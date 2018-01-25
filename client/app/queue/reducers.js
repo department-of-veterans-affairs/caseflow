@@ -1,14 +1,13 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './constants';
+import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import { combineReducers } from 'redux';
 
 export const initialState = {
   loadedQueue: {
     appeals: [],
     tasks: []
-  },
-  filterCriteria: {
-    searchQuery: ''
   }
 };
 
@@ -25,28 +24,17 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.SET_SEARCH:
-    return update(state, {
-      filterCriteria: {
-        searchQuery: {
-          $set: action.payload.searchQuery
-        }
-      }
-    });
-  case ACTIONS.CLEAR_SEARCH:
-    return update(state, {
-      filterCriteria: {
-        searchQuery: {
-          $set: ''
-        }
-      }
-    });
   default:
     return state;
   }
 };
 
+const rootReducer = combineReducers({
+  queue: workQueueReducer,
+  caseSelect: caseSelectReducer
+});
+
 export default timeFunction(
-  workQueueReducer,
+  rootReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
