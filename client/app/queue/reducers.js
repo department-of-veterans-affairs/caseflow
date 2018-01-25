@@ -1,9 +1,9 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './constants';
-import _ from 'lodash';
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
+import { mapArrayToObjectById } from './utils';
 
 export const initialState = {
   loadedQueue: {
@@ -11,13 +11,6 @@ export const initialState = {
     tasks: []
   }
 };
-
-const mapArrayToObjectById = (collection, attrs) => _(collection).
-  map((item) => ([
-    item.id, _.extend({}, item, attrs)
-  ])).
-  fromPairs().
-  value();
 
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {

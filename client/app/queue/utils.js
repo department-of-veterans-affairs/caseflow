@@ -35,3 +35,10 @@ export const sortTasks = ({ tasks, appeals }) => {
 
   return _.flatten(partitionedTasks);
 };
+
+export const mapArrayToObjectById = (collection, attrs) => _(collection).
+  map((item) => ([
+    item.id, _.extend({}, item, attrs)
+  ])).
+  fromPairs().
+  value();
