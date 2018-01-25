@@ -220,7 +220,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"].first["attributes"]["aod"]).to eq(false)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
-      expect(json["data"].first["attributes"]["alerts"]).to eq([])
+      expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]["front"]).to eq(false)
