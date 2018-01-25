@@ -3,9 +3,9 @@ import { BrowserRouter } from 'react-router-dom';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import { COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
-import CertificationHelp from './certificationHelp';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import CertificationHelp from './CertificationHelp';
 
 class Help extends React.PureComponent {
 
