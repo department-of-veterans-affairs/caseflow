@@ -2,7 +2,7 @@ import React from 'react';
 
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import CaseflowLogo from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/CaseflowLogo';
+import CaseflowLogo from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/CaseflowLogo';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {

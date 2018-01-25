@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 import { fetchAppealUsingVeteranId,
   setCaseSelectSearch,
@@ -16,20 +17,23 @@ import RadioField from '../components/RadioField';
 import IssuesList from './IssueList';
 import Alert from '../components/Alert';
 
+// todo: after Reader welcome gate is deprecated, move this component into Queue
 class CaseSelectSearch extends React.PureComponent {
 
   componentDidUpdate = () => {
-    // if only one appeal is received for the veteran id
-    // select that appeal's case.
-    if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
-      this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
+    if (!this.props.alwaysShowCaseSelectionModal) {
+      // if only one appeal is received for the veteran id
+      // select that appeal's case.
+      if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
+        this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
+      }
     }
 
     // when an appeal is selected using claim search,
     // this method redirects to the claim folder page
     // and also does a bit of store clean up.
     if (this.props.caseSelect.selectedAppeal.vacols_id) {
-      this.props.history.push(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
+      this.props.navigateToPath(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseSelectSearch();
     }
   };
@@ -73,7 +77,9 @@ class CaseSelectSearch extends React.PureComponent {
         value: appeal.vacols_id
       }));
 
-    return <div className="section-search">
+    const modalShowThreshold = this.props.alwaysShowCaseSelectionModal ? 0 : 1;
+
+    return <div className="section-search" {...this.props.styling}>
       {caseSelect.search.showErrorMessage &&
         <Alert title="Veteran ID not found" type="error">
           Please enter a valid Veteran ID and try again.
@@ -86,7 +92,7 @@ class CaseSelectSearch extends React.PureComponent {
       }
       <SearchBar
         id="searchBar"
-        size="small"
+        size={this.props.searchSize}
         onChange={this.props.setCaseSelectSearch}
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
@@ -94,7 +100,7 @@ class CaseSelectSearch extends React.PureComponent {
         loading={caseSelect.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { Boolean(_.size(caseSelect.receivedAppeals) > 1) && <Modal
+      { Boolean(_.size(caseSelect.receivedAppeals) > modalShowThreshold) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
@@ -127,6 +133,18 @@ class CaseSelectSearch extends React.PureComponent {
     </div>;
   }
 }
+
+CaseSelectSearch.propTypes = {
+  searchSize: PropTypes.string,
+  styling: PropTypes.object,
+  navigateToPath: PropTypes.func.isRequired,
+  alwaysShowCaseSelectionModal: PropTypes.bool
+};
+
+CaseSelectSearch.defaultProps = {
+  searchSize: 'small',
+  alwaysShowCaseSelectionModal: false
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAppealUsingVeteranId,

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ProgressBarSection from './ProgressBarSection';
 
 export default class ProgressBar extends React.Component {
