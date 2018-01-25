@@ -15,12 +15,13 @@ const redText = css({ color: 'red' });
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
+  getAppealForTask = (task) => this.props.appeals[task.appealId];
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
       valueFunction: (task) => <Link>
-        {task.appeal.attributes.veteran_full_name} ({task.appeal.attributes.vacols_id})
+        {this.getAppealForTask(task).attributes.veteran_full_name} ({this.getAppealForTask(task).attributes.vacols_id})
       </Link>
     },
     {
@@ -28,7 +29,7 @@ class QueueTable extends React.PureComponent {
       valueFunction: (task) => {
         const {
           attributes: { aod, type }
-        } = task.appeal;
+        } = this.getAppealForTask(task);
         const cavc = type === 'Court Remand';
         const valueToRender = <div>
           {aod && <span><span {...redText}>AOD</span>, </span>}
@@ -40,11 +41,11 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Docket Number',
-      valueFunction: (task) => task.appeal.attributes.docket_number
+      valueFunction: (task) => this.getAppealForTask(task).attributes.docket_number
     },
     {
       header: 'Issues',
-      valueFunction: (task) => task.appeal.attributes.issues.length
+      valueFunction: (task) => this.getAppealForTask(task).attributes.issues.length
     },
     {
       header: 'Due Date',
@@ -54,7 +55,7 @@ class QueueTable extends React.PureComponent {
       header: 'Reader Documents',
       valueFunction: (task) => {
         // todo: get document count
-        return <Link href={`/reader/appeal/${task.appeal.attributes.vacols_id}/documents`}>
+        return <Link href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}>
           <span {...redText}>FAKE ###</span>
         </Link>;
       }
@@ -63,7 +64,7 @@ class QueueTable extends React.PureComponent {
 
   render = () => <Table
     columns={this.getQueueColumns}
-    rowObjects={sortTasks(this.props.tasks)}
+    rowObjects={sortTasks(this.props)}
     getKeyForRow={this.getKeyForRow}
   />;
 }
