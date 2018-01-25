@@ -4,6 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import LastRetrievalInfo from './LastRetrievalInfo';
+import AppFrame from '../components/AppFrame';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
@@ -55,20 +58,19 @@ export class PdfListView extends React.Component {
       />;
     }
 
-    return <div className="usa-grid">
-      <div className="cf-app-segment cf-app-segment--alt">
-        <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-        <DocumentListHeader
-          documents={this.props.documents}
-          noDocuments={noDocuments}
-        />
-        {tableView}
-      </div>
-      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
-      { this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        <div className="cf-red-text">Unable to display VVA documents at this time</div> }
-    </div>;
+    return <AppFrame wideApp>
+      <AppSegment filledBackground>
+        <div className="section--document-list">
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
+          <DocumentListHeader
+            documents={this.props.documents}
+            noDocuments={noDocuments}
+          />
+          {tableView}
+        </div>
+      </AppSegment>
+      <LastRetrievalInfo />
+    </AppFrame>;
   }
 }
 

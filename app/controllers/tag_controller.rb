@@ -30,7 +30,7 @@ class TagController < ApplicationController
 
     document = Document.find(document_id)
 
-    document.tags.delete(tag_id)
+    document.tags.destroy(tag_id)
     render(json: { status: :no_content })
   end
 
