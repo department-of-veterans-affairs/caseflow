@@ -17,6 +17,7 @@ import RadioField from '../components/RadioField';
 import IssuesList from './IssueList';
 import Alert from '../components/Alert';
 
+// todo: after Reader welcome gate is deprecated, move this component into Queue
 class CaseSelectSearch extends React.PureComponent {
 
   componentDidUpdate = () => {
