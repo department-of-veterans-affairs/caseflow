@@ -7,12 +7,16 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS } from './constants';
 import { associateTasksWithAppeals } from './utils';
+import { mapArrayToObjectById } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
     return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
-      const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
+      let { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
+
+      appeals = mapArrayToObjectById(appeals, { docCount: 0 });
+      tasks = mapArrayToObjectById(tasks);
 
       this.props.onReceiveQueue({
         appeals,

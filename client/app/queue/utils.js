@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export const associateTasksWithAppeals = (serverData) => {
+export const associateTasksWithAppeals = (serverData = {}) => {
   const {
     appeals: { data: appeals },
     tasks: { data: tasks }
@@ -25,7 +25,7 @@ export const associateTasksWithAppeals = (serverData) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks, appeals }) => {
+export const sortTasks = ({ tasks = [], appeals = [] }) => {
   const partitionedTasks = _.partition(tasks, (task) =>
     appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
   );
@@ -36,9 +36,9 @@ export const sortTasks = ({ tasks, appeals }) => {
   return _.flatten(partitionedTasks);
 };
 
-export const mapArrayToObjectById = (collection, attrs) => _(collection).
+export const mapArrayToObjectById = (collection = [], defaults = {}) => _(collection).
   map((item) => ([
-    item.id, _.extend({}, item, attrs)
+    item.id, _.extend({}, defaults, item)
   ])).
   fromPairs().
   value();

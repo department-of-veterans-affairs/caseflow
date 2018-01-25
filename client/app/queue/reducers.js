@@ -3,7 +3,6 @@ import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './constants';
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
-import { mapArrayToObjectById } from './utils';
 
 export const initialState = {
   loadedQueue: {
@@ -18,10 +17,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       loadedQueue: {
         appeals: {
-          $set: mapArrayToObjectById(action.payload.appeals, { docCount: 0 })
+          $set: action.payload.appeals
         },
         tasks: {
-          $set: mapArrayToObjectById(action.payload.tasks)
+          $set: action.payload.tasks
         }
       }
     });
