@@ -5,50 +5,46 @@ RSpec.feature "Queue" do
     Fakes::Initializer.load!
   end
 
+  let(:documents) {
+    [
+      Generators::Document.create(
+        filename: "My BVA Decision",
+        type: "BVA Decision",
+        received_at: 7.days.ago,
+        vbms_document_id: 6,
+        category_procedural: true,
+        tags: [
+          Generators::Tag.create(text: "New Tag1"),
+          Generators::Tag.create(text: "New Tag2")
+        ],
+        description: Generators::Random.word_characters(50)
+      ),
+      Generators::Document.create(
+        filename: "My Form 9",
+        type: "Form 9",
+        received_at: 5.days.ago,
+        vbms_document_id: 4,
+        category_medical: true,
+        category_other: true
+      ),
+      Generators::Document.create(
+        filename: "My NOD",
+        type: "NOD",
+        received_at: 1.day.ago,
+        vbms_document_id: 3
+      )
+    ]
+  }
   let(:vacols_record) { :remand_decided }
-  let(:documents) { [] }
+  let(:appeal) do
+    Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents)
+  end
   let!(:issues) { [Generators::Issue.build] }
   let!(:current_user) do
     User.authenticate!(roles: ["System Admin"])
   end
 
   context "search for appeals using veteran id" do
-    # Currently the vbms_document_ids need to be set since they correspond to specific
-    # files to load when we fetch content.
-    let(:documents) do
-      [
-        Generators::Document.create(
-          filename: "My BVA Decision",
-          type: "BVA Decision",
-          received_at: 7.days.ago,
-          vbms_document_id: 6,
-          category_procedural: true,
-          tags: [
-            Generators::Tag.create(text: "New Tag1"),
-            Generators::Tag.create(text: "New Tag2")
-          ],
-          description: Generators::Random.word_characters(50)
-        ),
-        Generators::Document.create(
-          filename: "My Form 9",
-          type: "Form 9",
-          received_at: 5.days.ago,
-          vbms_document_id: 4,
-          category_medical: true,
-          category_other: true
-        ),
-        Generators::Document.create(
-          filename: "My NOD",
-          type: "NOD",
-          received_at: 1.day.ago,
-          vbms_document_id: 3
-        )
-      ]
-    end
-    let(:appeal) do
-      Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents)
-    end
-
     scenario "with no appeals" do
       visit "/queue"
       fill_in "searchBar", with: "obviouslyfakecaseid"
@@ -75,7 +71,7 @@ RSpec.feature "Queue" do
       appeal_options[0].click
       click_on "Okay"
 
-      expect(page).to have_content(appeal.veteran_full_name + "'s Claims Folder")
+      expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
     end
   end
 end
