@@ -26,22 +26,20 @@ export class CaseSelectLoadingScreen extends React.Component {
         Please <a href="">refresh the page</a> and try again.
     </div>;
 
-    const loadingDataDisplay = <LoadingDataDisplay
+    return <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
+        wrapInAppSegment: false,
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading cases in Reader...'
       }}
       failStatusMessageProps={{
+        wrapInAppSegment: false,
         title: 'Unable to load the welcome page'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
     </LoadingDataDisplay>;
-
-    return <div className="usa-grid">
-      {loadingDataDisplay}
-    </div>;
   }
 }
 

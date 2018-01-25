@@ -1,12 +1,14 @@
 describe AppealSeriesAlerts do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    DocketSnapshot.create
   end
   let(:series) { AppealSeries.create(appeals: [appeal]) }
   let(:appeal) do
     Generators::Appeal.build(
       vbms_id: "999887777S",
       status: status,
+      location_code: location_code,
       notification_date: 1.year.ago,
       soc_date: soc_date,
       form9_date: form9_date,
@@ -17,6 +19,7 @@ describe AppealSeriesAlerts do
   end
 
   let(:status) { "Advance" }
+  let(:location_code) { "77" }
   let(:soc_date) { 5.days.ago }
   let(:form9_date) { nil }
   let(:certification_date) { nil }
@@ -98,6 +101,34 @@ describe AppealSeriesAlerts do
         it "does not include an alert" do
           expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to be_nil
         end
+      end
+    end
+
+    context "decision_soon alert" do
+      let(:form9_date) { 1.year.ago }
+      let(:status) { "Active" }
+
+      before do
+        series.appeals.each do |appeal|
+          appeal.aod = false
+          appeal.case_assignment_exists = false
+        end
+      end
+
+      it "includes an alert" do
+        expect(alerts.find { |alert| alert[:type] == :decision_soon }).to_not be_nil
+      end
+    end
+
+    context "blocked_by_vso alert" do
+      let(:form9_date) { 1.year.ago }
+      let(:status) { "Active" }
+      let(:location_code) { "55" }
+
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+
+      it "includes an alert" do
+        expect(alerts.find { |alert| alert[:type] == :blocked_by_vso }).to_not be_nil
       end
     end
 
