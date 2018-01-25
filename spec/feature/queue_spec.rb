@@ -5,7 +5,7 @@ RSpec.feature "Queue" do
     Fakes::Initializer.load!
   end
 
-  let(:documents) {
+  let(:documents) do
     [
       Generators::Document.create(
         filename: "My BVA Decision",
@@ -34,7 +34,7 @@ RSpec.feature "Queue" do
         vbms_document_id: 3
       )
     ]
-  }
+  end
   let(:vacols_record) { :remand_decided }
   let(:appeal) do
     Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents)
