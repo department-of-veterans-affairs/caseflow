@@ -11,6 +11,8 @@ class AppealSeriesAlerts
       scheduled_hearing,
       hearing_no_show,
       held_for_evidence,
+      decision_soon,
+      blocked_by_vso,
       ramp,
       cavc_option
     ].compact
@@ -82,6 +84,24 @@ class AppealSeriesAlerts
         details: {
           due_date: due_date
         }
+      }
+    end
+  end
+
+  def decision_soon
+    if appeal_series.status == :decision_in_progress || (appeal_series.status == :on_docket && appeal_series.at_front)
+      {
+        type: :decision_soon,
+        details: {}
+      }
+    end
+  end
+
+  def blocked_by_vso
+    if appeal_series.status == :at_vso && appeal_series.at_front
+      {
+        type: :blocked_by_vso,
+        details: {}
       }
     end
   end
