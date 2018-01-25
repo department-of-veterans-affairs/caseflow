@@ -2,7 +2,7 @@ class AddDocumentsIndexToSeriesId < ActiveRecord::Migration
   disable_ddl_transaction!
 
   def change
-    ActiveRecord::Base.connection.execute "SET statement_timeout = 900000" # 15 minutes
+    ActiveRecord::Base.connection.execute "SET statement_timeout = 1800000" # 30 minutes
 
     add_index :documents, :series_id, unique: true, algorithm: :concurrently
   ensure
