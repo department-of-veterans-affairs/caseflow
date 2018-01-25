@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
-import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';

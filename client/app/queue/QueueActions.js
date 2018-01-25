@@ -8,17 +8,6 @@ export const onReceiveQueue = ({ tasks, appeals }) => ({
   }
 });
 
-export const setSearch = (searchQuery) => ({
-  type: ACTIONS.SET_SEARCH,
-  payload: {
-    searchQuery
-  }
-});
-
-export const clearSearch = () => ({
-  type: ACTIONS.CLEAR_SEARCH
-});
-
 export const setAppealDocCount = ({ appealId, docCount }) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {

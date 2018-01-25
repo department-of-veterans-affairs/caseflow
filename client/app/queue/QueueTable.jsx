@@ -6,12 +6,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Table from '../components/Table';
-import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
 
-const redText = css({ color: 'red' });
+// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
+const redText = css({ color: '#E60000' });
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
