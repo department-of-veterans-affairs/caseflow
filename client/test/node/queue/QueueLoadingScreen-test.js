@@ -59,7 +59,7 @@ describe('QueueLoadingScreen', () => {
       attributes: {
         appeal_id: '1',
         docket_date: '2017-12-28T17:18:20.412Z'
-      },
+      }
     }, {
       id: '222',
       appealId: '123',
@@ -90,7 +90,10 @@ describe('QueueLoadingScreen', () => {
     tasks = mapArrayToObjectById(tasks);
     appeals = mapArrayToObjectById(appeals, { docCount: 0 });
 
-    const sortedTasks = sortTasks({ tasks, appeals });
+    const sortedTasks = sortTasks({
+      tasks,
+      appeals
+    });
 
     expect(sortedTasks).to.deep.equal([{
       id: '333',

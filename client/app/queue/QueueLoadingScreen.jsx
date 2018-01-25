@@ -6,8 +6,7 @@ import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS } from './constants';
-import { associateTasksWithAppeals } from './utils';
-import { mapArrayToObjectById } from './utils';
+import { associateTasksWithAppeals, mapArrayToObjectById } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {

@@ -12,7 +12,7 @@ class QueueController < ApplicationController
   def index
     respond_to do |format|
       format.html { render "queue/index" }
-      format.json {
+      format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{current_user.id}",
                               name: "QueueController.tasks") do
 
@@ -22,7 +22,7 @@ class QueueController < ApplicationController
             appeals: json_appeals(appeals)
           }
         end
-      }
+      end
     end
   end
 
