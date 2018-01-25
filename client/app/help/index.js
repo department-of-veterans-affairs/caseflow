@@ -35,6 +35,11 @@ class Help extends React.PureComponent {
              <div className="cf-app-width cf-app-segment cf-app-segment--alt">
                <PageRoute
                  exact
+                 path="/help"
+                 title="Caseflow Help"
+                 component={this.helpRoot} />
+               <PageRoute
+                 exact
                  path="/"
                  title="Caseflow Help"
                  component={this.helpRoot} />
