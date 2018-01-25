@@ -13,7 +13,7 @@ class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
     return ApiUtil.get('/queue/?json', {
-      headers: _.pick(this.props, 'userId')
+      headers: { user_id: this.props.userId }
     }).then((response) => {
       let { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
