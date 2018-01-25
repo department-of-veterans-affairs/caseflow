@@ -9,7 +9,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
     const {
       disabled,
       id,
-      hideLabel,
+      label,
       name,
       onChange,
       onCancelClick,
@@ -19,7 +19,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
-      <label className={classNamesFn({ visuallyhidden: hideLabel })} htmlFor={id || name}>
+      <label className={classNamesFn({ visuallyhidden: !label })} htmlFor={id || name}>
         {name}
       </label>
       <textarea
