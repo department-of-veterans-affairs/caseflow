@@ -25,7 +25,7 @@ export default class Checkbox extends React.Component {
     ];
 
     if (!unpadded) {
-      classNames.push('cf-form- qa`');
+      classNames.push('cf-form-qa');
     }
 
     if (errorMessage) {
@@ -34,7 +34,7 @@ export default class Checkbox extends React.Component {
 
     return <div className={classNames.join(' ')}>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      <div className="cf-form-check">
+      <div className="cf-form-checkbox">
         <input
           name={name}
           onChange={this.onChange}

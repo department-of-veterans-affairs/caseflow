@@ -83,6 +83,13 @@ $color-hearings-saving: $color-gray;
       margin: 0;
       border: none;
       padding: .75em;
+
+      &:first-child {
+        font-weight: bold;
+        padding-right: 0;
+        padding-left: 0;
+        float: right;
+      }
     }
 
     th {
@@ -116,7 +123,11 @@ $color-hearings-saving: $color-gray;
     }
 
     .cf-hearings-prepped {
-      width: 4%;
+      width: 3%;
+
+      .cf-form-qa {
+        padding-left: 4px
+      }
     }
 
     .cf-hearings-docket-appellant {

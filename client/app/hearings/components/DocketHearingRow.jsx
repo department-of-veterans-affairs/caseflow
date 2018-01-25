@@ -23,11 +23,6 @@ const textareaStyling = css({
   }
 });
 
-const indexColumnStyling = css({
-  fontWeight: 'bold',
-  padding: '0px'
-});
-
 const preppedCheckboxStyling = css({
   float: 'right'
 });
@@ -100,8 +95,8 @@ export class DocketHearingRow extends React.PureComponent {
     </div>;
 
     return <tbody>
-      <tr>
-        <td {...indexColumnStyling}>
+      <tr className="docket-row">
+        <td>
           <span>{index + 1}.</span>
         </td>
         <td className="cf-hearings-prepped">
@@ -113,7 +108,7 @@ export class DocketHearingRow extends React.PureComponent {
               value={hearing.prepped}
               name={`${hearing.id}-prep`}
               hideLabel
-              styling={preppedCheckboxStyling}
+              {...preppedCheckboxStyling}
             />
           </span>
         </td>
@@ -137,6 +132,9 @@ export class DocketHearingRow extends React.PureComponent {
             }}>
             {hearing.vbms_id}
           </ViewableItemLink>
+          <span style={{ display: 'block', paddingTop: '5px', paddingBottom: '5px' }}>
+            {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
+          </span>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
@@ -172,14 +170,6 @@ export class DocketHearingRow extends React.PureComponent {
               onChange={this.setTranscriptRequested}
             />
           </div>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td colSpan="2">
-          {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
         </td>
       </tr>
       <tr>
