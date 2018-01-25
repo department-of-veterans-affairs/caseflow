@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import DocketsContainer from './containers/DocketsContainer';
@@ -8,10 +8,10 @@ import HearingWorksheetContainer from './containers//HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 const Hearings = ({ hearings }) => {
 

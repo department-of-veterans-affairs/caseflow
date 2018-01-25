@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Table from '../components/Table';
 import moment from 'moment';
-import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 import { sortTasks } from './utils';
 
-const redText = css({ color: 'red' });
+// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
+const redText = css({ color: '#E60000' });
 
 export default class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -27,8 +28,7 @@ export default class QueueTable extends React.PureComponent {
         const cavc = type === 'Court Remand';
         const valueToRender = <div>
           {aod && <span><span {...redText}>AOD</span>, </span>}
-          {cavc && <span><span {...redText}>CAVC</span>, </span>}
-          <span>{type}</span>
+          {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
         </div>;
 
         return <div>{valueToRender}</div>;
