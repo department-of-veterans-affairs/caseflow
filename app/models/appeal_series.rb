@@ -49,6 +49,10 @@ class AppealSeries < ActiveRecord::Base
     docket.try(:to_hash)
   end
 
+  def at_front
+    docket.try(:at_front)
+  end
+
   # Appeals from the same series contain many of the same events. We unique them,
   # using the property of AppealEvent that any two events with the same type and
   # date are considered equal.
@@ -130,9 +134,9 @@ class AppealSeries < ActiveRecord::Base
     when "19", "20"
       :bva_development
     when "14", "16", "18", "24"
-      latest_appeal.case_assignment_exists? ? :bva_development : :on_docket
+      latest_appeal.case_assignment_exists ? :bva_development : :on_docket
     else
-      latest_appeal.case_assignment_exists? ? :decision_in_progress : :on_docket
+      latest_appeal.case_assignment_exists ? :decision_in_progress : :on_docket
     end
   end
 

@@ -691,8 +691,8 @@ describe Appeal do
     end
   end
 
-  context "#case_assignment_exists?" do
-    subject { appeal.case_assignment_exists? }
+  context "#case_assignment_exists" do
+    subject { appeal.case_assignment_exists }
 
     it { is_expected.to be_truthy }
   end
