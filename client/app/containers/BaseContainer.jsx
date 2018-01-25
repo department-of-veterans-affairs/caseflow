@@ -11,7 +11,6 @@ import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
-import Help from '../help/index';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
@@ -22,7 +21,6 @@ const Pages = {
   CaseWorkerIndex,
   CancelCertificationConfirmation,
   DecisionReviewer: Reader,
-  Help,
   Intake,
   EstablishClaim,
   EstablishClaimCancel,
