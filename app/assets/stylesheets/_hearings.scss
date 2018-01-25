@@ -105,24 +105,19 @@ $color-hearings-saving: $color-gray;
         display: inline-block;
         vertical-align: top;
 
+        &:first-child {
+          padding-bottom: 5px;
+        }
+
         &:last-child {
           display: block;
         }
       }
     }
 
-    // .cf-hearings-prepped {
-    //   text-align: right;
-
-    //   > span {
-    //     display: inline-block;
-    //     vertical-align: top;
-
-    //     &:last-child {
-    //       display: block;
-    //     }
-    //   }
-    // }
+    .cf-hearings-prepped {
+      width: 4%;
+    }
 
     .cf-hearings-docket-appellant {
       width: 20%;

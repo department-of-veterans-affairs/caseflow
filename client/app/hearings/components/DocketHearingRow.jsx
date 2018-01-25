@@ -23,11 +23,14 @@ const textareaStyling = css({
   }
 });
 
-const indexColumStyling = css({
-  'font-weight': 'bold',
+const indexColumnStyling = css({
+  fontWeight: 'bold',
   padding: '0px'
 });
 
+const preppedCheckboxStyling = css({
+  float: 'right'
+});
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -98,7 +101,7 @@ export class DocketHearingRow extends React.PureComponent {
 
     return <tbody>
       <tr>
-        <td {...indexColumStyling}>
+        <td {...indexColumnStyling}>
           <span>{index + 1}.</span>
         </td>
         <td className="cf-hearings-prepped">
@@ -110,6 +113,7 @@ export class DocketHearingRow extends React.PureComponent {
               value={hearing.prepped}
               name={`${hearing.id}-prep`}
               hideLabel
+              styling={preppedCheckboxStyling}
             />
           </span>
         </td>

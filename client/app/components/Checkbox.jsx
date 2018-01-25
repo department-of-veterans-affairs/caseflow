@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 export default class Checkbox extends React.Component {
   onChange = (event) => {
@@ -32,10 +33,8 @@ export default class Checkbox extends React.Component {
     }
 
     return <div className={classNames.join(' ')}>
-
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-
-      <div className="cf-form-checkbox">
+      <div className="cf-form-check">
         <input
           name={name}
           onChange={this.onChange}
@@ -43,10 +42,11 @@ export default class Checkbox extends React.Component {
           id={id || name}
           checked={value}
           disabled={disabled}
+          aria-label="label"
         />
-        {<label className="question-label" htmlFor={name}>
-          {!hideLabel && (label || name)} {required && <span className="cf-required">Required</span>}
-        </label>}
+        <label className="question-label" htmlFor={name}>
+          <div className={ classnames({ 'usa-sr-only': hideLabel }) }>{(label || name)}</div> {required && <span className="cf-required">Required</span>}
+        </label>
       </div>
     </div>;
   }
