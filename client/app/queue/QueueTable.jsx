@@ -1,14 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Table from '../components/Table';
 import moment from 'moment';
-import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import { css } from 'glamor';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import Table from '../components/Table';
+import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
+
+import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
 
 const redText = css({ color: 'red' });
 
-export default class QueueTable extends React.PureComponent {
+class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getQueueColumns = () => [
@@ -64,6 +69,12 @@ export default class QueueTable extends React.PureComponent {
 }
 
 QueueTable.propTypes = {
-  tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  tasks: PropTypes.object.isRequired,
+  appeals: PropTypes.object.isRequired
 };
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setAppealDocCount
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(QueueTable);

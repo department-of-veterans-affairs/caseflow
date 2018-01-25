@@ -20,7 +20,7 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
-    // Promise does not give us a way to "un-then" and stop listening 
+    // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
     promise.then(
@@ -90,7 +90,10 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  createLoadPromise: PropTypes.func.isRequired
+  createLoadPromise: PropTypes.func.isRequired,
+  loadingScreenProps: PropTypes.object.isRequired,
+  failStatusMessageProps: PropTypes.object.isRequired,
+  failStatusMessageChildren: PropTypes.object.isRequired
 };
 
 LoadingDataDisplay.defaultProps = {

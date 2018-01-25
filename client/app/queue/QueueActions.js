@@ -18,3 +18,11 @@ export const setSearch = (searchQuery) => ({
 export const clearSearch = () => ({
   type: ACTIONS.CLEAR_SEARCH
 });
+
+export const setAppealDocCount = ({ appealId, docCount }) => ({
+  type: ACTIONS.SET_APPEAL_DOC_COUNT,
+  payload: {
+    appealId,
+    docCount
+  }
+});

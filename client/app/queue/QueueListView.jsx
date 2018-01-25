@@ -33,8 +33,8 @@ class QueueListView extends React.PureComponent {
 }
 
 QueueListView.propTypes = {
-  tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  tasks: PropTypes.object.isRequired,
+  appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => _.pick(state.loadedQueue, 'tasks', 'appeals');
