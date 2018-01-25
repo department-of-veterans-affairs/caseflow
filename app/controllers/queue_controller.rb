@@ -1,6 +1,12 @@
 class QueueController < ApplicationController
   before_action :verify_access, :react_routed, :check_queue_out_of_service
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    Rails.logger.error "QueueController Appeal not found: #{e.message}"
+
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 404
+  end
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -11,6 +17,13 @@ class QueueController < ApplicationController
 
   def index
     render "queue/index"
+  end
+
+  def document_count
+    appeal = Appeal.find(params[:appeal_id])
+    render json: {
+      documents: appeal.documents.length
+    }
   end
 
   def tasks
