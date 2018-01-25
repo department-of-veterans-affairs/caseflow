@@ -71,8 +71,7 @@ class CaseSelect extends React.PureComponent {
       return null;
     }
 
-    return <AppFrame wideApp>
-      <AppSegment filledBackground>
+    return <AppSegment filledBackground>
         <div className="section--case-select">
           <h1 className="welcome-header">Welcome to Reader!</h1>
           <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
@@ -88,8 +87,7 @@ class CaseSelect extends React.PureComponent {
             getKeyForRow={this.getKeyForRow}
           />
         </div>
-      </AppSegment>
-    </AppFrame>;
+      </AppSegment>;
   }
 }
 

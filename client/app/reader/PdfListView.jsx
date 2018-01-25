@@ -58,7 +58,7 @@ export class PdfListView extends React.Component {
       />;
     }
 
-    return <AppFrame wideApp>
+    return <div>
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
@@ -70,7 +70,7 @@ export class PdfListView extends React.Component {
         </div>
       </AppSegment>
       <LastRetrievalInfo />
-    </AppFrame>;
+    </div>;
   }
 }
 
