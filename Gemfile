@@ -130,8 +130,7 @@ group :development, :test do
   gem "timecop"
 
   gem "database_cleaner"
-  gem "konacha"
-  gem "poltergeist" # For legacy JS tests. Remove when we're all React
+
   # to save and open specific page in capybara tests
   gem "launchy"
 
