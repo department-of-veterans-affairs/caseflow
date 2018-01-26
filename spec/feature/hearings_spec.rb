@@ -98,7 +98,6 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
-
       find(".cf-hearings-prepped").find("label").click
       find(".dropdown-3-disposition").click
       find("#react-select-2--option-1").click

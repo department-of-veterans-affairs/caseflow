@@ -120,18 +120,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_PREPPED:
-    // dailyDocketKey = getDailyDocketKey(state, action);
-    // hearingIndex = getHearingIndex(state, action, dailyDocketKey);
-    // // console.log(state.dailyDocket[dailyDocketKey]);
-    // return update(state, {
-    //   dailyDocket: {
-    //     [dailyDocketKey]: {
-    //       [hearingIndex]: {
-    //         prepped: { $set: !state.dailyDocket[dailyDocketKey][hearingIndex].prepped }
-    //       }
-    //     }
-    //   }
-    // });
     return newHearingState(state, action, { prepped: { $set: action.payload.prepped } });
 
   case Constants.SET_EVIDENCE:
