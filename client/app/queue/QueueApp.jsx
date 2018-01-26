@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-import SearchBar from '../components/SearchBar';
+import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -12,35 +12,34 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import { COLORS } from './constants';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { setSearch, clearSearch } from './QueueActions';
-
-const searchBarStyling = css({
-  '.usa-search-big': {
-    '> .cf-search-input-with-close': {
-      marginLeft: 'calc(100% - 56.5rem)'
-    },
-    '> span > .cf-submit': {
-      width: '10.5rem'
-    }
-  }
-});
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <div className="usa-grid">
-      <SearchBar
-        id="searchBar"
-        size="big"
-        onSubmit={this.props.setSearch}
-        onChange={this.props.setSearch}
-        onClearSearch={this.props.clearSearch}
-        value={this.props.searchQuery}
-        submitUsingEnterKey
-        styling={searchBarStyling} />
-    </div>
+    <CaseSelectSearch
+      navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
+      alwaysShowCaseSelectionModal
+      feedbackUrl={this.props.feedbackUrl}
+      searchSize="big"
+      styling={this.getSearchStyling()} />
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
+
+  getSearchStyling = () => css({
+    '.section-search': {
+      marginTop: '3rem',
+      '> .usa-alert-error': {
+        marginBottom: '1rem'
+      },
+      '> .usa-search-big': {
+        '> .cf-search-input-with-close': {
+          marginLeft: `calc(100% - ${this.props.isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
+        },
+        '> span > .cf-submit': {
+          width: '10.5rem'
+        }
+      }
+    }
+  });
 
   render = () => <BrowserRouter basename="/queue">
     <div>
@@ -78,11 +77,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.filterCriteria, 'searchQuery');
+const mapStateToProps = (state) => _.pick(state.caseSelect,
+  ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']);
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setSearch,
-  clearSearch
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);
+export default connect(mapStateToProps)(QueueApp);
