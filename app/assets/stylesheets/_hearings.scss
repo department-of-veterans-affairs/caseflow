@@ -82,7 +82,7 @@ $color-hearings-saving: $color-gray;
       vertical-align: top;
       margin: 0;
       border: none;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
 
       &:first-child {
         font-weight: bold;
@@ -98,7 +98,7 @@ $color-hearings-saving: $color-gray;
       border: none;
       border-bottom: 1px solid $color-gray-lighter;
       margin: 0;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
 
       &:last-child {
         padding-right: 0;
@@ -129,7 +129,7 @@ $color-hearings-saving: $color-gray;
         margin-top: 0;
       }
 
-      .cf-form-qa {
+      .cf-form-checkboxes {
         padding-left: 4px;
       }
     }
