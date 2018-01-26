@@ -622,7 +622,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
-      ensure_stable
+      ensure_stable do
         scenario "Establish a new claim routed to ARC"
           # Mock the claim_id returned by VBMS's create end product
           Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
