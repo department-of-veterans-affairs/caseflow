@@ -29,8 +29,8 @@ const workQueueReducer = (state = initialState, action = {}) => {
       loadedQueue: {
         appeals: {
           [action.payload.appealId]: {
-            $set: {
-              docCount: action.payload.docCount
+            docCount: {
+              $set: action.payload.docCount
             }
           }
         }
