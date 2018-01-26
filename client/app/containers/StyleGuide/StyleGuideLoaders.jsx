@@ -1,7 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import LoadingContainer from '../../components/LoadingContainer';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants'
+import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants'
 import StyleGuideSmallLoader from './StyleGuideSmallLoader';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 

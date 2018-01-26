@@ -13,7 +13,7 @@ import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
 import * as Constants from '../../establishClaim/constants';
 import moment from 'moment';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
