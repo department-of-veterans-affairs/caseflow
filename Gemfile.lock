@@ -16,10 +16,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 7f930be6621155b87b78390f3ad39dada3bd72ca
-  ref: 7f930be6621155b87b78390f3ad39dada3bd72ca
+  revision: 8f335782beabdf246ea63437762ea32fb8eb4c26
+  ref: 8f335782beabdf246ea63437762ea32fb8eb4c26
   specs:
-    caseflow (0.2.11)
+    caseflow (0.2.12)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
@@ -159,7 +159,6 @@ GEM
     cliver (0.3.2)
     coderay (1.1.2)
     colored2 (3.1.2)
-    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     cork (0.3.0)
@@ -226,14 +225,6 @@ GEM
       therubyracer (~> 0.12.1)
     json (1.8.6)
     jsonapi-renderer (0.2.0)
-    konacha (4.0.0)
-      actionpack (>= 4.1, < 5)
-      capybara
-      colorize
-      railties (>= 4.1, < 5)
-      sprockets (>= 2, < 4)
-      sprockets-rails (>= 2, < 4)
-      tilt
     kramdown (1.16.2)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -276,10 +267,6 @@ GEM
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pg (0.21.0)
-    poltergeist (1.17.0)
-      capybara (~> 2.1)
-      cliver (~> 0.3.1)
-      websocket-driver (>= 0.2.0)
     powerpack (0.1.1)
     prometheus-client (0.7.1)
       quantile (~> 0.2.0)
@@ -458,9 +445,6 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
-    websocket-driver (0.7.0)
-      websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.3)
     where-or (0.1.6)
     xmldsig (0.3.2)
       nokogiri
@@ -501,7 +485,6 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   jshint
-  konacha
   launchy
   moment_timezone-rails
   newrelic_rpm
@@ -511,7 +494,6 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pg
-  poltergeist
   prometheus-client (~> 0.7.1)
   pry
   pry-byebug

@@ -256,8 +256,8 @@ class Appeal < ActiveRecord::Base
     location_code == LOCATION_CODES[location]
   end
 
-  def case_assignment_exists?
-    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
+  cache_attribute :case_assignment_exists do
+    self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
