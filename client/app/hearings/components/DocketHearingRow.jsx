@@ -101,7 +101,7 @@ export class DocketHearingRow extends React.PureComponent {
     </div>;
 
     return <tbody>
-      <tr className="docket-row">
+      <tr>
         <td>
           <span>{index + 1}.</span>
         </td>
