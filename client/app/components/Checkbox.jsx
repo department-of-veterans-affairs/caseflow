@@ -25,7 +25,7 @@ export default class Checkbox extends React.Component {
     ];
 
     if (!unpadded) {
-      classNames.push('cf-form-qa');
+      classNames.push('cf-form-checkboxes');
     }
 
     if (errorMessage) {
