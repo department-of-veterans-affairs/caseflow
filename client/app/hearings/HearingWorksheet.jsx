@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
@@ -63,6 +63,12 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheetIssues);
     this.props.toggleWorksheetSaving();
+  };
+
+  openPdf = (worksheet, worksheetIssues) => () => {
+    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
+      window.open(`${window.location.pathname}/print`, '_blank');
+    });
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
@@ -145,7 +151,9 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+        <Link
+          onClick={this.openPdf(worksheet, worksheetIssues)}
+          button="secondary">
           Save as PDF
         </Link>
         <Link

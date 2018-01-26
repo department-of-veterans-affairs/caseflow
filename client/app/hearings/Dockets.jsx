@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
-import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 export class Dockets extends React.Component {
 
   getType = (type) => {
