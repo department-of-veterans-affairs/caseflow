@@ -26,6 +26,6 @@ class IntakeStatsController < ApplicationController
   private
 
   def verify_access
-    verify_system_admin
+    verify_authorized_roles("Admin Intake")
   end
 end
