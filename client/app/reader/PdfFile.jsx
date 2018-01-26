@@ -184,27 +184,10 @@ export class PdfFile extends React.PureComponent {
     columnIndex: pageIndex % this.columnCount
   })
 
-  // The getOffsetForCell method does not work as I expected. I thought it would return the location of the
-  // top of a cell. Unfortunately, I think 
-  getOffsetForPageIndex = (pageIndex) => {
-    const { rowIndex, columnIndex } = this.pageRowAndColumn(pageIndex);
-    const scrollTopStart = this.grid.getOffsetForCell({
-      alignment: 'start',
-      rowIndex,
-      columnIndex
-    }).scrollTop;
-    const scrollTopEnd = this.grid.getOffsetForCell({
-      alignment: 'end',
-      rowIndex,
-      columnIndex
-    }).scrollTop;
-
-    if (scrollTopStart - scrollTopEnd < 450 && scrollTopEnd !== 0) {
-      return scrollTopEnd + 450;
-    }
-
-    return scrollTopStart;
-  }
+  getOffsetForPageIndex = (pageIndex, alignment = 'start') => this.grid.getOffsetForCell({
+    alignment,
+    ...this.pageRowAndColumn(pageIndex)
+  })
 
   scrollToPosition = (pageIndex, locationOnPage = 0) => {
     const position = this.getOffsetForPageIndex(pageIndex);
@@ -321,17 +304,20 @@ export class PdfFile extends React.PureComponent {
     this.scrollLeft = scrollLeft;
 
     if (this.grid) {
-      let lastIndex = 0;
+      let minIndex = 0;
+      let minDistance = Infinity;
 
       _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
-        const offset = this.getOffsetForPageIndex(index);
+        const offset = this.getOffsetForPageIndex(index, 'center');
+        const distance = Math.abs(offset.scrollTop - (scrollTop));
 
-        if (offset.scrollTop < scrollTop + (clientHeight / 2)) {
-          lastIndex = index;
+        if (distance < minDistance) {
+          minIndex = index;
+          minDistance = distance;
         }
       });
 
-      this.onPageChange(lastIndex, clientHeight);
+      this.onPageChange(minIndex, clientHeight);
     }
   }
 
