@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5dda05573d424d557be7a09052ab24b0dc6a5c5f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -130,8 +130,7 @@ group :development, :test do
   gem "timecop"
 
   gem "database_cleaner"
-  gem "konacha"
-  gem "poltergeist" # For legacy JS tests. Remove when we're all React
+
   # to save and open specific page in capybara tests
   gem "launchy"
 

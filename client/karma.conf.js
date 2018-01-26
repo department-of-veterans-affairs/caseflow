@@ -1,1 +1,1 @@
-module.exports = require('@department-of-veterans-affairs/appeals-frontend-toolkit/config/karma.conf');
+module.exports = require('@department-of-veterans-affairs/caseflow-frontend-toolkit/config/karma.conf');
