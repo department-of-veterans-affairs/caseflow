@@ -95,7 +95,7 @@ export class Certification extends React.Component {
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
       loadingScreenProps={{
         message: 'Loading and checking documents from the Veteran’s file…',
-        spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
+        spinnerColor: LOGO_COLORS.CERTIFICATION.ACCENT
       }}
       failStatusMessageProps={{
         title: 'Technical Difficulties'
