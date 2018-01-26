@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DateSelector from '../components/DateSelector';
-import SaveCommentTextArea from '../components/SaveCommentTextArea';
+import SaveableTextArea from '../components/SaveableTextArea';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
@@ -67,7 +67,7 @@ export default class EditComment extends React.Component {
         type="date"
         strongLabel
       />
-      <SaveCommentTextArea
+      <SaveableTextArea
         onKeyDown={this.keyListener}
         id={this.props.id}
         onChange={this.onChange}

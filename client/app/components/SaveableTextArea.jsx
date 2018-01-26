@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from './Button';
 import classNamesFn from 'classnames';
 
-export default class SaveCommentTextArea extends React.PureComponent {
+export default class SaveableTextArea extends React.PureComponent {
   render() {
     const {
       disabled,
@@ -51,9 +51,10 @@ export default class SaveCommentTextArea extends React.PureComponent {
   }
 }
 
-SaveCommentTextArea.propTypes = {
+SaveableTextArea.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string,
+  label: PropTypes.string,
   onChange: PropTypes.func,
   onCancelClick: PropTypes.func,
   onKeyDown: PropTypes.func,
