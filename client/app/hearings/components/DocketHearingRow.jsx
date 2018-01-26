@@ -27,6 +27,12 @@ const preppedCheckboxStyling = css({
   float: 'right'
 });
 
+const issueCountStyling = css({
+  display: 'block',
+  paddingTop: '5px',
+  paddingBottom: '5px'
+});
+
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
 { value: 'no_show',
@@ -132,7 +138,7 @@ export class DocketHearingRow extends React.PureComponent {
             }}>
             {hearing.vbms_id}
           </ViewableItemLink>
-          <span style={{ display: 'block', paddingTop: '5px', paddingBottom: '5px' }}>
+          <span {...issueCountStyling}>
             {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
           </span>
         </td>

@@ -47,11 +47,12 @@ const getDailyDocketKey = (state, action) => _.findKey(
   (hearings) => _.some(hearings, { id: action.payload.hearingId })
 );
 
-const getHearingIndex = (state, action, dailyDocketKey) => _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+const getHearingIndex = (state, action, dailyDocketKey) =>
+  _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   let dailyDocketKey;
-  let hearingIndex; 
+  let hearingIndex;
 
   switch (action.type) {
   case Constants.POPULATE_UPCOMING_HEARINGS:
@@ -132,7 +133,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     //   }
     // });
     return newHearingState(state, action, { prepped: { $set: action.payload.prepped } });
-
 
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {
