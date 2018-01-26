@@ -28,7 +28,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks = [], appeals = [] }) => {
+export const sortTasks = ({ tasks = {}, appeals = {} }) => {
   const partitionedTasks = _.partition(tasks, (task) =>
     appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
   );

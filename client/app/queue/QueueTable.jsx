@@ -7,9 +7,13 @@ import { connect } from 'react-redux';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import SmallLoader from '../components/SmallLoader';
 
 import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
+import ApiUtil from '../util/ApiUtil';
+import { COLORS } from './constants';
 
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 const redText = css({ color: '#E60000' });
@@ -54,14 +58,35 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Reader Documents',
-      valueFunction: (task) => {
-        // todo: get document count
-        return <Link href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}>
-          <span {...redText}>FAKE ###</span>
-        </Link>;
-      }
+      // todo: fail response
+      valueFunction: (task) => <LoadingDataDisplay
+        createLoadPromise={this.createLoadPromise(task.appealId)}
+        loadingScreenProps={{
+          message: `Loading documents...`,
+          spinnerColor: COLORS.QUEUE_LOGO_PRIMARY
+        }}
+        failStatusMessageProps={{
+          title: 'Error loading stuff'
+        }}
+        failStatusMessageChildren={<span>error text</span>}
+        loadingComponent={SmallLoader}>
+        <Link href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}>
+          {/* todo: this isn't getting updated after docCount updates */}
+          {this.getAppealForTask(task).docCount.toLocaleString()}
+        </Link>
+      </LoadingDataDisplay>
     }
   ];
+
+  createLoadPromise = (appealId) => () => ApiUtil.get(`/queue/${appealId}/docs`).
+    then((response) => {
+      const docCount = JSON.parse(response.text).docCount;
+
+      this.props.setAppealDocCount({
+        appealId,
+        docCount
+      });
+    });
 
   render = () => <Table
     columns={this.getQueueColumns}
