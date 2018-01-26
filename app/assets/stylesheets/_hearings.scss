@@ -125,6 +125,10 @@ $color-hearings-saving: $color-gray;
     .cf-hearings-prepped {
       width: 3%;
 
+      .cf-form-checkboxes {
+        margin-top: 0;
+      }
+
       .cf-form-qa {
         padding-left: 4px;
       }
