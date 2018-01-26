@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(version: 20180123190443) do
     t.string  "type"
     t.string  "file_number"
     t.string  "description"
+    t.string  "series_id"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
