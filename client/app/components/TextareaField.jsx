@@ -49,6 +49,7 @@ export default class TextareaField extends React.Component {
 }
 
 TextareaField.propTypes = {
+  hideLabel: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string,
   maxlength: PropTypes.number,
