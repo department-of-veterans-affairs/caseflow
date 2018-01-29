@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../components/Checkbox';
+import { css, select } from 'glamor';
 
 const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
@@ -26,10 +27,33 @@ TagSelector.propTypes = {
   tagToggleStates: PropTypes.object
 };
 
-const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle }) => {
-  return <ul className="cf-document-filter-picker cf-document-tag-picker">
+const tagListStyling = css({
+  paddingBottom: 0,
+  margin: 0,
+  maxHeight: '345px',
+  wordBreak: 'break-word',
+  maxWidth: '218px',
+  overflowY: 'auto',
+  listStyleType: 'none',
+  paddingLeft: 0
+});
+const tagListItemStyling = select(
+  '.cf-form-checkboxes',
+  {
+    marginBottom: 0,
+    marginTop: 0
+  },
+  select('label',
+    {
+      marginBottom: 0
+    }
+  )
+);
+
+const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+  return <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
     {tags.map((tag, index) => {
-      return <li className="cf-tag-selector" key={index}>
+      return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
         <TagSelector
           tag={tag}
           handleTagToggle={handleTagToggle}

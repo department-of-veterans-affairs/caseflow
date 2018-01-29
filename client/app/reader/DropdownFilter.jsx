@@ -1,5 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
+
+const dropdownFilterViewListStyle = css({
+  margin: 0
+});
+const dropdownFilterViewListItemStyle = css({
+  padding: '14px 14px 0 14px'
+});
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -41,7 +49,10 @@ class DropdownFilter extends React.PureComponent {
           </div>
         </button>
       </div>
-      {children}
+      {React.cloneElement(React.Children.only(children), {
+        dropdownFilterViewListStyle,
+        dropdownFilterViewListItemStyle
+      })}
     </div>;
   }
 

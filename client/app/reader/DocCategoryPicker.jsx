@@ -41,7 +41,7 @@ CategorySelector.propTypes = {
   categoryName: PropTypes.string.isRequired
 };
 
-const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly }) => {
+const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
   const docFilterPickerStyling = css({
     listStyleType: 'none',
     paddingLeft: 0,
@@ -77,14 +77,14 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
     )
   );
 
-  return <ul {...docFilterPickerStyling} {...docCategoryPicker}>
+  return <ul {...docFilterPickerStyling} {...docCategoryPicker} {...dropdownFilterViewListStyle}>
     {
       _(Constants.documentCategories).
         toPairs().
         // eslint-disable-next-line no-unused-vars
         sortBy(([name, category]) => category.renderOrder).
         map(
-          ([categoryName, category]) => <li key={categoryName}>
+          ([categoryName, category]) => <li key={categoryName} {...dropdownFilterViewListItemStyle}>
             <CategorySelector category={category}
               allowReadOnly={allowReadOnly}
               handleCategoryToggle={handleCategoryToggle}
@@ -96,10 +96,16 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
   </ul>;
 };
 
+DocCategoryPicker.defaultProps = {
+  dropdownFilterViewListStyle: {},
+  dropdownFilterViewListItemStyle: {}
+};
+
 DocCategoryPicker.propTypes = {
   handleCategoryToggle: PropTypes.func.isRequired,
   categoryToggleStates: PropTypes.object,
-  allowReadOnly: PropTypes.bool
+  allowReadOnly: PropTypes.bool,
+  dropDownView: PropTypes.bool
 };
 
 export default DocCategoryPicker;
