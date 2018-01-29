@@ -47,11 +47,7 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
     paddingLeft: 0,
     paddingBottom: 0
   });
-  const docCategoryPicker = css({
-      marginBottom: 0,
-      marginTop: 0,
-      paddingBottom: 0
-    },
+  const docCategoryPicker = css(
     select('& li', {
         marginBottom: 0
       },
