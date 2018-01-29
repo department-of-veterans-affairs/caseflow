@@ -8,7 +8,7 @@ import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
-import * as AppConstants from '../constants/AppConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 
 // TODO Move all stream related to streams container
@@ -139,7 +139,7 @@ export class HearingWorksheet extends React.PureComponent {
       {!this.props.print &&
             <AutoSave
               save={this.save(worksheet, worksheetIssues)}
-              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+              spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               isSaving={this.props.worksheetIsSaving}
               saveFailed={this.props.saveWorksheetFailed}
             />

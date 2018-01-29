@@ -5,7 +5,7 @@ import * as Actions from '../actions/Dockets';
 import _ from 'lodash';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
-import * as AppConstants from '../../constants/AppConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from '../constants/constants';
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
@@ -34,7 +34,7 @@ export class DailyDocketContainer extends React.Component {
     if (!dailyDocket) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
-          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+          <LoadingContainer color={LOGO_COLORS.HEARINGS.ACCENT}>
             <div className="cf-image-loader">
             </div>
             <p className="cf-txt-c">Loading hearings, please wait...</p>
@@ -51,7 +51,7 @@ export class DailyDocketContainer extends React.Component {
 
       <AutoSave
         save={this.props.save(dailyDocket, this.props.date)}
-        spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+        spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
       />
