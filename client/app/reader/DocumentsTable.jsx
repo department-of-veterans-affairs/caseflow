@@ -202,7 +202,6 @@ class DocumentsTable extends React.Component {
               isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={this.toggleCategoryDropdownFilterVisiblity}>
               <DocCategoryPicker
-                dropDownView={true}
                 categoryToggleStates={this.props.docFilterCriteria.category}
                 handleCategoryToggle={this.props.setCategoryFilter} />
             </DropdownFilter>
