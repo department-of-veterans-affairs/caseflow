@@ -6,7 +6,7 @@ RSpec.feature "Intake Stats Dashboard" do
   end
 
   scenario "Switching tab intervals" do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(roles: ["Admin Intake"])
 
     RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
     RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)

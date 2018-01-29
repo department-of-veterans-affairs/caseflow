@@ -82,7 +82,14 @@ $color-hearings-saving: $color-gray;
       vertical-align: top;
       margin: 0;
       border: none;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
+
+      &:first-child {
+        font-weight: bold;
+        padding-right: 0;
+        padding-left: 0;
+        float: right;
+      }
     }
 
     th {
@@ -91,7 +98,7 @@ $color-hearings-saving: $color-gray;
       border: none;
       border-bottom: 1px solid $color-gray-lighter;
       margin: 0;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
 
       &:last-child {
         padding-right: 0;
@@ -99,24 +106,28 @@ $color-hearings-saving: $color-gray;
     }
 
     .cf-hearings-docket-date {
-      padding-left: 0;
-      width: 18%;
+      width: 14%;
 
       > span {
         display: inline-block;
         vertical-align: top;
 
         &:first-child {
-          font-weight: bold;
-          text-align: right;
-          margin-right: .5em;
-          width: 1.5em;
+          padding-bottom: 5px;
         }
 
         &:last-child {
-          padding-left: 2em;
           display: block;
         }
+      }
+    }
+
+    .cf-hearings-prepped {
+      width: 3%;
+
+      .cf-form-checkboxes {
+        margin-top: 0;
+        padding-left: 4px;
       }
     }
 
@@ -176,7 +187,7 @@ $color-hearings-saving: $color-gray;
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: 0 .32em;
+    padding: 1.5em .32em;
     width: 100%;
 
     .cf-form-checkboxes {

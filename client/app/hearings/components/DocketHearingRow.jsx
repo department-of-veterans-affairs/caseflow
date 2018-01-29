@@ -7,7 +7,8 @@ import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
+  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
+  setHearingPrepped
 } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
@@ -20,6 +21,16 @@ const textareaStyling = css({
       width: '80%'
     }
   }
+});
+
+const preppedCheckboxStyling = css({
+  float: 'right'
+});
+
+const issueCountStyling = css({
+  display: 'block',
+  paddingTop: '5px',
+  paddingBottom: '5px'
 });
 
 const dispositionOptions = [{ value: 'held',
@@ -63,6 +74,8 @@ export class DocketHearingRow extends React.PureComponent {
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
+  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.index, value, this.props.hearingDate);
+
   render() {
     const {
       index,
@@ -89,8 +102,23 @@ export class DocketHearingRow extends React.PureComponent {
 
     return <tbody>
       <tr>
-        <td className="cf-hearings-docket-date">
+        <td>
           <span>{index + 1}.</span>
+        </td>
+        <td className="cf-hearings-prepped">
+          <span>
+            <Checkbox
+              id={`${hearing.id}-prep`}
+              onChange={this.preppedOnChange}
+              key={index}
+              value={hearing.prepped}
+              name={`${hearing.id}-prep`}
+              hideLabel
+              {...preppedCheckboxStyling}
+            />
+          </span>
+        </td>
+        <td className="cf-hearings-docket-date">
           <span>
             {getDateTime(hearing.date)} /<br />
             {getRoTime(hearing.date)}
@@ -110,6 +138,9 @@ export class DocketHearingRow extends React.PureComponent {
             }}>
             {hearing.vbms_id}
           </ViewableItemLink>
+          <span {...issueCountStyling}>
+            {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
+          </span>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
@@ -149,11 +180,7 @@ export class DocketHearingRow extends React.PureComponent {
       </tr>
       <tr>
         <td></td>
-        <td colSpan="2">
-          {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
-        </td>
-      </tr>
-      <tr>
+        <td></td>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
@@ -180,7 +207,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setHoldOpen,
   setAod,
   setHearingViewed,
-  setTranscriptRequested
+  setTranscriptRequested,
+  setHearingPrepped
 }, dispatch);
 
 export default connect(
