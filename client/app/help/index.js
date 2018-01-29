@@ -7,6 +7,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import CertificationHelp from './CertificationHelp';
 import DispatchHelp from './DispatchHelp';
+import IntakeHelp from './IntakeHelp';
 
 class Help extends React.PureComponent {
 
@@ -54,6 +55,11 @@ class Help extends React.PureComponent {
                  path="/dispatch/help"
                  title="Dispatch Help"
                  component={DispatchHelp} />
+               <PageRoute
+                 exact
+                 path="/intake/help"
+                 title="Intake Help"
+                 component={IntakeHelp} />
              </div>
            </AppFrame>
            <Footer
