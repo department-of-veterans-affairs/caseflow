@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { associateTasksWithAppeals, mapArrayToObjectById, sortTasks } from '../../../app/queue/utils';
+import _ from 'lodash';
+import { associateTasksWithAppeals, sortTasks } from '../../../app/queue/utils';
 
 const serverData = {
   appeals: {
@@ -87,8 +88,11 @@ describe('QueueLoadingScreen', () => {
   it('groups tasks by AOD/CAVC and sorts by docket date', () => {
     let { tasks, appeals } = associateTasksWithAppeals(serverData);
 
-    tasks = mapArrayToObjectById(tasks);
-    appeals = mapArrayToObjectById(appeals, { docCount: 0 });
+    tasks = _.keyBy(tasks, 'id');
+    appeals = _(appeals).
+      map((appeal) => _.extend(appeal, { docCount: 0 })).
+      keyBy('id').
+      value();
 
     const sortedTasks = sortTasks({
       tasks,
