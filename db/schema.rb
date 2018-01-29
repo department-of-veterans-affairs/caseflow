@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123190443) do
+ActiveRecord::Schema.define(version: 20180126175818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -447,9 +447,6 @@ ActiveRecord::Schema.define(version: 20180123190443) do
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false
     t.boolean  "dismiss",            default: false
-    t.string   "program"
-    t.string   "name"
-    t.string   "levels"
     t.string   "description"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
