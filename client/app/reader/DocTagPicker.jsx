@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../components/Checkbox';
-import { css, select } from 'glamor';
+import { css } from 'glamor';
 
 const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
@@ -37,20 +37,15 @@ const tagListStyling = css({
   listStyleType: 'none',
   paddingLeft: 0
 });
-const tagListItemStyling = css(
-  select(
-    '& .cf-form-checkboxes',
-    {
-      marginBottom: 0,
-      marginTop: 0
-    },
-    select('& label',
-      {
-        marginBottom: 0
-      }
-    )
-  )
-);
+const tagListItemStyling = css({
+  '& .cf-form-checkboxes': {
+    marginBottom: 0,
+    marginTop: 0,
+    '& label': {
+      marginBottom: 0
+    }
+  }
+});
 
 const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
   dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {

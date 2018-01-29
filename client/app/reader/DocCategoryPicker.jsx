@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
-import { css, select } from 'glamor';
+import { css } from 'glamor';
 
 const categoryLabelStyling = css({
   display: 'flex',
@@ -47,32 +47,23 @@ const docCategoryPickerStyle = css(
   {
     listStyleType: 'none',
     paddingLeft: 0,
-    paddingBottom: 0
-  },
-  select('& li',
+    paddingBottom: 0,
+    '& li':
     {
-      marginBottom: 0
-    },
-    // @include hover,
-    select('& .cf-form-checkboxes',
-      {
+      marginBottom: 0,
+      '& .cf-form-checkboxes': {
         marginTop: 0,
-        marginBottom: 0
-      },
-      select('& label', {
-        marginBottom: 0
-      })
-    )
-  ),
-  select(
-    '& li:last-child',
-    select('div', { marginBottom: 0 }),
-    select('& .cf-form-checkboxes',
-      {
-        marginBottom: 0
+        marginBottom: 0,
+        '& label': {
+          marginBottom: 0
+        }
       }
-    )
-  )
+    },
+    '& li:last-child': {
+      div: { marginBottom: 0 },
+      '& .cf-form-checkboxes': { marginBottom: 0 }
+    }
+  }
 );
 
 const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly,

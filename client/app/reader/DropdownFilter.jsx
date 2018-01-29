@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
 
 const dropdownFilterViewListStyle = css({
@@ -11,7 +12,7 @@ const dropdownFilterViewListItemStyle = css(
     ':hover':
     {
       backgroundColor: '#5b616b',
-      color: '#ffffff'
+      color: COLORS.WHITE
     }
   }
 );
