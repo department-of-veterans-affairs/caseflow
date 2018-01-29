@@ -62,9 +62,6 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
         },
         select('& label', {
           marginBottom: 0
-        }),
-        select('& .cf-category-selector', {
-          marginBottom: 0
         })
       )
     ),
@@ -74,10 +71,7 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
       select('& .cf-form-checkboxes',
         {
           marginBottom: 0
-        },
-        select('& .cf-category-selector', {
-          marginBottom: 0
-        })
+        }
       )
     )
   );
