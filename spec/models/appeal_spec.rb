@@ -691,8 +691,8 @@ describe Appeal do
     end
   end
 
-  context "#case_assignment_exists?" do
-    subject { appeal.case_assignment_exists? }
+  context "#case_assignment_exists" do
+    subject { appeal.case_assignment_exists }
 
     it { is_expected.to be_truthy }
   end
@@ -1609,9 +1609,7 @@ describe Appeal do
         { worksheet_issues_attributes: [{
           remand: true,
           vha: true,
-          program: "Wheel",
-          name: "Spoon",
-          levels: "Cabbage\nPickle",
+          description: "Cabbage\nPickle",
           notes: "Donkey\nCow",
           from_vacols: true,
           vacols_sequence_id: 1
@@ -1629,9 +1627,7 @@ describe Appeal do
         expect(issue.deny).to eq false
         expect(issue.dismiss).to eq false
         expect(issue.vha).to eq true
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
@@ -1649,9 +1645,7 @@ describe Appeal do
         expect(issue.remand).to eq(true)
         expect(issue.allow).to eq(false)
         expect(issue.dismiss).to eq(false)
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Tomato"
 
         # soft delete an issue
