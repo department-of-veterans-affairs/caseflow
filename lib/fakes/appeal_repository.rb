@@ -387,7 +387,7 @@ class Fakes::AppealRepository
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
         docket_number: "13 11-265",
-        regional_office_key: "RO79"
+        regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
                Generators::Issue.build(codes: %w[06 15 26],
@@ -406,7 +406,7 @@ class Fakes::AppealRepository
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
         docket_number: "13 11-265",
-        regional_office_key: "RO79"
+        regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build(
         disposition: "Remanded",
@@ -427,7 +427,7 @@ class Fakes::AppealRepository
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
         docket_number: "13 11-265",
-        regional_office_key: "RO79"
+        regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build],
       documents: redacted_reader_documents
@@ -444,7 +444,7 @@ class Fakes::AppealRepository
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
         docket_number: "13 11-265",
-        regional_office_key: "RO79"
+        regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
                Generators::Issue.build(codes: %w[06 15 26],
