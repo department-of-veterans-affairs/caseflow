@@ -19,7 +19,7 @@ import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
