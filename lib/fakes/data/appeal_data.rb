@@ -21,7 +21,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Case",
         docket_number: "13 11-265",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
-        regional_office_key: "RO13",
+        regional_office_key: "RO79",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -50,7 +50,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Case",
         docket_number: "13 11-265",
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
-        regional_office_key: "RO13",
+        regional_office_key: "RO79",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -79,7 +79,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Case",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
-        regional_office_key: "RO13",
+        regional_office_key: "RO79",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -248,7 +248,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Nino",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
-        regional_office_key: "RO13",
+        regional_office_key: "RO79",
         representative: "Disabled American Veterans",
         issues: [
           { disposition: :remanded,

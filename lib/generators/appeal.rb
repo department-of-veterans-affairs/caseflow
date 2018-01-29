@@ -30,7 +30,7 @@ class Generators::Appeal
         appellant_middle_initial: "A",
         appellant_last_name: last_name,
         appellant_relationship: "Child",
-        regional_office_key: "RO13",
+        regional_office_key: "RO79",
         decision_date: 7.days.ago,
         form9_date: 11.days.ago,
         appellant_city: "Huntingdon",
