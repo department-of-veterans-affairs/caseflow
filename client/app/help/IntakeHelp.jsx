@@ -33,6 +33,7 @@ class IntakeHelp extends React.Component {
       </ul>
 
       <div className="cf-help-divider"></div>
+
       <h2 id="what-is-caseflow-intake">1. What is Caseflow Intake?</h2>
       <p>Caseflow Intake (Intake) is a web-based application designed to support the Rapid Appeals
     Modernization Program (RAMP). It will help process legacy appeals for Veterans who have
