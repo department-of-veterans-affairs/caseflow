@@ -4,6 +4,7 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -17,6 +18,24 @@ import { COLORS } from './constants';
 
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 const redText = css({ color: '#E60000' });
+
+class ListeningLinkComponent extends React.PureComponent {
+  render = () => <Link href={this.props.href}>
+    {_.get(this.props.appeal, this.props.displayAttr).toLocaleString()}
+  </Link>;
+}
+
+const mapStateToLinkProps = (state, ownProps) => ({
+  appeal: state.queue.loadedQueue.appeals[ownProps.appealId]
+});
+
+ListeningLinkComponent.propTypes = {
+  appealId: PropTypes.string.isRequired,
+  displayAttr: PropTypes.string.isRequired,
+  href: PropTypes.string.isRequired
+};
+
+const ListeningLink = connect(mapStateToLinkProps)(ListeningLinkComponent);
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -62,18 +81,19 @@ class QueueTable extends React.PureComponent {
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task.appealId)}
         loadingScreenProps={{
-          message: `Loading documents...`,
+          message: 'Loading document count...',
           spinnerColor: COLORS.QUEUE_LOGO_PRIMARY
         }}
         failStatusMessageProps={{
-          title: 'Error loading stuff'
+          wrapInAppSegment: false,
+          title: 'Error loading appeal document count'
         }}
-        failStatusMessageChildren={<span>error text</span>}
+        failStatusMessageChildren={<span>Error</span>}
         loadingComponent={SmallLoader}>
-        <Link href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}>
-          {/* todo: this isn't getting updated after docCount updates */}
-          {this.getAppealForTask(task).docCount.toLocaleString()}
-        </Link>
+        <ListeningLink
+          appealId={task.appealId}
+          href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}
+          displayAttr="docCount" />
       </LoadingDataDisplay>
     }
   ];
@@ -100,8 +120,10 @@ QueueTable.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
+const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealDocCount
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(QueueTable);
+export default connect(mapStateToProps, mapDispatchToProps)(QueueTable);

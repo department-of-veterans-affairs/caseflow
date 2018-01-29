@@ -64,7 +64,7 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    const { loadingComponent: LoadingComponent } = this.props
+    const { loadingComponent: LoadingComponent } = this.props;
     const isTimedOut = this.state.promiseTimeElapsedMs > this.props.timeoutMs;
 
     // Because we put this first, we'll show the error state if the timeout has elapsed,

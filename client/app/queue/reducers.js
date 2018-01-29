@@ -6,8 +6,8 @@ import { combineReducers } from 'redux';
 
 export const initialState = {
   loadedQueue: {
-    appeals: [],
-    tasks: []
+    appeals: {},
+    tasks: {}
   }
 };
 
