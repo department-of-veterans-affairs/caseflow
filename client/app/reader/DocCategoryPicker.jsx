@@ -6,10 +6,11 @@ import Checkbox from '../components/Checkbox';
 import { css, select } from 'glamor';
 
 const CategorySelector = (props) => {
-  const categorySelectorStyling = css({
+  const categoryLabelStyling = css({
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: 0
+    marginBottom: 0,
+    paddingBottom: 0
   });
   const categoryNameStyling = css({
     lineHeight: 1,
@@ -17,7 +18,7 @@ const CategorySelector = (props) => {
   });
   const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
-  const label = <div {...categorySelectorStyling}>
+  const label = <div {...categoryLabelStyling}>
     {category.svg}
     <span {...categoryNameStyling}>{category.humanName}</span>
   </div>;
@@ -42,24 +43,26 @@ CategorySelector.propTypes = {
 };
 
 const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
-  const docFilterPickerStyling = css({
-    listStyleType: 'none',
-    paddingLeft: 0,
-    paddingBottom: 0
-  });
-  const docCategoryPicker = css(
-    select('& li', {
+  const docCategoryPickerStyle = css(
+    {
+      listStyleType: 'none',
+      paddingLeft: 0,
+      paddingBottom: 0
+    },
+    select('& li',
+      {
         marginBottom: 0
       },
       // @include hover,
-      select('& .cf-form-checkboxes', {
+      select('& .cf-form-checkboxes',
+        {
           marginTop: 0,
           marginBottom: 0
         },
-        select('label', {
+        select('& label', {
           marginBottom: 0
         }),
-        select('.cf-category-selector', {
+        select('& .cf-category-selector', {
           marginBottom: 0
         })
       )
@@ -67,7 +70,8 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
     select(
       '& li:last-child',
       select('div', { marginBottom: 0 }),
-      select('& .cf-form-checkboxes', {
+      select('& .cf-form-checkboxes',
+        {
           marginBottom: 0
         },
         select('& .cf-category-selector', {
@@ -77,7 +81,7 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
     )
   );
 
-  return <ul {...docFilterPickerStyling} {...docCategoryPicker} {...dropdownFilterViewListStyle}>
+  return <ul {...docCategoryPickerStyle} {...dropdownFilterViewListStyle}>
     {
       _(Constants.documentCategories).
         toPairs().

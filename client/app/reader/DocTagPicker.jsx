@@ -37,16 +37,18 @@ const tagListStyling = css({
   listStyleType: 'none',
   paddingLeft: 0
 });
-const tagListItemStyling = select(
-  '.cf-form-checkboxes',
-  {
-    marginBottom: 0,
-    marginTop: 0
-  },
-  select('label',
+const tagListItemStyling = css(
+  select(
+    '& .cf-form-checkboxes',
     {
-      marginBottom: 0
-    }
+      marginBottom: 0,
+      marginTop: 0
+    },
+    select('& label',
+      {
+        marginBottom: 0
+      }
+    )
   )
 );
 

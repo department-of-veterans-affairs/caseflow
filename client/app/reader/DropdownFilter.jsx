@@ -5,9 +5,16 @@ import { css } from 'glamor';
 const dropdownFilterViewListStyle = css({
   margin: 0
 });
-const dropdownFilterViewListItemStyle = css({
-  padding: '14px 14px 0 14px'
-});
+const dropdownFilterViewListItemStyle = css(
+  {
+    padding: '14px',
+    ':hover':
+    {
+      backgroundColor: '#5b616b',
+      color: '#ffffff'
+    }
+  }
+);
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
