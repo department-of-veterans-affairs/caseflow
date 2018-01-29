@@ -1,12 +1,13 @@
 import React from 'react';
-import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideColors extends React.PureComponent {
 
   Colors = {
     Base: '#212121',
-    'Gray-dark': '#323a45',
+    'Gray-dark': COLORS.GREY_DARK,
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
     'Gray-lighter': COLORS.GREY_LIGHT,
@@ -23,7 +24,7 @@ export default class StyleGuideColors extends React.PureComponent {
     Dispatch: LOGO_COLORS.DISPATCH.ACCENT,
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
-    Certification: '#459fd7',
+    Certification: LOGO_COLORS.CERTIFICATION.ACCENT,
     Reader: LOGO_COLORS.READER.ACCENT,
     'Case Summary': LOGO_COLORS.INTAKE.ACCENT,
     Intake: LOGO_COLORS.INTAKE.ACCENT,

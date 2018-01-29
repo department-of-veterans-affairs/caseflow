@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
-import { COLORS } from '../constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import moment from 'moment';
 
 const now = () => {

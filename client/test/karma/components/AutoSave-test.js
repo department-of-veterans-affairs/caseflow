@@ -2,7 +2,8 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import AutoSave from '../../../app/components/AutoSave';
-import { COLORS, LOGO_COLORS } from '../../../app/constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
 // eslint-disable-next-line no-unused-vars
 import DailyDocketContainer from '../../../app/hearings/containers/DailyDocketContainer';

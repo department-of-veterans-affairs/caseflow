@@ -1,18 +1,10 @@
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
 // poll dependency outage every 2 minutes
 export const DEPENDENCY_OUTAGE_POLLING_INTERVAL = 120000;
 export const LONGER_THAN_USUAL_TIMEOUT = 10000;
 export const CERTIFICATION_DATA_POLLING_INTERVAL = 5000;
 export const CERTIFICATION_DATA_OVERALL_TIMEOUT = 180000;
-
-export const COLORS = {
-  PRIMARY_ALT: '#02bfe7',
-
-  GREY_LIGHT: '#d6d7d9',
-  GREY_MEDIUM: '#757575',
-  GREY_DARK: '#323a45',
-
-  WHITE: '#fff'
-};
 
 export const LOGO_COLORS = {
   READER: {
@@ -33,10 +25,6 @@ export const LOGO_COLORS = {
   },
   CERTIFICATION: {
     ACCENT: '#459FD7',
-    OVERLAP: COLORS.GREY_LIGHT
-  },
-  DEFAULT: {
-    ACCENT: COLORS.GREY_DARK,
     OVERLAP: COLORS.GREY_LIGHT
   }
 };
