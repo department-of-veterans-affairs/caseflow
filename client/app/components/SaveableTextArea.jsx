@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import Button from './Button';
 import classNamesFn from 'classnames';
 
-export default class SaveCommentTextArea extends React.PureComponent {
+export default class SaveableTextArea extends React.PureComponent {
   render() {
     const {
       disabled,
       id,
-      hideLabel,
+      label,
       name,
       onChange,
       onCancelClick,
@@ -19,7 +19,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
-      <label className={classNamesFn({ visuallyhidden: hideLabel })} htmlFor={id || name}>
+      <label className={classNamesFn({ visuallyhidden: !label })} htmlFor={id || name}>
         {name}
       </label>
       <textarea
@@ -51,9 +51,10 @@ export default class SaveCommentTextArea extends React.PureComponent {
   }
 }
 
-SaveCommentTextArea.propTypes = {
+SaveableTextArea.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string,
+  label: PropTypes.string,
   onChange: PropTypes.func,
   onCancelClick: PropTypes.func,
   onKeyDown: PropTypes.func,

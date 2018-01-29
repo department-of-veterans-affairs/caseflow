@@ -2,7 +2,7 @@ import React from 'react';
 
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import SaveCommentTextArea from '../../components/SaveCommentTextArea';
+import SaveableTextArea from '../../components/SaveableTextArea';
 
 export default class StyleGuideSaveLongText extends React.PureComponent {
   constructor() {
@@ -31,9 +31,8 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
         link="StyleGuideSaveLongText.jsx"
         isSubsection
       />
-      <SaveCommentTextArea
+      <SaveableTextArea
         name="Edit Comment"
-        hideLabel
         disabled={this.isEmpty(this.state.value)}
         onChange={this.onChange}
         value={this.state.value}
