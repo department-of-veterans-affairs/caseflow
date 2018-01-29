@@ -118,7 +118,7 @@ class Generators::Appeal
           ]
         },
         veteran_is_appellant: {
-          # A quirk in our model — these fields are
+          # A quirk in our model: These fields are
           # only set when the appellant is not the veteran.
           appellant_first_name: nil,
           appellant_last_name: nil,
