@@ -12,7 +12,7 @@ const CategorySelector = (props) => {
     marginBottom: 0
   });
   const categoryNameStyling = css({
-    lineHeight: '1px',
+    lineHeight: 1,
     paddingLeft: '7px'
   });
   const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
@@ -53,8 +53,7 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowRe
       paddingBottom: 0
     },
     select('& li', {
-        marginBottom: 0,
-        padding: '14px'
+        marginBottom: 0
       },
       // @include hover,
       select('& .cf-form-checkboxes', {
