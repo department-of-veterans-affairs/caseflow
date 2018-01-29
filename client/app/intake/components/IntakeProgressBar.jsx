@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import ProgressBar from '../../components/ProgressBar';
 import { PAGE_PATHS } from '../constants';
