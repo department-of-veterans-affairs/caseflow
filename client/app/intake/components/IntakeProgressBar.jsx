@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 class IntakeProgressBarInner extends React.PureComponent {
   render() {
-    let progressBarSections = [
+    const progressBarSections = [
       {
         title: '1. Select Form',
         path: PAGE_PATHS.BEGIN
