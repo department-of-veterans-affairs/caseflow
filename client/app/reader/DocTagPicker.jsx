@@ -52,7 +52,8 @@ const tagListItemStyling = css(
   )
 );
 
-const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
   return <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
     {tags.map((tag, index) => {
       return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>

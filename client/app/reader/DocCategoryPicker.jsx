@@ -42,7 +42,8 @@ CategorySelector.propTypes = {
   categoryName: PropTypes.string.isRequired
 };
 
-const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly,
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
   const docCategoryPickerStyle = css(
     {
       listStyleType: 'none',
@@ -109,7 +110,8 @@ DocCategoryPicker.propTypes = {
   handleCategoryToggle: PropTypes.func.isRequired,
   categoryToggleStates: PropTypes.object,
   allowReadOnly: PropTypes.bool,
-  dropDownView: PropTypes.bool
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object
 };
 
 export default DocCategoryPicker;
