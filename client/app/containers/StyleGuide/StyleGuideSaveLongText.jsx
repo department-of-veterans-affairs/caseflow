@@ -19,7 +19,7 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
 
   onChange = (event) => {
     this.setState({
-      value: event.target.value
+      value: event
     });
   }
 
@@ -34,6 +34,7 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
       <SaveableTextArea
         name="Edit Comment"
         disabled={this.isEmpty(this.state.value)}
+        hideLabel
         onChange={this.onChange}
         value={this.state.value}
       />

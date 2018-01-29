@@ -42,7 +42,7 @@ export default class EditComment extends React.Component {
     this.handleAutoSave();
   }
 
-  onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
+  onChange = (event) => this.props.onChange(event, this.props.comment.uuid);
 
   onChangeDate = (relevantDate) => this.props.onChangeDate(relevantDate, this.props.comment.uuid);
 
@@ -68,6 +68,8 @@ export default class EditComment extends React.Component {
         strongLabel
       />
       <SaveableTextArea
+        name="Edit comment"
+        hideLabel
         onKeyDown={this.keyListener}
         id={this.props.id}
         onChange={this.onChange}

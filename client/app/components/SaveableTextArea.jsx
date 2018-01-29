@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Button from './Button';
-import classNamesFn from 'classnames';
+import TextareaField from './TextareaField';
 
 export default class SaveableTextArea extends React.PureComponent {
   render() {
     const {
       disabled,
+      hideLabel,
       id,
-      label,
       name,
       onChange,
       onCancelClick,
@@ -19,16 +19,13 @@ export default class SaveableTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
-      <label className={classNamesFn({ visuallyhidden: !label })} htmlFor={id || name}>
-        {name}
-      </label>
-      <textarea
-        className="comment-container comment-textarea"
+      <TextareaField
         name={name}
+        hideLabel={hideLabel}
         aria-label={name}
+        onChange={onChange}
         onKeyDown={onKeyDown}
         id={id || name}
-        onChange={onChange}
         value={value}
       />
       <div className="comment-save-button-container">
@@ -51,11 +48,13 @@ export default class SaveableTextArea extends React.PureComponent {
   }
 }
 
+// Both name and onChange are required because of TextareaField
 SaveableTextArea.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string,
-  onChange: PropTypes.func,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func,
   onKeyDown: PropTypes.func,
   onSaveClick: PropTypes.func,
