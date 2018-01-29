@@ -65,6 +65,12 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.toggleWorksheetSaving();
   };
 
+  openPdf = (worksheet, worksheetIssues) => () => {
+    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
+      window.open(`${window.location.pathname}/print`, '_blank');
+    });
+  };
+
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
@@ -145,7 +151,9 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+        <Link
+          onClick={this.openPdf(worksheet, worksheetIssues)}
+          button="secondary">
           Save as PDF
         </Link>
         <Link

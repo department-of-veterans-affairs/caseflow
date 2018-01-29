@@ -73,7 +73,7 @@ class CaseSelect extends React.PureComponent {
     return <AppSegment filledBackground>
       <div className="section--case-select">
         <h1 className="welcome-header">Welcome to Reader!</h1>
-        <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
+        <CaseSelectSearch navigateToPath={this.props.history.push} feedbackUrl={this.props.feedbackUrl} />
         <p className="cf-lead-paragraph">
           Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
         </p>

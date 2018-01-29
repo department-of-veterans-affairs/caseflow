@@ -16,6 +16,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :program, key: :program_area
   attribute :status_hash, key: :status
   attribute :alerts
+  attribute :docket_hash, key: :docket
   attribute :issues
 
   attribute :events do
@@ -25,10 +26,6 @@ class V2::AppealSerializer < ActiveModel::Serializer
   # Stubbed attributes
   attribute :description do
     ""
-  end
-
-  attribute :docket do
-    nil
   end
 
   attribute :evidence do
