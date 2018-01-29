@@ -19,10 +19,13 @@ import { COLORS } from './constants';
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 const redText = css({ color: '#E60000' });
 
+const getLinkToReader = (props) => <Link href={`/reader/appeal/${props.vacolsId}/documents`}>{props.text}</Link>;
+
 class ListeningLinkComponent extends React.PureComponent {
-  render = () => <Link href={this.props.href}>
-    {_.get(this.props.appeal, this.props.displayAttr).toLocaleString()}
-  </Link>;
+  render = () => getLinkToReader({
+    vacolsId: this.props.vacolsId,
+    text: _.get(this.props.appeal, this.props.displayAttr).toLocaleString()
+  });
 }
 
 const mapStateToLinkProps = (state, ownProps) => ({
@@ -31,8 +34,8 @@ const mapStateToLinkProps = (state, ownProps) => ({
 
 ListeningLinkComponent.propTypes = {
   appealId: PropTypes.string.isRequired,
-  displayAttr: PropTypes.string.isRequired,
-  href: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  displayAttr: PropTypes.string.isRequired
 };
 
 const ListeningLink = connect(mapStateToLinkProps)(ListeningLinkComponent);
@@ -77,22 +80,22 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Reader Documents',
-      // todo: fail response
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task.appealId)}
         loadingScreenProps={{
           message: 'Loading document count...',
           spinnerColor: COLORS.QUEUE_LOGO_PRIMARY
         }}
-        failStatusMessageProps={{
-          wrapInAppSegment: false,
-          title: 'Error loading appeal document count'
-        }}
-        failStatusMessageChildren={<span>Error</span>}
+        failStatusMessageProps={{}}
+        failStatusMessageChildren={getLinkToReader({
+          vacolsId: this.getAppealForTask(task).attributes.vacols_id,
+          text: 'View in Reader'
+        })}
+        errorComponent={'span'}
         loadingComponent={SmallLoader}>
         <ListeningLink
           appealId={task.appealId}
-          href={`/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`}
+          vacolsId={this.getAppealForTask(task).attributes.vacols_id}
           displayAttr="docCount" />
       </LoadingDataDisplay>
     }

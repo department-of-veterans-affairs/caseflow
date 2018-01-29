@@ -64,15 +64,18 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    const { loadingComponent: LoadingComponent } = this.props;
+    const {
+      loadingComponent: LoadingComponent,
+      errorComponent: ErrorComponent
+    } = this.props;
     const isTimedOut = this.state.promiseTimeElapsedMs > this.props.timeoutMs;
 
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
-      return <StatusMessage {...this.props.failStatusMessageProps}>
+      return <ErrorComponent {...this.props.failStatusMessageProps}>
         {this.props.failStatusMessageChildren}
-      </StatusMessage>;
+      </ErrorComponent>;
     }
 
     if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
@@ -101,7 +104,8 @@ LoadingDataDisplay.defaultProps = {
   slowLoadThresholdMs: 15 * 1000,
   timeoutMs: Infinity,
   slowLoadMessage: 'Loading is taking longer than usual...',
-  loadingComponent: LoadingScreen
+  loadingComponent: LoadingScreen,
+  errorComponent: StatusMessage
 };
 
 export default LoadingDataDisplay;
