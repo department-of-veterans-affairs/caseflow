@@ -98,6 +98,7 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
+      find(".cf-hearings-prepped").find(".cf-form-checkbox").click
       find(".dropdown-3-disposition").click
       find("#react-select-2--option-1").click
       find(".dropdown-3-hold_open").click
@@ -111,6 +112,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("60 days")
       expect(page).to have_content("None")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
+      expect(find_field("3-prep", visible: false)).to be_checked
     end
 
     scenario "Link on daily docket opens worksheet in new tab" do
@@ -182,6 +184,7 @@ RSpec.feature "Hearings" do
       click_on "button-addIssue-2"
       fill_in "2-issue-description", with: "This is the description"
       fill_in "2-issue-notes", with: "This is a note"
+      fill_in "2-issue-disposition", with: "This is a disposition"
 
       find("#cf-issue-delete-21").click
       click_on "Confirm delete"
@@ -190,6 +193,7 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the description")
       expect(page).to have_content("This is a note")
+      expect(page).to have_content("This is a disposition")
       expect(page).to_not have_content("Service Connection")
     end
 

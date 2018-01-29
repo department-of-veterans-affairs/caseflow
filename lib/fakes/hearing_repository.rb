@@ -54,6 +54,10 @@ class Fakes::HearingRepository
     hearing_records.find { |h| h.id == id }
   end
 
+  def self.find_index_by_id(id)
+    hearing_records.index { |h| h.id == id }
+  end
+
   def self.find_by_date(date)
     master_records.find { |h| h.date.to_date == date }
   end
@@ -64,6 +68,13 @@ class Fakes::HearingRepository
 
   def self.create_hearing_for_appeal(i, appeal)
     user = User.find_by_css_id("Hearing Prep")
+    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
+  end
+
+  def self.create_already_held_hearing_for_appeal(i, appeal)
+    user = User.find_by_css_id("Hearing Prep")
+    attrs = random_attrs(i)
+    attrs[:disposition] = :held
     Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
   end
 

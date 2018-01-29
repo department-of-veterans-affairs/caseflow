@@ -1,7 +1,7 @@
-import * as Constants from './actionTypes';
+import { ACTIONS } from './constants';
 
 export const onReceiveQueue = ({ tasks, appeals }) => ({
-  type: Constants.RECEIVE_QUEUE_DETAILS,
+  type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
     appeals

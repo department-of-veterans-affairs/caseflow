@@ -1,41 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import * as Constants from './constants';
+import { COLORS } from './constants';
+import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
-  getUserId = () => 1;
-
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
-    return ApiUtil.get(`/queue/${this.getUserId()}`, {}).
-      then((response) => {
-        const returnedObject = JSON.parse(response.text);
-        const { appeals, tasks } = returnedObject;
+    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
+      const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
-        this.props.onReceiveQueue({
-          appeals,
-          tasks
-        });
+      this.props.onReceiveQueue({
+        appeals,
+        tasks
       });
-  }
+    });
+  };
 
-  reload = () => window.location.reload()
+  reload = () => window.location.reload();
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load this case.<br />
+      It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
-        spinnerColor: Constants.QUEUE_COLOR,
+        spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
         message: 'Loading your appeals...'
       }}
       failStatusMessageProps={{
@@ -48,13 +45,15 @@ class QueueLoadingScreen extends React.PureComponent {
     return <div className="usa-grid">
       {loadingDataDisplay}
     </div>;
-  }
+  };
 }
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    onReceiveQueue
-  }, dispatch)
-);
+QueueLoadingScreen.propTypes = {
+  userId: PropTypes.number.isRequired
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveQueue
+}, dispatch);
 
 export default connect(null, mapDispatchToProps)(QueueLoadingScreen);

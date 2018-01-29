@@ -5,7 +5,7 @@ class Issue
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :close_date, :note
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :readable_disposition, :close_date, :note
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
@@ -116,6 +116,11 @@ class Issue
     issue_description
   end
 
+  # returns "Remanded \n mm/dd/yyyy"
+  def formatted_disposition
+    [readable_disposition, close_date.try(:to_formatted_s, :short_date)].join("\n") if readable_disposition
+  end
+
   def diagnostic_code
     codes.last if codes.last.length == 4
   end
@@ -190,7 +195,10 @@ class Issue
         codes: parse_codes_from_vacols(hash),
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
+        # disposition is a snake_case symbol, i.e. :remanded
         disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
+        # readable disposition is a string, i.e. "Remanded"
+        readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end

@@ -1,6 +1,8 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
-import * as Constants from './actionTypes';
+import { ACTIONS } from './constants';
+import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import { combineReducers } from 'redux';
 
 export const initialState = {
   loadedQueue: {
@@ -11,14 +13,14 @@ export const initialState = {
 
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case Constants.RECEIVE_QUEUE_DETAILS:
+  case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
       loadedQueue: {
         appeals: {
-          $set: action.payload.appeals.data
+          $set: action.payload.appeals
         },
         tasks: {
-          $set: action.payload.tasks.data
+          $set: action.payload.tasks
         }
       }
     });
@@ -27,7 +29,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
 };
 
+const rootReducer = combineReducers({
+  queue: workQueueReducer,
+  caseSelect: caseSelectReducer
+});
+
 export default timeFunction(
-  workQueueReducer,
+  rootReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

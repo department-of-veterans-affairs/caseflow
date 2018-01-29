@@ -256,8 +256,8 @@ class Appeal < ActiveRecord::Base
     location_code == LOCATION_CODES[location]
   end
 
-  def case_assignment_exists?
-    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
+  cache_attribute :case_assignment_exists do
+    self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
@@ -333,7 +333,33 @@ class Appeal < ActiveRecord::Base
     save ? find_or_create_documents! : fetched_documents
   end
 
+  def find_or_create_documents_v2!
+    AddSeriesIdToDocumentsJob.perform_now(self)
+
+    ids = fetched_documents.map(&:series_id)
+    existing_documents = Document.where(series_id: ids)
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.series_id] = document
+    end
+
+    fetched_documents.map do |document|
+      begin
+        if existing_documents[document.series_id]
+          document.merge_into(existing_documents[document.series_id]).save!
+          existing_documents[document.series_id]
+        else
+          document.save!
+          document
+        end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by(series_id: document.series_id)
+      end
+    end
+  end
+
   def find_or_create_documents!
+    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
+                                                                  user: RequestStore.store[:current_user])
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
@@ -341,15 +367,16 @@ class Appeal < ActiveRecord::Base
     end
 
     fetched_documents.map do |document|
-      if existing_documents[document.vbms_document_id]
-        document.merge_into(existing_documents[document.vbms_document_id])
-      else
-        begin
+      begin
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
+        else
           document.save!
           document
-        rescue ActiveRecord::RecordNotUnique
-          Document.find_by_vbms_document_id(document.vbms_document_id)
         end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
@@ -441,6 +468,10 @@ class Appeal < ActiveRecord::Base
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
+    # If testing against a local eFolder express instance then we want to pass DEMO
+    # values, so we should not sanitize the vbms_id.
+    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
     # ensure 8 digits if "C"-type id
@@ -547,7 +578,7 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if RequestStore.store[:application] == "reader" &&
+      if (RequestStore.store[:application] == "reader" || RequestStore.store[:application] == "hearings") &&
          FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
         EFolderService
       else

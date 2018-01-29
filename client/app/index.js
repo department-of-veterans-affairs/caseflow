@@ -9,11 +9,12 @@ import BaseContainer from './containers/BaseContainer';
 import { Certification } from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
+import Help from './help/index';
 import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from './establishClaimAdmin';
-import QueueManager from './queue/index';
+import Queue from './queue/index';
 
 const COMPONENTS = {
   BaseContainer,
@@ -27,7 +28,8 @@ const COMPONENTS = {
   TestUsers,
   Hearings,
   PerformanceDegradationBanner,
-  QueueManager
+  Help,
+  Queue
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {

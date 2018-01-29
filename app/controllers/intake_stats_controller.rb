@@ -5,6 +5,8 @@ class IntakeStatsController < ApplicationController
   before_action :verify_access
 
   def show
+    CalculateIntakeStatsJob.perform_later
+
     @stats = {
       daily: 0...30,
       weekly: 0...26,
@@ -24,6 +26,6 @@ class IntakeStatsController < ApplicationController
   private
 
   def verify_access
-    verify_system_admin
+    verify_authorized_roles("Admin Intake")
   end
 end
