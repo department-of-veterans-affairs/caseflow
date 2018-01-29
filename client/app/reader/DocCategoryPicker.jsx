@@ -3,13 +3,23 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
+import { css, select } from 'glamor';
 
 const CategorySelector = (props) => {
+  const categorySelectorStyling = css({
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginBottom: 0
+  });
+  const categoryNameStyling = css({
+    lineHeight: '1px',
+    paddingLeft: '7px'
+  });
   const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
-  const label = <div className="cf-category-selector">
+  const label = <div {...categorySelectorStyling}>
     {category.svg}
-    <span className="cf-category-name">{category.humanName}</span>
+    <span {...categoryNameStyling}>{category.humanName}</span>
   </div>;
 
   const handleChange = (checked) => {
@@ -32,7 +42,47 @@ CategorySelector.propTypes = {
 };
 
 const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly }) => {
-  return <ul className="cf-document-filter-picker cf-document-category-picker">
+  const docFilterPickerStyling = css({
+    listStyleType: 'none',
+    paddingLeft: 0,
+    paddingBottom: 0
+  });
+  const docCategoryPicker = css({
+      marginBottom: 0,
+      marginTop: 0,
+      paddingBottom: 0
+    },
+    select('& li', {
+        marginBottom: 0,
+        padding: '14px'
+      },
+      // @include hover,
+      select('& .cf-form-checkboxes', {
+          marginTop: 0,
+          marginBottom: 0
+        },
+        select('label', {
+          marginBottom: 0
+        }),
+        select('.cf-category-selector', {
+          marginBottom: 0
+        })
+      )
+    ),
+    select(
+      '& li:last-child',
+      select('div', { marginBottom: 0 }),
+      select('& .cf-form-checkboxes', {
+          marginBottom: 0
+        },
+        select('& .cf-category-selector', {
+          marginBottom: 0
+        })
+      )
+    )
+  );
+
+  return <ul {...docFilterPickerStyling} {...docCategoryPicker}>
     {
       _(Constants.documentCategories).
         toPairs().
