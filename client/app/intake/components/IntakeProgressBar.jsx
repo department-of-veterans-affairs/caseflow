@@ -5,7 +5,7 @@ import ProgressBar from '../../components/ProgressBar';
 import { PAGE_PATHS } from '../constants';
 import _ from 'lodash';
 
-class IntakeProgressBarInnerUnconnected extends React.PureComponent {
+class IntakeProgressBarInner extends React.PureComponent {
   render() {
     let progressBarSections = [
       {
@@ -40,10 +40,6 @@ class IntakeProgressBarInnerUnconnected extends React.PureComponent {
     return <ProgressBar sections={progressBarSectionsWithCurrentMarked} />;
   }
 }
-
-const IntakeProgressBarInner = connect(
-  ({ intake }) => ({ featureToggles: intake.featureToggles })
-)(IntakeProgressBarInnerUnconnected);
 
 export default class IntakeProgressBar extends React.Component {
   render = () => <Route path="/" component={IntakeProgressBarInner} />;

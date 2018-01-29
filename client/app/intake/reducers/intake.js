@@ -26,7 +26,6 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
-    featureToggles: data.featureToggles || {},
     id: null,
     formType: null,
     fileNumberSearch: '',
@@ -48,12 +47,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   }, data.serverIntake)
 );
 
-const resetIntake = (intake) => mapDataToInitialIntake(
-  {
-    serverIntake: {},
-    featureToggles: intake.featureToggles
-  }
-);
+const resetIntake = (intake) => mapDataToInitialIntake({ serverIntake: {} });
 
 export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   switch (action.type) {
