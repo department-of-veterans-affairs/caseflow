@@ -62,7 +62,7 @@ class QueueTable extends React.PureComponent {
       header: 'Reader Documents',
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task.appealId)}
-        errorComponent={'span'}
+        errorComponent="span"
         failStatusMessageProps={{}}
         failStatusMessageChildren={<ReaderLink
           appealId={task.appealId}

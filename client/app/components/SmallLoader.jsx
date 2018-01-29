@@ -17,14 +17,14 @@ export default class SmallLoader extends React.Component {
       className="cf-small-loader"
       {...componentProps}>
       {loadingSymbolHtml(message, '19px', spinnerColor)}
-    </Component>
+    </Component>;
   }
 }
 
 SmallLoader.defaultProps = {
   component: 'div',
   componentProps: {}
-}
+};
 
 SmallLoader.propTypes = {
   message: PropTypes.string.isRequired,
