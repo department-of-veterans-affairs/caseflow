@@ -13,7 +13,7 @@ export default class StyleGuideColors extends React.PureComponent {
     'Gray-lighter': COLORS.GREY_LIGHT,
     'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
-    White: '#ffffff',
+    White: COLORS.WHITE,
     Secondary: '#e31c3d',
     Green: '#2e8540',
     'Primary-alt': COLORS.PRIMARY_ALT,

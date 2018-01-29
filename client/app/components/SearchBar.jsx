@@ -65,7 +65,7 @@ export default class SearchBar extends React.Component {
 
   clearInput = () => this.input.value = '';
 
-  getInternalField = (spinnerColor = '#ffffff') => {
+  getInternalField = (spinnerColor = COLORS.WHITE) => {
     if (this.props.loading) {
       return <div className="search-text-spinner">
         { loadingSymbolHtml('', '25px', spinnerColor) }
