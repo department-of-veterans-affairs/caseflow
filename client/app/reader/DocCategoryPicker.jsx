@@ -5,17 +5,18 @@ import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
 import { css, select } from 'glamor';
 
+const categoryLabelStyling = css({
+  display: 'flex',
+  alignItems: 'flex-start',
+  marginBottom: 0,
+  paddingBottom: 0
+});
+const categoryNameStyling = css({
+  lineHeight: 1,
+  paddingLeft: '7px'
+});
+
 const CategorySelector = (props) => {
-  const categoryLabelStyling = css({
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginBottom: 0,
-    paddingBottom: 0
-  });
-  const categoryNameStyling = css({
-    lineHeight: 1,
-    paddingLeft: '7px'
-  });
   const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
   const label = <div {...categoryLabelStyling}>
@@ -42,39 +43,40 @@ CategorySelector.propTypes = {
   categoryName: PropTypes.string.isRequired
 };
 
-const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly,
-  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
-  const docCategoryPickerStyle = css(
+const docCategoryPickerStyle = css(
+  {
+    listStyleType: 'none',
+    paddingLeft: 0,
+    paddingBottom: 0
+  },
+  select('& li',
     {
-      listStyleType: 'none',
-      paddingLeft: 0,
-      paddingBottom: 0
+      marginBottom: 0
     },
-    select('& li',
+    // @include hover,
+    select('& .cf-form-checkboxes',
       {
+        marginTop: 0,
         marginBottom: 0
       },
-      // @include hover,
-      select('& .cf-form-checkboxes',
-        {
-          marginTop: 0,
-          marginBottom: 0
-        },
-        select('& label', {
-          marginBottom: 0
-        })
-      )
-    ),
-    select(
-      '& li:last-child',
-      select('div', { marginBottom: 0 }),
-      select('& .cf-form-checkboxes',
-        {
-          marginBottom: 0
-        }
-      )
+      select('& label', {
+        marginBottom: 0
+      })
     )
-  );
+  ),
+  select(
+    '& li:last-child',
+    select('div', { marginBottom: 0 }),
+    select('& .cf-form-checkboxes',
+      {
+        marginBottom: 0
+      }
+    )
+  )
+);
+
+const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly,
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
 
   return <ul {...docCategoryPickerStyle} {...dropdownFilterViewListStyle}>
     {
