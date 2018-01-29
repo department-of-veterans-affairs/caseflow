@@ -3,7 +3,7 @@ import React from 'react';
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import CaseflowLogo from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/CaseflowLogo';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {

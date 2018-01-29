@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { fetchStuckTasks } from './actions';
 import LoadingContainer from '../components/LoadingContainer';
 import StuckTasks from './StuckTasks';

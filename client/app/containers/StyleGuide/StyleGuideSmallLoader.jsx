@@ -1,7 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import SmallLoader from '../../components/SmallLoader';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 export default class StyleGuideSmallLoader extends React.PureComponent {
 

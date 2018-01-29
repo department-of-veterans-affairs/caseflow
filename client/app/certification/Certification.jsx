@@ -16,7 +16,6 @@ import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 class EntryPointRedirect extends React.Component {
@@ -95,7 +94,7 @@ export class Certification extends React.Component {
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
       loadingScreenProps={{
         message: 'Loading and checking documents from the Veteran’s file…',
-        spinnerColor: LOGO_COLORS.CERTIFICATION.ACCENT
+        spinnerColor: AppConstants.LOGO_COLORS.CERTIFICATION.ACCENT
       }}
       failStatusMessageProps={{
         title: 'Technical Difficulties'
