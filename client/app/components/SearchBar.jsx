@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { closeIcon, loadingSymbolHtml } from './RenderFunctions';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';

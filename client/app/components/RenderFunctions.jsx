@@ -3,7 +3,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { LOGO_COLORS } from '../constants/AppConstants'
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 /* eslint-disable max-len */
 
