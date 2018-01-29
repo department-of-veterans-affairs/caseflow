@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions/Dockets';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
-import * as AppConstants from '../../constants/AppConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import ApiUtil from '../../util/ApiUtil';
 import querystring from 'querystring';
@@ -49,7 +49,7 @@ export class HearingWorksheetContainer extends React.Component {
     if (!this.props.worksheet) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
-          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+          <LoadingContainer color={LOGO_COLORS.HEARINGS.ACCENT}>
             <div className="cf-image-loader">
             </div>
             <p className="cf-txt-c">Loading worksheet, please wait...</p>
