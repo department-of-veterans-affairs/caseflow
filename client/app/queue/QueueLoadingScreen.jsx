@@ -6,7 +6,7 @@ import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS } from './constants';
-import { associateTasksWithAppeals, mapArrayToObjectById } from './utils';
+import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
@@ -16,8 +16,11 @@ class QueueLoadingScreen extends React.PureComponent {
     }).then((response) => {
       let { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
-      appeals = mapArrayToObjectById(appeals, { docCount: 0 });
-      tasks = mapArrayToObjectById(tasks);
+      tasks = _.keyBy(tasks, 'id');
+      appeals = _(appeals).
+        map((appeal) => _.extend(appeal, { docCount: 0 })).
+        keyBy('id').
+        value();
 
       this.props.onReceiveQueue({
         appeals,
