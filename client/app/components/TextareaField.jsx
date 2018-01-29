@@ -13,6 +13,7 @@ export default class TextareaField extends React.Component {
       hideLabel,
       id,
       maxlength,
+      label,
       name,
       required,
       type,
@@ -30,7 +31,7 @@ export default class TextareaField extends React.Component {
     // but makes it invisible to any screens
     return <div className={className}>
       <label className={classNamesFn({ visuallyhidden: hideLabel }, 'question-label')} htmlFor={id || name}>
-        {name} {required && <span className="cf-required">Required</span>}
+        {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <textarea
