@@ -62,16 +62,20 @@ class QueueTable extends React.PureComponent {
       header: 'Reader Documents',
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task.appealId)}
-        loadingScreenProps={{
-          message: 'Loading document count...',
-          spinnerColor: COLORS.QUEUE_LOGO_PRIMARY
-        }}
+        errorComponent={'span'}
         failStatusMessageProps={{}}
         failStatusMessageChildren={<ReaderLink
           appealId={task.appealId}
           text="View in Reader" />}
-        errorComponent={'span'}
-        loadingComponent={SmallLoader}>
+        loadingComponent={SmallLoader}
+        loadingScreenProps={{
+          message: 'Loading...',
+          spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
+          component: Link,
+          componentProps: {
+            href: `/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`
+          }
+        }}>
         <ReaderLink
           appealId={task.appealId}
           displayAttr="docCount" />

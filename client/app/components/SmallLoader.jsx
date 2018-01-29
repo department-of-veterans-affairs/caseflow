@@ -7,19 +7,31 @@ export default class SmallLoader extends React.Component {
   render() {
     const {
       message,
-      spinnerColor
+      spinnerColor,
+      componentProps,
+      component: Component
     } = this.props;
 
-    return <div
+    return <Component
       id="small-loader"
-      className="cf-small-loader">
+      className="cf-small-loader"
+      {...componentProps}>
       {loadingSymbolHtml(message, '19px', spinnerColor)}
-    </div>;
+    </Component>
   }
+}
+
+SmallLoader.defaultProps = {
+  component: 'div',
+  componentProps: {}
 }
 
 SmallLoader.propTypes = {
   message: PropTypes.string.isRequired,
-  spinnerColor: PropTypes.string.isRequired
+  spinnerColor: PropTypes.string.isRequired,
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]).isRequired,
+  componentProps: PropTypes.object
 };
-
