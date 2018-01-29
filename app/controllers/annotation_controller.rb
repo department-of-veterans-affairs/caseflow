@@ -2,9 +2,12 @@ class AnnotationController < ApplicationController
   before_action :verify_access
 
   rescue_from ActiveRecord::RecordInvalid do |e|
+    # This is prevented in the UI and should never happen.
+    # :nocov:
     Rails.logger.error "AnnotationController failed validation: #{e.message}"
 
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    # :nocov:
   end
 
   ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
