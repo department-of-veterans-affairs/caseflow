@@ -10,6 +10,7 @@ import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
+import ReaderLink from './ReaderLink';
 
 import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
@@ -18,27 +19,6 @@ import { COLORS } from './constants';
 
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 const redText = css({ color: '#E60000' });
-
-const getLinkToReader = (props) => <Link href={`/reader/appeal/${props.vacolsId}/documents`}>{props.text}</Link>;
-
-class ListeningLinkComponent extends React.PureComponent {
-  render = () => getLinkToReader({
-    vacolsId: this.props.vacolsId,
-    text: _.get(this.props.appeal, this.props.displayAttr).toLocaleString()
-  });
-}
-
-const mapStateToLinkProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId]
-});
-
-ListeningLinkComponent.propTypes = {
-  appealId: PropTypes.string.isRequired,
-  vacolsId: PropTypes.string.isRequired,
-  displayAttr: PropTypes.string.isRequired
-};
-
-const ListeningLink = connect(mapStateToLinkProps)(ListeningLinkComponent);
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -87,15 +67,13 @@ class QueueTable extends React.PureComponent {
           spinnerColor: COLORS.QUEUE_LOGO_PRIMARY
         }}
         failStatusMessageProps={{}}
-        failStatusMessageChildren={getLinkToReader({
-          vacolsId: this.getAppealForTask(task).attributes.vacols_id,
-          text: 'View in Reader'
-        })}
+        failStatusMessageChildren={<ReaderLink
+          appealId={task.appealId}
+          text="View in Reader" />}
         errorComponent={'span'}
         loadingComponent={SmallLoader}>
-        <ListeningLink
+        <ReaderLink
           appealId={task.appealId}
-          vacolsId={this.getAppealForTask(task).attributes.vacols_id}
           displayAttr="docCount" />
       </LoadingDataDisplay>
     }
