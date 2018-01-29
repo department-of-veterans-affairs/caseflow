@@ -1,18 +1,19 @@
 import React from 'react';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideColors extends React.PureComponent {
 
   Colors = {
     Base: '#212121',
-    'Gray-dark': '#323a45',
+    'Gray-dark': COLORS.GREY_DARK,
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
-    'Gray-lighter': '#d6d7d9',
+    'Gray-lighter': COLORS.GREY_LIGHT,
     'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
-    White: '#ffffff',
+    White: COLORS.WHITE,
     Secondary: '#e31c3d',
     Green: '#2e8540',
     'Primary-alt': COLORS.PRIMARY_ALT,
@@ -20,13 +21,13 @@ export default class StyleGuideColors extends React.PureComponent {
     'Green-lightest': '#e7f4e4',
     'Primary-alt-lightest': '#e1f3f8',
     'Gold-lightest': '#fff1d2',
-    Dispatch: '#844e9f',
+    Dispatch: LOGO_COLORS.DISPATCH.ACCENT,
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
-    Certification: '#459fd7',
-    Reader: '#417505',
-    'Case Summary': '#ffcc4e',
-    Intake: '#ffcc4e',
+    Certification: LOGO_COLORS.CERTIFICATION.ACCENT,
+    Reader: LOGO_COLORS.READER.ACCENT,
+    'Case Summary': LOGO_COLORS.INTAKE.ACCENT,
+    Intake: LOGO_COLORS.INTAKE.ACCENT,
     Procedural: '#5a94ec',
     Medical: '#ff6868',
     'Other Evidence': '#3ad2cf'
