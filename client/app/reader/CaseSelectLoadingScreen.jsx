@@ -6,7 +6,7 @@ import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import * as Constants from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class CaseSelectLoadingScreen extends React.Component {
   createLoadPromise = () => {
@@ -29,7 +29,7 @@ export class CaseSelectLoadingScreen extends React.Component {
     return <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
-        spinnerColor: Constants.READER_COLOR,
+        spinnerColor: LOGO_COLORS.READER.ACCENT,
         message: 'Loading cases in Reader...'
       }}
       failStatusMessageProps={{

@@ -7,7 +7,7 @@ import { onReceiveDocs } from '../reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from './AnnotationLayer/AnnotationActions';
 import { connect } from 'react-redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import * as Constants from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class ReaderLoadingScreen extends React.Component {
   createLoadPromise = () => {
@@ -36,7 +36,7 @@ export class ReaderLoadingScreen extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
-        spinnerColor: Constants.READER_COLOR,
+        spinnerColor: LOGO_COLORS.READER.ACCENT,
         message: 'Loading claims folder in Reader...'
       }}
       failStatusMessageProps={{
