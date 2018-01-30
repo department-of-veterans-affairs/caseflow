@@ -26,7 +26,6 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
-    featureToggles: data.featureToggles || {},
     id: null,
     formType: null,
     fileNumberSearch: '',
@@ -48,17 +47,12 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   }, data.serverIntake)
 );
 
-const resetIntake = (intake) => mapDataToInitialIntake(
-  {
-    serverIntake: {},
-    featureToggles: intake.featureToggles
-  }
-);
+const resetIntake = () => mapDataToInitialIntake({ serverIntake: {} });
 
 export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return resetIntake(state);
+    return resetIntake();
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       fileNumberSearch: {
@@ -124,7 +118,7 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
       $toggle: ['cancelModalVisible']
     });
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return update(resetIntake(state), {
+    return update(resetIntake(), {
       requestStatus: {
         cancel: {
           $set: REQUEST_STATE.SUCCEEDED

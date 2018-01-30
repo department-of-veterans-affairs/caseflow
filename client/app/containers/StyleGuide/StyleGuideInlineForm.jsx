@@ -12,7 +12,7 @@ export default class StyleGuideInlineForm extends React.PureComponent {
     super(props);
 
     this.state = {
-      value: null
+      value: ''
     };
   }
 
