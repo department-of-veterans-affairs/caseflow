@@ -1,7 +1,6 @@
 require "ostruct"
 
 # frozen_string_literal: true
-# rubocop:disable Metrics/ClassLength
 class Fakes::AppealRepository
   class << self
     attr_accessor :issue_records
@@ -319,6 +318,7 @@ class Fakes::AppealRepository
   # 11555555 has an appeal ineligible for ramp
   # 12555555 has no active appeals
   # 13555555 has no ramp election
+  # rubocop:disable Metrics/MethodLength
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
 
