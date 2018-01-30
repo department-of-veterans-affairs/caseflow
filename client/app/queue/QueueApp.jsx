@@ -10,7 +10,7 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
-import { COLORS } from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { connect } from 'react-redux';
 
 class QueueApp extends React.PureComponent {
@@ -48,9 +48,8 @@ class QueueApp extends React.PureComponent {
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}
         logoProps={{
-          backgroundColor: COLORS.QUEUE_LOGO_BACKGROUND,
-          overlapColor: COLORS.QUEUE_LOGO_OVERLAP,
-          accentColor: COLORS.QUEUE_LOGO_PRIMARY
+          overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
+          accentColor: LOGO_COLORS.QUEUE.ACCENT
         }}
         appName="Queue">
         <div className="cf-wide-app section--queue-list">

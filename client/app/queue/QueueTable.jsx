@@ -15,7 +15,7 @@ import ReaderLink from './ReaderLink';
 import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
 import ApiUtil from '../util/ApiUtil';
-import { COLORS } from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 const redText = css({ color: '#E60000' });
@@ -70,7 +70,7 @@ class QueueTable extends React.PureComponent {
         loadingComponent={SmallLoader}
         loadingComponentProps={{
           message: 'Loading...',
-          spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
+          spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
           component: Link,
           componentProps: {
             href: `/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`
