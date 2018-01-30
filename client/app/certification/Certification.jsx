@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -94,7 +94,7 @@ export class Certification extends React.Component {
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
       loadingScreenProps={{
         message: 'Loading and checking documents from the Veteran’s file…',
-        spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
+        spinnerColor: AppConstants.LOGO_COLORS.CERTIFICATION.ACCENT
       }}
       failStatusMessageProps={{
         title: 'Technical Difficulties'

@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import LastRetrievalInfo from './LastRetrievalInfo';
-import AppFrame from '../components/AppFrame';
-import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
@@ -58,7 +57,7 @@ export class PdfListView extends React.Component {
       />;
     }
 
-    return <AppFrame wideApp>
+    return <div>
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
@@ -70,7 +69,7 @@ export class PdfListView extends React.Component {
         </div>
       </AppSegment>
       <LastRetrievalInfo />
-    </AppFrame>;
+    </div>;
   }
 }
 

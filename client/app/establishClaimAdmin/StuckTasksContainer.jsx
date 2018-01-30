@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as AppConstants from '../constants/AppConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { fetchStuckTasks } from './actions';
 import LoadingContainer from '../components/LoadingContainer';
 import StuckTasks from './StuckTasks';
@@ -18,7 +18,7 @@ export class StuckTasksContainer extends Component {
     if (this.props.loading) {
       return <div className="loading-dispatch">
         <div className="cf-sg-loader">
-          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
+          <LoadingContainer color={LOGO_COLORS.DISPATCH.ACCENT}>
             <div className="cf-image-loader">
             </div>
             <p className="cf-txt-c">Loading, please wait...</p>

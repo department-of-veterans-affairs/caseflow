@@ -72,15 +72,11 @@ class IntakesController < ApplicationController
     @new_intake ||= Intake.build(
       user: current_user,
       veteran_file_number: params[:file_number],
-      form_type: form_type
+      form_type: params[:form_type]
     )
   end
 
   def current_intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
-  end
-
-  def form_type
-    FeatureToggle.enabled?(:intake_reentry_form) ? params[:form_type] : "ramp_election"
   end
 end

@@ -1,8 +1,13 @@
 describe AppealSeries do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
+  end
+
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [latest_appeal] }
   let(:latest_appeal) do
     Generators::Appeal.build(
+      type: type,
       nod_date: nod_date,
       soc_date: soc_date,
       ssoc_dates: ssoc_dates,
@@ -15,6 +20,7 @@ describe AppealSeries do
     )
   end
 
+  let(:type) { "Original" }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
@@ -267,6 +273,54 @@ describe AppealSeries do
     it "returns list of alerts" do
       expect(!subject.empty?).to be_truthy
       expect(subject.first[:type]).to eq(:form9_needed)
+    end
+  end
+
+  context "#docket" do
+    subject { series.docket }
+
+    before { DocketSnapshot.create }
+
+    context "when the appeal is original and not aod" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+
+      it "has a docket" do
+        expect(subject).to_not be_nil
+      end
+    end
+
+    context "when the appeal is post-cavc" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+      let(:type) { "Court Remand" }
+
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when the appeal is aod" do
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when there is no form 9" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+      let(:form9_date) { nil }
+
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
+  context "#docket_hash" do
+    subject { series.docket_hash }
+
+    context "when the docket is nil" do
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
     end
   end
 end

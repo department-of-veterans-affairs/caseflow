@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const options = [
   {

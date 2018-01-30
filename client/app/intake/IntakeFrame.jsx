@@ -2,16 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
-import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
-import BeginPage from './pages/begin';
 import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
@@ -19,7 +18,7 @@ import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
-import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
 
 const textAlignRightStyling = css({
@@ -85,67 +84,39 @@ class IntakeFrame extends React.PureComponent {
                   lowerMargin
                 />
               }
-              { this.props.featureToggles.reentryForm &&
-                <div>
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.BEGIN}
-                    title="Select Form | Caseflow Intake"
-                    component={SelectFormPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.SEARCH}
-                    title="Search | Caseflow Intake"
-                    component={SearchPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.REVIEW}
-                    title="Review Request | Caseflow Intake"
-                    component={ReviewPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.FINISH}
-                    title="Finish Processing | Caseflow Intake"
-                    component={FinishPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.COMPLETED}
-                    title="Confirmation | Caseflow Intake"
-                    component={CompletedPage} />
-                </div>
-              }
-              { !this.props.featureToggles.reentryForm &&
-                <div>
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.BEGIN}
-                    title="Begin Intake | Caseflow Intake"
-                    component={BeginPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.REVIEW}
-                    title="Review Election | Caseflow Intake"
-                    component={ReviewPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.FINISH}
-                    title="Finish | Caseflow Intake"
-                    component={FinishPage} />
-                  <PageRoute
-                    exact
-                    path={PAGE_PATHS.COMPLETED}
-                    title="Completed | Caseflow Intake"
-                    component={CompletedPage} />
-                </div>
-              }
-            </AppSegment>
-            <AppSegment styling={textAlignRightStyling}>
-              { this.props.featureToggles.reentryForm &&
-                <Route
+              <div>
+                <PageRoute
                   exact
                   path={PAGE_PATHS.BEGIN}
-                  component={SelectFormButton} />
-              }
+                  title="Select Form | Caseflow Intake"
+                  component={SelectFormPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.SEARCH}
+                  title="Search | Caseflow Intake"
+                  component={SearchPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.REVIEW}
+                  title="Review Request | Caseflow Intake"
+                  component={ReviewPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.FINISH}
+                  title="Finish Processing | Caseflow Intake"
+                  component={FinishPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.COMPLETED}
+                  title="Confirmation | Caseflow Intake"
+                  component={CompletedPage} />
+              </div>
+            </AppSegment>
+            <AppSegment styling={textAlignRightStyling}>
+              <Route
+                exact
+                path={PAGE_PATHS.BEGIN}
+                component={SelectFormButton} />
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}

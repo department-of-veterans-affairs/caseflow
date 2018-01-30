@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.2.0.tgz#ebe2f37227c518ec060403facb920313265f1c3c"
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.2.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.3.0.tgz#300657c269d7fe39af42707b082bceb87e03db2c"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -5667,8 +5667,8 @@ supports-color@^4.0.0, supports-color@^4.2.1:
     has-flag "^2.0.0"
 
 symbol-observable@^1.0.3:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.1.0.tgz#5c68fd8d54115d9dfb72a84720549222e8db9b32"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
 
 "symbol-tree@>= 3.1.0 < 4.0.0":
   version "3.2.2"

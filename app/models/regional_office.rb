@@ -138,6 +138,7 @@ class RegionalOffice
     "RO75" => { city: "Milwaukee RACC", state: "WI", timezone: "America/Chicago" },
     "RO76" => { city: "St. Paul RACC", state: "MN", timezone: "America/Chicago" },
     "RO77" => { city: "San Diego", state: "CA", timezone: "America/Los_Angeles" },
+    "RO79" => { city: "St. Paul Regional Loan Center", state: "MN", timezone: "America/Chicago" },
     "RO80" => { city: "Philadelphia Insurance Center", state: "PA", timezone: "America/New_York" },
     "RO81" => { city: "Philadelphia Pension Center", state: "PA", timezone: "America/New_York" },
     "RO82" => { city: "Milwaukee Pension Center", state: "WI", timezone: "America/Chicago" },

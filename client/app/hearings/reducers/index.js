@@ -42,7 +42,18 @@ export const newHearingWorksheetState = (state, action, spec) => {
   return update(state, { worksheet: spec });
 };
 
+const getDailyDocketKey = (state, action) => _.findKey(
+  state.dailyDocket,
+  (hearings) => _.some(hearings, { id: action.payload.hearingId })
+);
+
+const getHearingIndex = (state, action, dailyDocketKey) =>
+  _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+  let dailyDocketKey;
+  let hearingIndex;
+
   switch (action.type) {
   case Constants.POPULATE_UPCOMING_HEARINGS:
     return update(state, {
@@ -95,23 +106,21 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_VIEWED:
-    return (() => {
-      const dailyDocketKey = _.findKey(
-        state.dailyDocket,
-        (hearings) => _.some(hearings, { id: action.payload.hearingId })
-      );
-      const hearingIndex = _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+    dailyDocketKey = getDailyDocketKey(state, action);
+    hearingIndex = getHearingIndex(state, action, dailyDocketKey);
 
-      return update(state, {
-        dailyDocket: {
-          [dailyDocketKey]: {
-            [hearingIndex]: {
-              viewed_by_current_user: { $set: true }
-            }
+    return update(state, {
+      dailyDocket: {
+        [dailyDocketKey]: {
+          [hearingIndex]: {
+            viewed_by_current_user: { $set: true }
           }
         }
-      });
-    })();
+      }
+    });
+
+  case Constants.SET_HEARING_PREPPED:
+    return newHearingState(state, action, { prepped: { $set: action.payload.prepped } });
 
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {

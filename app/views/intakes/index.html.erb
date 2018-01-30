@@ -4,10 +4,7 @@
     serverIntake: @current_intake ? @current_intake.ui_hash : {},
     dropdownUrls: dropdown_urls,
     page: "Intake",
-    feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+    feedbackUrl: feedback_url,
     buildDate: build_date,
-    featureToggles: {
-      reentryForm: FeatureToggle.enabled?(:intake_reentry_form)
-    }
   }) %>
 <% end %>
