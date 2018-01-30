@@ -36,12 +36,10 @@ export class ReaderLoadingScreen extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
-        wrapInAppSegment: false,
         spinnerColor: LOGO_COLORS.READER.ACCENT,
         message: 'Loading claims folder in Reader...'
       }}
       failStatusMessageProps={{
-        wrapInAppSegment: false,
         title: 'Unable to load documents'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
