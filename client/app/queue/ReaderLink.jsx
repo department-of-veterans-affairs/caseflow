@@ -13,7 +13,7 @@ class ReaderLink extends React.PureComponent {
     } = this.props;
 
     return <Link href={`/reader/appeal/${vacolsId}/documents`}>
-      {docCount ? `View ${docCount.toLocaleString()} in Reader` : 'View in Reader'}
+      {_.isUndefined(docCount) ? 'View in Reader' : `View ${docCount.toLocaleString()} in Reader`}
     </Link>;
   };
 }

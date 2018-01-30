@@ -61,7 +61,7 @@ class QueueTable extends React.PureComponent {
     {
       header: 'Reader Documents',
       valueFunction: (task) => <LoadingDataDisplay
-        createLoadPromise={this.createLoadPromise(task.appealId)}
+        createLoadPromise={this.createLoadPromise(task)}
         errorComponent="span"
         failStatusMessageProps={{}}
         failStatusMessageChildren={<ReaderLink appealId={task.appealId} />}
@@ -79,15 +79,25 @@ class QueueTable extends React.PureComponent {
     }
   ];
 
-  createLoadPromise = (appealId) => () => ApiUtil.get(`/queue/${appealId}/docs`).
-    then((response) => {
-      const docCount = JSON.parse(response.text).docCount;
+  createLoadPromise = (task) => () => {
+    const url = this.getAppealForTask(task).attributes.number_of_documents_url;
+    const requestOptions = {
+      withCredentials: true,
+      timeout: true,
+      headers: { 'FILE-NUMBER': task.appealId }
+    };
 
-      this.props.setAppealDocCount({
-        appealId,
-        docCount
+    return ApiUtil.get(url, requestOptions).
+      then((response) => {
+        const resp = JSON.parse(response.text);
+        const docCount = resp.data.attributes.documents.length;
+
+        this.props.setAppealDocCount({
+          ..._.pick(task, 'appealId'),
+          docCount
+        });
       });
-    });
+  };
 
   render = () => <Table
     columns={this.getQueueColumns}

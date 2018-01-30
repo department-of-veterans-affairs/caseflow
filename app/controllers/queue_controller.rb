@@ -28,7 +28,7 @@ class QueueController < ApplicationController
   def document_count
     appeal = Appeal.find(params[:appeal_id])
     render json: {
-      docCount: appeal.documents.length
+      docCount: appeal.number_of_documents
     }
   rescue ActiveRecord::RecordNotFound
     render json: {}, status: 404
