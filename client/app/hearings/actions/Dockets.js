@@ -31,6 +31,15 @@ export const handleWorksheetServerError = (err) => ({
   }
 });
 
+export const getWorksheet = (id) => (dispatch) => {
+  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
+    then((response) => {
+      dispatch(populateWorksheet(response.body));
+    }, (err) => {
+      dispatch(handleWorksheetServerError(err));
+    });
+};
+
 export const handleDocketServerError = (err) => ({
   type: Constants.HANDLE_DOCKET_SERVER_ERROR,
   payload: {
@@ -103,10 +112,10 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const setHearingPrepped = (hearingIndex, prepped, date) => ({
+export const setHearingPrepped = (hearingId, prepped, date) => ({
   type: Constants.SET_HEARING_PREPPED,
   payload: {
-    hearingIndex,
+    hearingId,
     prepped,
     date
   }
@@ -194,3 +203,44 @@ export const setHearingViewed = (hearingId) => ({
   type: Constants.SET_HEARING_VIEWED,
   payload: { hearingId }
 });
+
+export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
+  if (!dailyDocket || !dailyDocket[date]) {
+    ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
+      then((response) => {
+        dispatch(populateDailyDocket(response.body, date));
+      }, (err) => {
+        dispatch(handleDocketServerError(err));
+      });
+  }
+};
+
+export const saveDocket = (docket, date) => (dispatch) => {
+  const hearingsToSave = docket.filter((hearing) => hearing.edited);
+
+  if (hearingsToSave.length === 0) {
+    return;
+  }
+
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+
+  dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+    payload: { saveFailed: false } });
+
+  hearingsToSave.forEach((hearing) => {
+
+    const index = docket.findIndex((x) => x.id === hearing.id);
+
+    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+      then(() => {
+        dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
+          payload: { date,
+            index } });
+      },
+      () => {
+        dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+          payload: { saveFailed: true } });
+      });
+  });
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+}

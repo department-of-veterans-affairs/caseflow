@@ -1,21 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../actions/Dockets';
+import { getDailyDocket, saveDocket } from '../actions/Dockets';
 import _ from 'lodash';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from '../constants/constants';
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
-import ApiUtil from '../../util/ApiUtil';
 import { getDate } from '../util/DateUtil';
 
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    this.props.getDailyDocket();
+    this.props.getDailyDocket(null, this.props.date);
     document.title += ` ${getDate(this.props.date)}`;
   }
 
@@ -47,10 +46,12 @@ export class DailyDocketContainer extends React.Component {
       return <div>You have no hearings on this date.</div>;
     }
 
+    console.log(this.props);
+    console.log(this.props.saveDocket);
     return <div>
 
       <AutoSave
-        save={this.props.save(dailyDocket, this.props.date)}
+        save={this.props.saveDocket(dailyDocket, this.props.date)}
         spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
@@ -72,60 +73,24 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDailyDocket: (dailyDocket, date) => () => {
-    if (!dailyDocket[date]) {
-      ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
-        then((response) => {
-          dispatch(Actions.populateDailyDocket(response.body, date));
-        }, (err) => {
-          dispatch(Actions.handleDocketServerError(err));
-        });
-    }
-  },
-  save: (docket, date) => () => {
-    const hearingsToSave = docket.filter((hearing) => hearing.edited);
-
-    if (hearingsToSave.length === 0) {
-      return;
-    }
-
-    dispatch({ type: TOGGLE_DOCKET_SAVING });
-
-    dispatch({ type: SET_DOCKET_SAVE_FAILED,
-      payload: { saveFailed: false } });
-
-    hearingsToSave.forEach((hearing) => {
-
-      const index = docket.findIndex((x) => x.id === hearing.id);
-
-      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-        then(() => {
-          dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
-            payload: { date,
-              index } });
-        },
-        () => {
-          dispatch({ type: SET_DOCKET_SAVE_FAILED,
-            payload: { saveFailed: true } });
-        });
-    });
-    dispatch({ type: TOGGLE_DOCKET_SAVING });
-  }
+  ...bindActionCreators({
+    getDailyDocket,
+    saveDocket
+  }, dispatch)
 });
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps,
-    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket, ownProps.date)
-  };
-};
+// const mergeProps = (stateProps, dispatchProps, ownProps) => {
+//   return {
+//     ...stateProps,
+//     ...dispatchProps,
+//     ...ownProps,
+//     // getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket, ownProps.date)
+//   };
+// };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+  mapDispatchToProps
 )(DailyDocketContainer);
 
 DailyDocketContainer.propTypes = {

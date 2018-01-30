@@ -25,6 +25,24 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+export const setHearingPrepped = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
+  return update(state, {
+    dailyDocket: {
+      [action.payload.date]: {
+        $apply: (hearings) => {
+          const changedHearing = _.findIndex(hearings, { id: action.payload.hearingId });
+
+          return update(hearings, {
+            [changedHearing]: spec
+          });
+        }
+      }
+    }
+  });
+};
+
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
@@ -120,7 +138,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_PREPPED:
-    return newHearingState(state, action, { prepped: { $set: action.payload.prepped } });
+    return setHearingPrepped(state, action, { prepped: { $set: action.payload.prepped } });
 
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {

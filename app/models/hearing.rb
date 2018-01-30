@@ -129,6 +129,7 @@ class Hearing < ActiveRecord::Base
         :veteran_mi_formatted,
         :appellant_last_first_mi,
         :appellant_mi_formatted,
+        :veteran_fi_last_formatted,
         :vbms_id,
         :issue_count,
         :prepped

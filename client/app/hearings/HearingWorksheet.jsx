@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
+import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection'
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -144,6 +145,7 @@ export class HearingWorksheet extends React.PureComponent {
               saveFailed={this.props.saveWorksheetFailed}
             />
       }
+      <WorksheetHeaderVeteranSelection openPdf={this.openPdf} />
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />

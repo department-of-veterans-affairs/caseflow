@@ -1,22 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+
 import { connect } from 'react-redux';
-import * as Actions from '../actions/Dockets';
+import { getWorksheet } from '../actions/Dockets';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
-import ApiUtil from '../../util/ApiUtil';
 import querystring from 'querystring';
-
-export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
-    then((response) => {
-      dispatch(Actions.populateWorksheet(response.body));
-    }, (err) => {
-      dispatch(Actions.handleWorksheetServerError(err));
-    });
-};
 
 export class HearingWorksheetContainer extends React.Component {
 
@@ -68,9 +60,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getWorksheet: (id) => {
-    getWorksheet(id, dispatch);
-  }
+  ...bindActionCreators({
+    getWorksheet
+  }, dispatch)
 });
 
 export default connect(
