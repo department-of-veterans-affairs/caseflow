@@ -15,15 +15,9 @@ class QueueLoadingScreen extends React.PureComponent {
     return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
       const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
-      const tasksById = _.keyBy(tasks, 'id');
-      const appealsById = _(appeals).
-        map((appeal) => _.extend(appeal, { docCount: 0 })).
-        keyBy('id').
-        value();
-
       this.props.onReceiveQueue({
-        appeals: appealsById,
-        tasks: tasksById
+        appeals,
+        tasks
       });
     });
   };
