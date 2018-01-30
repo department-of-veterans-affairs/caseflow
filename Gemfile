@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8f335782beabdf246ea63437762ea32fb8eb4c26"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "44dbb79"
 
 gem "moment_timezone-rails"
 
