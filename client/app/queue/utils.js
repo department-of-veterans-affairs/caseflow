@@ -15,10 +15,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
   });
 
   const tasksById = _.keyBy(tasks, 'id');
-  const appealsById = _(appeals).
-    map((appeal) => ({ ...appeal, docCount: 0 })).
-    keyBy('id').
-    value();
+  const appealsById = _.keyBy(appeals, 'id');
 
   return {
     appeals: appealsById,

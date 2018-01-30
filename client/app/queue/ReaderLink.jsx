@@ -6,19 +6,22 @@ import _ from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class ReaderLink extends React.PureComponent {
-  render = () => <Link href={`/reader/appeal/${this.props.appeal.attributes.vacols_id}/documents`}>
-    {this.props.text || _.get(this.props.appeal, this.props.displayAttr).toLocaleString()}
-  </Link>;
+  render = () => {
+    const {
+      docCount,
+      vacols_id
+    } = this.props;
+
+    return <Link href={`/reader/appeal/${vacols_id}/documents`}>
+      {docCount ? `View ${docCount.toLocaleString()} in Reader` : 'View in Reader'}
+    </Link>;
+  };
 }
 
 ReaderLink.propTypes = {
-  appealId: PropTypes.string.isRequired,
-  displayAttr: PropTypes.string,
-  text: PropTypes.string
+  appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId]
-});
+const mapStateToProps = (state, ownProps) => _.pick(state.queue.loadedQueue.appeals[ownProps.appealId].attributes, 'docCount', 'vacols_id');
 
 export default connect(mapStateToProps)(ReaderLink);

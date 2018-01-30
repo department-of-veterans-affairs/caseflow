@@ -64,9 +64,7 @@ class QueueTable extends React.PureComponent {
         createLoadPromise={this.createLoadPromise(task.appealId)}
         errorComponent="span"
         failStatusMessageProps={{}}
-        failStatusMessageChildren={<ReaderLink
-          appealId={task.appealId}
-          text="View in Reader" />}
+        failStatusMessageChildren={<ReaderLink appealId={task.appealId} />}
         loadingComponent={SmallLoader}
         loadingComponentProps={{
           message: 'Loading...',
@@ -76,9 +74,7 @@ class QueueTable extends React.PureComponent {
             href: `/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`
           }
         }}>
-        <ReaderLink
-          appealId={task.appealId}
-          displayAttr="docCount" />
+        <ReaderLink appealId={task.appealId} />
       </LoadingDataDisplay>
     }
   ];
