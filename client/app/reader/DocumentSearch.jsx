@@ -12,7 +12,7 @@ import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlig
 } from '../reader/PdfSearch/PdfSearchActions';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { READER_COLOR } from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class DocumentSearch extends React.PureComponent {
   constructor() {
@@ -137,7 +137,7 @@ export class DocumentSearch extends React.PureComponent {
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
         loading={this.loading}
-        spinnerColor={READER_COLOR}
+        spinnerColor={LOGO_COLORS.READER.ACCENT}
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}

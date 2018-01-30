@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
-import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import moment from 'moment';
 
 const now = () => {
@@ -33,7 +33,7 @@ export default class AutoSave extends React.Component {
 
   render() {
     if (this.props.isSaving) {
-      const color = this.props.spinnerColor || LOADING_INDICATOR_COLOR_DEFAULT;
+      const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
       return <div className="saving">Saving...
         <div className="loadingSymbol">{loadingSymbolHtml('', '100%', color)}</div>
