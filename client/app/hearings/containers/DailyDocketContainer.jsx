@@ -46,8 +46,6 @@ export class DailyDocketContainer extends React.Component {
       return <div>You have no hearings on this date.</div>;
     }
 
-    console.log(this.props);
-    console.log(this.props.saveDocket);
     return <div>
 
       <AutoSave

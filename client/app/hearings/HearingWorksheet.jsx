@@ -22,7 +22,8 @@ import {
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
   setWorksheetSaveFailedStatus,
-  saveWorksheet
+  saveWorksheet,
+  saveDocket
 } from './actions/Dockets';
 
 import { saveIssues } from './actions/Issue';
@@ -139,7 +140,7 @@ export class HearingWorksheet extends React.PureComponent {
     return <div>
       {!this.props.print &&
             <AutoSave
-              save={this.save(worksheet, worksheetIssues)}
+              save={this.saveDocket(worksheet, worksheetIssues)}
               spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               isSaving={this.props.worksheetIsSaving}
               saveFailed={this.props.saveWorksheetFailed}
@@ -184,7 +185,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleWorksheetSaving,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
-  saveIssues
+  saveIssues,
+  saveDocket
 }, dispatch);
 
 export default connect(
