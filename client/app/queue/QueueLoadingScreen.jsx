@@ -12,9 +12,7 @@ import _ from 'lodash';
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    return ApiUtil.get('/queue/?json', {
-      headers: { user_id: this.props.userId }
-    }).then((response) => {
+    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
       let { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       tasks = _.keyBy(tasks, 'id');
