@@ -24,6 +24,7 @@ class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.appealId];
+
     return attr ? _.get(appeal.attributes, attr) : appeal;
   }
 
