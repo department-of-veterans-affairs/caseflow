@@ -62,9 +62,14 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.decomp as date_completed",
              "decass.dedeadline as date_due",
              "folder.tinum as docket_number")
-        .joins("left join vacols.decass on brieff.bfkey = decass.defolder")
-        .joins("join vacols.staff on brieff.bfcurloc = staff.slogid")
-        .joins("join vacols.folder on brieff.bfkey = folder.ticknum")
+        .joins(<<-SQL)
+          LEFT JOIN decass
+            ON brieff.bfkey = decass.defolder
+          JOIN staff
+            ON brieff.bfcurloc = staff.slogid
+          JOIN folder
+            ON brieff.bfkey = folder.ticknum
+        SQL
     end
     # rubocop:enable Metrics/MethodLength
 
