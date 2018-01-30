@@ -22,13 +22,16 @@ const redText = css({ color: '#E60000' });
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
-  getAppealForTask = (task) => this.props.appeals[task.appealId];
+  getAppealForTask = (task, attr) => {
+    const appeal = this.props.appeals[task.appealId];
+    return attr ? _.get(appeal.attributes, attr) : appeal;
+  }
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
       valueFunction: (task) => <Link>
-        {this.getAppealForTask(task).attributes.veteran_full_name} ({this.getAppealForTask(task).attributes.vacols_id})
+        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vacols_id')})
       </Link>
     },
     {
@@ -48,11 +51,11 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Docket Number',
-      valueFunction: (task) => this.getAppealForTask(task).attributes.docket_number
+      valueFunction: (task) => this.getAppealForTask(task, 'docket_number')
     },
     {
       header: 'Issues',
-      valueFunction: (task) => this.getAppealForTask(task).attributes.issues.length
+      valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
     },
     {
       header: 'Due Date',
@@ -63,7 +66,6 @@ class QueueTable extends React.PureComponent {
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task)}
         errorComponent="span"
-        failStatusMessageProps={{}}
         failStatusMessageChildren={<ReaderLink appealId={task.appealId} />}
         loadingComponent={SmallLoader}
         loadingComponentProps={{
@@ -71,7 +73,7 @@ class QueueTable extends React.PureComponent {
           spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
           component: Link,
           componentProps: {
-            href: `/reader/appeal/${this.getAppealForTask(task).attributes.vacols_id}/documents`
+            href: `/reader/appeal/${this.getAppealForTask(task, 'vacols_id')}/documents`
           }
         }}>
         <ReaderLink appealId={task.appealId} />
@@ -80,7 +82,7 @@ class QueueTable extends React.PureComponent {
   ];
 
   createLoadPromise = (task) => () => {
-    const url = this.getAppealForTask(task).attributes.number_of_documents_url;
+    const url = this.getAppealForTask(task, 'number_of_documents_url');
     const requestOptions = {
       withCredentials: true,
       timeout: true,
