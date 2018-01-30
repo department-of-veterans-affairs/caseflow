@@ -309,7 +309,7 @@ export class PdfFile extends React.PureComponent {
 
       _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
         const offset = this.getOffsetForPageIndex(index, 'center');
-        const distance = Math.abs(offset.scrollTop - (scrollTop));
+        const distance = Math.abs(offset.scrollTop - scrollTop);
 
         if (distance < minDistance) {
           minIndex = index;
