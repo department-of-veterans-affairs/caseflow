@@ -105,7 +105,10 @@ LoadingDataDisplay.defaultProps = {
   timeoutMs: Infinity,
   slowLoadMessage: 'Loading is taking longer than usual...',
   loadingComponent: LoadingScreen,
-  errorComponent: StatusMessage
+  errorComponent: StatusMessage,
+  loadingComponentProps: {},
+  failStatusMessageProps: {},
+  failStatusMessageChildren: {}
 };
 
 export default LoadingDataDisplay;

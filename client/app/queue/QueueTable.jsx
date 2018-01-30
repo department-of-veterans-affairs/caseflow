@@ -95,7 +95,7 @@ class QueueTable extends React.PureComponent {
 
   render = () => <Table
     columns={this.getQueueColumns}
-    rowObjects={sortTasks(this.props)}
+    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
     getKeyForRow={this.getKeyForRow}
   />;
 }
