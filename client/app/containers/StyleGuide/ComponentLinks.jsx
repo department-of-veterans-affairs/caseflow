@@ -177,6 +177,10 @@ export const componentLinks = [
     {
       anchor: '#inline-form',
       name: 'Inline Form'
+    },
+    {
+      anchor: '#save-long-text',
+      name: 'Save long text'
     }]
   },
   {

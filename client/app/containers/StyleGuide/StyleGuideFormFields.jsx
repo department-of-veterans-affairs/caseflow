@@ -4,6 +4,7 @@ import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuideTextInputError from './StyleGuideTextInputError';
 import StyleGuideTextArea from './StyleGuideTextArea';
 import StyleGuideCharacterLimit from './StyleGuideCharacterLimit';
+import StyleGuideSaveLongText from './StyleGuideSaveLongText';
 
 export default class StyleGuideFormFields extends React.PureComponent {
   render = () => {
@@ -15,7 +16,7 @@ export default class StyleGuideFormFields extends React.PureComponent {
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
+      <StyleGuideSaveLongText />
     </div>;
   }
 }
-
