@@ -27,7 +27,20 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.appellant_name
   end
 
+  attribute :appellant_address do
+    {
+      address_line_1: object.appellant_address_line_1,
+      address_line_2: object.appellant_address_line_2,
+      city: object.appellant_city,
+      state: object.appellant_state,
+      zip: object.appellant_zip,
+      country: object.appellant_country
+    }
+  end
+
   attribute :veteran_full_name
+  attribute :veteran_date_of_birth
+  attribute :veteran_gender
   attribute :vbms_id
   attribute :vacols_id
   attribute :type
