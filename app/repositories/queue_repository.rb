@@ -1,6 +1,6 @@
 class QueueRepository
   def self.tasks_for_user(css_id)
-    MetricsService.record("VACOLS: fetch user assignments",
+    MetricsService.record("VACOLS: fetch user tasks",
                           service: :vacols,
                           name: "tasks_for_user") do
       tasks_query(css_id)
@@ -35,7 +35,7 @@ class QueueRepository
 
   # :nocov:
   def self.tasks_query(css_id)
-    VACOLS::CaseAssignment.active_cases_for_user(css_id)
+    VACOLS::CaseAssignment.tasks_for_user(css_id)
   end
   # :nocov:
 
