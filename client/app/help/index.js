@@ -8,6 +8,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import CertificationHelp from './CertificationHelp';
 import HearingsHelp from './HearingsHelp';
 import ReaderHelp from './ReaderHelp';
+import DispatchHelp from './DispatchHelp';
+import IntakeHelp from './IntakeHelp';
 
 class Help extends React.PureComponent {
 
@@ -58,8 +60,19 @@ class Help extends React.PureComponent {
                <PageRoute
                  exact
                  path="/hearings/help"
-                 title="Hearings Prep Help"
+                 title="Hearings Help"
                  component={HearingsHelp} />
+               <PageRoute
+                 exact
+                 path="/dispatch/help"
+                 title="Dispatch Help"
+                 component={DispatchHelp} />
+               <PageRoute
+                 exact
+                 path="/intake/help"
+                 title="Intake Help"
+                 component={IntakeHelp} />
+
              </div>
            </AppFrame>
            <Footer

@@ -6,7 +6,7 @@ class CertificationHelp extends React.Component {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
       <h1 id="#top">Welcome to the Hearings Help page!</h1>
-      <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Hearing Prep, as well as links to the <a target="_blank" href="/assets/hearingprep_trainingguide-700f99a0935b6f978096a0a13e593fa5ccfdc60f0c1b106f0c1a44672065f474.pdf">Training Guide</a> and the  <a target="_blank" href="/assets/hearingprep_quickreference-ab220e981c81dbd346c0e83631ada13474051d2355ab193bcbcfbddd14432aca.pdf">Quick Reference</a>. These items are provided to assist you as you access and use Hearing Prep. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+      <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Hearing Prep, as well as links to the <a target="_blank" href="/assets/hearingprep_trainingguide-700f99a0935b6f978096a0a13e593fa5ccfdc60f0c1b106f0c1a44672065f474.pdf">Training Guide</a> and the  <a target="_blank" rel="noopener noreferrer" href="/assets/hearingprep_quickreference-ab220e981c81dbd346c0e83631ada13474051d2355ab193bcbcfbddd14432aca.pdf">Quick Reference</a>. These items are provided to assist you as you access and use Hearing Prep. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
@@ -44,7 +44,7 @@ class CertificationHelp extends React.Component {
       <h2 id="what-is-caseflow-hearing-PREP">1. What is Caseflow Hearing Prep?</h2>
 
       <p>Caseflow Hearing Prep helps judges rapidly prepare for their hearings. It allows judges to view their upcoming hearings, view relevant appellant information, take notes before and during a hearing, and review documents in the veteran's eFolder. Hearing Prep was built by the Digital Service at VA (DSVA) and will create cost savings and process improvements for many areas at the VA. Learn more:
-        <a target="_blank" href="/assets/hearingprep_trainingguide-700f99a0935b6f978096a0a13e593fa5ccfdc60f0c1b106f0c1a44672065f474.pdf">Training Guide</a>
+        <a target="_blank" rel="noopener noreferrer" href="/assets/hearingprep_trainingguide-700f99a0935b6f978096a0a13e593fa5ccfdc60f0c1b106f0c1a44672065f474.pdf">Training Guide</a>
       </p>
 
       <h2 id="how-was-hearing-developed">2. How was Hearing Prep developed?</h2>
@@ -66,7 +66,7 @@ class CertificationHelp extends React.Component {
 
       <h2 id="launch-hearing-prep">4. How do I launch Hearing Prep?</h2>
 
-      <p>To launch Hearing Prep, open Google Chrome and paste the following URL into the browser: <a href="https://appeals.cf.ds.va.gov/hearings/dockets" target="_blank"> https://appeals.cf.ds.va.gov/hearings/dockets</a>. Hit Enter and sign in using your VA credentials. You will be taken to the Hearing Prep Upcoming Hearing Days page.
+      <p>To launch Hearing Prep, open Google Chrome and paste the following URL into the browser: <a href="https://appeals.cf.ds.va.gov/hearings/dockets" target="_blank" rel="noopener noreferrer"> https://appeals.cf.ds.va.gov/hearings/dockets</a>. Hit Enter and sign in using your VA credentials. You will be taken to the Hearing Prep Upcoming Hearing Days page.
       </p>
 
       <h2 id="view-docket">5. How do I view my hearing docket for a specific day?</h2>
