@@ -61,7 +61,7 @@ class Generators::Hearing
     end
 
     def documents
-      Fakes::AppealRepository.static_reader_documents
+      Fakes::Data::AppealData.static_reader_documents
     end
 
     def default_appeal_id(hearing)

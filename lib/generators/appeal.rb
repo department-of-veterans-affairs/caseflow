@@ -19,7 +19,7 @@ class Generators::Appeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative: "Military Order of the Purple Heart",
+        representative: "Mi`litary Order of the Purple Heart",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
@@ -117,7 +117,9 @@ class Generators::Appeal
             { disposition: :denied }
           ]
         },
-        veteran_is_not_appellant: {
+        veteran_is_appellant: {
+          # A quirk in our model: These fields are
+          # only set when the appellant is not the veteran.
           appellant_first_name: nil,
           appellant_last_name: nil,
           appellant_middle_initial: nil,
