@@ -35,7 +35,7 @@ export class ReaderLoadingScreen extends React.Component {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
+      loadingComponentProps={{
         wrapInAppSegment: false,
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading claims folder in Reader...'

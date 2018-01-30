@@ -83,21 +83,21 @@ class LoadingDataDisplay extends React.PureComponent {
     }
 
     const isSlow = this.state.promiseTimeElapsedMs > this.props.slowLoadThresholdMs;
-    const loadingScreenProps = { ...this.props.loadingScreenProps };
+    const loadingComponentProps = { ...this.props.loadingComponentProps };
 
     if (isSlow) {
-      loadingScreenProps.message = this.props.slowLoadMessage;
+      loadingComponentProps.message = this.props.slowLoadMessage;
     }
 
-    return <LoadingComponent {...loadingScreenProps} />;
+    return <LoadingComponent {...loadingComponentProps} />;
   }
 }
 
 LoadingDataDisplay.propTypes = {
   createLoadPromise: PropTypes.func.isRequired,
-  loadingScreenProps: PropTypes.object.isRequired,
-  failStatusMessageProps: PropTypes.object.isRequired,
-  failStatusMessageChildren: PropTypes.object.isRequired
+  loadingComponentProps: PropTypes.object,
+  failStatusMessageProps: PropTypes.object,
+  failStatusMessageChildren: PropTypes.object
 };
 
 LoadingDataDisplay.defaultProps = {

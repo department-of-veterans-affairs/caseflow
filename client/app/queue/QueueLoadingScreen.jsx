@@ -38,7 +38,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
+      loadingComponentProps={{
         spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
         message: 'Loading your appeals...'
       }}

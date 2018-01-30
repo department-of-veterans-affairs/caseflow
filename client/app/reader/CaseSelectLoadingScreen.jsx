@@ -28,7 +28,7 @@ export class CaseSelectLoadingScreen extends React.Component {
 
     return <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
+      loadingComponentProps={{
         wrapInAppSegment: false,
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading cases in Reader...'

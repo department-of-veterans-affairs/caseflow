@@ -92,7 +92,7 @@ export class Certification extends React.Component {
       slowLoadThresholdMs={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
       timeoutMs={AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT}
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
-      loadingScreenProps={{
+      loadingComponentProps={{
         message: 'Loading and checking documents from the Veteran’s file…',
         spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
       }}

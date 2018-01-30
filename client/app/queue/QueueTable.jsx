@@ -68,7 +68,7 @@ class QueueTable extends React.PureComponent {
           appealId={task.appealId}
           text="View in Reader" />}
         loadingComponent={SmallLoader}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'Loading...',
           spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
           component: Link,
