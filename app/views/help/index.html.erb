@@ -1,13 +1,10 @@
 <% content_for :page_title do %>&nbsp &#124 &nbspHelp<% end %>
 
-<div class="cf-app-segment cf-app-segment--alt cf-help-content">
-  <h1>Caseflow Help</h1>
-
-  <ul id="toc" class="usa-unstyled-list">
-    <li><a href="/certification/help">Certification Help</a></li>
-    <li><a href="/dispatch/help">Dispatch Help</a></li>
-    <li><a href="/reader/help">Reader Help</a></li>
-    <li><a href="/hearings/help">Hearings Help</a></li>
-    <li><a href="/intake/help">Intake Help</a></li>
-  </ul>
-</div>
+<% content_for :full_page_content do %>
+  <%= react_component("Help", props: {
+    userDisplayName: current_user ? current_user.display_name : "",
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date
+  }) %>
+<% end %>

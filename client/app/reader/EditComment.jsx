@@ -14,9 +14,13 @@ export default class EditComment extends React.Component {
     this.shouldAutosave = true;
   }
 
+  isSaveDisabled = () => (
+    this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)
+  )
+
   handleAutoSave = () => {
     // only autosave when a comment exists
-    if (this.shouldAutosave && this.props.comment.comment) {
+    if (this.shouldAutosave && !this.isSaveDisabled()) {
       this.onSaveCommentEdit();
     }
   }
@@ -85,7 +89,7 @@ export default class EditComment extends React.Component {
               Cancel
           </Button>
           <Button
-            disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
+            disabled={this.isSaveDisabled()}
             name="save"
             onClick={this.onSaveCommentEdit}>
               Save

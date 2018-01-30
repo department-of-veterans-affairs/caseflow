@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123190443) do
+ActiveRecord::Schema.define(version: 20180126175818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,6 +198,8 @@ ActiveRecord::Schema.define(version: 20180123190443) do
     t.string  "series_id"
   end
 
+  add_index "documents", ["file_number"], name: "index_documents_on_file_number", using: :btree
+  add_index "documents", ["series_id"], name: "index_documents_on_series_id", unique: true, using: :btree
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
   create_table "documents_tags", force: :cascade do |t|
@@ -445,9 +447,6 @@ ActiveRecord::Schema.define(version: 20180123190443) do
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false
     t.boolean  "dismiss",            default: false
-    t.string   "program"
-    t.string   "name"
-    t.string   "levels"
     t.string   "description"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
