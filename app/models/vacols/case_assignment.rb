@@ -10,7 +10,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       id = connection.quote(css_id.upcase)
 
       select_assignments.where("staff.sdomainid = #{id}")
-                        .where("decass.decomp is null")
+        .where("decass.decomp is null")
     end
 
     # Valid case assignments must have an associated staff table
@@ -50,7 +50,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       id = connection.quote(css_id.upcase)
 
       select_tasks.where("staff.sdomainid = #{id}")
-                  .where("decass.decomp is null")
+        .where("decass.decomp is null")
     end
 
     def select_tasks
