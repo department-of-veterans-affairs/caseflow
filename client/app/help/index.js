@@ -6,6 +6,8 @@ import NavigationBar from '../components/NavigationBar';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import CertificationHelp from './CertificationHelp';
+import HearingsHelp from './HearingsHelp';
+import ReaderHelp from './ReaderHelp';
 
 class Help extends React.PureComponent {
 
@@ -48,7 +50,16 @@ class Help extends React.PureComponent {
                  path="/certification/help"
                  title="Certification Help"
                  component={CertificationHelp} />
-
+               <PageRoute
+                 exact
+                 path="/reader/help"
+                 title="Reader Help"
+                 component={ReaderHelp} />
+               <PageRoute
+                 exact
+                 path="/hearings/help"
+                 title="Hearings Prep Help"
+                 component={HearingsHelp} />
              </div>
            </AppFrame>
            <Footer
@@ -57,7 +68,6 @@ class Help extends React.PureComponent {
              buildDate={this.props.buildDate} />
          </div>
        </BrowserRouter>;
-
      }
 }
 export default Help;
