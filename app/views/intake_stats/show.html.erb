@@ -20,7 +20,7 @@
           <li class="cf-tab <%= (@stats[0].interval == interval) && "cf-active" %>">
           <span>
             <span>
-              <%= link_to interval.to_s.capitalize, intake_stats_path(interval) %>
+              <%= link_to interval_names[interval], intake_stats_path(interval) %>
             </span>
           </span>
           </li>

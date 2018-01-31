@@ -1,5 +1,5 @@
 class IntakeStats < Caseflow::Stats
-  INTERVALS = [:daily, :weekly, :monthly].freeze
+  INTERVALS = [:daily, :weekly, :monthly, :fiscal_yearly].freeze
 
   # Time to wait before recalculating stats
   THROTTLE_RECALCULATION_PERIOD = 20.minutes
