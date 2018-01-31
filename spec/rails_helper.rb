@@ -67,7 +67,13 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
     }
   }
 
-  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+    chromeOptions: {
+      args: %w[ no-sandbox headless disable-gpu window-size=1280,1024]
+    }
+  )
+
+  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options, desired_capabilities: capabilities)
 end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
