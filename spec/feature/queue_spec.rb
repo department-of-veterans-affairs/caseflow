@@ -3,6 +3,11 @@ require "rails_helper"
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
+    FeatureToggle.enable!(:queue_welcome_gate)
+  end
+
+  after do
+    FeatureToggle.disable!(:queue_welcome_gate)
   end
 
   let(:documents) do
