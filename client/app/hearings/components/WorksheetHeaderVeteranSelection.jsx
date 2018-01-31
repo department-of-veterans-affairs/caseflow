@@ -66,8 +66,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   getOptionLabel = (hearing) => (
     <div>
-      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 
-        ? 'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
+      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ?
+        'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>
   )
 
