@@ -29,7 +29,11 @@ class QueueController < ApplicationController
     # used for local dev. see Appeal.number_of_documents_url
     appeal = Appeal.find(params[:appeal_id])
     render json: {
-      docCount: appeal.number_of_documents
+      data: {
+        attributes: {
+          documents: (1..appeal.number_of_documents).to_a
+        }
+      }
     }
   rescue ActiveRecord::RecordNotFound
     render json: {}, status: 404
