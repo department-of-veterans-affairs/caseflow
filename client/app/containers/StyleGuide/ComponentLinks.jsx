@@ -35,8 +35,12 @@ export const componentLinks = [
       name: 'Palette'
     },
     {
-      anchor: '#logos',
-      name: 'Logos'
+      anchor: '#logo-colors',
+      name: 'Logo Colors'
+    },
+    {
+      anchor: '#reader-categories',
+      name: 'Reader Categories'
     }]
   },
   {
