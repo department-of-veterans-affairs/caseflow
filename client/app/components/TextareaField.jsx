@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNamesFn from 'classnames';
 
 export default class TextareaField extends React.Component {
   onChange = (event) => {
@@ -9,9 +10,10 @@ export default class TextareaField extends React.Component {
   render() {
     const {
       errorMessage,
+      hideLabel,
       id,
-      label,
       maxlength,
+      label,
       name,
       required,
       type,
@@ -25,8 +27,10 @@ export default class TextareaField extends React.Component {
     // Otherwise characterLimitCount will be null also.
     const characterLimitCount = (Boolean(maxlength) && Boolean(value)) ? (maxlength - value.length) : null;
 
+    // hideLabel still leaves the label element in the DOM (for a11y purposes)
+    // but makes it invisible to any screens
     return <div className={className}>
-      <label className="question-label" htmlFor={id || name}>
+      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
@@ -45,6 +49,7 @@ export default class TextareaField extends React.Component {
 }
 
 TextareaField.propTypes = {
+  hideLabel: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string,
   maxlength: PropTypes.number,
