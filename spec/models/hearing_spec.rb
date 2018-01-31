@@ -69,7 +69,7 @@ describe Hearing do
       Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
     end
     let!(:appeal3) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
     end
     let!(:appeal4) do
       Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")

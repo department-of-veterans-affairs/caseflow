@@ -94,7 +94,7 @@ class Fakes::HearingRepository
     4.times.each do |i|
       Generators::Hearings::MasterRecord.build(
         user_id: user.id,
-        date: Time.now.in_time_zone('EST').beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
+        date: Time.now.in_time_zone("EST").beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
         type: VACOLS::CaseHearing::HEARING_TYPES.values[1],
         regional_office_key: "RO21"
       )
@@ -105,7 +105,7 @@ class Fakes::HearingRepository
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
       type: VACOLS::CaseHearing::HEARING_TYPES.values[((i % 3 == 0) ? 2 : 0)],
-      date: Time.now.in_time_zone('EST').beginning_of_day +
+      date: Time.now.in_time_zone("EST").beginning_of_day +
         ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes,
       vacols_id: 950_330_575 + (i * 1465),
       notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
