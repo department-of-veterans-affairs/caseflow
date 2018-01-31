@@ -60,22 +60,19 @@ class RampElectionIntake < Intake
     end
   end
 
-  def veteran_ramp_elections
-    @veteran_ramp_elections ||= RampElection.where(veteran_file_number: veteran_file_number).all
-  end
-
   def ui_hash
-    super.merge(notice_date: ramp_election.notice_date,
-                option_selected: ramp_election.option_selected,
-                receipt_date: ramp_election.receipt_date,
-                end_product_description: ramp_election.end_product_description,
-                appeals: serialized_appeal_issues)
+    super.merge(
+      notice_date: ramp_election.notice_date,
+      option_selected: ramp_election.option_selected,
+      receipt_date: ramp_election.receipt_date,
+      end_product_description: ramp_election.end_product_description,
+      appeals: serialized_appeal_issues
+    )
   end
 
   private
 
-  # Appeals in VACOLS that will be closed out in favor
-  # of a new format review
+  # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
     active_veteran_appeals.select(&:eligible_for_ramp?)
   end
@@ -85,10 +82,7 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if veteran_ramp_elections.empty?
-      self.error_code = :did_not_receive_ramp_election
-
-    elsif !matching_ramp_election
+    if matching_ramp_election.successfully_received?
       self.error_code = :ramp_election_already_complete
       @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
 
@@ -101,6 +95,10 @@ class RampElectionIntake < Intake
   end
 
   def matching_ramp_election
-    @matching_ramp_election ||= veteran_ramp_elections.reject(&:successfully_received?).first
+    @ramp_election_on_create ||= veteran_ramp_elections.all.first || veteran_ramp_elections.build
+  end
+
+  def veteran_ramp_elections
+    RampElection.where(veteran_file_number: veteran_file_number)
   end
 end

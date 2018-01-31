@@ -116,21 +116,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     context "RAMP Election" do
-      scenario "Search for a veteran that has not received a RAMP election" do
-        visit "/intake"
-
-        within_fieldset("Which form are you processing?") do
-          find("label", text: "RAMP Opt-In Election Form").click
-        end
-        safe_click ".cf-submit.usa-button"
-
-        fill_in "Search small", with: "12341234"
-        click_on "Search"
-
-        expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
-      end
-
       scenario "Search for a veteran with an no active appeals" do
         RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
 
