@@ -12,8 +12,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
 import moment from 'moment';
 
-const found = <FoundIcon />;
-
 const headerSelectionStyling = css({
   display: 'block',
   padding: '8px 30px 10px 30px',
@@ -68,7 +66,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   getOptionLabel = (hearing) => (
     <div>
-      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ? 'issue' : 'issues'}){hearing.prepped ? found : ''}
+      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 
+        ? 'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>
   )
 
