@@ -181,36 +181,6 @@ export default class StyleGuideColors extends React.PureComponent {
           </div>
         )}
       </div>
-
-      <h3 id="text-accessibility">Text Accessibility</h3>
-
-      <p>
-        WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by
-        everyone, regardless of disability or user device. To meet these standards, text
-        and interactive elements should have a color contrast ratio of at least 4.5:1.
-        This ensures that viewers who cannot see the full color spectrum are able to
-        read the text.
-      </p>
-
-      <p>
-        The options below offer color palette combinations that fall within the range of
-        Section 508 compliant foreground/background color contrast ratios. To ensure that
-        text remains accessible, use only these permitted color combinations.
-      </p>
-
-      <p>
-        If you choose to customize beyond this palette, this color contrast tool is a
-        useful resource for testing the compliance of any color combination.
-      </p>
-
-      <h4>Fully Accessible Text Combinations</h4>
-
-      {this.Combos.map((name) =>
-        <div className="sg-colors-combo" key={name}
-          style={{ color: this.Colors[name] }}>
-          <b>{name.toLowerCase()} - on white</b>
-        </div>
-      )}
     </div>;
   }
 }
