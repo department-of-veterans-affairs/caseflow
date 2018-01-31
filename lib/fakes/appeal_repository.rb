@@ -85,7 +85,7 @@ class Fakes::AppealRepository
   end
 
   def self.appeals_ready_for_hearing(vbms_id)
-    Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
+    Appeal.where(vbms_id: vbms_id).select { |a| (a.decision_date.nil? || a.disposition == "Remanded") && a.form9_date }
   end
 
   def self.close_undecided_appeal!(*); end

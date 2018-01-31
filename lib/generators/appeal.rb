@@ -86,8 +86,12 @@ class Generators::Appeal
           docket_number: "13 12-225",
           issues: [
             { disposition: :remanded,
+              readable_disposition: "Remanded",
+              close_date: 7.days.ago,
               vacols_sequence_id: 1 },
             { disposition: :denied,
+              readable_disposition: "Denied",
+              close_date: 7.days.ago,
               vacols_sequence_id: 2 }
           ]
         },
