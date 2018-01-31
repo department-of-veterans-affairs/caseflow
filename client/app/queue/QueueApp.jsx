@@ -27,7 +27,7 @@ class QueueApp extends React.PureComponent {
   getSearchStyling = () => css({
     '.section-search': {
       marginTop: '3rem',
-      '> .usa-alert-error': {
+      '> .usa-alert-error, > .usa-alert-info': {
         marginBottom: '1rem'
       },
       '> .usa-search-big': {
