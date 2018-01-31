@@ -116,21 +116,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     context "RAMP Election" do
-      scenario "Search for a veteran that has not received a RAMP election" do
-        visit "/intake"
-
-        within_fieldset("Which form are you processing?") do
-          find("label", text: "RAMP Opt-In Election Form").click
-        end
-        safe_click ".cf-submit.usa-button"
-
-        fill_in "Search small", with: "12341234"
-        click_on "Search"
-
-        expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
-      end
-
       scenario "Search for a veteran with an no active appeals" do
         RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
 
@@ -168,7 +153,8 @@ RSpec.feature "RAMP Intake" do
       scenario "Search for a veteran that has a RAMP election already processed" do
         ramp_election = RampElection.create!(
           veteran_file_number: "12341234",
-          notice_date: 5.days.ago
+          notice_date: 7.days.ago,
+          receipt_date: 5.days.ago
         )
 
         RampElectionIntake.create!(
@@ -194,7 +180,7 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("Search for Veteran by ID")
         expect(page).to have_content(
-          "A RAMP opt-in with the notice date 08/02/2017 was already processed"
+          "A RAMP opt-in with the receipt date 08/02/2017 was already processed"
         )
 
         error_intake = Intake.last
