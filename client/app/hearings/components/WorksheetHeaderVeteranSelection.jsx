@@ -6,7 +6,8 @@ import FoundIcon from '../../components/FoundIcon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { populateDailyDocket, getDailyDocket, getWorksheet, setHearingPrepped } from '../actions/Dockets';
+import { populateDailyDocket, getDailyDocket, getWorksheet, 
+  onHearingPrepped, setHearingPrepped } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
@@ -69,7 +70,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ?
         'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>
-  )
+  );
 
   getDocketVeteranOptions = (dailyDocket) => (
     _.isEmpty(dailyDocket[this.date]) ?
@@ -80,7 +81,10 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       }))
   );
 
-  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.worksheet.id, value, this.date);
+  preppedOnChange = (value) => {
+    this.props.setHearingPrepped(this.props.worksheet.id, value, this.date, false);
+    this.props.onHearingPrepped(value);
+  }
 
   render() {
 
@@ -131,6 +135,7 @@ const mapDispatchToProps = (dispatch) => ({
     populateDailyDocket,
     getDailyDocket,
     getWorksheet,
+    onHearingPrepped,
     setHearingPrepped
   }, dispatch)
 });

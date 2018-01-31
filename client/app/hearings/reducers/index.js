@@ -25,8 +25,10 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
-export const setHearingPrepped = (state, action, spec) => {
-  _.extend(spec, { edited: { $set: true } });
+export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
+  if (setEdited) {
+    _.extend(spec, { edited: { $set: true } });
+  }
 
   return update(state, {
     dailyDocket: {
@@ -138,7 +140,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_PREPPED:
-    return setHearingPrepped(state, action, { prepped: { $set: action.payload.prepped } });
+    return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } });
+  case Constants.SET_WORKSHEET_HEARING_PREPPED:
+    return newHearingWorksheetState(state, action, { prepped: { $set: action.payload.prepped } });
 
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {

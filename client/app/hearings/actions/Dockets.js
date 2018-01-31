@@ -61,6 +61,13 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
+export const onHearingPrepped = (prepped) => ({
+  type: Constants.SET_WORKSHEET_HEARING_PREPPED,
+  payload: {
+    prepped
+  }
+});
+
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
@@ -112,12 +119,13 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const setHearingPrepped = (hearingId, prepped, date) => ({
+export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   type: Constants.SET_HEARING_PREPPED,
   payload: {
     hearingId,
     prepped,
-    date
+    date,
+    setEdited
   }
 });
 
