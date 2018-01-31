@@ -10,7 +10,8 @@ class IntakeStatsController < ApplicationController
     @stats = {
       daily: 0...30,
       weekly: 0...26,
-      monthly: 0...24
+      monthly: 0...24,
+      fiscal_yearly: 0...3
     }[interval].map { |i| IntakeStats.offset(time: IntakeStats.now, interval: interval, offset: i) }
   end
 
@@ -24,6 +25,16 @@ class IntakeStatsController < ApplicationController
   helper_method :interval
 
   private
+
+  def interval_names
+    {
+      daily: "Daily",
+      weekly: "Weekly",
+      monthly: "Monthly",
+      fiscal_yearly: "By Fiscal Year"
+    }
+  end
+  helper_method(:interval_names)
 
   def verify_access
     verify_authorized_roles("Admin Intake")
