@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
 
@@ -18,24 +19,35 @@ export default class AppealSummary extends React.PureComponent {
     }
   });
 
+  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr)
+
+  getLatestHearing = () => {
+    const hearings = this.getAppealAttr('hearings');
+
+    if (!hearings.length) {
+      return {};
+    }
+    return _.orderBy(hearings, 'held_on', 'desc')[0];
+  }
+
   getListElements = () => [{
     label: 'Type',
-    valueFunction: () => this.props.appeal.attributes.type
+    valueFunction: () => this.getAppealAttr('type')
   }, {
     label: 'Power of Attorney',
-    valueFunction: () => ''
+    valueFunction: () => this.getAppealAttr('power_of_attorney')
   }, {
     label: 'Hearing Preference',
     valueFunction: () => ''
   }, {
     label: 'Hearing held',
-    valueFunction: () => ''
+    valueFunction: () => this.getLatestHearing().held_on ? moment(this.getLatestHearing().held_on).format('MM/DD/YY') : ''
   }, {
     label: 'Judge at hearing',
-    valueFunction: () => ''
+    valueFunction: () => this.getLatestHearing().held_by
   }, {
     label: 'Regional Office',
-    valueFunction: () => ''
+    valueFunction: () => `${this.getAppealAttr('regional_office.city')} (${this.getAppealAttr('regional_office.key').replace('RO', '')})`
   }].map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
     <span {...boldText}>{label}:</span> {valueFunction()}
   </li>);

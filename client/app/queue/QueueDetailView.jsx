@@ -26,8 +26,8 @@ class QueueDetailView extends React.PureComponent {
         {`Draft Decision - ${appeal.veteran_full_name} (${appeal.vacols_id})`}
       </h1>
       <p className="cf-lead-paragraph">
-        Assigned to you by <span {...redText}>Judge</span> on {moment(new Date()).format('MM/DD/YY')}.
-        Due {moment(new Date()).format('MM/DD/YY')}
+        Assigned to you by <span {...redText}>Judge</span> on {moment(this.props.task.attributes.assigned_on).format('MM/DD/YY')}.
+        Due {moment(this.props.task.attributes.due_on).format('MM/DD/YY')}
       </p>
       <ReaderLink appealId={this.props.appealId} message="Open documents in Caseflow Reader" />
 
@@ -43,7 +43,9 @@ QueueDetailView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId]
+  // todo: rename appealId to vacolsId
+  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
+  task: state.queue.loadedQueue.tasks[ownProps.appealId]
 });
 
 export default connect(mapStateToProps)(QueueDetailView);
