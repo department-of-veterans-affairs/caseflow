@@ -492,7 +492,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       scenario "the EP creation page has a link back to decision review",
-                skip: "This test is failing because of a stale element reference" do
+               skip: "This test is failing because of a stale element reference" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
