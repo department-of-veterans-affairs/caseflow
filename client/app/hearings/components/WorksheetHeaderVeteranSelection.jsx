@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../components/Checkbox';
+import FoundIcon from '../../components/FoundIcon';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,20 +12,17 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
 import moment from 'moment';
 
+const found = <FoundIcon />;
+
 const headerSelectionStyling = css({
   display: 'block',
-  padding: '8px 20px 10px 30px',
+  padding: '8px 30px 10px 30px',
   height: '90px',
-  backgroundColor: '#E4E2E0',
-  '.question-label': {
-    marginBottom: '5px'
-  }
+  backgroundColor: '#E4E2E0'
 });
 
 const hearingPreppedStyling = css({
-  marginTop: '4rem',
-  marginBottom: '4rem',
-  marginLeft: '20px'
+  margin: '4rem 4rem 0 1.75rem'
 });
 
 const containerStyling = css({
@@ -39,11 +37,14 @@ const selectVeteranStyling = css({
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
+    // Getting the stored worksheet information from the local storage.
     const dailyDocket = JSON.parse(localStorage.getItem('dailyDocket'));
 
     this.date = localStorage.getItem('dailyDocketDate') ||
       moment(this.props.worksheet.date).format('YYYY-MM-DD');
 
+    // If the local storage information exists, populate the daily docket
+    // and the date. Also remove the information from local storage.
     if (dailyDocket && dailyDocket[this.date]) {
       this.props.populateDailyDocket(dailyDocket, this.date);
       localStorage.removeItem('dailyDocket');
@@ -65,11 +66,17 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     });
   };
 
-  getDocketVeteranOptions = (dailyDocket, worksheetIssues) => (
+  getOptionLabel = (hearing) => (
+    <div>
+      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ? 'issue' : 'issues'}){hearing.prepped ? found : ''}
+    </div>
+  )
+
+  getDocketVeteranOptions = (dailyDocket) => (
     _.isEmpty(dailyDocket[this.date]) ?
       [] :
       dailyDocket[this.date].map((hearing) => ({
-        label: `${hearing.veteran_fi_last_formatted} (${_.size(worksheetIssues)} issues)`,
+        label: this.getOptionLabel(hearing),
         value: hearing.id
       }))
   );
@@ -86,7 +93,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder="Hello there"
+            placeholder=""
             options={this.getDocketVeteranOptions(this.props.dailyDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.id}

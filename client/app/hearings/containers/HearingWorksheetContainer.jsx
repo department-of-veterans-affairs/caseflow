@@ -9,14 +9,8 @@ import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
-import createHistory from 'history/createBrowserHistory';
 
 export class HearingWorksheetContainer extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.history = createHistory();
-  }
 
   componentDidMount() {
     if (!this.props.worksheet) {
