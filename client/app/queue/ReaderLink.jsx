@@ -9,11 +9,20 @@ class ReaderLink extends React.PureComponent {
   render = () => {
     const {
       docCount,
+      message,
       vacols_id: vacolsId
     } = this.props;
 
+    let linkText = 'View in Reader';
+
+    if (message) {
+      linkText = message;
+    } else if (!_.isUndefined(docCount)) {
+      linkText = `View ${docCount.toLocaleString()} in Reader`;
+    }
+
     return <Link href={`/reader/appeal/${vacolsId}/documents`}>
-      {_.isUndefined(docCount) ? 'View in Reader' : `View ${docCount.toLocaleString()} in Reader`}
+      {linkText}
     </Link>;
   };
 }

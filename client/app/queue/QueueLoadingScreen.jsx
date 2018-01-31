@@ -10,13 +10,21 @@ import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
-    // todo: Promise.resolve() if appeals/tasks already loaded
-    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
+    const userId = this.props.userId;
+    const userQueueLoaded = !_.isEmpty(this.props.tasks) && !_.isEmpty(this.props.appeals) &&
+      this.props.loadedUserId === userId;
+
+    if (userQueueLoaded) {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/queue/tasks/${userId}`).then((response) => {
       const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       this.props.onReceiveQueue({
         appeals,
-        tasks
+        tasks,
+        userId
       });
     });
   };
@@ -52,8 +60,12 @@ QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
 };
 
+const mapStateToProps = (state) => ({
+  ...state.queue.loadedQueue
+});
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(QueueLoadingScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);

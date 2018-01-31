@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
 import QueueTable from './QueueTable';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 class QueueListView extends React.PureComponent {
   render = () => {
@@ -18,14 +19,14 @@ class QueueListView extends React.PureComponent {
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 className="cf-push-left">Your Queue</h1>
+        <h1 className="cf-push-left cf-form--full-width">Your Queue</h1>
         <QueueTable />
       </div>;
     }
 
-    return <div className="cf-app-segment cf-app-segment--alt">
+    return <AppSegment filledBackground>
       {tableContent}
-    </div>;
+    </AppSegment>;
   };
 }
 

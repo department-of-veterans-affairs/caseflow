@@ -10,12 +10,12 @@ export const associateTasksWithAppeals = (serverData = {}) => {
   _.each(tasks, (task) => {
     task.appealId = _(appeals).
       filter((appeal) => appeal.attributes.vacols_id === task.attributes.appeal_id).
-      map('id').
+      map('attributes.vacols_id').
       head();
   });
 
   const tasksById = _.keyBy(tasks, 'id');
-  const appealsById = _.keyBy(appeals, 'id');
+  const appealsById = _.keyBy(appeals, 'attributes.vacols_id');
 
   return {
     appeals: appealsById,

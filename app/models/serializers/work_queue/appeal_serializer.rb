@@ -1,15 +1,11 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
     object.issues.map do |issue|
-      {
-        close_date: issue.close_date,
-        codes: issue.codes,
-        disposition: issue.disposition,
+      issue.attributes.merge(
         id: issue.id,
         labels: issue.labels,
-        note: issue.note,
-        vacols_sequence_id: issue.vacols_sequence_id
-      }
+        codes: issue.codes
+      )
     end
   end
 

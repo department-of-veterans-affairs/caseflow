@@ -14,14 +14,19 @@ class QueueController < ApplicationController
   end
 
   def tasks
-    MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                          name: "QueueController.tasks") do
+    respond_to do |format|
+      format.html { render(:index) }
+      format.json do
+        MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
+                              name: "QueueController.tasks") do
 
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
-      render json: {
-        tasks: json_tasks(tasks),
-        appeals: json_appeals(appeals)
-      }
+          tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
+          render json: {
+            tasks: json_tasks(tasks),
+            appeals: json_appeals(appeals)
+          }
+        end
+      end
     end
   end
 

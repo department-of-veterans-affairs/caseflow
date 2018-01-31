@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { css } from 'glamor';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -16,9 +15,7 @@ import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-
-// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
-const redText = css({ color: '#E60000' });
+import { redText } from './constants';
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -26,13 +23,13 @@ class QueueTable extends React.PureComponent {
     const appeal = this.props.appeals[task.appealId];
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
-  }
+  };
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
-      valueFunction: (task) => <Link>
-        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vacols_id')})
+      valueFunction: (task) => <Link to={`/tasks/${task.appealId}`}>
+        {this.getAppealForTask(task, 'veteran_full_name')} ({task.appealId})
       </Link>
     },
     {
@@ -74,7 +71,7 @@ class QueueTable extends React.PureComponent {
           spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
           component: Link,
           componentProps: {
-            href: `/reader/appeal/${this.getAppealForTask(task, 'vacols_id')}/documents`
+            href: `/reader/appeal/${task.appealId}/documents`
           }
         }}>
         <ReaderLink appealId={task.appealId} />

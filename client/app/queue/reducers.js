@@ -7,7 +7,8 @@ import { combineReducers } from 'redux';
 export const initialState = {
   loadedQueue: {
     appeals: {},
-    tasks: {}
+    tasks: {},
+    loadedUserId: null
   }
 };
 
@@ -21,6 +22,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
         },
         tasks: {
           $set: action.payload.tasks
+        }
+      }
+    });
+  case ACTIONS.SET_LOADED_QUEUE_ID:
+    return update(state, {
+      loadedQueue: {
+        loadedUserId: {
+          $set: action.payload.userId
         }
       }
     });
