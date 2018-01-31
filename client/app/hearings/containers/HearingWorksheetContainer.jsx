@@ -9,11 +9,23 @@ import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
+import createHistory from 'history/createBrowserHistory';
 
 export class HearingWorksheetContainer extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.history = createHistory();
+  }
+
   componentDidMount() {
     if (!this.props.worksheet) {
+      this.props.getWorksheet(this.props.hearingId);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId)) {
       this.props.getWorksheet(this.props.hearingId);
     }
   }
@@ -29,7 +41,6 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   render() {
-
     if (this.props.worksheetServerError) {
       return <StatusMessage
         title="Unable to load the worksheet">
@@ -50,7 +61,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet {...this.props} />;
+    return <HearingWorksheet {...this.props} history={this.context.router.history} context={this.context}/>;
   }
 }
 
@@ -74,4 +85,8 @@ HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   hearingId: PropTypes.string.isRequired,
   worksheetServerError: PropTypes.object
+};
+
+HearingWorksheetContainer.contextTypes = {
+  router: PropTypes.object.isRequired
 };

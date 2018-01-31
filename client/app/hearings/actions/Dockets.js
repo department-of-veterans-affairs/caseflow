@@ -243,4 +243,4 @@ export const saveDocket = (docket, date) => (dispatch) => {
       });
   });
   dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
-}
+};

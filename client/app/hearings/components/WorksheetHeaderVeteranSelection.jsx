@@ -6,21 +6,25 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { populateDailyDocket, getDailyDocket, getWorksheet, setHearingPrepped } from '../actions/Dockets';
+import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
 import moment from 'moment';
 
 const headerSelectionStyling = css({
   display: 'block',
-  padding: '10px 20px 10px 30px',
-  height: '100px',
-  backgroundColor: '#E4E2E0'
+  padding: '8px 20px 10px 30px',
+  height: '90px',
+  backgroundColor: '#E4E2E0',
+  '.question-label': {
+    marginBottom: '5px'
+  }
 });
 
 const hearingPreppedStyling = css({
   marginTop: '4rem',
-  'margin-bottom': '4rem',
-  'margin-left': '2rem'
+  marginBottom: '4rem',
+  marginLeft: '20px'
 });
 
 const containerStyling = css({
@@ -50,9 +54,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   }
 
   onDropdownChange = (value) => {
-    console.log(value);
     if (value) {
-      this.props.getWorksheet(value.value);
+      this.props.history.push(`/hearings/${value.value}/worksheet`);
     }
   }
 
@@ -76,11 +79,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   render() {
 
     const { worksheet, worksheetIssues } = this.props;
-    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
-    console.log(worksheet);
-    console.log(this.props.dailyDocket);
 
-    return <span className="" {...headerSelectionStyling}>
+    return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
         <div {...selectVeteranStyling}>
           <SearchableDropdown
@@ -105,12 +105,12 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
+          href={`${getReaderLink(worksheet)}?category=case_summary`}
           button="primary"
           target="_blank">
         Review eFolder</Link>
       </div>
-    </span>
+    </span>;
   }
 }
 

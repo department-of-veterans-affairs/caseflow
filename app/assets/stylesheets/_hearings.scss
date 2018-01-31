@@ -6,6 +6,16 @@
 
 $color-hearings-saving: $color-gray;
 
+.worksheet-header {
+  .question-label {
+    margin-bottom: 4px;
+  }
+
+  .cf-push-right {
+    padding-top: 18px;
+  }
+}
+
 .saving {
   font-style: italic;
   color: $color-hearings-saving;

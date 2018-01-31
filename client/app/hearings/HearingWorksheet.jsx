@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
+import { getReaderLink } from './util/index';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection'
 
 // TODO Move all stream related to streams container
@@ -30,14 +31,15 @@ import { saveIssues } from './actions/Issue';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
+
     const textAreaProps = {
       minRows: 3,
       maxRows: 5000,
+      value: this.props.value || '',
       ..._.pick(
         this.props,
         [
           'name',
-          'value',
           'onChange',
           'id',
           'minRows'
@@ -80,8 +82,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
-    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
-
+    let readerLink = getReaderLink(worksheet);
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
@@ -139,14 +140,17 @@ export class HearingWorksheet extends React.PureComponent {
 
     return <div>
       {!this.props.print &&
-            <AutoSave
-              save={this.saveDocket(worksheet, worksheetIssues)}
-              spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
-              isSaving={this.props.worksheetIsSaving}
-              saveFailed={this.props.saveWorksheetFailed}
-            />
+        <div>
+          <AutoSave
+            save={this.save(worksheet, worksheetIssues)}
+            spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+            isSaving={this.props.worksheetIsSaving}
+            saveFailed={this.props.saveWorksheetFailed}
+          />
+          <WorksheetHeaderVeteranSelection openPdf={this.openPdf}
+            history={this.props.history} context={this.props.context} />
+        </div>
       }
-      <WorksheetHeaderVeteranSelection openPdf={this.openPdf} />
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
