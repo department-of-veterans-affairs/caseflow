@@ -23,6 +23,16 @@ module Fakes::Data::AppealData
     ]
   end
 
+  def self.reader_docs_no_categories
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 5, type: "Extra Reading", received_at: 60.days.ago)
+    ]
+  end
+
   def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
     seeded_random = Random.new(seed)
     (0..num_documents).to_a.reduce([]) do |acc, number|

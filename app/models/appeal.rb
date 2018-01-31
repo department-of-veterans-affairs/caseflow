@@ -44,7 +44,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
