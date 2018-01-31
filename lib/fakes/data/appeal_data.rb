@@ -6,6 +6,76 @@ module Fakes::Data::AppealData
     default_records.map(&:vacols_id)
   end
 
+  def self.static_reader_documents
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9",
+                                 category_medical: true, category_procedural: true),
+      Generators::Document.build(
+        vbms_document_id: 5,
+        type: "This is a very long document type let's see what it does to the UI!",
+        received_at: 7.days.ago,
+        category_other: true
+      ),
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
+                                 category_medical: true, category_procedural: true, category_other: true)
+    ]
+  end
+
+  def self.reader_docs_no_categories
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 5, type: "Extra Reading", received_at: 60.days.ago)
+    ]
+  end
+
+  def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
+    seeded_random = Random.new(seed)
+    (0..num_documents).to_a.reduce([]) do |acc, number|
+      acc << Generators::Document.build(
+        vbms_document_id: number,
+        type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
+        category_procedural: seeded_random.rand(10) == 1,
+        category_medical: seeded_random.rand(10) == 1,
+        category_other: seeded_random.rand(10) == 1
+      )
+    end
+  end
+
+  READER_REDACTED_DOCS = [
+    "VA 8 Certification of Appeal",
+    "Supplemental Statement of the Case",
+    "CAPRI",
+    "Notice of Disagreement",
+    "Rating Decision - Codesheet",
+    "Rating Decision - Narrative",
+    "Correspondence",
+    "VA 21-526EZ, Fully Developed Claim",
+    "STR - Medical",
+    "Military Personnel Record",
+    "Private Medical Treatment Record",
+    "Map-D Development Letter",
+    "Third Party Correspondence",
+    "VA 9 Appeal to Board of Appeals",
+    "Correspondence",
+    "VA 21-4142 Authorization to Disclose Information to VA",
+    "VA 21-4138 Statement in Support of Claim",
+    "VA Memo"
+  ].freeze
+
+  def self.redacted_reader_documents
+    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
+      Generators::Document.build(
+        vbms_document_id: (100 + index),
+        type: doc_type
+      )
+    end
+  end
+
   def self.default_records
     [
       Generators::Appeal.build(
@@ -15,7 +85,7 @@ module Fakes::Data::AppealData
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         date_due: "2018-02-13 00:00:00 UTC".to_datetime,
         signed_date: nil,
-        vbms_id: "1234",
+        vbms_id: "DEMO123",
         veteran_first_name: "Simple",
         veteran_middle_initial: "A",
         veteran_last_name: "Case",
@@ -35,7 +105,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         type: "Remand",
@@ -44,7 +115,7 @@ module Fakes::Data::AppealData
         date_received: nil,
         date_due: "2018-02-14 00:00:00 UTC".to_datetime,
         signed_date: nil,
-        vbms_id: "5",
+        vbms_id: "DEMO456",
         veteran_first_name: "Large",
         veteran_middle_initial: "B",
         veteran_last_name: "Case",
@@ -64,7 +135,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: random_reader_documents(1000)
       ),
       Generators::Appeal.build(
         type: "Remand",
@@ -73,7 +145,7 @@ module Fakes::Data::AppealData
         date_received: "2013-04-29 00:00:00 UTC".to_datetime,
         date_due: "2018-02-22 00:00:00 UTC".to_datetime,
         signed_date: nil,
-        vbms_id: "6",
+        vbms_id: "DEMO789",
         veteran_first_name: "Redacted",
         veteran_middle_initial: "C",
         veteran_last_name: "Case",
@@ -93,7 +165,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: redacted_reader_documents
       )
     ].each(&:save)
   end
@@ -101,7 +174,7 @@ module Fakes::Data::AppealData
   def self.default_queue_records
     [
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Original",
         vacols_id: "111112",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -112,6 +185,13 @@ module Fakes::Data::AppealData
         veteran_first_name: "Vera",
         veteran_middle_initial: "A",
         veteran_last_name: "Marshall",
+        veteran_date_of_birth: "1970-02-14 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
+        appellant_address_line_1: "303320 Rockwood Rd",
+        appellant_city: "Florham Park",
+        appellant_state: "NJ",
+        appellant_zip: "07932",
+        appellant_country: "USA",
         docket_number: "13 11-265",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
@@ -129,7 +209,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Post Remand",
         vacols_id: "222221",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -138,7 +218,15 @@ module Fakes::Data::AppealData
         signed_date: nil,
         vbms_id: "55435543",
         veteran_first_name: "Joe",
+        veteran_middle_initial: nil,
         veteran_last_name: "Snuffy",
+        veteran_date_of_birth: "1950-03-11 00:00:00 UTC".to_datetime,
+        veteran_gender: "M",
+        appellant_address_line_1: "777 Brigadoon Way",
+        appellant_city: "San Jose",
+        appellant_state: "CA",
+        appellant_zip: "36838",
+        appellant_country: "USA",
         docket_number: "13 11-265",
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
@@ -174,7 +262,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Court Remand",
         vacols_id: "333334",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -185,6 +273,13 @@ module Fakes::Data::AppealData
         veteran_first_name: "Andrea",
         veteran_middle_initial: "C",
         veteran_last_name: "Rasti",
+        veteran_date_of_birth: "1911-01-05 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
+        appellant_address_line_1: "8 James Ct",
+        appellant_city: "Boise",
+        appellant_state: "ID",
+        appellant_zip: "63873",
+        appellant_country: "USA",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
@@ -214,8 +309,16 @@ module Fakes::Data::AppealData
         vbms_id: "654325324",
         veteran_first_name: "Ricky",
         veteran_last_name: "Tikitembo",
+        veteran_date_of_birth: "1959-11-27 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
         appellant_first_name: "Clara",
         appellant_last_name: "Ti",
+        appellant_relationship: "Parent",
+        appellant_address_line_1: "200 Ai Wei Way",
+        appellant_city: "Fort Nixon",
+        appellant_state: "PA",
+        appellant_zip: "32883",
+        appellant_country: "USA",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
@@ -236,7 +339,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Reconsideration",
         vacols_id: "333336",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -266,7 +369,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Remand",
         vacols_id: "333338",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -275,7 +378,16 @@ module Fakes::Data::AppealData
         signed_date: nil,
         vbms_id: "123846543",
         veteran_first_name: "Ann",
+        veteran_middle_initial: nil,
         veteran_last_name: "Amazingveteran",
+        veteran_date_of_birth: "1959-11-27 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
+        appellant_address_line_1: "189 Legion Dr",
+        appellant_address_line_2: "Floor 5",
+        appellant_city: "Roaring Springs",
+        appellant_state: "MI",
+        appellant_zip: "67753",
+        appellant_country: "USA",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
@@ -295,7 +407,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
-        vacols_record: :veteran_is_not_appellant,
+        vacols_record: :veteran_is_appellant,
         type: "Clear and Unmistakable Error",
         vacols_id: "883335",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -304,7 +416,16 @@ module Fakes::Data::AppealData
         signed_date: nil,
         vbms_id: "687878778",
         veteran_first_name: "Ruth",
+        veteran_middle_initial: nil,
         veteran_last_name: "Gansburg",
+        veteran_date_of_birth: "1980-03-20 00:00:00 UTC".to_datetime,
+        veteran_gender: "38",
+        appellant_address_line_1: "7 Springfield Rd",
+        appellant_address_line_2: "Apt 2",
+        appellant_city: "Ottawa",
+        appellant_state: "ON",
+        appellant_zip: "K1M 1C8",
+        appellant_country: "CN",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",

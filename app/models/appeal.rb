@@ -17,10 +17,12 @@ class Appeal < ActiveRecord::Base
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
-  vacols_attr_accessor :appellant_city, :appellant_state
+  vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
+  vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -42,7 +44,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
