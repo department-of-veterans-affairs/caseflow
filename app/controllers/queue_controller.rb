@@ -6,7 +6,7 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    verify_system_admin
+    redirect_to "/unauthorized" unless feature_enabled?(:queue_welcome_gate)
   end
 
   def index
