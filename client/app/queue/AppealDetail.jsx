@@ -19,7 +19,7 @@ const appealDetailStyling = css({
 });
 
 export default class AppealDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr)
+  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
 
   getLastHearing = () => {
     const hearings = this.getAppealAttr('hearings');
@@ -29,36 +29,48 @@ export default class AppealDetail extends React.PureComponent {
     }
 
     return _.orderBy(hearings, 'held_on', 'desc')[0];
-  }
+  };
 
-  getListElements = () => [{
-    label: 'Type',
-    valueFunction: () => this.getAppealAttr('type')
-  }, {
-    label: 'Power of Attorney',
-    valueFunction: () => this.getAppealAttr('power_of_attorney')
-  }, {
-    label: 'Hearing Preference',
-    valueFunction: () => this.getLastHearing().type ? StringUtil.snakeCaseToCapitalized(this.getLastHearing().type) : ''
-  }, {
-    label: 'Hearing held',
-    valueFunction: () => this.getLastHearing().held_on ? moment(this.getLastHearing().held_on).format('M/D/YY') : ''
-  }, {
-    label: 'Judge at hearing',
-    valueFunction: () => this.getLastHearing().held_by
-  }, {
-    label: 'Regional Office',
-    valueFunction: () => {
-      const {
-        city,
-        key
-      } = this.getAppealAttr('regional_office');
+  getListElements = () => {
+    let listElements = [{
+      label: 'Type',
+      valueFunction: () => this.getAppealAttr('type')
+    }, {
+      label: 'Power of Attorney',
+      valueFunction: () => this.getAppealAttr('power_of_attorney')
+    }];
 
-      return `${city} (${key.replace('RO', '')})`;
+    if (this.getAppealAttr('hearings').length) {
+      const lastHearing = this.getLastHearing();
+
+      listElements.concat([{
+        label: 'Hearing Preference',
+        valueFunction: () => StringUtil.snakeCaseToCapitalized(lastHearing.type)
+      }, {
+        label: 'Hearing held',
+        valueFunction: () => moment(lastHearing.held_on).format('M/D/YY')
+      }, {
+        label: 'Judge at hearing',
+        valueFunction: () => lastHearing.held_by
+      }])
     }
-  }].map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
-    <span {...boldText}>{label}:</span> {valueFunction()}
-  </li>);
+
+    listElements.push({
+      label: 'Regional Office',
+      valueFunction: () => {
+        const {
+          city,
+          key
+        } = this.getAppealAttr('regional_office');
+
+        return `${city} (${key.replace('RO', '')})`;
+      }
+    })
+
+    return listElements.map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
+      <span {...boldText}>{label}:</span> {valueFunction()}
+    </li>);
+  };
 
   render = () => <div {...appealDetailStyling}>
     <h2>Appeal Summary</h2>
@@ -71,7 +83,7 @@ export default class AppealDetail extends React.PureComponent {
       className="task-list"
       formatLevelsInNewLine
       displayIssueProgram
-      displayLabels />
+      displayLabels/>
   </div>;
 }
 
