@@ -26,6 +26,7 @@ export default class AppealSummary extends React.PureComponent {
     if (!hearings.length) {
       return {};
     }
+
     return _.orderBy(hearings, 'held_on', 'desc')[0];
   }
 
@@ -46,7 +47,14 @@ export default class AppealSummary extends React.PureComponent {
     valueFunction: () => this.getLatestHearing().held_by
   }, {
     label: 'Regional Office',
-    valueFunction: () => `${this.getAppealAttr('regional_office.city')} (${this.getAppealAttr('regional_office.key').replace('RO', '')})`
+    valueFunction: () => {
+      const {
+        city,
+        key
+      } = this.getAppealAttr('regional_office');
+
+      return `${city} (${key.replace('RO', '')})`;
+    }
   }].map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
     <span {...boldText}>{label}:</span> {valueFunction()}
   </li>);

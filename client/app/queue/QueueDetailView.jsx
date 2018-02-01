@@ -19,10 +19,10 @@ class QueueDetailView extends React.PureComponent {
     } = this.props;
     const tabs = [{
       label: 'Appeal',
-      page: <AppealSummary appeal={this.props.appeal}/>
+      page: <AppealSummary appeal={this.props.appeal} />
     }, {
       label: `Appellant (${appeal.veteran_full_name})`,
-      page: <VeteranDetail appeal={this.props.appeal}/>
+      page: <VeteranDetail appeal={this.props.appeal} />
     }];
 
     return <AppSegment filledBackground>

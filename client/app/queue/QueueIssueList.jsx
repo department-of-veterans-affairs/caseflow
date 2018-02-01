@@ -27,10 +27,11 @@ export default class QueueIssueList extends React.PureComponent {
 
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
     if (formatLevelsInNewLine) {
-      const pClassName = `issue-level ${this.props.displayIssueProgram ? 'indented' : ''}`
+      const pClassName = `issue-level ${this.props.displayIssueProgram ? 'indented' : ''}`;
 
       return issue.levels.map((level) => <p className={pClassName} key={level}>{level}</p>);
     }
+
     return this.csvIssueLevels();
   };
 
@@ -42,6 +43,7 @@ export default class QueueIssueList extends React.PureComponent {
         <span {...boldText}>Issue:</span> {label}
       </span>;
     }
+
     return label;
   };
 

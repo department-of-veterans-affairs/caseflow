@@ -15,7 +15,7 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => (dispatch) => {
       appeals
     }
   });
-  dispatch(setLoadedQueueId(userId))
+  dispatch(setLoadedQueueId(userId));
 };
 
 export const setAppealDocCount = ({ appealId, docCount }) => ({

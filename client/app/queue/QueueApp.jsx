@@ -29,7 +29,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Link to="/">&lt; Back to your queue</Link>
-    <QueueDetailView appealId={props.match.params.appeal_id}/>
+    <QueueDetailView appealId={props.match.params.appeal_id} />
   </QueueLoadingScreen>;
 
   getSearchStyling = () => css({
@@ -74,7 +74,7 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:appeal_id"
             // todo: title
             title="Draft Decision - [Vet name] [VBMS ID] | Caseflow Queue"
-            render={this.routedQueueDetail}/>
+            render={this.routedQueueDetail} />
         </div>
       </AppFrame>
       <Footer

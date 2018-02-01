@@ -18,16 +18,16 @@ export default class VeteranDetail extends React.PureComponent {
 
   formatAddress = () => {
     const {
-      address_line_1,
-      address_line_2,
+      address_line_1: addressLine1,
+      address_line_2: addressLine2,
       city,
       state,
       zip,
       country
     } = this.getAppealAttr('appellant_address');
-    const streetAddress = `${address_line_1}${address_line_2 || ''}`
+    const streetAddress = `${addressLine1}${addressLine2 || ''}`;
 
-    return `${streetAddress}, ${city} ${state}, ${zip} ${country !== 'USA' ? country : ''}`
+    return `${streetAddress}, ${city} ${state}, ${zip} ${country === 'USA' ? '' : country}`;
   }
 
   getListElements = () => [{
@@ -48,7 +48,7 @@ export default class VeteranDetail extends React.PureComponent {
 
   render = () => <div {...this.getStyling()}>
     <h2>Veteran Details</h2>
-    {/*<span>The veteran is the appellant</span>*/}
+    {/* <span>The veteran is the appellant</span>*/}
     <ul className="veteran-summary-ul">
       {this.getListElements()}
     </ul>

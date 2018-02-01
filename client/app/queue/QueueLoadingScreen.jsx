@@ -7,6 +7,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { associateTasksWithAppeals } from './utils';
+import _ from 'lodash';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
