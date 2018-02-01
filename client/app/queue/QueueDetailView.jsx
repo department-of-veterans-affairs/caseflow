@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
@@ -9,10 +8,10 @@ import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 
-import { redText } from './constants';
+import { redText, fullWidth } from './constants';
+import { dateString } from './utils';
 
 const headerStyling = css({
-  width: '100%',
   marginBottom: '0.5rem'
 });
 const subHeadStyling = css({
@@ -34,12 +33,12 @@ class QueueDetailView extends React.PureComponent {
     }];
 
     return <AppSegment filledBackground>
-      <h1 className="cf-push-left" {...headerStyling}>
+      <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
         Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
-        Due {moment(task.due_on).format('MM/DD/YY')}
+        Assigned to you by <span {...redText}>Judge</span> on {dateString(task.assigned_on)}.
+        Due {dateString(task.due_on)}
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message="Open documents in Caseflow Reader" />
 

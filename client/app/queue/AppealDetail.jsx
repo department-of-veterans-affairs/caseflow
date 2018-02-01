@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { css } from 'glamor';
 import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
 import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
+import { dateString } from './utils';
 
 const appealDetailStyling = css({
   '> .appeal-summary-ul': {
@@ -32,7 +32,7 @@ export default class AppealDetail extends React.PureComponent {
   };
 
   getListElements = () => {
-    let listElements = [{
+    const listElements = [{
       label: 'Type',
       valueFunction: () => this.getAppealAttr('type')
     }, {
@@ -48,11 +48,11 @@ export default class AppealDetail extends React.PureComponent {
         valueFunction: () => StringUtil.snakeCaseToCapitalized(lastHearing.type)
       }, {
         label: 'Hearing held',
-        valueFunction: () => moment(lastHearing.held_on).format('M/D/YY')
+        valueFunction: () => dateString(lastHearing.held_on, 'M/D/YY')
       }, {
         label: 'Judge at hearing',
         valueFunction: () => lastHearing.held_by
-      }])
+      }]);
     }
 
     listElements.push({
@@ -65,7 +65,7 @@ export default class AppealDetail extends React.PureComponent {
 
         return `${city} (${key.replace('RO', '')})`;
       }
-    })
+    });
 
     return listElements.map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
       <span {...boldText}>{label}:</span> {valueFunction()}
@@ -83,7 +83,7 @@ export default class AppealDetail extends React.PureComponent {
       className="task-list"
       formatLevelsInNewLine
       displayIssueProgram
-      displayLabels/>
+      displayLabels />
   </div>;
 }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -12,7 +11,7 @@ import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 
 import { setAppealDocCount } from './QueueActions';
-import { sortTasks } from './utils';
+import { sortTasks, dateString } from './utils';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { redText } from './constants';
@@ -57,7 +56,7 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Due Date',
-      valueFunction: (task) => moment(task.attributes.due_on).format('MM/DD/YY')
+      valueFunction: (task) => dateString(task.attributes.due_on)
     },
     {
       header: 'Reader Documents',
