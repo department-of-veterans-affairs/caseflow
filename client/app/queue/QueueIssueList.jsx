@@ -7,22 +7,22 @@ import { NO_ISSUES_ON_APPEAL_MSG } from '../reader/constants';
 import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
 
-const inlineDisplay = css({
-  display: 'inline',
-  '& .issue-level': {
-    marginBottom: 0,
-    marginTop: '0.5rem',
-    '&.indented': {
-      marginLeft: '20rem'
-    }
-  },
-  '& .issue-label.indented': {
-    marginLeft: '2rem'
-  }
-});
-
 // todo: rename to IssueList after Reader welcome gate deprecation
 export default class QueueIssueList extends React.PureComponent {
+  getStyling = () => css({
+    display: 'inline',
+    '& .issue-level': {
+      marginBottom: 0,
+      marginTop: this.props.tightLevelStyling ? '0' : '0.5rem',
+      '&.indented': {
+        marginLeft: '20rem'
+      }
+    },
+    '& .issue-label.indented': {
+      marginLeft: '2rem'
+    }
+  });
+
   csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
 
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
@@ -32,7 +32,7 @@ export default class QueueIssueList extends React.PureComponent {
       return issue.levels.map((level) => <p className={pClassName} key={level}>{level}</p>);
     }
 
-    return this.csvIssueLevels();
+    return this.csvIssueLevels(issue);
   };
 
   issueTypeLabel = (issue) => {
@@ -47,7 +47,7 @@ export default class QueueIssueList extends React.PureComponent {
     return label;
   };
 
-  render = (appeal = this.props.appeal) => <div {...inlineDisplay}>
+  render = (appeal = this.props.appeal) => <div {...this.getStyling()}>
     {_.isEmpty(appeal.issues) ?
       NO_ISSUES_ON_APPEAL_MSG :
       <ol className={this.props.className}>
@@ -71,12 +71,14 @@ QueueIssueList.propTypes = {
   className: PropTypes.string,
   formatLevelsInNewLine: PropTypes.bool,
   displayIssueProgram: PropTypes.bool,
-  displayLabels: PropTypes.bool
+  displayLabels: PropTypes.bool,
+  tightLevelStyling: PropTypes.bool
 };
 
 QueueIssueList.defaultProps = {
   className: '',
   formatLevelsInNewLine: false,
   displayIssueProgram: false,
-  displayLabels: false
+  displayLabels: false,
+  tightLevelStyling: false
 };
