@@ -6,8 +6,8 @@ import { combineReducers } from 'redux';
 
 export const initialState = {
   loadedQueue: {
-    appeals: [],
-    tasks: []
+    appeals: {},
+    tasks: {}
   }
 };
 
@@ -21,6 +21,20 @@ const workQueueReducer = (state = initialState, action = {}) => {
         },
         tasks: {
           $set: action.payload.tasks
+        }
+      }
+    });
+  case ACTIONS.SET_APPEAL_DOC_COUNT:
+    return update(state, {
+      loadedQueue: {
+        appeals: {
+          [action.payload.appealId]: {
+            attributes: {
+              docCount: {
+                $set: action.payload.docCount
+              }
+            }
+          }
         }
       }
     });
