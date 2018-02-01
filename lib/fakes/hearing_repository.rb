@@ -9,11 +9,12 @@ class Fakes::HearingRepository
     user = User.find_by_css_id(css_id)
     records.select { |h| h.user_id == user.id }
 
-    records.map do |vacols_id, r|
-      Hearing.find_or_create_by(vacols_id: vacols_id).tap do |hearing|
-        hearing.assign_from_vacols(r)
+    records.map do |record|
+      next if record.master_record
+      Hearing.find_or_create_by(vacols_id: record.vacols_id).tap do |hearing|
+        hearing.assign_from_vacols(record.vacols_attributes)
       end
-    end
+    end.flatten
   end
 
   def self.records
@@ -102,14 +103,14 @@ class Fakes::HearingRepository
       hearing = Generators::Hearing.build(random_attrs(i).merge(user: user))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
-    4.times.each do |i|
-      Generators::Hearings::MasterRecord.build(
-        user_id: user.id,
-        date: Time.now.in_time_zone("EST").beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
-        type: VACOLS::CaseHearing::HEARING_TYPES.values[1],
-        regional_office_key: "RO21"
-      )
-    end
+    # 4.times.each do |i|
+    #   Generators::Hearings::MasterRecord.build(
+    #     user_id: user.id,
+    #     date: Time.now.in_time_zone("EST").beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
+    #     type: VACOLS::CaseHearing::HEARING_TYPES.values[1],
+    #     regional_office_key: "RO21"
+    #   )
+    # end
   end
 
   def self.random_attrs(i)
