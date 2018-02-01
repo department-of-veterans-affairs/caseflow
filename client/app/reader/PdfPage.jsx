@@ -17,6 +17,7 @@ import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
+import { COLORS } from '../constants/AppConstants';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -28,9 +29,9 @@ const PAGE_DIMENSION_SCALE = 1;
 
 const markStyle = css({
   '& mark': {
-    background: '#fff1d2',
+    background: COLORS.GOLD_LIGHTEST,
     '.highlighted': {
-      background: '#f9c642'
+      background: COLORS.GOLD_LIGHT
     }
   }
 });
