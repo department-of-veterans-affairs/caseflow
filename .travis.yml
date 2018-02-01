@@ -81,6 +81,8 @@ jobs:
     - 
       env: TEST_CATEGORY=certification
       script:
+        - whereis google-chrome-stable
+        - whereis chromedriver
         - bundle exec rake spec:parallel:setup:certification
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
