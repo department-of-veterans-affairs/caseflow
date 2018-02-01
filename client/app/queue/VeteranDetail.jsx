@@ -28,7 +28,7 @@ export default class VeteranDetail extends React.PureComponent {
     const streetAddress = `${addressLine1}${addressLine2 || ''}`;
 
     return `${streetAddress}, ${city} ${state}, ${zip} ${country === 'USA' ? '' : country}`;
-  }
+  };
 
   getListElements = () => [{
     label: 'Name',
@@ -48,11 +48,13 @@ export default class VeteranDetail extends React.PureComponent {
 
   render = () => <div {...this.getStyling()}>
     <h2>Veteran Details</h2>
-    {/* <span>The veteran is the appellant</span>*/}
+    <span>
+      {this.getAppealAttr('appellant_full_name') === null ? 'The veteran is the appellant.' : ''}
+    </span>
     <ul className="veteran-summary-ul">
       {this.getListElements()}
     </ul>
-  </div>
+  </div>;
 }
 
 VeteranDetail.propTypes = {

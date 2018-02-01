@@ -80,6 +80,10 @@ class QueueTable extends React.PureComponent {
   ];
 
   createLoadPromise = (task) => () => {
+    if (!_.isUndefined(this.props.appeals[task.appealId].attributes.docCount)) {
+      return Promise.resolve();
+    }
+
     const url = this.getAppealForTask(task, 'number_of_documents_url');
     const requestOptions = {
       withCredentials: true,

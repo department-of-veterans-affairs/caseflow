@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import QueueIssueList from './QueueIssueList';
 import { boldText } from './constants';
+import StringUtil from '../util/StringUtil';
 
 export default class AppealSummary extends React.PureComponent {
   getStyling = () => css({
@@ -20,7 +21,7 @@ export default class AppealSummary extends React.PureComponent {
 
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr)
 
-  getLatestHearing = () => {
+  getLastHearing = () => {
     const hearings = this.getAppealAttr('hearings');
 
     if (!hearings.length) {
@@ -38,13 +39,13 @@ export default class AppealSummary extends React.PureComponent {
     valueFunction: () => this.getAppealAttr('power_of_attorney')
   }, {
     label: 'Hearing Preference',
-    valueFunction: () => ''
+    valueFunction: () => this.getLastHearing().type ? StringUtil.snakeCaseToCapitalized(this.getLastHearing().type) : ''
   }, {
     label: 'Hearing held',
-    valueFunction: () => this.getLatestHearing().held_on ? moment(this.getLatestHearing().held_on).format('M/D/YY') : ''
+    valueFunction: () => this.getLastHearing().held_on ? moment(this.getLastHearing().held_on).format('M/D/YY') : ''
   }, {
     label: 'Judge at hearing',
-    valueFunction: () => this.getLatestHearing().held_by
+    valueFunction: () => this.getLastHearing().held_by
   }, {
     label: 'Regional Office',
     valueFunction: () => {
