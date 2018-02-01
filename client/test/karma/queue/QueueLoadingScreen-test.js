@@ -56,7 +56,7 @@ describe('QueueLoadingScreen', () => {
     expect(tasksWithAppeals).to.deep.equal({
       111: {
         id: '111',
-        appealId: '1',
+        vacolsId: '1',
         attributes: {
           appeal_id: '1',
           docket_date: '2017-12-28T17:18:20.412Z'
@@ -64,7 +64,7 @@ describe('QueueLoadingScreen', () => {
       },
       222: {
         id: '222',
-        appealId: '1',
+        vacolsId: '1',
         attributes: {
           appeal_id: '1',
           docket_date: '2016-10-07T03:15:27.580Z'
@@ -72,7 +72,7 @@ describe('QueueLoadingScreen', () => {
       },
       333: {
         id: '333',
-        appealId: '2',
+        vacolsId: '2',
         attributes: {
           appeal_id: '2',
           docket_date: '2015-10-13T06:47:34.155Z'
@@ -80,7 +80,7 @@ describe('QueueLoadingScreen', () => {
       },
       444: {
         id: '444',
-        appealId: '3',
+        vacolsId: '3',
         attributes: {
           appeal_id: '3',
           docket_date: '2016-03-01T04:15:51.123Z'
@@ -89,7 +89,7 @@ describe('QueueLoadingScreen', () => {
     });
   });
 
-  it.only('groups tasks by AOD/CAVC and sorts by docket date', () => {
+  it('groups tasks by AOD/CAVC and sorts by docket date', () => {
     const { tasks, appeals } = associateTasksWithAppeals(serverData);
 
     const sortedTasks = sortTasks({
@@ -99,28 +99,28 @@ describe('QueueLoadingScreen', () => {
 
     expect(sortedTasks).to.deep.equal([{
       id: '333',
-      appealId: '2',
+      vacolsId: '2',
       attributes: {
         appeal_id: '2',
         docket_date: '2015-10-13T06:47:34.155Z'
       }
     }, {
       id: '222',
-      appealId: '1',
+      vacolsId: '1',
       attributes: {
         appeal_id: '1',
         docket_date: '2016-10-07T03:15:27.580Z'
       }
     }, {
       id: '111',
-      appealId: '1',
+      vacolsId: '1',
       attributes: {
         appeal_id: '1',
         docket_date: '2017-12-28T17:18:20.412Z'
       }
     }, {
       id: '444',
-      appealId: '3',
+      vacolsId: '3',
       attributes: {
         appeal_id: '3',
         docket_date: '2016-03-01T04:15:51.123Z'

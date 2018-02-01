@@ -18,10 +18,10 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => (dispatch) => {
   dispatch(setLoadedQueueId(userId));
 };
 
-export const setAppealDocCount = ({ appealId, docCount }) => ({
+export const setAppealDocCount = ({ vacolsId, docCount }) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
+    vacolsId,
     docCount
   }
 });

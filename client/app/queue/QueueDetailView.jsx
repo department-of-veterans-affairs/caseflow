@@ -41,7 +41,7 @@ class QueueDetailView extends React.PureComponent {
         Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
         Due {moment(task.due_on).format('MM/DD/YY')}
       </p>
-      <ReaderLink appealId={this.props.appealId} message="Open documents in Caseflow Reader" />
+      <ReaderLink vacolsId={this.props.vacolsId} message="Open documents in Caseflow Reader" />
 
       <TabWindow
         name="queue-tabwindow"
@@ -51,13 +51,12 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  appealId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  // todo: rename appealId to vacolsId
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId]
+  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
 export default connect(mapStateToProps)(QueueDetailView);

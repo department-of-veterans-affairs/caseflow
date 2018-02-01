@@ -29,7 +29,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Link to="/">&lt; Back to your queue</Link>
-    <QueueDetailView appealId={props.match.params.appeal_id} />
+    <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   getSearchStyling = () => css({
@@ -71,9 +71,9 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/tasks/:appeal_id"
+            path="/tasks/:vacolsId"
             title={(params) => {
-              const appeal = this.props.appeals[params.appeal_id];
+              const appeal = this.props.appeals[params.vacolsId];
 
               if (!appeal) {
                 return 'Draft Decision | Caseflow Queue';

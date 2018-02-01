@@ -37,7 +37,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       loadedQueue: {
         appeals: {
-          [action.payload.appealId]: {
+          [action.payload.vacolsId]: {
             attributes: {
               docCount: {
                 $set: action.payload.docCount

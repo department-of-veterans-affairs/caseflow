@@ -28,10 +28,10 @@ class ReaderLink extends React.PureComponent {
 }
 
 ReaderLink.propTypes = {
-  appealId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) =>
-  _.pick(state.queue.loadedQueue.appeals[ownProps.appealId].attributes, 'docCount', 'vacols_id');
+  _.pick(state.queue.loadedQueue.appeals[ownProps.vacolsId].attributes, 'docCount', 'vacols_id');
 
 export default connect(mapStateToProps)(ReaderLink);
