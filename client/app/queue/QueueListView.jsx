@@ -19,10 +19,7 @@ class QueueListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 className="cf-push-left">Your Queue</h1>
-        <QueueTable
-          tasks={this.props.tasks}
-          appeals={this.props.appeals}
-        />
+        <QueueTable />
       </div>;
     }
 
@@ -33,8 +30,8 @@ class QueueListView extends React.PureComponent {
 }
 
 QueueListView.propTypes = {
-  tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  tasks: PropTypes.object.isRequired,
+  appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');

@@ -58,7 +58,9 @@ module AssociatedVacolsModel
     # commented out error.
     # raise LazyLoadingDisabledError if @vacols_load_status == :disabled
     if @vacols_load_status == :disabled
-      Rails.logger.warn "Future Error: Lazy Load triggered after VACOLS values are set."
+      # For now we will send it to Sentry so we can fix cases
+      # where LazyLoadingDisabledError happens in production
+      Raven.capture_exception(LazyLoadingDisabledError.new)
       @vacols_load_status = nil
     end
 

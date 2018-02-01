@@ -20,7 +20,7 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
-    // Promise does not give us a way to "un-then" and stop listening 
+    // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
     promise.then(
@@ -64,14 +64,18 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
+    const {
+      loadingComponent: LoadingComponent,
+      errorComponent: ErrorComponent
+    } = this.props;
     const isTimedOut = this.state.promiseTimeElapsedMs > this.props.timeoutMs;
 
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
-      return <StatusMessage {...this.props.failStatusMessageProps}>
+      return <ErrorComponent {...this.props.failStatusMessageProps}>
         {this.props.failStatusMessageChildren}
-      </StatusMessage>;
+      </ErrorComponent>;
     }
 
     if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
@@ -79,24 +83,32 @@ class LoadingDataDisplay extends React.PureComponent {
     }
 
     const isSlow = this.state.promiseTimeElapsedMs > this.props.slowLoadThresholdMs;
-    const loadingScreenProps = { ...this.props.loadingScreenProps };
+    const loadingComponentProps = { ...this.props.loadingComponentProps };
 
     if (isSlow) {
-      loadingScreenProps.message = this.props.slowLoadMessage;
+      loadingComponentProps.message = this.props.slowLoadMessage;
     }
 
-    return <LoadingScreen {...loadingScreenProps} />;
+    return <LoadingComponent {...loadingComponentProps} />;
   }
 }
 
 LoadingDataDisplay.propTypes = {
-  createLoadPromise: PropTypes.func.isRequired
+  createLoadPromise: PropTypes.func.isRequired,
+  loadingComponentProps: PropTypes.object,
+  failStatusMessageProps: PropTypes.object,
+  failStatusMessageChildren: PropTypes.object
 };
 
 LoadingDataDisplay.defaultProps = {
   slowLoadThresholdMs: 15 * 1000,
   timeoutMs: Infinity,
-  slowLoadMessage: 'Loading is taking longer than usual...'
+  slowLoadMessage: 'Loading is taking longer than usual...',
+  loadingComponent: LoadingScreen,
+  errorComponent: StatusMessage,
+  loadingComponentProps: {},
+  failStatusMessageProps: {},
+  failStatusMessageChildren: {}
 };
 
 export default LoadingDataDisplay;

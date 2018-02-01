@@ -26,5 +26,9 @@ export const LOGO_COLORS = {
   CERTIFICATION: {
     ACCENT: '#459FD7',
     OVERLAP: COLORS.GREY_LIGHT
+  },
+  QUEUE: {
+    ACCENT: '#11598D',
+    OVERLAP: '#0E456C'
   }
 };
