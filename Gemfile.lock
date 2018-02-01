@@ -53,8 +53,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 31e3991b413d88d7865b6716ba45f3fada038896
-  branch: travis-dispatch
+  revision: d5f94213dcef08756f8d1622355015739e96ff4f
+  branch: master
   specs:
     sniffybara (0.0.1)
       rainbow
@@ -249,7 +249,7 @@ GEM
       thor (~> 0.19)
     newrelic_rpm (4.7.1.340)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     octokit (4.8.0)
@@ -529,4 +529,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
