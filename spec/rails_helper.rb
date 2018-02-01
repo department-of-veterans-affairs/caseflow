@@ -53,6 +53,11 @@ end
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  chrome_options = ::Selenium::WebDriver::Chrome::Options.new()
+  chrome_options.args << 'headless'
+  chrome_options.args << 'no-sandbox'
+  chrome_options.args << 'disable-gpu'
+
   options = {
     port: 51_674,
     browser: :chrome,
@@ -65,7 +70,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
         disk_cache_dir: cache_directory
       }
     },
-    args: ["--no-sandbox", "--headless", "--disable-gpu"]
+    options: chrome_options
   }
   
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
