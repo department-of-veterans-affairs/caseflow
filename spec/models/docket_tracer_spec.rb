@@ -30,6 +30,8 @@ describe DocketSnapshot do
       expect(subject[:total]).to eq(123_456)
       expect(subject[:ahead]).to eq(13_456)
       expect(subject[:ready]).to eq(8456)
+      expect(subject[:month]).to eq(11.months.ago.to_date.beginning_of_month)
+      expect(subject[:docket_month]).to eq(11.months.ago.to_date.beginning_of_month)
       expect(subject[:eta]).to eq(nil)
     end
   end
