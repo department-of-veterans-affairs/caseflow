@@ -42,9 +42,9 @@ before_install:
   # - sudo apt-get install pdftk
   # - "export PATH=$PATH:/usr/lib/chromium-browser/"
   # - "export DISPLAY=:99.0"
-  - wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux32.zip -P ~/
-  - unzip ~/chromedriver_linux32.zip -d ~/
-  - rm ~/chromedriver_linux32.zip
+  - wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
   - sudo mv -f ~/chromedriver /usr/local/share/
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
