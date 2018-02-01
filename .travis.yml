@@ -45,20 +45,19 @@ before_install:
   # - sudo apt-get install pdftk
   # - "export PATH=$PATH:/usr/lib/chromium-browser/"
   # - "export DISPLAY=:99.0"
-  # - wget -N http://chromedriver.storage.googleapis.com/2.27/chromedriver_linux64.zip -P ~/
-  # - unzip ~/chromedriver_linux64.zip -d ~/
-  # - rm ~/chromedriver_linux64.zip
-  # - sudo mv -f ~/chromedriver /usr/local/share/
-  # - sudo chmod +x /usr/local/share/chromedriver
-  # - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  - wget -N http://chromedriver.storage.googleapis.com/2.27/chromedriver_linux32.zip -P ~/
+  - unzip ~/chromedriver_linux32.zip -d ~/
+  - rm ~/chromedriver_linux32.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - sudo apt-get install pdftk
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
 
 before_script:
   - bundle exec danger
-  - "export PATH=$PATH:/usr/lib/chromium-browser/"
-  - "export DISPLAY=:99.0"
+  - export DISPLAY=:99.0
 
 # script:
 #   - whereis google-chrome-stable
