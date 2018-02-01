@@ -57,6 +57,8 @@ before_install:
 
 before_script:
   - bundle exec danger
+  - "export PATH=$PATH:/usr/lib/chromium-browser/"
+  - "export DISPLAY=:99.0"
 
 # script:
 #   - whereis google-chrome-stable
