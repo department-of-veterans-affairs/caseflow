@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 
 const appStyling = css({
   paddingTop: '3rem'
-})
+});
 
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {

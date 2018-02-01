@@ -7,21 +7,20 @@ import { NO_ISSUES_ON_APPEAL_MSG } from './constants';
 import { boldText } from '../queue/constants';
 import StringUtil from '../util/StringUtil';
 
+const issueListStyle = css({
+  display: 'inline'
+});
+const labelStyle = (displayIssueProgram) => css({
+  marginLeft: displayIssueProgram ? '2rem' : null
+});
+const issueLevelStyle = (displayIssueProgram, tightLevelStyling) => css({
+  marginBottom: 0,
+  marginTop: tightLevelStyling ? 0 : '0.5rem',
+  marginLeft: displayIssueProgram ? '20rem' : null
+});
+
 // todo: move to queue after Reader welcome gate deprecation
 export default class IssueList extends React.PureComponent {
-  getStyling = () => css({
-    display: 'inline',
-    '& .issue-level': {
-      marginBottom: 0,
-      marginTop: this.props.tightLevelStyling ? '0' : '0.5rem',
-      '&.indented': {
-        marginLeft: '20rem'
-      }
-    },
-    '& .issue-label.indented': {
-      marginLeft: '2rem'
-    }
-  });
 
   csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
 
@@ -31,9 +30,15 @@ export default class IssueList extends React.PureComponent {
    */
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
     if (formatLevelsInNewLine) {
-      const pClassName = `issue-level ${this.props.displayIssueProgram ? 'indented' : ''}`;
+      const {
+        displayIssueProgram,
+        tightLevelStyling
+      } = this.props;
 
-      return issue.levels.map((level) => <p className={pClassName} key={level}>{level}</p>);
+      return issue.levels.map((level) =>
+        <p {...issueLevelStyle(displayIssueProgram, tightLevelStyling)} key={level}>
+          {level}
+        </p>);
     }
 
     return this.csvIssueLevels(issue);
@@ -43,7 +48,7 @@ export default class IssueList extends React.PureComponent {
     const label = issue.type;
 
     if (this.props.displayLabels) {
-      return <span className={`issue-label ${this.props.displayIssueProgram ? 'indented' : ''}`}>
+      return <span {...labelStyle(this.props.displayIssueProgram)}>
         <span {...boldText}>Issue:</span> {label}
       </span>;
     }
@@ -51,10 +56,12 @@ export default class IssueList extends React.PureComponent {
     return label;
   };
 
-  render = (appeal = this.props.appeal) => <div {...this.getStyling()}>
-    {_.isEmpty(appeal.issues) ?
-      NO_ISSUES_ON_APPEAL_MSG :
-      <ol className={this.props.className}>
+  render = () => {
+    const appeal = this.props.appeal;
+    let listContent = NO_ISSUES_ON_APPEAL_MSG;
+
+    if (!_.isEmpty(appeal.issues)) {
+      listContent = <ol className={this.props.className}>
         {appeal.issues.map((issue) =>
           <li key={`${issue.id}_${issue.vacols_sequence_id}`}>
             {this.props.displayIssueProgram && <span>
@@ -65,9 +72,13 @@ export default class IssueList extends React.PureComponent {
             </span>
           </li>
         )}
-      </ol>
+      </ol>;
     }
-  </div>;
+
+    return <div {...issueListStyle}>
+      {listContent}
+    </div>;
+  };
 }
 
 IssueList.propTypes = {

@@ -12,7 +12,7 @@ export const ACTIONS = {
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT'
 };
 
-// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
+// 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
 export const redText = css({ color: '#E60000' });
 
 export const boldText = css({ fontWeight: 'bold' });

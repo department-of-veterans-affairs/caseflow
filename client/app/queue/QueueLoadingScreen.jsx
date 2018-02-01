@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
-    const userId = this.props.userId;
+    const { userId } = this.props;
     const userQueueLoaded = !_.isEmpty(this.props.tasks) && !_.isEmpty(this.props.appeals) &&
       this.props.loadedUserId === userId;
 
