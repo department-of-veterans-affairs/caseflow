@@ -17,10 +17,12 @@ class Appeal < ActiveRecord::Base
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
-  vacols_attr_accessor :appellant_city, :appellant_state
+  vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
+  vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -42,7 +44,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -118,6 +120,14 @@ class Appeal < ActiveRecord::Base
 
   def number_of_documents
     documents.size
+  end
+
+  def number_of_documents_url
+    if document_service == ExternalApi::EfolderService
+      ExternalApi::EfolderService.efolder_files_url
+    else
+      "/queue/#{id}/docs"
+    end
   end
 
   def number_of_documents_after_certification
@@ -256,8 +266,8 @@ class Appeal < ActiveRecord::Base
     location_code == LOCATION_CODES[location]
   end
 
-  def case_assignment_exists?
-    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
+  cache_attribute :case_assignment_exists do
+    self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
@@ -333,7 +343,33 @@ class Appeal < ActiveRecord::Base
     save ? find_or_create_documents! : fetched_documents
   end
 
+  def find_or_create_documents_v2!
+    AddSeriesIdToDocumentsJob.perform_now(self)
+
+    ids = fetched_documents.map(&:series_id)
+    existing_documents = Document.where(series_id: ids)
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.series_id] = document
+    end
+
+    fetched_documents.map do |document|
+      begin
+        if existing_documents[document.series_id]
+          document.merge_into(existing_documents[document.series_id]).save!
+          existing_documents[document.series_id]
+        else
+          document.save!
+          document
+        end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by(series_id: document.series_id)
+      end
+    end
+  end
+
   def find_or_create_documents!
+    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
+                                                                  user: RequestStore.store[:current_user])
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
@@ -341,15 +377,16 @@ class Appeal < ActiveRecord::Base
     end
 
     fetched_documents.map do |document|
-      if existing_documents[document.vbms_document_id]
-        document.merge_into(existing_documents[document.vbms_document_id])
-      else
-        begin
+      begin
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
+        else
           document.save!
           document
-        rescue ActiveRecord::RecordNotUnique
-          Document.find_by_vbms_document_id(document.vbms_document_id)
         end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
@@ -441,6 +478,10 @@ class Appeal < ActiveRecord::Base
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
+    # If testing against a local eFolder express instance then we want to pass DEMO
+    # values, so we should not sanitize the vbms_id.
+    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
     # ensure 8 digits if "C"-type id

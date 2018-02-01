@@ -71,24 +71,35 @@ class Fakes::HearingRepository
     Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
   end
 
+  def self.create_already_held_hearing_for_appeal(i, appeal)
+    user = User.find_by_css_id("Hearing Prep")
+    attrs = random_attrs(i)
+    attrs[:disposition] = :held
+    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
+  end
+
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
-    50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
-    2.times.each { |i| Generators::Hearings::MasterRecord.build(user_id: user.id, date: Time.zone.now + (i + 6).days) }
+    38.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
+    4.times.each do |i|
+      Generators::Hearings::MasterRecord.build(
+        user_id: user.id,
+        date: Time.zone.now.beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
+        type: VACOLS::CaseHearing::HEARING_TYPES.values[1],
+        regional_office_key: "RO21"
+      )
+    end
   end
 
   def self.random_attrs(i)
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
-      type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
-      date: Time.zone.now - (i % 9).days - rand(3).days - rand(2).hours + rand(60).minutes,
+      type: VACOLS::CaseHearing::HEARING_TYPES.values[((i % 3 == 0) ? 2 : 0)],
+      date: Time.zone.now.beginning_of_day +
+        ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes,
       vacols_id: 950_330_575 + (i * 1465),
-      disposition: nil,
-      aod: nil,
-      hold_open: nil,
-      add_on: false,
-      notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
-      transcript_requested: false
+      notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
+      regional_office_key: %w[RO11 RO10 RO42 RO43 RO28 RO44][i % 6]
     }
   end
 end

@@ -6,7 +6,7 @@ import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import * as Constants from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class CaseSelectLoadingScreen extends React.Component {
   createLoadPromise = () => {
@@ -26,10 +26,10 @@ export class CaseSelectLoadingScreen extends React.Component {
         Please <a href="">refresh the page</a> and try again.
     </div>;
 
-    const loadingDataDisplay = <LoadingDataDisplay
+    return <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
-        spinnerColor: Constants.READER_COLOR,
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.READER.ACCENT,
         message: 'Loading cases in Reader...'
       }}
       failStatusMessageProps={{
@@ -38,10 +38,6 @@ export class CaseSelectLoadingScreen extends React.Component {
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
     </LoadingDataDisplay>;
-
-    return <div className="usa-grid">
-      {loadingDataDisplay}
-    </div>;
   }
 }
 

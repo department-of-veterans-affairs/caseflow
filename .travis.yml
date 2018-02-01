@@ -124,7 +124,6 @@ jobs:
         - cd ..
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
-        - bundle exec rake konacha:run
         - bundle exec rake mocha
     -
       env: TEST_CATEGORY=linters_and_security

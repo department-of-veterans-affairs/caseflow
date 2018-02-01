@@ -127,6 +127,8 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      veteran_date_of_birth: correspondent_record.sdob,
+      veteran_gender: correspondent_record.sgender,
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
@@ -135,8 +137,12 @@ class AppealRepository
       appellant_last_name: correspondent_record.sspare3,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
       appellant_ssn: correspondent_record.ssn,
+      appellant_address_line_1: correspondent_record.saddrst1,
+      appellant_address_line_2: correspondent_record.saddrst2,
       appellant_city: correspondent_record.saddrcty,
       appellant_state: correspondent_record.saddrstt,
+      appellant_country: correspondent_record.saddrcnty,
+      appellant_zip: correspondent_record.saddrzip,
       insurance_loan_number: case_record.bfpdnum,
       notification_date: normalize_vacols_date(case_record.bfdrodec),
       nod_date: normalize_vacols_date(case_record.bfdnod),
@@ -447,6 +453,32 @@ class AppealRepository
 
   def self.case_assignment_exists?(vacols_id)
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
+  end
+
+  def self.regular_non_aod_docket_count
+    MetricsService.record("VACOLS: regular_non_aod_docket_count",
+                          name: "regular_non_aod_docket_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.regular_non_aod_docket_count
+    end
+  end
+
+  def self.latest_docket_month
+    result = MetricsService.record("VACOLS: latest_docket_month",
+                                   name: "latest_docket_month",
+                                   service: :vacols) do
+      VACOLS::CaseDocket.docket_date_of_nth_appeal_in_case_storage(3500)
+    end
+
+    result.beginning_of_month
+  end
+
+  def self.docket_counts_by_month
+    MetricsService.record("VACOLS: docket_counts_by_month",
+                          name: "docket_counts_by_month",
+                          service: :vacols) do
+      VACOLS::CaseDocket.docket_counts_by_month
+    end
   end
 
   class << self

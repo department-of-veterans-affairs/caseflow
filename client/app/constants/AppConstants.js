@@ -1,10 +1,34 @@
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
 // poll dependency outage every 2 minutes
 export const DEPENDENCY_OUTAGE_POLLING_INTERVAL = 120000;
-export const LOADING_INDICATOR_COLOR_CERTIFICATION = '#459FD7';
-export const LOADING_INDICATOR_COLOR_DEFAULT = '#323A45';
-export const LOADING_INDICATOR_COLOR_DISPATCH = '#844E9F';
-export const LOADING_INDICATOR_COLOR_HEARINGS = '#68BD07';
-export const LOADING_INDICATOR_COLOR_READER = '#417505';
 export const LONGER_THAN_USUAL_TIMEOUT = 10000;
 export const CERTIFICATION_DATA_POLLING_INTERVAL = 5000;
 export const CERTIFICATION_DATA_OVERALL_TIMEOUT = 180000;
+
+export const LOGO_COLORS = {
+  READER: {
+    ACCENT: '#417505',
+    OVERLAP: '#2D5104'
+  },
+  INTAKE: {
+    ACCENT: '#FFCC4E',
+    OVERLAP: '#CA9E00'
+  },
+  DISPATCH: {
+    ACCENT: '#844e9f',
+    OVERLAP: '#7a4b91'
+  },
+  HEARINGS: {
+    ACCENT: '#56b605',
+    OVERLAP: COLORS.GREY_LIGHT
+  },
+  CERTIFICATION: {
+    ACCENT: '#459FD7',
+    OVERLAP: COLORS.GREY_LIGHT
+  },
+  QUEUE: {
+    ACCENT: '#11598D',
+    OVERLAP: '#0E456C'
+  }
+};

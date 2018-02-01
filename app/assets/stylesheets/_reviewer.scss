@@ -416,18 +416,6 @@ svg[aria-hidden=true],
 
         label:last-child {
           margin-bottom: 0;
-
-          .cf-category-selector {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-
-    .cf-document-category-picker {
-      li:last-child {
-        div {
-          margin-bottom: 0;
         }
       }
     }
@@ -650,10 +638,6 @@ input[type="search"].cf-search-input-with-close {
 
 .cf-pdf-page-hidden {
   visibility: hidden;
-}
-
-.cf-pdf-center-text {
-  text-align: center;
 }
 
 .cf-keyboard-shortcuts {

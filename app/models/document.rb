@@ -87,7 +87,8 @@ class Document < ActiveRecord::Base
     new(efolder_id: hash["id"],
         type: type_from_vbms_type(hash["type_id"]),
         received_at: hash["received_at"],
-        vbms_document_id: hash["external_document_id"],
+        vbms_document_id: hash["external_document_id"] || hash["version_id"],
+        series_id: hash["series_id"],
         file_number: file_number)
   end
 
@@ -170,14 +171,15 @@ class Document < ActiveRecord::Base
       alt_types: alt_types,
       received_at: received_at,
       filename: filename,
-      vbms_document_id: vbms_document_id
+      vbms_document_id: vbms_document_id,
+      series_id: series_id
     )
 
     document
   end
 
   def category_case_summary
-    CASE_SUMMARY_TYPES.include?(type) || received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF
+    CASE_SUMMARY_TYPES.include?(type) || (received_at && received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF)
   end
 
   def serialized_vacols_date

@@ -1,10 +1,10 @@
 class ApplicationController < ApplicationBaseController
   before_action :set_application
   before_action :set_timezone,
-                :setup_fakes,
-                :check_whats_new_cookie
+                :setup_fakes
   before_action :set_raven_user
   before_action :verify_authentication
+  before_action :set_paper_trail_whodunnit
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -118,12 +118,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :test_user?
 
-  def check_whats_new_cookie
-    client_last_seen_version = cookies[:whats_new]
-    @show_whats_new_indicator = client_last_seen_version.nil? ||
-                                client_last_seen_version != WhatsNewService.version
-  end
-
   def verify_authentication
     return true if current_user && current_user.authenticated?
 
@@ -177,6 +171,24 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
+  def feedback_subject
+    # TODO: when we want to segment feedback subjects further,
+    # add more conditions here.
+    if request.original_fullpath.include? "dispatch"
+      "Caseflow Dispatch"
+    elsif request.original_fullpath.include? "certifications"
+      "Caseflow Certification"
+    elsif request.original_fullpath.include? "reader"
+      "Caseflow Reader"
+    elsif request.original_fullpath.include? "hearings"
+      "Caseflow Hearing Prep"
+    elsif request.original_fullpath.include? "intake"
+      "Caseflow Intake"
+    else
+      "Caseflow"
+    end
+  end
+
   def feedback_url
     # :nocov:
     unless ENV["CASEFLOW_FEEDBACK_URL"]
@@ -184,21 +196,7 @@ class ApplicationController < ApplicationBaseController
     end
     # :nocov:
 
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    subject = if request.original_fullpath.include? "dispatch"
-                "Caseflow Dispatch"
-              elsif request.original_fullpath.include? "certifications"
-                "Caseflow Certification"
-              elsif request.original_fullpath.include? "reader"
-                "Caseflow Reader"
-              elsif request.original_fullpath.include? "hearings"
-                "Caseflow Hearing Prep"
-              else
-                "Caseflow"
-              end
-
-    param_object = { redirect: request.original_url, subject: subject }
+    param_object = { redirect: request.original_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end

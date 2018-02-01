@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import DocketHearingRow from './components/DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 export class DailyDocket extends React.Component {
 
@@ -11,7 +12,7 @@ export class DailyDocket extends React.Component {
     const docket = this.props.docket;
 
     return <div>
-      <div className="cf-app-segment cf-app-segment--alt cf-hearings">
+      <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket</h1>
@@ -25,8 +26,10 @@ export class DailyDocket extends React.Component {
         <table className="cf-hearings-docket">
           <thead>
             <tr>
-              <th>Time/Regional Office</th>
-              <th>Appellant/Veteran ID</th>
+              <th></th>
+              <th>Prep</th>
+              <th>Time/RO(s)</th>
+              <th>Veteran/Veteran ID</th>
               <th>Representative</th>
               <th>
                 Actions
@@ -42,8 +45,8 @@ export class DailyDocket extends React.Component {
             />
           )}
         </table>
-      </div>
-      <div className="cf-alt--actions cf-alt--app-width">
+      </AppSegment>
+      <div className="cf-alt--actions">
         <div className="cf-push-left">
           <Link to="/hearings/dockets">&lt; Back to Your Hearing Days</Link>
         </div>

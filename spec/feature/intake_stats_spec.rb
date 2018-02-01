@@ -6,7 +6,7 @@ RSpec.feature "Intake Stats Dashboard" do
   end
 
   scenario "Switching tab intervals" do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(roles: ["Admin Intake"])
 
     RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
     RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)
@@ -17,11 +17,15 @@ RSpec.feature "Intake Stats Dashboard" do
       end_product_reference_id: "132"
     )
 
+    expect(CalculateIntakeStatsJob).to receive(:perform_later)
+
     visit "/intake/stats"
     expect(page).to have_content("RAMP Elections for January (so far)")
     expect(page).to have_content("Sent 2")
     expect(page).to have_content("Successfully Received 1")
     expect(page).to have_content("Median Response Time 7.00 days")
+
+    expect(CalculateIntakeStatsJob).to receive(:perform_later)
 
     click_on "Daily"
     expect(page).to have_content("RAMP Elections for January 7")

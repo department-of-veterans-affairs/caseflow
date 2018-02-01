@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7cacaa8f607666ba0f4b971640cf3a4c21db1b83"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "2970f415ba80ccf338e1b4ecb4386c98be29f8b9"
 
 gem "moment_timezone-rails"
 
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5dda05573d424d557be7a09052ab24b0dc6a5c5f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -130,8 +130,7 @@ group :development, :test do
   gem "timecop"
 
   gem "database_cleaner"
-  gem "konacha"
-  gem "poltergeist" # For legacy JS tests. Remove when we're all React
+
   # to save and open specific page in capybara tests
   gem "launchy"
 

@@ -372,6 +372,169 @@ describe Appeal do
     end
   end
 
+  context "#find_or_create_documents_v2!" do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      FeatureToggle.enable!(:efolder_api_v2)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+      FeatureToggle.disable!(:efolder_api_v2)
+    end
+    let(:series_id) { "TEST_SERIES_ID" }
+
+    let(:documents) do
+      [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
+    end
+
+    context "when there is no existing document" do
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "saves retrieved documents" do
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when there is a document with same series_id" do
+      let!(:saved_document) { Generators::Document.create(type: "Form 9", series_id: series_id) }
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "updates retrieved documents" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq("NOD")
+      end
+    end
+
+    context "when there is a document with no series_id" do
+      let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+      let!(:saved_document) do
+        Generators::Document.create(
+          type: "Form 9",
+          vbms_document_id: vbms_document_id,
+          series_id: nil,
+          file_number: appeal.sanitized_vbms_id
+        )
+      end
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
+          [[
+            OpenStruct.new(
+              vbms_filename: "test_file",
+              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
+              document_id: vbms_document_id,
+              version_id: vbms_document_id,
+              series_id: series_id,
+              version: 0,
+              mime_type: "application/pdf",
+              received_at: rand(100).days.ago,
+              downloaded_from: "VBMS"
+            ),
+            OpenStruct.new(
+              vbms_filename: "test_file",
+              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
+              document_id: "DIFFERENT_ID",
+              version_id: "DIFFERENT_ID",
+              series_id: series_id,
+              version: 1,
+              mime_type: "application/pdf",
+              received_at: rand(100).days.ago,
+              downloaded_from: "VBMS"
+            )
+          ]]
+        )
+      end
+
+      it "adds series_id and updates retrieved documents" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+        expect(Document.first.series_id).to eq(nil)
+
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.first.series_id).to eq(series_id)
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+      end
+    end
+  end
+
+  context "#find_or_create_documents!" do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+    end
+    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+
+    let(:documents) do
+      [
+        Generators::Document.build(
+          type: "NOD",
+          vbms_document_id: vbms_document_id
+        ),
+        Generators::Document.build(type: "SOC")
+      ]
+    end
+
+    context "when there is no existing document" do
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "saves retrieved documents" do
+        returned_documents = appeal.find_or_create_documents!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when there is a document with same vbms_document_id" do
+      let!(:saved_document) { Generators::Document.create(type: "Form 9", vbms_document_id: vbms_document_id) }
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "updates retrieved documents" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+
+        returned_documents = appeal.find_or_create_documents!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq("NOD")
+      end
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
@@ -528,8 +691,8 @@ describe Appeal do
     end
   end
 
-  context "#case_assignment_exists?" do
-    subject { appeal.case_assignment_exists? }
+  context "#case_assignment_exists" do
+    subject { appeal.case_assignment_exists }
 
     it { is_expected.to be_truthy }
   end
@@ -1446,9 +1609,7 @@ describe Appeal do
         { worksheet_issues_attributes: [{
           remand: true,
           vha: true,
-          program: "Wheel",
-          name: "Spoon",
-          levels: "Cabbage\nPickle",
+          description: "Cabbage\nPickle",
           notes: "Donkey\nCow",
           from_vacols: true,
           vacols_sequence_id: 1
@@ -1466,9 +1627,7 @@ describe Appeal do
         expect(issue.deny).to eq false
         expect(issue.dismiss).to eq false
         expect(issue.vha).to eq true
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
@@ -1486,9 +1645,7 @@ describe Appeal do
         expect(issue.remand).to eq(true)
         expect(issue.allow).to eq(false)
         expect(issue.dismiss).to eq(false)
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Tomato"
 
         # soft delete an issue

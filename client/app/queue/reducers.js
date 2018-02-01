@@ -1,24 +1,40 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
-import * as Constants from './actionTypes';
+import { ACTIONS } from './constants';
+import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import { combineReducers } from 'redux';
 
 export const initialState = {
   loadedQueue: {
-    appeals: [],
-    tasks: []
+    appeals: {},
+    tasks: {}
   }
 };
 
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case Constants.RECEIVE_QUEUE_DETAILS:
+  case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
       loadedQueue: {
         appeals: {
-          $set: action.payload.appeals.data
+          $set: action.payload.appeals
         },
         tasks: {
-          $set: action.payload.tasks.data
+          $set: action.payload.tasks
+        }
+      }
+    });
+  case ACTIONS.SET_APPEAL_DOC_COUNT:
+    return update(state, {
+      loadedQueue: {
+        appeals: {
+          [action.payload.appealId]: {
+            attributes: {
+              docCount: {
+                $set: action.payload.docCount
+              }
+            }
+          }
         }
       }
     });
@@ -27,7 +43,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
 };
 
+const rootReducer = combineReducers({
+  queue: workQueueReducer,
+  caseSelect: caseSelectReducer
+});
+
 export default timeFunction(
-  workQueueReducer,
+  rootReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

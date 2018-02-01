@@ -4,7 +4,11 @@ describe "Appeals API v2", type: :request do
   end
 
   context "Appeal list" do
-    before { FeatureToggle.enable!(:appeals_status) }
+    before do
+      FeatureToggle.enable!(:appeals_status)
+      DocketSnapshot.create
+      post_remand.aod = false
+    end
 
     let!(:original) do
       Generators::Appeal.create(
@@ -214,11 +218,18 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"].first["attributes"]["aod"]).to eq(true)
+      expect(json["data"].first["attributes"]["aod"]).to eq(false)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
-      expect(json["data"].first["attributes"]["alerts"]).to eq([])
+      expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"].first["attributes"]["docket"]["front"]).to eq(false)
+      expect(json["data"].first["attributes"]["docket"]["total"]).to eq(123_456)
+      expect(json["data"].first["attributes"]["docket"]["ahead"]).to eq(43_456)
+      expect(json["data"].first["attributes"]["docket"]["ready"]).to eq(23_456)
+      expect(json["data"].first["attributes"]["docket"]["month"]).to eq("2014-05-01")
+      expect(json["data"].first["attributes"]["docket"]["docketMonth"]).to eq("2014-02-01")
+      expect(json["data"].first["attributes"]["docket"]["eta"]).to be_nil
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
@@ -286,7 +297,6 @@ describe "Appeals API v2", type: :request do
 
       # check stubbed attributes
       expect(json["data"].first["attributes"]["description"]).to eq("")
-      expect(json["data"].first["attributes"]["docket"]).to eq(nil)
       expect(json["data"].first["attributes"]["evidence"]).to eq([])
     end
   end

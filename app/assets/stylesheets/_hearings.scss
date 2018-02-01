@@ -16,10 +16,6 @@ $color-hearings-saving: $color-gray;
 
 .cf-hearings-daily-docket-container {
   position: relative;
-
-  .cf-hearings {
-    margin-top: 0;
-  }
 }
 
 .cf-hearings,
@@ -86,7 +82,14 @@ $color-hearings-saving: $color-gray;
       vertical-align: top;
       margin: 0;
       border: none;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
+
+      &:first-child {
+        font-weight: bold;
+        padding-right: 0;
+        padding-left: 0;
+        float: right;
+      }
     }
 
     th {
@@ -95,7 +98,7 @@ $color-hearings-saving: $color-gray;
       border: none;
       border-bottom: 1px solid $color-gray-lighter;
       margin: 0;
-      padding: .75em;
+      padding: .75em 0.75em .75em .25em;
 
       &:last-child {
         padding-right: 0;
@@ -103,24 +106,28 @@ $color-hearings-saving: $color-gray;
     }
 
     .cf-hearings-docket-date {
-      padding-left: 0;
-      width: 18%;
+      width: 14%;
 
       > span {
         display: inline-block;
         vertical-align: top;
 
         &:first-child {
-          font-weight: bold;
-          text-align: right;
-          margin-right: .5em;
-          width: 1.5em;
+          padding-bottom: 5px;
         }
 
         &:last-child {
-          padding-left: 2em;
           display: block;
         }
+      }
+    }
+
+    .cf-hearings-prepped {
+      width: 3%;
+
+      .cf-form-checkboxes {
+        margin-top: 0;
+        padding-left: 4px;
       }
     }
 
@@ -180,7 +187,7 @@ $color-hearings-saving: $color-gray;
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: 0 .32em;
+    padding: 1.5em .32em;
     width: 100%;
 
     .cf-form-checkboxes {
@@ -369,27 +376,27 @@ $color-hearings-saving: $color-gray;
     padding: .5em;
 
     &:nth-of-type(1) {
-      width: 4.5em;
+      width: 5%;
     }
 
     &:nth-of-type(2) {
-      width: 18em;
+      width: 26%;
     }
 
     &:nth-of-type(3) {
-      width: 14em;
+      width: 26%;
     }
 
     &:nth-of-type(4) {
-      width: 19em;
+      width: 13%;
     }
 
     &:nth-of-type(5) {
-      width: 20%;
+      width: 26%;
     }
 
     &:nth-of-type(6) {
-      width: 30%;
+      width: 4%;
     }
 
     textarea {
@@ -438,19 +445,6 @@ $color-hearings-saving: $color-gray;
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
-}
-
-@media only screen and (max-width : 1024px){
-
-  .cf-hearings {
-    .cf-hearings-docket {
-      .cf-hearings-docket-notes {
-        textarea {
-          width: 80%;
-        }
-      }
-    }
-  }
 }
 
 @page {
