@@ -9,14 +9,6 @@ $tag-backgrond-color: #d6d7d9;
     font-style: italic;
   }
 
-  mark {
-    background: $color-gold-lightest;
-
-    &.highlighted {
-      background: $color-gold-light;
-    }
-  }
-
   .section--no-search-results {
     .cf-msg-screen-text {
       display: none;
