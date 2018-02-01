@@ -19,7 +19,7 @@ class Generators::Appeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative: "Mi`litary Order of the Purple Heart",
+        representative: "Military Order of the Purple Heart",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,

@@ -2,13 +2,16 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
     object.issues.map do |issue|
       {
-        close_date: issue.close_date,
-        codes: issue.codes,
+        vacols_sequence_id: issue.vacols_sequence_id,
+        levels: issue.levels,
+        program: issue.program,
+        type: issue.type,
         disposition: issue.disposition,
+        close_date: issue.close_date,
+        note: issue.note,
         id: issue.id,
         labels: issue.labels,
-        note: issue.note,
-        vacols_sequence_id: issue.vacols_sequence_id
+        codes: issue.codes
       }
     end
   end
