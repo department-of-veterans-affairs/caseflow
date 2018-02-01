@@ -8,6 +8,12 @@ class Fakes::HearingRepository
   def self.upcoming_hearings_for_judge(css_id)
     user = User.find_by_css_id(css_id)
     records.select { |h| h.user_id == user.id }
+
+    records.map do |vacols_id, r|
+      Hearing.find_or_create_by(vacols_id: vacols_id).tap do |hearing|
+        hearing.assign_from_vacols(r)
+      end
+    end
   end
 
   def self.records
@@ -50,6 +56,10 @@ class Fakes::HearingRepository
     hearing_records.find { |h| h.vacols_id == vacols_id }
   end
 
+  def self.find_index_by_vacols_id(vacols_id)
+    hearing_records.index { |h| h.vacols_id == vacols_id }
+  end
+
   def self.find_by_id(id)
     hearing_records.find { |h| h.id == id }
   end
@@ -89,7 +99,7 @@ class Fakes::HearingRepository
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
-      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user))
+      hearing = Generators::Hearing.build(random_attrs(i).merge(user: user))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
     4.times.each do |i|
