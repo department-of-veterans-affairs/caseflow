@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import StatusMessage from '../components/StatusMessage';
 import QueueTable from './QueueTable';
@@ -9,6 +10,10 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 class QueueListView extends React.PureComponent {
   render = () => {
+    const headerStyling = css({
+      width: '100%'
+    });
+
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
     let tableContent;
 
@@ -19,7 +24,7 @@ class QueueListView extends React.PureComponent {
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 className="cf-push-left cf-form--full-width">Your Queue</h1>
+        <h1 className="cf-push-left" {...headerStyling}>Your Queue</h1>
         <QueueTable />
       </div>;
     }
