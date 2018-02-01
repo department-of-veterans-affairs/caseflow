@@ -8,7 +8,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import AppealSummary from './AppealSummary';
-import VeteranDetail from './VeteranDetail';
 
 import { redText } from './constants';
 
@@ -23,7 +22,7 @@ class QueueDetailView extends React.PureComponent {
       page: <AppealSummary appeal={this.props.appeal} />
     }, {
       label: `Appellant (${appeal.veteran_full_name})`,
-      page: <VeteranDetail appeal={this.props.appeal} />
+      page: 'TODO: Appellant detail page'
     }];
 
     const headerStyling = css({
