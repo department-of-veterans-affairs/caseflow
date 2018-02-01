@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { css } from 'glamor';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -16,23 +15,21 @@ import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-
-// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
-const redText = css({ color: '#E60000' });
+import { redText } from './constants';
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.appealId];
+    const appeal = this.props.appeals[task.vacolsId];
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
-  }
+  };
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
-      valueFunction: (task) => <Link>
-        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vacols_id')})
+      valueFunction: (task) => <Link to={`/tasks/${task.vacolsId}`}>
+        {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
       </Link>
     },
     {
@@ -67,27 +64,31 @@ class QueueTable extends React.PureComponent {
       valueFunction: (task) => <LoadingDataDisplay
         createLoadPromise={this.createLoadPromise(task)}
         errorComponent="span"
-        failStatusMessageChildren={<ReaderLink appealId={task.appealId} />}
+        failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
         loadingComponent={SmallLoader}
         loadingComponentProps={{
           message: 'Loading...',
           spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
           component: Link,
           componentProps: {
-            href: `/reader/appeal/${this.getAppealForTask(task, 'vacols_id')}/documents`
+            href: `/reader/appeal/${task.vacolsId}/documents`
           }
         }}>
-        <ReaderLink appealId={task.appealId} />
+        <ReaderLink vacolsId={task.vacolsId} />
       </LoadingDataDisplay>
     }
   ];
 
   createLoadPromise = (task) => () => {
+    if (!_.isUndefined(this.props.appeals[task.vacolsId].attributes.docCount)) {
+      return Promise.resolve();
+    }
+
     const url = this.getAppealForTask(task, 'number_of_documents_url');
     const requestOptions = {
       withCredentials: true,
       timeout: true,
-      headers: { 'FILE-NUMBER': task.appealId }
+      headers: { 'FILE-NUMBER': task.vacolsId }
     };
 
     return ApiUtil.get(url, requestOptions).
@@ -96,7 +97,7 @@ class QueueTable extends React.PureComponent {
         const docCount = resp.data.attributes.documents.length;
 
         this.props.setAppealDocCount({
-          ..._.pick(task, 'appealId'),
+          ..._.pick(task, 'vacolsId'),
           docCount
         });
       });
