@@ -80,6 +80,15 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record, true) }
   end
 
+  def self.load_appeals_records(vacols_ids)
+    case_records = MetricsService.record("VACOLS: load_appeals_records for #{vacols_ids}",
+                                         service: :vacols,
+                                         name: "load_appeals_records") do
+      VACOLS::Case.includes(:folder, :correspondent).find(vacols_ids)
+    end
+    case_records.map { |case_record| build_appeal(case_record) }
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
@@ -106,7 +115,6 @@ class AppealRepository
   end
   # :nocov:
 
-  # TODO: consider persisting these records
   def self.build_appeal(case_record, persist = false)
     appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
     appeal.save! if persist
