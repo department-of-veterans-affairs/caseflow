@@ -7,3 +7,11 @@ export const onReceiveQueue = ({ tasks, appeals }) => ({
     appeals
   }
 });
+
+export const setAppealDocCount = ({ appealId, docCount }) => ({
+  type: ACTIONS.SET_APPEAL_DOC_COUNT,
+  payload: {
+    appealId,
+    docCount
+  }
+});
