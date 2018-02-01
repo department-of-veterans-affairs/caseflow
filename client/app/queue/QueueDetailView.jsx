@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ReaderLink from './ReaderLink';
@@ -25,11 +26,19 @@ class QueueDetailView extends React.PureComponent {
       page: <VeteranDetail appeal={this.props.appeal} />
     }];
 
+    const headerStyling = css({
+      width: '100%',
+      marginBottom: '0.5rem'
+    });
+    const subHeadStyling = css({
+      marginBottom: '2rem'
+    })
+
     return <AppSegment filledBackground>
-      <h1 className="cf-push-left cf-form--full-width">
+      <h1 className="cf-push-left" {...headerStyling}>
         {`Draft Decision - ${appeal.veteran_full_name} (${appeal.vacols_id})`}
       </h1>
-      <p className="cf-lead-paragraph">
+      <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
         Due {moment(task.due_on).format('MM/DD/YY')}
       </p>
