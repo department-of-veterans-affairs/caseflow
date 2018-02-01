@@ -52,7 +52,6 @@ before_install:
   # - sudo chmod +x /usr/local/share/chromedriver
   # - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - sudo apt-get install pdftk
-  - chromedriver -v
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
 
