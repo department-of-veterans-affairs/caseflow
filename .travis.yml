@@ -34,7 +34,6 @@ before_install:
   - export YARN=/usr/bin/yarn
   
   - $YARN --version
-  - google-chrome --version
   # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   # - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
   # - sudo dpkg -i $PWD/chromium-chromedriver.deb
@@ -55,10 +54,8 @@ before_install:
 before_script:
   - bundle exec danger
   - export DISPLAY=:99.0
-
-# script:
-#   - whereis google-chrome-stable
-#   - whereis chromedriver
+  - google-chrome --version
+  - chromedriver -v
 
 jobs:
   include:
