@@ -12,6 +12,18 @@ const rowDisplay = css({
   display: 'flex',
   justifyContent: 'space-between'
 });
+const viewedParagraphStyling = css({
+  marginTop: '15px'
+});
+const issueStyling = css({
+  marginTop: '20px',
+  '& ol': {
+    paddingTop: '3px',
+    paddingLeft: '1em',
+    marginTop: 0,
+    marginBottom: 0
+  }
+});
 
 class ClaimsFolderDetails extends React.PureComponent {
 
@@ -20,10 +32,10 @@ class ClaimsFolderDetails extends React.PureComponent {
     const appealDoesntExist = _.isEmpty(appeal);
     const docsViewedCount = _.filter(documents, 'opened_by_current_user').length;
 
-    return <div className="cf-claims-folder-details">
+    return <div>
       <div>
         { !appealDoesntExist && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1> }
-        <p className="cf-push-right">
+        <p className="cf-push-right" {...viewedParagraphStyling}>
           You've viewed { docsViewedCount } out of { documents.length } documents
         </p>
       </div>
@@ -49,11 +61,9 @@ class ClaimsFolderDetails extends React.PureComponent {
                 <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
               </div>
             </div>
-            <div>
-              <div>
-                <b>Issues</b><br />
-                <IssueList appeal={appeal} />
-              </div>
+            <div {...issueStyling}>
+              <b>Issues</b><br />
+              <IssueList appeal={appeal} />
             </div>
           </div>}
         </AccordionSection>
