@@ -12,7 +12,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :hearings do
     object.hearings.map do |hearing|
       {
-        held_by: hearing.user.full_name,
+        held_by: hearing.user.present? ? hearing.user.full_name : "",
         held_on: hearing.date,
         type: hearing.type
       }
