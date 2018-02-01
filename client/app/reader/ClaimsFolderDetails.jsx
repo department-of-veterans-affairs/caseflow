@@ -44,7 +44,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             </div>
             <div className="usa-width-one-whole claims-folder-issues">
               <b>Issues</b><br />
-              <IssueList appeal={_.pick(appeal, 'issues')} />
+              <IssueList appeal={appeal} />
             </div>
           </div>}
         </AccordionSection>
