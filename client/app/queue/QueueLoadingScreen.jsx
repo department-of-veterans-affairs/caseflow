@@ -61,7 +61,7 @@ QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals')
+const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue

@@ -80,6 +80,7 @@ class QueueApp extends React.PureComponent {
               }
 
               const { attributes: appealAttrs } = appeal;
+
               return `Draft Decision - [${appealAttrs.veteran_full_name} - ${appealAttrs.vbms_id}] | Caseflow Queue`;
             }}
             render={this.routedQueueDetail} />

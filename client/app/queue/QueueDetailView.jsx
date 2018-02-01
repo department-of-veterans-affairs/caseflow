@@ -31,7 +31,7 @@ class QueueDetailView extends React.PureComponent {
     });
     const subHeadStyling = css({
       marginBottom: '2rem'
-    })
+    });
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...headerStyling}>
