@@ -70,17 +70,7 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/tasks/:vacolsId"
-            title={(params) => {
-              const appeal = this.props.appeals[params.vacolsId];
-
-              if (!appeal) {
-                return 'Draft Decision | Caseflow Queue';
-              }
-
-              const { attributes: appealAttrs } = appeal;
-
-              return `Draft Decision - [${appealAttrs.veteran_full_name} - ${appealAttrs.vbms_id}] | Caseflow Queue`;
-            }}
+            title='Draft Decision | Caseflow Queue'
             render={this.routedQueueDetail} />
         </div>
       </AppFrame>
