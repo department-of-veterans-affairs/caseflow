@@ -78,9 +78,10 @@ class Fakes::HearingRepository
     Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
   end
 
-  def self.create_appeal_stream(hearing)
-    Generators::Appeal.create(
+  def self.create_appeal_stream(hearing, i)
+    Generators::Appeal.build(
       vbms_id: hearing.vbms_id,
+      vacols_id: 950_330_575 + (i * 1276),
       vacols_record: { template: :remand_decided }
     )
   end
@@ -89,7 +90,7 @@ class Fakes::HearingRepository
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user))
-      create_appeal_stream(hearing) if Appeal.where(vbms_id: hearing.vbms_id).count < 2 && i % 5 == 0
+      create_appeal_stream(hearing, i) if i % 5 == 0
     end
     4.times.each do |i|
       Generators::Hearings::MasterRecord.build(
