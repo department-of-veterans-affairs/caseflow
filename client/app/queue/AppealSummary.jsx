@@ -4,9 +4,8 @@ import moment from 'moment';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import IssueList from '../reader/IssueList';
-
-const boldText = css({ fontWeight: 'bold' });
+import QueueIssueList from './QueueIssueList';
+import { boldText } from './constants';
 
 export default class AppealSummary extends React.PureComponent {
   getStyling = () => css({
@@ -14,8 +13,8 @@ export default class AppealSummary extends React.PureComponent {
       paddingLeft: 0,
       listStyle: 'none'
     },
-    '& .issue-level': {
-      margin: 0,
+    '& .task-list': {
+      paddingLeft: '1.5rem'
     }
   });
 
@@ -58,10 +57,12 @@ export default class AppealSummary extends React.PureComponent {
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
-    <IssueList
-      appeal={{ issues: this.props.appeal.attributes.issues }}
+    <QueueIssueList
+      appeal={_.pick(this.props.appeal.attributes, 'issues')}
       className="task-list"
-      formatLevelsInNewLine/>
+      formatLevelsInNewLine
+      displayIssueProgram
+      displayLabels />
   </div>;
 }
 

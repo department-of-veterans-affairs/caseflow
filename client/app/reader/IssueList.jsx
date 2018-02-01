@@ -18,7 +18,6 @@ const issueLevels = (issue, formatLevelsInNewLine) => (
 
 const issueTypeLabel = (issue) => issue.levels ? `${issue.type}:` : issue.type;
 
-// todo: after Reader welcome gate is deprecated, move this component into Queue
 const IssueList = ({ appeal, formatLevelsInNewLine, className }) => (
   <div style={{ display: 'inline' }} >
     { _.isEmpty(appeal.issues) ?

@@ -14,3 +14,5 @@ export const ACTIONS = {
 
 // 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
 export const redText = css({ color: '#E60000' });
+
+export const boldText = css({ fontWeight: 'bold' });
