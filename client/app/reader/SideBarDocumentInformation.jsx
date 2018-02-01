@@ -12,7 +12,6 @@ import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDe
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import Alert from '../components/Alert';
-import QueueIssueList from '../queue/QueueIssueList';
 
 class SideBarDocumentInformation extends PureComponent {
   render() {
@@ -48,7 +47,7 @@ class SideBarDocumentInformation extends PureComponent {
         </p>
         <div className="cf-pdf-meta-title">
           <strong>Issues: </strong>
-          <QueueIssueList appeal={_.pick(appeal, 'issues')} className="cf-pdf-meta-doc-info-issues" />
+          <IssueList appeal={_.pick(appeal, 'issues')} className="cf-pdf-meta-doc-info-issues" />
         </div>
       </div>;
     }

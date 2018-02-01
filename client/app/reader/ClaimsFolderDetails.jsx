@@ -6,7 +6,6 @@ import AccordionSection from '../components/AccordionSection';
 import IssueList from './IssueList';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
-import QueueIssueList from '../queue/QueueIssueList';
 
 class ClaimsFolderDetails extends React.PureComponent {
 
@@ -45,7 +44,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             </div>
             <div className="usa-width-one-whole claims-folder-issues">
               <b>Issues</b><br />
-              <QueueIssueList appeal={_.pick(appeal, 'issues')} />
+              <IssueList appeal={_.pick(appeal, 'issues')} />
             </div>
           </div>}
         </AccordionSection>

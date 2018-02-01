@@ -4,7 +4,7 @@ import moment from 'moment';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import QueueIssueList from './QueueIssueList';
+import IssueList from '../reader/IssueList';
 import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
 
@@ -66,7 +66,7 @@ export default class AppealSummary extends React.PureComponent {
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
-    <QueueIssueList
+    <IssueList
       appeal={_.pick(this.props.appeal.attributes, 'issues')}
       className="task-list"
       formatLevelsInNewLine

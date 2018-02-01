@@ -1,45 +1,88 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import { NO_ISSUES_ON_APPEAL_MSG } from './constants';
+import { boldText } from '../queue/constants';
+import StringUtil from '../util/StringUtil';
 
-const csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
+// todo: move to queue after Reader welcome gate deprecation
+export default class IssueList extends React.PureComponent {
+  getStyling = () => css({
+    display: 'inline',
+    '& .issue-level': {
+      marginBottom: 0,
+      marginTop: this.props.tightLevelStyling ? '0' : '0.5rem',
+      '&.indented': {
+        marginLeft: '20rem'
+      }
+    },
+    '& .issue-label.indented': {
+      marginLeft: '2rem'
+    }
+  });
 
-/**
- * Returns levels in a new line if formatLevelsInNewLine is true otherwise
- * the levels are returned as a comma seperated string in one line.
- */
-const issueLevels = (issue, formatLevelsInNewLine) => (
-  formatLevelsInNewLine ? issue.levels.map((level) =>
-    <p className="issue-level" key={level}>{level}</p>) :
-    csvIssueLevels(issue)
-);
+  csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
 
-const issueTypeLabel = (issue) => issue.levels ? `${issue.type}:` : issue.type;
+  /**
+   * Returns levels in a new line if formatLevelsInNewLine is true otherwise
+   * the levels are returned as a comma separated string in one line.
+   */
+  issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
+    if (formatLevelsInNewLine) {
+      const pClassName = `issue-level ${this.props.displayIssueProgram ? 'indented' : ''}`;
 
-const IssueList = ({ appeal, formatLevelsInNewLine, className }) => (
-  <div style={{ display: 'inline' }} >
-    { _.isEmpty(appeal.issues) ?
+      return issue.levels.map((level) => <p className={pClassName} key={level}>{level}</p>);
+    }
+
+    return this.csvIssueLevels(issue);
+  };
+
+  issueTypeLabel = (issue) => {
+    const label = issue.type;
+
+    if (this.props.displayLabels) {
+      return <span className={`issue-label ${this.props.displayIssueProgram ? 'indented' : ''}`}>
+        <span {...boldText}>Issue:</span> {label}
+      </span>;
+    }
+
+    return label;
+  };
+
+  render = (appeal = this.props.appeal) => <div {...this.getStyling()}>
+    {_.isEmpty(appeal.issues) ?
       NO_ISSUES_ON_APPEAL_MSG :
-      <ol className={className}>
+      <ol className={this.props.className}>
         {appeal.issues.map((issue) =>
-          <li key={`${issue.id}_${issue.vacols_sequence_id}`}><span>
-            {issueTypeLabel(issue)} {issueLevels(issue, formatLevelsInNewLine)}
-          </span></li>
+          <li key={`${issue.id}_${issue.vacols_sequence_id}`}>
+            {this.props.displayIssueProgram && <span>
+              <span {...boldText}>Program:</span> {StringUtil.titleCase(issue.program)}
+            </span>}
+            <span>
+              {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
+            </span>
+          </li>
         )}
       </ol>
     }
-  </div>
-);
+  </div>;
+}
 
 IssueList.propTypes = {
   appeal: PropTypes.object.isRequired,
-  formatLevelsInNewLine: PropTypes.bool
+  className: PropTypes.string,
+  formatLevelsInNewLine: PropTypes.bool,
+  displayIssueProgram: PropTypes.bool,
+  displayLabels: PropTypes.bool,
+  tightLevelStyling: PropTypes.bool
 };
 
 IssueList.defaultProps = {
-  formatLevelsInNewLine: false
+  className: '',
+  formatLevelsInNewLine: false,
+  displayIssueProgram: false,
+  displayLabels: false,
+  tightLevelStyling: false
 };
-
-export default IssueList;

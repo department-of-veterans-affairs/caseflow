@@ -11,12 +11,11 @@ import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions
 
 import CaseSelectSearch from './CaseSelectSearch';
 import IssueList from './IssueList';
-import QueueIssueList from '../queue/QueueIssueList';
 
 class CaseSelect extends React.PureComponent {
 
   renderIssuesColumnData = (appeal) =>
-    <QueueIssueList
+    <IssueList
       appeal={_.pick(appeal, 'issues')}
       formatLevelsInNewLine
       tightLevelStyling
