@@ -40,7 +40,7 @@ export default class AppealSummary extends React.PureComponent {
     valueFunction: () => ''
   }, {
     label: 'Hearing held',
-    valueFunction: () => this.getLatestHearing().held_on ? moment(this.getLatestHearing().held_on).format('MM/DD/YY') : ''
+    valueFunction: () => this.getLatestHearing().held_on ? moment(this.getLatestHearing().held_on).format('M/D/YY') : ''
   }, {
     label: 'Judge at hearing',
     valueFunction: () => this.getLatestHearing().held_by

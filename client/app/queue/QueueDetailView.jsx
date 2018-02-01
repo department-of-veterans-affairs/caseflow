@@ -7,18 +7,22 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import AppealSummary from './AppealSummary';
+import VeteranDetail from './VeteranDetail';
 
 import { redText } from './constants';
 
 class QueueDetailView extends React.PureComponent {
   render = () => {
-    const appeal = this.props.appeal.attributes;
+    const {
+      appeal: { attributes: appeal },
+      task: { attributes: task }
+    } = this.props;
     const tabs = [{
       label: 'Appeal',
       page: <AppealSummary appeal={this.props.appeal}/>
     }, {
       label: `Appellant (${appeal.veteran_full_name})`,
-      page: 'TODO: Appellant detail page'
+      page: <VeteranDetail appeal={this.props.appeal}/>
     }];
 
     return <AppSegment filledBackground>
@@ -26,8 +30,8 @@ class QueueDetailView extends React.PureComponent {
         {`Draft Decision - ${appeal.veteran_full_name} (${appeal.vacols_id})`}
       </h1>
       <p className="cf-lead-paragraph">
-        Assigned to you by <span {...redText}>Judge</span> on {moment(this.props.task.attributes.assigned_on).format('MM/DD/YY')}.
-        Due {moment(this.props.task.attributes.due_on).format('MM/DD/YY')}
+        Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
+        Due {moment(task.due_on).format('MM/DD/YY')}
       </p>
       <ReaderLink appealId={this.props.appealId} message="Open documents in Caseflow Reader" />
 
