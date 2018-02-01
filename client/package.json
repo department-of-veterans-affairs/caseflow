@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.2.0",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.4.1",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",

@@ -167,10 +167,6 @@ describe RampElectionIntake do
     subject { intake.start! }
     let!(:ramp_appeal) { appeal }
 
-    let!(:ramp_election) do
-      RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
-    end
-
     context "not valid to start" do
       let(:veteran_file_number) { "NOTVALID" }
 
@@ -188,11 +184,28 @@ describe RampElectionIntake do
     end
 
     context "valid to start" do
-      it "saves intake and sets detail to ramp election" do
-        expect(subject).to be_truthy
+      context "RAMP election with notice_date exists" do
+        let!(:ramp_election) do
+          RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+        end
 
-        expect(intake.started_at).to eq(Time.zone.now)
-        expect(intake.detail).to eq(ramp_election)
+        it "saves intake and sets detail to ramp election" do
+          expect(subject).to be_truthy
+
+          expect(intake.started_at).to eq(Time.zone.now)
+          expect(intake.detail).to eq(ramp_election)
+        end
+      end
+
+      context "matching RAMP election does not exist" do
+        let(:ramp_election) { RampElection.where(veteran_file_number: "64205555").first }
+
+        it "creates a new RAMP election with no notice_date" do
+          expect(subject).to be_truthy
+
+          expect(ramp_election).to_not be_nil
+          expect(ramp_election.notice_date).to be_nil
+        end
       end
     end
   end
@@ -201,46 +214,37 @@ describe RampElectionIntake do
     subject { intake.validate_start }
     let!(:ramp_appeal) { appeal }
 
-    context "there is not a ramp election for veteran" do
-      it "adds did_not_receive_ramp_election and returns false" do
+    let!(:ramp_election) do
+      RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
+    end
+
+    context "the ramp election is complete" do
+      let!(:complete_intake) do
+        RampElectionIntake.create!(
+          user: user,
+          detail: ramp_election,
+          completed_at: Time.zone.now,
+          completion_status: :success
+        )
+      end
+
+      it "adds ramp_election_already_complete and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq("did_not_receive_ramp_election")
+        expect(intake.error_code).to eq("ramp_election_already_complete")
       end
     end
 
-    context "there is a ramp election for veteran" do
-      let!(:ramp_election) do
-        RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
+    context "there are no active appeals" do
+      let(:appeal_vacols_record) { :full_grant_decided }
+
+      it "adds no_eligible_appeals and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("no_active_appeals")
       end
+    end
 
-      context "the ramp election is complete" do
-        let!(:complete_intake) do
-          RampElectionIntake.create!(
-            user: user,
-            detail: ramp_election,
-            completed_at: Time.zone.now,
-            completion_status: :success
-          )
-        end
-
-        it "adds ramp_election_already_complete and returns false" do
-          expect(subject).to eq(false)
-          expect(intake.error_code).to eq("ramp_election_already_complete")
-        end
-      end
-
-      context "there are no active appeals" do
-        let(:appeal_vacols_record) { :full_grant_decided }
-
-        it "adds no_eligible_appeals and returns false" do
-          expect(subject).to eq(false)
-          expect(intake.error_code).to eq("no_active_appeals")
-        end
-      end
-
-      context "there are eligible appeals" do
-        it { is_expected.to eq(true) }
-      end
+    context "there are eligible appeals" do
+      it { is_expected.to eq(true) }
     end
   end
 end

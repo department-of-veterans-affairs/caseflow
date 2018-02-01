@@ -16,7 +16,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :hearings do
     object.hearings.map do |hearing|
       {
-        held_by: hearing.user.full_name,
+        held_by: hearing.user.present? ? hearing.user.full_name : "",
         held_on: hearing.date,
         type: hearing.type
       }
@@ -46,6 +46,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :type
   attribute :aod
   attribute :docket_number
+  attribute :number_of_documents_url
 
   attribute :power_of_attorney do
     # TODO: change this to use our more sophisticated poa data fetching mechanism

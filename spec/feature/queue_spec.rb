@@ -36,8 +36,11 @@ RSpec.feature "Queue" do
     ]
   end
   let(:vacols_record) { :remand_decided }
-  let(:appeal) do
-    Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents)
+  let(:appeals) do
+    [
+      Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents),
+      Generators::Appeal.build(vbms_id: "115555555S", vacols_record: vacols_record, documents: documents, issues: [])
+    ]
   end
   let!(:issues) { [Generators::Issue.build] }
   let!(:current_user) do
@@ -45,7 +48,7 @@ RSpec.feature "Queue" do
   end
 
   context "search for appeals using veteran id" do
-    scenario "with no appeals" do
+    scenario "appeal not found" do
       visit "/queue"
       fill_in "searchBar", with: "obviouslyfakecaseid"
 
@@ -54,7 +57,20 @@ RSpec.feature "Queue" do
       expect(page).to have_content("Veteran ID not found")
     end
 
+    scenario "vet found, has no appeal" do
+      appeal = appeals.second
+
+      visit "/queue"
+      fill_in "searchBar", with: appeal.vbms_id
+
+      click_on "Search"
+
+      expect(page).to have_content("Veteran ID #{appeal.vbms_id} does not have any appeals.")
+    end
+
     scenario "one appeal found" do
+      appeal = appeals.first
+
       visit "/queue"
       fill_in "searchBar", with: (appeal.vbms_id + "\n")
 

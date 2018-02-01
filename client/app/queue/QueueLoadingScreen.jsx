@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import { COLORS } from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
@@ -31,8 +31,8 @@ class QueueLoadingScreen extends React.PureComponent {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
-        spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading your appeals...'
       }}
       failStatusMessageProps={{
