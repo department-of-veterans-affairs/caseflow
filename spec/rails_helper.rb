@@ -14,6 +14,7 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require 'capybara-screenshot/rspec'
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -71,6 +72,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
+Capybara::Screenshot.append_timestamp = false
 
 ActiveRecord::Migration.maintain_test_schema!
 

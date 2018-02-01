@@ -147,6 +147,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (>= 2.0, < 4.0)
+    capybara-screenshot (1.0.18)
+      capybara (>= 1.0, < 3)
+      launchy
     case_transform (0.2)
       activesupport
     childprocess (0.8.0)
@@ -473,6 +476,7 @@ DEPENDENCIES
   bundler-audit
   byebug
   capybara
+  capybara-screenshot
   caseflow!
   connect_vbms!
   danger (= 5.5.5)
@@ -529,4 +533,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

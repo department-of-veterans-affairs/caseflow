@@ -475,8 +475,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         ]
       end
       # :nocov:
-      scenario "Review page lets users choose which document to use",
-               skip: "This test is failing because of a stale element reference" do
+      scenario "Review page lets users choose which document to use" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
@@ -491,8 +490,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Benefit Type")
       end
 
-      scenario "the EP creation page has a link back to decision review",
-               skip: "This test is failing because of a stale element reference" do
+      scenario "the EP creation page has a link back to decision review" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
@@ -626,8 +624,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
 
-      scenario "Establish a new claim routed to ARC",
-               skip: "This test is failing because of a stale element reference" do
+      scenario "Establish a new claim routed to ARC" do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 

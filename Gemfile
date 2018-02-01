@@ -135,6 +135,7 @@ group :development, :test do
   gem "launchy"
 
   gem "danger", "5.5.5"
+  gem 'capybara-screenshot', :group => :test
 end
 
 group :development do
