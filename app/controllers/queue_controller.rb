@@ -6,7 +6,7 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    verify_system_admin
+    redirect_to "/unauthorized" unless feature_enabled?(:queue_welcome_gate)
   end
 
   def index
@@ -14,7 +14,7 @@ class QueueController < ApplicationController
   end
 
   def tasks
-    MetricsService.record("VACOLS: Get all tasks with appeals for #{current_user.id}",
+    MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
       tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
@@ -23,6 +23,20 @@ class QueueController < ApplicationController
         appeals: json_appeals(appeals)
       }
     end
+  end
+
+  def document_count
+    # used for local dev. see Appeal.number_of_documents_url
+    appeal = Appeal.find(params[:appeal_id])
+    render json: {
+      data: {
+        attributes: {
+          documents: (1..appeal.number_of_documents).to_a
+        }
+      }
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: {}, status: 404
   end
 
   private
