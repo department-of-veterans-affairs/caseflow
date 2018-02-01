@@ -10,6 +10,14 @@ import TabWindow from '../components/TabWindow';
 
 import { redText } from './constants';
 
+const headerStyling = css({
+  width: '100%',
+  marginBottom: '0.5rem'
+});
+const subHeadStyling = css({
+  marginBottom: '2rem'
+});
+
 class QueueDetailView extends React.PureComponent {
   render = () => {
     const {
@@ -24,17 +32,9 @@ class QueueDetailView extends React.PureComponent {
       page: 'TODO: Appellant detail page'
     }];
 
-    const headerStyling = css({
-      width: '100%',
-      marginBottom: '0.5rem'
-    });
-    const subHeadStyling = css({
-      marginBottom: '2rem'
-    });
-
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...headerStyling}>
-        {`Draft Decision - ${appeal.veteran_full_name} (${appeal.vacols_id})`}
+        Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.

@@ -16,6 +16,24 @@ import QueueDetailView from './QueueDetailView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { connect } from 'react-redux';
 
+const appStyling = css({
+  paddingTop: '3rem'
+})
+
+const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
+  '.section-search': {
+    '& .usa-alert-info': {
+      marginBottom: '1rem'
+    },
+    '& .cf-search-input-with-close': {
+      marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
+    },
+    '& .cf-submit': {
+      width: '10.5rem'
+    }
+  }
+});
+
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
@@ -23,7 +41,7 @@ class QueueApp extends React.PureComponent {
       alwaysShowCaseSelectionModal
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
-      styling={this.getSearchStyling()} />
+      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
@@ -31,26 +49,6 @@ class QueueApp extends React.PureComponent {
     <Link to="/">&lt; Back to your queue</Link>
     <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
-
-  getSearchStyling = () => css({
-    '.section-search': {
-      '& .usa-alert-info': {
-        marginBottom: '1rem'
-      },
-      '& .cf-search-input-with-close': {
-        marginLeft: `calc(100% - ${this.props.isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
-      },
-      '& .cf-submit': {
-        width: '10.5rem'
-      }
-    }
-  });
-
-  appStyling = () => css({
-    '.section--queue-list': {
-      paddingTop: '3rem'
-    }
-  });
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
@@ -63,7 +61,7 @@ class QueueApp extends React.PureComponent {
       }}
       appName="Queue">
       <AppFrame wideApp>
-        <div className="cf-wide-app section--queue-list" {...this.appStyling()}>
+        <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
             path="/"

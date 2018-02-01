@@ -8,12 +8,12 @@ import StatusMessage from '../components/StatusMessage';
 import QueueTable from './QueueTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
+const headerStyling = css({
+  width: '100%'
+});
+
 class QueueListView extends React.PureComponent {
   render = () => {
-    const headerStyling = css({
-      width: '100%'
-    });
-
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
     let tableContent;
 
