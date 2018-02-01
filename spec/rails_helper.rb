@@ -65,9 +65,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
         disk_cache_dir: cache_directory
       }
     },
-    args: ["no-sandbox, headless, disable-gpu"]
+    args: ["no-sandbox", "headless", "disable-gpu"]
   }
-  
+
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
