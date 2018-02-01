@@ -479,7 +479,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
-        expect(find("#review-decision-heading")).to have_content("Multiple Decision Documents")
+        expect(find("#review-decision-heading")).to have_content("Multipe Decision Documents")
 
         # Text on the tab
         expect(page).to have_content("Decision 1 (")
