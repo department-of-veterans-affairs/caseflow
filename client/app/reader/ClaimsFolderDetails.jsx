@@ -6,6 +6,12 @@ import AccordionSection from '../components/AccordionSection';
 import IssueList from './IssueList';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
+import { css } from 'glamor';
+
+const rowDisplay = css({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
 
 class ClaimsFolderDetails extends React.PureComponent {
 
@@ -24,27 +30,30 @@ class ClaimsFolderDetails extends React.PureComponent {
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionSection id="claim-folder-details-accordion" className="usa-grid"
           disabled={appealDoesntExist} title={appealDoesntExist ? 'Loading...' : 'Claims folder details'}>
-          {!appealDoesntExist &&
-          <div>
-            <div className="usa-width-one-fourth">
-              <b>Veteran ID</b><br />
-              <span>{appeal.vbms_id}</span>
+          {!appealDoesntExist && <div>
+            <div {...rowDisplay}>
+              <div>
+                <b>Veteran ID</b><br />
+                <span>{appeal.vbms_id}</span>
+              </div>
+              <div>
+                <b>Type</b><br />
+                <span>{appeal.type}</span> {getClaimTypeDetailInfo(appeal)}
+              </div>
+              <div>
+                <b>Docket Number</b><br />
+                <span>{appeal.docket_number}</span>
+              </div>
+              <div>
+                <b>Regional Office</b><br />
+                <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
+              </div>
             </div>
-            <div className="usa-width-one-fourth">
-              <b>Type</b><br />
-              <span>{appeal.type}</span> {getClaimTypeDetailInfo(appeal)}
-            </div>
-            <div className="usa-width-one-fourth">
-              <b>Docket Number</b><br />
-              <span>{appeal.docket_number}</span>
-            </div>
-            <div className="usa-width-one-fourth">
-              <b>Regional Office</b><br />
-              <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
-            </div>
-            <div className="usa-width-one-whole claims-folder-issues">
-              <b>Issues</b><br />
-              <IssueList appeal={appeal} />
+            <div {...rowDisplay}>
+              <div>
+                <b>Issues</b><br />
+                <IssueList appeal={appeal} />
+              </div>
             </div>
           </div>}
         </AccordionSection>

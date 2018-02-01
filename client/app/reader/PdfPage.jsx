@@ -15,6 +15,7 @@ import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 import { collectHistogram } from '../util/Metrics';
 
+import { css } from 'glamor';
 import classNames from 'classnames';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
@@ -24,6 +25,15 @@ const PAGE_MARGIN_BOTTOM = 25;
 
 // Base scale used to calculate dimensions and draw text.
 const PAGE_DIMENSION_SCALE = 1;
+
+const markStyle = css({
+  '& mark': {
+    background: '#fff1d2',
+    '.highlighted': {
+      background: '#f9c642'
+    }
+  }
+});
 
 export class PdfPage extends React.PureComponent {
   constructor(props) {
@@ -289,7 +299,8 @@ export class PdfPage extends React.PureComponent {
       className={pageClassNames}
       style={divPageStyle}
       onClick={this.onClick}
-      ref={this.getPageContainerRef}>
+      ref={this.getPageContainerRef}
+      {...markStyle}>
       <div
         id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
         className={pageContentsVisibleClass}
