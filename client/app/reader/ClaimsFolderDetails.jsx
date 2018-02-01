@@ -61,7 +61,7 @@ class ClaimsFolderDetails extends React.PureComponent {
                 <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
               </div>
             </div>
-            <div {...issueStyling}>
+            <div id="claims-folder-issues" {...issueStyling}>
               <b>Issues</b><br />
               <IssueList appeal={appeal} />
             </div>

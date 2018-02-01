@@ -243,7 +243,7 @@ RSpec.feature "Reader" do
       scenario "Claims folder details issues show no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
-        expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+        expect(find("#claims-folder-issues").text).to have_content("No issues on appeal")
       end
 
       context "When both document source manifest retrieval times are set" do
@@ -1177,7 +1177,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content(regional_office)
 
       # all the current issues listed in the UI
-      issue_list = all(".claims-folder-issues li")
+      issue_list = all("#claims-folder-issues li")
       expect(issue_list.count).to eq(appeal_info["issues"].length)
       issue_list.each_with_index do |issue, index|
         expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
