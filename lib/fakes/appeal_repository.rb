@@ -85,7 +85,21 @@ class Fakes::AppealRepository
   end
 
   def self.appeals_ready_for_hearing(vbms_id)
-    Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
+    Rails.logger.info("Load faked appeals ready for hearing for vbms id: #{vbms_id}")
+
+    return_records = MetricsService.record "load appeals ready for hearing for vbms_id #{vbms_id}" do
+      records.select do |_, r|
+        (r[:vbms_id] == vbms_id &&
+        (r[:decision_date].nil? || r[:disposition] == "Remanded") &&
+        r[:form9_date])
+      end
+    end
+
+    return_records.map do |vacols_id, r|
+      Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
+        appeal.assign_from_vacols(r)
+      end
+    end
   end
 
   def self.close_undecided_appeal!(*); end
