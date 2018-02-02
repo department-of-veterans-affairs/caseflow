@@ -6,11 +6,11 @@ import NavigationBar from '../components/NavigationBar';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import HelpRootView from './HelpRootView';
-import CertificationHelp from './CertificationHelp';
-import HearingsHelp from './HearingsHelp';
-import ReaderHelp from './ReaderHelp';
-import DispatchHelp from './DispatchHelp';
-import IntakeHelp from './IntakeHelp';
+import CertificationHelp from './components/CertificationHelp';
+import HearingsHelp from './components/HearingsHelp';
+import ReaderHelp from './components/ReaderHelp';
+import DispatchHelp from './components/DispatchHelp';
+import IntakeHelp from './components/IntakeHelp';
 
 class Help extends React.PureComponent {
 
