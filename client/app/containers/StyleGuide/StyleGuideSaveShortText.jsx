@@ -14,10 +14,6 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
     };
   }
 
-  isEmpty = (str) => {
-    return (!str || str.length === 0);
-  }
-
   onChange = (event) => {
     this.setState({
       value: event
