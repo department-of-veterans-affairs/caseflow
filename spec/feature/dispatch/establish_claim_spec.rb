@@ -52,7 +52,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Validate help link
       find("#menu-trigger").click
       find_link("Help").click
-      expect(page).to have_content("Welcome to the Dispatch Help page!")
+      expect(page).to have_content("Welcome to the Dispatch Help Page!")
       page.driver.go_back
 
       fill_in "the number of people", with: "2"

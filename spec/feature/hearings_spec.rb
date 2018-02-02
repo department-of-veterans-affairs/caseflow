@@ -75,7 +75,7 @@ RSpec.feature "Hearings" do
       # Validate help link
       find("#menu-trigger").click
       find_link("Help").click
-      expect(page).to have_content("Welcome to the Hearings Help page!")
+      expect(page).to have_content("Welcome to the Hearings Help Page!")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
