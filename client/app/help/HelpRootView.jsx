@@ -1,17 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 class HelpRootView extends React.Component {
 
   render() {
+
+    const pages = [
+      { name: 'Certification Help',
+        url: '/certification/help' },
+      { name: 'Dispatch Help',
+        url: '/dispatch/help' },
+      { name: 'Reader Help',
+        url: '/reader/help' },
+      { name: 'Hearings Help',
+        url: '/hearings/help' },
+      { name: 'Intake Help',
+        url: '/intake/help' }
+    ];
+
     return <div className="cf-help-content">
       <h1>Caseflow Help</h1>
       <ul id="toc" className="usa-unstyled-list">
-        <li><Link to="/certification/help">Certification Help</Link></li>
-        <li><Link to="/dispatch/help">Dispatch Help</Link></li>
-        <li><Link to="/reader/help">Reader Help</Link></li>
-        <li><Link to="/hearings/help">Hearings Help</Link></li>
-        <li><Link to="/intake/help">Intake Help</Link></li>
+        {pages.map(({ name, url }) =>
+          <li key={name}><Link to={url}>{name}</Link></li>
+        )}
       </ul>
     </div>;
   }
