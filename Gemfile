@@ -103,6 +103,8 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
+gem 'capybara-screenshot', :group => :test
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
@@ -135,7 +137,6 @@ group :development, :test do
   gem "launchy"
 
   gem "danger", "5.5.5"
-  gem 'capybara-screenshot', :group => :test
 end
 
 group :development do
