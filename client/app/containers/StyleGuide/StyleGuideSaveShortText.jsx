@@ -27,7 +27,7 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
   onCancel = () => {
     this.setState({
       value: this.state.currentValue
-    })
+    });
   }
 
   onSave = (event) => {
@@ -54,6 +54,6 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
         strongLabel
         name="document_title"
       />
-    </div>
+    </div>;
   }
 }
