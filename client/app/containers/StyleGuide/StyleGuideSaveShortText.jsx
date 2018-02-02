@@ -9,6 +9,7 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
     super();
 
     this.state = {
+      currentValue: '',
       value: ''
     };
   }
@@ -23,6 +24,18 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
     });
   }
 
+  onCancel = () => {
+    this.setState({
+      value: this.state.currentValue
+    })
+  }
+
+  onSave = (event) => {
+    this.setState({
+      currentValue: event
+    });
+  }
+
   render() {
     return <div>
       <StyleGuideComponentTitle
@@ -33,9 +46,9 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
       />
       <EditableField
         value={this.state.value}
-        onSave={() => console.log("placeholder for save")}
+        onSave={this.onSave}
         onChange={this.onChange}
-        onCancel={() => console.log("placeholder for cancel")}
+        onCancel={this.onCancel}
         maxLength={50}
         label="Document title"
         strongLabel
