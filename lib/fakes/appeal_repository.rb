@@ -90,8 +90,8 @@ class Fakes::AppealRepository
     return_records = MetricsService.record "load appeals ready for hearing for vbms_id #{vbms_id}" do
       records.select do |_, r|
         (r[:vbms_id] == vbms_id &&
-        (r[:decision_date].nil? || r[:disposition] == "Remanded")) # &&
-        # r[:form9_date])
+        (r[:decision_date].nil? || r[:disposition] == "Remanded") &&
+        r[:form9_date])
       end
     end
 
