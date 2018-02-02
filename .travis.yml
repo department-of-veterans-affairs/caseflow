@@ -84,7 +84,7 @@ jobs:
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
       after_failure:
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/tmp/capybara/screenshot.html s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.screenshot.html
+        - ./ci-bin/upload-screenshots-to-s3.bash
     - 
       env: TEST_CATEGORY=reader
       script:

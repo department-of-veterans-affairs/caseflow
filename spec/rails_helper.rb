@@ -72,7 +72,11 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
-Capybara::Screenshot.append_timestamp = false
+
+# custom names for saving screenshots
+Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
+  "screenshot_#{example.description.gsub(' ', '-').gsub(/^.*\/spec\//,'')}"
+end
 
 ActiveRecord::Migration.maintain_test_schema!
 
