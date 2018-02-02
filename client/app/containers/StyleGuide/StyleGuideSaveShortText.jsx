@@ -53,7 +53,6 @@ export default class StyleGuideSaveShortText extends React.PureComponent {
         label="Document title"
         strongLabel
         name="document_title"
-        errorMessage={this.isEmpty(this.state.value) ? "Please enter some text" : null}
       />
     </div>
   }
