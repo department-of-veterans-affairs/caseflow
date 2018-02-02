@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180126175818) do
+ActiveRecord::Schema.define(version: 20180131164937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -333,7 +333,7 @@ ActiveRecord::Schema.define(version: 20180126175818) do
 
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number",      null: false
-    t.date   "notice_date",              null: false
+    t.date   "notice_date"
     t.date   "receipt_date"
     t.string "option_selected"
     t.string "end_product_reference_id"
