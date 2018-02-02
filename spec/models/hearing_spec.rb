@@ -69,7 +69,7 @@ describe Hearing do
       Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
     end
     let!(:appeal3) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
     end
     let!(:appeal4) do
       Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
@@ -77,7 +77,7 @@ describe Hearing do
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
 
     it "returns active appeals with no decision date and with form9 date" do
-      expect(subject.size).to eq 2
+      expect(subject.size).to eq 3
     end
   end
 
