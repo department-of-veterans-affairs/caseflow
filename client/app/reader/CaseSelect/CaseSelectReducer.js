@@ -8,7 +8,8 @@ export const initialState = {
   receivedAppeals: [],
   search: {
     showErrorMessage: false,
-    showNoAppealsInfoMessage: false
+    showNoAppealsInfoMessage: false,
+    noAppealsSearchQuery: ''
   },
   caseSelectCriteria: {
     searchQuery: ''
@@ -59,7 +60,10 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showNoAppealsInfoMessage: { $set: true },
-        showErrorMessage: { $set: false }
+        showErrorMessage: { $set: false },
+        noAppealsSearchQuery: {
+          $set: action.payload.searchQuery
+        }
       }
     });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
@@ -70,7 +74,10 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
       },
       search: {
         showErrorMessage: { $set: false },
-        showNoAppealsInfoMessage: { $set: false }
+        showNoAppealsInfoMessage: { $set: false },
+        noAppealsSearchQuery: {
+          $set: ''
+        }
       }
     });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:

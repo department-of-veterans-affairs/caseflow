@@ -121,8 +121,6 @@ class Fakes::AppealRepository
       records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
-    fail ActiveRecord::RecordNotFound if return_records.empty?
-
     return_records.map do |vacols_id, r|
       Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
         appeal.assign_from_vacols(r)

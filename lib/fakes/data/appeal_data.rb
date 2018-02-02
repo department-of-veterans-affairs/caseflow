@@ -75,7 +75,7 @@ module Fakes::Data::AppealData
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         date_due: "2018-02-13 00:00:00 UTC".to_datetime,
         signed_date: nil,
-        vbms_id: "DEMO123",
+        vbms_id: "123C",
         veteran_first_name: "Simple",
         veteran_middle_initial: "A",
         veteran_last_name: "Case",

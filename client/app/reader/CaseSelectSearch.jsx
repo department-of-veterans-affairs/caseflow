@@ -87,7 +87,7 @@ class CaseSelectSearch extends React.PureComponent {
       }
       {caseSelect.search.showNoAppealsInfoMessage &&
         <Alert title="No appeals found" type="info">
-          {`Veteran ID ${this.props.caseSelectCriteria.searchQuery} does not have any appeals.`}
+          {`Veteran ID ${caseSelect.search.noAppealsSearchQuery} does not have any appeals.`}
         </Alert>
       }
       <SearchBar
