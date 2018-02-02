@@ -11,7 +11,8 @@ class Fakes::HearingRepository
 
     records.map do |record|
       next if record.master_record
-      Hearing.find_or_create_by(vacols_id: record.vacols_id).tap do |hearing|
+      hearing = Hearing.create_from_vacols_record(record)
+      set_vacols_values(hearing, vacols_record)
         hearing.assign_from_vacols(record.vacols_attributes)
       end
     end.flatten
