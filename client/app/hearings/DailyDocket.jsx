@@ -33,7 +33,7 @@ export class DailyDocket extends React.Component {
               <th></th>
               <th>Prep</th>
               <th>Time/RO(s)</th>
-              <th>Veteran/Veteran ID</th>
+              <th>Appellant/Veteran ID</th>
               <th>Representative</th>
               <th>
                 Actions

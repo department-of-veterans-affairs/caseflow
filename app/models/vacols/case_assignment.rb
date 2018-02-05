@@ -10,6 +10,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       id = connection.quote(css_id.upcase)
 
       select_assignments.where("staff.sdomainid = #{id}")
+        .where("decass.decomp is null")
     end
 
     # Valid case assignments must have an associated staff table
@@ -22,6 +23,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select("brieff.bfkey as vacols_id",
              "decass.deassign as date_assigned",
              "decass.dereceive as date_received",
+             "decass.decomp as date_completed",
              "decass.dedeadline as date_due",
              "brieff.bfddec as signed_date",
              "brieff.bfcorlid as vbms_id",
@@ -47,7 +49,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
     def tasks_for_user(css_id)
       id = connection.quote(css_id.upcase)
 
-      select_tasks.where("staff.sdomainid = #{id}")
+      select_tasks.where("s2.sdomainid = #{id}")
+        .where("decass.decomp is null")
     end
 
     def select_tasks
@@ -56,13 +59,21 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "brieff.bfd19 as docket_date",
              "decass.deassign as date_assigned",
              "decass.dereceive as date_received",
+             "decass.decomp as date_completed",
+             "s1.snamef as added_by_first_name",
+             "s1.snamemi as added_by_middle_name",
+             "s1.snamel as added_by_last_name",
+             "decass.deadusr as added_by_css_id",
              "decass.dedeadline as date_due",
+             "decass.deadusr as added_by",
              "folder.tinum as docket_number")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
-          JOIN staff
-            ON brieff.bfcurloc = staff.slogid
+          LEFT JOIN staff s1
+            ON decass.deadusr = s1.slogid
+          JOIN staff s2
+            ON brieff.bfcurloc = s2.slogid
           JOIN folder
             ON brieff.bfkey = folder.ticknum
         SQL

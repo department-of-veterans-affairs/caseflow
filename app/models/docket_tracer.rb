@@ -13,6 +13,8 @@ class DocketTracer < ActiveRecord::Base
       total: docket_count,
       ahead: ahead_count,
       ready: ahead_and_ready_count,
+      month: month,
+      docket_month: latest_docket_month,
       eta: nil
     }
   end

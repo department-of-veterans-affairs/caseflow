@@ -227,6 +227,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["docket"]["total"]).to eq(123_456)
       expect(json["data"].first["attributes"]["docket"]["ahead"]).to eq(43_456)
       expect(json["data"].first["attributes"]["docket"]["ready"]).to eq(23_456)
+      expect(json["data"].first["attributes"]["docket"]["month"]).to eq("2014-05-01")
+      expect(json["data"].first["attributes"]["docket"]["docketMonth"]).to eq("2014-02-01")
       expect(json["data"].first["attributes"]["docket"]["eta"]).to be_nil
 
       # check the events on the first appeal are correct

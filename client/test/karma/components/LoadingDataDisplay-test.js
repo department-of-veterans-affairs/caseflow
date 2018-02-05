@@ -12,7 +12,7 @@ describe('LoadingDataDisplay', () => {
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createEternalPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: loadingScreenMessage
         }}
       >
@@ -31,7 +31,7 @@ describe('LoadingDataDisplay', () => {
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}
@@ -50,7 +50,7 @@ describe('LoadingDataDisplay', () => {
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}
@@ -73,7 +73,7 @@ describe('LoadingDataDisplay', () => {
       <LoadingDataDisplay
         createLoadPromise={createSlowPromise}
         slowLoadThresholdMs={SLOW_TIMEOUT_MS / 10}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
       >
@@ -96,7 +96,7 @@ describe('LoadingDataDisplay', () => {
         createLoadPromise={createSlowPromise}
         slowLoadThresholdMs={TIMEOUT_MS / 20}
         timeoutMs={TIMEOUT_MS / 10}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}

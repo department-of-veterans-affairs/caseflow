@@ -41,24 +41,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
-.cf-claims-folder-details {
-  p {
-    margin-top: 15px;
-  }
-
-  .claims-folder-issues {
-    margin-top: 20px;
-
-    ol {
-      padding-top: 3px;
-      padding-left: 1em;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-}
-
-
 .rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
   color: $color-base;
 }
@@ -415,18 +397,6 @@ svg[aria-hidden=true],
         }
 
         label:last-child {
-          margin-bottom: 0;
-
-          .cf-category-selector {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-
-    .cf-document-category-picker {
-      li:last-child {
-        div {
           margin-bottom: 0;
         }
       }

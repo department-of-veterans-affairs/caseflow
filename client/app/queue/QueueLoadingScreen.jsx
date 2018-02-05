@@ -5,18 +5,27 @@ import { connect } from 'react-redux';
 import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import { COLORS } from './constants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { associateTasksWithAppeals } from './utils';
+import _ from 'lodash';
 
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
-    // todo: Promise.resolve() if appeals/tasks already loaded
-    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
+    const { userId } = this.props;
+    const userQueueLoaded = !_.isEmpty(this.props.tasks) && !_.isEmpty(this.props.appeals) &&
+      this.props.loadedUserId === userId;
+
+    if (userQueueLoaded) {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/queue/${userId}`).then((response) => {
       const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       this.props.onReceiveQueue({
         appeals,
-        tasks
+        tasks,
+        userId
       });
     });
   };
@@ -31,8 +40,8 @@ class QueueLoadingScreen extends React.PureComponent {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-      loadingScreenProps={{
-        spinnerColor: COLORS.QUEUE_LOGO_PRIMARY,
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading your appeals...'
       }}
       failStatusMessageProps={{
@@ -52,8 +61,10 @@ QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
 };
 
+const mapStateToProps = (state) => state.queue.loadedQueue;
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(QueueLoadingScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);

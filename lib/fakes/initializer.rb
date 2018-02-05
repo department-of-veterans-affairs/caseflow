@@ -17,7 +17,7 @@ class Fakes::Initializer
         User.authentication_service = Fakes::AuthenticationService
         # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
         # set this up in Fakes::AppealRepository.seed! which we don't call for this environment.
-        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::AppealRepository.static_reader_documents }
+        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
       if rails_env.development? || rails_env.demo?
