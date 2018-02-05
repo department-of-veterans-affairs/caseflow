@@ -18,6 +18,10 @@ const issueLevelStyle = (displayIssueProgram, tightLevelStyling) => css({
   marginTop: tightLevelStyling ? 0 : '0.5rem',
   marginLeft: displayIssueProgram ? '20rem' : null
 });
+const issueNoteStyle = css({
+  marginTop: '1rem',
+  marginLeft: '20rem'
+});
 
 // todo: move to queue after Reader welcome gate deprecation
 export default class IssueList extends React.PureComponent {
@@ -35,9 +39,9 @@ export default class IssueList extends React.PureComponent {
         tightLevelStyling
       } = this.props;
 
-      return issue.levels.map((level) =>
+      return issue.levels.map((level, idx) =>
         <p {...issueLevelStyle(displayIssueProgram, tightLevelStyling)} key={level}>
-          {level}
+          {displayIssueProgram && idx === 1 ? `${issue.codes[3]} - ${level}` : level}
         </p>);
     }
 
@@ -70,6 +74,9 @@ export default class IssueList extends React.PureComponent {
             <span>
               {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
             </span>
+            {this.props.displayIssueNote && <div {...issueNoteStyle}>
+              <span {...boldText}>Note:</span> {issue.note}
+            </div>}
           </li>
         )}
       </ol>;
@@ -86,6 +93,7 @@ IssueList.propTypes = {
   className: PropTypes.string,
   formatLevelsInNewLine: PropTypes.bool,
   displayIssueProgram: PropTypes.bool,
+  displayIssueNote: PropTypes.bool,
   displayLabels: PropTypes.bool,
   tightLevelStyling: PropTypes.bool
 };
@@ -94,6 +102,7 @@ IssueList.defaultProps = {
   className: '',
   formatLevelsInNewLine: false,
   displayIssueProgram: false,
+  displayIssueNote: false,
   displayLabels: false,
   tightLevelStyling: false
 };

@@ -83,6 +83,7 @@ export default class AppealDetail extends React.PureComponent {
       className="task-list"
       formatLevelsInNewLine
       displayIssueProgram
+      displayIssueNote
       displayLabels />
   </div>;
 }
