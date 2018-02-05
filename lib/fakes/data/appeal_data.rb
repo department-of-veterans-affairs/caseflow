@@ -23,6 +23,16 @@ module Fakes::Data::AppealData
     ]
   end
 
+  def self.reader_docs_no_categories
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 5, type: "Extra Reading", received_at: 60.days.ago)
+    ]
+  end
+
   def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
     seeded_random = Random.new(seed)
     (0..num_documents).to_a.reduce([]) do |acc, number|
@@ -183,6 +193,10 @@ module Fakes::Data::AppealData
         appellant_zip: "07932",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Joe",
+        added_by_middle_name: "A",
+        added_by_last_name: "Snuffy",
+        added_by_css_id: "MAPAPPAS",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
         representative: "Virginia Department of Veterans Affairs",
@@ -218,6 +232,10 @@ module Fakes::Data::AppealData
         appellant_zip: "36838",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: nil,
+        added_by_middle_name: nil,
+        added_by_last_name: nil,
+        added_by_css_id: nil,
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
         representative: "No Representative",
@@ -271,6 +289,10 @@ module Fakes::Data::AppealData
         appellant_zip: "63873",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Ricky",
+        added_by_middle_name: nil,
+        added_by_last_name: "Tikitembo",
+        added_by_css_id: "HROBERT",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
         representative: "One Time Representative",
@@ -310,6 +332,10 @@ module Fakes::Data::AppealData
         appellant_zip: "32883",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Dana",
+        added_by_middle_name: "T",
+        added_by_last_name: "Frey",
+        added_by_css_id: "DFREY",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
         representative: "Agent",
@@ -341,6 +367,10 @@ module Fakes::Data::AppealData
         veteran_last_name: "Nino",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
+        added_by_first_name: "Demo",
+        added_by_middle_name: nil,
+        added_by_last_name: "More",
+        added_by_css_id: "DMORE",
         regional_office_key: "RO13",
         representative: "Disabled American Veterans",
         issues: [
@@ -379,6 +409,10 @@ module Fakes::Data::AppealData
         appellant_zip: "67753",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: nil,
+        added_by_middle_name: nil,
+        added_by_last_name: nil,
+        added_by_css_id: nil,
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -417,6 +451,10 @@ module Fakes::Data::AppealData
         appellant_zip: "K1M 1C8",
         appellant_country: "CN",
         docket_number: "13 11-265",
+        added_by_first_name: "Jess",
+        added_by_middle_name: "P",
+        added_by_last_name: "Tran",
+        added_by_css_id: "HROBERT",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
