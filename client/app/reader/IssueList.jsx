@@ -13,9 +13,9 @@ const issueListStyle = css({
 const labelStyle = (displayIssueProgram) => css({
   marginLeft: displayIssueProgram ? '2rem' : null
 });
-const issueLevelStyle = (displayIssueProgram, tightLevelStyling) => css({
+const issueLevelStyle = (displayIssueProgram) => css({
   marginBottom: 0,
-  marginTop: tightLevelStyling ? 0 : '0.5rem',
+  marginTop: 0,
   marginLeft: displayIssueProgram ? '20rem' : null
 });
 const issueNoteStyle = css({
@@ -34,13 +34,10 @@ export default class IssueList extends React.PureComponent {
    */
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
     if (formatLevelsInNewLine) {
-      const {
-        displayIssueProgram,
-        tightLevelStyling
-      } = this.props;
+      const { displayIssueProgram } = this.props;
 
       return issue.levels.map((level, idx) =>
-        <p {...issueLevelStyle(displayIssueProgram, tightLevelStyling)} key={level}>
+        <p {...issueLevelStyle(displayIssueProgram)} key={level}>
           {displayIssueProgram && idx === 1 ? `${issue.codes[3]} - ${level}` : level}
         </p>);
     }
@@ -94,8 +91,7 @@ IssueList.propTypes = {
   formatLevelsInNewLine: PropTypes.bool,
   displayIssueProgram: PropTypes.bool,
   displayIssueNote: PropTypes.bool,
-  displayLabels: PropTypes.bool,
-  tightLevelStyling: PropTypes.bool
+  displayLabels: PropTypes.bool
 };
 
 IssueList.defaultProps = {
@@ -103,6 +99,5 @@ IssueList.defaultProps = {
   formatLevelsInNewLine: false,
   displayIssueProgram: false,
   displayIssueNote: false,
-  displayLabels: false,
-  tightLevelStyling: false
+  displayLabels: false
 };

@@ -14,7 +14,10 @@ const appealDetailStyling = css({
     listStyle: 'none'
   },
   '& .task-list': {
-    paddingLeft: '1.5rem'
+    paddingLeft: '1.5rem',
+    '& li': {
+      marginTop: '2rem'
+    }
   }
 });
 
