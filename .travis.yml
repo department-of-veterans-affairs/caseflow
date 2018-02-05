@@ -4,10 +4,12 @@ sudo: required
 rvm:
   - 2.2.4
 
+addons:
+  chrome: stable
+
 branches:
     only:
       - master
-
 env:
   global:
     # include $HOME/.local/bin for `aws`
@@ -32,18 +34,29 @@ before_install:
   - export YARN=/usr/bin/yarn
   
   - $YARN --version
-# See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
-  - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
-  - sudo dpkg -i $PWD/chromium-chromedriver.deb
-  - sudo apt-get install -f
+  # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
+  # - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
+  # - sudo dpkg -i $PWD/chromium-chromedriver.deb
+  # - sudo apt-get install -f
+  # - sudo apt-get install pdftk
+  # - "export PATH=$PATH:/usr/lib/chromium-browser/"
+  # - "export DISPLAY=:99.0"
+  - wget -N http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  - export PATH=$PATH:/usr/local/share/chromedriver/
   - sudo apt-get install pdftk
-  - "export PATH=$PATH:/usr/lib/chromium-browser/"
-  - "export DISPLAY=:99.0"
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
 
 before_script:
   - bundle exec danger
+  - export DISPLAY=:99.0
+  - google-chrome --version
+  - chromedriver -v
 
 jobs:
   include:
@@ -66,6 +79,8 @@ jobs:
     - 
       env: TEST_CATEGORY=certification
       script:
+        - whereis google-chrome-stable
+        - whereis chromedriver
         - bundle exec rake spec:parallel:setup:certification
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
