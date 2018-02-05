@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export const associateTasksWithAppeals = (serverData) => {
+export const associateTasksWithAppeals = (serverData = {}) => {
   const {
     appeals: { data: appeals },
     tasks: { data: tasks }
@@ -8,12 +8,18 @@ export const associateTasksWithAppeals = (serverData) => {
 
   // todo: Attorneys currently only have one task per appeal, but future users might have multiple
   _.each(tasks, (task) => {
-    task.appeal = appeals.filter((appeal) => appeal.attributes.vacols_id === task.attributes.appeal_id)[0];
+    task.vacolsId = _(appeals).
+      filter((appeal) => appeal.attributes.vacols_id === task.attributes.appeal_id).
+      map('attributes.vacols_id').
+      head();
   });
 
+  const tasksById = _.keyBy(tasks, 'id');
+  const appealsById = _.keyBy(appeals, 'attributes.vacols_id');
+
   return {
-    appeals,
-    tasks
+    appeals: appealsById,
+    tasks: tasksById
   };
 };
 
@@ -25,9 +31,9 @@ export const associateTasksWithAppeals = (serverData) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = (tasks) => {
+export const sortTasks = ({ tasks = {}, appeals = {} }) => {
   const partitionedTasks = _.partition(tasks, (task) =>
-    task.appeal.attributes.aod || task.appeal.attributes.type === 'Court Remand'
+    appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
   );
 
   _.each(partitionedTasks, _.sortBy('attributes.docket_date'));

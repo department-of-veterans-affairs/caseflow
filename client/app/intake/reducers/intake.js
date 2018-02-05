@@ -31,7 +31,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     fileNumberSearch: '',
     searchErrorCode: null,
     searchErrorData: {
-      duplicateNoticeDate: null,
+      duplicateReceiptDate: null,
       duplicateProcessedBy: null
     },
     cancelModalVisible: false,
@@ -87,8 +87,8 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         $set: action.payload.errorCode
       },
       searchErrorData: {
-        duplicateNoticeDate: {
-          $set: formatDateStr(action.payload.errorData.notice_date)
+        duplicateReceiptDate: {
+          $set: formatDateStr(action.payload.errorData.receipt_date)
         },
         duplicateProcessedBy: {
           $set: action.payload.errorData.processed_by
