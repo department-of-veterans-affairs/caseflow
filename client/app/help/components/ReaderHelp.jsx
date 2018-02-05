@@ -6,7 +6,7 @@ class CertificationHelp extends React.Component {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
 
-      <h1 id="#top">Welcome to the Reader Help Page!</h1>
+      <h1 id="#top">Welcome to the Reader Help page!</h1>
 
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> FAQs</a> for Reader. If you need help with a topic not covered on this page, please contact the Caseflow Product Support Team by calling 1-844-876-5548. We will assist you as quickly as possible. </p>
 
