@@ -74,7 +74,7 @@ export default class IssueList extends React.PureComponent {
             <span>
               {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
             </span>
-            {this.props.displayIssueNote && <div {...issueNoteStyle}>
+            {this.props.displayIssueNote && issue.note && <div {...issueNoteStyle}>
               <span {...boldText}>Note:</span> {issue.note}
             </div>}
           </li>
