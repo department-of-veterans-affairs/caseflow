@@ -4,21 +4,18 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import { boldText } from './constants';
-import { dateString } from './utils';
+import { DateString } from '../util/DateUtil';
 
-const appellantDetailStyling = css({
-  '& ul': {
-    paddingLeft: 0,
-    listStyle: 'none'
-  },
-  '& h2': {
-    marginBottom: '5px',
-    '&:nth-of-type(2)': {
-      marginTop: '3rem'
-    }
+const detailHeaderStyling = css({
+  marginBottom: '5px',
+  '&:nth-of-type(2)': {
+    marginTop: '3rem'
   }
 });
-
+const detailListStyling = css({
+  paddingLeft: 0,
+  listStyle: 'none'
+});
 const addressIndentStyling = (secondLine) => css({
   marginLeft: secondLine ? '12.5rem' : 0
 });
@@ -38,7 +35,7 @@ export default class AppellantDetail extends React.PureComponent {
     const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
     return <React.Fragment>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
+      {streetAddress && <React.Fragment><span>{streetAddress},</span><br/></React.Fragment>}
       <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
     </React.Fragment>;
   };
@@ -50,41 +47,38 @@ export default class AppellantDetail extends React.PureComponent {
   getDetails = ({ nameField, genderField, dobField, addressField, relationField }) => {
     const details = [{
       label: 'Name',
-      valueFunction: () => this.getAppealAttr(nameField)
+      value: this.getAppealAttr(nameField)
     }];
 
     if (genderField && this.getAppealAttr(genderField)) {
       details.push({
         label: 'Preferred pronoun',
-        valueFunction: () => this.getPreferredPronoun(genderField)
+        value: this.getPreferredPronoun(genderField)
       });
     }
     if (dobField && this.getAppealAttr(dobField)) {
       details.push({
         label: 'Date of birth',
-        valueFunction: () => dateString(this.getAppealAttr(dobField), 'M/D/YYYY')
+        value: <DateString date={this.getAppealAttr(dobField)} dateFormat='M/D/YYYY'/>
       });
     }
     if (relationField && this.getAppealAttr(relationField)) {
       details.push({
         label: 'Relation to Veteran',
-        valueFunction: () => this.getAppealAttr(relationField)
+        value: this.getAppealAttr(relationField)
       });
     }
     if (addressField && this.getAppealAttr(addressField)) {
       details.push({
         label: 'Mailing Address',
-        valueFunction: () => this.formatAddress(addressField)
+        value: this.formatAddress(addressField)
       });
     }
 
-    return details;
-  };
-
-  renderListElements = (elements = []) => elements.map(({ label, valueFunction }, idx) =>
-    <li key={idx}>
-      <span {...boldText}>{label}:</span> {valueFunction()}
+    return details.map(({ label, value }, idx) => <li key={idx}>
+      <span {...boldText}>{label}:</span> {value}
     </li>);
+  };
 
   render = () => {
     let appellantDetails;
@@ -92,49 +86,43 @@ export default class AppellantDetail extends React.PureComponent {
 
     if (this.veteranIsAppellant()) {
       appellantDetails = <React.Fragment>
-        <h2>Veteran Details</h2>
+        <h2 {...detailHeaderStyling}>Veteran Details</h2>
         <span>The veteran is the appellant.</span>
-        <ul>
-          {this.renderListElements(
-            this.getDetails({
-              nameField: 'veteran_full_name',
-              genderField: 'veteran_gender',
-              dobField: 'veteran_date_of_birth',
-              addressField: 'appellant_address'
-            })
-          )}
+        <ul {...detailListStyling}>
+          {this.getDetails({
+            nameField: 'veteran_full_name',
+            genderField: 'veteran_gender',
+            dobField: 'veteran_date_of_birth',
+            addressField: 'appellant_address'
+          })}
         </ul>
       </React.Fragment>;
     } else {
       appellantDetails = <React.Fragment>
-        <h2>Appellant Details</h2>
+        <h2 {...detailHeaderStyling}>Appellant Details</h2>
         <span>The veteran is not the appellant.</span>
-        <ul>
-          {this.renderListElements(
-            this.getDetails({
-              nameField: 'appellant_full_name',
-              addressField: 'appellant_address',
-              relationField: 'appellant_relationship'
-            })
-          )}
+        <ul {...detailListStyling}>
+          {this.getDetails({
+            nameField: 'appellant_full_name',
+            addressField: 'appellant_address',
+            relationField: 'appellant_relationship'
+          })}
         </ul>
       </React.Fragment>;
 
       veteranDetails = <React.Fragment>
-        <h2>Veteran Details</h2>
-        <ul>
-          {this.renderListElements(
-            this.getDetails({
-              nameField: 'veteran_full_name',
-              genderField: 'veteran_gender',
-              dobField: 'veteran_date_of_birth'
-            })
-          )}
+        <h2 {...detailHeaderStyling}>Veteran Details</h2>
+        <ul {...detailListStyling}>
+          {this.getDetails({
+            nameField: 'veteran_full_name',
+            genderField: 'veteran_gender',
+            dobField: 'veteran_date_of_birth'
+          })}
         </ul>
       </React.Fragment>;
     }
 
-    return <div {...appellantDetailStyling}>
+    return <div>
       {appellantDetails}
       {veteranDetails}
     </div>;

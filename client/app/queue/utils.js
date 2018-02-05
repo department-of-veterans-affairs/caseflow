@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -43,7 +42,3 @@ export const sortTasks = ({ tasks = {}, appeals = {} }) => {
 
   return _.flatten(partitionedTasks);
 };
-
-export const dateString = (date, dateFormat = 'MM/DD/YY') => <span>
-  {moment(date).format(dateFormat)}
-</span>;

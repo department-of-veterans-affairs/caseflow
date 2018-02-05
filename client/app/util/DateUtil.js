@@ -1,3 +1,4 @@
+import React from 'react';
 import StringUtil from './StringUtil';
 import moment from 'moment';
 import _ from 'lodash';
@@ -24,6 +25,10 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
     return formatDate(dateString);
   }).join(', ');
 };
+
+export const DateString = ({ date, dateFormat = 'MM/DD/YY' }) => <span>
+  {formatDateStr(date, undefined, dateFormat)}
+</span>;
 
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
   if (!dateString) {
