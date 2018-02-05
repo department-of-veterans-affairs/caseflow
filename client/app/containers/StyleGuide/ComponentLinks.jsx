@@ -185,6 +185,10 @@ export const componentLinks = [
     {
       anchor: '#save-long-text',
       name: 'Save long text'
+    },
+    {
+      anchor: '#save-short-text',
+      name: 'Save short text'
     }]
   },
   {
