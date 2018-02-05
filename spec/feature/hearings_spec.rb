@@ -217,8 +217,8 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       link = find("#review-efolder")
       link_href = link[:href]
-      expect(page).to have_content("Review eFolder")
-      click_on "Review eFolder"
+      expect(page).to have_content("Review Claims Folder")
+      click_on "Review Claims Folder"
       new_window = windows.last
       page.within_window new_window do
         visit link_href
