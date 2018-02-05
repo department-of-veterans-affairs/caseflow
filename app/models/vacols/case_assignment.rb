@@ -70,7 +70,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
-          FULL JOIN staff s1
+          LEFT JOIN staff s1
             ON decass.deadusr = s1.slogid
           JOIN staff s2
             ON brieff.bfcurloc = s2.slogid
