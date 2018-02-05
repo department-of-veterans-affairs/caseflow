@@ -35,7 +35,7 @@ export default class AppellantDetail extends React.PureComponent {
       zip,
       country
     } = this.getAppealAttr(addressFieldName);
-    const streetAddress = `${addressLine1} ${addressLine2 || ''}`;
+    const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
     return <React.Fragment>
       <span>{streetAddress},</span><br />
