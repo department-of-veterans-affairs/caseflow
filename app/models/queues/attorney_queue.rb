@@ -5,7 +5,7 @@ class AttorneyQueue < WorkQueue
     vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
     tasks = vacols_tasks.map do |task|
-      DraftDecision.from_vacols(task, user_id)
+      VacolsAssignment.from_vacols(task, user_id)
     end
     [tasks, vacols_appeals]
   end
