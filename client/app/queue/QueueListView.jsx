@@ -2,9 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import StatusMessage from '../components/StatusMessage';
 import QueueTable from './QueueTable';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+
+const headerStyling = css({
+  width: '100%'
+});
 
 class QueueListView extends React.PureComponent {
   render = () => {
@@ -18,14 +24,14 @@ class QueueListView extends React.PureComponent {
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 className="cf-push-left">Your Queue</h1>
+        <h1 className="cf-push-left" {...headerStyling}>Your Queue</h1>
         <QueueTable />
       </div>;
     }
 
-    return <div className="cf-app-segment cf-app-segment--alt">
+    return <AppSegment filledBackground>
       {tableContent}
-    </div>;
+    </AppSegment>;
   };
 }
 
