@@ -30,7 +30,7 @@ class QueueDetailView extends React.PureComponent {
       page: 'TODO: Appeal Summary page'
     }, {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
-      page: <AppellantDetail appeal={this.props.appeal}/>
+      page: <AppellantDetail appeal={this.props.appeal} />
     }];
 
     return <AppSegment filledBackground>
