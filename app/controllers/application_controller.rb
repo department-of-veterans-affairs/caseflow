@@ -172,20 +172,21 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_subject
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    if request.original_fullpath.include? "dispatch"
-      "Caseflow Dispatch"
-    elsif request.original_fullpath.include? "certifications"
-      "Caseflow Certification"
-    elsif request.original_fullpath.include? "reader"
-      "Caseflow Reader"
-    elsif request.original_fullpath.include? "hearings"
-      "Caseflow Hearing Prep"
-    elsif request.original_fullpath.include? "intake"
-      "Caseflow Intake"
-    else
+    feedback_hash = {
+      "dispatch" => "Caseflow Dispatch",
+      "certifications" => "Caseflow Certification",
+      "reader" => "Caseflow Reader",
+      "hearings" => "Caseflow Hearing Prep",
+      "intake" => "Caseflow Intake",
+      "queue" => "Caseflow Queue"
+    }
+    # Breaks down original_fullpath into array and checks if first element of request_array
+    # has a key in the feedback_hash
+    request_array = request.original_fullpath.split("/")
+    if feedback_hash.key?(request_array[1]) == false
       "Caseflow"
+    else
+      feedback_hash[request_array[1]]
     end
   end
 
