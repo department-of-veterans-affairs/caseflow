@@ -12,11 +12,11 @@ RSpec.describe "Reader Appeal Requests", type: :request do
     let(:headers) { { "HTTP_VETERAN_ID": "111225555S" } }
 
     it "returns not found" do
-      headers["HTTP_VETERAN_ID"] = "22221C"
+      headers["HTTP_VETERAN_ID"] = "22C"
       get "/reader/appeal/veteran-id", nil, headers
       expect(response).to have_http_status(:not_found)
 
-      headers["HTTP_VETERAN_ID"] = "22112121xs"
+      headers["HTTP_VETERAN_ID"] = "221121212121212121xs"
       get "/reader/appeal/veteran-id", nil, headers
       expect(response).to have_http_status(:not_found)
     end
