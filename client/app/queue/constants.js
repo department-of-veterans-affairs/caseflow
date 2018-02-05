@@ -16,3 +16,20 @@ export const ACTIONS = {
 export const redText = css({ color: '#E60000' });
 
 export const boldText = css({ fontWeight: 'bold' });
+
+export const CATEGORIES = {
+  QUEUE_TABLE: 'Queue Table',
+  QUEUE_TASK: 'Queue Task',
+}
+
+export const TASK_ACTIONS = {
+  VIEW_APPELLANT_INFO: 'view-appellant-info',
+  VIEW_APPEAL_INFO: 'view-appeal-info',
+  QUEUE_TO_READER: 'queue-to-reader',
+  QUEUE_TO_HEARING_WORKSHEET: 'queue-to-hearing-worksheet'
+}
+
+export const INTERACTION_TYPES = {
+  NEW_WINDOW: 'new-window',
+  SAME_WINDOW: 'same-window'
+}
