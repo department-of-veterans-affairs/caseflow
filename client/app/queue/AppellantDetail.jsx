@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText, redText } from './constants';
+import { boldText } from './constants';
 import { dateString } from './utils';
 
 const appellantDetailStyling = css({
@@ -38,7 +38,7 @@ export default class AppellantDetail extends React.PureComponent {
     const streetAddress = `${addressLine1} ${addressLine2 || ''}`;
 
     return <React.Fragment>
-      <span>{streetAddress},</span><br/>
+      <span>{streetAddress},</span><br />
       <span {...addressSecondLineStyling}>{city} {state}, {zip} {country === 'USA' ? '' : country}</span>
     </React.Fragment>;
   };
@@ -104,7 +104,8 @@ export default class AppellantDetail extends React.PureComponent {
         <span>The veteran is not the appellant.</span>
         <ul>
           {this.renderListElements(
-            this.getDetails({ nameField: 'appellant_full_name', addressField: 'appellant_address' })
+            this.getDetails({ nameField: 'appellant_full_name',
+              addressField: 'appellant_address' })
           )}
         </ul>
       </React.Fragment>;
