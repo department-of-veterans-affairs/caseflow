@@ -53,20 +53,23 @@ end
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  chrome_options = ::Selenium::WebDriver::Chrome::Options.new()
+  
+  chrome_options.add_preference(:download, { 
+    prompt_for_download: false,
+    default_directory: download_directory
+  })
+
+  chrome_options.add_preference(:browser, { 
+    disk_cache_dir: cache_directory
+  })
+
   options = {
     port: 51_674,
     browser: :chrome,
-    prefs: {
-      download: {
-        prompt_for_download: false,
-        default_directory: download_directory
-      },
-      browser: {
-        disk_cache_dir: cache_directory
-      }
-    }
+    options: chrome_options
   }
-
+  
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
