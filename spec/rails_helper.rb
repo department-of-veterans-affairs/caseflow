@@ -69,7 +69,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
     browser: :chrome,
     options: chrome_options
   }
-  
+
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
