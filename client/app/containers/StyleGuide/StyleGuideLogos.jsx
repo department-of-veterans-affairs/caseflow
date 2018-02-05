@@ -28,6 +28,16 @@ export default class StyleLogos extends React.PureComponent {
         accentColor: LOGO_COLORS.READER.ACCENT,
         overlapColor: LOGO_COLORS.READER.OVERLAP,
         appName: 'Reader'
+      },
+      {
+        accentColor: LOGO_COLORS.CERTIFICATION.ACCENT,
+        overlapColor: LOGO_COLORS.CERTIFICATION.OVERLAP,
+        appName: 'Certification'
+      },
+      {
+        accentColor: LOGO_COLORS.EFOLDER.ACCENT,
+        overlapColor: LOGO_COLORS.EFOLDER.OVERLAP,
+        appName: 'eFolder Express'
       }
     ];
 
