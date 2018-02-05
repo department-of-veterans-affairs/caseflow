@@ -22,8 +22,9 @@ const appStyling = css({
 
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
-    '& .usa-alert-info': {
-      marginBottom: '1rem'
+    '& .usa-alert-info, & .usa-alert-error': {
+      marginBottom: '1.5rem',
+      marginTop: 0
     },
     '& .cf-search-input-with-close': {
       marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
