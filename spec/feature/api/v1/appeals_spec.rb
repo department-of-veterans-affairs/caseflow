@@ -86,9 +86,9 @@ describe "Appeals API v1", type: :request do
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
     end
 
-    # OAR 2/5/18 - Removed as SSN not found will return an empty 
+    # OAR 2/5/18 - Removed as SSN not found will return an empty
     # result set not a not found.
-    #it "returns 404 if veteran with that SSN isn't found" do
+    # it "returns 404 if veteran with that SSN isn't found" do
     #  headers = {
     #    "ssn": "444444444",
     #    "Authorization": "Token token=#{api_key.key_string}"
@@ -101,7 +101,7 @@ describe "Appeals API v1", type: :request do
     #  json = JSON.parse(response.body)
     #  expect(json["errors"].length).to eq(1)
     #  expect(json["errors"].first["title"]).to eq("Veteran not found")
-    #end
+    # end
 
     it "caches response" do
       headers = {
