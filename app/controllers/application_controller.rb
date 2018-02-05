@@ -180,14 +180,8 @@ class ApplicationController < ApplicationBaseController
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
     }
-    # Breaks down original_fullpath into array and checks if first element of request_array
-    # has a key in the feedback_hash
-    request_array = request.original_fullpath.split("/")
-    if feedback_hash.key?(request_array[1]) == false
-      "Caseflow"
-    else
-      feedback_hash[request_array[1]]
-    end
+    subject = feedback_hash.keys.select{|route| request.original_fullpath.include?(route)}[0]
+    return subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
   def feedback_url
