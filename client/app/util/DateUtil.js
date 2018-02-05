@@ -26,10 +26,6 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
   }).join(', ');
 };
 
-export const DateString = ({ date, dateFormat = 'MM/DD/YY' }) => <span>
-  {formatDateStr(date, undefined, dateFormat)}
-</span>;
-
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
   if (!dateString) {
     return;
@@ -37,6 +33,10 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
 
   return moment(dateString, dateFormat).format(expectedFormat);
 };
+
+export const DateString = ({ date, dateFormat = 'MM/DD/YY' }) => <span>
+  {formatDateStr(date, 'YYYY-MM-DD', dateFormat)}
+</span>;
 
 export const formatDateStringForApi = (dateString) => (
   formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')

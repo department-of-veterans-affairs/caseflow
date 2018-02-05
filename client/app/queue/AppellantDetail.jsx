@@ -35,7 +35,7 @@ export default class AppellantDetail extends React.PureComponent {
     const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
     return <React.Fragment>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br/></React.Fragment>}
+      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
       <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
     </React.Fragment>;
   };
@@ -59,7 +59,7 @@ export default class AppellantDetail extends React.PureComponent {
     if (dobField && this.getAppealAttr(dobField)) {
       details.push({
         label: 'Date of birth',
-        value: <DateString date={this.getAppealAttr(dobField)} dateFormat='M/D/YYYY'/>
+        value: <DateString date={this.getAppealAttr(dobField)} dateFormat="M/D/YYYY" />
       });
     }
     if (relationField && this.getAppealAttr(relationField)) {
