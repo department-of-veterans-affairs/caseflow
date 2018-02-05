@@ -19,8 +19,8 @@ const appellantDetailStyling = css({
   }
 });
 
-const addressSecondLineStyling = css({
-  marginLeft: '12.5rem'
+const addressIndentStyling = (secondLine) => css({
+  marginLeft: secondLine ? '12.5rem' : 0
 });
 
 export default class AppellantDetail extends React.PureComponent {
@@ -38,8 +38,8 @@ export default class AppellantDetail extends React.PureComponent {
     const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
     return <React.Fragment>
-      <span>{streetAddress},</span><br />
-      <span {...addressSecondLineStyling}>{city} {state}, {zip} {country === 'USA' ? '' : country}</span>
+      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
+      <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
     </React.Fragment>;
   };
 
@@ -53,25 +53,25 @@ export default class AppellantDetail extends React.PureComponent {
       valueFunction: () => this.getAppealAttr(nameField)
     }];
 
-    if (genderField) {
+    if (genderField && this.getAppealAttr(genderField)) {
       details.push({
         label: 'Preferred pronoun',
         valueFunction: () => this.getPreferredPronoun(genderField)
       });
     }
-    if (dobField) {
+    if (dobField && this.getAppealAttr(dobField)) {
       details.push({
         label: 'Date of birth',
         valueFunction: () => dateString(this.getAppealAttr(dobField), 'M/D/YYYY')
       });
     }
-    if (relationField) {
+    if (relationField && this.getAppealAttr(relationField)) {
       details.push({
         label: 'Relation to Veteran',
         valueFunction: () => this.getAppealAttr(relationField)
       });
     }
-    if (addressField) {
+    if (addressField && this.getAppealAttr(addressField)) {
       details.push({
         label: 'Mailing Address',
         valueFunction: () => this.formatAddress(addressField)
@@ -99,7 +99,8 @@ export default class AppellantDetail extends React.PureComponent {
             this.getDetails({
               nameField: 'veteran_full_name',
               genderField: 'veteran_gender',
-              dobField: 'veteran_date_of_birth'
+              dobField: 'veteran_date_of_birth',
+              addressField: 'appellant_address'
             })
           )}
         </ul>
