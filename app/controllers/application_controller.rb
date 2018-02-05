@@ -180,8 +180,8 @@ class ApplicationController < ApplicationBaseController
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
     }
-    subject = feedback_hash.keys.select{|route| request.original_fullpath.include?(route)}[0]
-    return subject.nil? ? "Caseflow" : feedback_hash[subject]
+    subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
+    subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
   def feedback_url
