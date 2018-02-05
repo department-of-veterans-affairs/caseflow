@@ -10,27 +10,27 @@ RSpec.feature "Help" do
 
   scenario "user goes to the Certification Help page" do
     visit "/certification/help"
-    expect(page).to have_content("Welcome to the Certification Help Page!")
+    expect(page).to have_content("Welcome to the Certification Help page!")
   end
 
   scenario "user goes to the Dispatch Help page" do
     visit "/dispatch/help"
-    expect(page).to have_content("Welcome to the Dispatch Help Page!")
+    expect(page).to have_content("Welcome to the Dispatch Help page!")
   end
 
   scenario "user goes to the Intake Help page" do
     visit "/intake/help"
-    expect(page).to have_content("Welcome to the Intake Help Page!")
+    expect(page).to have_content("Welcome to the Intake Help page!")
   end
 
   scenario "user goes to the Reader Help page" do
     visit "/reader/help"
-    expect(page).to have_content("Welcome to the Reader Help Page!")
+    expect(page).to have_content("Welcome to the Reader Help page!")
   end
 
   scenario "user goes to the Hearings Help page" do
     visit "/hearings/help"
-    expect(page).to have_content("Welcome to the Hearings Help Page!")
+    expect(page).to have_content("Welcome to the Hearings Help page!")
   end
 
   scenario "logo properly goes to homepage" do
