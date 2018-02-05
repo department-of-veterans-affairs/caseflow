@@ -7,11 +7,32 @@ import { css } from 'glamor';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
+import AppFrame from '../components/AppFrame';
+import QueueDetailView from './QueueDetailView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { connect } from 'react-redux';
+
+const appStyling = css({
+  paddingTop: '3rem'
+});
+
+const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
+  '.section-search': {
+    '& .usa-alert-info': {
+      marginBottom: '1rem'
+    },
+    '& .cf-search-input-with-close': {
+      marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
+    },
+    '& .cf-submit': {
+      width: '10.5rem'
+    }
+  }
+});
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
@@ -20,51 +41,44 @@ class QueueApp extends React.PureComponent {
       alwaysShowCaseSelectionModal
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
-      styling={this.getSearchStyling()} />
+      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
-  getSearchStyling = () => css({
-    '.section-search': {
-      marginTop: '3rem',
-      '> .usa-alert-error, > .usa-alert-info': {
-        marginBottom: '1rem'
-      },
-      '> .usa-search-big': {
-        '> .cf-search-input-with-close': {
-          marginLeft: `calc(100% - ${this.props.isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
-        },
-        '> span > .cf-submit': {
-          width: '10.5rem'
-        }
-      }
-    }
-  });
+  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
+    <Link to="/">&lt; Back to your queue</Link>
+    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+  </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename="/queue">
-    <div>
-      <NavigationBar
-        defaultUrl="/"
-        userDisplayName={this.props.userDisplayName}
-        dropdownUrls={this.props.dropdownUrls}
-        logoProps={{
-          overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
-          accentColor: LOGO_COLORS.QUEUE.ACCENT
-        }}
-        appName="Queue">
-        <div className="cf-wide-app section--queue-list">
+    <NavigationBar
+      defaultUrl="/"
+      userDisplayName={this.props.userDisplayName}
+      dropdownUrls={this.props.dropdownUrls}
+      logoProps={{
+        overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
+        accentColor: LOGO_COLORS.QUEUE.ACCENT
+      }}
+      appName="Queue">
+      <AppFrame wideApp>
+        <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
             path="/"
             title="Your Queue | Caseflow Queue"
             render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId"
+            title="Draft Decision | Caseflow Queue"
+            render={this.routedQueueDetail} />
         </div>
-      </NavigationBar>
+      </AppFrame>
       <Footer
         appName="Queue"
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />
-    </div>
+    </NavigationBar>
   </BrowserRouter>;
 }
 
@@ -76,7 +90,9 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.caseSelect,
-  ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']);
+const mapStateToProps = (state) => ({
+  ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
+  ..._.pick(state.queue.loadedQueue, 'appeals')
+});
 
 export default connect(mapStateToProps)(QueueApp);

@@ -9,20 +9,29 @@ class ReaderLink extends React.PureComponent {
   render = () => {
     const {
       docCount,
+      message,
       vacols_id: vacolsId
     } = this.props;
 
+    let linkText = 'View in Reader';
+
+    if (message) {
+      linkText = message;
+    } else if (!_.isUndefined(docCount)) {
+      linkText = `View ${docCount.toLocaleString()} in Reader`;
+    }
+
     return <Link href={`/reader/appeal/${vacolsId}/documents`}>
-      {_.isUndefined(docCount) ? 'View in Reader' : `View ${docCount.toLocaleString()} in Reader`}
+      {linkText}
     </Link>;
   };
 }
 
 ReaderLink.propTypes = {
-  appealId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) =>
-  _.pick(state.queue.loadedQueue.appeals[ownProps.appealId].attributes, 'docCount', 'vacols_id');
+  _.pick(state.queue.loadedQueue.appeals[ownProps.vacolsId].attributes, 'docCount', 'vacols_id');
 
 export default connect(mapStateToProps)(ReaderLink);

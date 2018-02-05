@@ -19,7 +19,7 @@ class Generators::Appeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative: "Mi`litary Order of the Purple Heart",
+        representative: "Military Order of the Purple Heart",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
@@ -86,8 +86,12 @@ class Generators::Appeal
           docket_number: "13 12-225",
           issues: [
             { disposition: :remanded,
+              readable_disposition: "Remanded",
+              close_date: 7.days.ago,
               vacols_sequence_id: 1 },
             { disposition: :denied,
+              readable_disposition: "Denied",
+              close_date: 7.days.ago,
               vacols_sequence_id: 2 }
           ]
         },
