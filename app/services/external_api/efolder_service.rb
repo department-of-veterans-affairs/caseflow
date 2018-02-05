@@ -69,6 +69,11 @@ class ExternalApi::EfolderService
     }
   end
 
+  def self.efolder_files_url
+    # TODO: support v2
+    URI(efolder_base_url + "/api/v1/files").to_s
+  end
+
   def self.efolder_content_url(id)
     if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
       URI(efolder_base_url + "/api/v2/records/#{id}").to_s
