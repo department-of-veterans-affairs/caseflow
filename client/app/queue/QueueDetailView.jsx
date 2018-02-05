@@ -42,7 +42,7 @@ class QueueDetailView extends React.PureComponent {
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
-        Due {moment(task.due_on).format('MM/DD/YY')}
+        Due {moment(task.due_on).format('MM/DD/YY')}.
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
 
