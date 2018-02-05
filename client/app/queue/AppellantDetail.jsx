@@ -47,7 +47,7 @@ export default class AppellantDetail extends React.PureComponent {
 
   veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
 
-  getDetails = (nameField, genderField, dobField, addressField) => {
+  getDetails = ({ nameField, genderField, dobField, addressField }) => {
     const details = [{
       label: 'Name',
       valueFunction: () => this.getAppealAttr(nameField)
@@ -73,7 +73,7 @@ export default class AppellantDetail extends React.PureComponent {
     }
 
     return details;
-  }
+  };
 
   renderListElements = (elements = []) => elements.map(({ label, valueFunction }, idx) =>
     <li key={idx}>
@@ -90,7 +90,11 @@ export default class AppellantDetail extends React.PureComponent {
         <span>The veteran is the appellant.</span>
         <ul>
           {this.renderListElements(
-            this.getDetails('veteran_full_name', 'veteran_gender', 'veteran_date_of_birth')
+            this.getDetails({
+              nameField: 'veteran_full_name',
+              genderField: 'veteran_gender',
+              dobField: 'veteran_date_of_birth'
+            })
           )}
         </ul>
       </React.Fragment>;
@@ -100,7 +104,7 @@ export default class AppellantDetail extends React.PureComponent {
         <span>The veteran is not the appellant.</span>
         <ul>
           {this.renderListElements(
-            this.getDetails('appellant_full_name', undefined, undefined, 'appellant_address')
+            this.getDetails({ nameField: 'appellant_full_name', addressField: 'appellant_address' })
           )}
         </ul>
       </React.Fragment>;
@@ -109,7 +113,11 @@ export default class AppellantDetail extends React.PureComponent {
         <h2>Veteran Details</h2>
         <ul>
           {this.renderListElements(
-            this.getDetails('veteran_full_name', 'veteran_gender', 'veteran_date_of_birth')
+            this.getDetails({
+              nameField: 'veteran_full_name',
+              genderField: 'veteran_gender',
+              dobField: 'veteran_date_of_birth'
+            })
           )}
         </ul>
       </React.Fragment>;
