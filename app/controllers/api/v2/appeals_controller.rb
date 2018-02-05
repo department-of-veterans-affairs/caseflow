@@ -1,5 +1,6 @@
 class Api::V2::AppealsController < Api::ApplicationController
   def index
+    api_key.api_views.create(vbms_id: vbms_id)
     render json: json_appeals
   rescue ActiveRecord::RecordNotFound
     veteran_not_found
