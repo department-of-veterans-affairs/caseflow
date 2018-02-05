@@ -47,7 +47,7 @@ export default class AppellantDetail extends React.PureComponent {
 
   veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
 
-  getDetails = ({ nameField, genderField, dobField, addressField }) => {
+  getDetails = ({ nameField, genderField, dobField, addressField, relationField }) => {
     const details = [{
       label: 'Name',
       valueFunction: () => this.getAppealAttr(nameField)
@@ -63,6 +63,12 @@ export default class AppellantDetail extends React.PureComponent {
       details.push({
         label: 'Date of birth',
         valueFunction: () => dateString(this.getAppealAttr(dobField), 'M/D/YYYY')
+      });
+    }
+    if (relationField) {
+      details.push({
+        label: 'Relation to Veteran',
+        valueFunction: () => this.getAppealAttr(relationField)
       });
     }
     if (addressField) {
@@ -104,8 +110,11 @@ export default class AppellantDetail extends React.PureComponent {
         <span>The veteran is not the appellant.</span>
         <ul>
           {this.renderListElements(
-            this.getDetails({ nameField: 'appellant_full_name',
-              addressField: 'appellant_address' })
+            this.getDetails({
+              nameField: 'appellant_full_name',
+              addressField: 'appellant_address',
+              relationField: 'appellant_relationship'
+            })
           )}
         </ul>
       </React.Fragment>;
