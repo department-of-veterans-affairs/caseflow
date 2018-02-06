@@ -44,7 +44,7 @@ export default class IssueList extends React.PureComponent {
 
       return issue.levels.map((level, idx) =>
         <p {...issueLevelStyle(displayIssueProgram)} key={level}>
-          {displayIssueProgram && idx === 1 ? `${issue.codes[3]} - ${level}` : level}
+          {displayIssueProgram && idx === 1 ? issue.levels_with_codes[idx] : level}
         </p>);
     }
 
