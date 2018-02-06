@@ -17,7 +17,7 @@ export default class BareList extends React.PureComponent {
         )
       }
     </ListElementComponent>;
-  };
+  }
 }
 
 BareList.propTypes = {

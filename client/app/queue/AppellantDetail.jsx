@@ -78,7 +78,7 @@ export default class AppellantDetail extends React.PureComponent {
       <span {...boldText}>{label}:</span> {value}
     </React.Fragment>;
 
-    return <BareList ListElementComponent='ul' items={details.map(getDetailField)}/>;
+    return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
   render = () => {
