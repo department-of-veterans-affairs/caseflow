@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import BackToQueueLink from './BackToQueueLink';
 import LastRetrievalInfo from './LastRetrievalInfo';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
@@ -58,6 +59,7 @@ export class PdfListView extends React.Component {
     }
 
     return <div>
+      { this.props.queueRedirectUrl && <BackToQueueLink queueRedirectUrl={this.props.queueRedirectUrl}/> }
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
@@ -80,7 +82,8 @@ const mapStateToProps = (state, props) => {
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt
+    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
+    queueRedirectUrl: state.documentList.queueRedirectUrl
   };
 };
 

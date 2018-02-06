@@ -23,3 +23,6 @@ export const DOCUMENTS_OR_COMMENTS_ENUM = {
   DOCUMENTS: 'documents',
   COMMENTS: 'comments'
 };
+
+// "Back to Queue" link URL
+export const SET_QUEUE_REDIRECT_URL = 'SET_QUEUE_REDIRECT_URL';
