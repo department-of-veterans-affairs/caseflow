@@ -33,12 +33,22 @@ export default class AppealDetail extends React.PureComponent {
     }, {
       label: 'Power of Attorney',
       valueFunction: () => this.getAppealAttr('power_of_attorney')
+    }, {
+      label: 'Regional Office',
+      valueFunction: () => {
+        const {
+          city,
+          key
+        } = this.getAppealAttr('regional_office');
+
+        return `${city} (${key.replace('RO', '')})`;
+      }
     }];
 
     if (this.getAppealAttr('hearings').length) {
       const lastHearing = this.getLastHearing();
 
-      listElements.concat([{
+      listElements.splice(2, 0, ...[{
         label: 'Hearing Preference',
         valueFunction: () => StringUtil.snakeCaseToCapitalized(lastHearing.type)
       }, {
@@ -49,18 +59,6 @@ export default class AppealDetail extends React.PureComponent {
         valueFunction: () => lastHearing.held_by
       }]);
     }
-
-    listElements.push({
-      label: 'Regional Office',
-      valueFunction: () => {
-        const {
-          city,
-          key
-        } = this.getAppealAttr('regional_office');
-
-        return `${city} (${key.replace('RO', '')})`;
-      }
-    });
 
     return listElements.map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
       <span {...boldText}>{label}:</span> {valueFunction()}
