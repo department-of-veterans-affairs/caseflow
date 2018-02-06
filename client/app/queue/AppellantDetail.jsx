@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
+import BareList from '../components/BareList';
 import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const detailHeaderStyling = css({
-  marginBottom: '5px',
-  '&:nth-of-type(2)': {
-    marginTop: '3rem'
-  }
+  marginBottom: '5px'
 });
 const detailListStyling = css({
   paddingLeft: 0,
-  listStyle: 'none'
+  listStyle: 'none',
+  marginBottom: '3rem'
 });
 const addressIndentStyling = (secondLine) => css({
   marginLeft: secondLine ? '12.5rem' : 0
@@ -75,9 +74,11 @@ export default class AppellantDetail extends React.PureComponent {
       });
     }
 
-    return details.map(({ label, value }, idx) => <li key={idx}>
+    const getDetailField = ({ label, value }) => () => <React.Fragment>
       <span {...boldText}>{label}:</span> {value}
-    </li>);
+    </React.Fragment>;
+
+    return <BareList ListElementComponent='ul' items={details.map(getDetailField)}/>;
   };
 
   render = () => {
