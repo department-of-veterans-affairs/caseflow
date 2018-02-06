@@ -52,6 +52,14 @@ RSpec.feature "Queue" do
     User.authenticate!(roles: ["System Admin"])
   end
 
+  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
+  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
+  let!(:tasks) do
+    vacols_tasks.map do |task|
+      DraftDecision.from_vacols(task, current_user.css_id)
+    end
+  end
+
   context "search for appeals using veteran id" do
     scenario "appeal not found" do
       visit "/queue"
@@ -93,6 +101,39 @@ RSpec.feature "Queue" do
       click_on "Okay"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+    end
+  end
+
+  context "loads task detail views" do
+    scenario "view appellant details" do
+      appeal = vacols_appeals.first
+
+      visit "/queue"
+
+      find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+      find("#queue-tabwindow-tab-1").click
+
+      expect(page).to have_content("Veteran Details")
+      expect(page).to have_content("The veteran is the appellant.")
+
+      vet_gender = appeal.veteran_gender
+      vet_dob = appeal.veteran_date_of_birth
+
+      expect(page).to have_content((vet_gender == "F") ? "She/Her" : "He/His")
+      expect(page).to have_content(vet_dob.strftime("%-m/%e/%Y"))
+    end
+
+    scenario "veteran is not the appellant" do
+      appeal = vacols_appeals.reject { |a| a.appellant_name.nil? }.first
+
+      visit "/queue"
+
+      find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+      find("#queue-tabwindow-tab-1").click
+
+      expect(page).to have_content("Appellant Details")
+      expect(page).to have_content("Veteran Details")
+      expect(page).to have_content("The veteran is not the appellant.")
     end
   end
 end
