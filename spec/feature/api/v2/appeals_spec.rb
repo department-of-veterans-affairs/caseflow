@@ -135,20 +135,20 @@ describe "Appeals API v2", type: :request do
 
     # OAR 2/5/18 - Removed test case as a valid SSN will
     # just return an empty result set.
-    # it "returns 404 if veteran with that SSN isn't found" do
-    #  headers = {
-    #    "ssn": "444444444",
-    #    "Authorization": "Token token=#{api_key.key_string}"
-    #  }
+    it "returns 404 if veteran with that SSN isn't found" do
+      headers = {
+        "ssn": "444444444",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
 
-    #  get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", nil, headers
 
-    #  expect(response.code).to eq("404")
+      expect(response.code).to eq("200")
 
-    #  json = JSON.parse(response.body)
-    #  expect(json["errors"].length).to eq(1)
-    #  expect(json["errors"].first["title"]).to eq("Veteran not found")
-    # end
+      json = JSON.parse(response.body)
+      expect(json["data"].length).to eq(0)
+      # expect(json["errors"].first["title"]).to eq("Veteran not found")
+    end
 
     it "caches response" do
       headers = {
