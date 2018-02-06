@@ -105,35 +105,42 @@ RSpec.feature "Queue" do
   end
 
   context "loads task detail views" do
-    scenario "view appellant details" do
-      appeal = vacols_appeals.first
+    context "loads appellant detail view" do
+      scenario "veteran is the appellant" do
+        appeal = vacols_appeals.first
 
-      visit "/queue"
+        visit "/queue"
 
-      find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
-      find("#queue-tabwindow-tab-1").click
+        find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+        find("#queue-tabwindow-tab-1").click
 
-      expect(page).to have_content("Veteran Details")
-      expect(page).to have_content("The veteran is the appellant.")
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is the appellant.")
 
-      vet_gender = appeal.veteran_gender
-      vet_dob = appeal.veteran_date_of_birth
+        vet_gender = appeal.veteran_gender
+        vet_dob = appeal.veteran_date_of_birth
 
-      expect(page).to have_content((vet_gender == "F") ? "She/Her" : "He/His")
-      expect(page).to have_content(vet_dob.strftime("%-m/%e/%Y"))
-    end
+        expect(page).to have_content((vet_gender == "F") ? "She/Her" : "He/His")
+        expect(page).to have_content(vet_dob.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("The veteran is the appellant.")
+      end
 
-    scenario "veteran is not the appellant" do
-      appeal = vacols_appeals.reject { |a| a.appellant_name.nil? }.first
+      scenario "veteran is not the appellant" do
+        appeal = vacols_appeals.reject { |a| a.appellant_name.nil? }.first
 
-      visit "/queue"
+        visit "/queue"
 
-      find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
-      find("#queue-tabwindow-tab-1").click
+        find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+        find("#queue-tabwindow-tab-1").click
 
-      expect(page).to have_content("Appellant Details")
-      expect(page).to have_content("Veteran Details")
-      expect(page).to have_content("The veteran is not the appellant.")
+        expect(page).to have_content("Appellant Details")
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is not the appellant.")
+
+        expect(page).to have_content(appeal.appellant_name)
+        expect(page).to have_content(appeal.appellant_relationship)
+        expect(page).to have_content(appeal.appellant_address_line_1)
+      end
     end
   end
 end
