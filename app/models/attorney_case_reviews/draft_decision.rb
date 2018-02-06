@@ -1,3 +1,2 @@
 class DraftDecision < AttorneyCaseReview
-
 end

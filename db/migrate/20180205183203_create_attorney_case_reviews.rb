@@ -1,6 +1,6 @@
-class CreateAttorneyCaseReview < ActiveRecord::Migration
+class CreateAttorneyCaseReviews < ActiveRecord::Migration
   def change
-    create_table :attorney_case_review do |t|
+    create_table :attorney_case_reviews do |t|
       t.string  "document_id"
       t.integer "reviewing_judge_id"
       t.integer "attorney_id"

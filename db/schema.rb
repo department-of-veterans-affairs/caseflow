@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 20180205183203) do
   add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
 
-  create_table "attorney_case_review", force: :cascade do |t|
+  create_table "attorney_case_reviews", force: :cascade do |t|
     t.string   "document_id"
     t.integer  "reviewing_judge_id"
     t.integer  "attorney_id"
