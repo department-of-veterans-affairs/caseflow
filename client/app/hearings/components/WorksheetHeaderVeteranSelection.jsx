@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { populateDailyDocket, getDailyDocket, getWorksheet, 
-  onHearingPrepped, setHearingPrepped } from '../actions/Dockets';
+  onHearingPrepped, setHearingPrepped, saveWorksheet } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
@@ -25,7 +25,7 @@ const hearingPreppedStyling = css({
 });
 
 const containerStyling = css({
-  width: '1000px',
+  width: '70%',
   display: 'flex'
 });
 
@@ -59,11 +59,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     }
   }
 
-  openPdf = (worksheet, worksheetIssues) => () => {
-    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
-      window.open(`${window.location.pathname}/print`, '_blank');
-    });
-  };
+  saveWorksheet = (worksheet) => {
+    this.props.saveWorksheet(worksheet, true);
+  }
 
   getOptionLabel = (hearing) => (
     <div>
@@ -82,8 +80,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   );
 
   preppedOnChange = (value) => {
-    this.props.setHearingPrepped(this.props.worksheet.id, value, this.date, false);
     this.props.onHearingPrepped(value);
+    this.saveWorksheet(this.props.worksheet);
   }
 
   render() {
@@ -106,7 +104,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
         <Checkbox
           id={`${worksheet.id}-prep`}
           onChange={this.preppedOnChange}
-          value={worksheet.prepped}
+          value={worksheet.prepped || false}
           name={`${worksheet.id}-prep`}
           label="Hearing Prepped"
           styling={hearingPreppedStyling}
@@ -136,7 +134,8 @@ const mapDispatchToProps = (dispatch) => ({
     getDailyDocket,
     getWorksheet,
     onHearingPrepped,
-    setHearingPrepped
+    setHearingPrepped,
+    saveWorksheet
   }, dispatch)
 });
 

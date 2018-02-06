@@ -1,6 +1,7 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, debounceMs } from '../analytics';
+import moment from 'moment';
 
 export const populateUpcomingHearings = (upcomingHearings) => ({
   type: Constants.POPULATE_UPCOMING_HEARINGS,
@@ -61,12 +62,25 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const onHearingPrepped = (prepped) => ({
-  type: Constants.SET_WORKSHEET_HEARING_PREPPED,
+
+export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
+  type: Constants.SET_HEARING_PREPPED,
   payload: {
-    prepped
+    hearingId,
+    prepped,
+    date,
+    setEdited
   }
 });
+
+export const onHearingPrepped = (prepped) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_WORKSHEET_HEARING_PREPPED,
+    payload: {
+      prepped
+    }
+  });
+};
 
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
@@ -116,16 +130,6 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     hearingIndex,
     transcriptRequested,
     date
-  }
-});
-
-export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
-  type: Constants.SET_HEARING_PREPPED,
-  payload: {
-    hearingId,
-    prepped,
-    date,
-    setEdited
   }
 });
 
@@ -192,18 +196,32 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
-export const saveWorksheet = (worksheet) => (dispatch) => {
+export const saveWorksheet = (setPrepped = false) => (dispatch, getState) => {
+
+  const { worksheet } = getState();
+
   if (!worksheet.edited) {
     return;
   }
 
+  dispatch(toggleWorksheetSaving());
+  dispatch(setWorksheetSaveFailedStatus(false));
+
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
     then(() => {
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
+
+      // special case to update dailyDocket object when worksheet saves successfully.
+      if (setPrepped) {
+        dispatch(setHearingPrepped(worksheet.id, worksheet.prepped,
+          moment(worksheet.date).format('YYYY-MM-DD'), false));
+      }
     },
     () => {
-      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-        payload: { saveFailed: true } });
+      dispatch(setWorksheetSaveFailedStatus(true));
+    }).
+    finally(() => {
+      dispatch(toggleWorksheetSaving());
     });
 };
 

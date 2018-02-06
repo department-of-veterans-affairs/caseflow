@@ -34,10 +34,10 @@ export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
     dailyDocket: {
       [action.payload.date]: {
         $apply: (hearings) => {
-          const changedHearing = _.findIndex(hearings, { id: action.payload.hearingId });
+          const changedHearingIndex = _.findIndex(hearings, { id: action.payload.hearingId });
 
           return update(hearings, {
-            [changedHearing]: spec
+            [changedHearingIndex]: spec
           });
         }
       }

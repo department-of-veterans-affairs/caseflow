@@ -57,16 +57,15 @@ class WorksheetFormEntry extends React.PureComponent {
 }
 export class HearingWorksheet extends React.PureComponent {
 
-  componentDidMount() {
-    document.title = `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
+  componentDidUpdate(prevProps) {
+    if (prevProps.worksheet !== this.props.worksheet) {
+      document.title = `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
+    }
   }
 
   save = (worksheet, worksheetIssues) => () => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
     this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
