@@ -621,13 +621,11 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
-    def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
-
+    def for_api(vbms_id:)
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
+      repository.appeals_by_vbms_id(vbms_id)
         .select(&:api_supported?)
         .reject { |a| a.latest_event_date.nil? }
         .sort_by(&:latest_event_date)
