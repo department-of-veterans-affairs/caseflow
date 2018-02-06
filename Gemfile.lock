@@ -44,11 +44,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 9266698668bf361bf5df06990d06da59abb7c608
-  ref: 9266698668bf361bf5df06990d06da59abb7c608
+  revision: 416f7a4ee49c7c80160e97416e7c7b0a7bd20a4a
+  ref: 416f7a4ee49c7c80160e97416e7c7b0a7bd20a4a
   specs:
     bgs (0.1)
-      nokogiri (~> 1.8.1)
+      nokogiri (~> 1.8.2)
       savon (~> 2.11)
 
 GIT
@@ -249,7 +249,7 @@ GEM
       thor (~> 0.19)
     newrelic_rpm (4.7.1.340)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     octokit (4.8.0)
