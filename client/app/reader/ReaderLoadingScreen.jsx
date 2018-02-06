@@ -1,9 +1,8 @@
 import React from 'react';
-import querystring from 'querystring';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveManifests, setQueueRedirectUrl } from './DocumentList/DocumentListActions';
+import { onReceiveManifests } from './DocumentList/DocumentListActions';
 import { onReceiveDocs } from '../reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from './AnnotationLayer/AnnotationActions';
 import { connect } from 'react-redux';
@@ -59,8 +58,7 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     onReceiveDocs,
     onReceiveManifests,
-    onReceiveAnnotations,
-    setQueueRedirectUrl
+    onReceiveAnnotations
   }, dispatch)
 );
 
