@@ -106,7 +106,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Veteran Details")
@@ -125,7 +125,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        find(:xpath, "//a[text()='#{appeal.veteran_full_name}']").click
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Appellant Details")
