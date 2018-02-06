@@ -32,6 +32,10 @@ class QueueDetailView extends React.PureComponent {
       page: 'TODO: Appellant detail page'
     }];
 
+    const readerLinkMsg = appeal.docCount ?
+      `Open ${appeal.docCount.toLocaleString()} documents in Caseflow Reader` :
+      'Open documents in Caseflow Reader';
+
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...headerStyling}>
         Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
@@ -40,7 +44,7 @@ class QueueDetailView extends React.PureComponent {
         Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
         Due {moment(task.due_on).format('MM/DD/YY')}
       </p>
-      <ReaderLink vacolsId={this.props.vacolsId} message="Open documents in Caseflow Reader" />
+      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
 
       <TabWindow
         name="queue-tabwindow"
