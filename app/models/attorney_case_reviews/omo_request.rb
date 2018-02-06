@@ -1,0 +1,3 @@
+class OMORequest < AttorneyCaseReview
+
+end

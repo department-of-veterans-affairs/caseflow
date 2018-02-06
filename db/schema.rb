@@ -11,8 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180205142339) do
 
+ActiveRecord::Schema.define(version: 20180205183203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -94,6 +94,18 @@ ActiveRecord::Schema.define(version: 20180205142339) do
 
   add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
+
+  create_table "attorney_case_review", force: :cascade do |t|
+    t.string   "document_id"
+    t.integer  "reviewing_judge_id"
+    t.integer  "attorney_id"
+    t.string   "work_product"
+    t.boolean  "overtime",           default: false
+    t.string   "type"
+    t.text     "note"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
 
   create_table "certification_cancellations", force: :cascade do |t|
     t.integer "certification_id"
