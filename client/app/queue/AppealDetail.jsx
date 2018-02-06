@@ -8,17 +8,9 @@ import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
 import { dateString } from './utils';
 
-const appealDetailStyling = css({
-  '> .appeal-summary-ul': {
-    paddingLeft: 0,
-    listStyle: 'none'
-  },
-  '& .task-list': {
-    paddingLeft: '1.5rem',
-    '& li': {
-      marginTop: '2rem'
-    }
-  }
+const appealSummaryUlStyling = css({
+  paddingLeft: 0,
+  listStyle: 'none'
 });
 
 export default class AppealDetail extends React.PureComponent {
@@ -75,18 +67,19 @@ export default class AppealDetail extends React.PureComponent {
     </li>);
   };
 
-  render = () => <div {...appealDetailStyling}>
+  render = () => <div>
     <h2>Appeal Summary</h2>
-    <ul className="appeal-summary-ul">
+    <ul {...appealSummaryUlStyling}>
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
     <IssueList
       appeal={_.pick(this.props.appeal.attributes, 'issues')}
-      className="task-list"
       formatLevelsInNewLine
       displayIssueProgram
       displayIssueNote
+      spaceBetweenIssues
+      leftAlignList
       displayLabels />
   </div>;
 }
