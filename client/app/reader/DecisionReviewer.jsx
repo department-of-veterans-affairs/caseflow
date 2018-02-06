@@ -130,9 +130,20 @@ export class DecisionReviewer extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
+  getAppName = () => {
+    return this.props.queueRedirectUrl ?  'Queue' : 'Reader';
+  }
+
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
+
+  getClaimsFolderBreadcrumb = () => {
+    if (this.props.queueRedirectUrl == '/queue') {
+      return 'Your Queue > Claims Folder';
+    }
+    return 'Claims Folder';
+  }
 
   render() {
     const Router = this.props.router || BrowserRouter;
@@ -141,7 +152,7 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           wideApp
-          appName="Reader"
+          appName={this.getAppName()}
           logoProps={{
             accentColor: LOGO_COLORS.READER.ACCENT,
             overlapColor: LOGO_COLORS.READER.OVERLAP
@@ -159,7 +170,7 @@ export class DecisionReviewer extends React.PureComponent {
             <PageRoute
               exact
               title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb="Claims Folder"
+              breadcrumb={this.getClaimsFolderBreadcrumb()}
               path="/:vacolsId/documents"
               render={this.routedPdfListView} />
             <PageRoute
@@ -204,6 +215,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     documentFilters: state.documentList.pdfList.filters,
+    queueRedirectUrl: state.documentList.queueRedirectUrl,
     storeDocuments: state.documents,
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
