@@ -1,4 +1,4 @@
-class DraftDecision
+class VacolsAssignment
   include ActiveModel::Model
   include ActiveModel::Serialization
 
