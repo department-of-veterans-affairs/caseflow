@@ -54,11 +54,6 @@ RSpec.feature "Queue" do
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
-  let!(:tasks) do
-    vacols_tasks.map do |task|
-      DraftDecision.from_vacols(task, current_user.css_id)
-    end
-  end
 
   context "search for appeals using veteran id" do
     scenario "appeal not found" do
