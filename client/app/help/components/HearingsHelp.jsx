@@ -100,7 +100,7 @@ class CertificationHelp extends React.Component {
 
       <h2 id="review-appellaant-eFolder">11. How do I review the appellant’s eFolder?</h2>
 
-      <p> If you are on the Daily Docket page, click on the Veteran’s VBMS ID link located below the name of the Appellant whose efolder you wish to review. You will be taken to the Appellant’s Hearing Worksheet. To begin reviewing the Appellant’s eFolder, click on the <b>Review eFolder</b> button located at the bottom right-hand corner of the Hearing Worksheet page.
+      <p> If you are on the Daily Docket page, click on the Veteran’s VBMS ID link located below the name of the Appellant whose efolder you wish to review. You will be taken to the Appellant’s Hearing Worksheet. To begin reviewing the Appellant’s eFolder, click on the <b>Review Claims Folder</b> button located at the bottom right-hand corner of the Hearing Worksheet page.
       </p>
 
       <h2 id="issue-descriptions-hearing-worksheet">12. Where do the Issue Descriptions on the Hearing Worksheet come from?</h2>
