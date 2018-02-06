@@ -1,10 +1,11 @@
 class Api::V1::AppealsController < Api::ApplicationController
-  rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
-
   def index
+    api_key.api_views.create(vbms_id: vbms_id)
     render json: json_appeals
   rescue ActiveRecord::RecordNotFound
     veteran_not_found
+  rescue Caseflow::Error::InvalidSSN
+    invalid_ssn
   end
 
   private
@@ -24,7 +25,16 @@ class Api::V1::AppealsController < Api::ApplicationController
   end
 
   def appeals
-    @appeals ||= Appeal.for_api(appellant_ssn: ssn)
+    @appeals ||= Appeal.for_api(vbms_id: vbms_id)
+  end
+
+  def vbms_id
+    @vbms_id ||= fetch_vbms_id
+  end
+
+  def fetch_vbms_id
+    fail Caseflow::Error::InvalidSSN if !ssn || ssn.length != 9 || ssn.scan(/\D/).any?
+    Appeal.vbms_id_for_ssn(ssn)
   end
 
   # Cache can't be busted in prod

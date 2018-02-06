@@ -132,9 +132,9 @@ class User < ActiveRecord::Base
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids).each_with_object({}) do |hearing, object|
-      hearings_array = object[hearing.appeal_id] || []
-      object[hearing.appeal_id] = hearings_array.push(hearing)
+    WorksheetIssue.where(appeal_id: appeal_ids).each_with_object({}) do |issue, object|
+      hearings_array = object[issue.appeal_id] || []
+      object[issue.appeal_id] = hearings_array.push(issue.hearing) unless hearings_array.include?(issue.hearing)
     end
   end
 
