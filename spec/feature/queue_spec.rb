@@ -112,11 +112,8 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Veteran Details")
         expect(page).to have_content("The veteran is the appellant.")
 
-        vet_gender = appeal.veteran_gender
-        vet_dob = appeal.veteran_date_of_birth
-
-        expect(page).to have_content((vet_gender == "F") ? "She/Her" : "He/His")
-        expect(page).to have_content(vet_dob.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("She/Her")
+        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
         expect(page).to have_content("The veteran is the appellant.")
       end
 
