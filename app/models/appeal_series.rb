@@ -4,6 +4,7 @@ class AppealSeries < ActiveRecord::Base
   delegate :vacols_id,
            :active?,
            :type_code,
+           :representative,
            :aod,
            :ramp_election,
            :eligible_for_ramp?,
