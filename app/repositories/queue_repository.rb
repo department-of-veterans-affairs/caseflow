@@ -33,6 +33,16 @@ class QueueRepository
     appeals
   end
 
+  def self.reassign_case_to_judge!(bfkey, css_id, info)
+    decision_record = VACOLS::CaseDecision.find_by_vacols_id_and_css_id(css_id, vacols_id)
+    return unless decision_record
+    # DEPROD (work product), DERECEIVE (date), DEATCOM (note), DEDOCID (document_id)
+    decision_info = QueueMapper.case_decision_fields_to_vacols_codes(info)
+    decision_record.reassign_case_to_judge!(decision_info)
+    # need judge's stafkey
+    # decision_record.case.update_vacols_location!(stafkey)
+  end
+
   # :nocov:
   def self.tasks_query(css_id)
     VACOLS::CaseAssignment.tasks_for_user(css_id)
