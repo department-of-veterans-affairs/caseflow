@@ -41,6 +41,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     }
   end
 
+  attribute :appellant_relationship
   attribute :veteran_full_name
   attribute :veteran_date_of_birth
   attribute :veteran_gender
