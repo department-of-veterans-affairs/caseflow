@@ -9,11 +9,17 @@ import { BrowserRouter } from 'react-router-dom';
 class Error500 extends React.PureComponent {
 
   render() {
+    const options = [{ title: 'Help',
+      link: '/help' },
+    { title: 'Switch User',
+      link: '/test/users' }];
+
     return <BrowserRouter>
       <div>
         <NavigationBar
-          dropdownUrls={this.props.dropdownUrls}
+          dropdownUrls={options}
           appName="Error 500"
+          userDisplayName="Menu"
           defaultUrl="/"
           logoProps={{
             accentColor: COLORS.GREY_DARK,
