@@ -102,7 +102,7 @@ RSpec.feature "Queue" do
   context "loads task detail views" do
     context "displays who assigned task" do
       scenario "appeal has assigner" do
-        appeal = vacols_appeals.reject { |a| a.added_by_first_name.nil? }.first
+        appeal = vacols_appeals.select(&:added_by_first_name).first
         visit "/queue"
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
