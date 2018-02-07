@@ -9,7 +9,7 @@ import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
-import { redText, fullWidth } from './constants';
+import { fullWidth } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
@@ -42,7 +42,7 @@ class QueueDetailView extends React.PureComponent {
         Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you by <span {...redText}>Judge</span> on&nbsp;
+        Assigned to you by {task.added_by_name} on&nbsp;
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
