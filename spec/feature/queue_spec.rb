@@ -140,6 +140,8 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
         expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
         expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+
+        expect(page).to have_content("View Hearing Worksheet")
       end
 
       scenario "appeal has no hearing" do
