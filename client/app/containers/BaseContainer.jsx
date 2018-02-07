@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 // components
 import Alert from '../components/Alert';
 
-// Error components
-import Error500 from '../errors/Error500';
-
 // container components
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
@@ -29,7 +26,6 @@ const Pages = {
   EstablishClaimCancel,
   EstablishClaimComplete,
   StyleGuideIndex,
-  Error500,
   TestPage,
   UnpreparedTasksIndex,
   CanceledTasksIndex
