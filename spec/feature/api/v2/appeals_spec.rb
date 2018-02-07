@@ -133,18 +133,16 @@ describe "Appeals API v2", type: :request do
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
     end
 
-    # OAR 2/5/18 - Modified test case as a valid SSN will
-    # just return an empty result set.
-    it "returns 200 if veteran with that SSN isn't found" do
+    it "returns 404 if veteran with that SSN isn't found" do
       headers = {
-        "ssn": "abc",
+        "ssn": "444444444",
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
       get "/api/v2/appeals", nil, headers
 
       expect(response.code).to eq("404")
-      
+
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Veteran not found")

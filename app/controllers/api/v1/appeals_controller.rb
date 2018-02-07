@@ -31,7 +31,7 @@ class Api::V1::AppealsController < Api::ApplicationController
   def reload?
     !!params[:reload] && !Rails.deploy_env?(:prod)
   end
-
+  # :nocov:
   def veteran_not_found
     render json: {
       "errors": [
@@ -41,7 +41,8 @@ class Api::V1::AppealsController < Api::ApplicationController
       ]
     }, status: 404
   end
-
+  # :nocov:
+  
   def invalid_ssn
     render json: {
       "errors": [
