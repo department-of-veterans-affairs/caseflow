@@ -133,7 +133,7 @@ describe "Appeals API v2", type: :request do
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
     end
 
-    # OAR 2/5/18 - Removed test case as a valid SSN will
+    # OAR 2/5/18 - Modified test case as a valid SSN will
     # just return an empty result set.
     it "returns 404 if veteran with that SSN isn't found" do
       headers = {
@@ -147,7 +147,6 @@ describe "Appeals API v2", type: :request do
 
       json = JSON.parse(response.body)
       expect(json["data"].length).to eq(0)
-      # expect(json["errors"].first["title"]).to eq("Veteran not found")
     end
 
     it "caches response" do
