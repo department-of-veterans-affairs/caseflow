@@ -11,7 +11,8 @@ import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 
 import { setAppealDocCount } from './QueueActions';
-import { sortTasks, dateString } from './utils';
+import { sortTasks } from './utils';
+import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { redText } from './constants';
@@ -56,7 +57,7 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Due Date',
-      valueFunction: (task) => dateString(task.attributes.due_on)
+      valueFunction: (task) => <DateString date={task.attributes.due_on} />
     },
     {
       header: 'Reader Documents',

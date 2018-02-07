@@ -10,7 +10,7 @@ import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
 import { redText, fullWidth } from './constants';
-import { dateString } from './utils';
+import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
   marginBottom: '0.5rem'
@@ -42,8 +42,8 @@ class QueueDetailView extends React.PureComponent {
         Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you by <span {...redText}>Judge</span> on {dateString(task.assigned_on)}.
-        Due {dateString(task.due_on)}
+        Assigned to you by <span {...redText}>Judge</span> on <DateString date={task.assigned_on} dateFormat="MM/DD/YY"/>.
+        Due <DateString date={task.due_on} dateFormat="MM/DD/YY"/>.
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
 

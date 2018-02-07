@@ -4,9 +4,10 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
+import BareList from '../components/BareList';
 import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
-import { dateString } from './utils';
+import { DateString } from '../util/DateUtil';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -29,10 +30,10 @@ export default class AppealDetail extends React.PureComponent {
   getListElements = () => {
     const listElements = [{
       label: 'Type',
-      valueFunction: () => this.getAppealAttr('type')
+      value: this.getAppealAttr('type')
     }, {
       label: 'Power of Attorney',
-      valueFunction: () => this.getAppealAttr('power_of_attorney')
+      value: this.getAppealAttr('power_of_attorney')
     }, {
       label: 'Regional Office',
       valueFunction: () => {
@@ -50,19 +51,21 @@ export default class AppealDetail extends React.PureComponent {
 
       listElements.splice(2, 0, ...[{
         label: 'Hearing Preference',
-        valueFunction: () => StringUtil.snakeCaseToCapitalized(lastHearing.type)
+        value: StringUtil.snakeCaseToCapitalized(lastHearing.type)
       }, {
         label: 'Hearing held',
-        valueFunction: () => dateString(lastHearing.held_on, 'M/D/YY')
+        value: <DateString date={lastHearing.held_on} dateFormat="M/D/YY" />
       }, {
         label: 'Judge at hearing',
-        valueFunction: () => lastHearing.held_by
+        value: lastHearing.held_by
       }]);
     }
 
-    return listElements.map(({ label, valueFunction }, idx) => <li key={`appeal-summary-${idx}`}>
-      <span {...boldText}>{label}:</span> {valueFunction()}
-    </li>);
+    const getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
+      <span {...boldText}>{label}:</span> {value || valueFunction()}
+    </React.Fragment>;
+
+    return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
   };
 
   render = () => <div>
