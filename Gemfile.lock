@@ -16,10 +16,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 2970f415ba80ccf338e1b4ecb4386c98be29f8b9
-  ref: 2970f415ba80ccf338e1b4ecb4386c98be29f8b9
+  revision: 6be9e1e95b1a012af1fb5b7aa292ec7123281dc2
+  ref: 6be9e1e95b1a012af1fb5b7aa292ec7123281dc2
   specs:
-    caseflow (0.3.1)
+    caseflow (0.3.2)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
@@ -44,11 +44,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 9266698668bf361bf5df06990d06da59abb7c608
-  ref: 9266698668bf361bf5df06990d06da59abb7c608
+  revision: 416f7a4ee49c7c80160e97416e7c7b0a7bd20a4a
+  ref: 416f7a4ee49c7c80160e97416e7c7b0a7bd20a4a
   specs:
     bgs (0.1)
-      nokogiri (~> 1.8.1)
+      nokogiri (~> 1.8.2)
       savon (~> 2.11)
 
 GIT
@@ -249,7 +249,7 @@ GEM
       thor (~> 0.19)
     newrelic_rpm (4.7.1.340)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     octokit (4.8.0)
@@ -529,4 +529,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

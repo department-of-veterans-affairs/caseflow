@@ -11,7 +11,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         note: issue.note,
         id: issue.id,
         labels: issue.labels,
-        codes: issue.codes
+        codes: issue.codes,
+        levels_with_codes: issue.levels_with_codes
       }
     end
   end
@@ -41,6 +42,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     }
   end
 
+  attribute :appellant_relationship
   attribute :veteran_full_name
   attribute :veteran_date_of_birth
   attribute :veteran_gender

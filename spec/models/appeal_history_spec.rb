@@ -273,9 +273,7 @@ describe AppealHistory do
   end
 
   context ".for_api" do
-    subject { AppealHistory.for_api(appellant_ssn: ssn) }
-
-    let(:ssn) { "999887777" }
+    subject { AppealHistory.for_api(vbms_id: "999887777S") }
 
     let!(:veteran_appeals) do
       [
@@ -286,48 +284,6 @@ describe AppealHistory do
 
     it "returns appeal series" do
       expect(subject.length).to eq(2)
-    end
-
-    context "when ssn is nil" do
-      let(:ssn) { nil }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is less than 9 characters" do
-      let(:ssn) { "99887777" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is more than 9 characters" do
-      let(:ssn) { "9998877777" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is non-numeric" do
-      let(:ssn) { "99988777A" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when SSN not found in BGS" do
-      before do
-        Fakes::BGSService.ssn_not_found = true
-      end
-
-      it "raises ActiveRecord::RecordNotFound error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-      end
     end
   end
 end
