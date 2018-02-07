@@ -12,6 +12,7 @@ class ReaderLink extends React.PureComponent {
 
   readerLinkAnalytics = () => {
     const setInteractionType = getClickContext(event);
+
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER, setInteractionType);
   }
 

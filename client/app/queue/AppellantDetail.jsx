@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
+import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const detailHeaderStyling = css({

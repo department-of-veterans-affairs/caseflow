@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
 import BareList from '../components/BareList';
-import { boldText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
+import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 

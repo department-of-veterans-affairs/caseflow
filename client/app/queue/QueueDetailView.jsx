@@ -9,7 +9,7 @@ import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
-import { fullWidth, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
+import { fullWidth, CATEGORIES, INTERACTION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({

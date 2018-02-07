@@ -45,4 +45,4 @@ export const sortTasks = ({ tasks = {}, appeals = {} }) => {
 
 export const getClickContext = (event) => {
   return (event.button >= 2) ? INTERACTION_TYPES.NEW_WINDOW : INTERACTION_TYPES.SAME_WINDOW;
-}
+};
