@@ -90,16 +90,17 @@ describe "Appeals API v1", type: :request do
     # result set not a not found.
     it "returns 200 and no data if veteran with that SSN isn't found" do
       headers = {
-        "ssn": "444444444",
+        "ssn": "abc",
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
       get "/api/v1/appeals", nil, headers
 
-      expect(response.code).to eq("200")
+      expect(response.code).to eq("404")
 
       json = JSON.parse(response.body)
-      expect(json["data"].length).to eq(0)
+      expect(json["errors"].length).to eq(1)
+      expect(json["errors"].first["title"]).to eq("Veteran not found")
     end
 
     it "caches response" do

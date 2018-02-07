@@ -137,16 +137,17 @@ describe "Appeals API v2", type: :request do
     # just return an empty result set.
     it "returns 200 if veteran with that SSN isn't found" do
       headers = {
-        "ssn": "444444444",
+        "ssn": "abc",
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
       get "/api/v2/appeals", nil, headers
 
-      expect(response.code).to eq("200")
-
+      expect(response.code).to eq("404")
+      
       json = JSON.parse(response.body)
-      expect(json["data"].length).to eq(0)
+      expect(json["errors"].length).to eq(1)
+      expect(json["errors"].first["title"]).to eq("Veteran not found")
     end
 
     it "caches response" do
