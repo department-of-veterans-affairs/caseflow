@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText } from './constants';
+import { boldText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const detailHeaderStyling = css({
@@ -80,6 +80,10 @@ export default class AppellantDetail extends React.PureComponent {
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
+
+  componentDidMount() {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPELLANT_INFO, INTERACTION_TYPES.SAME_WINDOW);
+  }
 
   render = () => {
     let appellantDetails;

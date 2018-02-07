@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
 import BareList from '../components/BareList';
-import { boldText } from './constants';
+import { boldText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 
@@ -67,6 +67,10 @@ export default class AppealDetail extends React.PureComponent {
 
     return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
   };
+
+  componentDidMount() {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO, INTERACTION_TYPES.SAME_WINDOW);
+  }
 
   render = () => <div>
     <h2>Appeal Summary</h2>

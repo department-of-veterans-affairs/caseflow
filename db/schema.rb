@@ -339,7 +339,7 @@ ActiveRecord::Schema.define(version: 20180205142339) do
 
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number",      null: false
-    t.date   "notice_date"
+    t.date   "notice_date",              null: false
     t.date   "receipt_date"
     t.string "option_selected"
     t.string "end_product_reference_id"

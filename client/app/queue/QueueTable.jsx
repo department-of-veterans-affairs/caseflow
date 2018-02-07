@@ -15,7 +15,7 @@ import { sortTasks } from './utils';
 import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { redText } from './constants';
+import { redText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -74,7 +74,8 @@ class QueueTable extends React.PureComponent {
             href: `/reader/appeal/${task.vacolsId}/documents`
           }
         }}>
-        <ReaderLink vacolsId={task.vacolsId} />
+        <ReaderLink vacolsId={task.vacolsId} analyticsSource={CATEGORIES.QUEUE_TABLE}
+          interactionType={INTERACTION_TYPES.SAME_WINDOW} />
       </LoadingDataDisplay>
     }
   ];
@@ -102,6 +103,10 @@ class QueueTable extends React.PureComponent {
         });
       });
   };
+
+  componentDidMount() {
+    window.analyticsEvent(CATEGORIES.QUEUE_TABLE, TASK_ACTIONS.VIEW_QUEUE_TABLE, INTERACTION_TYPES.SAME_WINDOW);
+  }
 
   render = () => <Table
     columns={this.getQueueColumns}

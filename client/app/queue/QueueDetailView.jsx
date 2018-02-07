@@ -9,7 +9,7 @@ import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
-import { redText, fullWidth } from './constants';
+import { redText, fullWidth, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
@@ -20,6 +20,10 @@ const subHeadStyling = css({
 });
 
 class QueueDetailView extends React.PureComponent {
+  componentDidMount() {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_QUEUE_TASK, INTERACTION_TYPES.SAME_WINDOW);
+  }
+
   render = () => {
     const {
       appeal: { attributes: appeal },
@@ -46,7 +50,8 @@ class QueueDetailView extends React.PureComponent {
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
-      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
+      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
+        analyticsSource={CATEGORIES.QUEUE_TASK} interactionType={INTERACTION_TYPES.SAME_WINDOW} />
 
       <TabWindow
         name="queue-tabwindow"
