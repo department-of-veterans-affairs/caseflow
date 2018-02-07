@@ -137,19 +137,9 @@ export class DecisionReviewer extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
-        <NavigationBar
-          wideApp
-          appName="Reader"
-          logoProps={{
-            accentColor: LOGO_COLORS.READER.ACCENT,
-            overlapColor: LOGO_COLORS.READER.OVERLAP
-          }}
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
-          <PageRoute
+    const core = <Router basename={`${this.props.basename}/reader/appeal`} {...this.props.routerTestProps}>
+      <React.Fragment>
+      <PageRoute
             exact
             title="Document Viewer | Caseflow Reader"
             breadcrumb="Document Viewer"
@@ -168,14 +158,34 @@ export class DecisionReviewer extends React.PureComponent {
               title="Assignments | Caseflow Reader"
               render={this.routedCaseSelect} />
           </AppFrame>
+          </React.Fragment>
+          </Router>
+    
+
+    if (this.props.embedded) {
+      return core;
+    }
+
+    return <React.Fragment>
+        <NavigationBar
+          wideApp
+          appName="Reader"
+          logoProps={{
+            accentColor: LOGO_COLORS.READER.ACCENT,
+            overlapColor: LOGO_COLORS.READER.OVERLAP
+          }}
+          userDisplayName={this.props.userDisplayName}
+          dropdownUrls={this.props.dropdownUrls}
+          defaultUrl="/">
+          {core}
         </NavigationBar>
         <Footer
           wideApp
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />
-      </div>
-    </Router>;
+      </React.Fragment>
+    ;
   }
 }
 

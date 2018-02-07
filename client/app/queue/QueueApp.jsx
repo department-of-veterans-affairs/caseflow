@@ -35,7 +35,17 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   }
 });
 
+const basename = '/queue';
+
 class QueueApp extends React.PureComponent {
+  getEmbeddedReader = () => {
+    const passthroughReaderProps = _.pick(
+      this.props, 'userDisplayName', 'dropdownUrls', 'feedbackUrl', 'featureToggles', 'pdfWorker', 'buildDate'
+    )
+
+    return <Reader embedded {...passthroughReaderProps} basename={basename} />
+}
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
       navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
@@ -51,7 +61,7 @@ class QueueApp extends React.PureComponent {
     <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
-  render = () => <BrowserRouter basename="/queue">
+  render = () => <BrowserRouter basename={basename}>
     <NavigationBar
       defaultUrl="/"
       userDisplayName={this.props.userDisplayName}
@@ -73,6 +83,10 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
+          <PageRoute
+            path="/reader"
+            title="QueueReader"
+            render={this.getEmbeddedReader} />
         </div>
       </AppFrame>
       <Footer
