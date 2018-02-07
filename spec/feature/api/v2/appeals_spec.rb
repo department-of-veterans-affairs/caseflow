@@ -147,6 +147,7 @@ describe "Appeals API v2", type: :request do
 
       json = JSON.parse(response.body)
       expect(json["data"].length).to eq(0)
+      expect(ApiView.count).to eq(1)
     end
 
     it "caches response" do
