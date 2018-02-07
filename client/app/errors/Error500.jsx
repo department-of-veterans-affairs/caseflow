@@ -1,7 +1,7 @@
 import React from 'react';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import AppFrame from '../components/AppFrame';
 import NavigationBar from '../components/NavigationBar';
+import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
@@ -26,10 +26,10 @@ class Error500 extends React.PureComponent {
             overlapColor: COLORS.GREY_DARK
           }} />
         <AppFrame>
-          <AppSegment filledBackground>
+          <StatusMessage>
             <h1 className="cf-red-text cf-msg-screen-heading">Something went wrong.</h1>
-            <p className="cf-msg-screen-text">If you continue to see this page, please contact the help desk.</p>
-          </AppSegment>
+             If you continue to see this page, please contact the help desk.
+          </StatusMessage>
         </AppFrame>
         <Footer
           appName="Help"
