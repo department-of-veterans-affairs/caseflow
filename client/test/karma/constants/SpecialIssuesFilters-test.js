@@ -9,7 +9,7 @@ describe('SpecialIssueFilters', () => {
   });
   context('.regionalSpecialIssues', () => {
     it('returns all regional special issues', () => {
-      expect(specialIssueFunctions.regionalSpecialIssues()).have.lengthOf(9);
+      expect(specialIssueFunctions.regionalSpecialIssues()).have.lengthOf(8);
     });
   });
   context('.routedSpecialIssues', () => {
@@ -19,7 +19,7 @@ describe('SpecialIssueFilters', () => {
   });
   context('.routedOrRegionalSpecialIssues', () => {
     it('returns all routed or regional special issues', () => {
-      expect(specialIssueFunctions.routedOrRegionalSpecialIssues()).have.lengthOf(15);
+      expect(specialIssueFunctions.routedOrRegionalSpecialIssues()).have.lengthOf(14);
     });
   });
 });
