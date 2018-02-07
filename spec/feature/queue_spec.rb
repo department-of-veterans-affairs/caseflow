@@ -100,6 +100,34 @@ RSpec.feature "Queue" do
   end
 
   context "loads task detail views" do
+    context "displays who assigned task" do
+      scenario "appeal has assigner" do
+        appeal = vacols_appeals.select(&:added_by_first_name).first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+
+        added_by_name = FullName.new(
+          appeal.added_by_first_name,
+          appeal.added_by_middle_name,
+          appeal.added_by_last_name
+        ).formatted(:readable_full)
+        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+
+        expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
+      end
+
+      scenario "appeal has no assigner" do
+        appeal = vacols_appeals.select { |a| a.added_by_first_name.nil? }.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+
+        expect(page).to have_content("Assigned to you on #{assigned_date}")
+      end
+    end
+
     context "loads appeal summary view" do
       scenario "appeal has hearing" do
         appeal = vacols_appeals.reject { |a| a.hearings.empty? }.first
@@ -107,7 +135,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}'")
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
         expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
         expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
@@ -120,7 +148,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}'")
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
         expect(page).not_to have_content("Hearing Preference")
 
