@@ -55,7 +55,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet {...this.props} history={this.context.router.history} context={this.context}/>;
+    return <HearingWorksheet {...this.props} history={this.context.router.history} />;
   }
 }
 

@@ -102,10 +102,10 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           />
         </div>
         <Checkbox
-          id={`${worksheet.id}-prep`}
+          id={`prep-${worksheet.id}`}
           onChange={this.preppedOnChange}
           value={worksheet.prepped || false}
-          name={`${worksheet.id}-prep`}
+          name={`prep-${worksheet.id}`}
           label="Hearing Prepped"
           styling={hearingPreppedStyling}
         />
