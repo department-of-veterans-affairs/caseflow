@@ -39,7 +39,7 @@ export default class AppellantDetail extends React.PureComponent {
     </React.Fragment>;
   };
 
-  getPreferredPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
+  getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
 
   veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
 
@@ -51,8 +51,8 @@ export default class AppellantDetail extends React.PureComponent {
 
     if (genderField && this.getAppealAttr(genderField)) {
       details.push({
-        label: 'Preferred pronoun',
-        value: this.getPreferredPronoun(genderField)
+        label: 'Gender pronoun',
+        value: this.getGenderPronoun(genderField)
       });
     }
     if (dobField && this.getAppealAttr(dobField)) {

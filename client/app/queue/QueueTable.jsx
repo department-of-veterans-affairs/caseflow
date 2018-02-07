@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -16,6 +17,12 @@ import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { redText, CATEGORIES, TASK_ACTIONS, INTERACTION_TYPES } from './constants';
+import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
+const subHeadStyle = css({
+  fontSize: 'small',
+  color: COMMON_COLORS.GREY_MEDIUM
+});
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -24,13 +31,20 @@ class QueueTable extends React.PureComponent {
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
+  veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
-      valueFunction: (task) => <Link to={`/tasks/${task.vacolsId}`}>
-        {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
-      </Link>
+      valueFunction: (task) => <span>
+        <Link to={`/tasks/${task.vacolsId}`}>
+          {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
+        </Link>
+        {!this.veteranIsAppellant(task) && <React.Fragment>
+          <br />
+          <span {...subHeadStyle}>Veteran is not the appellant</span>
+        </React.Fragment>}
+      </span>
     },
     {
       header: 'Type(s)',
