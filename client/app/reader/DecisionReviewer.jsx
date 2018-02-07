@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { getQueryParams } from '../util/QueryParamsUtil';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
@@ -141,12 +140,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   getClaimsFolderBreadcrumb = () => {
     if (this.props.queueRedirectUrl === '/queue') {
-      return [
-        <span>
-          <Link href="/queue"className="cf-application-title">Your Queue</Link>
-          &nbsp; > &nbsp;
-        </span>,
-        'Claims Folder'];
+      return [<span>Your Queue &nbsp; > &nbsp;</span>, 'Claims Folder'];
     }
 
     return 'Claims Folder';
