@@ -22,7 +22,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         held_by: hearing.user.present? ? hearing.user.full_name : "",
         held_on: hearing.date,
-        type: hearing.type
+        type: hearing.type,
+        id: hearing.id
       }
     end
   end
