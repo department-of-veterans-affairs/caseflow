@@ -37,6 +37,10 @@ class IntakeStats < Caseflow::Stats
       RampElection.where(notice_date: offset_range(range)).count
     end,
 
+    elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed.where(notice_date: offset_range(range)).count
+    end,
+
     # Number of opt-in elections received by month and FYTD
     elections_successfully_received: lambda do |range|
       RampElection.completed.where(receipt_date: offset_range(range)).count
