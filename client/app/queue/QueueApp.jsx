@@ -76,11 +76,13 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/"
+            breadcrumb="Your Queue"
             title="Your Queue | Caseflow Queue"
             render={this.routedQueueList} />
           <PageRoute
             exact
             path="/tasks/:vacolsId"
+            breadcrumb="Draft Decision"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
           <PageRoute
