@@ -13,9 +13,11 @@ const updateLastReadDoc = (state, docId) => update(state, {
 
 const getQueueRedirectUrl = () => {
   const query = querystring.parse(window.location.search.slice(1));
+
   if (!query.queue_redirect_url) {
     return null;
   }
+
   return decodeURIComponent(query.queue_redirect_url);
 };
 

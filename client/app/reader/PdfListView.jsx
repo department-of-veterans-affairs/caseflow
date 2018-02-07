@@ -59,7 +59,7 @@ export class PdfListView extends React.Component {
     }
 
     return <div>
-      { this.props.queueRedirectUrl && <BackToQueueLink queueRedirectUrl={this.props.queueRedirectUrl}/> }
+      { this.props.queueRedirectUrl && <BackToQueueLink queueRedirectUrl={this.props.queueRedirectUrl} /> }
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />

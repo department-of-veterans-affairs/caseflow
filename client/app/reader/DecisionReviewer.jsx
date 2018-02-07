@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { getQueryParams } from '../util/QueryParamsUtil';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
@@ -131,7 +132,7 @@ export class DecisionReviewer extends React.PureComponent {
   </CaseSelectLoadingScreen>
 
   getAppName = () => {
-    return this.props.queueRedirectUrl ?  'Queue' : 'Reader';
+    return this.props.queueRedirectUrl ? 'Queue' : 'Reader';
   }
 
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
@@ -139,9 +140,15 @@ export class DecisionReviewer extends React.PureComponent {
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
   getClaimsFolderBreadcrumb = () => {
-    if (this.props.queueRedirectUrl == '/queue') {
-      return 'Your Queue > Claims Folder';
+    if (this.props.queueRedirectUrl === '/queue') {
+      return [
+        <span>
+          <Link href="/queue"className="cf-application-title">Your Queue</Link>
+          &nbsp; > &nbsp;
+        </span>,
+        'Claims Folder'];
     }
+
     return 'Claims Folder';
   }
 

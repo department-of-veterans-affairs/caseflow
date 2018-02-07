@@ -21,7 +21,7 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
-    const url = encodeURIComponent('/queue')
+    const url = encodeURIComponent('/queue');
 
     return <Link href={`/reader/appeal/${vacolsId}/documents?queue_redirect_url=${url}`}>
       {linkText}
