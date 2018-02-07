@@ -20,10 +20,6 @@ const subHeadStyling = css({
 });
 
 class QueueDetailView extends React.PureComponent {
-  componentDidMount() {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_QUEUE_TASK, INTERACTION_TYPES.SAME_WINDOW);
-  }
-
   render = () => {
     const {
       appeal: { attributes: appeal },

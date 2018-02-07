@@ -118,10 +118,6 @@ class QueueTable extends React.PureComponent {
       });
   };
 
-  componentDidMount() {
-    window.analyticsEvent(CATEGORIES.QUEUE_TABLE, TASK_ACTIONS.VIEW_QUEUE_TABLE, INTERACTION_TYPES.SAME_WINDOW);
-  }
-
   render = () => <Table
     columns={this.getQueueColumns}
     rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
