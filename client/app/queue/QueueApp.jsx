@@ -22,8 +22,9 @@ const appStyling = css({
 
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
-    '& .usa-alert-info': {
-      marginBottom: '1rem'
+    '& .usa-alert-info, & .usa-alert-error': {
+      marginBottom: '1.5rem',
+      marginTop: 0
     },
     '& .cf-search-input-with-close': {
       marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
@@ -52,6 +53,7 @@ class QueueApp extends React.PureComponent {
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
+      wideApp
       defaultUrl="/"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
@@ -75,6 +77,7 @@ class QueueApp extends React.PureComponent {
         </div>
       </AppFrame>
       <Footer
+        wideApp
         appName="Queue"
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />

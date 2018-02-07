@@ -99,6 +99,27 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "loads queue table view" do
+    scenario "table renders row per task" do
+      visit "/queue"
+
+      expect(page).to have_content("Your Queue")
+      expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
+
+    scenario "indicate if veteran is not appellant" do
+      appeal = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
+
+      visit "/queue"
+
+      appeal_row = find("tbody").find("#table-row-#{appeal.vacols_id}")
+      first_cell = appeal_row.find_all("td").first
+
+      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vacols_id})")
+      expect(first_cell).to have_content("Veteran is not the appellant")
+    end
+  end
+
   context "loads task detail views" do
     context "displays who assigned task" do
       scenario "appeal has assigner" do
