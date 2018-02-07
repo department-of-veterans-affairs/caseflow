@@ -8,7 +8,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 
-import { redText } from './constants';
+import { fullWidth } from './constants';
+import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
   width: '100%',
@@ -41,8 +42,9 @@ class QueueDetailView extends React.PureComponent {
         Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you by <span {...redText}>Judge</span> on {moment(task.assigned_on).format('MM/DD/YY')}.
-        Due {moment(task.due_on).format('MM/DD/YY')}
+        Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
+        <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
+        Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
 
