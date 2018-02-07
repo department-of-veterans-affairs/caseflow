@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
+import querystring from 'querystring';
 
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
@@ -37,28 +38,47 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 
 const basename = '/queue';
 
+const segmentStyling = css({
+  marginTop: '3rem'
+});
+
+class BackToQueueLink extends React.PureComponent {
+  render() {
+    const href = decodeURI(querystring.parse(this.props.location.search.slice(1)).backToPathname) || '/';
+    let text = 'Back to Your Queue';
+
+    if (href !== '/') {
+      text = 'Back to Draft Decision';
+    }
+
+    return <div {...segmentStyling}>
+      <Link href={`${basename}${href}`}>&lt; {text}</Link>
+    </div>;
+  }
+}
+
 class QueueApp extends React.PureComponent {
   getEmbeddedReader = () => {
     const passthroughReaderProps = _.pick(
       this.props, 'userDisplayName', 'dropdownUrls', 'feedbackUrl', 'featureToggles', 'pdfWorker', 'buildDate'
     );
 
-    return <Reader embedded {...passthroughReaderProps} basename={basename} />;
+    return <Reader embedded {...passthroughReaderProps} basename={basename} backToLink={BackToQueueLink} />;
   }
 
-  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+  routedQueueList = (props) => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
       navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
       alwaysShowCaseSelectionModal
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
       styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    <QueueListView {...this.props} />
+    <QueueListView {...this.props} location={props.location} />
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Link to="/">&lt; Back to your queue</Link>
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <QueueDetailView vacolsId={props.match.params.vacolsId} location={props.location} />
   </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename={basename}>
@@ -87,7 +107,8 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueDetail} />
           <PageRoute
             path="/reader"
-            title="QueueReader"
+            title="Reader"
+            breadcrumb="Reader"
             render={this.getEmbeddedReader} />
         </div>
       </AppFrame>

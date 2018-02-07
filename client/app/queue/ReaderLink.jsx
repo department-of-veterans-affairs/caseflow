@@ -2,12 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import url from 'url';
+import querystring from 'querystring';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class ReaderLink extends React.PureComponent {
   render = () => {
     const {
+      backToPathname,
       docCount,
       message,
       vacols_id: vacolsId
@@ -21,7 +24,12 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
-    return <Link href={`/queue/reader/appeal/${vacolsId}/documents`}>
+    const href = url.format({
+      pathname: `/queue/reader/appeal/${vacolsId}/documents`,
+      search: querystring.stringify({ backToPathname })
+    });
+
+    return <Link href={href}>
       {linkText}
     </Link>;
   };
