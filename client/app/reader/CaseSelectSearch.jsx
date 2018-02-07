@@ -85,9 +85,9 @@ class CaseSelectSearch extends React.PureComponent {
           Please enter a valid Veteran ID and try again.
         </Alert>
       }
-      {caseSelect.search.showNoAppealsInfoMessage &&
+      {caseSelect.search.noAppealsFoundSearchQueryValue &&
         <Alert title="No appeals found" type="info">
-          {`Veteran ID ${this.props.caseSelectCriteria.searchQuery} does not have any appeals.`}
+          {`Veteran ID ${caseSelect.search.noAppealsFoundSearchQueryValue} does not have any appeals.`}
         </Alert>
       }
       <SearchBar
