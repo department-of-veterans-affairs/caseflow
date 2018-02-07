@@ -6,11 +6,13 @@ import _ from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
+import { getClickContext } from './utils';
 
 class ReaderLink extends React.PureComponent {
 
   readerLinkAnalytics = () => {
-    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER, this.props.interactionType);
+    const setInteractionType = getClickContext(event);
+    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER, setInteractionType);
   }
 
   render = () => {

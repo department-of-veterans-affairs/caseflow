@@ -82,7 +82,7 @@ export default class AppellantDetail extends React.PureComponent {
   };
 
   componentDidMount() {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPELLANT_INFO, INTERACTION_TYPES.SAME_WINDOW);
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPELLANT_INFO);
   }
 
   render = () => {

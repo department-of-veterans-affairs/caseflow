@@ -32,6 +32,5 @@ export const TASK_ACTIONS = {
 };
 
 export const INTERACTION_TYPES = {
-  NEW_WINDOW: 'new-window',
   SAME_WINDOW: 'same-window'
 };

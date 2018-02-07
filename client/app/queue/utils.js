@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { INTERACTION_TYPES } from './constants';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -41,3 +42,7 @@ export const sortTasks = ({ tasks = {}, appeals = {} }) => {
 
   return _.flatten(partitionedTasks);
 };
+
+export const getClickContext = (event) => {
+  return (event.button >= 2) ? INTERACTION_TYPES.NEW_WINDOW : INTERACTION_TYPES.SAME_WINDOW;
+}
