@@ -15,6 +15,7 @@ import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { connect } from 'react-redux';
+import Reader from '../reader';
 
 const appStyling = css({
   paddingTop: '3rem'

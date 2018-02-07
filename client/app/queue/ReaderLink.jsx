@@ -21,7 +21,7 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
-    return <Link href={`/reader/appeal/${vacolsId}/documents`}>
+    return <Link href={`/queue/reader/appeal/${vacolsId}/documents`}>
       {linkText}
     </Link>;
   };
