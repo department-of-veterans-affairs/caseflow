@@ -112,8 +112,9 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
+        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
 
-        expect(page).to have_content("Assigned to you by #{added_by_name} on #{appeal.date_assigned.strftime("%m/%d/%y")}")
+        expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
 
       scenario "appeal has no assigner" do
@@ -121,8 +122,9 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
 
-        expect(page).to have_content("Assigned to you on #{appeal.date_assigned.strftime("%m/%d/%y")}")
+        expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
     end
 
