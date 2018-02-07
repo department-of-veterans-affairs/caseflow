@@ -7,6 +7,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
+import AppellantDetail from './AppellantDetail';
 
 import { redText, fullWidth } from './constants';
 import { dateString } from './utils';
@@ -28,8 +29,8 @@ class QueueDetailView extends React.PureComponent {
       label: 'Appeal',
       page: <AppealDetail appeal={this.props.appeal} />
     }, {
-      label: `Appellant (${appeal.veteran_full_name})`,
-      page: 'TODO: Appellant detail page'
+      label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
+      page: <AppellantDetail appeal={this.props.appeal} />
     }];
 
     const readerLinkMsg = appeal.docCount ?

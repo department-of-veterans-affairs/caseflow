@@ -1,3 +1,4 @@
+import React from 'react';
 import StringUtil from './StringUtil';
 import moment from 'moment';
 import _ from 'lodash';
@@ -32,6 +33,10 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
 
   return moment(dateString, dateFormat).format(expectedFormat);
 };
+
+export const DateString = ({ date, dateFormat = 'MM/DD/YY' }) => <span>
+  {formatDateStr(date, 'YYYY-MM-DD', dateFormat)}
+</span>;
 
 export const formatDateStringForApi = (dateString) => (
   formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')

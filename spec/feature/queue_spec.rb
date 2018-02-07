@@ -129,5 +129,40 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
     end
+
+    context "loads appellant detail view" do
+      scenario "veteran is the appellant" do
+        appeal = vacols_appeals.first
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        find("#queue-tabwindow-tab-1").click
+
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is the appellant.")
+
+        expect(page).to have_content("She/Her")
+        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("The veteran is the appellant.")
+      end
+
+      scenario "veteran is not the appellant" do
+        appeal = vacols_appeals.reject { |a| a.appellant_name.nil? }.first
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        find("#queue-tabwindow-tab-1").click
+
+        expect(page).to have_content("Appellant Details")
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is not the appellant.")
+
+        expect(page).to have_content(appeal.appellant_name)
+        expect(page).to have_content(appeal.appellant_relationship)
+        expect(page).to have_content(appeal.appellant_address_line_1)
+      end
+    end
   end
 end
