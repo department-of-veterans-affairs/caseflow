@@ -11,8 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180131164937) do
 
+ActiveRecord::Schema.define(version: 20180205183203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,12 @@ ActiveRecord::Schema.define(version: 20180131164937) do
 
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
+
+  create_table "api_views", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string   "vbms_id"
+    t.integer  "api_key_id"
+  end
 
   create_table "appeal_series", force: :cascade do |t|
     t.boolean "incomplete",          default: false
@@ -88,6 +94,18 @@ ActiveRecord::Schema.define(version: 20180131164937) do
 
   add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
+
+  create_table "attorney_case_reviews", force: :cascade do |t|
+    t.string   "document_id"
+    t.integer  "reviewing_judge_id"
+    t.integer  "attorney_id"
+    t.string   "work_product"
+    t.boolean  "overtime",           default: false
+    t.string   "type"
+    t.text     "note"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
 
   create_table "certification_cancellations", force: :cascade do |t|
     t.integer "certification_id"
@@ -457,6 +475,7 @@ ActiveRecord::Schema.define(version: 20180131164937) do
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
+  add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
 end

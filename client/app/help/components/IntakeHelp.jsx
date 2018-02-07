@@ -6,7 +6,7 @@ class IntakeHelp extends React.Component {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
 
-      <h1 id="#top">Welcome to the Intake Help Page!</h1>
+      <h1 id="#top">Welcome to the Intake Help page!</h1>
 
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Intake, as well as links to the <a target="_blank" rel="noopener noreferrer" href="/assets/intake_trainingguide-49068fd152891d233ef926cc49c3058627c7756716c4badd64067aee25db63cd.pdf">Training Guide</a> and the <a target="_blank" rel="noopener noreferrer" href="/assets/intake_quickreference-796b79be4082f216bccfcb33e71ab8feae69b2ac0b92afd40d21661b0517c605.pdf">Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>
