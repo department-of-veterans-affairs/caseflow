@@ -139,52 +139,51 @@ export class DecisionReviewer extends React.PureComponent {
 
     const core = <Router basename={`${this.props.basename}/reader/appeal`} {...this.props.routerTestProps}>
       <React.Fragment>
-      <PageRoute
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer} />
+        <AppFrame wideApp>
+          <PageRoute
             exact
-            title="Document Viewer | Caseflow Reader"
-            breadcrumb="Document Viewer"
-            path="/:vacolsId/documents/:docId"
-            render={this.routedPdfViewer} />
-          <AppFrame wideApp>
-            <PageRoute
-              exact
-              title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-          </AppFrame>
-          </React.Fragment>
-          </Router>
-    
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb="Claims Folder"
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
+          <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+        </AppFrame>
+      </React.Fragment>
+    </Router>;
 
     if (this.props.embedded) {
       return core;
     }
 
     return <React.Fragment>
-        <NavigationBar
-          wideApp
-          appName="Reader"
-          logoProps={{
-            accentColor: LOGO_COLORS.READER.ACCENT,
-            overlapColor: LOGO_COLORS.READER.OVERLAP
-          }}
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
-          {core}
-        </NavigationBar>
-        <Footer
-          wideApp
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </React.Fragment>
+      <NavigationBar
+        wideApp
+        appName="Reader"
+        logoProps={{
+          accentColor: LOGO_COLORS.READER.ACCENT,
+          overlapColor: LOGO_COLORS.READER.OVERLAP
+        }}
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}
+        defaultUrl="/">
+        {core}
+      </NavigationBar>
+      <Footer
+        wideApp
+        appName="Reader"
+        feedbackUrl={this.props.feedbackUrl}
+        buildDate={this.props.buildDate} />
+    </React.Fragment>
     ;
   }
 }

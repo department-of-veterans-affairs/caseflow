@@ -41,10 +41,10 @@ class QueueApp extends React.PureComponent {
   getEmbeddedReader = () => {
     const passthroughReaderProps = _.pick(
       this.props, 'userDisplayName', 'dropdownUrls', 'feedbackUrl', 'featureToggles', 'pdfWorker', 'buildDate'
-    )
+    );
 
-    return <Reader embedded {...passthroughReaderProps} basename={basename} />
-}
+    return <Reader embedded {...passthroughReaderProps} basename={basename} />;
+  }
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
