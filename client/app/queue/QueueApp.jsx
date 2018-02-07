@@ -53,6 +53,7 @@ class QueueApp extends React.PureComponent {
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
+      wideApp
       defaultUrl="/"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
@@ -76,6 +77,7 @@ class QueueApp extends React.PureComponent {
         </div>
       </AppFrame>
       <Footer
+        wideApp
         appName="Queue"
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />
