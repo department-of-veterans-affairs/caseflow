@@ -161,7 +161,7 @@ export class HearingWorksheet extends React.PureComponent {
           href={`${readerLink}?category=case_summary`}
           button="primary"
           target="_blank">
-            Review eFolder</Link>
+            Review Claims Folder</Link>
       </div>
       }
     </div>;

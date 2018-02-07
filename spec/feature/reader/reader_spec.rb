@@ -295,6 +295,11 @@ RSpec.feature "Reader" do
         Generators::Hearing.create(appeal: appeal)
       end
 
+      let!(:worksheet_issue) do
+        Generators::Hearing.create(appeal: appeal)
+        Generators::WorksheetIssue.create(appeal: appeal)
+      end
+
       before do
         Fakes::AppealRepository.appeal_records = [appeal, appeal2, appeal3, appeal4, appeal5]
       end

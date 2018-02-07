@@ -14,8 +14,8 @@ export const ACTIONS = {
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
 export const redText = css({ color: '#E60000' });
-
 export const boldText = css({ fontWeight: 'bold' });
+export const fullWidth = css({ width: '100%' });
 
 export const CATEGORIES = {
   QUEUE_TABLE: 'Queue Table',

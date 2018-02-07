@@ -52,6 +52,9 @@ RSpec.feature "Queue" do
     User.authenticate!(roles: ["System Admin"])
   end
 
+  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
+  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
+
   context "search for appeals using veteran id" do
     scenario "appeal not found" do
       visit "/queue"
@@ -93,6 +96,73 @@ RSpec.feature "Queue" do
       click_on "Okay"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+    end
+  end
+
+  context "loads task detail views" do
+    context "loads appeal summary view" do
+      scenario "appeal has hearing" do
+        appeal = vacols_appeals.reject { |a| a.hearings.empty? }.first
+        hearing = appeal.hearings.first
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}'")
+
+        expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
+        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
+        expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+      end
+
+      scenario "appeal has no hearing" do
+        appeal = vacols_tasks.select { |a| a.hearings.empty? }.first
+        appeal_ro = appeal.regional_office
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}'")
+
+        expect(page).not_to have_content("Hearing Preference")
+
+        expect(page).to have_content("Type: #{appeal.type}")
+        expect(page).to have_content("Power of Attorney: #{appeal.representative}")
+        expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
+      end
+    end
+
+    context "loads appellant detail view" do
+      scenario "veteran is the appellant" do
+        appeal = vacols_appeals.first
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        find("#queue-tabwindow-tab-1").click
+
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is the appellant.")
+
+        expect(page).to have_content("She/Her")
+        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("The veteran is the appellant.")
+      end
+
+      scenario "veteran is not the appellant" do
+        appeal = vacols_appeals.reject { |a| a.appellant_name.nil? }.first
+
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        find("#queue-tabwindow-tab-1").click
+
+        expect(page).to have_content("Appellant Details")
+        expect(page).to have_content("Veteran Details")
+        expect(page).to have_content("The veteran is not the appellant.")
+
+        expect(page).to have_content(appeal.appellant_name)
+        expect(page).to have_content(appeal.appellant_relationship)
+        expect(page).to have_content(appeal.appellant_address_line_1)
+      end
     end
   end
 end
