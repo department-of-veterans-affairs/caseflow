@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { populateDailyDocket, getDailyDocket, getWorksheet,
-  onHearingPrepped, setHearingPrepped, saveWorksheet } from '../actions/Dockets';
+  onHearingPrepped, saveWorksheet } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
@@ -132,7 +132,6 @@ const mapDispatchToProps = (dispatch) => ({
     getDailyDocket,
     getWorksheet,
     onHearingPrepped,
-    setHearingPrepped,
     saveWorksheet
   }, dispatch)
 });
