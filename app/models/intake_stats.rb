@@ -29,6 +29,12 @@ class IntakeStats < Caseflow::Stats
     def cache_key
       "#{name}-last-calculated-timestamp"
     end
+
+    def average(values)
+      sum = 0.0
+      values.each { |v| sum += v }
+      sum.to_f / values.count.to_f
+    end
   end
 
   CALCULATIONS = {
@@ -49,9 +55,8 @@ class IntakeStats < Caseflow::Stats
     # Average days to respond to RAMP election notice
     average_election_response_time: lambda do |range|
       elections = RampElection.completed.where(receipt_date: offset_range(range))
-      sum = 0.0
-      elections.each{ |e| sum += e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
-      sum / elections.count.to_f
+      response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      average(response_times)
     end
   }.freeze
 end
