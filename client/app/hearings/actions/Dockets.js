@@ -62,6 +62,21 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
+export const setNotes = (hearingIndex, notes, date) => ({
+  type: Constants.SET_NOTES,
+  payload: {
+    hearingIndex,
+    notes,
+    date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      debounceMs
+    }
+  }
+});
+
 export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   type: Constants.SET_HEARING_PREPPED,
   payload: {
@@ -80,21 +95,6 @@ export const onHearingPrepped = (prepped) => (dispatch) => {
     }
   });
 };
-
-export const setNotes = (hearingIndex, notes, date) => ({
-  type: Constants.SET_NOTES,
-  payload: {
-    hearingIndex,
-    notes,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      debounceMs
-    }
-  }
-});
 
 export const setDisposition = (hearingIndex, disposition, date) => ({
   type: Constants.SET_DISPOSITION,
