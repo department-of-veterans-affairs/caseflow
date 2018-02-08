@@ -6,7 +6,7 @@ import FoundIcon from '../../components/FoundIcon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { populateDailyDocket, getDailyDocket, getWorksheet, 
+import { populateDailyDocket, getDailyDocket, getWorksheet,
   onHearingPrepped, setHearingPrepped, saveWorksheet } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';

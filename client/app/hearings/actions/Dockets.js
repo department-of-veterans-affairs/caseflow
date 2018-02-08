@@ -62,7 +62,6 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-
 export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   type: Constants.SET_HEARING_PREPPED,
   payload: {

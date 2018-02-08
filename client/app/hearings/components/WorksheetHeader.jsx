@@ -8,7 +8,6 @@ import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
-import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection'
 
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);

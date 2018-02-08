@@ -11,7 +11,7 @@ import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import { getReaderLink } from './util/index';
-import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection'
+import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -31,7 +31,6 @@ import { saveIssues } from './actions/Issue';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
-
     const textAreaProps = {
       minRows: 3,
       maxRows: 5000,

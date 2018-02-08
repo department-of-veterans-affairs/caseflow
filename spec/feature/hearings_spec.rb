@@ -156,14 +156,14 @@ RSpec.feature "Hearings" do
         visit "/hearings/1/worksheet"
         find(".checkbox-wrapper-prep-1").find(".cf-form-checkbox").click
         expect(page).to have_css(".Select .cf-icon-found")
-        expect(find(".worksheet-header").find(".cf-form-checkbox").
-          find("#prep-1", visible: false)).to be_checked
+        expect(find(".worksheet-header").find(".cf-form-checkbox")
+          .find("#prep-1", visible: false)).to be_checked
 
         find(".Select-control").click
         find("#react-select-2--option-1").click
         expect(page).to_not have_css(".Select .cf-icon-found")
-        expect(find(".worksheet-header").find(".cf-form-checkbox").
-         find("#prep-0", visible: false)).to_not be_checked
+        expect(find(".worksheet-header").find(".cf-form-checkbox")
+         .find("#prep-0", visible: false)).to_not be_checked
       end
 
       scenario "Hearing worksheet switch veterans" do
