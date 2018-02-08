@@ -192,10 +192,8 @@ class AppealHistory
   end
 
   class << self
-    def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
-
-      new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
+    def for_api(vbms_id:)
+      new(vbms_id: vbms_id)
         .appeal_series
         .sort_by(&:api_sort_key)
     end

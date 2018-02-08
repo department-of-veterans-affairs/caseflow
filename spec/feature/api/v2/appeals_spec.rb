@@ -116,6 +116,8 @@ describe "Appeals API v2", type: :request do
       get "/api/v2/appeals", nil, headers
 
       expect(response.code).to eq("401")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns 422 if SSN is invalid" do
@@ -131,6 +133,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns 404 if veteran with that SSN isn't found" do
@@ -146,6 +150,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Veteran not found")
+
+      expect(ApiView.count).to eq(1)
     end
 
     it "caches response" do
@@ -175,6 +181,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(3)
+
+      expect(ApiView.count).to eq(3)
     end
 
     it "returns 500 on any other error" do
@@ -195,6 +203,8 @@ describe "Appeals API v2", type: :request do
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Unknown error occured")
       expect(json["errors"].first["detail"]).to match("Much random error (Sentry event id: a1b2c3)")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns list of appeals for veteran with SSN" do
@@ -298,6 +308,8 @@ describe "Appeals API v2", type: :request do
       # check stubbed attributes
       expect(json["data"].first["attributes"]["description"]).to eq("")
       expect(json["data"].first["attributes"]["evidence"]).to eq([])
+
+      expect(ApiView.count).to eq(1)
     end
   end
 end
