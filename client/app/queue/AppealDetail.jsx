@@ -59,7 +59,7 @@ export default class AppealDetail extends React.PureComponent {
         label: 'Hearing held',
         value: <React.Fragment>
           <DateString date={lastHearing.held_on} dateFormat="M/D/YY" style={marginRight} />
-          <Link target="_blank" href={`/hearings/${lastHearing.id}/worksheet/print`}>View Hearing Worksheet</Link>
+          <Link target="_blank" href={`/hearings/${lastHearing.id}/worksheet`}>View Hearing Worksheet</Link>
         </React.Fragment>
       }, {
         label: 'Judge at hearing',
