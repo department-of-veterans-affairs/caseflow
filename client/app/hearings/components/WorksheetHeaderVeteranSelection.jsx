@@ -59,9 +59,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     }
   }
 
-  saveWorksheet = (worksheet) => {
-    this.props.saveWorksheet(worksheet, true);
-  }
+  saveWorksheet = (worksheet) => this.props.saveWorksheet(worksheet, true);
 
   getOptionLabel = (hearing) => (
     <div>
