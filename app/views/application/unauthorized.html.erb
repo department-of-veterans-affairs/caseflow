@@ -5,6 +5,7 @@
     userDisplayName: current_user ? current_user.display_name : "",
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
-    buildDate: build_date
+    buildDate: build_date,
+    dependenciesFaked: ApplicationController.dependencies_faked?,
   }) %>
 <% end %>

@@ -9,15 +9,10 @@ import { BrowserRouter } from 'react-router-dom';
 class Unauthorized extends React.PureComponent {
 
   render() {
-    const options = [{ title: 'Help',
-      link: '/help' },
-    { title: 'Switch User',
-      link: '/test/users' }];
-
     return <BrowserRouter>
       <div>
         <NavigationBar
-          dropdownUrls={options}
+          dropdownUrls={this.props.dropdownUrls}
           appName="Unauthorized"
           userDisplayName="Menu"
           defaultUrl="/"
@@ -26,14 +21,14 @@ class Unauthorized extends React.PureComponent {
             overlapColor: COLORS.GREY_DARK
           }} />
         <AppFrame>
-          <StatusMessage>
-              <h2 className="cf-msg-screen-heading">Drat!</h2>
-              <p className="cf-msg-screen-deck">You aren't authorized to use this part of Caseflow yet.</p>
-                 <p className="cf-msg-screen-text">
-      <a href="/test/users">
-        Switch users to access this page.
-      </a>
-    </p>
+          <StatusMessage title= "Drat!">
+             You aren't authorized to use this part of Caseflow yet.
+            { this.props.dependenciesFaked &&
+            <p className="cf-msg-screen-text">
+              <a href="/test/users">
+              Switch users to access this page.
+              </a>
+            </p>}
           </StatusMessage>
         </AppFrame>
         <Footer
@@ -47,7 +42,4 @@ class Unauthorized extends React.PureComponent {
 }
 
 export default Unauthorized;
-
-
-
 
