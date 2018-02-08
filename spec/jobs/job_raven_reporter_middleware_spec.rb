@@ -3,7 +3,7 @@ describe JobRavenReporterMiddleware do
     @middleware = JobRavenReporterMiddleware.new
     @yield_called = false
     @raven_called = false
-    allow(Raven).to receive(:capture) { @raven_called = true }
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
   end
 
   context ".call" do
