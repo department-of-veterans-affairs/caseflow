@@ -46,13 +46,12 @@ class IntakeStats < Caseflow::Stats
       RampElection.completed.where(receipt_date: offset_range(range)).count
     end,
 
-    # Median days to respond to RAMP election notice
-    median_election_response_time: lambda do |range|
-      IntakeStats.percentile(
-        :response_time,
-        RampElection.completed.where(receipt_date: offset_range(range)),
-        50
-      )
+    # Average days to respond to RAMP election notice
+    average_election_response_time: lambda do |range|
+      elections = RampElection.completed.where(receipt_date: offset_range(range))
+      sum = 0.0
+      elections.each{ |e| sum += e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      sum / elections.count.to_f
     end
   }.freeze
 end
