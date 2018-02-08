@@ -159,9 +159,6 @@ class ApplicationController < ApplicationBaseController
   def on_vbms_error
     respond_to do |format|
       format.html do
-        @error_title = "VBMS Failure"
-        @error_subtitle = "Unable to communicate with the VBMS system at this time."
-        @error_retry_external_service = "VBMS"
         render "errors/500", layout: "application", status: 500
       end
 

@@ -12,7 +12,7 @@ RSpec.feature "Dropdown" do
     expect(page).to have_content("Sign out")
 
     visit "dispatch/establish-claim"
-    click_on "DSUSER (DSUSER)"
-    expect(page).to have_content("Sign out")
+    click_on "Menu"
+    expect(page).to have_content("Help")
   end
 end
