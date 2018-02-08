@@ -10,7 +10,7 @@ class HearingWorksheetDocs extends Component {
 
     return <div className="cf-hearings-worksheet-data">
       <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
-      <h4>Docs in eFolder: {worksheet.cached_number_of_documents}</h4>
+      <h4>Docs in Claims Folder: {worksheet.cached_number_of_documents}</h4>
 
       {Object.values(worksheetAppeals).map((appeal, key) => {
 

@@ -159,9 +159,6 @@ class ApplicationController < ApplicationBaseController
   def on_vbms_error
     respond_to do |format|
       format.html do
-        @error_title = "VBMS Failure"
-        @error_subtitle = "Unable to communicate with the VBMS system at this time."
-        @error_retry_external_service = "VBMS"
         render "errors/500", layout: "application", status: 500
       end
 
@@ -172,21 +169,16 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_subject
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    if request.original_fullpath.include? "dispatch"
-      "Caseflow Dispatch"
-    elsif request.original_fullpath.include? "certifications"
-      "Caseflow Certification"
-    elsif request.original_fullpath.include? "reader"
-      "Caseflow Reader"
-    elsif request.original_fullpath.include? "hearings"
-      "Caseflow Hearing Prep"
-    elsif request.original_fullpath.include? "intake"
-      "Caseflow Intake"
-    else
-      "Caseflow"
-    end
+    feedback_hash = {
+      "dispatch" => "Caseflow Dispatch",
+      "certifications" => "Caseflow Certification",
+      "reader" => "Caseflow Reader",
+      "hearings" => "Caseflow Hearing Prep",
+      "intake" => "Caseflow Intake",
+      "queue" => "Caseflow Queue"
+    }
+    subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
+    subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
   def feedback_url

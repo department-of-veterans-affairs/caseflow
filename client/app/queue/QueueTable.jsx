@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -13,9 +13,16 @@ import ReaderLink from './ReaderLink';
 
 import { setAppealDocCount } from './QueueActions';
 import { sortTasks } from './utils';
+import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { redText } from './constants';
+import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
+const subHeadStyle = css({
+  fontSize: 'small',
+  color: COMMON_COLORS.GREY_MEDIUM
+});
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -24,13 +31,20 @@ class QueueTable extends React.PureComponent {
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
+  veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
-      valueFunction: (task) => <Link to={`/tasks/${task.vacolsId}`}>
-        {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
-      </Link>
+      valueFunction: (task) => <span>
+        <Link to={`/tasks/${task.vacolsId}`}>
+          {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
+        </Link>
+        {!this.veteranIsAppellant(task) && <React.Fragment>
+          <br />
+          <span {...subHeadStyle}>Veteran is not the appellant</span>
+        </React.Fragment>}
+      </span>
     },
     {
       header: 'Type(s)',
@@ -57,7 +71,7 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Due Date',
-      valueFunction: (task) => moment(task.attributes.due_on).format('MM/DD/YY')
+      valueFunction: (task) => <DateString date={task.attributes.due_on} />
     },
     {
       header: 'Reader Documents',
