@@ -32,7 +32,7 @@ export default class Checkbox extends React.Component {
       classNames.push('usa-input-error');
     }
 
-    return <div className={classNames.join(' ')} {...this.props.styling}>
+    return <div className={classNames.join(' ')}>
 
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
       <div className="cf-form-checkbox">
