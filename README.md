@@ -18,10 +18,7 @@ Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://git
 
 Then run the following:
 
-    # rbenv install <the version of Ruby defined in .travis.yml>
-    # For example:
-    # rbenv install 2.2.4
-
+    rbenv install 2.2.4
     gem install bundler
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
