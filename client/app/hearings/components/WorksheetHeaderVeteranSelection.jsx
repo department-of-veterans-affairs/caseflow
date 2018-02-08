@@ -112,11 +112,11 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       </div>
       <div className="cf-push-right">
         <Link
-          name="review-efolder"
+          name="review-claims-folder"
           href={`${getReaderLink(worksheet)}?category=case_summary`}
           button="primary"
           target="_blank">
-        Review eFolder</Link>
+        Review claims folder</Link>
       </div>
     </span>;
   }
