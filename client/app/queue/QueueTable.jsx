@@ -114,6 +114,11 @@ class QueueTable extends React.PureComponent {
           ..._.pick(task, 'vacolsId'),
           docCount
         });
+      }, () => {
+        this.props.setAppealDocCount({
+          ..._.pick(task, 'vacolsId'),
+          docCount: 0
+        });
       });
   };
 
