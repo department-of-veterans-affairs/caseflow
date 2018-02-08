@@ -6,7 +6,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
 
-class Unauthorized extends React.PureComponent {
+class OutOfService extends React.PureComponent {
 
   render() {
     return <BrowserRouter>
@@ -22,7 +22,7 @@ class Unauthorized extends React.PureComponent {
           }} />
         <AppFrame>
           <StatusMessage title= "Technical Difficulties">
-             You aren't authorized to use this part of Caseflow yet.
+             It looks like Caseflow is experiencing technical difficulties right now. We apologize for any inconvenience. Please check back in a little bit.
           </StatusMessage>
         </AppFrame>
         <Footer
@@ -35,5 +35,5 @@ class Unauthorized extends React.PureComponent {
   }
 }
 
-export default Unauthorized;
+export default OutOfService;
 
