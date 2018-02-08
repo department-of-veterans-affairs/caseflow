@@ -4,9 +4,6 @@ class SessionsController < ApplicationController
   def new
     # :nocov:
     if Rails.application.config.sso_service_disabled
-      @error_title = "Login Service Unavailable"
-      @error_subtitle = "The VA's common login service is currently down."
-      @error_retry_external_service = "the system"
       return render "errors/500", layout: "application", status: 503
     end
     # :nocov:
