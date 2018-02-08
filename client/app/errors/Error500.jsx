@@ -26,8 +26,7 @@ class Error500 extends React.PureComponent {
             overlapColor: COLORS.GREY_DARK
           }} />
         <AppFrame>
-          <StatusMessage>
-            <h1 className="cf-red-text cf-msg-screen-heading">Something went wrong.</h1>
+          <StatusMessage title="Something went wrong." type="alert">
              If you continue to see this page, please contact the help desk.
           </StatusMessage>
         </AppFrame>
