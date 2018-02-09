@@ -18,7 +18,7 @@ const OutOfService = (props) => <BrowserRouter>
         overlapColor: COLORS.GREY_DARK
       }} />
     <AppFrame>
-      <StatusMessage title= "Technical Difficulties">
+      <StatusMessage title="Technical Difficulties">
        It looks like Caseflow is experiencing technical difficulties right now.
        We apologize for any inconvenience. Please check back in a little bit.
       </StatusMessage>

@@ -11,7 +11,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 
-import { setAppealDocCount } from './QueueActions';
+import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
 import { sortTasks } from './utils';
 import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
@@ -114,7 +114,7 @@ class QueueTable extends React.PureComponent {
           ..._.pick(task, 'vacolsId'),
           docCount
         });
-      });
+      }, () => this.props.loadAppealDocCountFail(task.vacolsId));
   };
 
   render = () => <Table
@@ -132,7 +132,8 @@ QueueTable.propTypes = {
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount
+  setAppealDocCount,
+  loadAppealDocCountFail
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueTable);
