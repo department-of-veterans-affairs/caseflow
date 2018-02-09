@@ -47,7 +47,8 @@ class QueueDetailView extends React.PureComponent {
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
-        analyticsSource={CATEGORIES.QUEUE_TASK} />
+        analyticsSource={CATEGORIES.QUEUE_TASK}
+        redirectUrl={window.location.pathname}/>
 
       <TabWindow
         name="queue-tabwindow"

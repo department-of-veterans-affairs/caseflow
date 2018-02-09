@@ -88,7 +88,9 @@ class QueueTable extends React.PureComponent {
             href: `/reader/appeal/${task.vacolsId}/documents`
           }
         }}>
-        <ReaderLink vacolsId={task.vacolsId} analyticsSource={CATEGORIES.QUEUE_TABLE} />
+        <ReaderLink vacolsId={task.vacolsId}
+          analyticsSource={CATEGORIES.QUEUE_TABLE}
+          redirectUrl={window.location.pathname}/>
       </LoadingDataDisplay>
     }
   ];

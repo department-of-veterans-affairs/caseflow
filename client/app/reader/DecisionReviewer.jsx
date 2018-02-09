@@ -130,21 +130,9 @@ export class DecisionReviewer extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
-  getAppName = () => {
-    return this.props.queueRedirectUrl ? 'Queue' : 'Reader';
-  }
-
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
-
-  getClaimsFolderBreadcrumb = () => {
-    if (this.props.queueRedirectUrl === '/queue') {
-      return [<span>Your Queue &nbsp; > &nbsp;</span>, 'Claims Folder'];
-    }
-
-    return 'Claims Folder';
-  }
 
   render() {
     const Router = this.props.router || BrowserRouter;
@@ -153,7 +141,7 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           wideApp
-          appName={this.getAppName()}
+          appName="Reader"
           logoProps={{
             accentColor: LOGO_COLORS.READER.ACCENT,
             overlapColor: LOGO_COLORS.READER.OVERLAP
@@ -171,7 +159,7 @@ export class DecisionReviewer extends React.PureComponent {
             <PageRoute
               exact
               title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb={this.getClaimsFolderBreadcrumb()}
+              breadcrumb={"Claims Folder"}
               path="/:vacolsId/documents"
               render={this.routedPdfListView} />
             <PageRoute
