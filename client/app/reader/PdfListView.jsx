@@ -57,7 +57,10 @@ export class PdfListView extends React.Component {
       />;
     }
 
+    const BackToLink = this.props.backToLink;
+
     return <div>
+      {BackToLink && <BackToLink location={this.props.location} />}
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />

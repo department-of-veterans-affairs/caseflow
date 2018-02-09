@@ -93,6 +93,7 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <PdfListView
+        backToLink={this.props.backToLink}
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
@@ -137,45 +138,54 @@ export class DecisionReviewer extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
-        <NavigationBar
-          wideApp
-          appName="Reader"
-          logoProps={{
-            accentColor: LOGO_COLORS.READER.ACCENT,
-            overlapColor: LOGO_COLORS.READER.OVERLAP
-          }}
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
+    const core = <Router basename={`${this.props.basename}/reader/appeal`} {...this.props.routerTestProps}>
+      <React.Fragment>
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer} />
+        <AppFrame wideApp>
           <PageRoute
             exact
-            title="Document Viewer | Caseflow Reader"
-            breadcrumb="Document Viewer"
-            path="/:vacolsId/documents/:docId"
-            render={this.routedPdfViewer} />
-          <AppFrame wideApp>
-            <PageRoute
-              exact
-              title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-          </AppFrame>
-        </NavigationBar>
-        <Footer
-          wideApp
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </div>
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb="Claims Folder"
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
+          <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+        </AppFrame>
+      </React.Fragment>
     </Router>;
+
+    if (this.props.embedded) {
+      return core;
+    }
+
+    return <React.Fragment>
+      <NavigationBar
+        wideApp
+        appName="Reader"
+        logoProps={{
+          accentColor: LOGO_COLORS.READER.ACCENT,
+          overlapColor: LOGO_COLORS.READER.OVERLAP
+        }}
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}
+        defaultUrl="/">
+        {core}
+      </NavigationBar>
+      <Footer
+        wideApp
+        appName="Reader"
+        feedbackUrl={this.props.feedbackUrl}
+        buildDate={this.props.buildDate} />
+    </React.Fragment>
+    ;
   }
 }
 

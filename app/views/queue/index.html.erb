@@ -4,6 +4,12 @@
     userId: current_user.id,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
-    buildDate: build_date
+    buildDate: build_date,
+
+    # Passthrough for Reader. This needs to be kept in sync with the react_component() call for Reader.
+    featureToggles: {
+      windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user)
+    },
+    pdfWorker: asset_path('pdf.worker.js'),
   }) %>
 <% end %>

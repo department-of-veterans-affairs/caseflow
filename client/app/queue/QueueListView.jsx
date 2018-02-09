@@ -27,7 +27,7 @@ class QueueListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 className="cf-push-left" {...fullWidth}>Your Queue</h1>
-        <QueueTable />
+        <QueueTable location={this.props.location} />
       </div>;
     }
 
