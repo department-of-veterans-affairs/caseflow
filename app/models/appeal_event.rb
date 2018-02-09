@@ -69,9 +69,6 @@ class AppealEvent
     merged: [
       "Merged Appeal"
     ],
-    record_designation: [
-      "Designation of Record"
-    ],
     reconsideration: [
       "Reconsideration by Letter"
     ],
