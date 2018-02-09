@@ -13,6 +13,7 @@ describe "Appeals API v2", type: :request do
     let!(:original) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
+        vacols_id: "1234567",
         vacols_record: {
           template: :remand_decided,
           type: "Original",
@@ -37,6 +38,7 @@ describe "Appeals API v2", type: :request do
     let!(:post_remand) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
+        vacols_id: "7654321",
         vacols_record: {
           template: :ready_to_certify,
           type: "Post Remand",
@@ -224,6 +226,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # check the attribtues on the first appeal
+      expect(json["data"].first["attributes"]["appealIds"].length).to eq(2)
+      expect(json["data"].first["attributes"]["appealIds"]).to include("1234567")
       expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)

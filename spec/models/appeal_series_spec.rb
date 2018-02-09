@@ -31,6 +31,27 @@ describe AppealSeries do
   let(:location_code) { "77" }
   let(:status) { "Advance" }
 
+  context "#vacols_ids" do
+    subject { series.vacols_ids }
+
+    let(:appeals) do
+      [
+        Generators::Appeal.build(
+          vacols_id: "1234567",
+          status: "Active",
+          last_location_change_date: 1.day.ago
+        ),
+        Generators::Appeal.build(
+          vacols_id: "7654321",
+          status: "Active",
+          last_location_change_date: 2.days.ago
+        )
+      ]
+    end
+
+    it { is_expected.to eq ["1234567", "7654321"] }
+  end
+
   context "#latest_appeal" do
     subject { series.latest_appeal.vacols_id }
 
