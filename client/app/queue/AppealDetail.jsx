@@ -6,6 +6,8 @@ import _ from 'lodash';
 import IssueList from '../reader/IssueList';
 import BareList from '../components/BareList';
 import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 
@@ -13,6 +15,7 @@ const appealSummaryUlStyling = css({
   paddingLeft: 0,
   listStyle: 'none'
 });
+const marginRight = css({ marginRight: '1rem' });
 
 export default class AppealDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
@@ -54,7 +57,10 @@ export default class AppealDetail extends React.PureComponent {
         value: StringUtil.snakeCaseToCapitalized(lastHearing.type)
       }, {
         label: 'Hearing held',
-        value: <DateString date={lastHearing.held_on} dateFormat="M/D/YY" />
+        value: <React.Fragment>
+          <DateString date={lastHearing.held_on} dateFormat="M/D/YY" style={marginRight} />
+          <Link target="_blank" href={`/hearings/${lastHearing.id}/worksheet`}>View Hearing Worksheet</Link>
+        </React.Fragment>
       }, {
         label: 'Judge at hearing',
         value: lastHearing.held_by
