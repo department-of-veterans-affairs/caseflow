@@ -23,7 +23,7 @@ class ReaderLink extends React.PureComponent {
 
     if (message) {
       linkText = message;
-    } else if (!_.isUndefined(docCount)) {
+    } else if (_.isNumber(docCount)) {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 

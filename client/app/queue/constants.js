@@ -9,7 +9,8 @@ export const COLORS = {
 export const ACTIONS = {
   RECEIVE_QUEUE_DETAILS: 'RECEIVE_QUEUE_DETAILS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
-  SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT'
+  SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
+  LOAD_APPEAL_DOC_COUNT_FAILURE: 'LOAD_APPEAL_DOC_COUNT_FAILURE'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
