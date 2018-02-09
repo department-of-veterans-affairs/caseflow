@@ -83,9 +83,14 @@ class AppealEvent
     ]
   }.freeze
 
-  EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
+  V1_EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
     hearing_held: :held,
     hearing_cancelled: :cancelled,
+    hearing_no_show: :no_show
+  }.freeze
+
+  EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
+    hearing_held: :held,
     hearing_no_show: :no_show
   }.freeze
 
@@ -112,6 +117,11 @@ class AppealEvent
 
   def issue_disposition=(disposition)
     self.type = type_from_issue_disposition(disposition)
+  end
+
+  def v1_hearing=(hearing)
+    self.type = V1_EVENT_TYPE_FOR_HEARING_DISPOSITIONS.key(hearing.disposition)
+    self.date = hearing.date
   end
 
   def hearing=(hearing)
