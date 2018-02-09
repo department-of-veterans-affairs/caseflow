@@ -1,6 +1,14 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  SOC_TIMELINESS           = [1, 1].freeze
+  SSOC_TIMELINESS          = [1, 1].freeze
+  CERTIFICATION_TIMELINESS = [1, 1].freeze
+  DECISION_TIMELINESS      = [1, 1].freeze
+  REMAND_TIMELINESS        = [1, 1].freeze
+  REMAND_SSOC_TIMELINESS   = [1, 1].freeze
+  RETURN_TIMELINESS        = [1, 1].freeze
+
   delegate :vacols_id,
            :active?,
            :type_code,
@@ -93,6 +101,19 @@ class AppealSeries < ActiveRecord::Base
     DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
   end
 
+  def last_soc_date
+    events.select { |event| [:soc, :ssoc].include? event.type }.last.date
+  end
+
+  def issues_for_last_decision
+    latest_appeal.issues.select { |issue| [:allowed, :remanded, :denied].include? issue.disposition }.map do |issue|
+      {
+        description: issue.friendly_description,
+        disposition: issue.disposition
+      }
+    end
+  end
+
   # rubocop:disable CyclomaticComplexity
   def fetch_status
     case latest_appeal.status
@@ -173,13 +194,58 @@ class AppealSeries < ActiveRecord::Base
     :remand
   end
 
+  # rubocop:disable MethodLength
   def details_for_status
     case status
+    when :scheduled_hearing
+      hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
+
+      {
+        date: hearing.date.to_date,
+        type: hearing.type,
+        location: hearing.location
+      }
+    when :pending_hearing_scheduling
+      {
+        type: latest_appeal.sanitized_hearing_request_type
+      }
+    when :pending_form9, :pending_certification, :pending_certification_ssoc
+      {
+        last_soc_date: last_soc_date,
+        certification_timeliness: CERTIFICATION_TIMELINESS,
+        ssoc_timeliness: SSOC_TIMELINESS
+      }
+    when :pending_soc
+      {
+        soc_timeliness: SOC_TIMELINESS
+      }
+    when :at_vso
+      {
+        vso_name: representative
+      }
     when :decision_in_progress
-      { test: "Hello World" }
+      {
+        decision_timeliness: DECISION_TIMELINESS
+      }
+    when :remand
+      {
+        issues: issues_for_last_decision,
+        remand_timeliness: REMAND_TIMELINESS
+      }
+    when :remand_ssoc
+      {
+        last_soc_date: last_soc_date,
+        return_timeliness: RETURN_TIMELINESS,
+        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS
+      }
+    when :bva_decision
+      {
+        issues: issues_for_last_decision
+      }
     else
       {}
     end
   end
+  # rubocop:enable MethodLength
   # rubocop:enable CyclomaticComplexity
 end
