@@ -35,7 +35,6 @@ class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
-  interactionType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
 
