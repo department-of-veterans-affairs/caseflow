@@ -9,7 +9,7 @@ import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
-import { fullWidth, CATEGORIES, INTERACTION_TYPES } from './constants';
+import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
@@ -47,7 +47,7 @@ class QueueDetailView extends React.PureComponent {
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
-        analyticsSource={CATEGORIES.QUEUE_TASK} interactionType={INTERACTION_TYPES.SAME_WINDOW} />
+        analyticsSource={CATEGORIES.QUEUE_TASK} />
 
       <TabWindow
         name="queue-tabwindow"
