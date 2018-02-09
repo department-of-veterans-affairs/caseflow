@@ -44,7 +44,7 @@ production:
 development_vacols:
   adapter: oracle_enhanced
   host: localhost
-  port: 32769
+  port: 1521
   username: VACOLS
   password: VACOLS
   database: BVAP.localdomain
