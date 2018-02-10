@@ -1,0 +1,16 @@
+Attaching to VACOLS_DB
+[36mVACOLS_DB    |[0m Start up Oracle Database
+[36mVACOLS_DB    |[0m Sat Feb 10 02:43:19 UTC 2018
+[36mVACOLS_DB    |[0m start database
+[36mVACOLS_DB    |[0m start listener
+[36mVACOLS_DB    |[0m The database is ready for use .
+[36mVACOLS_DB    |[0m 0x644217d0      2134  package body SYS.PRVT_ADVISOR.COMMON_DELETE_TASK
+[36mVACOLS_DB    |[0m 0x644217d0      7342  package body SYS.PRVT_ADVISOR.DELETE_EXPIRED_TASKS
+[36mVACOLS_DB    |[0m 0x64454280         1  anonymous block
+[36mVACOLS_DB    |[0m 2018-02-10T02:43:34.781801+00:00
+[36mVACOLS_DB    |[0m ORCLPDB1(3):Opening pdb with no Resource Manager plan active
+[36mVACOLS_DB    |[0m Pluggable database ORCLPDB1 opened read write
+[36mVACOLS_DB    |[0m Starting background process CJQ0
+[36mVACOLS_DB    |[0m 2018-02-10T02:43:35.233891+00:00
+[36mVACOLS_DB    |[0m CJQ0 started with pid=50, OS id=182 
+[36mVACOLS_DB    |[0m Completed: ALTER DATABASE OPEN
