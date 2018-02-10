@@ -8,3 +8,4 @@ GRANT CREATE SESSION TO VACOLS;
 
 @/ORCL/vacols_copy_1_tablespaces.sql
 @/ORCL/vacols_copy_2_tables.sql
+exit
