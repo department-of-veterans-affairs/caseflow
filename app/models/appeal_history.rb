@@ -1,10 +1,12 @@
 class AppealHistory
   include ActiveModel::Model
 
+  INVALID_TYPES = ["Designation of Record"].freeze
+
   attr_accessor :vbms_id
 
   def appeals
-    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+    @appeals ||= fetch_appeals
   end
 
   def appeal_series
@@ -12,6 +14,11 @@ class AppealHistory
   end
 
   private
+
+  def fetch_appeals
+    Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+      .reject { |appeal| INVALID_TYPES.include? appeal.type }
+  end
 
   def fetch_appeal_series
     if needs_update?
@@ -192,10 +199,8 @@ class AppealHistory
   end
 
   class << self
-    def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
-
-      new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
+    def for_api(vbms_id:)
+      new(vbms_id: vbms_id)
         .appeal_series
         .sort_by(&:api_sort_key)
     end

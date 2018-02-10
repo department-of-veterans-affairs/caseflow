@@ -11,6 +11,10 @@ class AppealSeries < ActiveRecord::Base
            :form9_date,
            to: :latest_appeal
 
+  def vacols_ids
+    appeals.map(&:vacols_id)
+  end
+
   def latest_appeal
     @latest_appeal ||= fetch_latest_appeal
   end

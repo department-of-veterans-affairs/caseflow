@@ -27,33 +27,55 @@
       <% end %>
     </ul>
 
-    <div class="cf-stats-section -activity">
-      <h3>RAMP Elections <span class="data-date"></span></h3>
+    <div id="ramp-elections-sent" class="cf-stats-section -activity">
+      <h3>RAMP Elections Sent <span class="data-date"></span></h3>
 
       <div class="cf-stat-panel data-chart" data-key="elections_sent">
         <h4 class="cf-stat-title">
-          Sent
+          Total
         </h4>
         <div class="cf-stat-figure data-value" data-key="elections_sent">
           <%= @stats[0].values[:elections_sent] %>
         </div>
       </div>
 
+      <div class="cf-stat-panel data-chart" data-key="elections_returned_by_notice_date">
+        <h4 class="cf-stat-title">
+          Number Returned
+        </h4>
+        <div class="cf-stat-figure data-value" data-key="elections_returned_by_notice_date">
+          <%= @stats[0].values[:elections_returned_by_notice_date] %>
+        </div>
+      </div>
+
+      <div class="cf-stat-panel data-chart" data-key="elections_returned_by_notice_date/elections_sent">
+        <h4 class="cf-stat-title">
+          Percentage Returned
+        </h4>
+        <div class="cf-stat-figure data-rate" data-key="elections_returned_by_notice_date/elections_sent">
+          <%= format_rate_stat(:elections_returned_by_notice_date, :elections_sent) %>
+        </div>
+      </div>
+    </div>
+
+    <div id="ramp-elections-received" class="cf-stats-section -activity">
+      <h3>RAMP Elections Received <span class="data-date"></span></h3>
+
       <div class="cf-stat-panel data-chart" data-key="elections_successfully_received">
         <h4 class="cf-stat-title">
-          Successfully Received
+          Total
         </h4>
         <div class="cf-stat-figure data-value" data-key="elections_successfully_received">
           <%= @stats[0].values[:elections_successfully_received] %>
         </div>
       </div>
 
-      <div class="cf-stat-panel data-chart" data-key="median_election_response_time">
+      <div class="cf-stat-panel data-chart" data-key="average_election_response_time">
         <h4 class="cf-stat-title">
-          Median Response Time
+          Average Response Time
         </h4>
-        <div class="cf-stat-figure data-time" data-key="median_election_response_time">
-          <%= format_time_duration_stat(@stats[0].values[:median_election_response_time]) %>
+        <div class="cf-stat-figure data-time" data-key="average_election_response_time">
+          <%= format_time_duration_stat(@stats[0].values[:average_election_response_time]) %>
         </div>
       </div>
     </div>

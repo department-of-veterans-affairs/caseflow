@@ -4,6 +4,7 @@ require "base64"
 
 class ApiKey < ActiveRecord::Base
   before_create :generate_key_string
+  has_many :api_views
 
   # Value of the key string, only available during creation
   attr_accessor :key_string

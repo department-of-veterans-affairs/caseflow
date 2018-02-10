@@ -72,6 +72,8 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
+# the default default_max_wait_time is 2 seconds
+Capybara.default_max_wait_time = 20
 
 ActiveRecord::Migration.maintain_test_schema!
 
