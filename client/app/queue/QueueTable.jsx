@@ -11,12 +11,12 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 
-import { setAppealDocCount } from './QueueActions';
+import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
 import { sortTasks } from './utils';
 import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { redText } from './constants';
+import { redText, CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 const subHeadStyle = css({
@@ -88,7 +88,7 @@ class QueueTable extends React.PureComponent {
             href: `/reader/appeal/${task.vacolsId}/documents`
           }
         }}>
-        <ReaderLink vacolsId={task.vacolsId} />
+        <ReaderLink vacolsId={task.vacolsId} analyticsSource={CATEGORIES.QUEUE_TABLE} />
       </LoadingDataDisplay>
     }
   ];
@@ -114,7 +114,7 @@ class QueueTable extends React.PureComponent {
           ..._.pick(task, 'vacolsId'),
           docCount
         });
-      });
+      }, () => this.props.loadAppealDocCountFail(task.vacolsId));
   };
 
   render = () => <Table
@@ -132,7 +132,8 @@ QueueTable.propTypes = {
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount
+  setAppealDocCount,
+  loadAppealDocCountFail
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueTable);

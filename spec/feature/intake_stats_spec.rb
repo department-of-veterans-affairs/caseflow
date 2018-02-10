@@ -25,7 +25,6 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
-
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 3")
@@ -34,7 +33,7 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January (so far)")
     expect(find("#ramp-elections-received")).to have_content("Total 2")
-    expect(find("#ramp-elections-received")).to have_content("Median Response Time 7.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
 
@@ -46,7 +45,7 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January 7")
     expect(find("#ramp-elections-received")).to have_content("Total 2")
-    expect(find("#ramp-elections-received")).to have_content("Median Response Time 7.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
   end
 
   scenario "Unauthorized user access" do
