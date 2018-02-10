@@ -5,7 +5,7 @@ namespace :local_vacols do
       puts "Removing existing volumes"
       `docker-compose down -v`
       puts "Starting database"
-      `docker-compose up > '../tmp/vacols.log' &`
+      `docker-compose up &> '../tmp/vacols.log' &`
 
       # Loop until setup is complete. At most 10 minutes
       puts "Waiting for the database to be ready"
@@ -44,7 +44,7 @@ namespace :local_vacols do
   desc "Starts up existing database"
   task start: :environment do
     Dir.chdir(Rails.root.join("vacols")) do
-      `docker-compose up > '../tmp/vacols.log' &`
+      `docker-compose up &> '../tmp/vacols.log' &`
     end
   end
 
