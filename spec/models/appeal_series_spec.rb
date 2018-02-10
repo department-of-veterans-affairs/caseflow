@@ -49,7 +49,7 @@ describe AppealSeries do
       ]
     end
 
-    it { is_expected.to eq ["1234567", "7654321"] }
+    it { is_expected.to eq %w[1234567 7654321] }
   end
 
   context "#latest_appeal" do
