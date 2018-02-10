@@ -5,7 +5,13 @@ import _ from 'lodash';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
+import { TASK_ACTIONS } from './constants';
 class ReaderLink extends React.PureComponent {
+
+  readerLinkAnalytics = () => {
+    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
+  }
+
   render = () => {
     const {
       docCount,
@@ -21,13 +27,14 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
-    return <Link href={`/reader/appeal/${vacolsId}/documents`}>
+    return <Link href={`/reader/appeal/${vacolsId}/documents`} onClick={this.readerLinkAnalytics}>
       {linkText}
     </Link>;
   };
 }
 
 ReaderLink.propTypes = {
+  analyticsSource: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
 
