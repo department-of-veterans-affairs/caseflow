@@ -21,7 +21,7 @@ class Hearing < ActiveRecord::Base
   end
 
   def location
-    type == :central_office ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
+    (type == :central_office) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
 
   def closed?
