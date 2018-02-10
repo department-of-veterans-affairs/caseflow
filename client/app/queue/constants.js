@@ -17,3 +17,14 @@ export const ACTIONS = {
 export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
+
+export const CATEGORIES = {
+  QUEUE_TABLE: 'Queue Table',
+  QUEUE_TASK: 'Queue Task'
+};
+
+export const TASK_ACTIONS = {
+  VIEW_APPELLANT_INFO: 'view-appellant-info',
+  VIEW_APPEAL_INFO: 'view-appeal-info',
+  QUEUE_TO_READER: 'queue-to-reader'
+};

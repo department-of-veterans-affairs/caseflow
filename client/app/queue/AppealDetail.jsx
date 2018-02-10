@@ -5,9 +5,9 @@ import _ from 'lodash';
 
 import IssueList from '../reader/IssueList';
 import BareList from '../components/BareList';
+import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { boldText } from './constants';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 
@@ -73,6 +73,10 @@ export default class AppealDetail extends React.PureComponent {
 
     return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
   };
+
+  componentDidMount() {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  }
 
   render = () => <div>
     <h2>Appeal Summary</h2>
