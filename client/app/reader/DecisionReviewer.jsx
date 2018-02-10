@@ -136,6 +136,15 @@ export class DecisionReviewer extends React.PureComponent {
 
   render() {
     const Router = this.props.router || BrowserRouter;
+    const queueEnabled = this.props.featureToggles.queueWelcomeGate;
+
+    // Since we're not inside React Router, we don't have access to the route params,
+    // so we'll have to manually search for the vacols id.
+    const match = window.location.pathname.match(/\/reader\/appeal\/(\d+)/);
+    const vacolsId = match ? match[1] : '';
+
+    const defaultUrl = queueEnabled ? `/${vacolsId}/documents/` : '/';
+    const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div>
@@ -148,7 +157,7 @@ export class DecisionReviewer extends React.PureComponent {
           }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
+          defaultUrl={defaultUrl}>
           <PageRoute
             exact
             title="Document Viewer | Caseflow Reader"
@@ -159,14 +168,15 @@ export class DecisionReviewer extends React.PureComponent {
             <PageRoute
               exact
               title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb={"Claims Folder"}
+              breadcrumb={claimsFolderBreadcrumb}
               path="/:vacolsId/documents"
               render={this.routedPdfListView} />
-            <PageRoute
+            {!queueEnabled && <PageRoute
               exact
               path="/"
               title="Assignments | Caseflow Reader"
               render={this.routedCaseSelect} />
+            }
           </AppFrame>
         </NavigationBar>
         <Footer

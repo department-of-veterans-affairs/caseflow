@@ -47,7 +47,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <Link to="/">&lt; Back to your queue</Link>
+    <Link to="/">&lt; Back to Your Queue</Link>
     <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 

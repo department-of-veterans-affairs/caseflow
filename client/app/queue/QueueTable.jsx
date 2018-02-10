@@ -90,7 +90,7 @@ class QueueTable extends React.PureComponent {
         }}>
         <ReaderLink vacolsId={task.vacolsId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
-          redirectUrl={window.location.pathname}/>
+          redirectUrl={window.location.pathname} />
       </LoadingDataDisplay>
     }
   ];

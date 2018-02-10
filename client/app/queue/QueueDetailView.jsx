@@ -48,7 +48,7 @@ class QueueDetailView extends React.PureComponent {
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
-        redirectUrl={window.location.pathname}/>
+        redirectUrl={window.location.pathname} />
 
       <TabWindow
         name="queue-tabwindow"
