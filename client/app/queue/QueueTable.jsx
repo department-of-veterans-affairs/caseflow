@@ -38,7 +38,7 @@ class QueueTable extends React.PureComponent {
       header: 'Decision Task Details',
       valueFunction: (task) => <span>
         <Link to={`/tasks/${task.vacolsId}`}>
-          {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
+          {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
         </Link>
         {!this.veteranIsAppellant(task) && <React.Fragment>
           <br />
