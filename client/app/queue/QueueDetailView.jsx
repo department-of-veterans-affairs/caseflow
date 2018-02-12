@@ -69,7 +69,7 @@ class QueueDetailView extends React.PureComponent {
         analyticsSource={CATEGORIES.QUEUE_TASK} />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"
-        placeholder="Select an action"
+        placeholder="Select an action&hellip;"
         options={draftDecisionOptions}
         onChange={this.changeRoute}
         hideLabel
