@@ -53,6 +53,24 @@ docker login -u dsvaappeals
 The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to
 accept the license agreement for [this docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
 
+## Start up local VACOLS container
+To set up our local copy of VACOLS, run
+```
+rake local_vacols:setup
+```
+To start the container after it's been setup, run
+```
+rake local_vacols:start
+```
+To stop the container, run
+```
+rake local_vacols:stop
+```
+To view the logs, run
+```
+rake local_vacols:logs
+```
+
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
