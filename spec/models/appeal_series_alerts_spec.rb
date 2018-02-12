@@ -176,6 +176,9 @@ describe AppealSeriesAlerts do
     context "ramp alert" do
       let!(:ramp_election) { RampElection.create(veteran_file_number: "999887777", notice_date: notice_date) }
       let(:notice_date) { 30.days.ago }
+      before do
+        appeal.issues << Generators::Issue.build
+      end
 
       context "when notice date is within the last 60 days" do
         it "includes an alert" do
