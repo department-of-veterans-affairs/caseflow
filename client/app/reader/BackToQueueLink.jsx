@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 
@@ -6,21 +7,18 @@ const segmentStyling = css({
   marginTop: '3rem'
 });
 
-const TASK_TYPE_CODES = {
-  "dd": "Draft Decision"
-};
-
 class BackToQueueLink extends React.PureComponent {
   getRedirectText = () => {
     const {
-      taskCode,
+      queueTaskType,
       veteranFullName,
-      vbmsId,
+      vbmsId
     } = this.props;
 
-    if (taskCode && TASK_TYPE_CODES[taskCode]) {
-      return `${TASK_TYPE_CODES[taskCode]} - ${veteranFullName} (${vbmsId})`
+    if (queueTaskType) {
+      return `${queueTaskType} - ${veteranFullName} (${vbmsId})`;
     }
+
     return 'Your Queue';
   }
 
@@ -34,5 +32,12 @@ class BackToQueueLink extends React.PureComponent {
     </div>;
   }
 }
+
+BackToQueueLink.propTypes = {
+  queueRedirectUrl: PropTypes.string.isRequired,
+  vbmsId: PropTypes.string,
+  veteranFullName: PropTypes.string,
+  queueTaskType: PropTypes.string
+};
 
 export default BackToQueueLink;

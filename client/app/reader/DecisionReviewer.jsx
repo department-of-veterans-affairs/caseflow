@@ -214,7 +214,6 @@ const mapStateToProps = (state, props) => {
 
   return {
     documentFilters: state.documentList.pdfList.filters,
-    queueRedirectUrl: state.documentList.queueRedirectUrl,
     storeDocuments: state.documents,
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
