@@ -24,8 +24,6 @@ const getQueueRedirectUrl = () => {
 const getQueueTaskType = () => {
   const query = querystring.parse(window.location.search.slice(1));
 
-  debugger;
-
   if (!query.queue_task_type) {
     return null;
   }
@@ -35,7 +33,7 @@ const getQueueTaskType = () => {
 
 const initialState = {
   queueRedirectUrl: getQueueRedirectUrl(),
-  getQueueTaskType: getQueueTaskType(),
+  queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
   filteredDocIds: null,

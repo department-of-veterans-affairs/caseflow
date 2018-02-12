@@ -15,11 +15,17 @@ class BackToQueueLink extends React.PureComponent {
       vbmsId
     } = this.props;
 
-    if (queueTaskType) {
-      return `${queueTaskType} - ${veteranFullName} (${vbmsId})`;
+    if (!queueTaskType) {
+      return "Your Queue";
     }
 
-    return 'Your Queue';
+    let str = `${queueTaskType}`;
+
+    if (veteranFullName) {
+      str += ` - ${veteranFullName} (${vbmsId})`;
+    }
+
+    return str;
   }
 
   render = () => {
