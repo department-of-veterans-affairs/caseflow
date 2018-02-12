@@ -103,7 +103,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def last_soc_date
-    events.select { |event| [:soc, :ssoc].include? event.type }.last.date
+    events.select { |event| [:soc, :ssoc].include? event.type }.last.date.to_date
   end
 
   def issues_for_last_decision

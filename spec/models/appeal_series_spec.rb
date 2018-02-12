@@ -285,6 +285,36 @@ describe AppealSeries do
         expect(subject[:details]).to eq({})
       end
     end
+
+    context "when it is in remand ssoc status" do
+      let(:status) { "Remand" }
+      let(:decision_date) { 3.days.ago }
+      let(:ssoc_dates) { [1.year.ago, 1.day.ago] }
+
+      it "returns a details hash with the most recent ssoc" do
+        expect(subject[:type]).to eq(:remand_ssoc)
+        expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
+        expect(subject[:details][:return_timeliness]).to eq([1, 2])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 10])
+      end
+    end
+
+    context "when it has been decided by the board" do
+      let(:status) { "Complete" }
+      let(:disposition) { "Allowed" }
+      before do
+        latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
+        latest_appeal.issues << Generators::Issue.build(disposition: :denied)
+        latest_appeal.issues << Generators::Issue.build(disposition: :field_grant)
+      end
+
+      it "returns a details hash with the decided issues" do
+        expect(subject[:type]).to eq(:bva_decision)
+        expect(subject[:details][:issues].length).to eq(2)
+        expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
+        expect(subject[:details][:issues].first[:description]).to eq("Service connection, limitation of thigh motion")
+      end
+    end
   end
 
   context "#alerts" do
