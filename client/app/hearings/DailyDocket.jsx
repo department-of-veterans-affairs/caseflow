@@ -7,11 +7,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 export class DailyDocket extends React.Component {
 
-  saveDailyDocketInLocalStorage = (docket) => {
-    localStorage.setItem('dailyDocket', JSON.stringify(docket));
-    localStorage.setItem('dailyDocketDate', this.props.date);
-  };
-
   render() {
     const docket = this.props.docket;
 
@@ -52,7 +47,7 @@ export class DailyDocket extends React.Component {
       </AppSegment>
       <div className="cf-alt--actions">
         <div className="cf-push-left">
-          <Link to="/hearings/dockets" onClick={this.saveDailyDocketInLocalStorage(this.props.docket)}>&lt; Back to Your Hearing Days</Link>
+          <Link to="/hearings/dockets">&lt; Back to Your Hearing Days</Link>
         </div>
       </div>
     </div>;

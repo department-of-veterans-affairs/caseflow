@@ -36,21 +36,9 @@ const selectVeteranStyling = css({
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
-    // Getting the stored worksheet information from the local storage.
-    const dailyDocket = JSON.parse(localStorage.getItem('dailyDocket'));
+    this.date = moment(this.props.worksheet.date).format('YYYY-MM-DD');
 
-    this.date = localStorage.getItem('dailyDocketDate') ||
-      moment(this.props.worksheet.date).format('YYYY-MM-DD');
-
-    // If the local storage information exists, populate the daily docket
-    // and the date. Also remove the information from local storage.
-    if (dailyDocket && dailyDocket[this.date]) {
-      this.props.populateDailyDocket(dailyDocket, this.date);
-      localStorage.removeItem('dailyDocket');
-      localStorage.removeItem('dailyDocketDate');
-    } else {
-      this.props.getDailyDocket(dailyDocket, this.date);
-    }
+    this.props.getDailyDocket(null, this.date);
   }
 
   onDropdownChange = (value) => {
