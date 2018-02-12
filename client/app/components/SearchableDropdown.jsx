@@ -54,6 +54,7 @@ class SearchableDropdown extends Component {
       placeholder,
       errorMessage,
       label,
+      hideLabel,
       multi,
       name,
       noResultsText,
@@ -67,6 +68,9 @@ class SearchableDropdown extends Component {
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
+    const labelClasses = classNames('question-label', {
+      'usa-sr-only': hideLabel
+    });
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
@@ -105,7 +109,7 @@ class SearchableDropdown extends Component {
     }
 
     return <div className={dropdownClasses} >
-      <label className="question-label" htmlFor={name}>
+      <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
@@ -131,6 +135,7 @@ SearchableDropdown.propTypes = {
   creatable: PropTypes.bool,
   errorMessage: PropTypes.string,
   label: PropTypes.string,
+  hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   options: PropTypes.array,

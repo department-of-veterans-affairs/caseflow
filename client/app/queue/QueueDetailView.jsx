@@ -5,9 +5,10 @@ import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ReaderLink from './ReaderLink';
-import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
+import TabWindow from '../components/TabWindow';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
@@ -18,6 +19,14 @@ const headerStyling = css({
 const subHeadStyling = css({
   marginBottom: '2rem'
 });
+
+const draftDecisionOptions = [{
+  label: 'Decision Ready for Review',
+  value: 'decision'
+}, {
+  label: 'OMO Ready for Review',
+  value: 'omo'
+}];
 
 class QueueDetailView extends React.PureComponent {
   render = () => {
@@ -48,6 +57,13 @@ class QueueDetailView extends React.PureComponent {
       </p>
       <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK} />
+      {this.props.featureToggles.phase_two && <SearchableDropdown
+        name="Select an action"
+        placeholder="Select an action"
+        options={draftDecisionOptions}
+        onChange={_.noop}
+        hideLabel
+        searchable={false} />}
 
       <TabWindow
         name="queue-tabwindow"

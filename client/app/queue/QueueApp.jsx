@@ -48,7 +48,9 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Link to="/">&lt; Back to your queue</Link>
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <QueueDetailView
+      vacolsId={props.match.params.vacolsId}
+      featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename="/queue">
