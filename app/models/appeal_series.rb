@@ -4,11 +4,16 @@ class AppealSeries < ActiveRecord::Base
   delegate :vacols_id,
            :active?,
            :type_code,
+           :representative,
            :aod,
            :ramp_election,
            :eligible_for_ramp?,
            :form9_date,
            to: :latest_appeal
+
+  def vacols_ids
+    appeals.map(&:vacols_id)
+  end
 
   def latest_appeal
     @latest_appeal ||= fetch_latest_appeal
