@@ -16,7 +16,7 @@ const detailListStyling = css({
   marginBottom: '3rem'
 });
 const addressIndentStyling = (secondLine) => css({
-  marginLeft: secondLine ? '12.5rem' : 0
+  marginLeft: secondLine ? '7.5em' : 0
 });
 
 export default class AppellantDetail extends React.PureComponent {
