@@ -16,7 +16,7 @@ class BackToQueueLink extends React.PureComponent {
     } = this.props;
 
     if (!queueTaskType) {
-      return "Your Queue";
+      return 'Your Queue';
     }
 
     let str = `${queueTaskType}`;
