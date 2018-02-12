@@ -22,7 +22,8 @@ namespace :local_vacols do
         puts "Updating schema"
         schema_complete = false
         120.times do
-          output = `docker exec --tty -i VACOLS_DB bash -c "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
+          output = `docker exec --tty -i VACOLS_DB bash -c \
+          "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
           if !output.include?("SP2-0640: Not connected")
             schema_complete = true
             break
