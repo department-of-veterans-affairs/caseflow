@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
+import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ReaderLink from './ReaderLink';
 import AppealDetail from './AppealDetail';
@@ -29,6 +30,15 @@ const draftDecisionOptions = [{
 }];
 
 class QueueDetailView extends React.PureComponent {
+  changeRoute = (props) => {
+    const route = props.value === 'omo' ? 'submit' : 'dispositions';
+
+    this.props.history.push(
+      `${this.props.history.location.pathname}/${route}`,
+      { type: props.value }
+    );
+  }
+
   render = () => {
     const {
       appeal: { attributes: appeal },
@@ -61,7 +71,7 @@ class QueueDetailView extends React.PureComponent {
         name="Select an action"
         placeholder="Select an action"
         options={draftDecisionOptions}
-        onChange={_.noop}
+        onChange={this.changeRoute}
         hideLabel
         searchable={false} />}
 
@@ -81,4 +91,4 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
-export default connect(mapStateToProps)(QueueDetailView);
+export default withRouter(connect(mapStateToProps)(QueueDetailView));
