@@ -43,6 +43,16 @@ For the frontend, you'll need to install Node and the relevant npm modules. [Ins
 
     cd client && yarn
 
+
+## Set up Docker
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. After installation is complete, run:
+```
+docker login -u dsvaappeals
+```
+
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to
+accept the license agreement for [this docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
@@ -52,21 +62,10 @@ NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABL
 
 You may wish to do this if you are debugging our NewRelic integration, for instance.
 
-## Running Caseflow in isolation
+## Set up Oracle
+You'll need to install the libraries required to connect to the VACOLS Oracle database:
 
-### Set up Docker
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Next, you'll need to login to
-docker. After installing Docker run:
-```
-docker login -u dsvaappeals
-```
-
-The password is in the DSVA 1Password account.
-
-### Set up Oracle
-First you'll need to install the libraries required to connect to the VACOLS Oracle database:
-
-#### OSX
+### OSX
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
 2) Unzip both packages into `/opt/oracle/instantclient_11_2`
@@ -80,14 +79,14 @@ sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 
 If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
 
-#### Windows
+### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
 2) Unzip both packages into `[DIR]`
 
 3) Add `[DIR]` to your `PATH`
 
-#### Linux
+### Linux
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
 
@@ -103,7 +102,7 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
-### Installing gems
+## Running Caseflow in isolation
 
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.

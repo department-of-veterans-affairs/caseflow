@@ -1,4 +1,0 @@
--db_1  | configDB.sh is done at 44 sec
-vacols-db_1  |
-vacols-db_1  | Done ! The database is ready for use .
-vacols-db_1  | # ==========================================
