@@ -78,8 +78,8 @@ class QueueTable extends React.PureComponent {
       valueFunction: (task) => {
 
       // TODO: We should use ReaderLink instead of Link as the loading component child.
-      const redirect_url = encodeURIComponent(window.location.pathname);
-      const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirect_url}`
+        const redirect_url = encodeURIComponent(window.location.pathname);
+        const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirect_url}`;
 
         return <LoadingDataDisplay
           createLoadPromise={this.createLoadPromise(task)}
@@ -91,7 +91,7 @@ class QueueTable extends React.PureComponent {
             spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
             component: Link,
             componentProps: {
-              href: href
+              href
             }
           }}>
           <ReaderLink vacolsId={task.vacolsId}

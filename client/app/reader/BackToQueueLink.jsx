@@ -19,7 +19,7 @@ class BackToQueueLink extends React.PureComponent {
       return queueTaskType;
     }
 
-    return  `${queueTaskType} - ${veteranFullName} (${vbmsId})`;
+    return `${queueTaskType} - ${veteranFullName} (${vbmsId})`;
   }
 
   render = () => {
@@ -36,7 +36,7 @@ class BackToQueueLink extends React.PureComponent {
 
     return <div {...segmentStyling}>
       <Link
-        to={useReactRouter? queueRedirectUrl : ''}
+        to={useReactRouter ? queueRedirectUrl : ''}
         href={useReactRouter ? '' : queueRedirectUrl}>
           &lt; Back to {this.getRedirectText()}
       </Link>
