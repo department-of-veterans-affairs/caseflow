@@ -116,11 +116,6 @@ class VACOLS::Case < VACOLS::Record
     NO_BOX_SELECTED: { vacols_value: "5" }
   }.freeze
 
-  # NOTE(jd): This is a list of the valid locations that Caseflow
-  # supports updating an appeal to. This is a subset of the overall locations
-  # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w[50 51 53 54 77 98 99].freeze
-
   JOIN_ISSUE_COUNT = "
     inner join
     (
@@ -234,8 +229,6 @@ class VACOLS::Case < VACOLS::Record
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
     return unless location
-
-    fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
 
     conn = self.class.connection
 

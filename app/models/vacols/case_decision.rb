@@ -4,11 +4,16 @@ class VACOLS::CaseDecision < VACOLS::Record
 
   has_one :case, foreign_key: :bfkey
 
+  COLUMN_NAMES = {
+    work_product: :deprod,
+    note: :deatcom,
+    document_id: :dedocid
+  }.freeze
+
   # :nocov:
   class << self
-    def find_by_vacols_id_and_css_id(css_id, vacols_id)
+    def find_by_vacols_id_and_css_id(vacols_id, css_id)
       css_id = connection.quote(css_id.upcase)
-      vacols_id = connection.quote(vacols_id)
 
       where(defolder: vacols_id)
         .where(decomp: nil)
@@ -19,12 +24,12 @@ class VACOLS::CaseDecision < VACOLS::Record
     end
   end
 
-  def reassign_case_to_judge!(decision_info)
+  def update_case_decision!(decision_info)
     attrs = decision_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_case_decision! #{defolder}",
                           service: :vacols,
                           name: "update_case_decision") do
-      update(attrs)
+      update(attrs.merge(dereceive: VacolsHelper.local_time_with_utc_timezone))
     end
   end
   # :nocov:
