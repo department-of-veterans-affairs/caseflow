@@ -216,5 +216,28 @@ RSpec.feature "Queue" do
         expect(page).to have_content(appeal.appellant_address_line_1)
       end
     end
+
+    context "links to reader" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+
+        expect(page).to have_content("Back to Your Queue")
+
+        click_on "Open documents in Caseflow Reader"
+
+        expect(page).to have_content("Back to Draft Decision")
+      end
+
+      scenario "from queue list page" do
+        visit "/queue"
+
+        safe_click("a[href='/reader/appeal/#{vacols_appeals.first.vacols_id}/documents?queue_redirect_url=%2Fqueue%2F']")
+
+        expect(page).to have_content("Back to Your Queue")
+      end
+    end
   end
 end
