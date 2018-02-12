@@ -19,10 +19,7 @@ module QueueMapper
     }.select { |k, _v| info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
   end
 
-
   def self.work_product_to_vacols_format(work_product, overtime)
     overtime ? OVERTIME_WORK_PRODUCTS.key(work_product) : WORK_PRODUCTS.key(work_product)
   end
 end
-
-

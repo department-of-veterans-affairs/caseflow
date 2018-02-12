@@ -25,7 +25,10 @@ class VACOLS::CaseDecision < VACOLS::Record
   end
 
   def update_case_decision!(decision_info)
+    VacolsHelper.validate_presence(decision_info, [:work_product, :document_id])
+
     attrs = decision_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+
     MetricsService.record("VACOLS: update_case_decision! #{defolder}",
                           service: :vacols,
                           name: "update_case_decision") do

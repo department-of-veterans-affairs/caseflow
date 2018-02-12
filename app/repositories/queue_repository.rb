@@ -33,25 +33,44 @@ class QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge(vacols_id:, attorney_css_id:, judge_css_id:, info:)
-    decision_record = VACOLS::CaseDecision.find_by_vacols_id_and_css_id(vacols_id, attorney_css_id)
-    return unless decision_record
-    update_case_decision(decision_record, info)
-    judge_stafkey = VACOLS::Staff.find_by(sdomainid: judge_css_id)
-    decision_record.case.update_vacols_location!(judge_stafkey)
+  # :nocov:
+  def self.find_case(vacols_id, css_id)
+    VACOLS::CaseDecision.find_by_vacols_id_and_css_id(vacols_id, css_id)
   end
+  # :nocov:
+
+  # :nocov:
+  def self.reassign_case_to_judge(decision_record:, judge_css_id:, decision_hash:)
+    return if !decision_record || !judge_css_id
+
+    # update DECASS table
+    update_case_decision(decision_record, decision_hash)
+
+    # update location with the judge's stafkey
+    update_location(decision_record, judge_css_id)
+  end
+  # :nocov:
+
+  # :nocov:
+  def self.update_location(decision_record, css_id)
+    stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
+    decision_record.case.update_vacols_location!(stafkey)
+  end
+  # :nocov:
 
   # decision_record is VACOLS::CaseDecision object
-  # info = {
+  # decision_hash = {
   #  work_product: "OMO - IME",
   #  overtime: true,
   #  document_id: "123456789.1234",
   #  note: "Require action"
   # }
-  def self.update_case_decision(decision_record, info)
-    decision_info = QueueMapper.case_decision_fields_to_vacols_codes(info)
+  # :nocov:
+  def self.update_case_decision(decision_record, decision_hash)
+    decision_info = QueueMapper.case_decision_fields_to_vacols_codes(decision_hash)
     decision_record.update_case_decision!(decision_info)
   end
+  # :nocov:
 
   # :nocov:
   def self.tasks_query(css_id)
@@ -64,9 +83,8 @@ class QueueRepository
     VACOLS::Case.includes(:folder, :correspondent, :representative)
       .find(vacols_ids)
   end
-
   # :nocov:
-  #
+
   # :nocov:
   def self.aod_query(vacols_ids)
     VACOLS::Case.aod(vacols_ids)
