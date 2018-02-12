@@ -4,10 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
+import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -47,7 +47,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <Link to="/">&lt; Back to Your Queue</Link>
+    <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
     <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
