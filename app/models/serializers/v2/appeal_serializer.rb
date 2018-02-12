@@ -3,6 +3,8 @@ class V2::AppealSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
+  attribute :vacols_ids, key: :appeal_ids
+
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
   end
