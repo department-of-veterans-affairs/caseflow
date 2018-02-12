@@ -4,7 +4,7 @@ namespace :local_vacols do
     Dir.chdir(Rails.root.join("vacols")) do
       puts "Removing existing volumes"
       `docker-compose down -v`
-      puts "Starting database"
+      puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
       `docker-compose up &> '../tmp/vacols.log' &`
 
       # Loop until setup is complete. At most 10 minutes

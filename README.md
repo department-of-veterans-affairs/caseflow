@@ -51,40 +51,15 @@ NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABL
 You may wish to do this if you are debugging our NewRelic integration, for instance.
 
 ## Running Caseflow in isolation
-To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
-to skip production gems when installing.
 
-    bundle install --without production staging
+### Set up Docker
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Next, you'll need to login to
+docker. After installing Docker run:
+```
+docker login -u dsvaappeals
+```
 
-Set up and seed the DB
-
-    rake db:setup
-
-And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
-
-    foreman start
-
-If you want to run the Rails server and frontend webpack server separately, look at the `Procfile` to figure out what commands to run.
-
-You can access the site at [http://localhost:3000/test/users](http://localhost:3000/test/users).
-
-## Roles
-
-When a VA employee logs in through the VA's unified login system (CSS) a session begins with the user.
-Within this session the user gets a set of roles. These roles determine what pages a user has access to.
-In dev mode, we don't log in with CSS and instead take on the [identity of a user in the database](#changing-between-test-users).
-
-## Dispatch (Dev Mode)
-To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
-
-To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
-The database is seeded with a number of tasks, users, and appeals.
-
-To see the worker view, you need the following role: [Establish Claim].
-From this view you can start a new task and go through the flow of establishing a claim.
-
-## Running Caseflow connected to external depedencies
-To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
+The password is in the DSVA 1Password account.
 
 ### Set up Oracle
 First you'll need to install the libraries required to connect to the VACOLS Oracle database:
@@ -125,6 +100,43 @@ export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is st
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
+
+### Installing gems
+
+To try Caseflow without going through the hassle of connecting to VBMS, just tell bundler
+to skip production gems when installing.
+
+    bundle install --without production staging
+
+Set up and seed the DB
+
+    rake db:setup
+
+And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
+
+    foreman start
+
+If you want to run the Rails server and frontend webpack server separately, look at the `Procfile` to figure out what commands to run.
+
+You can access the site at [http://localhost:3000/test/users](http://localhost:3000/test/users).
+
+## Roles
+
+When a VA employee logs in through the VA's unified login system (CSS) a session begins with the user.
+Within this session the user gets a set of roles. These roles determine what pages a user has access to.
+In dev mode, we don't log in with CSS and instead take on the [identity of a user in the database](#changing-between-test-users).
+
+## Dispatch (Dev Mode)
+To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
+
+To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
+The database is seeded with a number of tasks, users, and appeals.
+
+To see the worker view, you need the following role: [Establish Claim].
+From this view you can start a new task and go through the flow of establishing a claim.
+
+## Running Caseflow connected to external depedencies
+To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
 
 ### Environment variables
 
