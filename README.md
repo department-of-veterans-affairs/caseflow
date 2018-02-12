@@ -13,12 +13,14 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 Install dependencies via Homebrew:
 
     brew install postgresql redis chromedriver rbenv
-    
+
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
 Then run the following:
 
-    rbenv install 2.2.4
+    cd caseflow
+    rbenv install $(cat .ruby-version)
+    rbenv rehash
     gem install bundler
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
@@ -94,7 +96,7 @@ for Fedora based OS.
  1. Unzip both packages into `/opt/oracle/instantclient_11_2`
 
  1. Setup both packages according to the Oracle documentation:
- 
+
 ```sh
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
 cd /opt/oracle/instantclient_11_2
@@ -103,10 +105,11 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 
 ### Installing gems
 
-To try Caseflow without going through the hassle of connecting to VBMS, just tell bundler
+To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
 
     bundle install --without production staging
+    rbenv rehash
 
 Set up and seed the DB
 
