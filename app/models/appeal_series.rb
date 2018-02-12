@@ -1,13 +1,14 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
-  SOC_TIMELINESS           = [1, 1].freeze
-  SSOC_TIMELINESS          = [1, 1].freeze
-  CERTIFICATION_TIMELINESS = [1, 1].freeze
-  DECISION_TIMELINESS      = [1, 1].freeze
-  REMAND_TIMELINESS        = [1, 1].freeze
-  REMAND_SSOC_TIMELINESS   = [1, 1].freeze
-  RETURN_TIMELINESS        = [1, 1].freeze
+  # TODO: Replace these hardcoded values with dynamic data
+  SOC_TIMELINESS           = [13, 30].freeze # 75%tile = 24
+  SSOC_TIMELINESS          = [7, 20].freeze  # 75%tile = 15
+  CERTIFICATION_TIMELINESS = [2, 12].freeze  # 75%tile = 7
+  DECISION_TIMELINESS      = [1, 2].freeze   # 75%tile = 1
+  REMAND_TIMELINESS        = [7, 17].freeze  # 75%tile = 13
+  REMAND_SSOC_TIMELINESS   = [3, 10].freeze  # 75%tile = 7
+  RETURN_TIMELINESS        = [1, 2].freeze   # 75%tile = 1
 
   delegate :vacols_id,
            :active?,
