@@ -58,7 +58,7 @@ class QueueDetailView extends React.PureComponent {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
-        Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
+        Draft Decision - {appeal.veteran_full_name} ({appeal.vbms_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
