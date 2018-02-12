@@ -3,14 +3,12 @@ import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 
-
 class BackToQueueLink extends React.PureComponent {
   getRedirectText = () => {
     const {
       queueTaskType,
       veteranFullName,
-      vbmsId,
-
+      vbmsId
     } = this.props;
 
     if (!queueTaskType) {
@@ -38,11 +36,10 @@ class BackToQueueLink extends React.PureComponent {
       marginBottom: '-1.5rem'
     });
 
-
     return <div {...segmentStyling}>
       <Link
-        to={ useReactRouter? queueRedirectUrl : '' }
-        href={ useReactRouter ? '' : queueRedirectUrl }>
+        to={useReactRouter? queueRedirectUrl : ''}
+        href={useReactRouter ? '' : queueRedirectUrl}>
           &lt; Back to {this.getRedirectText()}
       </Link>
     </div>;
