@@ -49,7 +49,7 @@ BackToQueueLink.propTypes = {
   vbmsId: PropTypes.string,
   veteranFullName: PropTypes.string,
   queueTaskType: PropTypes.string,
-  useReactRouter: PropTypes.boolean
+  useReactRouter: PropTypes.bool
 };
 
 export default BackToQueueLink;
