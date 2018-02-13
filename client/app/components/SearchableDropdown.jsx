@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { css } from 'glamor';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -65,6 +66,10 @@ class SearchableDropdown extends Component {
       searchable
     } = this.props;
 
+    const dropdownStyling = css({
+      '& .Select-menu-outer': this.props.dropdownStyling
+    });
+
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
@@ -108,7 +113,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} >
+    return <div className={dropdownClasses} {...dropdownStyling}>
       <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
@@ -145,7 +150,8 @@ SearchableDropdown.propTypes = {
   creatableOptions: PropTypes.shape({
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
-  })
+  }),
+  dropdownStyling: PropTypes.object
 };
 
 export default SearchableDropdown;

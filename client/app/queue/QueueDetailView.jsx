@@ -14,12 +14,9 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 
-const headerStyling = css({
-  marginBottom: '0.5rem'
-});
-const subHeadStyling = css({
-  marginBottom: '2rem'
-});
+const headerStyling = css({ marginBottom: '0.5rem' });
+const subHeadStyling = css({ marginBottom: '2rem' });
+const dropdownMenuStyling = css({ minHeight: 0 });
 
 const draftDecisionOptions = [{
   label: 'Decision Ready for Review',
@@ -73,6 +70,7 @@ class QueueDetailView extends React.PureComponent {
         options={draftDecisionOptions}
         onChange={this.changeRoute}
         hideLabel
+        dropdownStyling={dropdownMenuStyling}
         searchable={false} />}
 
       <TabWindow
