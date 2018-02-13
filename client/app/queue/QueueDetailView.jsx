@@ -9,7 +9,7 @@ import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 
-import { fullWidth } from './constants';
+import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 const headerStyling = css({
@@ -39,14 +39,15 @@ class QueueDetailView extends React.PureComponent {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
-        Draft Decision - {appeal.veteran_full_name} ({appeal.vacols_id})
+        Draft Decision - {appeal.veteran_full_name} ({appeal.vbms_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
-      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg} />
+      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
+        analyticsSource={CATEGORIES.QUEUE_TASK} />
 
       <TabWindow
         name="queue-tabwindow"

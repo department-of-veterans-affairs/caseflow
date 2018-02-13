@@ -16,7 +16,7 @@ import { sortTasks } from './utils';
 import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { redText } from './constants';
+import { redText, CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 const subHeadStyle = css({
@@ -38,7 +38,7 @@ class QueueTable extends React.PureComponent {
       header: 'Decision Task Details',
       valueFunction: (task) => <span>
         <Link to={`/tasks/${task.vacolsId}`}>
-          {this.getAppealForTask(task, 'veteran_full_name')} ({task.vacolsId})
+          {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
         </Link>
         {!this.veteranIsAppellant(task) && <React.Fragment>
           <br />
@@ -88,7 +88,7 @@ class QueueTable extends React.PureComponent {
             href: `/reader/appeal/${task.vacolsId}/documents`
           }
         }}>
-        <ReaderLink vacolsId={task.vacolsId} />
+        <ReaderLink vacolsId={task.vacolsId} analyticsSource={CATEGORIES.QUEUE_TABLE} />
       </LoadingDataDisplay>
     }
   ];

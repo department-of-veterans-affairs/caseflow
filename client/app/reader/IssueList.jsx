@@ -11,16 +11,16 @@ const issueListStyle = css({
   display: 'inline'
 });
 const labelStyle = (displayIssueProgram) => css({
-  marginLeft: displayIssueProgram ? '2rem' : null
+  marginLeft: displayIssueProgram ? '1.5em' : null
 });
 const issueLevelStyle = (displayIssueProgram) => css({
   marginBottom: 0,
   marginTop: 0,
-  marginLeft: displayIssueProgram ? '20rem' : null
+  marginLeft: displayIssueProgram ? '12em' : null
 });
 const issueNoteStyle = css({
   marginTop: '1rem',
-  marginLeft: '20rem'
+  marginLeft: '12em'
 });
 const issueLiStyle = (spaceBetweenIssues) => css({
   marginTop: spaceBetweenIssues ? '2rem' : null
