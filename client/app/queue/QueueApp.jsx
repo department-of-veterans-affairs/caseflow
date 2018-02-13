@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -8,6 +9,7 @@ import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import Breadcrumbs from './components/Breadcrumbs';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -15,12 +17,9 @@ import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { connect } from 'react-redux';
 
-const appStyling = css({
-  paddingTop: '3rem'
-});
-
+const appStyling = css({ paddingTop: '3rem' });
+const breadcrumbStyling = css({ marginTop: '-1.5rem', marginBottom: '-1.5rem' });
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {
@@ -54,9 +53,24 @@ class QueueApp extends React.PureComponent {
       featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
-  routedSubmitDecision = (props) => <SubmitDecisionView
-    vacolsId={props.match.params.vacolsId}
-    breadcrumb="Submit OMO" />;
+  routedSubmitDecision = (props) => {
+    const { vacolsId } = props.match.params;
+    const appeal = this.props.appeals[vacolsId].attributes;
+
+    return <QueueLoadingScreen {...this.props}>
+      <Breadcrumbs styling={breadcrumbStyling} crumbs={[{
+        label: 'Your Queue',
+        path: '/'
+      }, {
+        label: `OMO ${appeal.veteran_full_name}`,
+        path: `/tasks/${vacolsId}`
+      }, {
+        label: 'Submit OMO',
+        path: `/tasks/${vacolsId}/submit`
+      }]} />
+      <SubmitDecisionView vacolsId={vacolsId} />
+    </QueueLoadingScreen>;
+  };
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar

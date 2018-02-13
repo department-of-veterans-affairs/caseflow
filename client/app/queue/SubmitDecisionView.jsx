@@ -11,7 +11,7 @@ import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
-import DecisionViewFooter from './DecisionViewFooter';
+import DecisionViewFooter from './components/DecisionViewFooter';
 
 import { fullWidth } from './constants';
 
@@ -44,13 +44,13 @@ class SubmitDecisionView extends React.PureComponent {
 
   render = () => {
     const {
-      appeal: { attributes: appeal }
+      appeal: { attributes: appeal },
+      history,
+      vacolsId
     } = this.props;
     const footerButtons = [{
       displayText: `Go back to ${appeal.veteran_full_name}`,
       callback: () => {
-        const { history, vacolsId } = this.props;
-
         history.push(`/tasks/${vacolsId}`);
         window.scrollTo(0, 0);
       },
