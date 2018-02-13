@@ -78,7 +78,6 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueList} />
           <PageRoute
             exact
-            breadcrumb="Draft Decision"
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
@@ -90,13 +89,11 @@ class QueueApp extends React.PureComponent {
 
               return `Draft Decision | Submit ${decisionType}`;
             }}
-            breadcrumb="Submit OMO"
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
-            breadcrumb="Select Dispositions"
             render={() => <span>Select issue dispositions</span>} />
         </div>
       </AppFrame>
