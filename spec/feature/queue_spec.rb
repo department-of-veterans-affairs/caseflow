@@ -115,7 +115,7 @@ RSpec.feature "Queue" do
       appeal_row = find("tbody").find("#table-row-#{appeal.vacols_id}")
       first_cell = appeal_row.find_all("td").first
 
-      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vacols_id})")
+      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vbms_id})")
       expect(first_cell).to have_content("Veteran is not the appellant")
     end
   end
