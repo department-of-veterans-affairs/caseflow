@@ -3,23 +3,39 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
+import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ReaderLink from './ReaderLink';
-import TabWindow from '../components/TabWindow';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
+import TabWindow from '../components/TabWindow';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 
-const headerStyling = css({
-  marginBottom: '0.5rem'
-});
-const subHeadStyling = css({
-  marginBottom: '2rem'
-});
+const headerStyling = css({ marginBottom: '0.5rem' });
+const subHeadStyling = css({ marginBottom: '2rem' });
+const dropdownMenuStyling = css({ minHeight: 0 });
+
+const draftDecisionOptions = [{
+  label: 'Decision Ready for Review',
+  value: 'decision'
+}, {
+  label: 'OMO Ready for Review',
+  value: 'omo'
+}];
 
 class QueueDetailView extends React.PureComponent {
+  changeRoute = (props) => {
+    const route = props.value === 'omo' ? 'submit' : 'dispositions';
+
+    this.props.history.push(
+      `${this.props.history.location.pathname}/${route}`,
+      { type: props.value }
+    );
+  }
+
   render = () => {
     const {
       appeal: { attributes: appeal },
@@ -46,11 +62,20 @@ class QueueDetailView extends React.PureComponent {
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
-      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
+      <ReaderLink
+        vacolsId={this.props.vacolsId}
+        message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
         taskType="Draft Decision" />
-
+      {this.props.featureToggles.phase_two && <SearchableDropdown
+        name="Select an action"
+        placeholder="Select an action&hellip;"
+        options={draftDecisionOptions}
+        onChange={this.changeRoute}
+        hideLabel
+        dropdownStyling={dropdownMenuStyling}
+        searchable={false} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />
@@ -67,4 +92,4 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
-export default connect(mapStateToProps)(QueueDetailView);
+export default withRouter(connect(mapStateToProps)(QueueDetailView));

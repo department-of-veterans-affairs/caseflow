@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { css } from 'glamor';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -54,6 +55,7 @@ class SearchableDropdown extends Component {
       placeholder,
       errorMessage,
       label,
+      hideLabel,
       multi,
       name,
       noResultsText,
@@ -64,9 +66,16 @@ class SearchableDropdown extends Component {
       searchable
     } = this.props;
 
+    const dropdownStyling = css({
+      '& .Select-menu-outer': this.props.dropdownStyling
+    });
+
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
+    const labelClasses = classNames('question-label', {
+      'usa-sr-only': hideLabel
+    });
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
@@ -104,8 +113,8 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} >
-      <label className="question-label" htmlFor={name}>
+    return <div className={dropdownClasses} {...dropdownStyling}>
+      <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
@@ -131,6 +140,7 @@ SearchableDropdown.propTypes = {
   creatable: PropTypes.bool,
   errorMessage: PropTypes.string,
   label: PropTypes.string,
+  hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   options: PropTypes.array,
@@ -140,7 +150,8 @@ SearchableDropdown.propTypes = {
   creatableOptions: PropTypes.shape({
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
-  })
+  }),
+  dropdownStyling: PropTypes.object
 };
 
 export default SearchableDropdown;
