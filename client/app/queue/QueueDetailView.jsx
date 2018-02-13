@@ -62,8 +62,12 @@ class QueueDetailView extends React.PureComponent {
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </p>
-      <ReaderLink vacolsId={this.props.vacolsId} message={readerLinkMsg}
-        analyticsSource={CATEGORIES.QUEUE_TASK} />
+      <ReaderLink
+        vacolsId={this.props.vacolsId}
+        message={readerLinkMsg}
+        analyticsSource={CATEGORIES.QUEUE_TASK}
+        redirectUrl={window.location.pathname}
+        taskType="Draft Decision" />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"
@@ -72,7 +76,6 @@ class QueueDetailView extends React.PureComponent {
         hideLabel
         dropdownStyling={dropdownMenuStyling}
         searchable={false} />}
-
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />
