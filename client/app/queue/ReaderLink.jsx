@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import querystring from 'querystring';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -16,6 +17,8 @@ class ReaderLink extends React.PureComponent {
     const {
       docCount,
       message,
+      redirectUrl,
+      taskType,
       vacols_id: vacolsId
     } = this.props;
 
@@ -27,7 +30,18 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
-    return <Link href={`/reader/appeal/${vacolsId}/documents`} onClick={this.readerLinkAnalytics}>
+    const queryParams = {
+      queue_redirect_url: redirectUrl
+    };
+
+    if (taskType) {
+      queryParams.queue_task_type = taskType;
+    }
+    const qs = querystring.stringify(queryParams);
+    const href = `/reader/appeal/${vacolsId}/documents?${qs}`;
+
+    return <Link href={href}
+      onClick={this.readerLinkAnalytics}>
       {linkText}
     </Link>;
   };
@@ -35,6 +49,8 @@ class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
+  redirectUrl: PropTypes.string,
+  taskType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
 

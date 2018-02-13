@@ -1,3 +1,4 @@
+import querystring from 'querystring';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
 import { update } from '../../util/ReducerUtil';
@@ -10,7 +11,29 @@ const updateLastReadDoc = (state, docId) => update(state, {
   }
 });
 
+const getQueueRedirectUrl = () => {
+  const query = querystring.parse(window.location.search.slice(1));
+
+  if (!query.queue_redirect_url) {
+    return null;
+  }
+
+  return decodeURIComponent(query.queue_redirect_url);
+};
+
+const getQueueTaskType = () => {
+  const query = querystring.parse(window.location.search.slice(1));
+
+  if (!query.queue_task_type) {
+    return null;
+  }
+
+  return decodeURIComponent(query.queue_task_type);
+};
+
 const initialState = {
+  queueRedirectUrl: getQueueRedirectUrl(),
+  queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
   filteredDocIds: null,
