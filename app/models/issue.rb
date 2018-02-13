@@ -98,22 +98,11 @@ class Issue
   end
 
   def friendly_description
-    issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
-      descriptions = descriptions[code]
-      # If there is no value, we probably haven't added the issue type in our list, so return.
-      return nil unless descriptions
-      break descriptions if descriptions.is_a?(String)
-      descriptions
-    end
+    friendly_description_for_codes(codes)
+  end
 
-    if diagnostic_code
-      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
-      return if diagnostic_code_description.nil?
-      # Some description strings are templates. This is a no-op unless the description string contains %s.
-      issue_description = issue_description % diagnostic_code_description
-    end
-
-    issue_description
+  def friendly_description_without_new_material
+    new_material? ? friendly_description_for_codes(%w[02 15 03]) : friendly_description
   end
 
   # returns "Remanded \n mm/dd/yyyy"
@@ -186,6 +175,28 @@ class Issue
       note: note
     }
   end
+
+  private
+
+  def friendly_description_for_codes(code_array)
+    issue_description = code_array.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
+      descriptions = descriptions[code]
+      # If there is no value, we probably haven't added the issue type in our list, so return.
+      return nil unless descriptions
+      break descriptions if descriptions.is_a?(String)
+      descriptions
+    end
+
+    if diagnostic_code
+      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      return if diagnostic_code_description.nil?
+      # Some description strings are templates. This is a no-op unless the description string contains %s.
+      issue_description = issue_description % diagnostic_code_description
+    end
+
+    issue_description
+  end
+
 
   class << self
     def load_from_vacols(hash)
