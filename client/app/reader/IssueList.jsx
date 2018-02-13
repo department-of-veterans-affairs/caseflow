@@ -11,12 +11,22 @@ const issueListStyle = css({
   display: 'inline'
 });
 const labelStyle = (displayIssueProgram) => css({
-  marginLeft: displayIssueProgram ? '2rem' : null
+  marginLeft: displayIssueProgram ? '1.5em' : null
 });
-const issueLevelStyle = (displayIssueProgram, tightLevelStyling) => css({
+const issueLevelStyle = (displayIssueProgram) => css({
   marginBottom: 0,
-  marginTop: tightLevelStyling ? 0 : '0.5rem',
-  marginLeft: displayIssueProgram ? '20rem' : null
+  marginTop: 0,
+  marginLeft: displayIssueProgram ? '12em' : null
+});
+const issueNoteStyle = css({
+  marginTop: '1rem',
+  marginLeft: '12em'
+});
+const issueLiStyle = (spaceBetweenIssues) => css({
+  marginTop: spaceBetweenIssues ? '2rem' : null
+});
+const issueOlStyle = (leftAlignList) => css({
+  paddingLeft: leftAlignList ? '1.5rem' : null
 });
 
 // todo: move to queue after Reader welcome gate deprecation
@@ -30,14 +40,11 @@ export default class IssueList extends React.PureComponent {
    */
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
     if (formatLevelsInNewLine) {
-      const {
-        displayIssueProgram,
-        tightLevelStyling
-      } = this.props;
+      const { displayIssueProgram } = this.props;
 
-      return issue.levels.map((level) =>
-        <p {...issueLevelStyle(displayIssueProgram, tightLevelStyling)} key={level}>
-          {level}
+      return issue.levels.map((level, idx) =>
+        <p {...issueLevelStyle(displayIssueProgram)} key={level}>
+          {displayIssueProgram && idx === 1 ? issue.levels_with_codes[idx] : level}
         </p>);
     }
 
@@ -57,19 +64,29 @@ export default class IssueList extends React.PureComponent {
   };
 
   render = () => {
-    const appeal = this.props.appeal;
+    const {
+      appeal,
+      className,
+      spaceBetweenIssues,
+      displayIssueProgram,
+      displayIssueNote,
+      leftAlignList
+    } = this.props;
     let listContent = NO_ISSUES_ON_APPEAL_MSG;
 
     if (!_.isEmpty(appeal.issues)) {
-      listContent = <ol className={this.props.className}>
+      listContent = <ol className={className} {...issueOlStyle(leftAlignList)}>
         {appeal.issues.map((issue) =>
-          <li key={`${issue.id}_${issue.vacols_sequence_id}`}>
-            {this.props.displayIssueProgram && <span>
+          <li key={`${issue.id}_${issue.vacols_sequence_id}`} {...issueLiStyle(spaceBetweenIssues)}>
+            {displayIssueProgram && <span>
               <span {...boldText}>Program:</span> {StringUtil.titleCase(issue.program)}
             </span>}
             <span>
               {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
             </span>
+            {displayIssueNote && issue.note && <div {...issueNoteStyle}>
+              <span {...boldText}>Note:</span> {issue.note}
+            </div>}
           </li>
         )}
       </ol>;
@@ -85,15 +102,19 @@ IssueList.propTypes = {
   appeal: PropTypes.object.isRequired,
   className: PropTypes.string,
   formatLevelsInNewLine: PropTypes.bool,
+  spaceBetweenIssues: PropTypes.bool,
+  leftAlignList: PropTypes.bool,
   displayIssueProgram: PropTypes.bool,
-  displayLabels: PropTypes.bool,
-  tightLevelStyling: PropTypes.bool
+  displayIssueNote: PropTypes.bool,
+  displayLabels: PropTypes.bool
 };
 
 IssueList.defaultProps = {
   className: '',
   formatLevelsInNewLine: false,
+  spaceBetweenIssues: false,
+  leftAlignList: false,
   displayIssueProgram: false,
-  displayLabels: false,
-  tightLevelStyling: false
+  displayIssueNote: false,
+  displayLabels: false
 };

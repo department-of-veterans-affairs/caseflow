@@ -10,6 +10,9 @@ import { Certification } from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Help from './help/index';
+import Error500 from './errors/Error500';
+import Unauthorized from './containers/Unauthorized';
+import OutOfService from './containers/OutOfService';
 import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
@@ -26,6 +29,9 @@ const COMPONENTS = {
   ManageEstablishClaim,
   Login,
   TestUsers,
+  Error500,
+  OutOfService,
+  Unauthorized,
   Hearings,
   PerformanceDegradationBanner,
   Help,

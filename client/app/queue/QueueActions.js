@@ -16,3 +16,11 @@ export const setAppealDocCount = ({ vacolsId, docCount }) => ({
     docCount
   }
 });
+
+export const loadAppealDocCountFail = (vacolsId) => ({
+  type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
+  payload: {
+    vacolsId,
+    docCount: null
+  }
+});
