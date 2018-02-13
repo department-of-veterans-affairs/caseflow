@@ -188,7 +188,7 @@ class ApplicationController < ApplicationBaseController
     end
     # :nocov:
 
-    redirect_url = request.original_fullpath.include?("404") ? root_path : request.original_url
+    redirect_url = request.original_fullpath.start_with?("/404") ? root_path : request.original_url
     param_object = { redirect: redirect_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
