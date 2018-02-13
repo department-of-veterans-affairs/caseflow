@@ -99,6 +99,27 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "loads queue table view" do
+    scenario "table renders row per task" do
+      visit "/queue"
+
+      expect(page).to have_content("Your Queue")
+      expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
+
+    scenario "indicate if veteran is not appellant" do
+      appeal = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
+
+      visit "/queue"
+
+      appeal_row = find("tbody").find("#table-row-#{appeal.vacols_id}")
+      first_cell = appeal_row.find_all("td").first
+
+      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vbms_id})")
+      expect(first_cell).to have_content("Veteran is not the appellant")
+    end
+  end
+
   context "loads task detail views" do
     context "displays who assigned task" do
       scenario "appeal has assigner" do
@@ -140,6 +161,9 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
         expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
         expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+
+        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
+        expect(worksheet_link.text).to eq("View Hearing Worksheet")
       end
 
       scenario "appeal has no hearing" do
@@ -190,6 +214,21 @@ RSpec.feature "Queue" do
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
+      end
+    end
+
+    context "links to reader" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+
+        expect(page).to have_content("Back to Your Queue")
+
+        click_on "Open documents in Caseflow Reader"
+
+        expect(page).to have_content("Back to Draft Decision")
       end
     end
   end
