@@ -1,10 +1,12 @@
 class AppealHistory
   include ActiveModel::Model
 
+  INVALID_TYPES = ["Designation of Record"].freeze
+
   attr_accessor :vbms_id
 
   def appeals
-    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+    @appeals ||= fetch_appeals
   end
 
   def appeal_series
@@ -12,6 +14,11 @@ class AppealHistory
   end
 
   private
+
+  def fetch_appeals
+    Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+      .reject { |appeal| INVALID_TYPES.include? appeal.type }
+  end
 
   def fetch_appeal_series
     if needs_update?
