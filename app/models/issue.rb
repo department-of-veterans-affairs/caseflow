@@ -197,7 +197,6 @@ class Issue
     issue_description
   end
 
-
   class << self
     def load_from_vacols(hash)
       new(
