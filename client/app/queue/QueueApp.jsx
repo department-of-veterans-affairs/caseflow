@@ -48,7 +48,9 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <QueueDetailView
+      vacolsId={props.match.params.vacolsId}
+      featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename="/queue">
@@ -74,6 +76,20 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId/submit"
+            title={(props) => {
+              const decisionType = props.location.state.type === 'omo' ? 'OMO' : 'Draft Decision';
+
+              return `Draft Decision | Submit ${decisionType}`;
+            }}
+            render={(props) => <span>Submit {props.location.state.type} page</span>} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId/dispositions"
+            title="Draft Decision | Select Dispositions"
+            render={() => <span>Select issue dispositions</span>} />
         </div>
       </AppFrame>
       <Footer
