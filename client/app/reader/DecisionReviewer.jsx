@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import AppFrame from '../components/AppFrame';
@@ -135,7 +135,6 @@ export class DecisionReviewer extends React.PureComponent {
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
   render() {
-    const Router = this.props.router || BrowserRouter;
     const queueEnabled = this.props.featureToggles.queueWelcomeGate;
 
     // Since we're not inside React Router, we don't have access to the route params,
@@ -146,8 +145,7 @@ export class DecisionReviewer extends React.PureComponent {
     const defaultUrl = queueEnabled ? `/${vacolsId}/documents/` : '/';
     const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
+    return <React.Fragment>
         <NavigationBar
           wideApp
           appName="Reader"
@@ -184,8 +182,8 @@ export class DecisionReviewer extends React.PureComponent {
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />
-      </div>
-    </Router>;
+      </React.Fragment>
+    ;
   }
 }
 

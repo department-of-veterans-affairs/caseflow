@@ -3,6 +3,7 @@ import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit
 
 import DecisionReviewer from './DecisionReviewer';
 
+import { BrowserRouter } from 'react-router-dom';
 import { reduxSearch } from 'redux-search';
 import rootReducer from './reducers';
 
@@ -22,10 +23,15 @@ class Reader extends React.PureComponent {
     this.setState({ enhancers });
 
   }
-  render = () =>
-    <ReduxBase reducer={rootReducer} enhancers={this.state.enhancers}>
-      <DecisionReviewer {...this.props} />
-    </ReduxBase>;
+  render = () => {
+    const Router = this.props.router || BrowserRouter;
+
+    return <ReduxBase reducer={rootReducer} enhancers={this.state.enhancers}>
+      <Router basename="/reader/appeal" {...this.props.routerTestProps}>
+        <DecisionReviewer {...this.props} />
+      </Router>
+    </ReduxBase>
+  };
 }
 
 export default Reader;
