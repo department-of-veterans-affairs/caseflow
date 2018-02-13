@@ -2,13 +2,13 @@ class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
   # TODO: Replace these hardcoded values with dynamic data
-  SOC_TIMELINESS           = [13, 30] # 75%tile = 24
-  SSOC_TIMELINESS          = [7, 20]  # 75%tile = 15
-  CERTIFICATION_TIMELINESS = [2, 12]  # 75%tile = 7
-  DECISION_TIMELINESS      = [1, 2]   # 75%tile = 1
-  REMAND_TIMELINESS        = [7, 17]  # 75%tile = 13
-  REMAND_SSOC_TIMELINESS   = [3, 10]  # 75%tile = 7
-  RETURN_TIMELINESS        = [1, 2]   # 75%tile = 1
+  SOC_TIMELINESS           = [13, 30].freeze # 75%tile = 24
+  SSOC_TIMELINESS          = [7, 20].freeze  # 75%tile = 15
+  CERTIFICATION_TIMELINESS = [2, 12].freeze  # 75%tile = 7
+  DECISION_TIMELINESS      = [1, 2].freeze   # 75%tile = 1
+  REMAND_TIMELINESS        = [7, 17].freeze  # 75%tile = 13
+  REMAND_SSOC_TIMELINESS   = [3, 10].freeze  # 75%tile = 7
+  RETURN_TIMELINESS        = [1, 2].freeze   # 75%tile = 1
 
   delegate :vacols_id,
            :active?,
@@ -211,25 +211,25 @@ class AppealSeries < ActiveRecord::Base
     when :pending_form9, :pending_certification, :pending_certification_ssoc
       {
         last_soc_date: last_soc_date,
-        certification_timeliness: CERTIFICATION_TIMELINESS,
-        ssoc_timeliness: SSOC_TIMELINESS
+        certification_timeliness: CERTIFICATION_TIMELINESS.dup,
+        ssoc_timeliness: SSOC_TIMELINESS.dup
       }
     when :pending_soc
-      { soc_timeliness: SOC_TIMELINESS }
+      { soc_timeliness: SOC_TIMELINESS.dup }
     when :at_vso
       { vso_name: representative }
     when :decision_in_progress
-      { decision_timeliness: DECISION_TIMELINESS }
+      { decision_timeliness: DECISION_TIMELINESS.dup }
     when :remand
       {
         issues: issues_for_last_decision,
-        remand_timeliness: REMAND_TIMELINESS
+        remand_timeliness: REMAND_TIMELINESS.dup
       }
     when :remand_ssoc
       {
         last_soc_date: last_soc_date,
-        return_timeliness: RETURN_TIMELINESS,
-        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS
+        return_timeliness: RETURN_TIMELINESS.dup,
+        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS.dup
       }
     when :bva_decision
       { issues: issues_for_last_decision }
