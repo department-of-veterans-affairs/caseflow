@@ -13,6 +13,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
+import SubmitDecisionView from './SubmitDecisionView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { connect } from 'react-redux';
 
@@ -53,6 +54,8 @@ class QueueApp extends React.PureComponent {
       featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
+  routedSubmitDecision = () => <SubmitDecisionView breadcrumb="Submit OMO"/>;
+
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
       wideApp
@@ -73,6 +76,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueList} />
           <PageRoute
             exact
+            breadcrumb="Draft Decision"
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
@@ -84,11 +88,13 @@ class QueueApp extends React.PureComponent {
 
               return `Draft Decision | Submit ${decisionType}`;
             }}
-            render={(props) => <span>Submit {props.location.state.type} page</span>} />
+            breadcrumb="Submit OMO"
+            render={this.routedSubmitDecision} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
+            breadcrumb="Select Dispositions"
             render={() => <span>Select issue dispositions</span>} />
         </div>
       </AppFrame>
