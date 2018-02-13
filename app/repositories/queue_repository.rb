@@ -34,6 +34,50 @@ class QueueRepository
   end
 
   # :nocov:
+  def self.find_case(vacols_id, css_id)
+    VACOLS::CaseDecision.find_by_vacols_id_and_css_id(vacols_id, css_id)
+  end
+  # :nocov:
+
+  # :nocov:
+  # decision_hash = {
+  #  judge_css_id: "GRATR_316"
+  #  work_product: "OMO - IME",
+  #  overtime: true,
+  #  document_id: "123456789.1234",
+  #  note: "Require action"
+  # }
+  def self.reassign_case_to_judge(decision_record:, decision_hash:)
+    return unless decision_record
+
+    VacolsHelper.validate_presence(decision_hash, [:work_product, :document_id, :judge_css_id])
+
+    ActiveRecord::Base.transaction do
+      # update DECASS table
+      update_case_decision(decision_record,
+                           decision_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
+
+      # update location with the judge's stafkey
+      update_location(decision_record, decision_hash[:judge_css_id])
+    end
+  end
+  # :nocov:
+
+  # :nocov:
+  def self.update_location(decision_record, css_id)
+    stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
+    decision_record.case.update_vacols_location!(stafkey)
+  end
+  # :nocov:
+
+  # :nocov:
+  def self.update_case_decision(decision_record, decision_hash)
+    decision_info = QueueMapper.case_decision_fields_to_vacols_codes(decision_hash)
+    decision_record.update_case_decision!(decision_info)
+  end
+  # :nocov:
+
+  # :nocov:
   def self.tasks_query(css_id)
     VACOLS::CaseAssignment.tasks_for_user(css_id)
   end
@@ -44,9 +88,8 @@ class QueueRepository
     VACOLS::Case.includes(:folder, :correspondent, :representative)
       .find(vacols_ids)
   end
-
   # :nocov:
-  #
+
   # :nocov:
   def self.aod_query(vacols_ids)
     VACOLS::Case.aod(vacols_ids)
