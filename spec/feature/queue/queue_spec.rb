@@ -4,10 +4,12 @@ RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_welcome_gate)
+    FeatureToggle.enable!(:queue_phase_two)
   end
 
   after do
     FeatureToggle.disable!(:queue_welcome_gate)
+    FeatureToggle.disable!(:queue_phase_two)
   end
 
   let(:documents) do
@@ -229,6 +231,22 @@ RSpec.feature "Queue" do
         click_on "Open documents in Caseflow Reader"
 
         expect(page).to have_content("Back to Draft Decision")
+      end
+    end
+  end
+
+  context "loads decision views" do
+    context "submits decision" do
+      scenario "submits omo decision" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+
+        expect(page).to have_content("Submit OMO")
+        expect(page).to have_content("Go back to #{appeal.veteran_full_name}")
       end
     end
   end
