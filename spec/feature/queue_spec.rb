@@ -230,14 +230,6 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Back to Draft Decision")
       end
-
-      scenario "from queue list page" do
-        visit "/queue"
-
-        safe_click("a[href='/reader/appeal/#{vacols_appeals.first.vacols_id}/documents?queue_redirect_url=%2Fqueue%2F']")
-
-        expect(page).to have_content("Back to Your Queue")
-      end
     end
   end
 end
