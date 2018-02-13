@@ -54,7 +54,9 @@ class QueueApp extends React.PureComponent {
       featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
-  routedSubmitDecision = () => <SubmitDecisionView breadcrumb="Submit OMO"/>;
+  routedSubmitDecision = (props) => <SubmitDecisionView
+    vacolsId={props.match.params.vacolsId}
+    breadcrumb="Submit OMO" />;
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
