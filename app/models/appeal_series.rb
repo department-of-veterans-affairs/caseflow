@@ -207,9 +207,7 @@ class AppealSeries < ActiveRecord::Base
         location: hearing.location
       }
     when :pending_hearing_scheduling
-      {
-        type: latest_appeal.sanitized_hearing_request_type
-      }
+      { type: latest_appeal.sanitized_hearing_request_type }
     when :pending_form9, :pending_certification, :pending_certification_ssoc
       {
         last_soc_date: last_soc_date,
@@ -217,17 +215,11 @@ class AppealSeries < ActiveRecord::Base
         ssoc_timeliness: SSOC_TIMELINESS
       }
     when :pending_soc
-      {
-        soc_timeliness: SOC_TIMELINESS
-      }
+      { soc_timeliness: SOC_TIMELINESS }
     when :at_vso
-      {
-        vso_name: representative
-      }
+      { vso_name: representative }
     when :decision_in_progress
-      {
-        decision_timeliness: DECISION_TIMELINESS
-      }
+      { decision_timeliness: DECISION_TIMELINESS }
     when :remand
       {
         issues: issues_for_last_decision,
@@ -240,9 +232,7 @@ class AppealSeries < ActiveRecord::Base
         remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS
       }
     when :bva_decision
-      {
-        issues: issues_for_last_decision
-      }
+      { issues: issues_for_last_decision }
     else
       {}
     end
