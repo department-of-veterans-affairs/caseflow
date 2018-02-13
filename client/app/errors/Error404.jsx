@@ -29,8 +29,8 @@ class Error404 extends React.PureComponent {
           <StatusMessage title="Page not found">
             Oops! We can't find the correct page. If you need assistance,
             please visit the <Link to="/">Caseflow Help Page</Link>.
-            <p>If you continue to see this page, please contact the
-              <Link to={this.props.feedbackUrl}>Caseflow Help Desk</Link>.</p>
+            <p>If you continue to see this page, please contact
+            the <a href={this.props.feedbackUrl}>Caseflow Help Desk</a>.</p>
           </StatusMessage>
         </AppFrame>
         <Footer
