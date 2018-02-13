@@ -55,7 +55,7 @@ class QueueRepository
     ActiveRecord::Base.transaction do
       # update DECASS table
       update_case_decision(decision_record,
-          decision_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
+                           decision_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
 
       # update location with the judge's stafkey
       update_location(decision_record, decision_hash[:judge_css_id])
