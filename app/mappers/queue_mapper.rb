@@ -15,6 +15,7 @@ module QueueMapper
     {
       note: info[:note],
       document_id: info[:document_id],
+      reassigned_at: info[:reassigned_at],
       work_product: work_product_to_vacols_format(info[:work_product], info[:overtime])
     }.select { |k, _v| info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
   end

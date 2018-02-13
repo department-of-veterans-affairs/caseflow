@@ -7,7 +7,8 @@ class VACOLS::CaseDecision < VACOLS::Record
   COLUMN_NAMES = {
     work_product: :deprod,
     note: :deatcom,
-    document_id: :dedocid
+    document_id: :dedocid,
+    reassigned_at: :dereceive
   }.freeze
 
   # :nocov:
@@ -25,14 +26,11 @@ class VACOLS::CaseDecision < VACOLS::Record
   end
 
   def update_case_decision!(decision_info)
-    VacolsHelper.validate_presence(decision_info, [:work_product, :document_id])
-
     attrs = decision_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-
     MetricsService.record("VACOLS: update_case_decision! #{defolder}",
                           service: :vacols,
                           name: "update_case_decision") do
-      update(attrs.merge(dereceive: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs)
     end
   end
   # :nocov:

@@ -40,14 +40,26 @@ class QueueRepository
   # :nocov:
 
   # :nocov:
-  def self.reassign_case_to_judge(decision_record:, judge_css_id:, decision_hash:)
-    return if !decision_record || !judge_css_id
+  # decision_hash = {
+  #  judge_css_id: "GRATR_316"
+  #  work_product: "OMO - IME",
+  #  overtime: true,
+  #  document_id: "123456789.1234",
+  #  note: "Require action"
+  # }
+  def self.reassign_case_to_judge(decision_record:, decision_hash:)
+    return unless decision_record
 
-    # update DECASS table
-    update_case_decision(decision_record, decision_hash)
+    VacolsHelper.validate_presence(decision_hash, [:work_product, :document_id, :judge_css_id])
 
-    # update location with the judge's stafkey
-    update_location(decision_record, judge_css_id)
+    ActiveRecord::Base.transaction do
+      # update DECASS table
+      update_case_decision(decision_record,
+          decision_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
+
+      # update location with the judge's stafkey
+      update_location(decision_record, decision_hash[:judge_css_id])
+    end
   end
   # :nocov:
 
@@ -58,13 +70,6 @@ class QueueRepository
   end
   # :nocov:
 
-  # decision_record is VACOLS::CaseDecision object
-  # decision_hash = {
-  #  work_product: "OMO - IME",
-  #  overtime: true,
-  #  document_id: "123456789.1234",
-  #  note: "Require action"
-  # }
   # :nocov:
   def self.update_case_decision(decision_record, decision_hash)
     decision_info = QueueMapper.case_decision_fields_to_vacols_codes(decision_hash)
