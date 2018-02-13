@@ -75,21 +75,30 @@ class QueueTable extends React.PureComponent {
     },
     {
       header: 'Reader Documents',
-      valueFunction: (task) => <LoadingDataDisplay
-        createLoadPromise={this.createLoadPromise(task)}
-        errorComponent="span"
-        failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
-        loadingComponent={SmallLoader}
-        loadingComponentProps={{
-          message: 'Loading...',
-          spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-          component: Link,
-          componentProps: {
-            href: `/reader/appeal/${task.vacolsId}/documents`
-          }
-        }}>
-        <ReaderLink vacolsId={task.vacolsId} analyticsSource={CATEGORIES.QUEUE_TABLE} />
-      </LoadingDataDisplay>
+      valueFunction: (task) => {
+
+      // TODO: We should use ReaderLink instead of Link as the loading component child.
+        const redirectUrl = encodeURIComponent(window.location.pathname);
+        const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirectUrl}`;
+
+        return <LoadingDataDisplay
+          createLoadPromise={this.createLoadPromise(task)}
+          errorComponent="span"
+          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
+          loadingComponent={SmallLoader}
+          loadingComponentProps={{
+            message: 'Loading...',
+            spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+            component: Link,
+            componentProps: {
+              href
+            }
+          }}>
+          <ReaderLink vacolsId={task.vacolsId}
+            analyticsSource={CATEGORIES.QUEUE_TABLE}
+            redirectUrl={window.location.pathname} />
+        </LoadingDataDisplay>;
+      }
     }
   ];
 
