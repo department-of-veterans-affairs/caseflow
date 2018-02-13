@@ -215,9 +215,9 @@ RSpec.feature "Hearings" do
       expect(page).to have_field("1-issue-notes")
 
       click_on "button-addIssue-2"
-      fill_in "2-issue-description", with: "This is the description"
-      fill_in "2-issue-notes", with: "This is a note"
-      fill_in "2-issue-disposition", with: "This is a disposition"
+      fill_in "3-issue-description", with: "This is the description"
+      fill_in "3-issue-notes", with: "This is a note"
+      fill_in "3-issue-disposition", with: "This is a disposition"
 
       find("#cf-issue-delete-21").click
       click_on "Confirm delete"

@@ -227,6 +227,9 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
 
 export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
 
+  dispatch(setHearingPrepped(hearingId, prepped,
+    moment(date).format('YYYY-MM-DD'), false));
+
   ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
     then((response) => {
       dispatch(setHearingPrepped(hearingId, response.body.prepped,

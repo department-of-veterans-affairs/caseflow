@@ -1,1 +1,1 @@
-export const getReaderLink = (worksheet) => `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
+export const getReaderLink = (appealVacolsId) => `/reader/appeal/${appealVacolsId}/documents`;

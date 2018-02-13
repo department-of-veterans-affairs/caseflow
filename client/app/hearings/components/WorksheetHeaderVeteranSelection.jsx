@@ -101,7 +101,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="review-claims-folder"
-          href={`${getReaderLink(worksheet)}?category=case_summary`}
+          href={`${getReaderLink(worksheet.appeal_vacols_id)}?category=case_summary`}
           button="primary"
           target="_blank">
         Review claims folder</Link>
