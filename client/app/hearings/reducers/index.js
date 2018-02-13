@@ -142,9 +142,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_HEARING_PREPPED:
     return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } },
       action.payload.setEdited);
-  case Constants.SET_WORKSHEET_HEARING_PREPPED:
-    return newHearingWorksheetState(state, action, { prepped: { $set: action.payload.prepped } });
-
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {
       evidence: { $set: action.payload.evidence }

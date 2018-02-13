@@ -186,7 +186,7 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
-export const saveWorksheet = (setPrepped = false) => (dispatch, getState) => {
+export const saveWorksheet = () => (dispatch, getState) => {
 
   const { worksheet } = getState();
 
@@ -200,12 +200,6 @@ export const saveWorksheet = (setPrepped = false) => (dispatch, getState) => {
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
     then(() => {
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-
-      // special case to update dailyDocket object when worksheet saves successfully.
-      if (setPrepped) {
-        dispatch(setHearingPrepped(worksheet.id, worksheet.prepped,
-          moment(worksheet.date).format('YYYY-MM-DD'), false));
-      }
     },
     () => {
       dispatch(setWorksheetSaveFailedStatus(true));
