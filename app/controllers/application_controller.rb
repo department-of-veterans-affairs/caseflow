@@ -175,7 +175,8 @@ class ApplicationController < ApplicationBaseController
       "reader" => "Caseflow Reader",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
-      "queue" => "Caseflow Queue"
+      "queue" => "Caseflow Queue",
+      "help" => "Caseflow Help"
     }
     subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
     subject.nil? ? "Caseflow" : feedback_hash[subject]
@@ -188,7 +189,8 @@ class ApplicationController < ApplicationBaseController
     end
     # :nocov:
 
-    param_object = { redirect: request.original_url, subject: feedback_subject }
+    redirect_url = request.original_fullpath.include?("404") ? root_path : request.original_url
+    param_object = { redirect: redirect_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
