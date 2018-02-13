@@ -63,7 +63,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.POPULATE_DAILY_DOCKET:
     return update(state, {
       dailyDocket: {
-        [action.payload.date]: { $set: action.payload.dailyDocket }
+        [action.payload.date]: { $set: _.sortBy(action.payload.dailyDocket, hearing => hearing.id)}
       }
     });
 
