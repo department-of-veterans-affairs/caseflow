@@ -1,15 +1,19 @@
 class QueueController < ApplicationController
-  before_action :verify_access, :react_routed, :check_queue_out_of_service
+  before_action :react_routed, :check_queue_out_of_service
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def verify_access
-    redirect_to "/unauthorized" unless feature_enabled?(:queue_welcome_gate)
+    return true if feature_enabled?(:queue_welcome_gate)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
   end
 
   def index
+    return redirect_to "/unauthorized" unless verify_access
+
     render "queue/index"
   end
 
