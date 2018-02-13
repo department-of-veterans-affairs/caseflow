@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { populateDailyDocket, getDailyDocket, getWorksheet,
-  onHearingPrepped, saveWorksheet } from '../actions/Dockets';
+  setPrepped } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
@@ -37,7 +37,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
     this.date = moment(this.props.worksheet.date).format('YYYY-MM-DD');
-
     this.props.getDailyDocket(null, this.date);
   }
 
@@ -47,8 +46,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     }
   }
 
-  saveWorksheet = (worksheet) => this.props.saveWorksheet(worksheet, true);
-
   getOptionLabel = (hearing) => (
     <div>
       {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ?
@@ -56,23 +53,28 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     </div>
   );
 
-  getDocketVeteranOptions = (dailyDocket) => (
-    _.isEmpty(dailyDocket[this.date]) ?
+  getDocketVeteranOptions = (docket) => (
+    _.isEmpty(docket) ?
       [] :
-      dailyDocket[this.date].map((hearing) => ({
+      docket.map((hearing) => ({
         label: this.getOptionLabel(hearing),
         value: hearing.id
       }))
   );
 
-  preppedOnChange = (value) => {
-    this.props.onHearingPrepped(value);
-    this.saveWorksheet(this.props.worksheet);
-  }
+  savePrepped = (hearingId, value) => this.props.setPrepped(hearingId, value, this.date);
+
+  preppedOnChange = (value) => this.savePrepped(this.props.worksheet.id, value);
 
   render() {
 
-    const { worksheet, worksheetIssues } = this.props;
+    const { worksheet, worksheetIssues, dailyDocket } = this.props;
+    const currentDocket = dailyDocket[this.date] || {};
+
+    // getting the hearing information from the daily docket for the prepped field
+    // in the header
+    const hearingIndex = _.findIndex(currentDocket, { id: worksheet.id });
+    const currentHearing = currentDocket[hearingIndex] || {};
 
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
@@ -81,17 +83,17 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
             label="Select Veteran"
             name="worksheet-veteran-selection"
             placeholder=""
-            options={this.getDocketVeteranOptions(this.props.dailyDocket, worksheetIssues)}
+            options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.id}
             searchable={false}
           />
         </div>
         <Checkbox
-          id={`prep-${worksheet.id}`}
+          id={`prep-${currentHearing.id}`}
           onChange={this.preppedOnChange}
-          value={worksheet.prepped || false}
-          name={`prep-${worksheet.id}`}
+          value={currentHearing.prepped || false}
+          name={`prep-${currentHearing.id}`}
           label="Hearing Prepped"
           styling={hearingPreppedStyling}
         />
@@ -104,6 +106,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           target="_blank">
         Review claims folder</Link>
       </div>
+
     </span>;
   }
 }
@@ -119,8 +122,7 @@ const mapDispatchToProps = (dispatch) => ({
     populateDailyDocket,
     getDailyDocket,
     getWorksheet,
-    onHearingPrepped,
-    saveWorksheet
+    setPrepped
   }, dispatch)
 });
 

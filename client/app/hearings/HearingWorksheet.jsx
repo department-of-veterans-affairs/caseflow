@@ -176,7 +176,8 @@ export class HearingWorksheet extends React.PureComponent {
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
   worksheetAppeals: state.worksheetAppeals,
-  worksheetIssues: state.worksheetIssues
+  worksheetIssues: state.worksheetIssues,
+  saveWorksheetFailed: state.saveWorksheetFailed
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

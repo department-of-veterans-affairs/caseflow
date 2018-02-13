@@ -87,15 +87,6 @@ export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   }
 });
 
-export const onHearingPrepped = (prepped) => (dispatch) => {
-  dispatch({
-    type: Constants.SET_WORKSHEET_HEARING_PREPPED,
-    payload: {
-      prepped
-    }
-  });
-};
-
 export const setDisposition = (hearingIndex, disposition, date) => ({
   type: Constants.SET_DISPOSITION,
   payload: {
@@ -238,6 +229,20 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
         dispatch(handleDocketServerError(err));
       });
   }
+};
+
+export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+
+  ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
+    then((response) => {
+      dispatch(setHearingPrepped(hearingId, response.body.prepped,
+        moment(date).format('YYYY-MM-DD'), false));
+    },
+    () => {
+      // we need better error handling here
+      // eslint-disable-next-line no-console
+      console.log('Prepped save failed');
+    });
 };
 
 export const saveDocket = (docket, date) => (dispatch) => {
