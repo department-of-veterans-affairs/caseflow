@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../components/Checkbox';
 import FoundIcon from '../../components/FoundIcon';
@@ -42,6 +43,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   onDropdownChange = (value) => {
     if (value) {
+      this.props.save();
       this.props.history.push(`/hearings/${value.value}/worksheet`);
     }
   }
@@ -125,6 +127,13 @@ const mapDispatchToProps = (dispatch) => ({
     setPrepped
   }, dispatch)
 });
+
+WorksheetHeaderVeteranSelection.propTypes = {
+  worksheet: PropTypes.object.isRequired,
+  worksheetIssues: PropTypes.object.isRequired,
+  dailyDocket: PropTypes.object.isRequired,
+  save: PropTypes.func.isRequired
+};
 
 export default connect(
   mapStateToProps,

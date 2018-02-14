@@ -146,7 +146,9 @@ export class HearingWorksheet extends React.PureComponent {
             saveFailed={this.props.saveWorksheetFailed}
           />
           <WorksheetHeaderVeteranSelection openPdf={this.openPdf}
-            history={this.props.history} />
+            history={this.props.history}
+            save={this.save(worksheet, worksheetIssues)}
+          />
         </div>
       }
       <div className={wrapperClassNames}>
