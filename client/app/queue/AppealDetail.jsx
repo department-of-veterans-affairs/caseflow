@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import IssueList from '../reader/IssueList';
+import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
 import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
