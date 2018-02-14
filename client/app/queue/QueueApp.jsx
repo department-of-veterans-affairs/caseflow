@@ -10,6 +10,7 @@ import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Breadcrumbs from './components/Breadcrumbs';
+import DecisionViewFooter from './components/DecisionViewFooter';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -19,8 +20,10 @@ import SubmitDecisionView from './SubmitDecisionView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 const appStyling = css({ paddingTop: '3rem' });
-const breadcrumbStyling = css({ marginTop: '-1.5rem',
-  marginBottom: '-1.5rem' });
+const breadcrumbStyling = css({
+  marginTop: '-1.5rem',
+  marginBottom: '-1.5rem'
+});
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {
@@ -37,6 +40,8 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class QueueApp extends React.PureComponent {
+  getRouterRef = (router) => this.router = router;
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
       navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
@@ -57,6 +62,18 @@ class QueueApp extends React.PureComponent {
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
+    const footerButtons = [{
+      displayText: `Go back to ${appeal.veteran_full_name}`,
+      callback: () => {
+        this.router.history.push(`/tasks/${vacolsId}`);
+        window.scrollTo(0, 0);
+      },
+      classNames: ['cf-btn-link']
+    }, {
+      displayText: 'Submit',
+      callback: _.noop,
+      classNames: ['cf-right-side']
+    }];
 
     return <React.Fragment>
       <Breadcrumbs styling={breadcrumbStyling} crumbs={[{
@@ -70,10 +87,11 @@ class QueueApp extends React.PureComponent {
         path: `/tasks/${vacolsId}/submit`
       }]} />
       <SubmitDecisionView vacolsId={vacolsId} />
+      <DecisionViewFooter buttons={footerButtons} />
     </React.Fragment>;
   };
 
-  render = () => <BrowserRouter basename="/queue">
+  render = () => <BrowserRouter basename="/queue" ref={this.getRouterRef}>
     <NavigationBar
       wideApp
       defaultUrl="/"
