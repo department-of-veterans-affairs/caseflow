@@ -6,9 +6,9 @@ import _ from 'lodash';
 
 export default class Breadcrumbs extends React.PureComponent {
   render = () => {
-    const { crumbs, styling } = this.props
+    const { crumbs, styling } = this.props;
     const breadcrumbComponents = _.sortBy(crumbs, ({ path }) => path.length).
-      map((route, idx, crumbs) =>
+      map((route, idx) =>
         <Route key={route.label} path={route.path} render={(props) =>
           <React.Fragment>
             <Link id="cf-logo-link" to={props.match.url} classNames={['cf-btn-link']}>

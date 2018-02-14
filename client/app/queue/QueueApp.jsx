@@ -19,7 +19,8 @@ import SubmitDecisionView from './SubmitDecisionView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 const appStyling = css({ paddingTop: '3rem' });
-const breadcrumbStyling = css({ marginTop: '-1.5rem', marginBottom: '-1.5rem' });
+const breadcrumbStyling = css({ marginTop: '-1.5rem',
+  marginBottom: '-1.5rem' });
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {

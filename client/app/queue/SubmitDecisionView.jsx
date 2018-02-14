@@ -57,7 +57,7 @@ class SubmitDecisionView extends React.PureComponent {
       classNames: ['cf-btn-link']
     }, {
       displayText: 'Submit',
-      callback: () => alert('Data submitted'),
+      callback: () => console.warn('data submitted'),
       classNames: ['cf-right-side']
     }];
     const omoTypes = [{
@@ -76,11 +76,11 @@ class SubmitDecisionView extends React.PureComponent {
         <p className="cf-lead-paragraph" {...subHeadStyling}>
           Review and complete the following details to check this task out for judge review.
         </p>
-        <hr/>
+        <hr />
         <RadioField
           name="omo_type"
           label="OMO type:"
-          onChange={(omo_type) => this.setState({ omo_type })}
+          onChange={(omoType) => this.setState({ omo_type: omoType })}
           value={this.state.omo_type}
           vertical
           required
@@ -97,10 +97,10 @@ class SubmitDecisionView extends React.PureComponent {
         <TextField
           name="Document ID:"
           required
-          onChange={(document_id) => this.setState({ document_id })}
+          onChange={(documentId) => this.setState({ document_id: documentId })}
           value={this.state.document_id}
         />
-        <span>Check out to:</span><br/>
+        <span>Check out to:</span><br />
         <span>Nick Kroes</span>
         <Button
           classNames={['cf-btn-link']}
