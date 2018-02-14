@@ -1,3 +1,5 @@
+class ErrorReassigningCaseToJudge < StandardError; end
+
 class QueueRepository
   # :nocov:
   def self.tasks_for_user(css_id)
@@ -36,46 +38,48 @@ class QueueRepository
   # :nocov:
 
   # :nocov:
-  def self.find_case(vacols_id, css_id)
-    VACOLS::CaseDecision.find_by_vacols_id_and_css_id(vacols_id, css_id)
-  end
-  # :nocov:
-
-  # :nocov:
-  # decision_hash = {
+  # decass_hash = {
+  #  vacols_id: "123456",
+  #  attorney_css_id: "CASEFLOW_317",
   #  judge_css_id: "GRATR_316"
   #  work_product: "OMO - IME",
   #  overtime: true,
   #  document_id: "123456789.1234",
   #  note: "Require action"
   # }
-  def self.reassign_case_to_judge(decision_record:, decision_hash:)
-    return unless decision_record
-
-    VacolsHelper.validate_presence(decision_hash, [:work_product, :document_id, :judge_css_id])
+  # TODO: use decass uniq ID instead of vacols_id and attorney_css_id
+  def self.reassign_case_to_judge(decass_hash)
+    decass_record = find_decass_record(decass_hash[:vacols_id], decass_hash[:attorney_css_id])
+    fail ErrorReassigningCaseToJudge unless decass_record
 
     ActiveRecord::Base.transaction do
       # update DECASS table
-      update_case_decision(decision_record,
-                           decision_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
+      update_decass_record(decass_record,
+                           decass_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
 
       # update location with the judge's stafkey
-      update_location(decision_record, decision_hash[:judge_css_id])
+      update_location(decass_record.case, decass_hash[:judge_css_id])
     end
   end
   # :nocov:
 
   # :nocov:
-  def self.update_location(decision_record, css_id)
-    stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
-    decision_record.case.update_vacols_location!(stafkey)
+  def self.find_decass_record(vacols_id, css_id)
+    VACOLS::Decass.find_by_vacols_id_and_css_id(vacols_id, css_id)
   end
   # :nocov:
 
   # :nocov:
-  def self.update_case_decision(decision_record, decision_hash)
-    decision_info = QueueMapper.case_decision_fields_to_vacols_codes(decision_hash)
-    decision_record.update_case_decision!(decision_info)
+  def self.update_location(case_record, css_id)
+    stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
+    case_record.update_vacols_location!(stafkey)
+  end
+  # :nocov:
+
+  # :nocov:
+  def self.update_decass_record(decass_record, decass_hash)
+    info = QueueMapper.case_decision_fields_to_vacols_codes(decass_hash)
+    decass_record.update_decass_record!(info)
   end
   # :nocov:
 
