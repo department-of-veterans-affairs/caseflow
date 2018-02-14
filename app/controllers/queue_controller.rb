@@ -6,9 +6,11 @@ class QueueController < ApplicationController
   end
 
   def verify_access
+    # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
     code = Rails.cache.read(:queue_access_code)
     return true if params[:code] && code && params[:code] == code
+    # :nocov:
   end
 
   def index
