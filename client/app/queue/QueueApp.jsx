@@ -86,7 +86,7 @@ class QueueApp extends React.PureComponent {
         label: 'Submit OMO',
         path: `/tasks/${vacolsId}/submit`
       }]} />
-      <SubmitDecisionView vacolsId={vacolsId} />
+      <SubmitDecisionView vacolsId={vacolsId} decisionType="omo" />
       <DecisionViewFooter buttons={footerButtons} />
     </React.Fragment>;
   };

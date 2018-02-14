@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
+import StringUtil from '../util/StringUtil';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import RadioField from '../components/RadioField';
@@ -48,16 +49,17 @@ class SubmitDecisionView extends React.PureComponent {
       displayText: 'VHA - IME',
       value: 'ime'
     }];
+    const { decisionType } = this.props;
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Submit OMO
+        Submit {decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType)}
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Review and complete the following details to check this task out for judge review.
       </p>
       <hr />
-      <RadioField
+      {decisionType === 'omo' && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(omoType) => this.setState({ omo_type: omoType })}
@@ -66,7 +68,7 @@ class SubmitDecisionView extends React.PureComponent {
         required
         options={omoTypes}
         styling={radioFieldStyling}
-      />
+      />}
       <Checkbox
         name="overtime"
         label="This work product is overtime"
@@ -98,7 +100,8 @@ class SubmitDecisionView extends React.PureComponent {
 }
 
 SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  decisionType: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
