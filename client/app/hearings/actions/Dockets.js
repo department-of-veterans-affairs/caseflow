@@ -186,9 +186,7 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
-export const saveWorksheet = () => (dispatch, getState) => {
-
-  const { worksheet } = getState();
+export const saveWorksheet = (worksheet) => (dispatch) => {
 
   if (!worksheet.edited) {
     return;
