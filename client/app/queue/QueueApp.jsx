@@ -58,7 +58,7 @@ class QueueApp extends React.PureComponent {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
 
-    return <QueueLoadingScreen {...this.props}>
+    return <React.Fragment>
       <Breadcrumbs styling={breadcrumbStyling} crumbs={[{
         label: 'Your Queue',
         path: '/'
@@ -70,7 +70,7 @@ class QueueApp extends React.PureComponent {
         path: `/tasks/${vacolsId}/submit`
       }]} />
       <SubmitDecisionView vacolsId={vacolsId} />
-    </QueueLoadingScreen>;
+    </React.Fragment>;
   };
 
   render = () => <BrowserRouter basename="/queue">
