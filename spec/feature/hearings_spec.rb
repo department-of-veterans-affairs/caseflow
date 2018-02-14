@@ -160,7 +160,7 @@ RSpec.feature "Hearings" do
           .find("#prep-1", visible: false)).to be_checked
 
         find(".Select-control").click
-        find("#react-select-2--option-1").click
+        find("#react-select-2--option-0").click
         expect(page).to_not have_css(".Select .cf-icon-found")
         expect(find(".worksheet-header").find(".cf-form-checkbox")
          .find("#prep-0", visible: false)).to_not be_checked
@@ -169,15 +169,13 @@ RSpec.feature "Hearings" do
       scenario "Hearing worksheet switch veterans" do
         visit "/hearings/1/worksheet"
         find(".Select-control").click
-        find("#react-select-2--option-1").click
-        expect(page).to have_content("Veteran First Name A. Veteran Last Name")
+        find("#react-select-2--option-0").click
         expect(page).to have_current_path("/hearings/0/worksheet")
         expect(page).to have_content("Veteran First Name A. Veteran Last Name0")
         expect(page.title).to eq "V. Veteran Last Name0's Hearing Worksheet"
 
         find(".Select-control").click
-        find("#react-select-2--option-0").click
-        expect(page).to have_content("Veteran First Name A. Veteran Last Name")
+        find("#react-select-2--option-1").click
         expect(page).to have_current_path("/hearings/1/worksheet")
         expect(page).to have_content("Veteran First Name A. Veteran Last Name1")
         expect(page.title).to eq "V. Veteran Last Name1's Hearing Worksheet"
