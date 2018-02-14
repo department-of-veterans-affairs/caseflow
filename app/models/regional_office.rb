@@ -251,7 +251,7 @@ class RegionalOffice
     "RO40" => {
       label: "Albuquerque regional office",
       city: "Albuquerque", state: "NM",
-      timezone: "America/Chicago"
+      timezone: "America/Denver"
     },
     "RO41" => {
       label: "Salt Lake City regional office",
