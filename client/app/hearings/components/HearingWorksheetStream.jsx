@@ -20,7 +20,7 @@ class HearingWorksheetStream extends Component {
         maxValue = Number(issue.vacols_sequence_id);
       }
     });
-    console.log(maxValue);
+
     return maxValue;
   };
 
