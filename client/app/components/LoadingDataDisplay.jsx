@@ -9,6 +9,14 @@ const PROMISE_RESULTS = {
   FAILURE: 'FAILURE'
 };
 
+const accessDeniedMsg = <div>
+        It looks like you do not have the necessary level of access to view this information..<br />
+        Please check with your application administrator before trying again.</div>;
+
+const itemNotFoundMsg = <div>
+        We could not find the information you were looking for.<br />
+        Please return to the previous page, check the information provided, and try again.</div>;
+
 class LoadingDataDisplay extends React.PureComponent {
   constructor() {
     super();
@@ -29,15 +37,17 @@ class LoadingDataDisplay extends React.PureComponent {
           return;
         }
 
-        this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
+        this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS,
+          statusCode: null });
         window.clearInterval(this.intervalId);
       },
-      () => {
+      (response) => {
         if (!this._isMounted) {
           return;
         }
 
-        this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
+        this.setState({ promiseResult: PROMISE_RESULTS.FAILURE,
+          statusCode: response.status });
         window.clearInterval(this.intervalId);
       }
     );
@@ -49,6 +59,7 @@ class LoadingDataDisplay extends React.PureComponent {
         promiseTimeElapsedMs: Date.now() - this.state.promiseStartTimeMs
       });
     }, 100);
+
     this._isMounted = true;
   }
 
@@ -74,7 +85,9 @@ class LoadingDataDisplay extends React.PureComponent {
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
       return <ErrorComponent {...this.props.failStatusMessageProps}>
-        {this.props.failStatusMessageChildren}
+        {this.state.statusCode === 403 && accessDeniedMsg}
+        {this.state.statusCode === 404 && itemNotFoundMsg}
+        {this.state.statusCode !== 403 && this.state.statusCode !== 404 &&this.props.failStatusMessageChildren}
       </ErrorComponent>;
     }
 
