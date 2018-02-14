@@ -187,7 +187,6 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
 });
 
 export const saveWorksheet = (worksheet) => (dispatch) => {
-
   if (!worksheet.edited) {
     return;
   }
