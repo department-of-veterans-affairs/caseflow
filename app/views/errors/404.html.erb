@@ -2,7 +2,7 @@
   <%= react_component("Error404", props: {
     userDisplayName: current_user ? current_user.display_name : "",
     dropdownUrls: dropdown_urls,
-    feedbackUrl: feedback_url,
+    feedbackUrl: feedback_url(request.base_url),
     buildDate: build_date
   }) %>
 <% end %>
