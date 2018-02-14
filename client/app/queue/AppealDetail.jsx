@@ -84,14 +84,7 @@ export default class AppealDetail extends React.PureComponent {
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
-    <IssueList
-      appeal={_.pick(this.props.appeal.attributes, 'issues')}
-      formatLevelsInNewLine
-      displayIssueProgram
-      displayIssueNote
-      spaceBetweenIssues
-      leftAlignList
-      displayLabels />
+    <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
   </div>;
 }
 
