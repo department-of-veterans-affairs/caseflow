@@ -9,7 +9,7 @@ import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
 import EntryPointRedirect from './components/EntryPointRedirect';
 import CancelCertificationConfirmation from './CancelCertificationConfirmation';
-import ErrorMessage from './ErrorMessage';
+import ErrorMessage from './components/ErrorMessage';
 import PageRoute from '../components/PageRoute';
 
 import AppFrame from '../components/AppFrame';
