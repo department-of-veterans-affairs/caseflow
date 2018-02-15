@@ -19,16 +19,31 @@ import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
+import AppFrame from '../components/AppFrame';
+import NavigationBar from '../components/NavigationBar';
+import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
-
-
- class CertificationFrame extends React.Component {
-
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+class CertificationFrame extends React.Component {
 
   render() {
 
     return <BrowserRouter>
             <div>
+            <NavigationBar
+      wideApp
+      defaultUrl="/"
+      userDisplayName={this.props.userDisplayName}
+      dropdownUrls={this.props.dropdownUrls}
+      logoProps={{
+        overlapColor: LOGO_COLORS.CERTIFICATION.OVERLAP,
+        accentColor: LOGO_COLORS.CERTIFICATION.ACCENT
+      }}
+      appName="Certification" />
+       <AppFrame>
+       <AppSegment filledBackground>
               <Route path="/certifications/new/:vacols_id"
                 component={EntryPointRedirect} />
               <PageRoute
@@ -65,6 +80,8 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
                 path="/certification_cancellations/"
                 component={CancelCertificationConfirmation}
               />
+                </AppSegment>
+          </AppFrame>
             </div>
           </BrowserRouter>;
   }
