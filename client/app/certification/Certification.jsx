@@ -1,29 +1,12 @@
 import React from 'react';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
-
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import Success from './Success';
-import DocumentsCheck from './DocumentsCheck';
-import ConfirmHearing from './ConfirmHearing';
-import ConfirmCaseDetails from './ConfirmCaseDetails';
-import SignAndCertify from './SignAndCertify';
-import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import CertificationFrame from './CertificationFrame';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
-import ErrorMessage from './ErrorMessage';
-import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-
-
-const mapStateToProps = (state) => ({
-  certificationStatus: state.certificationStatus
-});
-
 
 export class Certification extends React.Component {
 
