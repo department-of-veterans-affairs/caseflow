@@ -202,7 +202,6 @@ class Document < ActiveRecord::Base
 
   def reader_with_efolder_api?
     EFolderService == ExternalApi::EfolderService &&
-      RequestStore.store[:application] == "reader" &&
       FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
   end
 
