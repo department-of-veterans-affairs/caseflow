@@ -11,6 +11,7 @@ import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
 import CancelCertificationConfirmation from './CancelCertificationConfirmation';
+import CertificationFrame from './CertificationFrame';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
@@ -102,46 +103,7 @@ export class Certification extends React.Component {
       failStatusMessageChildren={failStatusMessageChildren}>
       { this.state.certification &&
         <ReduxBase reducer={certificationReducers} initialState={initialData}>
-          <BrowserRouter>
-            <div>
-              <Route path="/certifications/new/:vacols_id"
-                component={EntryPointRedirect} />
-              <PageRoute
-                title="Check Documents | Caseflow Certification"
-                path="/certifications/:vacols_id/check_documents"
-                component={DocumentsCheck}
-              />
-              <PageRoute
-                title="Confirm Case Details | Caseflow Certification"
-                path="/certifications/:vacols_id/confirm_case_details"
-                component={ConfirmCaseDetails}
-              />
-              <PageRoute
-                title="Confirm Hearing | Caseflow Certification"
-                path="/certifications/:vacols_id/confirm_hearing"
-                component={ConfirmHearing}
-              />
-              <PageRoute
-                title="Sign and Certify | Caseflow Certification"
-                path="/certifications/:vacols_id/sign_and_certify"
-                component={SignAndCertify} />
-              <PageRoute
-                title="Success! | Caseflow Certification"
-                path="/certifications/:vacols_id/success"
-                component={Success}
-              />
-              <PageRoute
-                title="Error | Caseflow Certification"
-                path="/certifications/error"
-                component={ErrorMessage}
-              />
-              <PageRoute
-                title="Not Certified | Caseflow Certification"
-                path="/certification_cancellations/"
-                component={CancelCertificationConfirmation}
-              />
-            </div>
-          </BrowserRouter>
+          <CertificationFrame {...this.props} />
         </ReduxBase> }
     </LoadingDataDisplay>;
   }
