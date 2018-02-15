@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import DocketHearingRow from './components/DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -55,13 +54,7 @@ export class DailyDocket extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  dockets: state.dockets
-});
-
-export default connect(
-  mapStateToProps
-)(DailyDocket);
+export default DailyDocket;
 
 DailyDocket.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired
