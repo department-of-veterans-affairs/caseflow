@@ -86,7 +86,8 @@ class HearingWorksheetStream extends Component {
       page: this.getIssues()
     }, {
       label: `Prior Issues (${this.getPriorIssuesCount()})`,
-      page: this.getIssues(true)
+      page: this.getIssues(true),
+      disable: !this.getPriorIssuesCount()
     }];
 
     return <div className="cf-hearings-worksheet-data">
