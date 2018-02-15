@@ -119,11 +119,11 @@ class AppealSeriesAlerts
   end
 
   def ramp
-    if appeal_series.program == :compensation &&
-       appeal_series.ramp_election &&
-       Time.zone.today <= appeal_series.ramp_election.due_date
+    if appeal_series.ramp_election && Time.zone.today <= appeal_series.ramp_election.due_date
+      eligible = appeal_series.program == :compensation && appeal_series.eligible_for_ramp?
+
       {
-        type: appeal_series.eligible_for_ramp? ? :ramp_eligible : :ramp_ineligible,
+        type: eligible ? :ramp_eligible : :ramp_ineligible,
         details: {
           date: appeal_series.ramp_election.notice_date,
           due_date: appeal_series.ramp_election.due_date
