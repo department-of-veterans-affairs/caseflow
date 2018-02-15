@@ -253,7 +253,7 @@ describe "Appeals API v2", type: :request do
       # check the status on the first appeal
       status = json["data"].first["attributes"]["status"]
       expect(status["type"]).to eq("decision_in_progress")
-      expect(status["details"]["test"]).to eq("Hello World")
+      expect(status["details"]["decisionTimeliness"]).to eq([1, 2])
 
       # check the first appeal's issue
       expect(json["data"].first["attributes"]["issues"])
