@@ -10,6 +10,7 @@ import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
+import EntryPointRedirect from './components/EntryPointRedirect'
 import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
@@ -18,15 +19,7 @@ import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-class EntryPointRedirect extends React.Component {
-  render() {
-    let {
-      match
-    } = this.props;
 
-    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`} />;
-  }
-}
 
 
  class CertificationFrame extends React.Component {

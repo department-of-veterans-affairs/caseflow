@@ -19,23 +19,11 @@ import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-class EntryPointRedirect extends React.Component {
-  render() {
-    let {
-      match
-    } = this.props;
-
-    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`} />;
-  }
-}
 
 const mapStateToProps = (state) => ({
   certificationStatus: state.certificationStatus
 });
 
-export default connect(
-  mapStateToProps
-)(EntryPointRedirect);
 
 export class Certification extends React.Component {
 
