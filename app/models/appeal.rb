@@ -591,12 +591,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def document_service
-    @document_service ||=
-      if FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
-        EFolderService
-      else
-        VBMSService
-      end
+    @document_service ||= EFolderService
   end
 
   # Used for serialization
