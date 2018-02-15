@@ -159,9 +159,6 @@ class ApplicationController < ApplicationBaseController
   def on_vbms_error
     respond_to do |format|
       format.html do
-        @error_title = "VBMS Failure"
-        @error_subtitle = "Unable to communicate with the VBMS system at this time."
-        @error_retry_external_service = "VBMS"
         render "errors/500", layout: "application", status: 500
       end
 
@@ -184,14 +181,15 @@ class ApplicationController < ApplicationBaseController
     subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
-  def feedback_url
+  def feedback_url(redirect = nil)
     # :nocov:
     unless ENV["CASEFLOW_FEEDBACK_URL"]
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
     # :nocov:
 
-    param_object = { redirect: request.original_url, subject: feedback_subject }
+    redirect_url = redirect || request.original_url
+    param_object = { redirect: redirect_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end

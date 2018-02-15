@@ -4,10 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
+import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -22,8 +22,9 @@ const appStyling = css({
 
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
-    '& .usa-alert-info': {
-      marginBottom: '1rem'
+    '& .usa-alert-info, & .usa-alert-error': {
+      marginBottom: '1.5rem',
+      marginTop: 0
     },
     '& .cf-search-input-with-close': {
       marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
@@ -46,12 +47,15 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <Link to="/">&lt; Back to your queue</Link>
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
+    <QueueDetailView
+      vacolsId={props.match.params.vacolsId}
+      featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
+      wideApp
       defaultUrl="/"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
@@ -72,9 +76,24 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow Queue"
             render={this.routedQueueDetail} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId/submit"
+            title={(props) => {
+              const decisionType = props.location.state.type === 'omo' ? 'OMO' : 'Draft Decision';
+
+              return `Draft Decision | Submit ${decisionType}`;
+            }}
+            render={(props) => <span>Submit {props.location.state.type} page</span>} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId/dispositions"
+            title="Draft Decision | Select Dispositions"
+            render={() => <span>Select issue dispositions</span>} />
         </div>
       </AppFrame>
       <Footer
+        wideApp
         appName="Queue"
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />

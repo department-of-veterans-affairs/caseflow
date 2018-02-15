@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class RegionalOffice
   class NotFoundError < StandardError; end
 
@@ -67,63 +68,291 @@ class RegionalOffice
   }.freeze
 
   CITIES = {
-    "RO01" => { city: "Boston", state: "MA", timezone: "America/New_York" },
-    "RO02" => { city: "Togus", state: "ME", timezone: "America/New_York" },
-    "RO03" => { city: "White River Foreign Cases", state: "VT", timezone: "America/New_York" },
-    "RO04" => { city: "Providence", state: "RI", timezone: "America/New_York" },
-    "RO05" => { city: "White River Junction", state: "VT", timezone: "America/New_York" },
-    "RO06" => { city: "New York", state: "NY", timezone: "America/New_York" },
-    "RO07" => { city: "Buffalo", state: "NY", timezone: "America/New_York" },
-    "RO08" => { city: "Hartford", state: "CT", timezone: "America/New_York" },
-    "RO09" => { city: "Newark", state: "NJ", timezone: "America/New_York" },
-    "RO10" => { city: "Philadelphia", state: "PA", timezone: "America/New_York" },
-    "RO11" => { city: "Pittsburgh", state: "PA", timezone: "America/New_York" },
-    "RO13" => { city: "Baltimore", state: "MD", timezone: "America/New_York" },
-    "RO14" => { city: "Roanoke", state: "VA", timezone: "America/New_York" },
-    "RO15" => { city: "Huntington", state: "WV", timezone: "America/New_York" },
-    "RO16" => { city: "Atlanta", state: "GA", timezone: "America/New_York" },
-    "RO17" => { city: "St. Petersburg", state: "FL", timezone: "America/New_York" },
-    "RO18" => { city: "Winston-Salem", state: "NC", timezone: "America/New_York" },
-    "RO19" => { city: "Columbia", state: "SC", timezone: "America/New_York" },
-    "RO20" => { city: "Nashville", state: "TN", timezone: "America/Chicago" },
-    "RO21" => { city: "New Orleans", state: "LA", timezone: "America/Chicago" },
-    "RO22" => { city: "Montgomery", state: "AL", timezone: "America/Chicago" },
-    "RO23" => { city: "Jackson", state: "MS", timezone: "America/Chicago" },
-    "RO25" => { city: "Cleveland", state: "OH", timezone: "America/New_York" },
-    "RO26" => { city: "Indianapolis", state: "IN", timezone: "America/Indiana/Indianapolis" },
-    "RO27" => { city: "Louisville", state: "KY", timezone: "America/Kentucky/Louisville" },
-    "RO28" => { city: "Chicago", state: "IL", timezone: "America/Chicago" },
-    "RO29" => { city: "Detroit", state: "MI", timezone: "America/New_York" },
-    "RO30" => { city: "Milwaukee", state: "WI", timezone: "America/Chicago" },
-    "RO31" => { city: "St. Louis", state: "MO", timezone: "America/Chicago" },
-    "RO33" => { city: "Des Moines", state: "IA", timezone: "America/Chicago" },
-    "RO34" => { city: "Lincoln", state: "NE", timezone: "America/Chicago" },
-    "RO35" => { city: "St. Paul", state: "MN", timezone: "America/Chicago" },
-    "RO36" => { city: "Ft. Harrison", state: "MT", timezone: "America/Denver" },
-    "RO37" => { city: "Fargo", state: "ND", timezone: "America/Chicago" },
-    "RO38" => { city: "Sioux Falls", state: "SD", timezone: "America/Chicago" },
-    "RO39" => { city: "Denver", state: "CO", timezone: "America/Denver" },
-    "RO40" => { city: "Albuquerque", state: "NM", timezone: "America/Chicago" },
-    "RO41" => { city: "Salt Lake City", state: "UT", timezone: "America/Denver" },
-    "RO42" => { city: "Cheyenne", state: "WY", timezone: "America/Denver" },
-    "RO43" => { city: "Oakland", state: "CA", timezone: "America/Los_Angeles" },
-    "RO44" => { city: "Los Angeles", state: "CA", timezone: "America/Los_Angeles" },
-    "RO45" => { city: "Phoenix", state: "AZ", timezone: "America/Denver" },
-    "RO46" => { city: "Seattle", state: "WA", timezone: "America/Los_Angeles" },
-    "RO47" => { city: "Boise", state: "ID", timezone: "America/Boise" },
-    "RO48" => { city: "Portland", state: "OR", timezone: "America/Los_Angeles" },
-    "RO49" => { city: "Waco", state: "TX", timezone: "America/Chicago" },
-    "RO50" => { city: "Little Rock", state: "AR", timezone: "America/Chicago" },
-    "RO51" => { city: "Muskogee", state: "OK", timezone: "America/Chicago" },
-    "RO52" => { city: "Wichita", state: "KS", timezone: "America/Chicago" },
-    "RO54" => { city: "Reno", state: "NV", timezone: "America/Los_Angeles" },
-    "RO55" => { city: "San Juan", state: "PR", timezone: "America/Puerto_Rico" },
-    "RO58" => { city: "Manila", state: "PI", timezone: "Asia/Manila" },
-    "RO59" => { city: "Honolulu", state: "HI", timezone: "Pacific/Honolulu" },
-    "RO60" => { city: "Wilmington", state: "DE", timezone: "America/New_York" },
-    "RO61" => { city: "Houston Foreign Cases", state: "TX", timezone: "America/Chicago" },
-    "RO62" => { city: "Houston", state: "TX", timezone: "America/Chicago" },
-    "RO63" => { city: "Anchorage", state: "AK", timezone: "America/Anchorage" },
+    "RO01" => {
+      label: "Boston regional office",
+      city: "Boston", state: "MA",
+      timezone: "America/New_York"
+    },
+    "RO02" => {
+      label: "Togus regional office",
+      city: "Togus", state: "ME",
+      timezone: "America/New_York"
+    },
+    "RO03" => {
+      label: "White River regional office",
+      city: "White River Foreign Cases", state: "VT",
+      timezone: "America/New_York"
+    },
+    "RO04" => {
+      label: "Providence regional office",
+      city: "Providence", state: "RI",
+      timezone: "America/New_York"
+    },
+    "RO05" => {
+      label: "White River regional office",
+      city: "White River Junction", state: "VT",
+      timezone: "America/New_York"
+    },
+    "RO06" => {
+      label: "New York City regional office",
+      city: "New York", state: "NY",
+      timezone: "America/New_York"
+    },
+    "RO07" => {
+      label: "Buffalo regional office",
+      city: "Buffalo", state: "NY",
+      timezone: "America/New_York"
+    },
+    "RO08" => {
+      label: "Hartford regional office",
+      city: "Hartford", state: "CT",
+      timezone: "America/New_York"
+    },
+    "RO09" => {
+      label: "Newark regional office",
+      city: "Newark", state: "NJ",
+      timezone: "America/New_York"
+    },
+    "RO10" => {
+      label: "Philadelphia regional office",
+      city: "Philadelphia", state: "PA",
+      timezone: "America/New_York"
+    },
+    "RO11" => {
+      label: "Pittsburgh regional office",
+      city: "Pittsburgh", state: "PA",
+      timezone: "America/New_York"
+    },
+    "RO13" => {
+      label: "Baltimore regional office",
+      city: "Baltimore", state: "MD",
+      timezone: "America/New_York"
+    },
+    "RO14" => {
+      label: "Roanoke regional office",
+      city: "Roanoke", state: "VA",
+      timezone: "America/New_York"
+    },
+    "RO15" => {
+      label: "Huntington regional office",
+      city: "Huntington", state: "WV",
+      timezone: "America/New_York"
+    },
+    "RO16" => {
+      label: "Atlanta regional office",
+      city: "Atlanta", state: "GA",
+      timezone: "America/New_York"
+    },
+    "RO17" => {
+      label: "St. Petersburg regional office",
+      city: "St. Petersburg", state: "FL",
+      timezone: "America/New_York"
+    },
+    "RO18" => {
+      label: "Winston-Salem regional office",
+      city: "Winston-Salem", state: "NC",
+      timezone: "America/New_York"
+    },
+    "RO19" => {
+      label: "Columbia regional office",
+      city: "Columbia", state: "SC",
+      timezone: "America/New_York"
+    },
+    "RO20" => {
+      label: "Nashville regional office",
+      city: "Nashville", state: "TN",
+      timezone: "America/Chicago"
+    },
+    "RO21" => {
+      label: "New Orleans regional office",
+      city: "New Orleans", state: "LA",
+      timezone: "America/Chicago"
+    },
+    "RO22" => {
+      label: "Montgomery regional office",
+      city: "Montgomery", state: "AL",
+      timezone: "America/Chicago"
+    },
+    "RO23" => {
+      label: "Jackson regional office",
+      city: "Jackson", state: "MS",
+      timezone: "America/Chicago"
+    },
+    "RO25" => {
+      label: "Cleveland regional office",
+      city: "Cleveland", state: "OH",
+      timezone: "America/New_York"
+    },
+    "RO26" => {
+      label: "Indianapolis regional office",
+      city: "Indianapolis", state: "IN",
+      timezone: "America/Indiana/Indianapolis"
+    },
+    "RO27" => {
+      label: "Louisville regional office",
+      city: "Louisville", state: "KY",
+      timezone: "America/Kentucky/Louisville"
+    },
+    "RO28" => {
+      label: "Chicago regional office",
+      city: "Chicago", state: "IL",
+      timezone: "America/Chicago"
+    },
+    "RO29" => {
+      label: "Detroit regional office",
+      city: "Detroit", state: "MI",
+      timezone: "America/New_York"
+    },
+    "RO30" => {
+      label: "Milwaukee regional office",
+      city: "Milwaukee", state: "WI",
+      timezone: "America/Chicago"
+    },
+    "RO31" => {
+      label: "St. Louis regional office",
+      city: "St. Louis", state: "MO",
+      timezone: "America/Chicago"
+    },
+    "RO33" => {
+      label: "Des Moines regional office",
+      city: "Des Moines", state: "IA",
+      timezone: "America/Chicago"
+    },
+    "RO34" => {
+      label: "Lincoln regional office",
+      city: "Lincoln", state: "NE",
+      timezone: "America/Chicago"
+    },
+    "RO35" => {
+      label: "St. Paul regional office",
+      city: "St. Paul", state: "MN",
+      timezone: "America/Chicago"
+    },
+    "RO36" => {
+      label: "Ft. Harrison regional office",
+      city: "Ft. Harrison", state: "MT",
+      timezone: "America/Denver"
+    },
+    "RO37" => {
+      label: "Fargo regional office",
+      city: "Fargo", state: "ND",
+      timezone: "America/Chicago"
+    },
+    "RO38" => {
+      label: "Sioux Falls regional office",
+      city: "Sioux Falls", state: "SD",
+      timezone: "America/Chicago"
+    },
+    "RO39" => {
+      label: "Denver regional office",
+      city: "Denver", state: "CO",
+      timezone: "America/Denver"
+    },
+    "RO40" => {
+      label: "Albuquerque regional office",
+      city: "Albuquerque", state: "NM",
+      timezone: "America/Denver"
+    },
+    "RO41" => {
+      label: "Salt Lake City regional office",
+      city: "Salt Lake City", state: "UT",
+      timezone: "America/Denver"
+    },
+    "RO42" => {
+      label: "Cheyenne regional office",
+      city: "Cheyenne", state: "WY",
+      timezone: "America/Denver"
+    },
+    "RO43" => {
+      label: "Oakland regional office",
+      city: "Oakland", state: "CA",
+      timezone: "America/Los_Angeles"
+    },
+    "RO44" => {
+      label: "Los Angeles regional office",
+      city: "Los Angeles", state: "CA",
+      timezone: "America/Los_Angeles"
+    },
+    "RO45" => {
+      label: "Phoenix regional office",
+      city: "Phoenix", state: "AZ",
+      timezone: "America/Denver"
+    },
+    "RO46" => {
+      label: "Seattle regional office",
+      city: "Seattle", state: "WA",
+      timezone: "America/Los_Angeles"
+    },
+    "RO47" => {
+      label: "Boise regional office",
+      city: "Boise", state: "ID",
+      timezone: "America/Boise"
+    },
+    "RO48" => {
+      label: "Portland regional office",
+      city: "Portland", state: "OR",
+      timezone: "America/Los_Angeles"
+    },
+    "RO49" => {
+      label: "Waco regional office",
+      city: "Waco", state: "TX",
+      timezone: "America/Chicago"
+    },
+    "RO50" => {
+      label: "Little Rock regional office",
+      city: "Little Rock", state: "AR",
+      timezone: "America/Chicago"
+    },
+    "RO51" => {
+      label: "Muskogee regional office",
+      city: "Muskogee", state: "OK",
+      timezone: "America/Chicago"
+    },
+    "RO52" => {
+      label: "Wichita regional office",
+      city: "Wichita", state: "KS",
+      timezone: "America/Chicago"
+    },
+    "RO54" => {
+      label: "Reno regional office",
+      city: "Reno", state: "NV",
+      timezone: "America/Los_Angeles"
+    },
+    "RO55" => {
+      label: "San Juan regional office",
+      city: "San Juan", state: "PR",
+      timezone: "America/Puerto_Rico"
+    },
+    "RO58" => {
+      label: "Manila regional office",
+      city: "Manila", state: "PI",
+      timezone: "Asia/Manila"
+    },
+    "RO59" => {
+      label: "Honolulu regional office",
+      city: "Honolulu", state: "HI",
+      timezone: "Pacific/Honolulu"
+    },
+    "RO60" => {
+      label: "Wilmington regional office",
+      city: "Wilmington", state: "DE",
+      timezone: "America/New_York"
+    },
+    "RO61" => {
+      label: "Houston regional office",
+      city: "Houston Foreign Cases", state: "TX",
+      timezone: "America/Chicago"
+    },
+    "RO62" => {
+      label: "Houston regional office",
+      city: "Houston", state: "TX",
+      timezone: "America/Chicago"
+    },
+    "RO63" => {
+      label: "Anchorage regional office",
+      city: "Anchorage", state: "AK",
+      timezone: "America/Anchorage"
+    },
     "RO64" => { city: "Columbia Fiduciary Hub", state: "SC", timezone: "America/New_York" },
     "RO65" => { city: "Indianapolis Fiduciary Hub", state: "IN", timezone: "America/Indiana/Indianapolis" },
     "RO66" => { city: "Lincoln Fiduciary Hub", state: "NE", timezone: "America/Chicago" },
@@ -132,12 +361,24 @@ class RegionalOffice
     "RO69" => { city: "Western Area Fiduciary Hub", state: "UT", timezone: "America/Denver" },
     "RO70" => { city: "Louisville CLCW", state: "KY", timezone: "America/Kentucky/Louisville" },
     "RO71" => { city: "Pittsburgh Foreign Cases", state: "PA", timezone: "America/New_York" },
-    "RO72" => { city: "Washington", state: "DC", timezone: "America/New_York" },
-    "RO73" => { city: "Manchester", state: "NH", timezone: "America/New_York" },
+    "RO72" => {
+      label: "Washington, DC regional office",
+      city: "Washington", state: "DC",
+      timezone: "America/New_York"
+    },
+    "RO73" => {
+      label: "Manchester regional office",
+      city: "Manchester", state: "NH",
+      timezone: "America/New_York"
+    },
     "RO74" => { city: "Philadelphia RACC", state: "PA", timezone: "America/New_York" },
     "RO75" => { city: "Milwaukee RACC", state: "WI", timezone: "America/Chicago" },
     "RO76" => { city: "St. Paul RACC", state: "MN", timezone: "America/Chicago" },
-    "RO77" => { city: "San Diego", state: "CA", timezone: "America/Los_Angeles" },
+    "RO77" => {
+      label: "San Diego regional office",
+      city: "San Diego", state: "CA",
+      timezone: "America/Los_Angeles"
+    },
     "RO79" => { city: "St. Paul Regional Loan Center", state: "MN", timezone: "America/Chicago" },
     "RO80" => { city: "Philadelphia Insurance Center", state: "PA", timezone: "America/New_York" },
     "RO81" => { city: "Philadelphia Pension Center", state: "PA", timezone: "America/New_York" },
@@ -162,11 +403,36 @@ class RegionalOffice
   ROS = CITIES.keys.freeze
 
   SATELLITE_OFFICES = {
-    "SO62" => { city: "San Antonio", state: "TX", timezone: "America/Chicago", regional_office: "RO62" },
-    "SO06" => { city: "Albany", state: "NY", timezone: "America/New_York", regional_office: "RO06" },
-    "SO54" => { city: "Las Vegas", state: "NV", timezone: "America/Los_Angeles", regional_office: "RO54" },
-    "SO49" => { city: "El Paso", state: "TX", timezone: "America/Chicago", regional_office: "RO49" },
-    "SO43" => { city: "Sacremento", state: "CA", timezone: "America/Los_Angeles", regional_office: "RO43" }
+    "SO62" => {
+      label: "San Antonio satellite office",
+      city: "San Antonio", state: "TX",
+      timezone: "America/Chicago",
+      regional_office: "RO62"
+    },
+    "SO06" => {
+      label: "Albany satellite office",
+      city: "Albany", state: "NY",
+      timezone: "America/New_York",
+      regional_office: "RO06"
+    },
+    "SO54" => {
+      label: "Las Vegas satellite office",
+      city: "Las Vegas", state: "NV",
+      timezone: "America/Los_Angeles",
+      regional_office: "RO54"
+    },
+    "SO49" => {
+      label: "El Paso satellite office",
+      city: "El Paso", state: "TX",
+      timezone: "America/Chicago",
+      regional_office: "RO49"
+    },
+    "SO43" => {
+      label: "Sacremento satellite office",
+      city: "Sacremento", state: "CA",
+      timezone: "America/Los_Angeles",
+      regional_office: "RO43"
+    }
   }.freeze
 
   # The string key is a unique identifier for a regional office.
@@ -233,3 +499,4 @@ class RegionalOffice
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
