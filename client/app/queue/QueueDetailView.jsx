@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 
@@ -13,6 +14,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
+import { setDecisionType } from './QueueActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -30,10 +32,8 @@ class QueueDetailView extends React.PureComponent {
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
 
-    this.props.history.push(
-      `${this.props.history.location.pathname}/${route}`,
-      { type: props.value }
-    );
+    this.props.setDecisionType(props.value);
+    this.props.history.push(`${this.props.history.location.pathname}/${route}`);
   }
 
   render = () => {
@@ -92,4 +92,10 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
-export default withRouter(connect(mapStateToProps)(QueueDetailView));
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setDecisionType
+  }, dispatch)
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));

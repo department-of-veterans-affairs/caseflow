@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+
+import { setDecisionOptions } from './QueueActions';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import RadioField from '../components/RadioField';
@@ -17,8 +20,8 @@ import { fullWidth } from './constants';
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noBottomMargin = css({ marginBottom: 0 });
 
-// applying question-label styling directly to <legend> in RadioField
-// isn't specific enough, is overridden by .cf-form-showhide-radio .question-label
+// Using glamor to apply marginBottom directly to <legend> in RadioField isn't
+// specific enough, and gets overridden by `.cf-form-showhide-radio .question-label`.
 const radioFieldStyling = css(noBottomMargin, {
   marginTop: '2rem',
   '& .question-label': {
@@ -30,17 +33,6 @@ const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
 
 class SubmitDecisionView extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      omo_type: '',
-      overtime: false,
-      document_id: '',
-      notes: '',
-      isBlocking: false
-    };
-  }
-
   render = () => {
     const omoTypes = [{
       displayText: 'VHA - OMO',
@@ -49,7 +41,10 @@ class SubmitDecisionView extends React.PureComponent {
       displayText: 'VHA - IME',
       value: 'ime'
     }];
-    const { decisionType } = this.props;
+    const {
+      type: decisionType,
+      opts: decisionOpts
+    } = this.props.decision;
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -62,8 +57,8 @@ class SubmitDecisionView extends React.PureComponent {
       {decisionType === 'omo' && <RadioField
         name="omo_type"
         label="OMO type:"
-        onChange={(omoType) => this.setState({ omo_type: omoType })}
-        value={this.state.omo_type}
+        onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
+        value={decisionOpts.omoType}
         vertical
         required
         options={omoTypes}
@@ -72,15 +67,15 @@ class SubmitDecisionView extends React.PureComponent {
       <Checkbox
         name="overtime"
         label="This work product is overtime"
-        onChange={(overtime) => this.setState({ overtime })}
-        value={this.state.overtime}
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime}
         styling={css(smallBottomMargin, checkboxStyling)}
       />
       <TextField
         name="Document ID:"
         required
-        onChange={(documentId) => this.setState({ document_id: documentId })}
-        value={this.state.document_id}
+        onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
+        value={decisionOpts.documentId}
       />
       <span>Check out to:</span><br />
       <span>Nick Kroes</span>
@@ -91,8 +86,8 @@ class SubmitDecisionView extends React.PureComponent {
       </Button>
       <TextareaField
         name="Notes:"
-        value={this.state.notes}
-        onChange={(notes) => this.setState({ notes })}
+        value={decisionOpts.notes}
+        onChange={(notes) => this.props.setDecisionOptions({ notes })}
         styling={textAreaStyling}
       />
     </AppSegment>;
@@ -100,12 +95,18 @@ class SubmitDecisionView extends React.PureComponent {
 }
 
 SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  decisionType: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId]
+  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  decision: state.queue.taskDecision
 });
 
-export default connect(mapStateToProps)(SubmitDecisionView);
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setDecisionOptions
+  }, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);

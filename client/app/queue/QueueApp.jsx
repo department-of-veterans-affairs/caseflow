@@ -40,7 +40,7 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class QueueApp extends React.PureComponent {
-  getRouterRef = (router) => this.router = router;
+  setRouterRef = (router) => this.router = router;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
@@ -71,7 +71,6 @@ class QueueApp extends React.PureComponent {
       classNames: ['cf-btn-link']
     }, {
       displayText: 'Submit',
-      callback: _.noop,
       classNames: ['cf-right-side']
     }];
 
@@ -86,12 +85,12 @@ class QueueApp extends React.PureComponent {
         label: 'Submit OMO',
         path: `/tasks/${vacolsId}/submit`
       }]} />
-      <SubmitDecisionView vacolsId={vacolsId} decisionType="omo" />
+      <SubmitDecisionView vacolsId={vacolsId} />
       <DecisionViewFooter buttons={footerButtons} />
     </React.Fragment>;
   };
 
-  render = () => <BrowserRouter basename="/queue" ref={this.getRouterRef}>
+  render = () => <BrowserRouter basename="/queue" ref={this.setRouterRef}>
     <NavigationBar
       wideApp
       defaultUrl="/"
@@ -117,8 +116,8 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/tasks/:vacolsId/submit"
-            title={(props) => {
-              const decisionType = props.location.state.type === 'omo' ? 'OMO' : 'Draft Decision';
+            title={() => {
+              const decisionType = this.props.decisionType === 'omo' ? 'OMO' : 'Draft Decision';
 
               return `Draft Decision | Submit ${decisionType}`;
             }}
@@ -149,7 +148,8 @@ QueueApp.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
-  ..._.pick(state.queue.loadedQueue, 'appeals')
+  ..._.pick(state.queue.loadedQueue, 'appeals'),
+  decisionType: state.queue.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);

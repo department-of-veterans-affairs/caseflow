@@ -9,6 +9,10 @@ export const initialState = {
     appeals: {},
     tasks: {},
     loadedUserId: null
+  },
+  taskDecision: {
+    type: '',
+    opts: {}
   }
 };
 
@@ -43,6 +47,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.SET_DECISION_TYPE:
+    return update(state, {
+      taskDecision: {
+        type: { $set: action.payload.type }
+      }
+    })
+  case ACTIONS.SET_DECISION_OPTIONS:
+    return update(state, {
+      taskDecision: {
+        opts: { $merge: action.payload.opts }
+      }
+    })
   default:
     return state;
   }
