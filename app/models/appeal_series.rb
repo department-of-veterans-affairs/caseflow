@@ -1,6 +1,7 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
   # TODO: Replace these hardcoded values with dynamic data
   SOC_TIMELINESS           = [13, 30].freeze # 75%tile = 24
   SSOC_TIMELINESS          = [7, 20].freeze  # 75%tile = 15
