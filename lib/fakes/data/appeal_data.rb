@@ -210,7 +210,8 @@ module Fakes::Data::AppealData
                      "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
             note: "hypertension secondary to DMII."
           }
-        ]
+        ],
+        documents: random_reader_documents(7)
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -267,7 +268,8 @@ module Fakes::Data::AppealData
                      "Service connection",
                      "New and material",
                      "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -309,7 +311,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         type: "Original",
@@ -352,7 +355,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -428,7 +432,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: random_reader_documents(25)
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -494,7 +499,8 @@ module Fakes::Data::AppealData
           { vacols_sequence_id: 12,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       )
     ].each(&:save)
   end
