@@ -74,7 +74,7 @@ export class DocketHearingRow extends React.PureComponent {
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
-  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.index, value, this.props.hearingDate);
+  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.hearing.id, value, this.props.hearingDate);
 
   render() {
     const {
