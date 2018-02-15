@@ -115,7 +115,7 @@ RSpec.feature "Queue" do
       appeal_row = find("tbody").find("#table-row-#{appeal.vacols_id}")
       first_cell = appeal_row.find_all("td").first
 
-      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vacols_id})")
+      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vbms_id})")
       expect(first_cell).to have_content("Veteran is not the appellant")
     end
   end
@@ -214,6 +214,21 @@ RSpec.feature "Queue" do
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
+      end
+    end
+
+    context "links to reader" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+
+        expect(page).to have_content("Back to Your Queue")
+
+        click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
+
+        expect(page).to have_content("Back to Draft Decision - #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
     end
   end
