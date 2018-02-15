@@ -285,6 +285,57 @@ describe AppealSeries do
         expect(subject[:details]).to eq({})
       end
     end
+
+    context "when it is in remand ssoc status" do
+      let(:status) { "Remand" }
+      let(:decision_date) { 3.days.ago }
+      let(:ssoc_dates) { [1.year.ago, 1.day.ago] }
+
+      it "returns a details hash with the most recent ssoc" do
+        expect(subject[:type]).to eq(:remand_ssoc)
+        expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
+        expect(subject[:details][:return_timeliness]).to eq([1, 2])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 10])
+      end
+    end
+
+    context "when it has been decided by the board" do
+      let(:status) { "Remand" }
+      let(:disposition) { "Allowed" }
+      before do
+        latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
+        latest_appeal.issues << Generators::Issue.build(disposition: :remanded)
+        latest_appeal.issues << Generators::Issue.build(disposition: :field_grant)
+      end
+
+      it "returns a details hash with the decided issues" do
+        expect(subject[:type]).to eq(:remand)
+        expect(subject[:details][:remand_timeliness]).to eq([7, 17])
+        expect(subject[:details][:issues].length).to eq(2)
+        expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
+        expect(subject[:details][:issues].first[:description]).to eq("Service connection, limitation of thigh motion")
+      end
+    end
+
+    context "when it is at VSO" do
+      let(:status) { "Active" }
+      let(:location_code) { "55" }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:at_vso)
+        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
+      end
+    end
+
+    context "when it is pending a form 9" do
+      let(:form9_date) { nil }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:pending_form9)
+        expect(subject[:details][:certification_timeliness]).to eq([2, 12])
+        expect(subject[:details][:ssoc_timeliness]).to eq([7, 20])
+      end
+    end
   end
 
   context "#alerts" do
