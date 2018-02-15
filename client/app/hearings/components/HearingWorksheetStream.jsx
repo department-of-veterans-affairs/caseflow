@@ -32,7 +32,9 @@ class HearingWorksheetStream extends Component {
   getIssues = (prior) => {
     let issueCount = 0;
 
+    /* eslint-disable array-callback-return */
     return <div> {Object.values(this.props.worksheetAppeals).map((appeal, key) => {
+    /* eslint-enable array-callback-return */
 
       let appealWorksheetIssues = currentIssues(filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id));
 
