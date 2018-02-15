@@ -28,6 +28,7 @@ class Fakes::Initializer
           load!
         else
           load_fakes_and_seed!
+          Fakes::HearingRepository.seed!
         end
       end
     end
@@ -62,7 +63,6 @@ class Fakes::Initializer
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
-      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings" || app_name == "reader"
     end
 
     def running_rake_command?

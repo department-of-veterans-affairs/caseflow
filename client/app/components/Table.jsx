@@ -86,9 +86,9 @@ class Row extends React.PureComponent {
 
 class BodyRows extends React.PureComponent {
   render() {
-    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
+    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
-    return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
+    return <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
       {rowObjects.map((object, rowNumber) => {
         const key = getKeyForRow(rowNumber, object);
 
@@ -131,7 +131,9 @@ export default class Table extends React.PureComponent {
       tbodyId,
       tbodyRef,
       caption,
-      id
+      id,
+      styling,
+      bodyStyling
     } = this.props;
 
     let keyGetter = getKeyForRow;
@@ -143,11 +145,13 @@ export default class Table extends React.PureComponent {
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
+    console.log(bodyStyling);
 
     return <table
       id={id}
       className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
-      summary={summary} >
+      summary={summary}
+      {...styling} >
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
@@ -159,7 +163,8 @@ export default class Table extends React.PureComponent {
         getKeyForRow={keyGetter}
         rowObjects={rowObjects}
         bodyClassName={bodyClassName}
-        rowClassNames={rowClassNames} />
+        rowClassNames={rowClassNames}
+        bodyStyling={bodyStyling} />
       <FooterRow columns={columns} />
     </table>;
   }

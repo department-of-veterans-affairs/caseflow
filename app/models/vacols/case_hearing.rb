@@ -45,11 +45,11 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   # :nocov:
   class << self
-    def upcoming_for_judge(css_id)
+    def hearings_for_judge(css_id)
       id = connection.quote(css_id)
 
       select_hearings.where("staff.sdomainid = #{id}")
-        .where("hearing_date > ?", 60.days.ago.beginning_of_day)
+        .where("hearing_date > ?", 365.days.ago.beginning_of_day)
         .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 

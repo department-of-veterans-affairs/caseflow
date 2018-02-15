@@ -1,12 +1,12 @@
 class HearingRepository
   class << self
     # :nocov:
-    def upcoming_hearings_for_judge(css_id)
-      records = MetricsService.record("VACOLS: HearingRepository.upcoming_hearings_for_judge: #{css_id}",
+    def fetch_hearings_for_judge(css_id)
+      records = MetricsService.record("VACOLS: HearingRepository.fetch_hearings_for_judge: #{css_id}",
                                       service: :vacols,
-                                      name: "upcoming_hearings_for_judge") do
-        VACOLS::CaseHearing.upcoming_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+                                      name: "fetch_hearings_for_judge") do
+        VACOLS::CaseHearing.hearings_for_judge(css_id) +
+          VACOLS::TravelBoardSchedule.hearings_for_judge(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
