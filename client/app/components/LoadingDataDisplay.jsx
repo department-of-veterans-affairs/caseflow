@@ -87,7 +87,7 @@ class LoadingDataDisplay extends React.PureComponent {
       return <ErrorComponent {...this.props.failStatusMessageProps}>
         {this.state.statusCode === 403 && accessDeniedMsg}
         {this.state.statusCode === 404 && itemNotFoundMsg}
-        {this.state.statusCode !== 403 && this.state.statusCode !== 404 &&this.props.failStatusMessageChildren}
+        {this.state.statusCode !== 403 && this.state.statusCode !== 404 && this.props.failStatusMessageChildren}
       </ErrorComponent>;
     }
 

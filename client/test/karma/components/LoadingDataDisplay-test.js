@@ -46,7 +46,7 @@ describe('LoadingDataDisplay', () => {
   });
 
   it('shows fail component', () => {
-    const createFailingPromise = () => Promise.reject({status: 500 });
+    const createFailingPromise = () => Promise.reject({ status: 500 });
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
