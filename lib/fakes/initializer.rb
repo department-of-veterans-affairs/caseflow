@@ -5,15 +5,15 @@ class Fakes::Initializer
       User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
       HearingDocket.repository = Fakes::HearingRepository
-      Appeal.repository = Fakes::AppealRepository
+      # Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.appeal_repository = Fakes::AppealRepository
+      # User.appeal_repository = Fakes::AppealRepository
       WorkQueue.repository = Fakes::QueueRepository
     end
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
-      if rails_env.ssh_forwarding?
+      if rails_env.ssh_forwarding? && !running_rake_command?
         User.authentication_service = Fakes::AuthenticationService
         # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
         # set this up in Fakes::AppealRepository.seed! which we don't call for this environment.

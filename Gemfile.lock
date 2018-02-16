@@ -107,6 +107,8 @@ GEM
       activemodel (= 4.2.7.1)
       activesupport (= 4.2.7.1)
       arel (~> 6.0)
+    activerecord-import (0.22.0)
+      activerecord (>= 3.2)
     activerecord-oracle_enhanced-adapter (1.6.9)
     activesupport (4.2.7.1)
       i18n (~> 0.7)
@@ -466,6 +468,7 @@ PLATFORMS
 DEPENDENCIES
   aasm (= 4.11.0)
   active_model_serializers (~> 0.10.0)
+  activerecord-import
   activerecord-jdbcsqlite3-adapter
   activerecord-oracle_enhanced-adapter
   bgs!

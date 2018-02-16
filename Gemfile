@@ -134,6 +134,8 @@ group :development, :test do
   # to save and open specific page in capybara tests
   gem "launchy"
 
+  gem "activerecord-import"
+
   gem "danger", "5.5.5"
 end
 

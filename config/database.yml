@@ -41,20 +41,20 @@ production:
   url: <%= ENV["POSTGRES_URL"] %>
 
 # For connecting to the VACOLS Databases
-development_vacols:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/development-vacols.sqlite3
+# development_vacols:
+#   adapter: sqlite3
+#   pool: 5
+#   timeout: 5000
+#   database: db/development-vacols.sqlite3
 
 # Docker setup
-#development_vacols:
-#  adapter: oracle_enhanced
-#  host: localhost
-#  port: 1521
-#  username: VACOLS
-#  password: VACOLS
-#  database: BVAP.localdomain
+development_vacols:
+ adapter: oracle_enhanced
+ host: localhost
+ port: 1521
+ username: VACOLS
+ password: VACOLS
+ database: BVAP.localdomain
 
 demo_vacols:
   adapter: sqlite3

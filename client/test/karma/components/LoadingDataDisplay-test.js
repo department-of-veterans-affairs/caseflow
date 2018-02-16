@@ -25,7 +25,7 @@ describe('LoadingDataDisplay', () => {
 
   const wait = (timeoutMs) => new Promise((resolve) => setTimeout(resolve, timeoutMs));
 
-  it('shows success component', () => {
+  it.only('shows success component', () => {
     const createFailingPromise = () => Promise.resolve();
     const requestSucceededMessage = 'Request succeeded';
     const wrapper = mount(
@@ -42,10 +42,11 @@ describe('LoadingDataDisplay', () => {
 
     return wait().then(() => {
       expect(wrapper.text()).to.include(requestSucceededMessage);
+      console.log('THIS IS A TEST2');
     });
   });
 
-  it('shows fail component', () => {
+  it.only('shows fail component', () => {
     const createFailingPromise = () => Promise.reject();
     const wrapper = mount(
       <LoadingDataDisplay
@@ -61,6 +62,7 @@ describe('LoadingDataDisplay', () => {
 
     return wait().then(() => {
       expect(wrapper.text()).to.include('Fail message');
+      console.log('THIS IS A TEST');
     });
   });
 
