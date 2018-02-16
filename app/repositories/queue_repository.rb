@@ -1,4 +1,5 @@
 class QueueRepository
+  # :nocov:
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
                           service: :vacols,
@@ -32,6 +33,7 @@ class QueueRepository
     appeals.map(&:save)
     appeals
   end
+  # :nocov:
 
   # :nocov:
   def self.find_case(vacols_id, css_id)
@@ -79,9 +81,15 @@ class QueueRepository
 
   # :nocov:
   def self.tasks_query(css_id)
-    VACOLS::CaseAssignment.tasks_for_user(css_id)
+    records = VACOLS::CaseAssignment.tasks_for_user(css_id)
+    filter_duplicate_tasks(records)
   end
   # :nocov:
+
+  def self.filter_duplicate_tasks(records)
+    # Keep the latest assignment if there are duplicate records
+    records.group_by(&:vacols_id).each_with_object([]) { |(_k, v), result| result << v.sort_by(&:date_assigned).last }
+  end
 
   # :nocov:
   def self.appeal_info_query(vacols_ids)
