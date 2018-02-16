@@ -591,7 +591,12 @@ class Appeal < ActiveRecord::Base
   end
 
   def document_service
-    @document_service ||= EFolderService
+    @document_service ||=
+      if ["dispatch", :certification].include? RequestStore.store[:application]
+        VBMSService
+      else
+        EFolderService
+      end
   end
 
   # Used for serialization
