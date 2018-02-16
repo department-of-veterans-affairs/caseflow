@@ -79,5 +79,78 @@
         </div>
       </div>
     </div>
+
+    <div id="ramp-elections-processed">
+      <div class="cf-stats-section -activity">
+        <h3>RAMP Elections Processed <span class="data-date"></span></h3>
+
+        <div class="cf-stat-panel data-chart" data-key="total_completed">
+          <h4 class="cf-stat-title">
+            Total
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_completed">
+            <%= @stats[0].values[:total_completed] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_sucessfully_completed">
+          <h4 class="cf-stat-title">
+            Eligible
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_sucessfully_completed">
+            <%= @stats[0].values[:total_sucessfully_completed] %>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-stats-section -missing">
+        <div class="cf-stat-panel data-chart" data-key="total_ineligible">
+          <h4 class="cf-stat-title">
+            Ineligible
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_ineligible">
+            <%= @stats[0].values[:total_ineligible] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_ineligible/total_completed">
+          <h4 class="cf-stat-title">
+            Percent Ineligible
+          </h4>
+          <div class="cf-stat-figure data-rate" data-key="total_ineligible/total_completed">
+            <%= format_rate_stat(:total_ineligible, :total_completed) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-stats-section -missing">
+        <div class="cf-stat-panel data-chart" data-key="total_ramp_election_already_complete">
+          <h4 class="cf-stat-title">
+            Ineligible - Duplicate
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_ramp_election_already_complete">
+            <%= @stats[0].values[:total_ramp_election_already_complete] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_no_active_appeals">
+          <h4 class="cf-stat-title">
+            Ineligible - No Appeals
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_no_active_appeals">
+            <%= @stats[0].values[:total_no_active_appeals] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_no_eligible_appeals">
+          <h4 class="cf-stat-title">
+            Ineligible - Ineligible Appeals
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_no_eligible_appeals">
+            <%= @stats[0].values[:total_no_eligible_appeals] %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
