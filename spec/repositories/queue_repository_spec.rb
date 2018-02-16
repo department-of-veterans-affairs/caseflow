@@ -5,7 +5,6 @@ describe QueueRepository do
   end
 
   context ".filter_duplicate_tasks" do
-
     subject { QueueRepository.filter_duplicate_tasks(tasks) }
 
     let(:tasks) do
@@ -15,7 +14,7 @@ describe QueueRepository do
         OpenStruct.new(vacols_id: "123C", date_assigned: 2.days.ago),
         OpenStruct.new(vacols_id: "123C", date_assigned: 9.days.ago),
         OpenStruct.new(vacols_id: "123A", date_assigned: 9.days.ago)
-        ]
+      ]
     end
 
     it "should filter duplicate tasks and keep the latest" do
