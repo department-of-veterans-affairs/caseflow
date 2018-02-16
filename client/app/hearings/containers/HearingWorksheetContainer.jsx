@@ -1,28 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+
 import { connect } from 'react-redux';
-import * as Actions from '../actions/Dockets';
+import { getWorksheet } from '../actions/Dockets';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
-import ApiUtil from '../../util/ApiUtil';
 import querystring from 'querystring';
-
-export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
-    then((response) => {
-      dispatch(Actions.populateWorksheet(response.body));
-    }, (err) => {
-      dispatch(Actions.handleWorksheetServerError(err));
-    });
-};
 
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
     if (!this.props.worksheet) {
       this.props.getWorksheet(this.props.hearingId);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId)) {
+      this.props.getWorksheet(nextProps.hearingId);
     }
   }
 
@@ -37,7 +35,6 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   render() {
-
     if (this.props.worksheetServerError) {
       return <StatusMessage
         title="Unable to load the worksheet">
@@ -58,7 +55,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet {...this.props} />;
+    return <HearingWorksheet {...this.props} history={this.context.router.history} />;
   }
 }
 
@@ -68,9 +65,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getWorksheet: (id) => {
-    getWorksheet(id, dispatch);
-  }
+  ...bindActionCreators({
+    getWorksheet
+  }, dispatch)
 });
 
 export default connect(
@@ -82,4 +79,8 @@ HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   hearingId: PropTypes.string.isRequired,
   worksheetServerError: PropTypes.object
+};
+
+HearingWorksheetContainer.contextTypes = {
+  router: PropTypes.object.isRequired
 };

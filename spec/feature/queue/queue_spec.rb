@@ -161,7 +161,7 @@ RSpec.feature "Queue" do
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
         expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
-        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
+        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
         expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
@@ -228,9 +228,9 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Back to Your Queue")
 
-        click_on "Open documents in Caseflow Reader"
+        click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
 
-        expect(page).to have_content("Back to Draft Decision")
+        expect(page).to have_content("Back to Draft Decision - #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
     end
   end
