@@ -35,7 +35,7 @@ export default class IssueList extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      className,
+      className
     } = this.props;
     let listContent = NO_ISSUES_ON_APPEAL_MSG;
 

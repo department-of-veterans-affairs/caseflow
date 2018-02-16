@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
 import { boldText } from '../constants';
@@ -22,20 +23,34 @@ const leftAlignTd = css({
   paddingLeft: 0,
   paddingRight: 0
 });
-const programColumnWidth = css({ width: '20rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
 const issueMarginTop = css({ marginTop: '0.5rem' });
 
 export default class IssueList extends React.PureComponent {
   issueLevels = (issue) => issue.levels.map((level, idx) => <div key={idx} {...issueMarginTop}>
     <span key={level} {...issueLevelStyling}>
-      {idx === 1 ? issue.levels_with_codes[idx] : level}
+      {idx === 1 ? _.last(issue.description) : level}
     </span>
   </div>);
 
   issueTypeLabel = (issue) => <div>
     <span {...boldText}>Issue:</span> {issue.type}
   </div>;
+
+  formatIssueProgram = (issue) => {
+    const programWords = StringUtil.titleCase(issue.program).split(' ');
+    const acronyms = ['vba', 'bva', 'vre', 'nca'];
+
+    return _(programWords).
+      map((word) => {
+        if (acronyms.includes(word.toLowerCase())) {
+          return word.toUpperCase();
+        }
+
+        return word;
+      }).
+      join(' ');
+  }
 
   render = () => {
     const {
@@ -48,9 +63,9 @@ export default class IssueList extends React.PureComponent {
     if (appeal.issues.length) {
       listContent = <React.Fragment>
         {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
-          <td {...leftAlignTd}>
-            <div {...programColumnWidth}>
-              {idx + 1}. <span {...boldText}>Program:</span> {StringUtil.titleCase(issue.program)}
+          <td {...leftAlignTd} width="210px">
+            <div>
+              {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
             </div>
           </td>
           <td>
