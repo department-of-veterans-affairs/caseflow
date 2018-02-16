@@ -36,17 +36,21 @@ class HearingWorksheetStream extends Component {
     return <div> {Object.values(this.props.worksheetAppeals).map((appeal, key) => {
     /* eslint-enable array-callback-return */
 
-      let appealWorksheetIssues = currentIssues(filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id));
+      const appealIssues = filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id);
+
+      let appealWorksheetIssues;
 
       if (prior) {
-        appealWorksheetIssues = priorIssues(filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id));
+        appealWorksheetIssues = priorIssues(appealIssues);
+      } else {
+        appealWorksheetIssues = currentIssues(appealIssues);
       }
 
       const currentIssueCount = issueCount;
 
       issueCount += _.size(appealWorksheetIssues);
 
-      if (_.size(appealWorksheetIssues) > 0) {
+      if (_.size(appealWorksheetIssues)) {
         return <div key={appeal.id} id={appeal.id}>
           <HearingWorksheetIssues
             appealKey={key}
