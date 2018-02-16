@@ -1,4 +1,5 @@
 class QueueRepository
+  # :nocov:
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
                           service: :vacols,
@@ -32,6 +33,7 @@ class QueueRepository
     appeals.map(&:save)
     appeals
   end
+  # :nocov:
 
   # :nocov:
   def self.find_case(vacols_id, css_id)
