@@ -9,7 +9,7 @@ import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import Breadcrumbs from './components/Breadcrumbs';
+import Breadcrumbs from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Breadcrumbs';
 import DecisionViewFooter from './components/DecisionViewFooter';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
@@ -75,16 +75,20 @@ class QueueApp extends React.PureComponent {
     }];
 
     return <React.Fragment>
-      <Breadcrumbs styling={breadcrumbStyling} crumbs={[{
-        label: 'Your Queue',
-        path: '/'
-      }, {
-        label: `OMO ${appeal.veteran_full_name}`,
-        path: `/tasks/${vacolsId}`
-      }, {
-        label: 'Submit OMO',
-        path: `/tasks/${vacolsId}/submit`
-      }]} />
+      <Breadcrumbs
+        getBreadcrumbLabel={(route) => route.breadcrumb}
+        caretBeforeCrumb={false}
+        styling={breadcrumbStyling}
+        getElements={() => [{
+          breadcrumb: 'Your Queue',
+          path: '/'
+        }, {
+          breadcrumb: `OMO ${appeal.veteran_full_name}`,
+          path: `/tasks/${vacolsId}`
+        }, {
+          breadcrumb: 'Submit OMO',
+          path: `/tasks/${vacolsId}/submit`
+        }]} />
       <SubmitDecisionView vacolsId={vacolsId} />
       <DecisionViewFooter buttons={footerButtons} />
     </React.Fragment>;

@@ -52,13 +52,13 @@ const workQueueReducer = (state = initialState, action = {}) => {
       taskDecision: {
         type: { $set: action.payload.type }
       }
-    })
+    });
   case ACTIONS.SET_DECISION_OPTIONS:
     return update(state, {
       taskDecision: {
         opts: { $merge: action.payload.opts }
       }
-    })
+    });
   default:
     return state;
   }
