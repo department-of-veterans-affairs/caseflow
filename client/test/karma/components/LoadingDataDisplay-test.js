@@ -45,8 +45,8 @@ describe('LoadingDataDisplay', () => {
     });
   });
 
-  it('shows fail component', () => {
-    const createFailingPromise = () => Promise.reject({ status: 500 });
+  it('shows props msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 502 });
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
@@ -61,6 +61,42 @@ describe('LoadingDataDisplay', () => {
 
     return wait().then(() => {
       expect(wrapper.text()).to.include('Fail message');
+    });
+  });
+
+  it('shows access denied msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 403 });
+    const wrapper = mount(
+      <LoadingDataDisplay
+        createLoadPromise={createFailingPromise}
+        loadingComponentProps={{
+          message: 'loading message'
+        }}
+      >
+        <p>Request succeeded</p>
+      </LoadingDataDisplay>
+    );
+
+    return wait().then(() => {
+      expect(wrapper.text()).to.include('you do not have the necessary level of access');
+    });
+  });
+
+  it('shows not found msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 404 });
+    const wrapper = mount(
+      <LoadingDataDisplay
+        createLoadPromise={createFailingPromise}
+        loadingComponentProps={{
+          message: 'loading message'
+        }}
+      >
+        <p>Request succeeded</p>
+      </LoadingDataDisplay>
+    );
+
+    return wait().then(() => {
+      expect(wrapper.text()).to.include('not find the information');
     });
   });
 
