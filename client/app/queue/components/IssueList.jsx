@@ -12,7 +12,8 @@ const tableStyling = css({
   '& td': {
     verticalAlign: 'top',
     border: 'none',
-    paddingTop: 0
+    paddingTop: 0,
+    backgroundColor: 'inherit'
   }
 });
 const issueLevelStyling = css({

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import IssueList from '../queue/components/IssueList';
+import IssueList from './IssueList';
 import EditableField from '../components/EditableField';
 import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDescription
 } from './Documents/DocumentsActions';
