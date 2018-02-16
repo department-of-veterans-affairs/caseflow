@@ -429,6 +429,7 @@ class AppealRepository
                           service: :vacols,
                           name: "active_cases_for_user") do
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
+      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
