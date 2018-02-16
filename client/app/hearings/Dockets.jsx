@@ -15,9 +15,36 @@ const tableBorder = css({
   marginTop: '0px'
 });
 
+// .cf-document-list-body {
+//   display: block;
+//   max-height: 65vh;
+//   overflow: auto;
+
+//   > .borderless {
+//     border: none;
+
+//     > td {
+//       width: 100vw;
+//       padding-bottom: 0;
+//     }
+
+//     .horizontal-comment {
+//       margin-left: 0;
+//       width: 100%;
+//     }
+//   }
+
 const tableBodyStyling = css({
+  display: 'table-row',
   maxHeight: '65vh',
-  overflow: 'auto'
+  overflow: 'auto',
+  width: '100%',
+  '.cf-dockets-body': {
+    '> td': {
+      width: '100vw',
+      paddingBottom: 0
+    }
+  }
 });
 
 const tabBodyStyling = css({
@@ -36,16 +63,35 @@ export class Dockets extends React.Component {
 
   linkToDailyDocket = (docket) => {
     if (docket.master_record) {
-      return moment(docket.date).format('ddd DD/MM/YYYY');
+      return moment(docket.date).format('ddd MM/DD/YYYY');
     }
 
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-      {moment(docket.date).format('ddd DD/MM/YYYY')}
+      {moment(docket.date).format('ddd MM/DD/YYYY')}
     </Link>;
   }
 
   getScheduledCount = (docket) => {
     return (docket.master_record ? 0 : docket.hearings_count);
+  }
+
+  getRowObjects = (hearings) => {
+    const docketIndex = Object.keys(hearings).sort();
+    const rowObjects = docketIndex.map((docketDate) => {
+
+      let docket = hearings[docketDate];
+
+      return {
+        date: this.linkToDailyDocket(docket),
+        start_time: getDateTime(docket.date),
+        type: this.getType(docket.type),
+        regional_office: docket.regional_office_name,
+        slots: docket.slots,
+        scheduled: this.getScheduledCount(docket)
+      };
+    });
+
+    return rowObjects;
   }
 
   render() {
@@ -78,48 +124,22 @@ export class Dockets extends React.Component {
       }
     ];
 
-    const reduceMethod = (result, value, key) => {
+    const defaultGroupedHearings = {
+      upcoming: {},
+      past: {}
+    };
+
+    const groupedHearings = _.reduce(this.props.upcomingHearings, (result, value, key) => {
       const dateMoment = moment(value.date);
-      const pastOrUpcoming = dateMoment.isAfter(Date.now()) ? 'upcoming' : 'past';
+      const pastOrUpcoming = dateMoment.isAfter(new Date().setHours(0, 0, 0, 0)) ? 'upcoming' : 'past';
 
       result[pastOrUpcoming][key] = value;
 
       return result;
-    };
+    }, defaultGroupedHearings);
 
-    const grouped = _.reduce(this.props.upcomingHearings, reduceMethod , 
-      { upcoming: {},
-        past: {} });
-
-    const upcomingDocketIndex = Object.keys(grouped.upcoming).sort();
-    const upcomingRowObjects = upcomingDocketIndex.map((docketDate) => {
-
-      let docket = grouped.upcoming[docketDate];
-
-      return {
-        date: this.linkToDailyDocket(docket),
-        start_time: getDateTime(docket.date),
-        type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
-        slots: docket.slots,
-        scheduled: this.getScheduledCount(docket)
-      };
-    });
-
-    const pastDocketIndex = Object.keys(grouped.past).sort();
-    const pastRowObjects = pastDocketIndex.map((docketDate) => {
-
-      let docket = grouped.past[docketDate];
-
-      return {
-        date: this.linkToDailyDocket(docket),
-        start_time: getDateTime(docket.date),
-        type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
-        slots: docket.slots,
-        scheduled: this.getScheduledCount(docket)
-      };
-    });
+    const upcomingRowObjects = this.getRowObjects(groupedHearings.upcoming);
+    const pastRowObjects = this.getRowObjects(groupedHearings.past);
 
     const tabs = [
       {
@@ -132,6 +152,7 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
+          bodyClassName="cf-dockets-body"
         />
       },
       {
@@ -144,6 +165,7 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
+          bodyClassName="cf-dockets-body"
         />
       }
     ];

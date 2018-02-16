@@ -28,11 +28,19 @@ $color-hearings-saving: $color-gray;
   position: relative;
 }
 
+.cf-hearings-schedule {
+  .cf-tab {
+    span {
+      min-width: 150px;
+    }
+  }
+}
+
 .cf-hearings,
-.cf-hearings-schedule,
+.cf-hearings-schedule
 .cf-hearings-worksheet {
   padding: $cf-30px;
-
+  
   .cf-hearings-title-and-judge {
     h1 {
       margin-bottom: 0;
