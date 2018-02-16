@@ -159,7 +159,7 @@ RSpec.feature "Queue" do
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
         expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
-        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%e/%y')}")
+        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
         expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
