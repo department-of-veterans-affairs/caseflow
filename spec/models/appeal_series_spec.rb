@@ -395,4 +395,43 @@ describe AppealSeries do
       end
     end
   end
+
+  context "#description" do
+    subject { series.description }
+
+    context "when there is a single issue" do
+      before do
+        latest_appeal.issues << Generators::Issue.build
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    end
+
+    context "when that issue is new and materials" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 04 5252])
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    end
+
+    context "when there are multiple issues" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
+        latest_appeal.issues << Generators::Issue.build(vacols_sequence_id: 2)
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 03 9432], vacols_sequence_id: 3)
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion, and 2 others") }
+    end
+
+    context "when those issues do not have commas" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 12 05], vacols_sequence_id: 2)
+      end
+
+      it { is_expected.to eq("100% rating for individual unemployability and 1 other") }
+    end
+  end
 end

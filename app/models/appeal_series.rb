@@ -83,6 +83,25 @@ class AppealSeries < ActiveRecord::Base
     @issues ||= AppealSeriesIssues.new(appeal_series: self).all
   end
 
+  def description
+    ordered_issues = latest_appeal.issues.sort do |a, b|
+      dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
+
+      next dc_comparison unless dc_comparison == 0
+
+      a.vacols_sequence_id <=> b.vacols_sequence_id
+    end
+
+    marquee_issue_description = ordered_issues.first.friendly_description_without_new_material
+
+    return marquee_issue_description if issues.length == 1
+
+    comma = (marquee_issue_description.count(",") > 0) ? "," : ""
+    issue_count = issues.count - 1
+
+    "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
+  end
+
   private
 
   def fetch_latest_appeal
