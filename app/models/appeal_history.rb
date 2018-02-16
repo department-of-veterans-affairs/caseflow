@@ -130,7 +130,7 @@ class AppealHistory
   end
 
   def find_parent_appeal(appeal)
-    if %w[B W].include? appeal.vacols_id[-1]
+    if %w[B W P].include? appeal.vacols_id[-1]
       # Appeals that are created for the sole purpose of recording a post-remand field disposition
       # have the same vacols_id as their parent, just with the disposition code appended.
       parent_id = appeal.vacols_id[0...-1]
