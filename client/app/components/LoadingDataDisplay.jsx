@@ -83,7 +83,7 @@ class LoadingDataDisplay extends React.PureComponent {
     case 404:
       return itemNotFoundTitle;
     default:
-      return null;
+      return this.props.failStatusMessageProps;
     }
   }
 
@@ -94,7 +94,7 @@ class LoadingDataDisplay extends React.PureComponent {
     case 404:
       return itemNotFoundMsg;
     default:
-      return null;
+      return this.props.failStatusMessageChildren;
     }
   }
 
