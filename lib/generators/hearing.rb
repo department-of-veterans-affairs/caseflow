@@ -28,7 +28,13 @@ class Generators::Hearing
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
       Fakes::HearingRepository.hearing_records ||= []
-      Fakes::HearingRepository.hearing_records.push(hearing)
+
+      if Fakes::HearingRepository.find_by_vacols_id(hearing.vacols_id)
+        i = Fakes::HearingRepository.find_index_by_vacols_id(hearing.vacols_id)
+        Fakes::HearingRepository.hearing_records[i] = hearing
+      else
+        Fakes::HearingRepository.hearing_records.push(hearing)
+      end
 
       hearing
     end

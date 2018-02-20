@@ -91,7 +91,7 @@ describe Hearing do
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
 
     it "returns active appeals with no decision date and with form9 date" do
-      expect(subject.size).to eq 3
+      expect(subject.size).to eq 2
     end
   end
 
