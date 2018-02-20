@@ -39,23 +39,17 @@ export default class IssueList extends React.PureComponent {
     </span>
   </div>);
 
-  issueTypeLabel = (issue) => <div>
+  issueTypeLabel = (issue) => <React.Fragment>
     <span {...boldText}>Issue:</span> {issue.type}
-  </div>;
+  </React.Fragment>;
 
   formatIssueProgram = (issue) => {
     const programWords = StringUtil.titleCase(issue.program).split(' ');
     const acronyms = ['vba', 'bva', 'vre', 'nca'];
 
-    return _(programWords).
-      map((word) => {
-        if (acronyms.includes(word.toLowerCase())) {
-          return word.toUpperCase();
-        }
-
-        return word;
-      }).
-      join(' ');
+    return programWords.map((word) =>
+      acronyms.includes(word.toLowerCase()) ? word.toUpperCase() : word
+    ).join(' ');
   };
 
   getIssues = () => {
