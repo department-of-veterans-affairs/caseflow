@@ -7,8 +7,11 @@ import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
 import { boldText } from '../constants';
 import StringUtil from '../../util/StringUtil';
 
-const tableContainerStyling = css({ width: '55rem' });
+const tableContainerStyling = (issuesOnly) => css({
+  width: issuesOnly ? '100%' : '55rem'
+});
 const tableStyling = css({
+  marginTop: '1rem',
   '& td': {
     verticalAlign: 'top',
     border: 'none',
@@ -51,18 +54,30 @@ export default class IssueList extends React.PureComponent {
         return word;
       }).
       join(' ');
-  }
+  };
 
-  render = () => {
+  getIssues = () => {
     const {
-      appeal
+      appeal,
+      issuesOnly
     } = this.props;
-    let listContent = <tr>
-      <td>{NO_ISSUES_ON_APPEAL_MSG}</td>
-    </tr>;
 
-    if (appeal.issues.length) {
-      listContent = <React.Fragment>
+    if (!appeal.issues.length) {
+      return <tr>
+        <td>{NO_ISSUES_ON_APPEAL_MSG}</td>
+      </tr>;
+    }
+
+    if (issuesOnly) {
+      return <React.Fragment>
+        {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
+          <td {...leftAlignTd}>
+            {idx + 1}. {issue.type} {issue.levels.join(', ')}
+          </td>
+        </tr>)}
+      </React.Fragment>;
+    } else {
+      return <React.Fragment>
         {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
           <td {...leftAlignTd} width="210px">
             <div>
@@ -78,19 +93,24 @@ export default class IssueList extends React.PureComponent {
         </tr>)}
       </React.Fragment>;
     }
-
-    return <div {...tableContainerStyling}>
-      <table {...tableStyling}>
-        <tbody>
-          {listContent}
-        </tbody>
-      </table>
-    </div>;
   };
+
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
+    <table {...tableStyling}>
+      <tbody>
+      {this.getIssues()}
+      </tbody>
+    </table>
+  </div>;
 }
 
 IssueList.propTypes = {
   appeal: PropTypes.shape({
     issues: PropTypes.array
-  }).isRequired
+  }).isRequired,
+  issuesOnly: PropTypes.bool
+};
+
+IssueList.defaultProps = {
+  issuesOnly: false
 };
