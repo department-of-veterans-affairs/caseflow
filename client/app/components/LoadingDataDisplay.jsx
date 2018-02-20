@@ -9,12 +9,12 @@ const PROMISE_RESULTS = {
   FAILURE: 'FAILURE'
 };
 
-const accessDeniedTitle = { title: 'Additional access needed' }
+const accessDeniedTitle = { title: 'Additional access needed' };
 const accessDeniedMsg = <div>
-        It looks like you do not have the necessary level of access to view this information..<br />
+        It looks like you do not have the necessary level of access to view this information.<br />
         Please check with your application administrator before trying again.</div>;
 
-const itemNotFoundTitle = { title: 'Information cannot be found' }
+const itemNotFoundTitle = { title: 'Information cannot be found' };
 const itemNotFoundMsg = <div>
         We could not find the information you were looking for.<br />
         Please return to the previous page, check the information provided, and try again.</div>;
