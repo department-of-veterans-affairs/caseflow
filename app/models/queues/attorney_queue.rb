@@ -1,5 +1,6 @@
 class AttorneyQueue < WorkQueue
   def self.tasks_with_appeals(user_id)
+    binding.pry
     css_id = User.find(user_id).css_id
     vacols_tasks = repository.tasks_for_user(css_id)
     vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
