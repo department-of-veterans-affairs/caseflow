@@ -14,6 +14,7 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require 'capybara-screenshot/rspec'
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -74,6 +75,11 @@ end
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 20
+
+# custom names for saving screenshots
+Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
+  "screenshot_#{example.description.gsub(' ', '-').gsub(/^.*\/spec\//,'')}"
+end
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -217,7 +223,7 @@ end
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  repeat_count = ENV["TRAVIS"] ? 100 : 20
+  repeat_count = ENV["TRAVIS"] ? 150 : 20
   repeat_count.times do
     yield
   end
