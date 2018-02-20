@@ -13,6 +13,8 @@ const issueLevelStyle = css({
   marginTop: 0
 });
 
+// todo: deprecate this with Reader Welcome Gate.
+// this has been superseded by queue/components/IssueList.jsx everywhere besides CaseSelect.
 export default class IssueList extends React.PureComponent {
 
   csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
