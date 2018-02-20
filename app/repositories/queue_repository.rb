@@ -1,4 +1,4 @@
-class ErrorReassigningCaseToJudge < StandardError; end
+class ReassignCaseToJudgeError < StandardError; end
 
 class QueueRepository
   # :nocov:
@@ -50,7 +50,7 @@ class QueueRepository
   # TODO: use decass uniq ID instead of vacols_id and attorney_css_id
   def self.reassign_case_to_judge(decass_hash)
     decass_record = find_decass_record(decass_hash[:vacols_id], decass_hash[:attorney_css_id])
-    fail ErrorReassigningCaseToJudge unless decass_record
+    fail ReassignCaseToJudgeError unless decass_record
 
     ActiveRecord::Base.transaction do
       # update DECASS table
@@ -79,6 +79,8 @@ class QueueRepository
   # :nocov:
   def self.update_decass_record(decass_record, decass_hash)
     info = QueueMapper.case_decision_fields_to_vacols_codes(decass_hash)
+    # Validate presence of the required fields after the mapper to ensure correctness
+    VacolsHelper.validate_presence(decision_hash, [:work_product, :document_id, :reassigned_at])
     decass_record.update_decass_record!(info)
   end
   # :nocov:

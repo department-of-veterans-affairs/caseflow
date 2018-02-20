@@ -4,6 +4,8 @@ class AttorneyCaseReview < ActiveRecord::Base
 
   validates :attorney, :reviewing_judge, :document_id, :work_product, :overtime, presence: true
 
+  EXCEPTIONS = [ReassignCaseToJudgeError, MissingRequiredFieldError].freeze
+
   class << self
     attr_writer :repository
 
@@ -24,8 +26,8 @@ class AttorneyCaseReview < ActiveRecord::Base
             document_id: record.document_id,
             overtime: record.overtime,
             note: record.note
-            )
-        rescue ErrorReassigningCaseToJudge
+          )
+        rescue *EXCEPTIONS
           raise ActiveRecord::Rollback
         end
         record

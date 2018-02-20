@@ -19,9 +19,7 @@ class QueueController < ApplicationController
     render "queue/index"
   end
 
-  # params = { type: "OMORequest", judge_reviewing_id: 12, document_id: "", work_product: "", overtime: "", note: "" }
   def complete
-    # ensure presence of parameters
     record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, vacols_id: params[:vacols_id]))
     return attorney_case_review_error unless record
     render json: record
