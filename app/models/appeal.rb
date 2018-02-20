@@ -590,10 +590,6 @@ class Appeal < ActiveRecord::Base
     @fetched_documents
   end
 
-  def document_service
-    @document_service ||= VBMSService
-  end
-
   # Used for serialization
   def regional_office_hash
     regional_office.to_h
