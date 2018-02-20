@@ -12,6 +12,7 @@ const tableContainerStyling = (issuesOnly) => css({
 });
 const tableStyling = css({
   marginTop: '1rem',
+  marginBottom: '1rem',
   '& td': {
     verticalAlign: 'top',
     border: 'none',
