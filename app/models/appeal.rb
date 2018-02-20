@@ -127,7 +127,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def number_of_documents_url
-    EFolderService.efolder_files_url
+    if Rails.env.production? || Rails.env.staging?
+      ExternalApi::EfolderService.efolder_files_url
+    else
+      "/queue/#{id}/docs"
+    end
   end
 
   def number_of_documents_after_certification
