@@ -76,29 +76,30 @@ export default class IssueList extends React.PureComponent {
           </td>
         </tr>)}
       </React.Fragment>;
-    } else {
-      return <React.Fragment>
-        {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
-          <td {...leftAlignTd} width="210px">
-            <div>
-              {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
-            </div>
-          </td>
-          <td>
-            {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
-            <div {...noteMarginTop}>
-              <span {...boldText}>Note:</span> {issue.note}
-            </div>
-          </td>
-        </tr>)}
-      </React.Fragment>;
     }
+
+    return <React.Fragment>
+      {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
+        <td {...leftAlignTd} width="210px">
+          <div>
+            {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
+          </div>
+        </td>
+        <td>
+          {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
+          <div {...noteMarginTop}>
+            <span {...boldText}>Note:</span> {issue.note}
+          </div>
+        </td>
+      </tr>)}
+    </React.Fragment>;
+
   };
 
   render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
     <table {...tableStyling}>
       <tbody>
-      {this.getIssues()}
+        {this.getIssues()}
       </tbody>
     </table>
   </div>;
