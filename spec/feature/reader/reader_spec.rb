@@ -1177,7 +1177,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content(regional_office)
 
       # all the current issues listed in the UI
-      issue_list = all("#claims-folder-issues li")
+      issue_list = all("#claims-folder-issues tr")
       expect(issue_list.count).to eq(appeal_info["issues"].length)
       issue_list.each_with_index do |issue, index|
         expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
