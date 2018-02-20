@@ -12,7 +12,7 @@ class ApplicationBaseController < ActionController::Base
   def unauthorized
     respond_to do |format|
       format.html do
-        render  layout: "application", status: 403
+        render layout: "application", status: 403
       end
       format.json do
         render json: {
