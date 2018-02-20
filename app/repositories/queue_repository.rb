@@ -80,7 +80,7 @@ class QueueRepository
   def self.update_decass_record(decass_record, decass_hash)
     info = QueueMapper.case_decision_fields_to_vacols_codes(decass_hash)
     # Validate presence of the required fields after the mapper to ensure correctness
-    VacolsHelper.validate_presence(decision_hash, [:work_product, :document_id, :reassigned_at])
+    VacolsHelper.validate_presence(info, [:work_product, :document_id, :reassigned_at])
     decass_record.update_decass_record!(info)
   end
   # :nocov:

@@ -2,7 +2,7 @@ class AttorneyCaseReview < ActiveRecord::Base
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :attorney, :reviewing_judge, :document_id, :work_product, :overtime, presence: true
+  validates :attorney, :type, :reviewing_judge, :document_id, :work_product, :overtime, presence: true
 
   EXCEPTIONS = [QueueRepository::ReassignCaseToJudgeError, VacolsHelper::MissingRequiredFieldError].freeze
 
