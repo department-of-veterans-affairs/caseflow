@@ -83,6 +83,7 @@ class AppealSeries < ActiveRecord::Base
     @issues ||= AppealSeriesIssues.new(appeal_series: self).all
   end
 
+  # rubocop:disable CyclomaticComplexity
   def description
     ordered_issues = latest_appeal.issues.sort do |a, b|
       dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
@@ -91,6 +92,8 @@ class AppealSeries < ActiveRecord::Base
 
       a.vacols_sequence_id <=> b.vacols_sequence_id
     end
+
+    return "VA needs to record issues" if ordered_issues.empty?
 
     marquee_issue_description = ordered_issues.first.friendly_description_without_new_material
 
@@ -101,6 +104,7 @@ class AppealSeries < ActiveRecord::Base
 
     "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
   end
+  # rubocop:enable CyclomaticComplexity
 
   private
 
