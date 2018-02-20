@@ -16,6 +16,49 @@ $color-hearings-saving: $color-gray;
   }
 }
 
+.cf-document-list-body {
+  display: block;
+  max-height: 65vh;
+  overflow: auto;
+
+  > .borderless {
+    border: none;
+
+    > td {
+      width: 100vw;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.cf-document-list-header-row tr {
+  display: block;
+
+  th > div {
+    display: flex;
+  }
+}
+
+.hearings {
+  thead > tr {
+    display: inline-table;
+    width: 100%;
+  
+    th {
+      min-width: 165px;
+    }
+  }
+
+  tbody > tr {
+    display: inline-table;
+    width: 100%;
+  
+    td {
+      min-width: 165px;
+    }
+  }
+}
+
 .saving {
   font-style: italic;
   color: $color-hearings-saving;
@@ -34,6 +77,10 @@ $color-hearings-saving: $color-gray;
       min-width: 150px;
     }
   }
+}
+
+h1 {
+  padding-bottom: 0px;
 }
 
 .cf-hearings,

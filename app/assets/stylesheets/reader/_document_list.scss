@@ -46,12 +46,11 @@ $tag-backgrond-color: #d6d7d9;
 
     tbody > tr > td {
       vertical-align: top;
+      min-width: 140px;
     }
 
-    .comments-table-header > tr > th {
-      font-weight: normal;
-      float: left;
-      padding-left: 0;
+    thead > tr > th {
+      min-width: 140px;
     }
   }
 

@@ -155,7 +155,7 @@ export default class Table extends React.PureComponent {
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      
+      <HeaderRow columns={columns} headerClassName={headerClassName} />
       <BodyRows
         id={tbodyId}
         tbodyRef={tbodyRef}

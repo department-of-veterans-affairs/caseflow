@@ -15,27 +15,8 @@ const tableBorder = css({
   marginTop: '0px'
 });
 
-// .cf-document-list-body {
-//   display: block;
-//   max-height: 65vh;
-//   overflow: auto;
-
-//   > .borderless {
-//     border: none;
-
-//     > td {
-//       width: 100vw;
-//       padding-bottom: 0;
-//     }
-
-//     .horizontal-comment {
-//       margin-left: 0;
-//       width: 100%;
-//     }
-//   }
-
 const tableBodyStyling = css({
-  display: 'table-row',
+  display: 'block',
   maxHeight: '65vh',
   overflow: 'auto',
   width: '100%',
@@ -145,20 +126,19 @@ export class Dockets extends React.Component {
       {
         label: 'Upcoming',
         page: <Table
-          className="dockets"
+          className="hearings"
           columns={columns}
           rowObjects={upcomingRowObjects}
           summary="Your Upcoming Hearing Days?"
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
-          bodyClassName="cf-dockets-body"
         />
       },
       {
         label: 'Past',
         page: <Table
-          className="dockets"
+          className="hearings"
           columns={columns}
           rowObjects={pastRowObjects}
           summary="Your Past Hearing Days?"
