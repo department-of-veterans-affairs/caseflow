@@ -28,6 +28,7 @@ const leftAlignTd = css({
   paddingLeft: 0,
   paddingRight: 0
 });
+const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
 const issueMarginTop = css({ marginTop: '0.5rem' });
 
@@ -73,7 +74,10 @@ export default class IssueList extends React.PureComponent {
       return <React.Fragment>
         {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
           <td {...leftAlignTd}>
-            {idx + 1}. {issue.type} {issue.levels.join(', ')}
+            {idx + 1}.
+          </td>
+          <td {...minimalLeftPadding}>
+            {issue.type} {issue.levels.join(', ')}
           </td>
         </tr>)}
       </React.Fragment>;
