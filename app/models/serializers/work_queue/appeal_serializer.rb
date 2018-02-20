@@ -12,7 +12,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         id: issue.id,
         labels: issue.labels,
         codes: issue.codes,
-        levels_with_codes: issue.levels_with_codes
+        description: issue.description
       }
     end
   end

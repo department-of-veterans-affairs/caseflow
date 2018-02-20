@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import IssueList from '../reader/IssueList';
+import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
 import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -84,14 +84,7 @@ export default class AppealDetail extends React.PureComponent {
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
-    <IssueList
-      appeal={_.pick(this.props.appeal.attributes, 'issues')}
-      formatLevelsInNewLine
-      displayIssueProgram
-      displayIssueNote
-      spaceBetweenIssues
-      leftAlignList
-      displayLabels />
+    <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
   </div>;
 }
 
