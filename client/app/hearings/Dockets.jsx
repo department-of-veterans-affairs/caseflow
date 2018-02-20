@@ -19,13 +19,7 @@ const tableBodyStyling = css({
   display: 'block',
   maxHeight: '65vh',
   overflow: 'auto',
-  width: '100%',
-  '.cf-dockets-body': {
-    '> td': {
-      width: '100vw',
-      paddingBottom: 0
-    }
-  }
+  width: '100%'
 });
 
 const tabBodyStyling = css({
@@ -145,7 +139,6 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
-          bodyClassName="cf-dockets-body"
         />
       }
     ];
