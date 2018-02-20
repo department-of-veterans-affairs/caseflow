@@ -40,7 +40,7 @@ class LoadingDataDisplay extends React.PureComponent {
         }
 
         this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS,
-          statusCode: null });
+          statusCode: 200 });
         window.clearInterval(this.intervalId);
       },
       (response) => {
