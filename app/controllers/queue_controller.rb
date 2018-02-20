@@ -31,6 +31,10 @@ class QueueController < ApplicationController
     end
   end
 
+  def judges
+    render json: { judges: Judge.list_all }
+  end
+
   def document_count
     # used for local dev. see Appeal.number_of_documents_url
     appeal = Appeal.find(params[:appeal_id])
