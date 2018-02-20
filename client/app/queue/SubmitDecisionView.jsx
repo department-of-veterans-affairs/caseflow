@@ -45,13 +45,14 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
+    const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Submit {decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType)}
+        Submit {decisionTypeDisplay} for Review
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Review and complete the following details to check this task out for judge review.
+        Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
       <hr />
       {decisionType === 'omo' && <RadioField

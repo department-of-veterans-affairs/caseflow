@@ -63,7 +63,7 @@ class QueueApp extends React.PureComponent {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
     const footerButtons = [{
-      displayText: `Go back to ${appeal.veteran_full_name}`,
+      displayText: `Go back to draft decision ${appeal.vbms_id}`,
       callback: () => {
         this.router.history.push(`/tasks/${vacolsId}`);
         window.scrollTo(0, 0);
