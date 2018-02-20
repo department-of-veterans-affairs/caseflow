@@ -5,16 +5,24 @@ describe('IssuesUtil', () => {
 
   const issues = {
     1: {
-      disposition: 'Remanded'
+      disposition: 'Remanded',
+      from_vacols: true
     },
     2: {
-      disposition: 'Granted'
+      disposition: 'Granted',
+      from_vacols: true
     },
     3: {
-      disposition: null
+      disposition: null,
+      from_vacols: true
     },
     4: {
-      _destroy: true
+      _destroy: true,
+      from_vacols: true
+    },
+    5: {
+      disposition: 'Remanded',
+      from_vacols: false
     }
   };
 
@@ -22,10 +30,16 @@ describe('IssuesUtil', () => {
 
     const currentIssuesFiltered = {
       1: {
-        disposition: 'Remanded'
+        disposition: 'Remanded',
+        from_vacols: true
       },
       3: {
-        disposition: null
+        disposition: null,
+        from_vacols: true
+      },
+      5: {
+        disposition: 'Remanded',
+        from_vacols: false
       }
     };
 
@@ -38,7 +52,8 @@ describe('IssuesUtil', () => {
 
     const priorIssuesFiltered = {
       2: {
-        disposition: 'Granted'
+        disposition: 'Granted',
+        from_vacols: true
       }
     };
 
