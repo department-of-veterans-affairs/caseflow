@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
@@ -16,6 +15,7 @@ import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 
 import { fullWidth } from './constants';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noBottomMargin = css({ marginBottom: 0 });
@@ -33,6 +33,18 @@ const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
 
 class SubmitDecisionView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectingJudge: false,
+      judge: {
+        label: 'Nick Kroes',
+        value: 'VACOKROESN'
+      }
+    };
+  }
+
   render = () => {
     const omoTypes = [{
       displayText: 'VHA - OMO',
@@ -46,6 +58,36 @@ class SubmitDecisionView extends React.PureComponent {
       opts: decisionOpts
     } = this.props.decision;
     const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
+    const judges = [{
+      label: 'Nick Kroes',
+      value: 'VACOKROESN'
+    }, {
+      label: 'Judy Sheindlin',
+      value: 'VACOJUDY'
+    }, {
+      label: 'Judge Dredd',
+      value: 'VAMCDREDDJ'
+    }];
+    const judgeDisplay = this.state.selectingJudge ?
+      <React.Fragment>
+        <SearchableDropdown
+          name="Select a judge"
+          placeholder="Select a judge&hellip;"
+          options={judges}
+          onChange={(value) => this.setState({
+            selectingJudge: false,
+            judge: value
+          })}
+          hideLabel />
+      </React.Fragment> :
+      <React.Fragment>
+        <span>{this.state.judge.label}</span>
+        <Button
+          classNames={['cf-btn-link']}
+          onClick={() => this.setState({ selectingJudge: true })}>
+          Select another judge
+        </Button>
+      </React.Fragment>;
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -79,12 +121,7 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.documentId}
       />
       <span>Check out to:</span><br />
-      <span>Nick Kroes</span>
-      <Button
-        classNames={['cf-btn-link']}
-        onClick={_.noop}>
-        Select another judge
-      </Button>
+      {judgeDisplay}
       <TextareaField
         name="Notes:"
         value={decisionOpts.notes}

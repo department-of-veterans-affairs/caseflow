@@ -71,7 +71,11 @@ class QueueApp extends React.PureComponent {
       classNames: ['cf-btn-link']
     }, {
       displayText: 'Submit',
-      classNames: ['cf-right-side']
+      classNames: ['cf-right-side'],
+      callback: () => {
+        this.router.history.push('/');
+        window.scrollTo(0, 0);
+      }
     }];
 
     return <React.Fragment>
