@@ -9,10 +9,12 @@ const PROMISE_RESULTS = {
   FAILURE: 'FAILURE'
 };
 
+const accessDeniedTitle = { title: 'Additional access needed' }
 const accessDeniedMsg = <div>
         It looks like you do not have the necessary level of access to view this information..<br />
         Please check with your application administrator before trying again.</div>;
 
+const itemNotFoundTitle = { title: 'Information cannot be found' }
 const itemNotFoundMsg = <div>
         We could not find the information you were looking for.<br />
         Please return to the previous page, check the information provided, and try again.</div>;
@@ -74,6 +76,28 @@ class LoadingDataDisplay extends React.PureComponent {
     }
   }
 
+  errorTitleHelper = (statusCode) => {
+    switch (statusCode) {
+    case 403:
+      return accessDeniedTitle;
+    case 404:
+      return itemNotFoundTitle;
+    default:
+      return null;
+    }
+  }
+
+  errorMsgHelper = (statusCode) => {
+    switch (statusCode) {
+    case 403:
+      return accessDeniedMsg;
+    case 404:
+      return itemNotFoundMsg;
+    default:
+      return null;
+    }
+  }
+
   render() {
     const {
       loadingComponent: LoadingComponent,
@@ -84,10 +108,8 @@ class LoadingDataDisplay extends React.PureComponent {
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
-      return <ErrorComponent {...this.props.failStatusMessageProps}>
-        {this.state.statusCode === 403 && accessDeniedMsg}
-        {this.state.statusCode === 404 && itemNotFoundMsg}
-        {this.state.statusCode !== 403 && this.state.statusCode !== 404 && this.props.failStatusMessageChildren}
+      return <ErrorComponent {...this.errorTitleHelper(this.state.statusCode)}>
+        {this.errorMsgHelper(this.state.statusCode)}
       </ErrorComponent>;
     }
 
