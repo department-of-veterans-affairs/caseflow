@@ -1,6 +1,5 @@
-class ReassignCaseToJudgeError < StandardError; end
-
 class QueueRepository
+  class ReassignCaseToJudgeError < StandardError; end
   # :nocov:
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
@@ -59,6 +58,7 @@ class QueueRepository
 
       # update location with the judge's stafkey
       update_location(decass_record.case, decass_hash[:judge_css_id])
+      true
     end
   end
   # :nocov:

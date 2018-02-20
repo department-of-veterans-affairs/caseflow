@@ -4,7 +4,7 @@ class AttorneyCaseReview < ActiveRecord::Base
 
   validates :attorney, :reviewing_judge, :document_id, :work_product, :overtime, presence: true
 
-  EXCEPTIONS = [ReassignCaseToJudgeError, MissingRequiredFieldError].freeze
+  EXCEPTIONS = [QueueRepository::ReassignCaseToJudgeError, VacolsHelper::MissingRequiredFieldError].freeze
 
   class << self
     attr_writer :repository
