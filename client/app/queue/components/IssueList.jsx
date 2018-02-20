@@ -80,9 +80,7 @@ export default class IssueList extends React.PureComponent {
     return <React.Fragment>
       {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
         <td {...leftAlignTd} width="210px">
-          <div>
-            {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
-          </div>
+          {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
         </td>
         <td>
           {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
