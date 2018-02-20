@@ -87,9 +87,32 @@ namespace :local_vacols do
     puts "Do not check in the result of running this without talking with Chris. We need to certify that there " \
       "is no PII in the results."
 
-    cases = cases_includes.offset(3_000_000).limit(10) + cases_includes.where(bfcurloc: "ZZHU")
+    cases = cases_with_joins.offset(3_000_000).limit(10) + cases_with_joins.where(bfcurloc: "ZZHU")
 
-    cases_includes = cases.includes(
+    write_csv(VACOLS::Case, cases)
+    write_csv(VACOLS::Folder, cases.map(&:folder))
+    write_csv(VACOLS::Representative, cases.map(&:representative))
+    write_csv(VACOLS::Correspondent, cases.map(&:correspondent))
+    write_csv(VACOLS::CaseIssue, cases.map(&:case_issues))
+    write_csv(VACOLS::Note, cases.map(&:notes))
+    write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
+    write_csv(VACOLS::Decass, cases.map(&:decass))
+
+    staff = cases.map do |c|
+      s = c.staff
+      s[:sdomainid] = "READER" if s[:stafkey] == "ZZHU"
+      s
+    end
+    write_csv(VACOLS::Staff, staff)
+
+    write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
+    write_csv(VACOLS::Issref, VACOLS::Issref.all)
+  end
+
+  private
+
+  def cases_with_joins
+    VACOLS::Case.includes(
       :folder,
       :representative,
       :correspondent,
@@ -99,22 +122,7 @@ namespace :local_vacols do
       :decass,
       :staff
     )
-
-    write_csv(VACOLS::Case, cases_includes)
-    write_csv(VACOLS::Folder, cases_includes.map(&:folder))
-    write_csv(VACOLS::Representative, cases_includes.map(&:representative))
-    write_csv(VACOLS::Correspondent, cases_includes.map(&:correspondent))
-    write_csv(VACOLS::CaseIssue, cases_includes.map(&:case_issues))
-    write_csv(VACOLS::Note, cases_includes.map(&:notes))
-    write_csv(VACOLS::CaseHearing, cases_includes.map(&:case_hearings))
-    write_csv(VACOLS::Decass, cases_includes.map(&:decass))
-    write_csv(VACOLS::Staff, cases_includes.map(&:staff))
-
-    write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
-    write_csv(VACOLS::Issref, VACOLS::Issref.all)
   end
-
-  private
 
   def read_csv(klass)
     items = []
