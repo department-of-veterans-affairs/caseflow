@@ -206,7 +206,7 @@ class Issue
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
         # disposition is a snake_case symbol, i.e. :remanded
-        disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
+        disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]).parameterize.underscore.to_sym,
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
