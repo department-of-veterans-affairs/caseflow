@@ -114,12 +114,13 @@ export class Dockets extends React.Component {
     }, defaultGroupedHearings);
 
     const upcomingRowObjects = this.getRowObjects(groupedHearings.upcoming);
-    const pastRowObjects = this.getRowObjects(groupedHearings.past);
+    let pastRowObjects = this.getRowObjects(groupedHearings.past);
 
+    pastRowObjects = {};
     const tabs = [
       {
         label: 'Upcoming',
-        page: <Table
+        page: _.size(upcomingRowObjects) ? <Table
           className="hearings"
           columns={columns}
           rowObjects={upcomingRowObjects}
@@ -127,11 +128,11 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
-        />
+        /> : <p>You currently have no hearings scheduled.</p>
       },
       {
         label: 'Past',
-        page: <Table
+        page: _.size(pastRowObjects) ? <Table
           className="hearings"
           columns={columns}
           rowObjects={pastRowObjects}
@@ -139,7 +140,7 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
-        />
+        /> : <p>You have not held any hearings in the past 365 days.</p>
       }
     ];
 

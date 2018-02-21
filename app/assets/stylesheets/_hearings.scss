@@ -21,8 +21,13 @@ $color-hearings-saving: $color-gray;
     display: inline-table;
     width: 100%;
 
+    th:nth-child(3) {
+      min-width: 75px;
+    }
+
     th {
-      min-width: 165px;
+      max-width: 165px;
+      min-width: 155px;
     }
   }
 
@@ -30,8 +35,13 @@ $color-hearings-saving: $color-gray;
     display: inline-table;
     width: 100%;
 
+    td:nth-child(3) {
+      min-width: 75px;
+    }
+
     td {
-      min-width: 165px;
+      max-width: 165px;
+      min-width: 150px;
     }
   }
 }
@@ -54,10 +64,11 @@ $color-hearings-saving: $color-gray;
       min-width: 150px;
     }
   }
-}
 
-h1 {
-  padding-bottom: 0;
+  h1 {
+    padding-bottom: 0;
+  }
+
 }
 
 .cf-hearings,
