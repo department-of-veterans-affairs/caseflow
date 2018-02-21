@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
@@ -50,12 +49,32 @@ class QueueApp extends React.PureComponent {
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
-  </QueueLoadingScreen>;
+  routedQueueDetail = (props) => {
+    const { vacolsId } = props.match.params;
+    const crumbs = [];
+
+    if (!_.isEmpty(this.props.appeals)) {
+      const { veteran_full_name } = this.props.appeals[vacolsId].attributes;
+      crumbs.push({
+        breadcrumb: 'Your Queue',
+        path: '/'
+      }, {
+        breadcrumb: veteran_full_name,
+        path: `/tasks/${vacolsId}`
+      });
+    }
+
+    return <QueueLoadingScreen {...this.props}>
+      <Breadcrumbs
+        getBreadcrumbLabel={(route) => route.breadcrumb}
+        caretBeforeAllCrumbs={false}
+        styling={breadcrumbStyling}
+        elements={crumbs} />
+      <QueueDetailView
+        vacolsId={props.match.params.vacolsId}
+        featureToggles={this.props.featureToggles} />
+    </QueueLoadingScreen>;
+  }
 
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
@@ -79,7 +98,7 @@ class QueueApp extends React.PureComponent {
       breadcrumb: 'Your Queue',
       path: '/'
     }, {
-      breadcrumb: `OMO ${appeal.veteran_full_name}`,
+      breadcrumb: appeal.veteran_full_name,
       path: `/tasks/${vacolsId}`
     }, {
       breadcrumb: 'Submit OMO',
