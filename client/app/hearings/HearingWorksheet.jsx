@@ -163,12 +163,6 @@ export class HearingWorksheet extends React.PureComponent {
           button="secondary">
           Save as PDF
         </Link>
-        <Link
-          name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
-          button="primary"
-          target="_blank">
-            Review Claims Folder</Link>
       </div>
       }
     </div>;
