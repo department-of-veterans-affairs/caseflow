@@ -120,6 +120,7 @@ Rails.application.routes.draw do
     get '/judges', to: 'queue#judges'
     get '/:user_id', to: 'queue#tasks'
     get '/:appeal_id/docs', to: 'queue#document_count'
+    post '/tasks/:vacols_id/complete', to: 'queue#complete'
   end
 
   get "health-check", to: "health_checks#show"
