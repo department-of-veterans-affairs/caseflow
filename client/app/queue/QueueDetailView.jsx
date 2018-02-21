@@ -14,7 +14,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
-import { setDecisionType } from './QueueActions';
+import { setCaseReviewActionType } from './QueueActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -32,7 +32,7 @@ class QueueDetailView extends React.PureComponent {
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
 
-    this.props.setDecisionType(props.value);
+    this.props.setCaseReviewActionType(props.value);
     this.props.history.push(`${this.props.history.location.pathname}/${route}`);
   }
 
@@ -92,10 +92,8 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setDecisionType
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setCaseReviewActionType
+}, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));

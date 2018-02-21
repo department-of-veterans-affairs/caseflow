@@ -47,7 +47,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.SET_DECISION_TYPE:
+  case ACTIONS.SET_REVIEW_ACTION_TYPE:
     return update(state, {
       taskDecision: {
         type: { $set: action.payload.type }

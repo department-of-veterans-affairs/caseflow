@@ -40,8 +40,6 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class QueueApp extends React.PureComponent {
-  setRouterRef = (router) => this.router = router;
-
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
       navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
@@ -65,7 +63,7 @@ class QueueApp extends React.PureComponent {
     const footerButtons = [{
       displayText: `Go back to draft decision ${appeal.vbms_id}`,
       callback: () => {
-        this.router.history.push(`/tasks/${vacolsId}`);
+        props.history.push(`/tasks/${vacolsId}`);
         window.scrollTo(0, 0);
       },
       classNames: ['cf-btn-link']
@@ -73,32 +71,33 @@ class QueueApp extends React.PureComponent {
       displayText: 'Submit',
       classNames: ['cf-right-side'],
       callback: () => {
-        this.router.history.push('/');
+        props.history.push('/');
         window.scrollTo(0, 0);
       }
+    }];
+    const crumbs = [{
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: `OMO ${appeal.veteran_full_name}`,
+      path: `/tasks/${vacolsId}`
+    }, {
+      breadcrumb: 'Submit OMO',
+      path: `/tasks/${vacolsId}/submit`
     }];
 
     return <React.Fragment>
       <Breadcrumbs
         getBreadcrumbLabel={(route) => route.breadcrumb}
-        caretBeforeCrumb={false}
+        caretBeforeAllCrumbs={false}
         styling={breadcrumbStyling}
-        getElements={() => [{
-          breadcrumb: 'Your Queue',
-          path: '/'
-        }, {
-          breadcrumb: `OMO ${appeal.veteran_full_name}`,
-          path: `/tasks/${vacolsId}`
-        }, {
-          breadcrumb: 'Submit OMO',
-          path: `/tasks/${vacolsId}/submit`
-        }]} />
+        elements={crumbs} />
       <SubmitDecisionView vacolsId={vacolsId} />
       <DecisionViewFooter buttons={footerButtons} />
     </React.Fragment>;
   };
 
-  render = () => <BrowserRouter basename="/queue" ref={this.setRouterRef}>
+  render = () => <BrowserRouter basename="/queue">
     <NavigationBar
       wideApp
       defaultUrl="/"

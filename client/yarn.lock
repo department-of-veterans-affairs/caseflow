@@ -54,7 +54,7 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.4.1":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.5.0":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.4.1.tgz#bd612665fe219c0771b3e8accc4bea162e78aec4"
   dependencies:

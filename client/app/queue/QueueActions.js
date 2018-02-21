@@ -25,8 +25,8 @@ export const loadAppealDocCountFail = (vacolsId) => ({
   }
 });
 
-export const setDecisionType = (type) => ({
-  type: ACTIONS.SET_DECISION_TYPE,
+export const setCaseReviewActionType = (type) => ({
+  type: ACTIONS.SET_REVIEW_ACTION_TYPE,
   payload: {
     type
   }
