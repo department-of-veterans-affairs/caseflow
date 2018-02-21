@@ -143,9 +143,9 @@ class QueueApp extends React.PureComponent {
             exact
             path="/tasks/:vacolsId/submit"
             title={() => {
-              const decisionType = this.props.decisionType === 'omo' ? 'OMO' : 'Draft Decision';
+              const reviewActionType = this.props.reviewActionType === 'omo' ? 'OMO' : 'Draft Decision';
 
-              return `Draft Decision | Submit ${decisionType}`;
+              return `Draft Decision | Submit ${reviewActionType}`;
             }}
             render={this.routedSubmitDecision} />
           <PageRoute
@@ -175,7 +175,7 @@ QueueApp.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
-  decisionType: state.queue.taskDecision.type
+  reviewActionType: state.queue.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);
