@@ -88,9 +88,13 @@ namespace :local_vacols do
     puts "Do not check in the result of running this without talking with Chris. We need to certify that there " \
       "is no PII in the results."
 
+    Time.utc(2017, 5, 1)
+
     cases = cases_with_joins.offset(3_000_000).limit(10) +
-      cases_with_joins.where(bfcurloc: "ZZHU") +
-      cases_with_joins.where(bfcurloc: "NKROES")
+            cases_with_joins.where(bfcurloc: "ZZHU") +
+            cases_with_joins.where(bfcurloc: "NKROES") +
+            VACOLS::Case.remands_ready_for_claims_establishment.limit(10) +
+            VACOLS::Case.amc_full_grants(outcoded_after: Time.utc(2017, 5, 1)).limit(10) +
 
     write_csv(VACOLS::Case, cases)
     write_csv(VACOLS::Folder, cases.map(&:folder))
@@ -101,8 +105,7 @@ namespace :local_vacols do
     write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
     write_csv(VACOLS::Decass, cases.map(&:decass))
 
-    staff = VACOLS::Staff.all.map do |c|
-      s = c.staff
+    staff = VACOLS::Staff.all.map do |s|
       s[:sdomainid] = "READER" if s[:stafkey] == "ZZHU"
       s[:sdomainid] = "HEARING PREP" if s[:stafkey] == "NKROES"
       s

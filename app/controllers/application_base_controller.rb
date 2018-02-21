@@ -9,6 +9,18 @@ class ApplicationBaseController < ActionController::Base
   before_action :check_out_of_service
   before_action :strict_transport_security
 
+  before_action :set_time
+
+  after_action :unset_time
+
+  def set_time
+    Timecop.travel(Time.utc(2017, 5, 1)) if Rails.env.development?
+  end
+
+  def unset_time
+    Timecop.return if Rails.env.development?
+  end
+
   def unauthorized
     respond_to do |format|
       format.html do
