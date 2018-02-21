@@ -10,6 +10,7 @@ class Fakes::Initializer
       User.appeal_repository = Fakes::AppealRepository
       WorkQueue.repository = Fakes::QueueRepository
       Judge.repository = Fakes::JudgeRepository
+      AttorneyCaseReview.repository = Fakes::QueueRepository
     end
 
     # This method is called only 1 time during application bootup
