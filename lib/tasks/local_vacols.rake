@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 namespace :local_vacols do
   desc "Starts and sets up a dockerized local VACOLS"
@@ -78,6 +78,7 @@ namespace :local_vacols do
     read_csv(VACOLS::Staff)
     read_csv(VACOLS::Vftypes)
     read_csv(VACOLS::Issref)
+    read_csv(VACOLS::TravelBoardSchedule)
   end
 
   # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -87,26 +88,30 @@ namespace :local_vacols do
     puts "Do not check in the result of running this without talking with Chris. We need to certify that there " \
       "is no PII in the results."
 
-    cases = cases_with_joins.offset(3_000_000).limit(10) + cases_with_joins.where(bfcurloc: "ZZHU")
+    cases = cases_with_joins.offset(3_000_000).limit(10) +
+      cases_with_joins.where(bfcurloc: "ZZHU") +
+      cases_with_joins.where(bfcurloc: "NKROES")
 
     write_csv(VACOLS::Case, cases)
     write_csv(VACOLS::Folder, cases.map(&:folder))
     write_csv(VACOLS::Representative, cases.map(&:representative))
     write_csv(VACOLS::Correspondent, cases.map(&:correspondent))
     write_csv(VACOLS::CaseIssue, cases.map(&:case_issues))
-    write_csv(VACOLS::Note, cases.map(&:notes))
+    write_csv(VACOLS::Note, cases.map(& :notes))
     write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
     write_csv(VACOLS::Decass, cases.map(&:decass))
 
-    staff = cases.map do |c|
+    staff = VACOLS::Staff.all.map do |c|
       s = c.staff
       s[:sdomainid] = "READER" if s[:stafkey] == "ZZHU"
+      s[:sdomainid] = "HEARING PREP" if s[:stafkey] == "NKROES"
       s
     end
     write_csv(VACOLS::Staff, staff)
 
     write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
     write_csv(VACOLS::Issref, VACOLS::Issref.all)
+    write_csv(VACOLS::TravelBoardSchedule, VACOLS::TravelBoardSchedule.where("tbyear > 2016"))
   end
 
   private
@@ -119,8 +124,7 @@ namespace :local_vacols do
       :case_issues,
       :notes,
       :case_hearings,
-      :decass,
-      :staff
+      :decass
     )
   end
 
