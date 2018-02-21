@@ -95,9 +95,9 @@ class WorksheetHeader extends React.PureComponent {
                 </button>
               </CopyToClipboard>
             }
-              {this.props.print &&
-                <div><b>{worksheet.sanitized_vbms_id}</b></div>
-              }
+            {this.props.print &&
+              <div><b>{worksheet.sanitized_vbms_id}</b></div>
+            }
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
