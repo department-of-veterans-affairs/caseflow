@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import Button from '../../components/Button';
+import TabWindow from '../../components/TabWindow';
 import { onAddIssue } from '../actions/Issue';
-import { filterIssuesOnAppeal } from '../util/IssuesUtil';
+import { filterIssuesOnAppeal, currentIssues, priorIssues } from '../util/IssuesUtil';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
@@ -28,43 +29,76 @@ class HearingWorksheetStream extends Component {
     return (this.getMaxVacolsSequenceId() + 1).toString();
   };
 
-  render() {
-
-    let {
-      worksheetAppeals,
-      worksheetIssues
-    } = this.props;
-
+  getIssues = (prior) => {
     let issueCount = 0;
 
-    return <div className="cf-hearings-worksheet-data">
-      {Object.values(worksheetAppeals).map((appeal, key) => {
+    /* eslint-disable array-callback-return */
+    return <div> {Object.values(this.props.worksheetAppeals).map((appeal, key) => {
+    /* eslint-enable array-callback-return */
 
-        const appealWorksheetIssues = filterIssuesOnAppeal(worksheetIssues, appeal.id);
-        const currentIssueCount = issueCount;
+      const appealIssues = filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id);
 
-        issueCount += _.size(appealWorksheetIssues);
+      let appealWorksheetIssues;
 
+      if (prior) {
+        appealWorksheetIssues = priorIssues(appealIssues);
+      } else {
+        appealWorksheetIssues = currentIssues(appealIssues);
+      }
+
+      const currentIssueCount = issueCount;
+
+      issueCount += _.size(appealWorksheetIssues);
+
+      if (_.size(appealWorksheetIssues)) {
         return <div key={appeal.id} id={appeal.id}>
-          <h2 className="cf-hearings-worksheet-header">Appeal Stream <span>{key + 1}</span></h2>
           <HearingWorksheetIssues
             appealKey={key}
+            issues={appealWorksheetIssues}
             worksheetStreamsAppeal={appeal}
             print={this.props.print}
             {...this.props}
             countOfIssuesInPreviousAppeals={currentIssueCount}
+            prior={prior}
           />
-          {!this.props.print &&
-            <Button
-              classNames={['usa-button-outline', 'hearings-add-issue']}
-              name="+ Add Issue"
-              id={`button-addIssue-${appeal.id}`}
-              onClick={this.onAddIssue(appeal.id)}
-            />
+          {!this.props.print && !prior &&
+          <Button
+            classNames={['usa-button-outline', 'hearings-add-issue']}
+            name="+ Add Issue"
+            id={`button-addIssue-${appeal.id}`}
+            onClick={this.onAddIssue(appeal.id)}
+          />
           }
-          <div className="cf-help-divider"></div>
+          <div className="cf-help-divider" />
         </div>;
-      })}
+      }
+    })}
+    </div>;
+  };
+
+  getCurrentIssuesCount = () => {
+    return _.size(currentIssues(this.props.worksheetIssues));
+  };
+
+  getPriorIssuesCount = () => {
+    return _.size(priorIssues(this.props.worksheetIssues));
+  };
+
+  render() {
+    const tabs = [{
+      label: `Current Issues (${this.getCurrentIssuesCount()})`,
+      page: this.getIssues()
+    }, {
+      label: `Prior Issues (${this.getPriorIssuesCount()})`,
+      page: this.getIssues(true),
+      disable: !this.getPriorIssuesCount()
+    }];
+
+    return <div className="cf-hearings-worksheet-data">
+      <TabWindow
+        name="issues-tabwindow"
+        tabs={tabs}
+      />
     </div>;
   }
 }
