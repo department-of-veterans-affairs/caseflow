@@ -86,7 +86,7 @@ class Fakes::HearingRepository
     )
   end
 
-  def self.generate_hearings_in_the_past(number_of_hearings)
+  def self.generate_hearings_in_the_past(number_of_hearings, user)
     number_of_hearings.times.each do |i|
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user,
                                                                  date: 365.days.ago.beginning_of_day +
@@ -102,7 +102,7 @@ class Fakes::HearingRepository
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
 
-    generate_hearings_in_the_past(10)
+    generate_hearings_in_the_past(10, user)
     4.times.each do |i|
       Generators::Hearings::MasterRecord.build(
         user_id: user.id,
