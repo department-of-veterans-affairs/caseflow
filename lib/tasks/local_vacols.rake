@@ -95,6 +95,7 @@ namespace :local_vacols do
             cases_with_joins.where(bfcurloc: "NKROES") +
             VACOLS::Case.remands_ready_for_claims_establishment.limit(10) +
             VACOLS::Case.amc_full_grants(outcoded_after: Time.utc(2017, 5, 1)).limit(10) +
+            cases_with_joins.where(bfcorlid: "231745657S")
 
     write_csv(VACOLS::Case, cases)
     write_csv(VACOLS::Folder, cases.map(&:folder))

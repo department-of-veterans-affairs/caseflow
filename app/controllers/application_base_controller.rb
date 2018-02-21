@@ -21,19 +21,6 @@ class ApplicationBaseController < ActionController::Base
     Timecop.return if Rails.env.development?
   end
 
-  def unauthorized
-    respond_to do |format|
-      format.html do
-        render status: 403
-      end
-      format.json do
-        render json: {
-          errors: ["Unauthorized"]
-        }, status: 403
-      end
-    end
-  end
-
   private
 
   def check_out_of_service
