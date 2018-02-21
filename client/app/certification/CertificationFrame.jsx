@@ -13,7 +13,7 @@ import ErrorMessage from './components/ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import PerformanceDegradationBanner from '../components/PerformanceDegradationBanner';
 import AppFrame from '../components/AppFrame';
-import CaseflowNavigationBar from '../components/NavigationBar';
+import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
@@ -23,9 +23,8 @@ class CertificationFrame extends React.Component {
 
     return <BrowserRouter>
       <div>
-        <CaseflowNavigationBar
+        <NavigationBar
           wideApp
-          extraBanner
           defaultUrl="/"
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
@@ -33,7 +32,6 @@ class CertificationFrame extends React.Component {
             overlapColor: LOGO_COLORS.CERTIFICATION.OVERLAP,
             accentColor: LOGO_COLORS.CERTIFICATION.ACCENT
           }}
-          {...this.props}
           appName="Certification" />
         <PerformanceDegradationBanner />
         <AppFrame>
