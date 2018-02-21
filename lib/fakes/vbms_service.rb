@@ -1,4 +1,5 @@
 require "ostruct"
+require "csv"
 
 class VBMSCaseflowLogger
   def self.log(event, data)
@@ -27,6 +28,16 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_ids_by_file_number
   end
 
+  def self.load_vbms_ids_mappings
+    return if @load_vbms_ids_mappings
+    @load_vbms_ids_mappings = true
+    @document_records ||= {}
+    CSV.foreach(Rails.root.join("vacols", "vbms_setup.csv"), headers: true) do |row|
+      row_hash = row.to_h
+      @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+    end
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
@@ -51,6 +62,8 @@ class Fakes::VBMSService
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal, _user = nil)
+    load_vbms_ids_mappings
+
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     fetched_at_format = "%FT%T.%LZ"
     {

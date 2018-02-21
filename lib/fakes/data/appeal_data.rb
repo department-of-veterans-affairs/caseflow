@@ -1,5 +1,13 @@
 # rubocop:disable Metrics/ModuleLength
 module Fakes::Data::AppealData
+  def self.freeze_time
+    Timecop.travel(Time.utc(2017, 5, 1))
+    return_value = yield
+    Timecop.return
+
+    return_value
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.default_vacols_ids
@@ -35,7 +43,7 @@ module Fakes::Data::AppealData
 
   def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
     seeded_random = Random.new(seed)
-    (0..num_documents).to_a.reduce([]) do |acc, number|
+    @random_documents ||= (0..num_documents).to_a.reduce([]) do |acc, number|
       acc << Generators::Document.build(
         vbms_document_id: number,
         type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
@@ -68,12 +76,49 @@ module Fakes::Data::AppealData
   ].freeze
 
   def self.redacted_reader_documents
-    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
+    @redacted_documents ||= READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
       Generators::Document.build(
         vbms_document_id: (100 + index),
         type: doc_type
       )
     end
+  end
+
+  def self.certification_documents
+    [
+      Generators::Document.build(type: "NOD", category_procedural: true),
+      Generators::Document.build(type: "SOC"),
+      Generators::Document.build(type: "Form 9", category_medical: true),
+      Generators::Document.build(type: "SSOC"),
+      Generators::Document.build(type: "SSOC", received_at: 10.days.ago)
+    ]
+  end
+
+  def self.establish_claim_documents
+    freeze_time do
+      certification_documents + [
+        Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago, category_other: true)
+      ]
+    end
+  end
+
+  def self.establish_claim_multiple_decisions
+    freeze_time do
+      establish_claim_documents + [
+        Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago)
+      ]
+    end
+  end
+
+  def self.document_mapping
+    {
+      "static_documents" => static_reader_documents,
+      "no_categories" => reader_docs_no_categories,
+      "random_documents" => random_reader_documents(1000),
+      "redacted_documents" => redacted_reader_documents,
+      "establish_claim" => establish_claim_documents,
+      "establish_claim_multiple" => establish_claim_multiple_decisions
+    }
   end
 
   def self.default_records

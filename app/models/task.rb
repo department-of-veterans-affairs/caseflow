@@ -68,7 +68,7 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared").prepared_before_today
+      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
 
     def completed_success

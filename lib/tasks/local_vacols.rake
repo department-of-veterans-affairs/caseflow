@@ -90,11 +90,14 @@ namespace :local_vacols do
 
     Time.utc(2017, 5, 1)
 
+    reader_vbms_ids = %w[static_documents no_categories random_documents redacted_documents]
+    dispatch_vbms_ids = %w[establish_claim establish_claim_multiple]
+
     cases = cases_with_joins.offset(3_000_000).limit(10) +
-            cases_with_joins.where(bfcurloc: "ZZHU") +
-            cases_with_joins.where(bfcurloc: "NKROES") +
-            VACOLS::Case.remands_ready_for_claims_establishment.limit(10) +
-            VACOLS::Case.amc_full_grants(outcoded_after: Time.utc(2017, 5, 1)).limit(10) +
+            vbms_record_from_case(cases_with_joins.where(bfcurloc: "ZZHU"), reader_vbms_ids) +
+            vbms_record_from_case(cases_with_joins.where(bfcurloc: "NKROES"), reader_vbms_ids) +
+            vbms_record_from_case(VACOLS::Case.remands_ready_for_claims_establishment.limit(10), dispatch_vbms_ids) +
+            vbms_record_from_case(VACOLS::Case.amc_full_grants(outcoded_after: Time.utc(2017, 5, 1)).limit(10), dispatch_vbms_ids) +
             cases_with_joins.where(bfcorlid: "231745657S")
 
     write_csv(VACOLS::Case, cases)
@@ -119,6 +122,21 @@ namespace :local_vacols do
   end
 
   private
+
+  def vbms_record_from_case(cases, documents)
+    if !@vbms_record_started
+      CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "wb") do |csv|
+        csv << %w[vbms_id documents]
+      end
+      @vbms_record_started = true
+    end
+    CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "a") do |csv|
+      cases.each_with_index do |c, i|
+        csv << [c.bfcorlid, documents[i % documents.length]]
+      end
+    end
+    cases
+  end
 
   def cases_with_joins
     VACOLS::Case.includes(
