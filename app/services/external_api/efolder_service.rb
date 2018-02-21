@@ -18,7 +18,7 @@ class ExternalApi::EfolderService
     if response.error?
       fail Caseflow::Error::EfolderAccessForbidden, "403" if response.try(:code) == 403
       fail Caseflow::Error::DocumentRetrievalError, "502" if response.try(:code) == 500
-      fail Caseflow::Error::DocumentRetrievalError, "#{error.code}";
+      fail Caseflow::Error::DocumentRetrievalError, error.code.to_s
     end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
