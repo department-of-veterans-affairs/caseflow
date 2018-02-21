@@ -18,7 +18,7 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
-  describe "POST queue/tasks/:vacols_id/complete" do
+  describe "POST queue/tasks/:task_id/complete" do
     let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
 
     context "when all parameters are present" do
@@ -35,7 +35,7 @@ RSpec.describe QueueController, type: :controller do
 
       it "should be successful" do
         User.authenticate!(roles: ["System Admin"])
-        post :complete, vacols_id: "1234567", queue: params
+        post :complete, task_id: "1234567-2016-11-05", queue: params
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["document_id"]).to eq "123456789.1234"
@@ -57,7 +57,7 @@ RSpec.describe QueueController, type: :controller do
 
       it "should not be successful" do
         User.authenticate!(roles: ["System Admin"])
-        post :complete, vacols_id: "1234567", queue: params
+        post :complete, task_id: "1234567-2016-11-05", queue: params
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Error Completing Attorney Case Review"
