@@ -95,7 +95,7 @@ RSpec.feature "Hearings" do
       visit "/hearings/dockets"
 
       click_on("dockets-tab-1")
-      
+
       # Verify dates
       day1 = get_day(1)
       day2 = get_day(2)
@@ -307,7 +307,7 @@ end
 
 def get_day(row)
   date_row = find(:xpath, "//tbody/tr[#{row}]/td[1]").text
-  parts = date_row[/\d{1,2}\/\d{1,2}\/\d{4}/].split('/').map(&:to_i)
+  parts = date_row[/\d{1,2}\/\d{1,2}\/\d{4}/].split("/").map(&:to_i)
   Date.new(parts[2], parts[0], parts[1])
 end
 

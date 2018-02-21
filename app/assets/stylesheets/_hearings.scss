@@ -20,7 +20,7 @@ $color-hearings-saving: $color-gray;
   thead > tr {
     display: inline-table;
     width: 100%;
-  
+
     th {
       min-width: 165px;
     }
@@ -29,7 +29,7 @@ $color-hearings-saving: $color-gray;
   tbody > tr {
     display: inline-table;
     width: 100%;
-  
+
     td {
       min-width: 165px;
     }
@@ -57,14 +57,14 @@ $color-hearings-saving: $color-gray;
 }
 
 h1 {
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 .cf-hearings,
-.cf-hearings-schedule
+.cf-hearings-schedule,
 .cf-hearings-worksheet {
   padding: $cf-30px;
-  
+
   .cf-hearings-title-and-judge {
     h1 {
       margin-bottom: 0;
