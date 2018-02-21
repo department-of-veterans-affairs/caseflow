@@ -19,6 +19,12 @@ class QueueController < ApplicationController
     render "queue/index"
   end
 
+  def complete
+    record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, vacols_id: params[:vacols_id]))
+    return attorney_case_review_error unless record
+    render json: record
+  end
+
   def tasks
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
@@ -29,6 +35,10 @@ class QueueController < ApplicationController
         appeals: json_appeals(appeals)
       }
     end
+  end
+
+  def judges
+    render json: { judges: Judge.list_all }
   end
 
   def document_count
@@ -46,6 +56,24 @@ class QueueController < ApplicationController
   end
 
   private
+
+  def attorney_case_review_error
+    render json: {
+      "errors": [
+        "title": "Error Completing Attorney Case Review",
+        "detail": "Errors occured when completing attorney case review"
+      ]
+    }, status: 400
+  end
+
+  def complete_params
+    params.require("queue").permit(:type,
+                                   :reviewing_judge_id,
+                                   :document_id,
+                                   :work_product,
+                                   :overtime,
+                                   :note)
+  end
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(

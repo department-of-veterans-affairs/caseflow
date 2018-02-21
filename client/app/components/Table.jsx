@@ -145,7 +145,6 @@ export default class Table extends React.PureComponent {
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
-    console.log(bodyStyling);
 
     return <table
       id={id}

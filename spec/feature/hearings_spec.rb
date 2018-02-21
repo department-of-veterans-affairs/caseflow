@@ -4,7 +4,7 @@ RSpec.feature "Hearings" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1, 13))
+    # Timecop.freeze(Time.utc(2017, 1, 1, 13))/
   end
 
   let(:appeal) do
@@ -38,9 +38,23 @@ RSpec.feature "Hearings" do
         date: Time.zone.now,
         master_record: true
       )
+      Generators::Hearing.create(
+        id: 4,
+        user: current_user,
+        type: "central_office",
+        date: 3.days.ago,
+        master_record: true
+      )
+      Generators::Hearing.create(
+        id: 5,
+        user: current_user,
+        type: "central_office",
+        date: 6.days.ago,
+        master_record: false
+      )
     end
 
-    scenario "Shows dockets for each day" do
+    scenario "Shows upcoming dockets for upcoming day" do
       visit "/hearings/dockets"
 
       expect(page).to have_content("Your Hearing Days")
@@ -49,7 +63,6 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("VLJ: Lauren Roth")
 
       # Verify dates
-
       day1 = get_day(1)
       day2 = get_day(2)
 
@@ -61,7 +74,7 @@ RSpec.feature "Hearings" do
       docket2_type = get_type(2)
 
       expect(docket1_type).to eql("CO")
-      expect(docket2_type).to eql("Video")
+      expect(docket2_type).to eql("video")
 
       # Verify hearings count in each docket
 
@@ -76,6 +89,35 @@ RSpec.feature "Hearings" do
       find("#menu-trigger").click
       find_link("Help").click
       expect(page).to have_content("Welcome to the Hearings Help page!")
+    end
+
+    scenario "Shows past dockets for each day" do
+      visit "/hearings/dockets"
+
+      click_on("dockets-tab-1")
+      
+      # Verify dates
+      day1 = get_day(1)
+      day2 = get_day(2)
+
+      expect(day1 + 3.days).to eql(day2)
+
+      # Verify docket types
+
+      docket1_type = get_type(1)
+      docket2_type = get_type(2)
+
+      expect(docket1_type).to eql("CO")
+      expect(docket2_type).to eql("CO")
+
+      # Verify hearings count in each docket
+
+      docket1_hearings = get_hearings(1)
+      docket2_hearings = get_hearings(2)
+
+      # the first one is a master record
+      expect(docket1_hearings).to eql("1")
+      expect(docket2_hearings).to eql("0")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
@@ -262,7 +304,8 @@ end
 # helpers
 
 def get_day(row)
-  parts = find(:xpath, "//tbody/tr[#{row}]/td[1]").text.split("/").map(&:to_i)
+  date_row = find(:xpath, "//tbody/tr[#{row}]/td[1]").text
+  parts = date_row[/\d{1,2}\/\d{1,2}\/\d{4}/].split('/').map(&:to_i)
   Date.new(parts[2], parts[0], parts[1])
 end
 

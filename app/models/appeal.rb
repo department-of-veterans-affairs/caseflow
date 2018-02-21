@@ -592,8 +592,7 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if (RequestStore.store[:application] == "reader" || RequestStore.store[:application] == "hearings") &&
-         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      if %w[reader queue hearings].include?(RequestStore.store[:application])
         EFolderService
       else
         VBMSService

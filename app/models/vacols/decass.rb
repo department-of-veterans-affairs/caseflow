@@ -1,4 +1,4 @@
-class VACOLS::CaseDecision < VACOLS::Record
+class VACOLS::Decass < VACOLS::Record
   self.table_name = "vacols.decass"
   self.primary_key = "defolder"
 
@@ -25,11 +25,11 @@ class VACOLS::CaseDecision < VACOLS::Record
     end
   end
 
-  def update_case_decision!(decision_info)
+  def update_decass_record!(decision_info)
     attrs = decision_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-    MetricsService.record("VACOLS: update_case_decision! #{defolder}",
+    MetricsService.record("VACOLS: update_decass_record! #{defolder}",
                           service: :vacols,
-                          name: "update_case_decision") do
+                          name: "update_decass_record") do
       update(attrs)
     end
   end

@@ -69,11 +69,11 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
                                   service: :vacols,
                                   name: "appeals_ready_for_hearing") do
-      # An appeal is ready for hearing if form 9 has been submitted,
-      # with no decision date OR with dispositions: "3" Remanded and "L" Manlincon remands
+      # An appeal is ready for hearing if form 9 has been submitted, and
+      # there is no decision date OR the appeal is in remand status
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
-        .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
+        .where("bfddec is NULL or bfmpro = 'REM'")
         .includes(:folder, :correspondent)
     end
 
@@ -429,6 +429,7 @@ class AppealRepository
                           service: :vacols,
                           name: "active_cases_for_user") do
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
+      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)

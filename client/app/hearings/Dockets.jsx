@@ -38,11 +38,11 @@ export class Dockets extends React.Component {
 
   linkToDailyDocket = (docket) => {
     if (docket.master_record) {
-      return moment(docket.date).format('ddd MM/DD/YYYY');
+      return moment(docket.date).format('ddd M/DD/YYYY');
     }
 
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-      {moment(docket.date).format('ddd MM/DD/YYYY')}
+      {moment(docket.date).format('ddd M/DD/YYYY')}
     </Link>;
   }
 
