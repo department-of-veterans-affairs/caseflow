@@ -12,19 +12,6 @@ class VACOLS::Decass < VACOLS::Record
   }.freeze
 
   # :nocov:
-  class << self
-    def find_by_vacols_id_and_css_id(vacols_id, css_id)
-      css_id = connection.quote(css_id.upcase)
-
-      where(defolder: vacols_id)
-        .where(decomp: nil)
-        .where("staff.sdomainid = #{css_id}")
-        .joins("join brieff on brieff.bfkey = decass.defolder")
-        .joins("join staff on brieff.bfcurloc = staff.slogid")
-        .first
-    end
-  end
-
   def update_decass_record!(decision_info)
     attrs = decision_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_decass_record! #{defolder}",
