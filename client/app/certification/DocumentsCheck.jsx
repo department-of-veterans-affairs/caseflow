@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DocumentsMatchingBox from './DocumentsMatchingBox';
-import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
-import DocumentsCheckTable from './DocumentsCheckTable';
+import DocumentsMatchingBox from './components/DocumentsMatchingBox';
+import DocumentsNotMatchingBox from './components/DocumentsNotMatchingBox';
+import DocumentsCheckTable from './components/DocumentsCheckTable';
 import NotReady from './NotReady';
-import AlreadyCertified from './AlreadyCertified';
+import AlreadyCertified from './components/AlreadyCertified';
 import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
