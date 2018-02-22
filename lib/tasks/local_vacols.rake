@@ -67,18 +67,20 @@ namespace :local_vacols do
 
   desc "Seeds local VACOLS"
   task seed: :environment do
-    read_csv(VACOLS::Case)
-    read_csv(VACOLS::Folder)
-    read_csv(VACOLS::Representative)
-    read_csv(VACOLS::Correspondent)
-    read_csv(VACOLS::CaseIssue)
-    read_csv(VACOLS::Note)
-    read_csv(VACOLS::CaseHearing)
-    read_csv(VACOLS::Decass)
-    read_csv(VACOLS::Staff)
-    read_csv(VACOLS::Vftypes)
-    read_csv(VACOLS::Issref)
-    read_csv(VACOLS::TravelBoardSchedule)
+    date_shift = Time.now.utc - Time.utc(2017, 5, 1)
+
+    read_csv(VACOLS::Case, date_shift)
+    read_csv(VACOLS::Folder, date_shift)
+    read_csv(VACOLS::Representative, date_shift)
+    read_csv(VACOLS::Correspondent, date_shift)
+    read_csv(VACOLS::CaseIssue, date_shift)
+    read_csv(VACOLS::Note, date_shift)
+    read_csv(VACOLS::CaseHearing, date_shift)
+    read_csv(VACOLS::Decass, date_shift)
+    read_csv(VACOLS::Staff, date_shift)
+    read_csv(VACOLS::Vftypes, date_shift)
+    read_csv(VACOLS::Issref, date_shift)
+    read_csv(VACOLS::TravelBoardSchedule, date_shift)
   end
 
   # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -88,17 +90,26 @@ namespace :local_vacols do
     puts "Do not check in the result of running this without talking with Chris. We need to certify that there " \
       "is no PII in the results."
 
-    Time.utc(2017, 5, 1)
+    case_descriptors = []
+    CSV.foreach(Rails.root.join("vacols", "cases.csv"), headers: true) do |row|
+      case_descriptors << row.to_h
+    end
 
-    reader_vbms_ids = %w[static_documents no_categories random_documents redacted_documents]
-    dispatch_vbms_ids = %w[establish_claim establish_claim_multiple]
+    ids = case_descriptors.map do |c|
+      c["vacols_id"]
+    end
 
-    cases = cases_with_joins.offset(3_000_000).limit(10) +
-            vbms_record_from_case(cases_with_joins.where(bfcurloc: "ZZHU"), reader_vbms_ids) +
-            vbms_record_from_case(cases_with_joins.where(bfcurloc: "NKROES"), reader_vbms_ids) +
-            vbms_record_from_case(VACOLS::Case.remands_ready_for_claims_establishment.limit(10), dispatch_vbms_ids) +
-            vbms_record_from_case(VACOLS::Case.amc_full_grants(outcoded_after: Time.utc(2017, 5, 1)).limit(10), dispatch_vbms_ids) +
-            cases_with_joins.where(bfcorlid: "231745657S")
+    cases = VACOLS::Case.includes(
+      :folder,
+      :representative,
+      :correspondent,
+      :case_issues,
+      :notes,
+      :case_hearings,
+      :decass
+    ).find(ids)
+
+    vbms_record_from_case(cases, case_descriptors)
 
     write_csv(VACOLS::Case, cases)
     write_csv(VACOLS::Folder, cases.map(&:folder))
@@ -123,40 +134,31 @@ namespace :local_vacols do
 
   private
 
-  def vbms_record_from_case(cases, documents)
-    if !@vbms_record_started
-      CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "wb") do |csv|
-        csv << %w[vbms_id documents]
-      end
-      @vbms_record_started = true
-    end
-    CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "a") do |csv|
+  def vbms_record_from_case(cases, case_descriptors)
+    CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "wb") do |csv|
+      csv << %w[vbms_id documents]
       cases.each_with_index do |c, i|
-        csv << [c.bfcorlid, documents[i % documents.length]]
+        csv << [c.bfcorlid, case_descriptors[i]["vbms_id"]]
       end
     end
-    cases
   end
 
-  def cases_with_joins
-    VACOLS::Case.includes(
-      :folder,
-      :representative,
-      :correspondent,
-      :case_issues,
-      :notes,
-      :case_hearings,
-      :decass
-    )
-  end
-
-  def read_csv(klass)
+  def read_csv(klass, date_shift)
     items = []
     klass.delete_all
     CSV.foreach(Rails.root.join("vacols", klass.name + "_dump.csv"), headers: true) do |row|
       h = row.to_h
       items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
     end
+    klass.columns_hash.each do |k, v|
+      next if v.type != :datetime
+
+      items.map! do |item|
+        item[k] = item[k] + date_shift if item[k]
+        item
+      end
+    end
+
     klass.import(items)
   end
 

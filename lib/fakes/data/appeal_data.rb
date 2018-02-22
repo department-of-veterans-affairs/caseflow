@@ -1,13 +1,5 @@
 # rubocop:disable Metrics/ModuleLength
 module Fakes::Data::AppealData
-  def self.freeze_time
-    Timecop.travel(Time.utc(2017, 5, 1))
-    return_value = yield
-    Timecop.return
-
-    return_value
-  end
-
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.default_vacols_ids
@@ -95,19 +87,15 @@ module Fakes::Data::AppealData
   end
 
   def self.establish_claim_documents
-    freeze_time do
-      certification_documents + [
-        Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago, category_other: true)
-      ]
-    end
+    certification_documents + [
+      Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago, category_other: true)
+    ]
   end
 
   def self.establish_claim_multiple_decisions
-    freeze_time do
-      establish_claim_documents + [
-        Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago)
-      ]
-    end
+    establish_claim_documents + [
+      Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago)
+    ]
   end
 
   def self.document_mapping
