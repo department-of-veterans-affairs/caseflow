@@ -9,7 +9,7 @@ RSpec.feature "Dropdown" do
 
     visit "certifications/new/#{appeal.vacols_id}"
     click_on "DSUSER (DSUSER)"
-    expect(page).to have_content("Sign out")
+    expect(page).to have_content("Sign Out")
 
     visit "dispatch/establish-claim"
     click_on "Menu"

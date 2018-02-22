@@ -4,7 +4,8 @@ class Fakes::Initializer
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-
+      Judge.repository = Fakes::JudgeRepository
+      AttorneyCaseReview.repository = Fakes::QueueRepository
       if !rails_env.local_vacols?
         User.appeal_repository = Fakes::AppealRepository
         WorkQueue.repository = Fakes::QueueRepository

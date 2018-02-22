@@ -81,19 +81,23 @@ class WorksheetHeader extends React.PureComponent {
           <div>Veteran Name:</div>
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
+
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
           <div>
-
-            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
-              <button
-                name="Copy Veteran ID"
-                className={['usa-button-outline cf-copy-to-clipboard']}>
-                {worksheet.sanitized_vbms_id}
-                <ClipboardIcon />
-              </button>
-            </CopyToClipboard>
-
+            {!this.props.print &&
+              <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+                <button
+                  name="Copy Veteran ID"
+                  className={['usa-button-outline cf-copy-to-clipboard']}>
+                  {worksheet.sanitized_vbms_id}
+                  <ClipboardIcon />
+                </button>
+              </CopyToClipboard>
+            }
+            {this.props.print &&
+              <div><b>{worksheet.sanitized_vbms_id}</b></div>
+            }
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">

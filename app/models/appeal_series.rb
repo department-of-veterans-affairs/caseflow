@@ -1,6 +1,16 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
+  # TODO: Replace these hardcoded values with dynamic data
+  SOC_TIMELINESS           = [13, 30].freeze # 75%tile = 24
+  SSOC_TIMELINESS          = [7, 20].freeze  # 75%tile = 15
+  CERTIFICATION_TIMELINESS = [2, 12].freeze  # 75%tile = 7
+  DECISION_TIMELINESS      = [1, 2].freeze   # 75%tile = 1
+  REMAND_TIMELINESS        = [7, 17].freeze  # 75%tile = 13
+  REMAND_SSOC_TIMELINESS   = [3, 10].freeze  # 75%tile = 7
+  RETURN_TIMELINESS        = [1, 2].freeze   # 75%tile = 1
+
   delegate :vacols_id,
            :active?,
            :type_code,
@@ -73,6 +83,29 @@ class AppealSeries < ActiveRecord::Base
     @issues ||= AppealSeriesIssues.new(appeal_series: self).all
   end
 
+  # rubocop:disable CyclomaticComplexity
+  def description
+    ordered_issues = latest_appeal.issues.sort do |a, b|
+      dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
+
+      next dc_comparison unless dc_comparison == 0
+
+      a.vacols_sequence_id <=> b.vacols_sequence_id
+    end
+
+    return "VA needs to record issues" if ordered_issues.empty?
+
+    marquee_issue_description = ordered_issues.first.friendly_description_without_new_material
+
+    return marquee_issue_description if issues.length == 1
+
+    comma = (marquee_issue_description.count(",") > 0) ? "," : ""
+    issue_count = issues.count - 1
+
+    "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
+  end
+  # rubocop:enable CyclomaticComplexity
+
   private
 
   def fetch_latest_appeal
@@ -91,6 +124,19 @@ class AppealSeries < ActiveRecord::Base
   def fetch_docket
     return unless %w[original post_remand].include?(type_code) && form9_date && !aod
     DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
+  end
+
+  def last_soc_date
+    events.select { |event| [:soc, :ssoc].include? event.type }.last.date.to_date
+  end
+
+  def issues_for_last_decision
+    latest_appeal.issues.select { |issue| [:allowed, :remanded, :denied].include? issue.disposition }.map do |issue|
+      {
+        description: issue.friendly_description,
+        disposition: issue.disposition
+      }
+    end
   end
 
   # rubocop:disable CyclomaticComplexity
@@ -173,13 +219,48 @@ class AppealSeries < ActiveRecord::Base
     :remand
   end
 
+  # rubocop:disable MethodLength
   def details_for_status
     case status
+    when :scheduled_hearing
+      hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
+
+      {
+        date: hearing.date.to_date,
+        type: hearing.type,
+        location: hearing.location
+      }
+    when :pending_hearing_scheduling
+      { type: latest_appeal.sanitized_hearing_request_type }
+    when :pending_form9, :pending_certification, :pending_certification_ssoc
+      {
+        last_soc_date: last_soc_date,
+        certification_timeliness: CERTIFICATION_TIMELINESS.dup,
+        ssoc_timeliness: SSOC_TIMELINESS.dup
+      }
+    when :pending_soc
+      { soc_timeliness: SOC_TIMELINESS.dup }
+    when :at_vso
+      { vso_name: representative }
     when :decision_in_progress
-      { test: "Hello World" }
+      { decision_timeliness: DECISION_TIMELINESS.dup }
+    when :remand
+      {
+        issues: issues_for_last_decision,
+        remand_timeliness: REMAND_TIMELINESS.dup
+      }
+    when :remand_ssoc
+      {
+        last_soc_date: last_soc_date,
+        return_timeliness: RETURN_TIMELINESS.dup,
+        remand_ssoc_timeliness: REMAND_SSOC_TIMELINESS.dup
+      }
+    when :bva_decision
+      { issues: issues_for_last_decision }
     else
       {}
     end
   end
+  # rubocop:enable MethodLength
   # rubocop:enable CyclomaticComplexity
 end
