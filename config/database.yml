@@ -31,6 +31,10 @@ ssh_forwarding:
   <<: *default
   database: caseflow_certification_ssh_forwarding
 
+local_vacols:
+  <<: *default
+  database: caseflow_certification_local_vacols
+
 staging:
   <<: *default
   database: caseflow_certification_staging
@@ -41,14 +45,14 @@ production:
   url: <%= ENV["POSTGRES_URL"] %>
 
 # For connecting to the VACOLS Databases
-# development_vacols:
-#   adapter: sqlite3
-#   pool: 5
-#   timeout: 5000
-#   database: db/development-vacols.sqlite3
+development_vacols:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/development-vacols.sqlite3
 
 # Docker setup
-development_vacols:
+local_vacols_vacols:
  adapter: oracle_enhanced
  host: localhost
  port: 1521
