@@ -40,6 +40,7 @@ class QueueApp extends React.PureComponent {
     <CaseSelectSearch
       navigateToPath={(path) => {
         const redirectUrl = encodeURIComponent(window.location.pathname);
+
         location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
       }}
       alwaysShowCaseSelectionModal
