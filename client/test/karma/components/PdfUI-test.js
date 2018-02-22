@@ -85,10 +85,10 @@ describe('PdfUI', () => {
     context('.zoom', () => {
       it('sets the zoom state', () => {
         let delta = 0.5;
-        let currentZoom = wrapper.state('scale');
+        let currentZoom = wrapper.props('scale');
 
         wrapper.instance().zoom(delta)();
-        expect(wrapper.state('scale')).to.equal(currentZoom + delta);
+        expect(wrapper.props('scale')).to.equal(currentZoom + delta);
       });
     });
 
@@ -100,20 +100,20 @@ describe('PdfUI', () => {
       context('zoomIn', () => {
         it('updates the scale by .3', () => {
           let delta = 0.3;
-          let currentZoom = wrapper.state('scale');
+          let currentZoom = wrapper.props('scale');
 
           wrapper.find({ name: 'zoomIn' }).simulate('click');
-          expect(wrapper.state('scale')).to.equal(currentZoom + delta);
+          expect(wrapper.props('scale')).to.equal(currentZoom + delta);
         });
       });
 
       context('zoomOut', () => {
         it('updates the scale by -.3', () => {
           let delta = -0.3;
-          let currentZoom = wrapper.state('scale');
+          let currentZoom = wrapper.props('scale');
 
           wrapper.find({ name: 'zoomOut' }).simulate('click');
-          expect(wrapper.state('scale')).to.equal(currentZoom + delta);
+          expect(wrapper.props('scale')).to.equal(currentZoom + delta);
         });
       });
 
