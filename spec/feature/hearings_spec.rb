@@ -248,8 +248,8 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       link = find("#review-claims-folder")
       link_href = link[:href]
-      expect(page).to have_content("Review Claims Folder")
-      click_on "Review Claims Folder"
+      expect(page).to have_content("Review claims folder")
+      click_on "Review claims folder"
       new_window = windows.last
       page.within_window new_window do
         visit link_href
