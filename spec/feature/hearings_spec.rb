@@ -246,7 +246,7 @@ RSpec.feature "Hearings" do
 
     scenario "Can click from hearing worksheet to reader" do
       visit "/hearings/1/worksheet"
-      link = find("#review-efolder")
+      link = find("#review-claims-folder")
       link_href = link[:href]
       expect(page).to have_content("Review Claims Folder")
       click_on "Review Claims Folder"
