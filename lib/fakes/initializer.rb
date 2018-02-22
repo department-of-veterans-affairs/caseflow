@@ -1,6 +1,6 @@
 class Fakes::Initializer
   class << self
-    def load!
+    def load!(rails_env)
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
@@ -16,6 +16,8 @@ class Fakes::Initializer
     end
 
     # This method is called only 1 time during application bootup
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def app_init!(rails_env)
       if rails_env.ssh_forwarding? && !running_rake_command?
         User.authentication_service = Fakes::AuthenticationService
@@ -29,12 +31,14 @@ class Fakes::Initializer
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
         if running_rake_command?
-          load!
+          load!(rails_env)
         else
-          load_fakes_and_seed!
+          load_fakes_and_seed!(rails_env)
         end
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # This setup method is called on every request during development
     # to properly reload class attributes like the fake repositories and
@@ -45,8 +49,8 @@ class Fakes::Initializer
 
     private
 
-    def load_fakes_and_seed!(app_name: nil)
-      load!
+    def load_fakes_and_seed!(rails_env, app_name: nil)
+      load!(rails_env)
 
       User.authentication_service.vacols_regional_offices = {
         "DSUSER" => "DSUSER",
