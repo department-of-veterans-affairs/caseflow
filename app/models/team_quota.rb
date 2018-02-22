@@ -30,6 +30,8 @@ class TeamQuota < ActiveRecord::Base
     user_count - assigned_quotas.locked.count
   end
 
+  private
+
   def calculate_task_count_for(quota_index)
     task_count_per_user + ((remainder_task_count > quota_index) ? 1 : 0)
   end

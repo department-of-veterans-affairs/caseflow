@@ -6,6 +6,7 @@ class Judge
 
   def upcoming_dockets
     @upcoming_dockets ||= upcoming_hearings_grouped_by_date.transform_values do |hearings|
+
       HearingDocket.from_hearings(hearings)
     end
   end

@@ -3,12 +3,15 @@ class Fakes::Initializer
     def load!
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
-      # Hearing.repository = Fakes::HearingRepository
-      # HearingDocket.repository = Fakes::HearingRepository
-      # Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      # User.appeal_repository = Fakes::AppealRepository
-      # WorkQueue.repository = Fakes::QueueRepository
+
+      if !rails_env.local_vacols?
+        User.appeal_repository = Fakes::AppealRepository
+        WorkQueue.repository = Fakes::QueueRepository
+        Hearing.repository = Fakes::HearingRepository
+        HearingDocket.repository = Fakes::HearingRepository
+        Appeal.repository = Fakes::AppealRepository
+      end
     end
 
     # This method is called only 1 time during application bootup
@@ -22,7 +25,7 @@ class Fakes::Initializer
         Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.development? || rails_env.demo?
+      if rails_env.development? || rails_env.demo? || rails_env.local_vacols?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
