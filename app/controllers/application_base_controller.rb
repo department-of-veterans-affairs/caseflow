@@ -10,7 +10,16 @@ class ApplicationBaseController < ActionController::Base
   before_action :strict_transport_security
 
   def unauthorized
-    render status: 403
+    respond_to do |format|
+      format.html do
+        render layout: "application", status: 403
+      end
+      format.json do
+        render json: {
+          errors: ["Unauthorized"]
+        }, status: 403
+      end
+    end
   end
 
   private
