@@ -1,5 +1,5 @@
 import React from 'react';
-import StatusMessage from '../components/StatusMessage';
+import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
 
 const CancelCertificationConfirmation = () => {
   const summaryMessage = <span>The certification has been cancelled and changes you made
