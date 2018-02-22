@@ -140,7 +140,12 @@ export class PdfUI extends React.Component {
   fitToScreen = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
-    this.props.setZoomLevel(this.state.fitToScreenZoom);
+    // Toggle fit to screen property.
+    if (this.props.scale === this.state.fitToScreenZoom) {
+      this.props.setZoomLevel(1);
+    } else {
+      this.props.setZoomLevel(this.state.fitToScreenZoom);
+    }
   }
 
   onPageChange = (currentPage, fitToScreenZoom) => {
