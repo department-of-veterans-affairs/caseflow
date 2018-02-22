@@ -4,6 +4,7 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { PdfUI } from '../../../app/reader/PdfUI';
+import { setZoomLevel } from '../../../app/reader/PdfViewer/PdfViewerActions';
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
@@ -87,6 +88,7 @@ describe('PdfUI', () => {
         let delta = 0.5;
         let currentZoom = wrapper.props('scale');
 
+        wrapper.setProps({ setZoomLevel });
         wrapper.instance().zoom(delta)();
         expect(wrapper.props('scale')).to.equal(currentZoom + delta);
       });
@@ -102,6 +104,7 @@ describe('PdfUI', () => {
           let delta = 0.3;
           let currentZoom = wrapper.props('scale');
 
+          wrapper.setProps({ setZoomLevel });
           wrapper.find({ name: 'zoomIn' }).simulate('click');
           expect(wrapper.props('scale')).to.equal(currentZoom + delta);
         });
@@ -112,6 +115,7 @@ describe('PdfUI', () => {
           let delta = -0.3;
           let currentZoom = wrapper.props('scale');
 
+          wrapper.setProps({ setZoomLevel });
           wrapper.find({ name: 'zoomOut' }).simulate('click');
           expect(wrapper.props('scale')).to.equal(currentZoom + delta);
         });
