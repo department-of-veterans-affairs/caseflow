@@ -34,23 +34,17 @@ class QueueRepository
     appeals.map(&:save)
     appeals
   end
-  # :nocov:
 
-  # :nocov:
   # decass_hash = {
-  #  vacols_id: "123456",
-  #  attorney_css_id: "CASEFLOW_317",
+  #  task_id: "123456-2016-10-19",
   #  judge_css_id: "GRATR_316"
   #  work_product: "OMO - IME",
   #  overtime: true,
   #  document_id: "123456789.1234",
   #  note: "Require action"
   # }
-  # TODO: use decass uniq ID instead of vacols_id and attorney_css_id
   def self.reassign_case_to_judge(decass_hash)
-    decass_record = find_decass_record(decass_hash[:vacols_id], decass_hash[:attorney_css_id])
-    fail ReassignCaseToJudgeError unless decass_record
-
+    decass_record = find_decass_record(decass_hash[:task_id])
     ActiveRecord::Base.transaction do
       # update DECASS table
       update_decass_record(decass_record,
@@ -61,52 +55,50 @@ class QueueRepository
       true
     end
   end
-  # :nocov:
 
-  # :nocov:
-  def self.find_decass_record(vacols_id, css_id)
-    VACOLS::Decass.find_by_vacols_id_and_css_id(vacols_id, css_id)
+  def self.decass_by_vacols_id_and_date_assigned(vacols_id, date_assigned)
+    VACOLS::Decass.find_by(defolder: vacols_id, deassign: date_assigned)
   end
-  # :nocov:
 
-  # :nocov:
   def self.update_location(case_record, css_id)
     stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
     case_record.update_vacols_location!(stafkey)
   end
-  # :nocov:
 
-  # :nocov:
   def self.update_decass_record(decass_record, decass_hash)
     info = QueueMapper.case_decision_fields_to_vacols_codes(decass_hash)
     # Validate presence of the required fields after the mapper to ensure correctness
     VacolsHelper.validate_presence(info, [:work_product, :document_id, :reassigned_at])
     decass_record.update_decass_record!(info)
   end
-  # :nocov:
 
-  # :nocov:
   def self.tasks_query(css_id)
     records = VACOLS::CaseAssignment.tasks_for_user(css_id)
     filter_duplicate_tasks(records)
   end
+
+  def self.appeal_info_query(vacols_ids)
+    VACOLS::Case.includes(:folder, :correspondent, :representative)
+      .find(vacols_ids)
+  end
+
+  def self.aod_query(vacols_ids)
+    VACOLS::Case.aod(vacols_ids)
+  end
   # :nocov:
+
+  def self.find_decass_record(task_id)
+    # Task ID is a concatantion of the vacols ID and the date assigned
+    result = task_id.split("-", 2)
+    fail ReassignCaseToJudgeError if result.size != 2
+    record = decass_by_vacols_id_and_date_assigned(result.first, result.second.to_date)
+    # TODO: check permission that the user can update the record
+    fail ReassignCaseToJudgeError unless record
+    record
+  end
 
   def self.filter_duplicate_tasks(records)
     # Keep the latest assignment if there are duplicate records
     records.group_by(&:vacols_id).each_with_object([]) { |(_k, v), result| result << v.sort_by(&:date_assigned).last }
   end
-
-  # :nocov:
-  def self.appeal_info_query(vacols_ids)
-    VACOLS::Case.includes(:folder, :correspondent, :representative)
-      .find(vacols_ids)
-  end
-  # :nocov:
-
-  # :nocov:
-  def self.aod_query(vacols_ids)
-    VACOLS::Case.aod(vacols_ids)
-  end
-  # :nocov:
 end
