@@ -76,36 +76,12 @@ module Fakes::Data::AppealData
     end
   end
 
-  def self.certification_documents
-    [
-      Generators::Document.build(type: "NOD", category_procedural: true),
-      Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9", category_medical: true),
-      Generators::Document.build(type: "SSOC"),
-      Generators::Document.build(type: "SSOC", received_at: 10.days.ago)
-    ]
-  end
-
-  def self.establish_claim_documents
-    certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago, category_other: true)
-    ]
-  end
-
-  def self.establish_claim_multiple_decisions
-    establish_claim_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 2.days.ago)
-    ]
-  end
-
   def self.document_mapping
     {
       "static_documents" => static_reader_documents,
       "no_categories" => reader_docs_no_categories,
       "random_documents" => random_reader_documents(1000),
-      "redacted_documents" => redacted_reader_documents,
-      "establish_claim" => establish_claim_documents,
-      "establish_claim_multiple" => establish_claim_multiple_decisions
+      "redacted_documents" => redacted_reader_documents
     }
   end
 

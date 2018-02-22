@@ -16,8 +16,6 @@ class Fakes::Initializer
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
-      # Timecop.travel(Time.utc(2017, 5, 1)) if Rails.env.development?
-          
       if rails_env.ssh_forwarding? && !running_rake_command?
         User.authentication_service = Fakes::AuthenticationService
         # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
