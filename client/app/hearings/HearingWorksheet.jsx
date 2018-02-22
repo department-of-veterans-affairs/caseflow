@@ -80,7 +80,6 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
-    let readerLink = getReaderLink(worksheet.appeal_vacols_id);
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
