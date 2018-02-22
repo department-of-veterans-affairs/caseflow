@@ -448,6 +448,32 @@ $color-hearings-saving: $color-gray;
   }
 }
 
+.cf-pdf-foot {
+  position: absolute;
+  opacity: 1;
+  bottom: 0;
+  padding: 0 20px;
+  color: #323a45;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  font-size: 11px;
+  //
+  // button {
+  //   display: flex;
+  //
+  //   $button-label-spacing: 10px;
+  //
+  //   .left-button-label {
+  //     margin-left: $button-label-spacing;
+  //   }
+  //
+  //   .right-button-label {
+  //     margin-right: $button-label-spacing;
+  //   }
+  }
+
+
 .hearings-add-issue {
   margin-bottom: 20px;
 }

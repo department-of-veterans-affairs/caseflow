@@ -171,6 +171,11 @@ export class HearingWorksheet extends React.PureComponent {
             Review Claims Folder</Link>
       </div>
       }
+      <div>
+      {this.props.print &&
+       <div className="cf-pdf-foot cf-push-right">{worksheet.veteran_fi_last_formatted}</div>
+      }
+      </div>
     </div>;
   }
 }
