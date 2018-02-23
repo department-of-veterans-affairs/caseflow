@@ -5,6 +5,7 @@
 	  buttonText: start_text,
 	  userQuota: user_quota && user_quota.to_hash,
 	  currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
+	  userDisplayName: current_user.display_name,
 	  dropdownUrls: dropdown_urls,
       feedbackUrl: feedback_url,
       buildDate: build_date

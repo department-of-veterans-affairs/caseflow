@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
-
+import NavigationBar from '../../components/NavigationBar';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import AppFrame from '../../components/AppFrame';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
@@ -74,6 +75,15 @@ export default class CaseWorkerIndex extends BaseForm {
 
     return <BrowserRouter>
       <React.Fragment>
+        <NavigationBar
+          dropdownUrls={this.props.dropdownUrls}
+          appName="Establish Claim"
+          userDisplayName="Menu"
+          defaultUrl="/dispatch/establish-claim/"
+          logoProps={{
+            accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+            overlapColor: LOGO_COLORS.DISPATCH.OVERLAP
+          }} />
 
         <AppFrame>
           <div className="cf-app-segment cf-app-segment--alt">
