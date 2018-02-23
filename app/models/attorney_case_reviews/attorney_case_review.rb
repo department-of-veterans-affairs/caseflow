@@ -20,7 +20,7 @@ class AttorneyCaseReview < ActiveRecord::Base
         return unless record.valid?
 
         begin
-          repository.reassign_case_to_judge(params)
+          repository.reassign_case_to_judge(params.merge(judge_css_id: record.reviewing_judge.css_id))
         rescue *EXCEPTIONS
           raise ActiveRecord::Rollback
         end
