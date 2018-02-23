@@ -40,7 +40,8 @@ describe AttorneyCaseReview do
           work_product: "OMO - IME",
           document_id: "123456789.1234",
           overtime: true,
-          note: "something").and_return(true)
+          note: "something"
+        ).and_return(true)
       end
 
       let(:params) do
