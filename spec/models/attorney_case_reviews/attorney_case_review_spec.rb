@@ -34,8 +34,13 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present and Vacols update is successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).with(params.merge(judge_css_id: judge.css_id))
-          .and_return(true)
+        allow(QueueRepository).to receive(:reassign_case_to_judge).with(
+          task_id: "123456-2013-12-06",
+          judge_css_id: judge.css_id,
+          work_product: "OMO - IME",
+          document_id: "123456789.1234",
+          overtime: true,
+          note: "something").and_return(true)
       end
 
       let(:params) do
