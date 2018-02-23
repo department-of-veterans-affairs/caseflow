@@ -136,6 +136,10 @@ export class HearingWorksheet extends React.PureComponent {
       'cf-app-segment--alt': !this.props.print
     });
 
+    const printWrapperClassNames = classNames('cf-hearings-worksheet', {
+      'cf-app-segment--alt cf_hearing_body': this.props.print
+    });
+
     return <div>
       {!this.props.print &&
         <div>
@@ -151,13 +155,22 @@ export class HearingWorksheet extends React.PureComponent {
           />
         </div>
       }
+      {!this.props.print &&
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
         {secondWorksheetPage}
       </div>
+    }
+    {this.props.print &&
+    <div className={printWrapperClassNames}>
+      {firstWorksheetPage}
+      <PrintPageBreak />
+      {secondWorksheetPage}
+    </div>
+     }
       {!this.props.print &&
-      <div className="cf-push-right">
+        <div className="cf-push-right">
         <Link
           onClick={this.openPdf(worksheet, worksheetIssues)}
           button="secondary">
@@ -171,11 +184,11 @@ export class HearingWorksheet extends React.PureComponent {
             Review Claims Folder</Link>
       </div>
       }
-      <div>
       {this.props.print &&
-       <div className="cf-pdf-foot cf-push-right">{worksheet.veteran_fi_last_formatted}</div>
+       <div className="cf-pdf-foot">
+       {worksheet.veteran_fi_last_formatted}
+       </div>
       }
-      </div>
     </div>;
   }
 }
