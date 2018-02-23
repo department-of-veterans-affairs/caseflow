@@ -28,6 +28,7 @@ export const initialState = {
   pdfSideBarError: initialPdfSidebarErrorState,
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
+  scale: 1,
   windowingOverscan: _.random(5, 10)
 };
 
@@ -136,6 +137,10 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
+    });
+  case Constants.SET_ZOOM_LEVEL:
+    return update(state, {
+      scale: { $set: action.payload.scale }
     });
 
   // errors
