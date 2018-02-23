@@ -67,7 +67,7 @@ class QueueApp extends React.PureComponent {
     return <QueueLoadingScreen {...this.props}>
       <Breadcrumbs
         getBreadcrumbLabel={(route) => route.breadcrumb}
-        caretBeforeAllCrumbs={false}
+        shouldDrawCaretBeforeFirstCrumb={false}
         styling={breadcrumbStyling}
         elements={crumbs} />
       <QueueDetailView
@@ -108,7 +108,7 @@ class QueueApp extends React.PureComponent {
     return <React.Fragment>
       <Breadcrumbs
         getBreadcrumbLabel={(route) => route.breadcrumb}
-        caretBeforeAllCrumbs={false}
+        shouldDrawCaretBeforeFirstCrumb={false}
         styling={breadcrumbStyling}
         elements={crumbs} />
       <SubmitDecisionView vacolsId={vacolsId} />
