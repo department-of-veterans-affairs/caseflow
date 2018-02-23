@@ -18,7 +18,6 @@ class AttorneyCaseReview < ActiveRecord::Base
         # Save to the Caseflow DB first to ensure required fields are present
         record = create(params)
         return unless record.valid?
-
         begin
           repository.reassign_case_to_judge(
             task_id: record.task_id,
@@ -28,9 +27,13 @@ class AttorneyCaseReview < ActiveRecord::Base
             overtime: record.overtime,
             note: record.note
           )
-        rescue *EXCEPTIONS
+        # :nocov:
+        rescue *EXCEPTIONS => e
+          Raven.capture_exception(e)
+          Rails.logger.warn(e)
           raise ActiveRecord::Rollback
         end
+        # :nocov:
         record
       end
     end
