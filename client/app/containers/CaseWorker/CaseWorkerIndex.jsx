@@ -78,7 +78,7 @@ export default class CaseWorkerIndex extends BaseForm {
         <NavigationBar
           dropdownUrls={this.props.dropdownUrls}
           appName="Establish Claim"
-          userDisplayName="Menu"
+          userDisplayName={this.props.userDisplayName}
           defaultUrl="/dispatch/establish-claim/"
           logoProps={{
             accentColor: LOGO_COLORS.DISPATCH.ACCENT,

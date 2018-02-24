@@ -1,13 +1,13 @@
 <% content_for :full_page_content do %>
 	<%= react_component("CaseWorker", props: {
-	  page: "CaseWorkerIndex",
-	  availableTasks: tasks.any_assignable_to?(current_user),
-	  buttonText: start_text,
-	  userQuota: user_quota && user_quota.to_hash,
-	  currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
-	  userDisplayName: current_user.display_name,
-	  dropdownUrls: dropdown_urls,
-      feedbackUrl: feedback_url,
-      buildDate: build_date
+	page: "CaseWorkerIndex",
+	availableTasks: tasks.any_assignable_to?(current_user),
+	userDisplayName: current_user.display_name,
+	dropdownUrls: dropdown_urls,
+	feedbackUrl: feedback_url,
+	buildDate: build_date,
+	buttonText: start_text,
+	userQuota: user_quota && user_quota.to_hash,
+	currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash)
 	}) %>
 <% end %>
