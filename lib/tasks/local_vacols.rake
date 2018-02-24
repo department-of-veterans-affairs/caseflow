@@ -67,7 +67,7 @@ namespace :local_vacols do
 
   desc "Seeds local VACOLS"
   task seed: :environment do
-    date_shift = Time.now.utc - Time.utc(2017, 5, 1)
+    date_shift = Time.now.utc - Time.utc(2017, 11, 1)
 
     read_csv(VACOLS::Case, date_shift)
     read_csv(VACOLS::Folder, date_shift)
@@ -122,7 +122,7 @@ namespace :local_vacols do
 
     staff = VACOLS::Staff.all.map do |s|
       s[:sdomainid] = "READER" if s[:stafkey] == "ZZHU"
-      s[:sdomainid] = "HEARING PREP" if s[:stafkey] == "NKROES"
+      s[:sdomainid] = "HEARING PREP" if s[:stafkey] == "PSORISIO"
       s
     end
     write_csv(VACOLS::Staff, staff)
@@ -166,7 +166,7 @@ namespace :local_vacols do
     CSV.open(Rails.root.join("vacols", klass.name + "_dump.csv"), "wb") do |csv|
       names = klass.attribute_names
       csv << names
-      rows.flatten.uniq.each do |row|
+      rows.flatten.each do |row|
         next if row.nil?
         attributes = row.attributes.select { |k, _v| names.include?(k) }
         csv << attributes.values
