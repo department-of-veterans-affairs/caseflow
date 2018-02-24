@@ -1,6 +1,6 @@
 class Fakes::Initializer
   class << self
-    def load!(rails_env)
+    def load!(rails_env: nil)
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
@@ -31,9 +31,9 @@ class Fakes::Initializer
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
         if running_rake_command?
-          load!(rails_env)
+          load!(rails_env: rails_env)
         else
-          load_fakes_and_seed!(rails_env)
+          load_fakes_and_seed!(rails_env: rails_env)
         end
       end
     end
@@ -49,8 +49,8 @@ class Fakes::Initializer
 
     private
 
-    def load_fakes_and_seed!(rails_env, app_name: nil)
-      load!(rails_env)
+    def load_fakes_and_seed!(rails_env:, app_name: nil)
+      load!(rails_env: rails_env)
 
       User.authentication_service.vacols_regional_offices = {
         "DSUSER" => "DSUSER",
