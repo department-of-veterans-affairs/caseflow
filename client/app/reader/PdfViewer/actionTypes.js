@@ -8,6 +8,7 @@ export const HIDE_SEARCH_BAR = 'HIDE_SEARCH_BAR';
 export const JUMP_TO_PAGE = 'JUMP_TO_PAGE';
 export const RESET_JUMP_TO_PAGE = 'RESET_JUMP_TO_PAGE';
 export const RESET_PDF_SIDEBAR_ERRORS = 'RESET_PDF_SIDEBAR_ERRORS';
+export const SET_ZOOM_LEVEL = 'SET_ZOOM_LEVEL';
 
 // errors
 export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';

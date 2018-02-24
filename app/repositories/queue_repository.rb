@@ -61,8 +61,10 @@ class QueueRepository
   end
 
   def self.update_location(case_record, css_id)
-    stafkey = VACOLS::Staff.find_by(sdomainid: css_id)
-    case_record.update_vacols_location!(stafkey)
+    fail ReassignCaseToJudgeError unless css_id
+    staff = VACOLS::Staff.find_by(sdomainid: css_id)
+    fail ReassignCaseToJudgeError unless staff
+    case_record.update_vacols_location!(staff.stafkey)
   end
 
   def self.update_decass_record(decass_record, decass_hash)
