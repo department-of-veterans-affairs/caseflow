@@ -1,13 +1,47 @@
 describe AttorneyCaseReview do
+  let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
+  let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
+
+  context ".create" do
+    subject { AttorneyCaseReview.create(params) }
+    context "should validate format of the task ID" do
+      let(:params) do
+        {
+          type: "OMORequest",
+          reviewing_judge: judge,
+          work_product: "OMO - IME",
+          document_id: "123456789.1234",
+          overtime: true,
+          note: "something",
+          task_id: task_id,
+          attorney: attorney
+        }
+      end
+      context "when correct format" do
+        let(:task_id) { "123456-2013-12-06" }
+        it { is_expected.to be_valid }
+      end
+
+      context "when incorrect format" do
+        let(:task_id) { "123456-2013/12/06" }
+        it { is_expected.to_not be_valid }
+      end
+    end
+  end
+
   context ".complete!" do
     subject { AttorneyCaseReview.complete!(params) }
 
-    let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
-    let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
-
     context "when all parameters are present and Vacols update is successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_return(true)
+        allow(QueueRepository).to receive(:reassign_case_to_judge).with(
+          task_id: "123456-2013-12-06",
+          judge_css_id: judge.css_id,
+          work_product: "OMO - IME",
+          document_id: "123456789.1234",
+          overtime: true,
+          note: "something"
+        ).and_return(true)
       end
 
       let(:params) do
@@ -18,7 +52,7 @@ describe AttorneyCaseReview do
           document_id: "123456789.1234",
           overtime: true,
           note: "something",
-          vacols_id: "123456",
+          task_id: "123456-2013-12-06",
           attorney: attorney
         }
       end
@@ -46,7 +80,7 @@ describe AttorneyCaseReview do
           document_id: "123456789.1234",
           overtime: true,
           note: "something",
-          vacols_id: "123456",
+          task_id: "123456-2013-12-06",
           attorney: attorney
         }
       end
@@ -69,7 +103,7 @@ describe AttorneyCaseReview do
           document_id: "123456789.1234",
           overtime: true,
           note: "something",
-          vacols_id: "123456",
+          task_id: "123456-2013-12-06",
           attorney: attorney
         }
       end

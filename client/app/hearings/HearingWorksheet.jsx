@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
-import { getReaderLink } from './util/index';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 
 // TODO Move all stream related to streams container
@@ -80,7 +79,6 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
-    let readerLink = getReaderLink(worksheet.appeal_vacols_id);
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
@@ -176,12 +174,6 @@ export class HearingWorksheet extends React.PureComponent {
           button="secondary">
           Save as PDF
         </Link>
-        <Link
-          name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
-          button="primary"
-          target="_blank">
-            Review Claims Folder</Link>
       </div>
       }
       {this.props.print &&

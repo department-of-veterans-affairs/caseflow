@@ -43,8 +43,8 @@ class VACOLS::Case < VACOLS::Record
     "P" => "RAMP Opt-in",
     "Q" => "Recon Motion Withdrawn",
     "R" => "Reconsideration by Letter",
-    "S" => "Unknown (S)",
-    "U" => "Unknown (U)",
+    "S" => "Stay",
+    "U" => "Motion to Vacate Denied",
     "V" => "Motion to Vacate Withdrawn",
     "W" => "Withdrawn from Remand",
     "X" => "Remand Failure to Respond"
