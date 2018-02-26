@@ -41,7 +41,11 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
-      navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
+      navigateToPath={(path) => {
+        const redirectUrl = encodeURIComponent(window.location.pathname);
+
+        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
+      }}
       alwaysShowCaseSelectionModal
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
