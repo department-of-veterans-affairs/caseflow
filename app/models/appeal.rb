@@ -549,6 +549,7 @@ class Appeal < ActiveRecord::Base
   def create_new_document!(document, ids)
     document.save!
 
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
     previous_documents = Document.where(series_id: document.series_id).order(:id)
       .where.not(vbms_document_id: ids)
 

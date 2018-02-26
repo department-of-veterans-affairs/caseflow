@@ -489,7 +489,7 @@ describe Appeal do
             ]
           end
 
-          it "Copies metadata from the most recently saved document not returned by the API" do
+          it "copies metadata from the most recently saved document not returned by the API" do
             appeal.find_or_create_documents_v2!
 
             expect(Document.third.annotations.first.comment).to eq(older_comment)
@@ -497,7 +497,7 @@ describe Appeal do
         end
       end
 
-      context "when returned docs contain existing doc" do
+      context "when API returns doc that is already saved" do
         let!(:saved_documents) do
           Generators::Document.create(
             type: "Form 9",
@@ -520,7 +520,7 @@ describe Appeal do
 
     context "when there is a document with no series_id" do
       let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-      let!(:saved_documents) do
+      let!(:saved_document) do
         Generators::Document.create(
           type: "Form 9",
           vbms_document_id: vbms_document_id,
@@ -561,7 +561,7 @@ describe Appeal do
 
       it "adds series_id and updates retrieved documents" do
         expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_documents.type)
+        expect(Document.first.type).to eq(saved_document.type)
         expect(Document.first.series_id).to eq(nil)
 
         returned_documents = appeal.find_or_create_documents_v2!
@@ -626,54 +626,6 @@ describe Appeal do
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq("NOD")
-      end
-    end
-  end
-
-  context "#create_new_document!" do
-    before do
-      FeatureToggle.enable!(:efolder_docs_api)
-      RequestStore.store[:application] = "reader"
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_docs_api)
-    end
-    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-    let(:series_id) { "TEST_SERIES_ID" }
-    let(:comment) { "TEST_COMMENT" }
-    let(:old_document) do
-      Generators::Document.create(
-        type: "SSOC",
-        series_id: series_id
-      )
-    end
-    let!(:existing_annotations) do
-      [
-        Generators::Annotation.create(
-          comment: comment,
-          x: 1,
-          y: 2,
-          document_id: old_document.id
-        )
-      ]
-    end
-    
-    let(:document) do
-      Generators::Document.build(
-        type: "NOD",
-        vbms_document_id: vbms_document_id,
-        series_id: series_id
-      )
-    end
-
-    context "when there is an existing document with the same series_id" do
-
-      it "copies comments to new document" do
-        returned_document = appeal.create_new_document!(document, [document.vbms_document_id])
-        expect(returned_document.annotations[0].comment).to eq(comment)
-
-        expect(old_document.annotations[0].comment).to eq(comment)
       end
     end
   end
