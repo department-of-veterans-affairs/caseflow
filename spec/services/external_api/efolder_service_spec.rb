@@ -254,7 +254,7 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
         end
       end
 
@@ -477,7 +477,7 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
         end
       end
     end
@@ -499,7 +499,7 @@ describe ExternalApi::EfolderService do
         it "raises DocumentRetrievalError" do
           allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
           allow(HTTPI).to receive(:get).and_return(http_resp_400).once
-          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err, "400")
         end
       end
     end

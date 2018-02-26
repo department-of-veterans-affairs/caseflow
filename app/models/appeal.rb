@@ -127,7 +127,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def number_of_documents_url
-    if Rails.env.production? || Rails.env.staging?
+    if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
       "/queue/#{id}/docs"
@@ -578,7 +578,7 @@ class Appeal < ActiveRecord::Base
   def fetch_documents_from_service!
     return if @fetched_documents
 
-    doc_struct = EFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
+    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
     @fetched_documents = doc_struct[:documents]
     @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
@@ -588,6 +588,15 @@ class Appeal < ActiveRecord::Base
   def fetched_documents
     fetch_documents_from_service!
     @fetched_documents
+  end
+
+  def document_service
+    @document_service ||=
+      if %w[reader queue hearings].include?(RequestStore.store[:application])
+        EFolderService
+      else
+        VBMSService
+      end
   end
 
   # Used for serialization
