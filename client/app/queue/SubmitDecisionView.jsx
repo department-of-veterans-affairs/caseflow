@@ -47,8 +47,7 @@ class SubmitDecisionView extends React.PureComponent {
     super(props);
 
     this.state = {
-      selectingJudge: false,
-      judge: judges[0]
+      selectingJudge: false
     };
   }
 
@@ -71,14 +70,14 @@ class SubmitDecisionView extends React.PureComponent {
           name="Select a judge"
           placeholder="Select a judge&hellip;"
           options={judges}
-          onChange={(value) => this.setState({
-            selectingJudge: false,
-            judge: value
-          })}
+          onChange={(judge) => {
+            this.setState({ selectingJudge: false });
+            this.props.setDecisionOptions({ judge })
+          }}
           hideLabel />
       </React.Fragment> :
       <React.Fragment>
-        <span>{this.state.judge.label}</span>
+        <span>{(decisionOpts.judge || judges[0]).label}</span>
         <Button
           classNames={['cf-btn-link']}
           onClick={() => this.setState({ selectingJudge: true })}>
