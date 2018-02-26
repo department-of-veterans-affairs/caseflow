@@ -96,6 +96,7 @@ RSpec.feature "Queue" do
       click_on "Okay"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+      expect(page).to have_link("Back to Your Queue", href: "/queue")
     end
   end
 
