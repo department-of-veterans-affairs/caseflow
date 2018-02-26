@@ -75,7 +75,7 @@ class IntakeStats < Caseflow::Stats
 
     # Average days to respond to RAMP election notice
     average_election_response_time: lambda do |range|
-      elections = RampElection.completed.where(receipt_date: offset_range(range))
+      elections = RampElection.completed.where(receipt_date: offset_range(range)).where.not(notice_date: nil)
       response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
       average(response_times)
     end,
