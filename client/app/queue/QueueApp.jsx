@@ -55,6 +55,7 @@ class QueueApp extends React.PureComponent {
 
     if (!_.isEmpty(this.props.appeals)) {
       const { veteran_full_name } = this.props.appeals[vacolsId].attributes;
+
       crumbs.push({
         breadcrumb: 'Your Queue',
         path: '/'
