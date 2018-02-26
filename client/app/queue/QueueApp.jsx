@@ -13,6 +13,7 @@ import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Breadcrumbs from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Breadcrumbs';
+import DecisionViewFooter from './components/DecisionViewFooter';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -109,14 +110,21 @@ class QueueApp extends React.PureComponent {
       breadcrumb: 'Submit OMO',
       path: `/tasks/${vacolsId}/submit`
     }];
-    const goToPrevStep = () => {
-      props.history.push(`/tasks/${vacolsId}`);
-      window.scrollTo(0, 0);
-    }
-    const goToNextStep = () => {
-      props.history.push('/');
-      window.scrollTo(0, 0);
-    }
+    const footerButtons = [{
+      displayText: `Go back to draft decision ${appeal.vbms_id}`,
+      callback: () => {
+        props.history.push(`/tasks/${vacolsId}`);
+        window.scrollTo(0, 0);
+      },
+      classNames: ['cf-btn-link']
+    }, {
+      displayText: 'Submit',
+      classNames: ['cf-right-side'],
+      callback: () => {
+        props.history.push('/');
+        window.scrollTo(0, 0);
+      }
+    }];
 
     return <QueueLoadingScreen createLoadPromise={this.loadJudges} objectLoaded="judge" {...this.props}>
       <Breadcrumbs
@@ -124,12 +132,8 @@ class QueueApp extends React.PureComponent {
         shouldDrawCaretBeforeFirstCrumb={false}
         styling={breadcrumbStyling}
         elements={crumbs} />
-      <SubmitDecisionView
-        vacolsId={vacolsId}
-        vbmsId={appeal.vbms_id}
-        goToNextStep={goToNextStep}
-        goToPrevStep={goToPrevStep}
-      />
+      <SubmitDecisionView vacolsId={vacolsId} />
+      <DecisionViewFooter buttons={footerButtons} />
     </QueueLoadingScreen>;
   };
 

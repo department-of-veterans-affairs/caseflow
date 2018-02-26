@@ -42,29 +42,6 @@ class SubmitDecisionView extends React.PureComponent {
     };
   }
 
-  getFooterButtons = () => [{
-    displayText: `Go back to draft decision ${this.props.vbmsId}`,
-    classNames: ['cf-btn-link'],
-    callback: this.props.goToPrevStep
-  }, {
-    displayText: 'Submit',
-    classNames: ['cf-right-side'],
-    callback: () => {
-      const {
-        opts: decisionOpts
-      } = this.props.decision;
-      const params = ['omoType', 'documentId', 'notes'];
-      const presentParams = _.filter(params, (param) => _.has(decisionOpts, param));
-
-      if (presentParams.length === params.length) {
-        this.props.goToNextStep();
-      } else {
-        const missingParams = _.difference(params, presentParams);
-        console.warn(`missing params: ${JSON.stringify(missingParams)}`);
-      }
-    }
-  }]
-
   getJudgeSelectComponent = () => {
     if (this.state.selectingJudge) {
       return <React.Fragment>
@@ -112,59 +89,53 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
     const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
 
-    return <React.Fragment>
-      <AppSegment filledBackground>
-        <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Submit {decisionTypeDisplay} for Review
-        </h1>
-        <p className="cf-lead-paragraph" {...subHeadStyling}>
-          Complete the details below to submit this {decisionTypeDisplay} request for judge review.
-        </p>
-        <hr/>
-        {decisionType === 'omo' && <RadioField
-          name="omo_type"
-          label="OMO type:"
-          onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
-          value={decisionOpts.omoType}
-          vertical
-          required
-          options={omoTypes}
-          styling={radioFieldStyling}
-        />}
-        <Checkbox
-          name="overtime"
-          label="This work product is overtime"
-          onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-          value={decisionOpts.overtime}
-          styling={css(smallBottomMargin, checkboxStyling)}
-        />
-        <TextField
-          label="Document ID:"
-          name="document_id"
-          required
-          onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
-          value={decisionOpts.documentId}
-        />
-        <span>Submit to judge:</span><br/>
-        {this.getJudgeSelectComponent()}
-        <TextareaField
-          label="Notes:"
-          name="notes"
-          value={decisionOpts.notes}
-          onChange={(notes) => this.props.setDecisionOptions({ notes })}
-          styling={textAreaStyling}
-        />
-      </AppSegment>
-      <DecisionViewFooter buttons={this.getFooterButtons()} />
-    </React.Fragment>;
+    return <AppSegment filledBackground>
+      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        Submit {decisionTypeDisplay} for Review
+      </h1>
+      <p className="cf-lead-paragraph" {...subHeadStyling}>
+        Complete the details below to submit this {decisionTypeDisplay} request for judge review.
+      </p>
+      <hr/>
+      {decisionType === 'omo' && <RadioField
+        name="omo_type"
+        label="OMO type:"
+        onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
+        value={decisionOpts.omoType}
+        vertical
+        required
+        options={omoTypes}
+        styling={radioFieldStyling}
+      />}
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime}
+        styling={css(smallBottomMargin, checkboxStyling)}
+      />
+      <TextField
+        label="Document ID:"
+        name="document_id"
+        required
+        onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
+        value={decisionOpts.documentId}
+      />
+      <span>Submit to judge:</span><br/>
+      {this.getJudgeSelectComponent()}
+      <TextareaField
+        label="Notes:"
+        name="notes"
+        value={decisionOpts.notes}
+        onChange={(notes) => this.props.setDecisionOptions({ notes })}
+        styling={textAreaStyling}
+      />
+    </AppSegment>;
   };
 }
 
 SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
-  goToNextStep: PropTypes.func.isRequired,
-  goToPrevStep: PropTypes.func.isRequired
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
