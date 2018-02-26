@@ -65,7 +65,7 @@ QueueLoadingScreen.propTypes = {
 
 QueueLoadingScreen.defaultProps = {
   objectLoaded: 'your case'
-}
+};
 
 const mapStateToProps = (state) => state.queue.loadedQueue;
 

@@ -14,7 +14,6 @@ import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
-import DecisionViewFooter from './components/DecisionViewFooter';
 
 import { fullWidth } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -96,7 +95,7 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      <hr/>
+      <hr />
       {decisionType === 'omo' && <RadioField
         name="omo_type"
         label="OMO type:"
@@ -121,7 +120,7 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
         value={decisionOpts.documentId}
       />
-      <span>Submit to judge:</span><br/>
+      <span>Submit to judge:</span><br />
       {this.getJudgeSelectComponent()}
       <TextareaField
         label="Notes:"
