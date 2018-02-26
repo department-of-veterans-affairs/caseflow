@@ -72,7 +72,7 @@ class SubmitDecisionView extends React.PureComponent {
           options={judges}
           onChange={(judge) => {
             this.setState({ selectingJudge: false });
-            this.props.setDecisionOptions({ judge })
+            this.props.setDecisionOptions({ judge });
           }}
           hideLabel />
       </React.Fragment> :

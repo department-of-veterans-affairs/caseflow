@@ -227,7 +227,7 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).to have_content("Back to Your Queue")
+        expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
         click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
 
