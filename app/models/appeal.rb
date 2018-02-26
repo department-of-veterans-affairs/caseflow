@@ -347,25 +347,6 @@ class Appeal < ActiveRecord::Base
     save ? find_or_create_documents! : fetched_documents
   end
 
-  def create_new_document!(document, ids)
-    document.save!
-
-    previous_documents = Document.where(series_id: document.series_id)
-      .where.not(vbms_document_id: ids).sort_by(&:created_at)
-
-    if previous_documents.count
-      previous_documents.last.annotations.map do |annotation|
-        annotation.dup.assign_attribute(document_id: document.id).save!
-      end
-
-      previous_documents.last.documents_tag.map do |tag|
-        tag.dup.assign_attribute(document_id: document.id).save!
-      end
-    end
-
-    document
-  end
-
   def find_or_create_documents_v2!
     AddSeriesIdToDocumentsJob.perform_now(self)
 
@@ -387,8 +368,6 @@ class Appeal < ActiveRecord::Base
         Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
-
-    document
   end
 
   def find_or_create_documents!
@@ -414,8 +393,6 @@ class Appeal < ActiveRecord::Base
       end
     end
   end
-
-
 
   # These three methods are used to decide whether the appeal is processed
   # as a partial grant, remand, or full grant when dispatching it.
@@ -568,6 +545,19 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  def create_new_document!(document, ids)
+    document.save!
+
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
