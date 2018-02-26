@@ -32,6 +32,7 @@ export default class AutoSave extends React.Component {
   }
 
   render() {
+    console.log('do we ever get in here?');
     if (this.props.isSaving) {
       const color = this.props.spinnerColor || COLORS.GREY_DARK;
 

@@ -239,14 +239,15 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     });
 };
 
-export const saveDocket = (docket, date) => (dispatch) => {
+export const saveDocket = (docket, date) => (dispatch) => () => {
   const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
   if (hearingsToSave.length === 0) {
     return;
   }
 
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
+    payload: { saving: true } });
 
   dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
     payload: { saveFailed: false } });
@@ -266,5 +267,6 @@ export const saveDocket = (docket, date) => (dispatch) => {
           payload: { saveFailed: true } });
       });
   });
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
+    payload: { saving: false } });
 };
