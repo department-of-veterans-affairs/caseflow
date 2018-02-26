@@ -10,6 +10,7 @@ import { Certification } from './certification/Certification';
 // Dispatch
 import EstablishClaim from './containers/EstablishClaimPage/EstablishClaim';
 import ManageEstablishClaim from './manageEstablishClaim/index';
+import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
 
 import Hearings from './hearings/index';
 import Help from './help/index';
@@ -32,6 +33,7 @@ const COMPONENTS = {
   // the above EstablishClaimAdmin
   ManageEstablishClaim,
   EstablishClaim,
+  CaseWorker,
   Login,
   TestUsers,
   Error404,

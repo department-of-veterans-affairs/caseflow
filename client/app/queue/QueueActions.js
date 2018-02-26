@@ -24,3 +24,17 @@ export const loadAppealDocCountFail = (vacolsId) => ({
     docCount: null
   }
 });
+
+export const setCaseReviewActionType = (type) => ({
+  type: ACTIONS.SET_REVIEW_ACTION_TYPE,
+  payload: {
+    type
+  }
+});
+
+export const setDecisionOptions = (opts) => ({
+  type: ACTIONS.SET_DECISION_OPTIONS,
+  payload: {
+    opts
+  }
+});

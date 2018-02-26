@@ -6,7 +6,6 @@ import Alert from '../components/Alert';
 
 // container components
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
-import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
@@ -17,7 +16,6 @@ import CanceledTasksIndex from './CanceledTasksIndex';
 import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
-  CaseWorkerIndex,
   CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
