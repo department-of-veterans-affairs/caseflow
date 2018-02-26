@@ -221,7 +221,7 @@ class VACOLS::Case < VACOLS::Record
 
   # The attributes that are copied over when the case is cloned because of a remand
   def remand_clone_attributes
-    attributes.slice(
+    slice(
       :bfcorkey, :bfcorlid, :bfdnod, :bfdsoc, :bfd19, :bf41stat, :bfregoff,
       :bfissnr, :bfdorg, :bfdc, :bfic, :bfio, :bfoc, :bfms, :bfsh, :bfso,
       :bfst, :bfdrodec, :bfcasev, :bfdpdcn, :bfddro, :bfdroid, :bfdrortr, :bfro1
