@@ -31,6 +31,16 @@ const radioFieldStyling = css(noBottomMargin, {
 const subHeadStyling = css({ marginBottom: '2rem' });
 const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
+const judges = [{
+  label: 'Nick Kroes',
+  value: 'VACOKROESN'
+}, {
+  label: 'Judy Sheindlin',
+  value: 'VACOJUDY'
+}, {
+  label: 'Judge Dredd',
+  value: 'VAMCDREDDJ'
+}];
 
 class SubmitDecisionView extends React.PureComponent {
   constructor(props) {
@@ -38,10 +48,7 @@ class SubmitDecisionView extends React.PureComponent {
 
     this.state = {
       selectingJudge: false,
-      judge: {
-        label: 'Nick Kroes',
-        value: 'VACOKROESN'
-      }
+      judge: judges[0]
     };
   }
 
@@ -58,16 +65,6 @@ class SubmitDecisionView extends React.PureComponent {
       opts: decisionOpts
     } = this.props.decision;
     const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
-    const judges = [{
-      label: 'Nick Kroes',
-      value: 'VACOKROESN'
-    }, {
-      label: 'Judy Sheindlin',
-      value: 'VACOJUDY'
-    }, {
-      label: 'Judge Dredd',
-      value: 'VAMCDREDDJ'
-    }];
     const judgeDisplay = this.state.selectingJudge ?
       <React.Fragment>
         <SearchableDropdown
@@ -141,10 +138,8 @@ const mapStateToProps = (state, ownProps) => ({
   decision: state.queue.taskDecision
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setDecisionOptions
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setDecisionOptions
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);
