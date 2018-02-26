@@ -46,13 +46,13 @@ class SubmitDecisionView extends React.PureComponent {
     classNames: ['cf-btn-link'],
     callback: this.props.goToPrevStep
   }, {
-    displayText: 'submit',
+    displayText: 'Submit',
     classNames: ['cf-right-side'],
     callback: () => {
       const {
         opts: decisionOpts
       } = this.props.decision;
-      const params = ['omoType', 'overtime', 'documentId', 'notes'];
+      const params = ['omoType', 'documentId', 'notes'];
       const presentParams = _.filter(params, (param) => _.has(decisionOpts, param));
 
       if (presentParams.length === params.length) {
@@ -85,6 +85,7 @@ class SubmitDecisionView extends React.PureComponent {
     return <React.Fragment>
       <span>{_.get(this.props.decision.opts.judge, 'label') || ''}</span>
       <Button
+        id="select-judge"
         classNames={['cf-btn-link']}
         onClick={() => this.setState({ selectingJudge: true })}>
         Select another judge
@@ -133,7 +134,8 @@ class SubmitDecisionView extends React.PureComponent {
           styling={css(smallBottomMargin, checkboxStyling)}
         />
         <TextField
-          name="Document ID:"
+          label="Document ID:"
+          name="document_id"
           required
           onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
           value={decisionOpts.documentId}
@@ -141,7 +143,8 @@ class SubmitDecisionView extends React.PureComponent {
         <span>Submit to judge:</span><br/>
         {this.getJudgeSelectComponent()}
         <TextareaField
-          name="Notes:"
+          label="Notes:"
+          name="notes"
           value={decisionOpts.notes}
           onChange={(notes) => this.props.setDecisionOptions({ notes })}
           styling={textAreaStyling}
