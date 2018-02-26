@@ -9,6 +9,13 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   }
 });
 
+export const onReceiveJudges = (judges) => ({
+  type: ACTIONS.RECEIVE_JUDGE_DETAILS,
+  payload: {
+    judges
+  }
+});
+
 export const setAppealDocCount = ({ vacolsId, docCount }) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {

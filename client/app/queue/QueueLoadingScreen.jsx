@@ -34,18 +34,18 @@ class QueueLoadingScreen extends React.PureComponent {
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load your cases.<br />
+      It looks like Caseflow was unable to load {this.props.objectLoaded}s.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createLoadPromise}
+      createLoadPromise={this.props.createLoadPromise || this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading your appeals...'
+        message: `Loading ${this.props.objectLoaded}s...`
       }}
       failStatusMessageProps={{
-        title: 'Unable to load appeals'
+        title: `Unable to load ${this.props.objectLoaded}s`
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
@@ -58,8 +58,14 @@ class QueueLoadingScreen extends React.PureComponent {
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  createLoadPromise: PropTypes.func,
+  objectLoaded: PropTypes.string
 };
+
+QueueLoadingScreen.defaultProps = {
+  objectLoaded: 'your case'
+}
 
 const mapStateToProps = (state) => state.queue.loadedQueue;
 
