@@ -128,6 +128,20 @@ export default class EstablishClaim extends React.Component {
     };
   }
 
+  handleAlert = (type, title, message) => {
+    this.setState({
+      alert: {
+        message,
+        title,
+        type
+      }
+    });
+  }
+
+  handleAlertClear = () => {
+    this.setState({ alert: null });
+  }
+
   defaultPage() {
     if (this.props.task.aasm_state === 'reviewed') {
       // Force navigate to the note page on initial component mount
