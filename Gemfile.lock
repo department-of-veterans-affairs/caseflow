@@ -493,7 +493,7 @@ DEPENDENCIES
   paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!
-  pg (= 0.20)
+  pg
   prometheus-client (~> 0.7.1)
   pry
   pry-byebug
