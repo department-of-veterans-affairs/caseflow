@@ -404,7 +404,7 @@ describe Appeal do
       end
     end
 
-    context "when there are documents with same series_id", focus: true do
+    context "when there are documents with same series_id" do
       let!(:saved_documents) do
         [
           Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
@@ -559,7 +559,7 @@ describe Appeal do
         )
       end
 
-      it "adds series_id and updates retrieved documents" do
+      it "adds series_id" do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
         expect(Document.first.series_id).to eq(nil)
@@ -567,9 +567,9 @@ describe Appeal do
         returned_documents = appeal.find_or_create_documents_v2!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
+        # Adds series id to existing document
         expect(Document.first.series_id).to eq(series_id)
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.count).to eq(3)
       end
     end
   end
