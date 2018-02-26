@@ -95,7 +95,7 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-      {this.props.print && worksheetHeader}
+      {this.props.print}
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
@@ -175,11 +175,6 @@ export class HearingWorksheet extends React.PureComponent {
           Save as PDF
         </Link>
       </div>
-      }
-      {this.props.print &&
-       <div className="cf-pdf-foot">
-       {worksheet.veteran_fi_last_formatted}
-       </div>
       }
     </div>;
   }
