@@ -31,6 +31,7 @@ const radioFieldStyling = css(noBottomMargin, {
 const subHeadStyling = css({ marginBottom: '2rem' });
 const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
+const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
   constructor(props) {
@@ -82,13 +83,17 @@ class SubmitDecisionView extends React.PureComponent {
       </React.Fragment>;
     }
 
+    const selectedJudge = _.get(this.props.decision.opts.judge, 'label');
+
     return <React.Fragment>
-      <span>{_.get(this.props.decision.opts.judge, 'label') || ''}</span>
+      {selectedJudge && <span>{selectedJudge}</span>}
       <Button
         id="select-judge"
         classNames={['cf-btn-link']}
+        willNeverBeLoading
+        styling={selectJudgeButtonStyling(selectedJudge)}
         onClick={() => this.setState({ selectingJudge: true })}>
-        Select another judge
+        Select {selectedJudge ? 'another' : 'a'} judge
       </Button>
     </React.Fragment>;
   }
