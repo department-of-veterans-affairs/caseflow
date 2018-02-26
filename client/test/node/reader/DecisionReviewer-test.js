@@ -55,6 +55,7 @@ const getStore = () => createStore(
 
 const getWrapper = (store) => mount(
   <Provider store={store}>
+    <MemoryRouter initialEntries={INITIAL_ENTRIES}>
     <DecisionReviewer
       featureToggles={{}}
       userDisplayName="Name"
@@ -65,12 +66,8 @@ const getWrapper = (store) => mount(
       }]}
       pdfWorker="worker"
       url="url"
-      router={MemoryRouter}
-      routerTestProps={{
-        initialEntries: INITIAL_ENTRIES
-      }}
-
     />
+    </MemoryRouter>
   </Provider>, { attachTo: document.getElementById('app') });
 
 /* eslint-disable camelcase */

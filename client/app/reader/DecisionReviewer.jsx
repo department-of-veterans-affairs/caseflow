@@ -192,11 +192,7 @@ DecisionReviewer.propTypes = {
   // Required actions
   onScrollToComment: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func,
-
-  // These two properties are exclusively for testing purposes
-  router: PropTypes.func,
-  routerProps: PropTypes.object
+  setCategoryFilter: PropTypes.func
 };
 
 const mapStateToProps = (state, props) => {
