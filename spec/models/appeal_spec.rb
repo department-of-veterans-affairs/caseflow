@@ -535,6 +535,54 @@ describe Appeal do
     end
   end
 
+  context "#create_new_document!", focus: true do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+    end
+    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+    let(:series_id) { "TEST_SERIES_ID" }
+    let(:comment) { "TEST_COMMENT" }
+    let(:old_document) do
+      Generators::Document.create(
+        type: "SSOC",
+        series_id: series_id
+      )
+    end
+    let!(:existing_annotations) do
+      [
+        Generators::Annotation.create(
+          comment: comment,
+          x: 1,
+          y: 2,
+          document_id: old_document.id
+        )
+      ]
+    end
+    
+    let(:document) do
+      Generators::Document.build(
+        type: "NOD",
+        vbms_document_id: vbms_document_id,
+        series_id: series_id
+      )
+    end
+
+    context "when there is an existing document with the same series_id" do
+
+      it "copies comments to new document" do
+        returned_documents = appeal.create_new_document!(document, [document.id])
+        expect(returned_documents[0].annotations[0].comment).to eq(comment)
+
+        expect(old_document.annotations[0].comment).to eq(comment)
+      end
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]

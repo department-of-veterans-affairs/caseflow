@@ -69,7 +69,7 @@ gem "parallel"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
 
-gem "pg", platforms: :ruby
+gem "pg", "0.20", platforms: :ruby
 
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
