@@ -116,7 +116,7 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
         value={decisionOpts.documentId}
       />
-      <span>Check out to:</span><br />
+      <span>Submit to judge:</span><br />
       {judgeDisplay}
       <TextareaField
         name="Notes:"
