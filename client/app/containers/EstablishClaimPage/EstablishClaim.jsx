@@ -4,6 +4,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import { BrowserRouter } from 'react-router-dom';
+import NavigationBar from '../../components/NavigationBar';
+import { LOGO_COLORS } from '../../constants/AppConstants';
+import AppFrame from '../../components/AppFrame';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
@@ -121,6 +126,20 @@ export default class EstablishClaim extends React.Component {
       specialIssuesEmail: '',
       specialIssuesRegionalOffice: ''
     };
+  }
+
+  handleAlert = (type, title, message) => {
+    this.setState({
+      alert: {
+        message,
+        title,
+        type
+      }
+    });
+  }
+
+  handleAlertClear = () => {
+    this.setState({ alert: null });
   }
 
   defaultPage() {
@@ -469,14 +488,27 @@ export default class EstablishClaim extends React.Component {
 
     const { initialState, reducer } = bootstrapRedux(this.props);
 
-    return (
-      <ReduxBase store={this.store} initialState={initialState} reducer={reducer} getStoreRef={this.onReceiveStore}>
-        <div>
-          <EstablishClaimProgressBar
-            isReviewDecision={this.isDecisionPage()}
-            isRouteClaim={!this.isDecisionPage()}
-          />
-          { this.isDecisionPage() &&
+    return <ReduxBase store={this.store}
+      initialState={initialState}
+      reducer={reducer}
+      getStoreRef={this.onReceiveStore}>
+      <BrowserRouter>
+        <React.Fragment>
+          <NavigationBar
+            dropdownUrls={this.props.dropdownUrls}
+            appName="Establish Claim"
+            userDisplayName={this.props.userDisplayName}
+            defaultUrl="/dispatch/establish-claim/"
+            logoProps={{
+              accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+              overlapColor: LOGO_COLORS.DISPATCH.OVERLAP
+            }} />
+          <AppFrame>
+            <EstablishClaimProgressBar
+              isReviewDecision={this.isDecisionPage()}
+              isRouteClaim={!this.isDecisionPage()}
+            />
+            { this.isDecisionPage() &&
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={decisionType}
@@ -486,8 +518,8 @@ export default class EstablishClaim extends React.Component {
             pdfjsLink={pdfjsLink}
             task={this.props.task}
           />
-          }
-          { this.isAssociatePage() &&
+            }
+            { this.isAssociatePage() &&
           <AssociatePage
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
@@ -501,8 +533,8 @@ export default class EstablishClaim extends React.Component {
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
-          }
-          { this.isFormPage() &&
+            }
+            { this.isFormPage() &&
           <EstablishClaimForm
             loading={this.state.loading}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
@@ -515,8 +547,8 @@ export default class EstablishClaim extends React.Component {
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
           />
-          }
-          { this.isNotePage() &&
+            }
+            { this.isNotePage() &&
           <EstablishClaimNote
             loading={this.state.loading}
             endProductCreated={this.state.endProductCreated}
@@ -529,8 +561,8 @@ export default class EstablishClaim extends React.Component {
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
-          }
-          { this.isEmailPage() &&
+            }
+            { this.isEmailPage() &&
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleAlertClear={this.props.handleAlertClear}
@@ -553,15 +585,20 @@ export default class EstablishClaim extends React.Component {
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
           />
-          }
-          <CancelModal
-            handleAlertClear={this.props.handleAlertClear}
-            handleAlert={this.props.handleAlert}
-            taskId={this.props.task.id}
-          />
-        </div>
-      </ReduxBase>
-    );
+            }
+            <CancelModal
+              handleAlertClear={this.props.handleAlertClear}
+              handleAlert={this.props.handleAlert}
+              taskId={this.props.task.id}
+            />
+          </AppFrame>
+          <Footer
+            appName="Establish Claim"
+            feedbackUrl={this.props.feedbackUrl}
+            buildDate={this.props.buildDate} />
+        </React.Fragment>
+      </BrowserRouter>
+    </ReduxBase>;
   }
 }
 

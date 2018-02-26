@@ -7,8 +7,11 @@ import _ from 'lodash';
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
 import { Certification } from './certification/Certification';
+// Dispatch
+import EstablishClaim from './containers/EstablishClaimPage/EstablishClaim';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
+
 import Hearings from './hearings/index';
 import Help from './help/index';
 import Error500 from './errors/Error500';
@@ -29,6 +32,7 @@ const COMPONENTS = {
   // This is the older admin page that should eventually get merged into
   // the above EstablishClaimAdmin
   ManageEstablishClaim,
+  EstablishClaim,
   CaseWorker,
   Login,
   TestUsers,

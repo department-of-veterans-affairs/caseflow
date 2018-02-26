@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import Alert from '../components/Alert';
 
 // container components
-import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
@@ -20,7 +19,6 @@ const Pages = {
   CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
-  EstablishClaim,
   EstablishClaimCancel,
   EstablishClaimComplete,
   StyleGuideIndex,
@@ -29,13 +27,13 @@ const Pages = {
   CanceledTasksIndex
 };
 
-// This is the "base page" that wraps all pages rendered directly
+// This is the "base page" that wraps pages rendered directly
 // in a Rails view. This component manages interactivity that exists
 // across *all* React page. For now that includes:
 //   - alerts
 //
 // The `page` property dictates which page is rendered within this
-// component. e.g.  <BaseContainer page="EstablishClaim" />
+// component. e.g.  <BaseContainer page="StyleGuideIndex" />
 
 export default class BaseContainer extends React.Component {
   constructor(props) {

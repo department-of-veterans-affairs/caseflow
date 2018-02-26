@@ -1,8 +1,13 @@
 <% content_for :page_title do task.appeal.task_header end %>
-<%= react_component("BaseContainer", props: {
+<% content_for :full_page_content do %>
+<%= react_component("EstablishClaim", props: {
   task: task.to_hash_with_bgs_call,
   pdfLink: pdf_establish_claim_path(id: task.id, time: Time.now.to_i),
   pdfjsLink: pdfjs.full_path(file: pdf_establish_claim_path(id: task.id, time: Time.now.to_i)),
   page: "EstablishClaim",
-  regionalOfficeCities: RegionalOffice::CITIES
+  regionalOfficeCities: RegionalOffice::CITIES,
+  userDisplayName: current_user.display_name,
+  dropdownUrls: dropdown_urls,
+  feedbackUrl: feedback_url,
 }) %>
+<% end %>
