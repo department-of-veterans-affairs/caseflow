@@ -6,7 +6,7 @@ class VACOLS::Folder < VACOLS::Record
 
   # The attributes that are copied over when the folder is cloned because of a remand
   def remand_clone_attributes
-    attributes.slice(
+    slice(
       :ticorkey, :tistkey, :titrnum, :tinum, :tiadtime, :tiagor, :tiasbt, :tigwui,
       :tihepc, :tiaids, :timgas, :tiptsd, :tiradb, :tiradn, :tisarc, :tisexh,
       :titoba, :tinosc, :ti38us, :tinnme, :tinwgr, :tipres, :titrtm, :tinoot

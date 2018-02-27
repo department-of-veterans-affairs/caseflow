@@ -292,7 +292,7 @@ describe Form8 do
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
-        appellant_name: "Micah, Bobby",
+        appellant_name: "Micah Bobby",
         appellant_relationship: "Brother",
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane",
