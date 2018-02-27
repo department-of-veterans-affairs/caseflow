@@ -1,13 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
-
-import ApiUtil from '../util/ApiUtil';
-import { onReceiveJudges } from './QueueActions';
 
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
@@ -85,18 +81,6 @@ class QueueApp extends React.PureComponent {
     </QueueLoadingScreen>;
   }
 
-  loadJudges = () => {
-    if (!_.isEmpty(this.props.judges)) {
-      return Promise.resolve();
-    }
-
-    return ApiUtil.get('/queue/judges').then((response) => {
-      const judges = JSON.parse(response.text).judges;
-
-      this.props.onReceiveJudges(_.keyBy(judges, 'css_id'));
-    });
-  }
-
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
@@ -126,7 +110,7 @@ class QueueApp extends React.PureComponent {
       path: `/tasks/${vacolsId}/submit`
     }];
 
-    return <QueueLoadingScreen createLoadPromise={this.loadJudges} objectToLoad="judge" {...this.props}>
+    return <React.Fragment>
       <Breadcrumbs
         getBreadcrumbLabel={(route) => route.breadcrumb}
         shouldDrawCaretBeforeFirstCrumb={false}
@@ -134,7 +118,7 @@ class QueueApp extends React.PureComponent {
         elements={crumbs} />
       <SubmitDecisionView vacolsId={vacolsId} />
       <DecisionViewFooter buttons={footerButtons} />
-    </QueueLoadingScreen>;
+    </React.Fragment>;
   };
 
   render = () => <BrowserRouter basename="/queue">
@@ -196,12 +180,7 @@ QueueApp.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.taskDecision.type,
-  ..._.pick(state.queue, 'judges')
+  reviewActionType: state.queue.taskDecision.type
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveJudges
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);
+export default connect(mapStateToProps)(QueueApp);
