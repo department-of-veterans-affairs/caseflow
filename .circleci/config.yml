@@ -18,6 +18,9 @@ jobs:
           - POSTGRES_USER: root
             POSTGRES_DB: caseflow_certification_test
 
+      # This is the circleci provided Redis container.
+      - image: circleci/redis:4.0.8
+
     steps:
       - checkout
 
