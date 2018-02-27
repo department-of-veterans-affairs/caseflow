@@ -3,6 +3,15 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.2-browsers
+        environment:
+          - RAILS_ENV: test
+          - POSTGRES_HOST: localhost
+          - POSTGRES_USER: root
+      - image: circleci/postgres:10.2
+        environment:
+          - POSTGRES_USER: root
+            POSTGRES_DB: circle-test_test
+
     steps:
       - checkout
 
