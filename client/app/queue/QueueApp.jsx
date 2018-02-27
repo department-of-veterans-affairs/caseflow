@@ -16,6 +16,7 @@ import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
+import SelectDispositionsView from './SelectDispositionsView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 const appStyling = css({ paddingTop: '3rem' });
@@ -121,6 +122,43 @@ class QueueApp extends React.PureComponent {
     </React.Fragment>;
   };
 
+  routedSelectDispositions = (props) => {
+    const { vacolsId } = props.match.params;
+    const appeal = this.props.appeals[vacolsId].attributes;
+    const footerButtons = [{
+      displayText: 'Go back to Select Work Product',
+      callback: () => {
+        props.history.push(`/tasks/${vacolsId}`);
+        window.scrollTo(0, 0);
+      },
+      classNames: ['cf-btn-link']
+    }, {
+      displayText: 'Finish disposition',
+      callback: _.noop,
+      classNames: ['cf-right-side']
+    }];
+    const crumbs = [{
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: appeal.veteran_full_name,
+      path: `/tasks/${vacolsId}`
+    }, {
+      breadcrumb: 'Select Dispositions',
+      path: `/tasks/${vacolsId}/dispositions`
+    }];
+
+    return <React.Fragment>
+      <Breadcrumbs
+        getBreadcrumbLabel={(route) => route.breadcrumb}
+        styling={breadcrumbStyling}
+        shouldDrawCaretBeforeFirstCrumb={false}
+        elements={crumbs} />
+      <SelectDispositionsView vacolsId={vacolsId} />
+      <DecisionViewFooter buttons={footerButtons} />
+    </React.Fragment>;
+  };
+
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
       wideApp
@@ -157,7 +195,7 @@ class QueueApp extends React.PureComponent {
             exact
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
-            render={() => <span>Select issue dispositions</span>} />
+            render={this.routedSelectDispositions} />
         </div>
       </AppFrame>
       <Footer

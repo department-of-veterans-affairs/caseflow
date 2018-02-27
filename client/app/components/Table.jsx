@@ -131,7 +131,8 @@ export default class Table extends React.PureComponent {
       tbodyId,
       tbodyRef,
       caption,
-      id
+      id,
+      styling
     } = this.props;
 
     let keyGetter = getKeyForRow;
@@ -147,6 +148,7 @@ export default class Table extends React.PureComponent {
     return <table
       id={id}
       className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
+      {...styling}
       summary={summary} >
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
@@ -179,5 +181,6 @@ Table.propTypes = {
   headerClassName: PropTypes.string,
   className: PropTypes.string,
   caption: PropTypes.string,
-  id: PropTypes.string
+  id: PropTypes.string,
+  styling: PropTypes.object
 };

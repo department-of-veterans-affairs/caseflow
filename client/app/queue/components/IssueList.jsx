@@ -31,6 +31,7 @@ const leftAlignTd = css({
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
 const issueMarginTop = css({ marginTop: '0.5rem' });
+const bottomBorder = (singleIssue) => css({ borderBottom: singleIssue ? 'none !important' : '' });
 
 export default class IssueList extends React.PureComponent {
   issueLevels = (issue) => issue.levels.map((level, idx) => <div key={idx} {...issueMarginTop}>
@@ -55,7 +56,9 @@ export default class IssueList extends React.PureComponent {
   getIssues = () => {
     const {
       appeal,
-      issuesOnly
+      issuesOnly,
+      singleIssue,
+      idxToDisplay
     } = this.props;
 
     if (!appeal.issues.length) {
@@ -65,20 +68,20 @@ export default class IssueList extends React.PureComponent {
     }
 
     if (issuesOnly) {
-      return <React.Fragment>
-        {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
+      return <React.Fragment>{appeal.issues.map((issue, idx) =>
+        <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
           <td {...leftAlignTd}>
-            {idx + 1}.
+            {idxToDisplay || (idx + 1)}.
           </td>
           <td {...minimalLeftPadding}>
             {issue.type} {issue.levels.join(', ')}
           </td>
-        </tr>)}
-      </React.Fragment>;
+        </tr>)
+      }</React.Fragment>;
     }
 
-    return <React.Fragment>
-      {appeal.issues.map((issue, idx) => <tr key={`${issue.id}_${issue.vacols_sequence_id}`}>
+    return <React.Fragment>{appeal.issues.map((issue, idx) =>
+      <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
         <td {...leftAlignTd} width="210px">
           {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
         </td>
@@ -88,15 +91,15 @@ export default class IssueList extends React.PureComponent {
             <span {...boldText}>Note:</span> {issue.note}
           </div>
         </td>
-      </tr>)}
-    </React.Fragment>;
+      </tr>)
+    }</React.Fragment>;
 
   };
 
   render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
     <table {...tableStyling}>
       <tbody>
-        {this.getIssues()}
+      {this.getIssues()}
       </tbody>
     </table>
   </div>;
@@ -106,9 +109,12 @@ IssueList.propTypes = {
   appeal: PropTypes.shape({
     issues: PropTypes.array
   }).isRequired,
-  issuesOnly: PropTypes.bool
+  issuesOnly: PropTypes.bool,
+  singleIssue: PropTypes.bool,
+  idxToDisplay: PropTypes.number
 };
 
 IssueList.defaultProps = {
-  issuesOnly: false
+  issuesOnly: false,
+  singleIssue: false
 };
