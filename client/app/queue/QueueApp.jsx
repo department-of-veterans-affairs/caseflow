@@ -100,16 +100,6 @@ class QueueApp extends React.PureComponent {
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const crumbs = [{
-      breadcrumb: 'Your Queue',
-      path: '/'
-    }, {
-      breadcrumb: appeal.veteran_full_name,
-      path: `/tasks/${vacolsId}`
-    }, {
-      breadcrumb: 'Submit OMO',
-      path: `/tasks/${vacolsId}/submit`
-    }];
     const footerButtons = [{
       displayText: `Go back to draft decision ${appeal.vbms_id}`,
       callback: () => {
@@ -125,8 +115,18 @@ class QueueApp extends React.PureComponent {
         window.scrollTo(0, 0);
       }
     }];
+    const crumbs = [{
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: appeal.veteran_full_name,
+      path: `/tasks/${vacolsId}`
+    }, {
+      breadcrumb: 'Submit OMO',
+      path: `/tasks/${vacolsId}/submit`
+    }];
 
-    return <QueueLoadingScreen createLoadPromise={this.loadJudges} objectLoaded="judge" {...this.props}>
+    return <QueueLoadingScreen createLoadPromise={this.loadJudges} objectToLoad="judge" {...this.props}>
       <Breadcrumbs
         getBreadcrumbLabel={(route) => route.breadcrumb}
         shouldDrawCaretBeforeFirstCrumb={false}
