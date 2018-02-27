@@ -5,7 +5,7 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   # :nocov:
   def remand_clone_attributes
-    attributes.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
+    slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
   end
 
   # rubocop:disable MethodLength
