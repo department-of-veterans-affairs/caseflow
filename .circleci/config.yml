@@ -22,12 +22,20 @@ jobs:
       - checkout
 
       - run:
+          name: Setup prereqs
+          command: ci-bin/setup-circleci-prereqs
+
+      - run:
           name: Which bundler?
           command: bundle -v
 
       - run:
           name: bundle install
           command: bundle check || bundle install --without production staging
+
+      - run:
+          name: yarn install
+          command: cd client && yarn install --frozen-lockfile
 
       - run:
           name: Tests
