@@ -49,7 +49,7 @@ namespace :ci do
     puts "\nVerifying code coverage"
     require "simplecov"
 
-    test_categories = %w[unit api certification dispatch reader other]
+    test_categories = %w[unit api certification dispatch reader other queue]
 
     merged_results = test_categories.inject({}) do |merged, category|
       path = File.join("coverage/", ".#{category}.resultset.json")

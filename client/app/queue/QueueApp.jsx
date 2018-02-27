@@ -1,25 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import Breadcrumbs from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Breadcrumbs';
+import DecisionViewFooter from './components/DecisionViewFooter';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
+import SubmitDecisionView from './SubmitDecisionView';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { connect } from 'react-redux';
 
-const appStyling = css({
-  paddingTop: '3rem'
+const appStyling = css({ paddingTop: '3rem' });
+const breadcrumbStyling = css({
+  marginTop: '-1.5rem',
+  marginBottom: '-1.5rem'
 });
-
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {
@@ -50,12 +53,73 @@ class QueueApp extends React.PureComponent {
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
-  </QueueLoadingScreen>;
+  routedQueueDetail = (props) => {
+    const { vacolsId } = props.match.params;
+    const crumbs = [];
+
+    if (!_.isEmpty(this.props.appeals)) {
+      const { veteran_full_name } = this.props.appeals[vacolsId].attributes;
+
+      crumbs.push({
+        breadcrumb: 'Your Queue',
+        path: '/'
+      }, {
+        breadcrumb: veteran_full_name,
+        path: `/tasks/${vacolsId}`
+      });
+    }
+
+    return <QueueLoadingScreen {...this.props}>
+      <Breadcrumbs
+        getBreadcrumbLabel={(route) => route.breadcrumb}
+        shouldDrawCaretBeforeFirstCrumb={false}
+        styling={breadcrumbStyling}
+        elements={crumbs} />
+      <QueueDetailView
+        vacolsId={props.match.params.vacolsId}
+        featureToggles={this.props.featureToggles} />
+    </QueueLoadingScreen>;
+  }
+
+  routedSubmitDecision = (props) => {
+    const { vacolsId } = props.match.params;
+    const appeal = this.props.appeals[vacolsId].attributes;
+    const footerButtons = [{
+      displayText: `Go back to draft decision ${appeal.vbms_id}`,
+      callback: () => {
+        props.history.push(`/tasks/${vacolsId}`);
+        window.scrollTo(0, 0);
+      },
+      classNames: ['cf-btn-link']
+    }, {
+      displayText: 'Submit',
+      classNames: ['cf-right-side'],
+      callback: () => {
+        props.history.push('/');
+        window.scrollTo(0, 0);
+      }
+    }];
+    const crumbs = [{
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: appeal.veteran_full_name,
+      path: `/tasks/${vacolsId}`
+    }, {
+      breadcrumb: 'Submit OMO',
+      path: `/tasks/${vacolsId}/submit`
+    }];
+
+    return <React.Fragment>
+      <Breadcrumbs
+        getBreadcrumbLabel={(route) => route.breadcrumb}
+        shouldDrawCaretBeforeFirstCrumb={false}
+        styling={breadcrumbStyling}
+        elements={crumbs} />
+      <SubmitDecisionView vacolsId={vacolsId} />
+      <DecisionViewFooter buttons={footerButtons} />
+    </React.Fragment>;
+  };
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
@@ -83,12 +147,12 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/tasks/:vacolsId/submit"
-            title={(props) => {
-              const decisionType = props.location.state.type === 'omo' ? 'OMO' : 'Draft Decision';
+            title={() => {
+              const reviewActionType = this.props.reviewActionType === 'omo' ? 'OMO' : 'Draft Decision';
 
-              return `Draft Decision | Submit ${decisionType}`;
+              return `Draft Decision | Submit ${reviewActionType}`;
             }}
-            render={(props) => <span>Submit {props.location.state.type} page</span>} />
+            render={this.routedSubmitDecision} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
@@ -115,7 +179,8 @@ QueueApp.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
-  ..._.pick(state.queue.loadedQueue, 'appeals')
+  ..._.pick(state.queue.loadedQueue, 'appeals'),
+  reviewActionType: state.queue.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);
