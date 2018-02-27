@@ -45,3 +45,10 @@ export const setDecisionOptions = (opts) => ({
     opts
   }
 });
+
+export const setSelectingJudge = (selectingJudge) => ({
+  type: ACTIONS.SET_SELECTING_JUDGE,
+  payload: {
+    selectingJudge
+  }
+});

@@ -14,6 +14,9 @@ export const initialState = {
   taskDecision: {
     type: '',
     opts: {}
+  },
+  ui: {
+    selectingJudge: false
   }
 };
 
@@ -64,6 +67,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       taskDecision: {
         opts: { $merge: action.payload.opts }
+      }
+    });
+  case ACTIONS.SET_SELECTING_JUDGE:
+    return update(state, {
+      ui: {
+        selectingJudge: { $set: action.payload.selectingJudge }
       }
     });
   default:

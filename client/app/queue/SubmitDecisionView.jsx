@@ -6,7 +6,7 @@ import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 
-import { setDecisionOptions } from './QueueActions';
+import { setDecisionOptions, setSelectingJudge } from './QueueActions';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import RadioField from '../components/RadioField';
@@ -33,16 +33,8 @@ const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selectingJudge: false
-    };
-  }
-
   getJudgeSelectComponent = () => {
-    if (this.state.selectingJudge) {
+    if (this.props.selectingJudge) {
       return <React.Fragment>
         <SearchableDropdown
           name="Select a judge"
@@ -52,7 +44,7 @@ class SubmitDecisionView extends React.PureComponent {
             value: judge.css_id
           }))}
           onChange={(judge) => {
-            this.setState({ selectingJudge: false });
+            this.props.setSelectingJudge(false);
             this.props.setDecisionOptions({ judge });
           }}
           hideLabel />
@@ -68,7 +60,7 @@ class SubmitDecisionView extends React.PureComponent {
         classNames={['cf-btn-link']}
         willNeverBeLoading
         styling={selectJudgeButtonStyling(selectedJudge)}
-        onClick={() => this.setState({ selectingJudge: true })}>
+        onClick={() => this.props.setSelectingJudge(true)}>
         Select {selectedJudge ? 'another' : 'a'} judge
       </Button>
     </React.Fragment>;
@@ -140,11 +132,13 @@ SubmitDecisionView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
   decision: state.queue.taskDecision,
-  judges: state.queue.judges
+  judges: state.queue.judges,
+  selectingJudge: state.queue.ui.selectingJudge
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDecisionOptions
+  setDecisionOptions,
+  setSelectingJudge
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);
