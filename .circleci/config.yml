@@ -2,15 +2,21 @@ version: 2
 jobs:
   build:
     docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
+
+      # This is the circleci provided Postgres container. We can only modify
+      # it via environment variables.
       - image: circleci/postgres:10.2
         environment:
           - POSTGRES_USER: root
-            POSTGRES_DB: circle-test_test
+            POSTGRES_DB: caseflow_certification_test
 
     steps:
       - checkout
