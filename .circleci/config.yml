@@ -13,3 +13,7 @@ jobs:
       - run:
           name: bundle install
           command: bundle check || bundle install --without production staging
+
+      - run:
+          name: Tests
+          command: rake
