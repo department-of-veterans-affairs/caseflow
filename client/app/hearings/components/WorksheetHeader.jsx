@@ -38,7 +38,7 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-title-meta-right">
         <div className="title cf-hearings-title-and-judge">
           <h1>Hearing Worksheet</h1>
-          <span>VLJ: {worksheet.user.full_name}</span>
+          <span>VLJ: {worksheet.user ? worksheet.user.full_name : ''}</span>
         </div>
         <div className="meta">
           <div>{moment(worksheet.date).format('ddd l')}</div>
