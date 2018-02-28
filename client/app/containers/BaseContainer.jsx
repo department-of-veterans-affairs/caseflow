@@ -9,10 +9,8 @@ import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
-import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
-  CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
   StyleGuideIndex,
