@@ -41,10 +41,9 @@ class QueueController < ApplicationController
     render json: { judges: Judge.list_all }
   end
 
-  def document_count
-    # used for local dev. see Appeal.number_of_documents_url
-    vbms_id = request.headers["HTTP_FILE_NUMBER"]
-    appeal = Appeal.find_by_vbms_id(vbms_id)
+  def dev_document_count
+    # only used for local dev. see Appeal.number_of_documents_url
+    appeal = Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"])
     render json: {
       data: {
         attributes: {
