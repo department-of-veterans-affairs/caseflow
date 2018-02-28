@@ -5,13 +5,10 @@ import PropTypes from 'prop-types';
 import Alert from '../components/Alert';
 
 // container components
-import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
-import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
-import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 import CanceledTasksIndex from './CanceledTasksIndex';
 import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
@@ -20,9 +17,6 @@ const Pages = {
   CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
-  EstablishClaim,
-  EstablishClaimCancel,
-  EstablishClaimComplete,
   StyleGuideIndex,
   TestPage,
   UnpreparedTasksIndex,
