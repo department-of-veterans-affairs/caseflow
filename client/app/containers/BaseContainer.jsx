@@ -7,7 +7,6 @@ import Alert from '../components/Alert';
 // container components
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
-import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
@@ -15,11 +14,8 @@ import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete'
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 import CanceledTasksIndex from './CanceledTasksIndex';
-import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
-  CaseWorkerIndex,
-  CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
   EstablishClaim,

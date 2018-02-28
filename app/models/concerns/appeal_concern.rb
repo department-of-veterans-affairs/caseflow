@@ -33,7 +33,7 @@ module AppealConcern
 
   def appellant_name
     if appellant_first_name
-      [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
+      [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(" ")
     end
   end
 
