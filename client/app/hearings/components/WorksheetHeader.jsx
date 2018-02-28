@@ -38,7 +38,12 @@ class WorksheetHeader extends React.PureComponent {
     return <div>
       <div className="cf-title-meta-right">
         <div className="title cf-hearings-title-and-judge">
+          {!this.props.print &&
           <h1>Hearing Worksheet</h1>
+          }
+          {this.props.print &&
+          <h1 className="cf-hearings-print-worksheet-header">Hearing Worksheet</h1>
+          }
           <span>VLJ: {veteranLawJudge.full_name}</span>
         </div>
         <div className="meta">
@@ -48,7 +53,12 @@ class WorksheetHeader extends React.PureComponent {
       </div>
 
       <div className="cf-hearings-worksheet-data">
+        {!this.props.print &&
         <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
+        }
+        {this.props.print &&
+         <h2 className="cf-hearings-print-worksheet-header">Appellant/Veteran Information</h2>
+        }
         <div className="cf-hearings-worksheet-data-cell column-1">
           <div>Appellant Name:</div>
           <div><b>{appellant}</b></div>
