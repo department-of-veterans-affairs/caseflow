@@ -38,11 +38,9 @@ class ExternalApi::EfolderService
 
     response_attrs = {}
 
-    send_efolder_request("/api/v2/manifests", user, headers, method: :post)
-
+    response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
+    # binding.pry
     TRIES.times do
-      response = send_efolder_request("/api/v2/manifests", user, headers)
-
       fail Caseflow::Error::DocumentRetrievalError if response.error?
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
@@ -51,6 +49,8 @@ class ExternalApi::EfolderService
 
       break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
       sleep 1
+      manifest_id = response_attrs["id"]
+      response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
     generate_response(response_attrs, vbms_id)

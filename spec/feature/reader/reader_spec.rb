@@ -125,6 +125,49 @@ RSpec.feature "Reader" do
     end
   end
 
+  context "Document is updated" do
+    let(:series_id) { SecureRandom.uuid }
+    let(:document_ids_in_series) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:fetch_documents_responses) do
+      document_ids_in_series.map do |document_id|
+        {
+          documents: [Generators::Document.build(vbms_document_id: document_id, series_id: series_id)],
+          manifest_vbms_fetched_at: Time.now.utc,
+          manifest_vva_fetched_at: Time.now.utc
+        }
+      end
+    end
+
+    before do
+      FeatureToggle.enable!(:efolder_api_v2)
+      expect(VBMSService).to receive(:fetch_documents_for).with(appeal, anything).and_return(
+        fetch_documents_responses[0],
+        fetch_documents_responses[1]
+      )
+    end
+
+    after do
+      FeatureToggle.enable!(:efolder_api_v2)
+    end
+
+    it "should alert user" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+      expect(page).to have_content("Document Viewer")
+
+      add_comment("test comment")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+
+      expect(page).to have_content("This document has been updated")
+
+      click_on "Got It"
+      expect(page).to_not have_content("This document has been updated")
+      expect(page).to have_content("test comment")
+    end
+  end
+
   context "Short list of documents" do
     # Currently the vbms_document_ids need to be set since they correspond to specific
     # files to load when we fetch content.

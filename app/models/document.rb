@@ -192,7 +192,7 @@ class Document < ActiveRecord::Base
 
   def content_url
     if reader_with_efolder_api?
-      if FeatureToggle.enabled?(:efolder_api_v2, user: user)
+      if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
         ExternalApi::EfolderService.efolder_content_url(vbms_document_id.tr("{}", ""))
       else
         ExternalApi::EfolderService.efolder_content_url(efolder_id)
