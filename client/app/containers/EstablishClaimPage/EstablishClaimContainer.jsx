@@ -20,7 +20,8 @@ const Pages = {
   EstablishClaimCancel,
   EstablishClaimComplete,
   UnpreparedTasksIndex,
-  CanceledTasksIndex
+  CanceledTasksIndex,
+  TestPage
 };
 
 export default class EstablishClaimContainer extends React.Component {
