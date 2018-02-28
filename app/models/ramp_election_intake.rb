@@ -5,6 +5,8 @@ class RampElectionIntake < Intake
     did_not_receive_ramp_election: "did_not_receive_ramp_election",
     ramp_election_already_complete: "ramp_election_already_complete",
     no_eligible_appeals: "no_eligible_appeals",
+    no_active_compensation_appeals: "no_active_compensation_appeals",
+    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     no_active_appeals: "no_active_appeals"
   }.merge(Intake::ERROR_CODES)
 
@@ -55,7 +57,7 @@ class RampElectionIntake < Intake
     eligible_appeals.map do |appeal|
       {
         id: appeal.id,
-        issues: appeal.issues.map(&:description_attributes)
+        issues: appeal.compensation_issues.map(&:description_attributes)
       }
     end
   end
@@ -74,7 +76,17 @@ class RampElectionIntake < Intake
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
-    active_veteran_appeals.select(&:eligible_for_ramp?)
+    active_fully_compensation_appeals.select(&:eligible_for_ramp?)
+  end
+
+  # Temporarily only allow RAMP appeals with 100% compensation issues.
+  # TODO: Take this out when we allow partial closing of appeals.
+  def active_fully_compensation_appeals
+    active_veteran_appeals.select(&:fully_compensation?)
+  end
+
+  def active_compensation_appeals
+    active_veteran_appeals.select(&:compensation?)
   end
 
   def active_veteran_appeals
@@ -88,6 +100,12 @@ class RampElectionIntake < Intake
 
     elsif active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
+
+    elsif active_compensation_appeals.empty?
+      self.error_code = :no_active_compensation_appeals
+
+    elsif active_fully_compensation_appeals.empty?
+      self.error_code = :no_active_fully_compensation_appeals
 
     elsif eligible_appeals.empty?
       self.error_code = :no_eligible_appeals

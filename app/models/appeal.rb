@@ -260,6 +260,18 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def compensation_issues
+    issues.select { |issue| issue.program == :compensation }
+  end
+
+  def compensation?
+    !compensation_issues.empty?
+  end
+
+  def fully_compensation?
+    compensation_issues.count == issues.count
+  end
+
   def ramp_election
     RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
