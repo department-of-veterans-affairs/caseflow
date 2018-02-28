@@ -13,12 +13,15 @@ import EstablishClaimCancel from './EstablishClaimCanceled';
 import UnpreparedTasksIndex from '../UnpreparedTasksIndex';
 import CanceledTasksIndex from '../CanceledTasksIndex';
 
+import TestPage from '../TestPage';
+
 const Pages = {
   EstablishClaim,
   EstablishClaimCancel,
   EstablishClaimComplete,
   UnpreparedTasksIndex,
-  CanceledTasksIndex
+  CanceledTasksIndex,
+  TestPage
 };
 
 export default class EstablishClaimContainer extends React.Component {
