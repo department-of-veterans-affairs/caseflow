@@ -52,6 +52,7 @@ class SubmitDecisionView extends React.PureComponent {
         this.props.goToNextStep();
       } else {
         const missingParams = _.difference(requiredParams, presentParams);
+
         console.warn(`missing params: ${JSON.stringify(missingParams)}`);
       }
     }
@@ -112,7 +113,7 @@ class SubmitDecisionView extends React.PureComponent {
         <p className="cf-lead-paragraph" {...subHeadStyling}>
           Complete the details below to submit this {decisionTypeDisplay} request for judge review.
         </p>
-        <hr/>
+        <hr />
         {decisionType === 'omo' && <RadioField
           name="omo_type"
           label="OMO type:"
@@ -137,7 +138,7 @@ class SubmitDecisionView extends React.PureComponent {
           onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
           value={decisionOpts.documentId}
         />
-        <span>Submit to judge:</span><br/>
+        <span>Submit to judge:</span><br />
         {this.getJudgeSelectComponent()}
         <TextareaField
           label="Notes:"

@@ -99,7 +99,7 @@ export default class IssueList extends React.PureComponent {
   render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
     <table {...tableStyling}>
       <tbody>
-      {this.getIssues()}
+        {this.getIssues()}
       </tbody>
     </table>
   </div>;

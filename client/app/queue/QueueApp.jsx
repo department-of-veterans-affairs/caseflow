@@ -97,11 +97,11 @@ class QueueApp extends React.PureComponent {
     const goToPrevStep = () => {
       props.history.push(`/tasks/${vacolsId}`);
       window.scrollTo(0, 0);
-    }
+    };
     const goToNextStep = () => {
       props.history.push('/');
       window.scrollTo(0, 0);
-    }
+    };
 
     return <React.Fragment>
       <Breadcrumbs
@@ -134,11 +134,11 @@ class QueueApp extends React.PureComponent {
     const goToPrevStep = () => {
       props.history.push(`/tasks/${vacolsId}`);
       window.scrollTo(0, 0);
-    }
+    };
     const goToNextStep = () => {
       props.history.push(`/tasks/${vacolsId}/submit`);
       window.scrollTo(0, 0);
-    }
+    };
 
     return <React.Fragment>
       <Breadcrumbs

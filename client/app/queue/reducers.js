@@ -19,6 +19,7 @@ export const initialState = {
   ui: {
     selectingJudge: false
   },
+
   /**
    * `pendingChanges` is an object of appeals/tasks that have been modified since
    * loading from the server. When a user starts editing an appeal/task, we copy
@@ -100,7 +101,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.UPDATE_APPEAL_ISSUE:
+  case ACTIONS.UPDATE_APPEAL_ISSUE: {
     const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
     const issueIdx = _.findIndex(issues, (issue) => issue.id === action.payload.issueId);
 
@@ -119,6 +120,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  }
   case ACTIONS.UPDATE_OBJECT:
     return update(state, {
       pendingChanges: {
