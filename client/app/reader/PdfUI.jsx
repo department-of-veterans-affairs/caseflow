@@ -9,7 +9,7 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { resetJumpToPage, togglePdfSidebar, toggleSearchBar
+import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel
 } from '../reader/PdfViewer/PdfViewerActions';
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
@@ -26,7 +26,8 @@ const MINIMUM_ZOOM = 0.1;
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
 //
-// Zoom In & Out: A plus and minus to zoom in and out.
+// Zoom In & Out: A plus and minus to zoom in and out (moved from local
+// state to reducer.
 // Page number: Shows what page you're currently on, out of the
 //   total number of pages.
 // Document name: The document name is in the top right corner.
@@ -35,7 +36,6 @@ export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      scale: 1,
       currentPage: 1
     };
   }
@@ -51,14 +51,12 @@ export class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
+    const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.props.scale + delta, 2));
     const zoomDirection = delta > 0 ? 'in' : 'out';
 
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
-    this.setState({
-      scale: nextScale
-    });
+    this.props.setZoomLevel(nextScale);
   }
 
   openDownloadLink = () => {
@@ -142,9 +140,12 @@ export class PdfUI extends React.Component {
   fitToScreen = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
-    this.setState({
-      scale: this.state.fitToScreenZoom
-    });
+    // Toggle fit to screen property.
+    if (this.props.scale === this.state.fitToScreenZoom) {
+      this.props.setZoomLevel(1);
+    } else {
+      this.props.setZoomLevel(this.state.fitToScreenZoom);
+    }
   }
 
   onPageChange = (currentPage, fitToScreenZoom) => {
@@ -269,7 +270,7 @@ export class PdfUI extends React.Component {
           id={this.props.id}
           history={this.props.history}
           onPageClick={this.props.onPageClick}
-          scale={this.state.scale}
+          scale={this.props.scale}
           onPageChange={this.onPageChange}
           prefetchFiles={this.props.prefetchFiles}
           resetJumpToPage={this.props.resetJumpToPage}
@@ -289,7 +290,7 @@ const mapStateToProps = (state, props) => {
     docListIsFiltered: docListIsFiltered(state),
     loadError: state.pdf.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
-    ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
+    ..._.pick(state.pdfViewer, 'hidePdfSidebar', 'scale'),
     numPages
   };
 };
@@ -300,7 +301,8 @@ const mapDispatchToProps = (dispatch) => (
     resetJumpToPage,
     rotateDocument,
     selectCurrentPdf,
-    toggleSearchBar
+    toggleSearchBar,
+    setZoomLevel
   }, dispatch)
 );
 
@@ -330,5 +332,6 @@ PdfUI.propTypes = {
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool,
   featureToggles: PropTypes.object,
-  showPdf: PropTypes.func
+  showPdf: PropTypes.func,
+  scale: PropTypes.number
 };
