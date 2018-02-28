@@ -190,7 +190,7 @@ export class PdfViewer extends React.Component {
         }
       ]}
       closeHandler={this.closeDocumentUpdatedModal}
-      title="This document you have chosen has been updated">
+      title="This document has been updated">
       This document has been updated in VBMS. We were able to copy over the comments, tags, and categories from the
       previous version of this document. However, if the content of the document has changed, these may no
       longer be correct.
