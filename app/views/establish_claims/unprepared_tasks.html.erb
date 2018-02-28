@@ -3,9 +3,9 @@
 
 <% content_for :full_page_content do %>
 	<%= react_component("EstablishClaimContainer", props: {
-	    unpreparedTasks: @unprepared_tasks.map(&:to_hash),
-	    page: "UnpreparedTasksIndex",
-	    userDisplayName: current_user.display_name,
+		unpreparedTasks: @unprepared_tasks.map(&:to_hash),
+		page: "UnpreparedTasksIndex",
+		userDisplayName: current_user.display_name,
 		dropdownUrls: dropdown_urls,
 		feedbackUrl: feedback_url,
 		buildDate: build_date
