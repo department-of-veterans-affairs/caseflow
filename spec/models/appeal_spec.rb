@@ -404,22 +404,117 @@ describe Appeal do
       end
     end
 
-    context "when there is a document with same series_id" do
-      let!(:saved_document) { Generators::Document.create(type: "Form 9", series_id: series_id) }
+    context "when there are documents with same series_id" do
+      let!(:saved_documents) do
+        [
+          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
+          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
+        ]
+      end
 
       before do
         expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
       end
 
-      it "updates retrieved documents" do
-        expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_document.type)
+      it "adds new retrieved documents" do
+        expect(Document.count).to eq(2)
+        expect(Document.first.type).to eq(saved_documents[0].type)
 
         returned_documents = appeal.find_or_create_documents_v2!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq("NOD")
+        expect(Document.count).to eq(4)
+        expect(Document.first.type).to eq("Form 9")
+        expect(Document.second.type).to eq("NOD")
+      end
+
+      context "when existing document has comments, tags, and categories" do
+        let(:older_comment) { "OLD_TEST_COMMENT" }
+        let(:comment) { "TEST_COMMENT" }
+        let(:tag) { "TEST_TAG" }
+        let!(:existing_annotations) do
+          [
+            Generators::Annotation.create(
+              comment: older_comment,
+              x: 1,
+              y: 2,
+              document_id: saved_documents[0].id
+            ),
+            Generators::Annotation.create(
+              comment: comment,
+              x: 1,
+              y: 2,
+              document_id: saved_documents[1].id
+            )
+          ]
+        end
+        let!(:document_tag) do
+          [
+            DocumentsTag.create(
+              tag_id: Generators::Tag.create(text: "NOT USED TAG").id,
+              document_id: saved_documents[0].id
+            ),
+            DocumentsTag.create(
+              tag_id: Generators::Tag.create(text: tag).id,
+              document_id: saved_documents[1].id
+            )
+          ]
+        end
+
+        it "copies metdata to new document" do
+          expect(Annotation.count).to eq(2)
+          expect(Annotation.second.comment).to eq(comment)
+          expect(DocumentsTag.count).to eq(2)
+
+          appeal.find_or_create_documents_v2!
+
+          expect(Annotation.count).to eq(3)
+          expect(Document.second.annotations.first.comment).to eq(comment)
+          expect(Document.third.annotations.first.comment).to eq(comment)
+
+          expect(DocumentsTag.count).to eq(3)
+          expect(Document.second.documents_tags.first.tag.text).to eq(tag)
+          expect(Document.third.documents_tags.first.tag.text).to eq(tag)
+
+          expect(Document.second.category_medical).to eq(true)
+          expect(Document.third.category_medical).to eq(true)
+        end
+
+        context "when the API returns two documents with the same series_id" do
+          let(:documents) do
+            [
+              Generators::Document.build(type: "NOD", series_id: series_id),
+              Generators::Document.build(type: "SOC"),
+              saved_documents[1]
+            ]
+          end
+
+          it "copies metadata from the most recently saved document not returned by the API" do
+            appeal.find_or_create_documents_v2!
+
+            expect(Document.third.annotations.first.comment).to eq(older_comment)
+          end
+        end
+      end
+
+      context "when API returns doc that is already saved" do
+        let!(:saved_documents) do
+          Generators::Document.create(
+            type: "Form 9",
+            series_id: series_id,
+            vbms_document_id: documents[0].vbms_document_id
+          )
+        end
+        it "updates existing document" do
+          expect(Document.count).to eq(1)
+          expect(Document.first.type).to eq(saved_documents.type)
+
+          returned_documents = appeal.find_or_create_documents_v2!
+          expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+          expect(Document.count).to eq(2)
+          expect(Document.first.type).to eq("NOD")
+        end
       end
     end
 
@@ -464,7 +559,7 @@ describe Appeal do
         )
       end
 
-      it "adds series_id and updates retrieved documents" do
+      it "adds series_id" do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
         expect(Document.first.series_id).to eq(nil)
@@ -472,9 +567,9 @@ describe Appeal do
         returned_documents = appeal.find_or_create_documents_v2!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
+        # Adds series id to existing document
         expect(Document.first.series_id).to eq(series_id)
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.count).to eq(3)
       end
     end
   end

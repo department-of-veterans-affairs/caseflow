@@ -24,6 +24,13 @@ RSpec.feature "Intake Stats Dashboard" do
       end_product_reference_id: "132"
     )
 
+    # RAMP election with no notice date
+    RampElection.create!(
+      veteran_file_number: "77776663",
+      receipt_date: 45.minutes.ago,
+      end_product_reference_id: "132"
+    )
+
     RampElectionIntake.create!(
       veteran_file_number: "1111",
       completed_at: 3.hours.ago,
@@ -55,7 +62,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned 33 %")
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January (so far)")
-    expect(find("#ramp-elections-received")).to have_content("Total 2")
+    expect(find("#ramp-elections-received")).to have_content("Total 3")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
@@ -76,7 +83,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned ?? %")
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January 7")
-    expect(find("#ramp-elections-received")).to have_content("Total 2")
+    expect(find("#ramp-elections-received")).to have_content("Total 3")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
   end
 
