@@ -14,7 +14,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
-import { setCaseReviewActionType } from './QueueActions';
+import { setCaseReviewActionType, startEditingAppeal } from './QueueActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -32,6 +32,9 @@ class QueueDetailView extends React.PureComponent {
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
 
+    // We move the current appeal to pendingChanges before loading any decision
+    // flow views, so we can operate exclusively on the copy to be modified.
+    this.props.startEditingAppeal(this.props.vacolsId);
     this.props.setCaseReviewActionType(props.value);
     this.props.history.push(`${this.props.history.location.pathname}/${route}`);
   }
@@ -93,7 +96,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setCaseReviewActionType
+  setCaseReviewActionType,
+  startEditingAppeal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));

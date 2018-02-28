@@ -38,3 +38,62 @@ export const setDecisionOptions = (opts) => ({
     opts
   }
 });
+
+export const startEditingAppeal = (vacolsId) => ({
+  type: ACTIONS.START_EDITING_OBJECT,
+  payload: {
+    type: 'appeals',
+    vacolsId
+  }
+});
+
+export const startEditingTask = (vacolsId) => ({
+  type: ACTIONS.START_EDITING_OBJECT,
+  payload: {
+    type: 'tasks',
+    vacolsId
+  }
+});
+
+export const cancelEditingAppeal = (vacolsId) => ({
+  type: ACTIONS.CANCEL_EDITING_OBJECT,
+  payload: {
+    type: 'appeals',
+    vacolsId
+  }
+});
+
+export const cancelEditingTask = (vacolsId) => ({
+  type: ACTIONS.CANCEL_EDITING_OBJECT,
+  payload: {
+    type: 'tasks',
+    vacolsId
+  }
+});
+
+export const updateAppeal = (vacolsId, attributes) => ({
+  type: ACTIONS.UPDATE_OBJECT,
+  payload: {
+    type: 'appeals',
+    vacolsId,
+    attributes
+  }
+});
+
+export const updateAppealIssue = (appealId, issueId, attributes) => ({
+  type: ACTIONS.UPDATE_APPEAL_ISSUE,
+  payload: {
+    appealId,
+    issueId,
+    attributes
+  }
+});
+
+export const updateTask = (vacolsId, attributes) => ({
+  type: ACTIONS.UPDATE_OBJECT,
+  payload: {
+    type: 'tasks',
+    vacolsId,
+    attributes
+  }
+});

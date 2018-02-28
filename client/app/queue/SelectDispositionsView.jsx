@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -10,6 +12,7 @@ import IssueList from './components/IssueList';
 import Table from '../components/Table';
 import SearchableDropdown from '../components/SearchableDropdown';
 
+import { cancelEditingAppeal, updateAppealIssue } from './QueueActions';
 import { fullWidth } from './constants';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
@@ -20,6 +23,7 @@ const rowStyling = css({
   }
 });
 
+// todo: map to VACOLS attrs
 const issueDispositionOptions = [
   [1, 'Allowed'],
   [3, 'Remanded'],
@@ -31,11 +35,9 @@ const issueDispositionOptions = [
 ];
 
 class SelectDispositionsView extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      disposition: ''
-    };
+  componentWillUnmount = () => {
+    // todo: if no edits made, cancel_editing
+    this.props.cancelEditingAppeal(this.props.vacolsId);
   }
 
   getKeyForRow = (rowNumber) => rowNumber;
@@ -54,21 +56,23 @@ class SelectDispositionsView extends React.PureComponent {
     },
     {
       header: 'Dispositions',
-      valueFunction: () => <SearchableDropdown
+      valueFunction: (issue) => <SearchableDropdown
         placeholder="Select Dispositions"
-        value={this.state.disposition}
+        value={issue.disposition}
         hideLabel
         searchable={false}
         options={issueDispositionOptions.map((opt) => ({
           label: `${opt[0]} - ${opt[1]}`,
           value: StringUtil.convertToCamelCase(opt[1])
         }))}
-        onChange={(({ value }) => {
-          console.warn(`${value} selected`);
-        })}
+        onChange={(({ value }) => this.props.updateAppealIssue(
+          this.props.vacolsId,
+          issue.id,
+          { disposition: value }
+        ))}
         name="Dispositions dropdown" />
     }
-  ]
+  ];
 
   render = () => <AppSegment filledBackground>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -92,7 +96,12 @@ SelectDispositionsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId]
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId]
 });
 
-export default connect(mapStateToProps)(SelectDispositionsView);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  cancelEditingAppeal,
+  updateAppealIssue
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);
