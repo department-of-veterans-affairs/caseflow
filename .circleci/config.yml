@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: circleci/ruby:2.2-browsers
+        environment:
+          - RAILS_ENV: test
+          - POSTGRES_HOST: localhost
+          - POSTGRES_USER: root
+
+    steps:
+      - checkout
+
+      - run:
+          name: Make CircleCI report OK so folks are not confused while we set it up
+          command: true
