@@ -130,7 +130,7 @@ class Appeal < ActiveRecord::Base
     if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
-      "/queue/#{id}/docs"
+      "/queue/docs"
     end
   end
 

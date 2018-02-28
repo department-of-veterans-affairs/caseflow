@@ -43,7 +43,8 @@ class QueueController < ApplicationController
 
   def document_count
     # used for local dev. see Appeal.number_of_documents_url
-    appeal = Appeal.find(params[:appeal_id])
+    vbms_id = request.headers["HTTP_FILE_NUMBER"]
+    appeal = Appeal.find_by_vbms_id(vbms_id)
     render json: {
       data: {
         attributes: {
