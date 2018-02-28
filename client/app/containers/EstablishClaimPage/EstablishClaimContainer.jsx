@@ -10,11 +10,15 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import EstablishClaim from './EstablishClaim';
 import EstablishClaimComplete from './EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimCanceled';
+import UnpreparedTasksIndex from '../UnpreparedTasksIndex';
+import CanceledTasksIndex from '../CanceledTasksIndex';
 
 const Pages = {
   EstablishClaim,
   EstablishClaimCancel,
-  EstablishClaimComplete
+  EstablishClaimComplete,
+  UnpreparedTasksIndex,
+  CanceledTasksIndex
 };
 
 export default class EstablishClaimContainer extends React.Component {

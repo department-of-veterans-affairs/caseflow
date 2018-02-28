@@ -1,8 +1,13 @@
 <% content_for :new_window_title do %>Claims Missing Decisions<% end %>
-
 <% content_for :page_title do page_title('Claims Missing Decisions') end %>
 
-<%= react_component("BaseContainer", props: {
-    unpreparedTasks: @unprepared_tasks.map(&:to_hash),
-    page: "UnpreparedTasksIndex"
-}) %>
+<% content_for :full_page_content do %>
+	<%= react_component("EstablishClaimContainer", props: {
+	    unpreparedTasks: @unprepared_tasks.map(&:to_hash),
+	    page: "UnpreparedTasksIndex",
+	    userDisplayName: current_user.display_name,
+		dropdownUrls: dropdown_urls,
+		feedbackUrl: feedback_url,
+		buildDate: build_date
+	}) %>
+<% end %>

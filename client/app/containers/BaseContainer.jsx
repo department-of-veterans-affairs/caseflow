@@ -9,8 +9,6 @@ import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
-import UnpreparedTasksIndex from './UnpreparedTasksIndex';
-import CanceledTasksIndex from './CanceledTasksIndex';
 import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
@@ -18,9 +16,7 @@ const Pages = {
   DecisionReviewer: Reader,
   Intake,
   StyleGuideIndex,
-  TestPage,
-  UnpreparedTasksIndex,
-  CanceledTasksIndex
+  TestPage
 };
 
 // This is the "base page" that wraps all pages rendered directly
