@@ -20,6 +20,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
+import Modal from '../components/Modal';
 
 const PAGE_MARGIN = 25;
 

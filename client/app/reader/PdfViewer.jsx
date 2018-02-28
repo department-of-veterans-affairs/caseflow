@@ -8,7 +8,7 @@ import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { selectCurrentPdf } from '../reader/Documents/DocumentsActions';
+import { selectCurrentPdf, closeDocumentUpdatedModal } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
 } from '../reader/AnnotationLayer/AnnotationActions';
 
@@ -177,6 +177,26 @@ export class PdfViewer extends React.Component {
     return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
   }
 
+  closeDocumentUpdatedModal = () => {
+    this.props.closeDocumentUpdatedModal(this.selectedDoc().id);
+  }
+
+  updatedDocumentModal = () => {
+    return <Modal
+      buttons={[
+        { classNames: ['usa-button', 'usa-button-primary'],
+          name: 'Got It',
+          onClick: this.closeDocumentUpdatedModal
+        }
+      ]}
+      closeHandler={this.closeDocumentUpdatedModal}
+      title="This document you have chosen has been updated">
+      This document has been updated in VBMS. We were able to copy over the comments, tags, and categories from the
+      previous version of this document. However, if the content of the document has changed, these may no
+      longer be correct.
+    </Modal>;
+  }
+
   render() {
     const doc = this.selectedDoc();
 
@@ -212,6 +232,7 @@ export class PdfViewer extends React.Component {
             featureToggles={this.props.featureToggles}
           />
         </div>
+        {doc.wasUpdated && this.updatedDocumentModal()}
         {this.props.deleteAnnotationModalIsOpenFor && <Modal
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -251,7 +272,8 @@ const mapDispatchToProps = (dispatch) => ({
     deleteAnnotation,
     stopPlacingAnnotation,
     fetchAppealDetails,
-    showSearchBar
+    showSearchBar,
+    closeDocumentUpdatedModal
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))

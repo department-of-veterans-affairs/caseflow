@@ -14,7 +14,8 @@ const documentsReducer = (state = initialState, action = {}) => {
       doc.id, {
         ...doc,
         receivedAt: doc.received_at,
-        listComments: false
+        listComments: false,
+        wasUpdated: doc.previous_document_version_id !== null && !doc.opened_by_current_user
       }
     ]).
       fromPairs().
@@ -184,6 +185,14 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         description: {
           $set: action.payload.description
+        }
+      }
+    });
+  case Constants.CLOSE_DOCUMENT_UPDATED_MODAL:
+    return update(state, {
+      [action.payload.docId]: {
+        wasUpdated: {
+          $set: false
         }
       }
     });

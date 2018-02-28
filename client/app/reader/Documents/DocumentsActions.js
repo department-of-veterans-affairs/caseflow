@@ -163,6 +163,13 @@ export const selectCurrentPdfLocally = (docId) => (dispatch) => {
   });
 };
 
+export const closeDocumentUpdatedModal = (docId) => ({
+  type: Constants.CLOSE_DOCUMENT_UPDATED_MODAL,
+  payload: {
+    docId
+  }
+});
+
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
     catch((err) => {
