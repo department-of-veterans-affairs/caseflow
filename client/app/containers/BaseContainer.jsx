@@ -14,10 +14,8 @@ import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete'
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 import CanceledTasksIndex from './CanceledTasksIndex';
-import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
-  CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
   EstablishClaim,
