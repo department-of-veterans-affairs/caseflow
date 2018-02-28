@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 import _ from 'lodash';
 
 export const initialState = {
+  judges: {},
   loadedQueue: {
     appeals: {},
     tasks: {},
@@ -14,6 +15,9 @@ export const initialState = {
   taskDecision: {
     type: '',
     opts: {}
+  },
+  ui: {
+    selectingJudge: false
   },
   /**
    * `pendingChanges` is an object of appeals/tasks that have been modified since
@@ -42,6 +46,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
         loadedUserId: {
           $set: action.payload.userId
         }
+      }
+    });
+  case ACTIONS.RECEIVE_JUDGE_DETAILS:
+    return update(state, {
+      judges: {
+        $set: action.payload.judges
       }
     });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
@@ -122,6 +132,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   // todo: request_edit_object, success, failure
+  case ACTIONS.SET_SELECTING_JUDGE:
+    return update(state, {
+      ui: {
+        selectingJudge: { $set: action.payload.selectingJudge }
+      }
+    });
   default:
     return state;
   }

@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+import _ from 'lodash';
 
-import { setDecisionOptions } from './QueueActions';
+import { setDecisionOptions, setSelectingJudge } from './QueueActions';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import RadioField from '../components/RadioField';
@@ -20,8 +21,6 @@ import SearchableDropdown from '../components/SearchableDropdown';
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noBottomMargin = css({ marginBottom: 0 });
 
-// Using glamor to apply marginBottom directly to <legend> in RadioField isn't
-// specific enough, and gets overridden by `.cf-form-showhide-radio .question-label`.
 const radioFieldStyling = css(noBottomMargin, {
   marginTop: '2rem',
   '& .question-label': {
@@ -31,24 +30,40 @@ const radioFieldStyling = css(noBottomMargin, {
 const subHeadStyling = css({ marginBottom: '2rem' });
 const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
-const judges = [{
-  label: 'Nick Kroes',
-  value: 'VACOKROESN'
-}, {
-  label: 'Judy Sheindlin',
-  value: 'VACOJUDY'
-}, {
-  label: 'Judge Dredd',
-  value: 'VAMCDREDDJ'
-}];
+const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
-  constructor(props) {
-    super(props);
+  getJudgeSelectComponent = () => {
+    if (this.props.selectingJudge) {
+      return <React.Fragment>
+        <SearchableDropdown
+          name="Select a judge"
+          placeholder="Select a judge&hellip;"
+          options={_.map(this.props.judges, (judge) => ({
+            label: judge.full_name,
+            value: judge.css_id
+          }))}
+          onChange={(judge) => {
+            this.props.setSelectingJudge(false);
+            this.props.setDecisionOptions({ judge });
+          }}
+          hideLabel />
+      </React.Fragment>;
+    }
 
-    this.state = {
-      selectingJudge: false
-    };
+    const selectedJudge = _.get(this.props.decision.opts.judge, 'label');
+
+    return <React.Fragment>
+      {selectedJudge && <span>{selectedJudge}</span>}
+      <Button
+        id="select-judge"
+        classNames={['cf-btn-link']}
+        willNeverBeLoading
+        styling={selectJudgeButtonStyling(selectedJudge)}
+        onClick={() => this.props.setSelectingJudge(true)}>
+        Select {selectedJudge ? 'another' : 'a'} judge
+      </Button>
+    </React.Fragment>;
   }
 
   render = () => {
@@ -64,26 +79,6 @@ class SubmitDecisionView extends React.PureComponent {
       opts: decisionOpts
     } = this.props.decision;
     const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
-    const judgeDisplay = this.state.selectingJudge ?
-      <React.Fragment>
-        <SearchableDropdown
-          name="Select a judge"
-          placeholder="Select a judge&hellip;"
-          options={judges}
-          onChange={(judge) => {
-            this.setState({ selectingJudge: false });
-            this.props.setDecisionOptions({ judge });
-          }}
-          hideLabel />
-      </React.Fragment> :
-      <React.Fragment>
-        <span>{(decisionOpts.judge || judges[0]).label}</span>
-        <Button
-          classNames={['cf-btn-link']}
-          onClick={() => this.setState({ selectingJudge: true })}>
-          Select another judge
-        </Button>
-      </React.Fragment>;
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -111,15 +106,17 @@ class SubmitDecisionView extends React.PureComponent {
         styling={css(smallBottomMargin, checkboxStyling)}
       />
       <TextField
-        name="Document ID:"
+        label="Document ID:"
+        name="document_id"
         required
         onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
         value={decisionOpts.documentId}
       />
       <span>Submit to judge:</span><br />
-      {judgeDisplay}
+      {this.getJudgeSelectComponent()}
       <TextareaField
-        name="Notes:"
+        label="Notes:"
+        name="notes"
         value={decisionOpts.notes}
         onChange={(notes) => this.props.setDecisionOptions({ notes })}
         styling={textAreaStyling}
@@ -134,11 +131,14 @@ SubmitDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  decision: state.queue.taskDecision
+  decision: state.queue.taskDecision,
+  judges: state.queue.judges,
+  selectingJudge: state.queue.ui.selectingJudge
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDecisionOptions
+  setDecisionOptions,
+  setSelectingJudge
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);

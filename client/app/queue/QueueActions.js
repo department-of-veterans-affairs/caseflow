@@ -9,6 +9,13 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   }
 });
 
+export const onReceiveJudges = (judges) => ({
+  type: ACTIONS.RECEIVE_JUDGE_DETAILS,
+  payload: {
+    judges
+  }
+});
+
 export const setAppealDocCount = ({ vacolsId, docCount }) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
@@ -92,8 +99,14 @@ export const updateAppealIssue = (appealId, issueId, attributes) => ({
 export const updateTask = (vacolsId, attributes) => ({
   type: ACTIONS.UPDATE_OBJECT,
   payload: {
-    type: 'tasks',
-    vacolsId,
-    attributes
+  type: 'tasks',
+  vacolsId,
+  attributes
+});
+
+export const setSelectingJudge = (selectingJudge) => ({
+  type: ACTIONS.SET_SELECTING_JUDGE,
+  payload: {
+    selectingJudge
   }
 });

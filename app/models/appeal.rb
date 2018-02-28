@@ -130,7 +130,7 @@ class Appeal < ActiveRecord::Base
     if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
-      "/queue/#{id}/docs"
+      "/queue/docs_for_dev"
     end
   end
 
@@ -350,23 +350,22 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents_v2!
     AddSeriesIdToDocumentsJob.perform_now(self)
 
-    ids = fetched_documents.map(&:series_id)
-    existing_documents = Document.where(series_id: ids)
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.series_id] = document
+      accumulator[document.vbms_document_id] = document
     end
 
     fetched_documents.map do |document|
       begin
-        if existing_documents[document.series_id]
-          document.merge_into(existing_documents[document.series_id]).save!
-          existing_documents[document.series_id]
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
         else
-          document.save!
-          document
+          create_new_document!(document, ids)
         end
       rescue ActiveRecord::RecordNotUnique
-        Document.find_by(series_id: document.series_id)
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
@@ -546,6 +545,20 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  def create_new_document!(document, ids)
+    document.save!
+
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
