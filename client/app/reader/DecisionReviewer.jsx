@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import AppFrame from '../components/AppFrame';
@@ -135,57 +135,51 @@ export class DecisionReviewer extends React.PureComponent {
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
   render() {
-    const Router = this.props.router || BrowserRouter;
     const queueEnabled = this.props.featureToggles.queueWelcomeGate;
 
-    // Since we're not inside React Router, we don't have access to the route params,
-    // so we'll have to manually search for the vacols id.
-    const match = window.location.pathname.match(/\/reader\/appeal\/(\d+)/);
-    const vacolsId = match ? match[1] : '';
-
+    const { vacolsId } = this.props.match.params;
     const defaultUrl = queueEnabled ? `/${vacolsId}/documents/` : '/';
     const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
-        <NavigationBar
-          wideApp
-          appName="Reader"
-          logoProps={{
-            accentColor: LOGO_COLORS.READER.ACCENT,
-            overlapColor: LOGO_COLORS.READER.OVERLAP
-          }}
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl={defaultUrl}>
+    return <React.Fragment>
+      <NavigationBar
+        wideApp
+        appName="Reader"
+        logoProps={{
+          accentColor: LOGO_COLORS.READER.ACCENT,
+          overlapColor: LOGO_COLORS.READER.OVERLAP
+        }}
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}
+        defaultUrl={defaultUrl}>
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer} />
+        <AppFrame wideApp>
           <PageRoute
             exact
-            title="Document Viewer | Caseflow Reader"
-            breadcrumb="Document Viewer"
-            path="/:vacolsId/documents/:docId"
-            render={this.routedPdfViewer} />
-          <AppFrame wideApp>
-            <PageRoute
-              exact
-              title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb={claimsFolderBreadcrumb}
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            {!queueEnabled && <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-            }
-          </AppFrame>
-        </NavigationBar>
-        <Footer
-          wideApp
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </div>
-    </Router>;
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb={claimsFolderBreadcrumb}
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
+          {!queueEnabled && <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+          }
+        </AppFrame>
+      </NavigationBar>
+      <Footer
+        wideApp
+        appName="Reader"
+        feedbackUrl={this.props.feedbackUrl}
+        buildDate={this.props.buildDate} />
+    </React.Fragment>
+    ;
   }
 }
 
@@ -198,11 +192,7 @@ DecisionReviewer.propTypes = {
   // Required actions
   onScrollToComment: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func,
-
-  // These two properties are exclusively for testing purposes
-  router: PropTypes.func,
-  routerProps: PropTypes.object
+  setCategoryFilter: PropTypes.func
 };
 
 const mapStateToProps = (state, props) => {
@@ -229,4 +219,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer));

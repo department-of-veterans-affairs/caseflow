@@ -55,22 +55,19 @@ const getStore = () => createStore(
 
 const getWrapper = (store) => mount(
   <Provider store={store}>
-    <DecisionReviewer
-      featureToggles={{}}
-      userDisplayName="Name"
-      feedbackUrl="fakeurl"
-      dropdownUrls={[{
-        title: 'title',
-        link: 'link'
-      }]}
-      pdfWorker="worker"
-      url="url"
-      router={MemoryRouter}
-      routerTestProps={{
-        initialEntries: INITIAL_ENTRIES
-      }}
-
-    />
+    <MemoryRouter initialEntries={INITIAL_ENTRIES}>
+      <DecisionReviewer
+        featureToggles={{}}
+        userDisplayName="Name"
+        feedbackUrl="fakeurl"
+        dropdownUrls={[{
+          title: 'title',
+          link: 'link'
+        }]}
+        pdfWorker="worker"
+        url="url"
+      />
+    </MemoryRouter>
   </Provider>, { attachTo: document.getElementById('app') });
 
 /* eslint-disable camelcase */
