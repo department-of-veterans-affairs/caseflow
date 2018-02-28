@@ -42,10 +42,16 @@ export default class EstablishClaimContainer extends React.Component {
   }
 
   render() {
-    let { page, ...rest } = this.props;
-    let { alert } = this.state;
+    let {
+      page,
+      ...rest
+    } = this.props;
 
-    let DispatchComponent = Pages[page];
+    let {
+      alert
+    } = this.state;
+
+    let PageComponent = Pages[page];
 
     return <BrowserRouter>
       <React.Fragment>
@@ -67,7 +73,7 @@ export default class EstablishClaimContainer extends React.Component {
           />
         </div>}
         <AppFrame>
-          <DispatchComponent
+          <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
             handleAlertClear={this.handleAlertClear}
