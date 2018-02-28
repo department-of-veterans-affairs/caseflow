@@ -99,9 +99,10 @@ export const updateAppealIssue = (appealId, issueId, attributes) => ({
 export const updateTask = (vacolsId, attributes) => ({
   type: ACTIONS.UPDATE_OBJECT,
   payload: {
-  type: 'tasks',
-  vacolsId,
-  attributes
+    type: 'tasks',
+    vacolsId,
+    attributes
+  }
 });
 
 export const setSelectingJudge = (selectingJudge) => ({

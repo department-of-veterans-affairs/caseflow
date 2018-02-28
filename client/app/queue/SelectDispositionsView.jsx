@@ -14,6 +14,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { cancelEditingAppeal, updateAppealIssue } from './QueueActions';
 import { fullWidth } from './constants';
+import DecisionViewFooter from './components/DecisionViewFooter';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -39,6 +40,16 @@ class SelectDispositionsView extends React.PureComponent {
     // todo: if no edits made, cancel_editing
     this.props.cancelEditingAppeal(this.props.vacolsId);
   }
+
+  getFooterButtons = () => [{
+    displayText: 'Go back to Select Work Product',
+    classNames: ['cf-btn-link'],
+    callback: this.props.goToPrevStep
+  }, {
+    displayText: 'Finish dispositions',
+    classNames: ['cf-right-side'],
+    callback: this.props.goToNextStep
+  }];
 
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [
@@ -74,25 +85,31 @@ class SelectDispositionsView extends React.PureComponent {
     }
   ];
 
-  render = () => <AppSegment filledBackground>
-    <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-      Select Dispositions
-    </h1>
-    <p className="cf-lead-paragraph" {...mediumBottomMargin}>
-      Review each issue and assign the appropriate dispositions.
-    </p>
-    <hr />
-    <Table
-      columns={this.getColumns}
-      rowObjects={this.props.appeal.attributes.issues}
-      getKeyForRow={this.getKeyForRow}
-      styling={rowStyling}
-    />
-  </AppSegment>;
+  render = () => <React.Fragment>
+    <AppSegment filledBackground>
+      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        Select Dispositions
+      </h1>
+      <p className="cf-lead-paragraph" {...mediumBottomMargin}>
+        Review each issue and assign the appropriate dispositions.
+      </p>
+      <hr />
+      <Table
+        columns={this.getColumns}
+        rowObjects={this.props.appeal.attributes.issues}
+        getKeyForRow={this.getKeyForRow}
+        styling={rowStyling}
+      />
+    </AppSegment>
+    <DecisionViewFooter buttons={this.getFooterButtons()} />
+  </React.Fragment>;
 }
 
 SelectDispositionsView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  vbmsId: PropTypes.string.isRequired,
+  goToNextStep: PropTypes.func.isRequired,
+  goToPrevStep: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({

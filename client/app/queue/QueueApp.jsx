@@ -9,7 +9,6 @@ import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Breadcrumbs from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Breadcrumbs';
-import DecisionViewFooter from './components/DecisionViewFooter';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -85,21 +84,6 @@ class QueueApp extends React.PureComponent {
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const footerButtons = [{
-      displayText: `Go back to draft decision ${appeal.vbms_id}`,
-      callback: () => {
-        props.history.push(`/tasks/${vacolsId}`);
-        window.scrollTo(0, 0);
-      },
-      classNames: ['cf-btn-link']
-    }, {
-      displayText: 'Submit',
-      classNames: ['cf-right-side'],
-      callback: () => {
-        props.history.push('/');
-        window.scrollTo(0, 0);
-      }
-    }];
     const crumbs = [{
       breadcrumb: 'Your Queue',
       path: '/'
@@ -110,6 +94,14 @@ class QueueApp extends React.PureComponent {
       breadcrumb: 'Submit OMO',
       path: `/tasks/${vacolsId}/submit`
     }];
+    const goToPrevStep = () => {
+      props.history.push(`/tasks/${vacolsId}`);
+      window.scrollTo(0, 0);
+    }
+    const goToNextStep = () => {
+      props.history.push('/');
+      window.scrollTo(0, 0);
+    }
 
     return <React.Fragment>
       <Breadcrumbs
@@ -117,26 +109,18 @@ class QueueApp extends React.PureComponent {
         shouldDrawCaretBeforeFirstCrumb={false}
         styling={breadcrumbStyling}
         elements={crumbs} />
-      <SubmitDecisionView vacolsId={vacolsId} />
-      <DecisionViewFooter buttons={footerButtons} />
+      <SubmitDecisionView
+        vacolsId={vacolsId}
+        vbmsId={appeal.vbms_id}
+        goToNextStep={goToNextStep}
+        goToPrevStep={goToPrevStep}
+      />
     </React.Fragment>;
   };
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const footerButtons = [{
-      displayText: 'Go back to Select Work Product',
-      callback: () => {
-        props.history.push(`/tasks/${vacolsId}`);
-        window.scrollTo(0, 0);
-      },
-      classNames: ['cf-btn-link']
-    }, {
-      displayText: 'Finish disposition',
-      callback: _.noop,
-      classNames: ['cf-right-side']
-    }];
     const crumbs = [{
       breadcrumb: 'Your Queue',
       path: '/'
@@ -147,6 +131,14 @@ class QueueApp extends React.PureComponent {
       breadcrumb: 'Select Dispositions',
       path: `/tasks/${vacolsId}/dispositions`
     }];
+    const goToPrevStep = () => {
+      props.history.push(`/tasks/${vacolsId}`);
+      window.scrollTo(0, 0);
+    }
+    const goToNextStep = () => {
+      props.history.push(`/tasks/${vacolsId}/submit`);
+      window.scrollTo(0, 0);
+    }
 
     return <React.Fragment>
       <Breadcrumbs
@@ -154,8 +146,12 @@ class QueueApp extends React.PureComponent {
         styling={breadcrumbStyling}
         shouldDrawCaretBeforeFirstCrumb={false}
         elements={crumbs} />
-      <SelectDispositionsView vacolsId={vacolsId} />
-      <DecisionViewFooter buttons={footerButtons} />
+      <SelectDispositionsView
+        vacolsId={vacolsId}
+        vbmsId={appeal.vbms_id}
+        goToNextStep={goToNextStep}
+        goToPrevStep={goToPrevStep}
+      />
     </React.Fragment>;
   };
 
