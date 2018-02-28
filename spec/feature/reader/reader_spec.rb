@@ -147,7 +147,7 @@ RSpec.feature "Reader" do
     end
 
     after do
-      FeatureToggle.enable!(:efolder_api_v2)
+      FeatureToggle.disable!(:efolder_api_v2)
     end
 
     it "should alert user" do
