@@ -8,6 +8,8 @@ describe RampElectionIntake do
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:appeal_vacols_record) { :ready_to_certify }
+  let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+  let(:issues) { [compensation_issue] }
 
   let(:intake) do
     RampElectionIntake.new(
@@ -21,7 +23,8 @@ describe RampElectionIntake do
     Generators::Appeal.build(
       vbms_id: "64205555C",
       vacols_record: appeal_vacols_record,
-      veteran: veteran
+      veteran: veteran,
+      issues: issues
     )
   end
 
@@ -219,8 +222,6 @@ describe RampElectionIntake do
     end
 
     let(:education_issue) { Generators::Issue.build(template: :education) }
-    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
-    let(:issues) { [compensation_issue] }
 
     context "the ramp election is complete" do
       let!(:complete_intake) do

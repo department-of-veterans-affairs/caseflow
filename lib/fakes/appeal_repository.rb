@@ -332,6 +332,7 @@ class Fakes::AppealRepository
   # 11555555 has an appeal ineligible for ramp
   # 12555555 has no active appeals
   # 13555555 has no ramp election
+  # 14555555 has no compensation issues
   # rubocop:disable Metrics/MethodLength
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
@@ -388,6 +389,11 @@ class Fakes::AppealRepository
     Generators::Appeal.build(
       vbms_id: "13555555C",
       vacols_record: :activated
+    )
+
+    Generators::Appeal.build(
+      vbms_id: "14555555C",
+      issues: (1..2).map { Generators::Issue.build(template: :education) }
     )
 
     Generators::Appeal.build(

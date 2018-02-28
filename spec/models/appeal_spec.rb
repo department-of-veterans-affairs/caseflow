@@ -1225,6 +1225,53 @@ describe Appeal do
     end
   end
 
+  context "#compensation_issues" do
+    subject { appeal.compensation_issues }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
+
+    it { is_expected.to eq([compensation_issue]) }
+  end
+
+  context "#compensation?" do
+    subject { appeal.compensation? }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:education_issue) { Generators::Issue.build(template: :education) }
+
+    context "when there are no compensation issues" do
+      let(:issues) { [education_issue] }
+      it { is_expected.to be false }
+    end
+
+    context "when there is at least 1 compensation issue" do
+      let(:issues) { [education_issue, compensation_issue] }
+      it { is_expected.to be true }
+    end
+  end
+
+
+  context "#fully_compensation?" do
+    subject { appeal.fully_compensation? }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:education_issue) { Generators::Issue.build(template: :education) }
+
+    context "when there is at least one non-compensation issue" do
+      let(:issues) { [education_issue, compensation_issue] }
+      it { is_expected.to be false }
+    end
+
+    context "when there are all compensation issues" do
+      let(:issues) { [compensation_issue] }
+      it { is_expected.to be true }
+    end
+  end
+
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
