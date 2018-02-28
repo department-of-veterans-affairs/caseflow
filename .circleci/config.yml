@@ -16,4 +16,4 @@ jobs:
 
       - run:
           name: Make CircleCI report OK so folks are not confused while we set it up
-          command: true
+          command: "true"
