@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import Table from '../components/Table';
-import { formatDate } from '../util/DateUtil';
+import Table from '../../components/Table';
+import { formatDate } from '../../util/DateUtil';
 
 export default class CanceledTasksIndex extends React.Component {
   render() {
