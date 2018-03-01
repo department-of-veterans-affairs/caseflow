@@ -39,8 +39,10 @@ class Helpers::Sanitizers
       sspare3: ::Faker::Name.initials(1),
       sspare4: ::Faker::Name.suffix,
       sfnod: random_or_nil(::Faker::Date.between(Date.new(1980), Date.new(2018))),
-      sdob: ::Faker::Date.between(Date.new(1960), Date.new(1990))
+      sdob: ::Faker::Date.between(Date.new(1960), Date.new(1990)),
+      sgender: (::Faker::Number.number(1).to_i < 5) ? "M" : "F"
     )
+
     representative = vacols_case.representative
     representative.assign_attributes(
       replast: ::Faker::Name.last_name,

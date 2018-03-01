@@ -120,7 +120,7 @@ namespace :local_vacols do
     write_csv(VACOLS::Representative, cases.map(&:representative))
     write_csv(VACOLS::Correspondent, cases.map(&:correspondent))
     write_csv(VACOLS::CaseIssue, cases.map(&:case_issues))
-    write_csv(VACOLS::Note, cases.map(& :notes))
+    write_csv(VACOLS::Note, cases.map(&:notes))
     write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
     write_csv(VACOLS::Decass, cases.map(&:decass))
 
