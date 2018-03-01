@@ -47,15 +47,18 @@ class ExternalApi::EfolderService
 
       fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
 
-      break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+      if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+        return generate_response(response_attrs, vbms_id)
+      end
+
       sleep 1
 
-      manifest_id = response_attrs["id"]
+      manifest_id = JSON.parse(response.body)["data"]["id"]
 
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    generate_response(response_attrs, vbms_id)
+    fail Caseflow::Error::DocumentRetrievalError
   end
 
   def self.generate_response(response_attrs, vbms_id)
