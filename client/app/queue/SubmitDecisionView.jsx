@@ -43,10 +43,15 @@ class SubmitDecisionView extends React.PureComponent {
     classNames: ['cf-right-side'],
     callback: () => {
       const {
+        type: decisionType,
         opts: decisionOpts
       } = this.props.decision;
-      const requiredParams = ['omoType', 'documentId', 'notes'];
+      const requiredParams = ['documentId', 'notes'];
       const presentParams = _.filter(requiredParams, (param) => _.has(decisionOpts, param));
+
+      if (decisionType === 'omo') {
+        requiredParams.push('omoType');
+      }
 
       if (presentParams.length === requiredParams.length) {
         this.props.goToNextStep();
