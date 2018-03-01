@@ -87,6 +87,15 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def verify_queue_phase_two
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_two)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
