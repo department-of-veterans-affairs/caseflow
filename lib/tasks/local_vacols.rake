@@ -109,6 +109,10 @@ namespace :local_vacols do
       :decass
     ).find(ids)
 
+    cases.each do |vacols_case|
+      Helpers::Sanitizers.sanitize_case(vacols_case)
+    end
+
     vbms_record_from_case(cases, case_descriptors)
 
     write_csv(VACOLS::Case, cases)
