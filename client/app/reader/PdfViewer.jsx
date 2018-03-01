@@ -181,21 +181,19 @@ export class PdfViewer extends React.Component {
     this.props.closeDocumentUpdatedModal(this.selectedDoc().id);
   }
 
-  updatedDocumentModal = () => {
-    return <Modal
-      buttons={[
-        { classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Got It',
-          onClick: this.closeDocumentUpdatedModal
-        }
-      ]}
-      closeHandler={this.closeDocumentUpdatedModal}
-      title="This document has been updated">
-      This document has been updated in VBMS. We were able to copy over the comments, tags, and categories from the
-      previous version of this document. However, if the content of the document has changed, these may no
-      longer be correct.
-    </Modal>;
-  }
+  updatedDocumentModal = () => <Modal
+    buttons={[
+      { classNames: ['usa-button', 'usa-button-primary'],
+        name: 'Got It',
+        onClick: this.closeDocumentUpdatedModal
+      }
+    ]}
+    closeHandler={this.closeDocumentUpdatedModal}
+    title="This document has been updated">
+    This document has been updated in VBMS. We were able to copy over the comments, tags, and categories from the
+    previous version of this document. However, if the content of the document has changed, these may no
+    longer be correct.
+  </Modal>;
 
   render() {
     const doc = this.selectedDoc();
