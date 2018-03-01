@@ -115,15 +115,15 @@ rake local_vacols:logs
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
-1) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
+2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
 ```
 export VACOLS_PASSWORD=<pw_from_credstash>
 export VACOLS_USERNAME=<pw_from_credstash>
 ```
-1) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
-1) `RAILS_ENV=ssh_forwarding rake local_vacols:dump_data` to dump the data to CSV files
-1) `RAILS_ENV=local_vacols rake local_vacols:seed` to load the data from the CSV files into your local VACOLS
-1) `rails s -e local_vacols` to start the server connected to local VACOLS or `rails c -e local_vacols` to start the rails console connected to local VACOLS.
+3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
+4) `RAILS_ENV=ssh_forwarding rake local_vacols:dump_data` to dump the data to CSV files
+5) `RAILS_ENV=local_vacols rake local_vacols:seed` to load the data from the CSV files into your local VACOLS
+6) `rails s -e local_vacols` to start the server connected to local VACOLS or `rails c -e local_vacols` to start the rails console connected to local VACOLS.
 
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
