@@ -1518,7 +1518,7 @@ RSpec.feature "Reader" do
     let(:series_id) { SecureRandom.uuid }
     let(:document_ids_in_series) { [SecureRandom.uuid, SecureRandom.uuid] }
     let(:fetch_documents_responses) do
-      do |document_id|
+      document_ids_in_series.map do |document_id|
         {
           documents: [Generators::Document.build(vbms_document_id: document_id, series_id: series_id)],
           manifest_vbms_fetched_at: Time.now.utc,
