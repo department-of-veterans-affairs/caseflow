@@ -1,11 +1,16 @@
 <% content_for :page_title do task.appeal.task_header end %>
-
-<%= react_component("BaseContainer", props: {
+<% content_for :full_page_content do %>
+<%= react_component("EstablishClaimContainer", props: {
   availableTasks: tasks.any_assignable_to?(current_user),
   buttonText: start_text,
   employeeCount: team_quota.user_count,
   page: "EstablishClaimCancel",
   secondHeader: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.sanitized_vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch.",
   totalCasesCompleted: total_cases_completed,
-  totalCasesToComplete: to_complete_count
+  totalCasesToComplete: to_complete_count,
+  userDisplayName: current_user.display_name,
+  dropdownUrls: dropdown_urls,
+  feedbackUrl: feedback_url,
+  buildDate: build_date
 }) %>
+<% end %>
