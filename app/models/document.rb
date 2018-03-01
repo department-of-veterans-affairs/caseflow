@@ -198,6 +198,28 @@ class Document < ActiveRecord::Base
     end
   end
 
+  def copy_metadata_from_document(source_document)
+    source_document.annotations.map do |annotation|
+      annotation.dup.tap do |a|
+        a.document_id = id
+        a.save!
+      end
+    end
+
+    source_document.documents_tags.map do |tag|
+      tag.dup.tap do |t|
+        t.document_id = id
+        t.save!
+      end
+    end
+
+    update_attributes(
+      category_procedural: source_document.category_procedural,
+      category_medical: source_document.category_medical,
+      category_other: source_document.category_other
+    )
+  end
+
   private
 
   def reader_with_efolder_api?

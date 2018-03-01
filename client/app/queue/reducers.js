@@ -5,6 +5,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
 
 export const initialState = {
+  judges: {},
   loadedQueue: {
     appeals: {},
     tasks: {},
@@ -13,6 +14,9 @@ export const initialState = {
   taskDecision: {
     type: '',
     opts: {}
+  },
+  ui: {
+    selectingJudge: false
   }
 };
 
@@ -30,6 +34,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
         loadedUserId: {
           $set: action.payload.userId
         }
+      }
+    });
+  case ACTIONS.RECEIVE_JUDGE_DETAILS:
+    return update(state, {
+      judges: {
+        $set: action.payload.judges
       }
     });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
@@ -57,6 +67,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       taskDecision: {
         opts: { $merge: action.payload.opts }
+      }
+    });
+  case ACTIONS.SET_SELECTING_JUDGE:
+    return update(state, {
+      ui: {
+        selectingJudge: { $set: action.payload.selectingJudge }
       }
     });
   default:

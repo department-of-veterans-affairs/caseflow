@@ -238,7 +238,7 @@ RSpec.feature "Queue" do
 
   context "loads decision views" do
     context "submits decision" do
-      scenario "submits omo decision" do
+      scenario "loads submit omo decision page" do
         appeal = vacols_appeals.first
         visit "/queue"
 
@@ -251,6 +251,30 @@ RSpec.feature "Queue" do
         expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
 
         expect(page).to have_content("Go back to draft decision #{appeal.vbms_id}")
+      end
+
+      scenario "submits omo decision" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+
+        expect(page).to have_content("Submit OMO for Review")
+
+        click_label("omo-type_omo")
+        click_label("overtime")
+        fill_in "document_id", with: "12345"
+        fill_in "notes", with: "notes"
+
+        safe_click("#select-judge")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+        expect(page).to have_content("Andrew Mackenzie")
+
+        safe_click("button.cf-right-side")
+        expect(page.current_path).to eq("/queue/")
       end
     end
   end
