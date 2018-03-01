@@ -6,7 +6,11 @@ import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 
-import { setDecisionOptions, setSelectingJudge } from './QueueActions';
+import {
+  setDecisionOptions,
+  setSelectingJudge,
+  pushBreadcrumb
+} from './QueueActions';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import RadioField from '../components/RadioField';
@@ -34,6 +38,19 @@ const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
+  componentDidMount = () => this.props.pushBreadcrumb({
+    breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
+    path: `/tasks/${this.props.vacolsId}/submit`
+  });
+
+  getDecisionTypeDisplay = () => {
+    const {
+      type: decisionType
+    } = this.props.decision;
+
+    return decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
+  }
+
   getFooterButtons = () => [{
     displayText: `Go back to draft decision ${this.props.vbmsId}`,
     classNames: ['cf-btn-link'],
@@ -108,15 +125,14 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const decisionTypeDisplay = decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
 
     return <React.Fragment>
       <AppSegment filledBackground>
         <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Submit {decisionTypeDisplay} for Review
+          Submit {this.getDecisionTypeDisplay()} for Review
         </h1>
         <p className="cf-lead-paragraph" {...subHeadStyling}>
-          Complete the details below to submit this {decisionTypeDisplay} request for judge review.
+          Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
         </p>
         <hr />
         {decisionType === 'omo' && <RadioField
@@ -174,7 +190,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
-  setSelectingJudge
+  setSelectingJudge,
+  pushBreadcrumb
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);

@@ -17,7 +17,8 @@ export const initialState = {
     opts: {}
   },
   ui: {
-    selectingJudge: false
+    selectingJudge: false,
+    breadcrumbs: []
   },
 
   /**
@@ -138,6 +139,22 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         selectingJudge: { $set: action.payload.selectingJudge }
+      }
+    });
+  case ACTIONS.PUSH_BREADCRUMB:
+    return update(state, {
+      ui: {
+        breadcrumbs: {
+          $push: action.payload.crumbs
+        }
+      }
+    });
+  case ACTIONS.RESET_BREADCRUMBS:
+    return update(state, {
+      ui: {
+        breadcrumbs: {
+          $set: []
+        }
       }
     });
   default:

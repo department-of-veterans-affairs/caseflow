@@ -11,7 +11,11 @@ import IssueList from './components/IssueList';
 import Table from '../components/Table';
 import SearchableDropdown from '../components/SearchableDropdown';
 
-import { cancelEditingAppeal, updateAppealIssue } from './QueueActions';
+import {
+  cancelEditingAppeal,
+  updateAppealIssue,
+  pushBreadcrumb
+} from './QueueActions';
 import { fullWidth } from './constants';
 import DecisionViewFooter from './components/DecisionViewFooter';
 
@@ -35,6 +39,11 @@ const issueDispositionOptions = [
 ];
 
 class SelectDispositionsView extends React.PureComponent {
+  componentDidMount = () => this.props.pushBreadcrumb({
+    breadcrumb: 'Select Dispositions',
+    path: `/tasks/${this.props.vacolsId}/dispositions`
+  });
+
   componentWillUnmount = () => {
     // todo: if no edits made, cancel_editing
     this.props.cancelEditingAppeal(this.props.vacolsId);
@@ -117,7 +126,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppeal,
-  updateAppealIssue
+  updateAppealIssue,
+  pushBreadcrumb
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);

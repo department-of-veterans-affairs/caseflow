@@ -8,7 +8,6 @@ import { css } from 'glamor';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import Breadcrumbs from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Breadcrumbs';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
@@ -17,12 +16,9 @@ import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import Breadcrumbs from './components/BreadcrumbManager';
 
 const appStyling = css({ paddingTop: '3rem' });
-const breadcrumbStyling = css({
-  marginTop: '-1.5rem',
-  marginBottom: '-1.5rem'
-});
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {
@@ -53,47 +49,16 @@ class QueueApp extends React.PureComponent {
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => {
-    const { vacolsId } = props.match.params;
-    const crumbs = [];
-
-    if (!_.isEmpty(this.props.appeals)) {
-      const { veteran_full_name } = this.props.appeals[vacolsId].attributes;
-
-      crumbs.push({
-        breadcrumb: 'Your Queue',
-        path: '/'
-      }, {
-        breadcrumb: veteran_full_name,
-        path: `/tasks/${vacolsId}`
-      });
-    }
-
-    return <QueueLoadingScreen {...this.props}>
-      <Breadcrumbs
-        getBreadcrumbLabel={(route) => route.breadcrumb}
-        shouldDrawCaretBeforeFirstCrumb={false}
-        styling={breadcrumbStyling}
-        elements={crumbs} />
-      <QueueDetailView
-        vacolsId={props.match.params.vacolsId}
-        featureToggles={this.props.featureToggles} />
-    </QueueLoadingScreen>;
-  }
+  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
+    <Breadcrumbs />
+    <QueueDetailView
+      vacolsId={props.match.params.vacolsId}
+      featureToggles={this.props.featureToggles} />
+  </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const crumbs = [{
-      breadcrumb: 'Your Queue',
-      path: '/'
-    }, {
-      breadcrumb: appeal.veteran_full_name,
-      path: `/tasks/${vacolsId}`
-    }, {
-      breadcrumb: 'Submit OMO',
-      path: `/tasks/${vacolsId}/submit`
-    }];
     const goToPrevStep = () => {
       props.history.push(`/tasks/${vacolsId}`);
       window.scrollTo(0, 0);
@@ -104,11 +69,7 @@ class QueueApp extends React.PureComponent {
     };
 
     return <React.Fragment>
-      <Breadcrumbs
-        getBreadcrumbLabel={(route) => route.breadcrumb}
-        shouldDrawCaretBeforeFirstCrumb={false}
-        styling={breadcrumbStyling}
-        elements={crumbs} />
+      <Breadcrumbs />
       <SubmitDecisionView
         vacolsId={vacolsId}
         vbmsId={appeal.vbms_id}
@@ -121,16 +82,6 @@ class QueueApp extends React.PureComponent {
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const crumbs = [{
-      breadcrumb: 'Your Queue',
-      path: '/'
-    }, {
-      breadcrumb: appeal.veteran_full_name,
-      path: `/tasks/${vacolsId}`
-    }, {
-      breadcrumb: 'Select Dispositions',
-      path: `/tasks/${vacolsId}/dispositions`
-    }];
     const goToPrevStep = () => {
       props.history.push(`/tasks/${vacolsId}`);
       window.scrollTo(0, 0);
@@ -141,11 +92,7 @@ class QueueApp extends React.PureComponent {
     };
 
     return <React.Fragment>
-      <Breadcrumbs
-        getBreadcrumbLabel={(route) => route.breadcrumb}
-        styling={breadcrumbStyling}
-        shouldDrawCaretBeforeFirstCrumb={false}
-        elements={crumbs} />
+      <Breadcrumbs />
       <SelectDispositionsView
         vacolsId={vacolsId}
         vbmsId={appeal.vbms_id}

@@ -14,7 +14,12 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
-import { setCaseReviewActionType, startEditingAppeal } from './QueueActions';
+import {
+  setCaseReviewActionType,
+  startEditingAppeal,
+  pushBreadcrumb,
+  resetBreadcrumbs
+} from './QueueActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -29,6 +34,17 @@ const draftDecisionOptions = [{
 }];
 
 class QueueDetailView extends React.PureComponent {
+  componentDidMount = () => {
+    this.props.resetBreadcrumbs();
+    this.props.pushBreadcrumb({
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: this.props.appeal.attributes.veteran_full_name,
+      path: `/tasks/${this.props.vacolsId}`
+    });
+  }
+
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
 
@@ -97,7 +113,9 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
-  startEditingAppeal
+  startEditingAppeal,
+  pushBreadcrumb,
+  resetBreadcrumbs
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));

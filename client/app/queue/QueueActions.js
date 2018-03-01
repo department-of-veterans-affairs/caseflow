@@ -111,3 +111,14 @@ export const setSelectingJudge = (selectingJudge) => ({
     selectingJudge
   }
 });
+
+export const pushBreadcrumb = (...crumbs) => ({
+  type: ACTIONS.PUSH_BREADCRUMB,
+  payload: {
+    crumbs: [...crumbs]
+  }
+});
+
+export const resetBreadcrumbs = () => ({
+  type: ACTIONS.RESET_BREADCRUMBS
+});
