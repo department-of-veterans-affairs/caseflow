@@ -33,7 +33,7 @@ export default class BaseContainer extends React.Component {
     let { page, ...rest } = this.props;
     let PageComponent = Pages[page];
 
-    return <PageComponent {...rest} />
+    return <PageComponent {...rest} />;
   }
 }
 
