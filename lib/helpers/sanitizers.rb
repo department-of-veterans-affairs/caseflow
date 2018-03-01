@@ -46,7 +46,7 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
-      bfcorlid: ::Faker::Number.number(9),
+      bfcorlid: ::Faker::Number.number(9) + "S",
       bfcaseva: nil,
       bfcasevb: nil,
       bfcasevc: nil,

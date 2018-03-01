@@ -67,7 +67,7 @@ namespace :local_vacols do
 
   desc "Seeds local VACOLS"
   task seed: :environment do
-    date_shift = Time.now.utc - Time.utc(2017, 11, 1)
+    date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
 
     read_csv(VACOLS::Case, date_shift)
     read_csv(VACOLS::Folder, date_shift)
@@ -160,11 +160,17 @@ namespace :local_vacols do
       items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
     end
     klass.columns_hash.each do |k, v|
-      next if v.type != :datetime
-
-      items.map! do |item|
-        item[k] = item[k] + date_shift if item[k]
-        item
+      if v.type == :datetime
+        items.map! do |item|
+          item[k] = item[k] + date_shift if item[k]
+          item
+        end
+      elsif v.type == :string
+        max_index = /\((\d*)\)/.match(v.sql_type)[1].to_i - 1
+        items.map! do |item|
+          item[k] = item[k][0..max_index] if item[k]
+          item
+        end
       end
     end
 
