@@ -159,22 +159,22 @@ export class HearingWorksheet extends React.PureComponent {
         <PrintPageBreak />
         {secondWorksheetPage}
       </div>
-    }
-    {this.props.print &&
+      }
+      {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
       <PrintPageBreak />
       {secondWorksheetPage}
     </div>
-     }
+      }
       {!this.props.print &&
         <div className="cf-push-right">
-        <Link
-          onClick={this.openPdf(worksheet, worksheetIssues)}
-          button="secondary">
+          <Link
+            onClick={this.openPdf(worksheet, worksheetIssues)}
+            button="secondary">
           Save as PDF
-        </Link>
-      </div>
+          </Link>
+        </div>
       }
     </div>;
   }

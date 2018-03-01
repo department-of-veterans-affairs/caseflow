@@ -11,18 +11,18 @@ class HearingWorksheetDocs extends Component {
     return <div className="cf-hearings-worksheet-data">
       {!this.props.print &&
       <div>
-      <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
-      <h4>Docs in Claims Folder: {worksheet.cached_number_of_documents}</h4>
+        <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
+        <h4>Docs in Claims Folder: {worksheet.cached_number_of_documents}</h4>
       </div>
       }
       {this.props.print &&
       <div>
-      <h2 className="cf-hearings-print-worksheet-header">Relevant Documents</h2>
-      <h4 className="cf-hearings-print-worksheet-header">
+        <h2 className="cf-hearings-print-worksheet-header">Relevant Documents</h2>
+        <h4 className="cf-hearings-doc-print-worksheet-header">
       Docs in Claims Folder: {worksheet.cached_number_of_documents}
-      </h4>
+        </h4>
       </div>
-     }
+      }
 
       {Object.values(worksheetAppeals).map((appeal, key) => {
 
@@ -33,7 +33,7 @@ class HearingWorksheetDocs extends Component {
             <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
           }
           {this.props.print &&
-            <p className="cf-hearings-print-worksheet-header">APPEAL STREAM <span>{key + 1}</span></p>
+            <p className="cf-hearings-print-appeal-stream">APPEAL STREAM <span>{key + 1}</span></p>
           }
         </div>
         <div>
