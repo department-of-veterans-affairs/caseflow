@@ -1,5 +1,6 @@
 RSpec.describe IssuesController, type: :controller do
   before do
+    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
   end
 
@@ -11,18 +12,12 @@ RSpec.describe IssuesController, type: :controller do
 
   describe "POST appeals/:appeal_id/issues" do
     context "when all parameters are present" do
-      before do
-        allow(IssueRepository).to receive(:create_vacols_issue)
-          .with("DSUSER", params.merge(vacols_id: appeal.vacols_id))
-          .and_return(OpenStruct.new)
-      end
-
       let(:params) do
         {
-          program: "02",
-          issue: "14",
-          level_1: "01",
-          level_2: "88",
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end
@@ -31,20 +26,21 @@ RSpec.describe IssuesController, type: :controller do
         User.authenticate!(roles: ["System Admin"])
         post :create, appeal_id: appeal.id, issues: params
         expect(response.status).to eq 201
+        response_body = JSON.parse(response.body)["issue"]
+        expect(response_body["codes"]).to eq ["01", "02", "03", "04"]
+        expect(response_body["labels"]).to eq ["test1", "test2", "test3", "test4"]
+        expect(response_body["vacols_sequence_id"]).to eq 1
+        expect(response_body["note"]).to eq "test"
       end
     end
 
     context "when appeal is not found" do
-      before do
-        allow(IssueRepository).to receive(:create_vacols_issue).and_return(OpenStruct.new)
-      end
-
       let(:params) do
         {
-          program: "02",
-          issue: "14",
-          level_1: "01",
-          level_2: "88",
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end
@@ -59,10 +55,10 @@ RSpec.describe IssuesController, type: :controller do
     context "when there is an error" do
       let(:params) do
         {
-          program: "02",
-          issue: "14",
-          level_1: "01",
-          level_2: "88",
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end

@@ -15,12 +15,13 @@ class IssuesController < ApplicationController
   end
 
   def create_params
-    params.require("issues").permit(:program,
-                                    :issue,
-                                    :level_1,
-                                    :level_2,
-                                    :level_3,
-                                    :note)
+    params.require("issues").permit(:note,
+                                    program: [:description, :code],
+                                    issue: [:description, :code],
+                                    level_1: [:description, :code],
+                                    level_2: [:description, :code],
+                                    level_3: [:description, :code]
+                                    )
       .merge(vacols_id: appeal.vacols_id)
   end
 
