@@ -18,11 +18,11 @@ class Generators::Issue
       {
         compensation: {
           codes: %w[02 15 03 5252],
-          labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"],
+          labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
         },
         education: {
           codes: %w[03 15 03 5252],
-          labels: ["Education", "Service connection", "All Others", "Thigh, limitation of flexion of"],
+          labels: ["Education", "Service connection", "All Others", "Thigh, limitation of flexion of"]
         }
       }
     end

@@ -75,8 +75,8 @@ class Search extends React.PureComponent {
       },
       no_active_fully_compensation_appeals: {
         title: 'Ineligible to participate in RAMP: appeal contains non-compensation issues',
-        body: "Caseflow temporarily does not support closing Appeals with any non-compensation issues." +
-          "Please contact Caseflow Support on how to proceed."
+        body: 'Caseflow temporarily does not support closing Appeals with any non-compensation issues.' +
+          'Please contact Caseflow Support on how to proceed.'
       },
       no_complete_ramp_election: {
         title: 'No RAMP Opt-In Election',

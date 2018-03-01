@@ -40,7 +40,8 @@ RSpec.feature "RAMP Intake" do
   let!(:ineligible_appeal) do
     Generators::Appeal.build(
       vbms_id: "77778888C",
-      vacols_record: :activated
+      vacols_record: :activated,
+      issues: issues
     )
   end
 

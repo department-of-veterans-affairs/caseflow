@@ -1253,7 +1253,6 @@ describe Appeal do
     end
   end
 
-
   context "#fully_compensation?" do
     subject { appeal.fully_compensation? }
 
