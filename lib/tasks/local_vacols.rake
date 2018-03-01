@@ -125,6 +125,7 @@ namespace :local_vacols do
     write_csv(VACOLS::Decass, cases.map(&:decass))
 
     staff = VACOLS::Staff.all.map do |s|
+      Helpers::Sanitizers.sanitize_staff(s)
       s[:sdomainid] = "READER" if s[:stafkey] == "ZZHU"
       s[:sdomainid] = "HEARING PREP" if s[:stafkey] == "PSORISIO"
       s
@@ -133,7 +134,11 @@ namespace :local_vacols do
 
     write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
     write_csv(VACOLS::Issref, VACOLS::Issref.all)
-    write_csv(VACOLS::TravelBoardSchedule, VACOLS::TravelBoardSchedule.where("tbyear > 2016"))
+
+    write_csv(
+      VACOLS::TravelBoardSchedule,
+      VACOLS::TravelBoardSchedule.where("tbyear > 2016").map { |tb| Helpers::Sanitizers.sanitize_travel_board(tb) }
+    )
   end
 
   private
