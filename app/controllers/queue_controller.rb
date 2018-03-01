@@ -1,21 +1,13 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
+  before_action :verify_welcome_gate_access, except: :complete
+  before_action :verify_queue_phase_two, only: :complete
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
-  def verify_access
-    # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
-    # :nocov:
-  end
-
   def index
-    return redirect_to "/unauthorized" unless verify_access
-
     render "queue/index"
   end
 
@@ -41,9 +33,9 @@ class QueueController < ApplicationController
     render json: { judges: Judge.list_all }
   end
 
-  def document_count
-    # used for local dev. see Appeal.number_of_documents_url
-    appeal = Appeal.find(params[:appeal_id])
+  def dev_document_count
+    # only used for local dev. see Appeal.number_of_documents_url
+    appeal = Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"])
     render json: {
       data: {
         attributes: {
@@ -56,6 +48,15 @@ class QueueController < ApplicationController
   end
 
   private
+
+  def verify_welcome_gate_access
+    # :nocov:
+    return true if feature_enabled?(:queue_welcome_gate)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
 
   def attorney_case_review_error
     render json: {
