@@ -92,10 +92,10 @@ class QueueRepository
   def self.find_decass_record(task_id)
     # Task ID is a concatantion of the vacols ID and the date assigned
     result = task_id.split("-", 2)
-    fail ReassignCaseToJudgeError if result.size != 2
+    fail ReassignCaseToJudgeError, "Task ID is invalid format: #{task_id}" if result.size != 2
     record = decass_by_vacols_id_and_date_assigned(result.first, result.second.to_date)
     # TODO: check permission that the user can update the record
-    fail ReassignCaseToJudgeError unless record
+    fail ReassignCaseToJudgeError, "Decass record does not exist for vacols_id: #{result.first}" unless record
     record
   end
 

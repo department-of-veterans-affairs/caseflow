@@ -90,28 +90,5 @@ describe AttorneyCaseReview do
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
-
-    context "when all required parameters are present and Vacols update throws an error" do
-      before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_return(AttorneyCaseReview::EXCEPTIONS.sample)
-      end
-
-      let(:params) do
-        {
-          reviewing_judge: judge,
-          work_product: "OMO - IME",
-          document_id: "123456789.1234",
-          overtime: true,
-          note: "something",
-          task_id: "123456-2013-12-06",
-          attorney: attorney
-        }
-      end
-
-      it "should not create AttorneyCaseReview record" do
-        expect(subject).to eq nil
-        expect(AttorneyCaseReview.count).to eq 0
-      end
-    end
   end
 end

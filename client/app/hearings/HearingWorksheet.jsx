@@ -84,7 +84,6 @@ export class HearingWorksheet extends React.PureComponent {
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      veteranLawJudge={this.props.veteran_law_judge}
       appellant={appellant}
     />;
 
