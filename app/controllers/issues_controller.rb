@@ -20,8 +20,7 @@ class IssuesController < ApplicationController
                                     issue: [:description, :code],
                                     level_1: [:description, :code],
                                     level_2: [:description, :code],
-                                    level_3: [:description, :code]
-                                    )
+                                    level_3: [:description, :code])
       .merge(vacols_id: appeal.vacols_id)
   end
 
