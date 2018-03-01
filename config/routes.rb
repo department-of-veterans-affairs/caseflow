@@ -83,6 +83,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :appeals, only: [] do
+    resources :issues, only: [:create, :update, :delete], param: :vacols_sequence_id
+  end
+
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
