@@ -21,7 +21,7 @@ export default class TextAccessibility extends React.Component {
     'Green'
   ];
 
-  render() {
+  render =() => {
     return <div>
       <StyleGuideComponentTitle
         title="Text Accessibility"

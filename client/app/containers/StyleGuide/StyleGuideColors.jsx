@@ -63,14 +63,6 @@ export default class StyleGuideColors extends React.PureComponent {
     'Intake'
   ];
 
-  Combos = [
-    'Base',
-    'Gray',
-    'Primary',
-    'Secondary',
-    'Green'
-  ];
-
   Reader = [
     'Case Summary',
     'Procedural',
