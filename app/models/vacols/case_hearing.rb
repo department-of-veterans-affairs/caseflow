@@ -49,7 +49,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       id = connection.quote(css_id)
 
       select_hearings.where("staff.sdomainid = #{id}")
-        .where("hearing_date > ?", 60.days.ago.beginning_of_day)
+        .where("hearing_date > ?", 1.year.ago.beginning_of_day)
         .where("bfddec is NULL or bfmpro = 'REM'")
     end
 

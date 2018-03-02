@@ -10,6 +10,18 @@ class Judge
     @upcoming_dockets ||= upcoming_hearings_grouped_by_date.transform_values do |hearings|
       HearingDocket.from_hearings(hearings)
     end
+
+    # get bulk slots for all the dockets from vacols
+    dockets_slots = get_dockets_slots(@upcoming_dockets)
+
+    # assingn the slots to dockets
+    dockets_slots.each do |date, slots|
+      docket = @upcoming_dockets[date]
+      docket.slots = slots ||
+        HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(docket.regional_office_key)]
+    end
+
+    @upcoming_dockets
   end
 
   def docket?(date)
@@ -30,6 +42,10 @@ class Judge
 
   def upcoming_hearings
     Hearing.repository.upcoming_hearings_for_judge(user.css_id).sort_by(&:date)
+  end
+
+  def get_dockets_slots(dockets)
+    Hearing.repository.fetch_dockets_slots(dockets)
   end
 
   class << self
