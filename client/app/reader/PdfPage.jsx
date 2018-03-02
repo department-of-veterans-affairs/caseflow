@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { addPageToRenderQueue, changePriority, removePageFromRenderQueue } from './PdfJs';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -120,11 +121,13 @@ export class PdfPage extends React.PureComponent {
     this.canvas.height = viewport.height;
     this.canvas.width = viewport.width;
 
-    // Call PDFJS to actually draw the page.
-    return page.render({
+    const options = {
       canvasContext: this.canvas.getContext('2d', { alpha: false }),
       viewport
-    }).then(() => {
+    };
+
+    // Call PDFJS to actually draw the page.
+    return addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0).then(() => {
       this.isDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -144,11 +147,18 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
+    removePageFromRenderQueue(this.props.pageIndex);
     if (this.props.page) {
       this.props.page.cleanup();
       if (this.markInstance) {
         this.markInstance.unmark();
       }
+    }
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.isPageVisible !== this.props.isPageVisible) {
+      changePriority(this.props.pageIndex, nextProps.isPageVisible ? 1 : 0);
     }
   }
 

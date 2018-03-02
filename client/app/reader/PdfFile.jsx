@@ -402,6 +402,11 @@ export class PdfFile extends React.PureComponent {
     </div>;
   }
 
+  overscanIndicesGetter = ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
+    overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
+    overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+  })
+
   render() {
     if (this.props.loadError) {
       return <div>{this.displayErrorMessage()}</div>;
@@ -432,6 +437,7 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}
+            overscanIndicesGetter={this.overscanIndicesGetter}
             estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
