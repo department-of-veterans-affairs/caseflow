@@ -10,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import IssueList from './components/IssueList';
 import Table from '../components/Table';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Checkbox from '../components/Checkbox';
 
 import {
   cancelEditingAppeal,
@@ -19,11 +20,17 @@ import {
 import { fullWidth } from './constants';
 import DecisionViewFooter from './components/DecisionViewFooter';
 
-const mediumBottomMargin = css({ marginBottom: '2rem' });
-const smallBottomMargin = css({ marginBottom: '1rem' });
+const marginTop = (n) => css({ marginTop: `${n}rem` });
+const marginBottom = (n) => css({ marginBottom: `${n}rem` });
 const rowStyling = css({
-  '& > tbody > tr > td:first-of-type': {
-    width: '40%'
+  '& > tbody > tr > td': {
+    verticalAlign: 'top',
+    '&:nth-of-type(2n + 1)': {
+      width: '40%'
+    },
+    '> div': {
+      minHeight: '12rem'
+    }
   }
 });
 
@@ -59,6 +66,35 @@ class SelectDispositionsView extends React.PureComponent {
     callback: this.props.goToNextStep
   }];
 
+  getDispositionsColumn = (issue) => <div>
+    <SearchableDropdown
+      placeholder="Select Dispositions"
+      value={issue.disposition}
+      hideLabel
+      searchable={false}
+      options={issueDispositionOptions.map((opt) => ({
+        label: `${opt[0]} - ${opt[1]}`,
+        value: StringUtil.convertToCamelCase(opt[1])
+      }))}
+      onChange={({ value }) => this.props.updateAppealIssue(
+        this.props.vacolsId,
+        issue.id,
+        { disposition: value }
+      )}
+      name="Dispositions dropdown" />
+    {issue.disposition === 'vacated' && <Checkbox
+      name="duplicate-vacated-issue"
+      styling={css(marginBottom(0), marginTop(1))}
+      value={issue.duplicate}
+      {/* todo: unset duplicate on change disposition != vacated? */}
+      onChange={(duplicate) => this.props.updateAppealIssue(
+        this.props.vacolsId,
+        issue.id,
+        { duplicate }
+      )}
+      label="Vacate and readjudicate this issue. Automatically duplicate vacated issue." />}
+  </div>;
+
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [
     {
@@ -75,30 +111,16 @@ class SelectDispositionsView extends React.PureComponent {
     },
     {
       header: 'Dispositions',
-      valueFunction: (issue) => <SearchableDropdown
-        placeholder="Select Dispositions"
-        value={issue.disposition}
-        hideLabel
-        searchable={false}
-        options={issueDispositionOptions.map((opt) => ({
-          label: `${opt[0]} - ${opt[1]}`,
-          value: StringUtil.convertToCamelCase(opt[1])
-        }))}
-        onChange={(({ value }) => this.props.updateAppealIssue(
-          this.props.vacolsId,
-          issue.id,
-          { disposition: value }
-        ))}
-        name="Dispositions dropdown" />
+      valueFunction: this.getDispositionsColumn
     }
   ];
 
   render = () => <React.Fragment>
     <AppSegment filledBackground>
-      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Select Dispositions
       </h1>
-      <p className="cf-lead-paragraph" {...mediumBottomMargin}>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Review each issue and assign the appropriate dispositions.
       </p>
       <hr />
