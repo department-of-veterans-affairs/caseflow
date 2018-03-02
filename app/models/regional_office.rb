@@ -380,7 +380,7 @@ class RegionalOffice
       timezone: "America/Los_Angeles"
     },
     "RO78" => {
-      label: "Unknown regional office (RO78)",
+      label: "Legacy RO (RO78)",
       city: "Unknown", state: "??",
       timezone: "America/New_York"
     },
