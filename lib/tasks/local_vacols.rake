@@ -47,6 +47,7 @@ namespace :local_vacols do
   desc "Starts up existing database"
   task start: :environment do
     Dir.chdir(Rails.root.join("vacols")) do
+      puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
       `docker-compose up &> '../tmp/vacols.log' &`
     end
   end
