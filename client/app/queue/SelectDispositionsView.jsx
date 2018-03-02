@@ -25,13 +25,16 @@ const marginTop = (margin) => css({ marginTop: `${margin}rem` });
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
 const rowStyling = css({
-  '& > tbody > tr > td': {
-    verticalAlign: 'top',
-    '&:nth-of-type(2n + 1)': {
-      width: '40%'
-    },
-    '> div': {
-      minHeight: '12rem'
+  '& > tbody > tr': {
+    borderBottom: 'none',
+    '> td': {
+      verticalAlign: 'top',
+      '&:nth-of-type(2n + 1)': {
+        width: '40%'
+      },
+      '> div': {
+        minHeight: '12rem'
+      }
     }
   }
 });
@@ -58,7 +61,8 @@ class SelectDispositionsView extends React.PureComponent {
       breadcrumb: 'Select Dispositions',
       path: `/tasks/${vacolsId}/dispositions`
     });
-    // wipe dispositions in pending appeal for validation purposes
+    // Wipe any previously-set dispositions in the pending
+    // appeal's issues for validation purposes.
     _.each(issues, (issue) =>
       this.props.updateAppealIssue(
         vacolsId,
@@ -68,8 +72,17 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   componentWillUnmount = () => {
-    // todo: if no edits made, cancel_editing
-    this.props.cancelEditingAppeal(this.props.vacolsId);
+    const {
+      appeal: { attributes: { issues } },
+      vacolsId
+    } = this.props;
+    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+
+    // If the user hasn't selected a disposition for all issues and they're
+    // navigating away, they've canceled the checkout process.
+    if (issuesWithoutDisposition.length > 0) {
+      this.props.cancelEditingAppeal(vacolsId);
+    }
   }
 
   getFooterButtons = () => [{
