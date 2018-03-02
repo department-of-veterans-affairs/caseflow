@@ -127,7 +127,15 @@ export class PdfPage extends React.PureComponent {
     };
 
     // Call PDFJS to actually draw the page.
-    return addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0).then(() => {
+    let promise;
+
+    if (this.props.featureToggles.improvedRendering) {
+      promise = addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0)
+    } else {
+      promise = page.render;
+    }
+
+    return promise.then(() => {
       this.isDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
