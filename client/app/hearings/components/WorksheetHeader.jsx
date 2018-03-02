@@ -39,6 +39,10 @@ class WorksheetHeader extends React.PureComponent {
         <div className="title cf-hearings-title-and-judge">
           {!this.props.print &&
           <h1>Hearing Worksheet</h1>
+          }
+          {this.props.print &&
+          <h1 className="cf-hearings-print-worksheet-header">Hearing Worksheet</h1>
+          }
           <span>VLJ: {worksheet.user ? worksheet.user.full_name : ''}</span>
         </div>
         <div className="meta">
