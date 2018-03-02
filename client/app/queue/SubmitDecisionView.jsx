@@ -38,10 +38,25 @@ const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
-  componentDidMount = () => this.props.pushBreadcrumb({
-    breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
-    path: `/tasks/${this.props.vacolsId}/submit`
-  });
+  componentDidMount = () => {
+    const {
+      pushBreadcrumb,
+      vacolsId,
+      setDecisionOptions,
+      task: { attributes: task }
+    } = this.props;
+
+    pushBreadcrumb({
+      breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
+      path: `/tasks/${vacolsId}/submit`
+    });
+    setDecisionOptions({
+      judge: {
+        label: task.added_by_name,
+        value: task.added_by_css_id
+      }
+    });
+  }
 
   getDecisionTypeDisplay = () => {
     const {
@@ -63,7 +78,7 @@ class SubmitDecisionView extends React.PureComponent {
         type: decisionType,
         opts: decisionOpts
       } = this.props.decision;
-      const requiredParams = ['documentId', 'notes'];
+      const requiredParams = ['documentId', 'judge'];
       const presentParams = _.filter(requiredParams, (param) => _.has(decisionOpts, param));
 
       if (decisionType === 'omo') {
@@ -81,24 +96,32 @@ class SubmitDecisionView extends React.PureComponent {
   }]
 
   getJudgeSelectComponent = () => {
-    if (this.props.selectingJudge) {
+    const {
+      selectingJudge,
+      judges,
+      setSelectingJudge,
+      setDecisionOptions,
+      decision: { opts: decisionOpts }
+    } = this.props;
+
+    if (selectingJudge) {
       return <React.Fragment>
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
-          options={_.map(this.props.judges, (judge) => ({
+          options={_.map(judges, (judge) => ({
             label: judge.full_name,
             value: judge.css_id
           }))}
           onChange={(judge) => {
-            this.props.setSelectingJudge(false);
-            this.props.setDecisionOptions({ judge });
+            setSelectingJudge(false);
+            setDecisionOptions({ judge });
           }}
           hideLabel />
       </React.Fragment>;
     }
 
-    const selectedJudge = _.get(this.props.decision.opts.judge, 'label');
+    const selectedJudge = _.get(decisionOpts.judge, 'label');
 
     return <React.Fragment>
       {selectedJudge && <span>{selectedJudge}</span>}
@@ -107,7 +130,7 @@ class SubmitDecisionView extends React.PureComponent {
         classNames={['cf-btn-link']}
         willNeverBeLoading
         styling={selectJudgeButtonStyling(selectedJudge)}
-        onClick={() => this.props.setSelectingJudge(true)}>
+        onClick={() => setSelectingJudge(true)}>
         Select {selectedJudge ? 'another' : 'a'} judge
       </Button>
     </React.Fragment>;
@@ -183,6 +206,7 @@ SubmitDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.taskDecision,
   judges: state.queue.judges,
   selectingJudge: state.queue.ui.selectingJudge
