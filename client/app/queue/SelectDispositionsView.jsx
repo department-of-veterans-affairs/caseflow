@@ -22,6 +22,7 @@ import DecisionViewFooter from './components/DecisionViewFooter';
 
 const marginTop = (n) => css({ marginTop: `${n}rem` });
 const marginBottom = (n) => css({ marginBottom: `${n}rem` });
+const marginLeft = (n) => css({ marginLeft: `${n}rem` });
 const rowStyling = css({
   '& > tbody > tr > td': {
     verticalAlign: 'top',
@@ -132,6 +133,9 @@ class SelectDispositionsView extends React.PureComponent {
         getKeyForRow={this.getKeyForRow}
         styling={rowStyling}
       />
+      <div {...marginLeft(1.5)}>
+        <Link>Add Issue</Link>
+      </div>
     </AppSegment>
     <DecisionViewFooter buttons={this.getFooterButtons()} />
   </React.Fragment>;
