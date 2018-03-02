@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
-import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -25,7 +24,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'counter'
       },
       {
-        header: 'Issue',
+        header: `Appeal Stream ${appealKey + 1}`,
         align: 'left',
         valueName: 'description'
       },
@@ -38,15 +37,18 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Disposition',
         align: 'left',
         valueName: 'disposition'
-      },
-      {
-        header: 'Preliminary Impressions',
-        align: 'left',
-        valueName: 'actions'
       }
     ];
 
-    if (!this.props.print) {
+    if (!this.props.prior) {
+      columns.push({
+        header: 'Preliminary Impressions',
+        align: 'left',
+        valueName: 'actions'
+      });
+    }
+
+    if (!this.props.print && !this.props.prior) {
       columns.push({
         header: '',
         align: 'left',
@@ -54,9 +56,7 @@ class HearingWorksheetIssues extends PureComponent {
       });
     }
 
-    const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
-
-    const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
+    const rowObjects = Object.keys(this.props.issues).map((issue, key) => {
 
       let issueRow = worksheetIssues[issue];
 
@@ -72,7 +72,7 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="notes"
-          readOnly={this.props.print}
+          readOnly={this.props.print || this.props.prior}
           maxLength={100}
         />,
         disposition: <HearingWorksheetIssueFields
@@ -115,6 +115,8 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
+  issues: PropTypes.object.isRequired,
+  prior: PropTypes.bool,
   worksheetStreamsAppeal: PropTypes.object.isRequired,
   countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
 };

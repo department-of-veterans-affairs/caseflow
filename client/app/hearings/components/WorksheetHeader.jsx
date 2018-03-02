@@ -15,8 +15,7 @@ class WorksheetHeader extends React.PureComponent {
   render() {
     const {
       appellant,
-      worksheet,
-      veteranLawJudge
+      worksheet
     } = this.props;
 
     let olderVeteran = worksheet.veteran_age > 74;
@@ -39,7 +38,7 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-title-meta-right">
         <div className="title cf-hearings-title-and-judge">
           <h1>Hearing Worksheet</h1>
-          <span>VLJ: {veteranLawJudge.full_name}</span>
+          <span>VLJ: {worksheet.user ? worksheet.user.full_name : ''}</span>
         </div>
         <div className="meta">
           <div>{moment(worksheet.date).format('ddd l')}</div>
@@ -81,19 +80,23 @@ class WorksheetHeader extends React.PureComponent {
           <div>Veteran Name:</div>
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
+
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
           <div>
-
-            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
-              <button
-                name="Copy Veteran ID"
-                className={['usa-button-outline cf-copy-to-clipboard']}>
-                {worksheet.sanitized_vbms_id}
-                <ClipboardIcon />
-              </button>
-            </CopyToClipboard>
-
+            {!this.props.print &&
+              <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+                <button
+                  name="Copy Veteran ID"
+                  className={['usa-button-outline cf-copy-to-clipboard']}>
+                  {worksheet.sanitized_vbms_id}
+                  <ClipboardIcon />
+                </button>
+              </CopyToClipboard>
+            }
+            {this.props.print &&
+              <div><b>{worksheet.sanitized_vbms_id}</b></div>
+            }
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">

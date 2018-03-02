@@ -69,6 +69,15 @@ class Search extends React.PureComponent {
         title: 'Ineligible to participate in RAMP: appeal is at the Board',
         body: rampIneligibleInstructions
       },
+      no_active_compensation_appeals: {
+        title: 'Ineligible to participate in RAMP: appeal does not contain any compensation issues',
+        body: rampIneligibleInstructions
+      },
+      no_active_fully_compensation_appeals: {
+        title: 'Ineligible to participate in RAMP: appeal contains non-compensation issues',
+        body: 'Caseflow temporarily does not support closing appeals with any non-compensation issues.' +
+          'Please contact Caseflow Support on how to proceed.'
+      },
       no_complete_ramp_election: {
         title: 'No RAMP Opt-In Election',
         body: 'A RAMP Opt-In Election Form was not yet processed in Caseflow, so this Veteran' +
@@ -78,7 +87,7 @@ class Search extends React.PureComponent {
       ramp_election_is_active: {
         title: 'This Veteran has a pending RAMP EP in VBMS',
         body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
-          ' Election Form, notify them using tf “RAMP Ineligible Letter” (premature election).'
+          ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
       },
       ramp_election_no_issues: {
         title: 'This Veteran has a pending RAMP EP with no contentions',

@@ -25,7 +25,7 @@ describe AttorneyQueue do
 
     it "returns tasks" do
       expect(subject[0].length).to eq(2)
-      expect(subject[0][0].class).to eq(DraftDecision)
+      expect(subject[0][0].class).to eq(VacolsAssignment)
     end
 
     it "returns appeals" do

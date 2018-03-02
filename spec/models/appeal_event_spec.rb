@@ -104,8 +104,11 @@ describe AppealEvent do
     let(:vacols_dispositions) { VACOLS::Case::DISPOSITIONS.values }
     let(:event_dispositions) { AppealEvent::EVENT_TYPE_FOR_DISPOSITIONS.values.flatten }
 
-    it "accounts for all VACOLS dispositions" do
-      expect(vacols_dispositions - event_dispositions).to eq([])
+    it "accounts for all active VACOLS dispositions" do
+      expect(vacols_dispositions - event_dispositions).to eq(
+        ["Designation of Record", "Stay",
+         "Motion to Vacate Denied"]
+      )
     end
   end
 end

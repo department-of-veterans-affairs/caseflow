@@ -98,22 +98,11 @@ class Issue
   end
 
   def friendly_description
-    issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
-      descriptions = descriptions[code]
-      # If there is no value, we probably haven't added the issue type in our list, so return.
-      return nil unless descriptions
-      break descriptions if descriptions.is_a?(String)
-      descriptions
-    end
+    friendly_description_for_codes(codes)
+  end
 
-    if diagnostic_code
-      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
-      return if diagnostic_code_description.nil?
-      # Some description strings are templates. This is a no-op unless the description string contains %s.
-      issue_description = issue_description % diagnostic_code_description
-    end
-
-    issue_description
+  def friendly_description_without_new_material
+    new_material? ? friendly_description_for_codes(%w[02 15 03]) : friendly_description
   end
 
   # returns "Remanded \n mm/dd/yyyy"
@@ -187,7 +176,34 @@ class Issue
     }
   end
 
+  private
+
+  def friendly_description_for_codes(code_array)
+    issue_description = code_array.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
+      descriptions = descriptions[code]
+      # If there is no value, we probably haven't added the issue type in our list, so return.
+      return nil unless descriptions
+      break descriptions if descriptions.is_a?(String)
+      descriptions
+    end
+
+    if diagnostic_code
+      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      return if diagnostic_code_description.nil?
+      # Some description strings are templates. This is a no-op unless the description string contains %s.
+      issue_description = issue_description % diagnostic_code_description
+    end
+
+    issue_description
+  end
+
   class << self
+    attr_writer :repository
+
+    def repository
+      @repository ||= IssueRepository
+    end
+
     def load_from_vacols(hash)
       new(
         id: hash["isskey"],
@@ -196,11 +212,19 @@ class Issue
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
         # disposition is a snake_case symbol, i.e. :remanded
-        disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
+        disposition: hash["issdc"] ? (VACOLS::Case::DISPOSITIONS[hash["issdc"]]).parameterize.underscore.to_sym : nil,
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
+    end
+
+    def create!(css_id, issue_hash)
+      repository.create_vacols_issue(css_id, issue_hash.symbolize_keys)
+    rescue ActiveRecord::RecordInvalid, IssueRepository::IssueCreationError => e
+      Rails.logger.warn(e)
+      Raven.capture_exception(e)
+      nil
     end
 
     private

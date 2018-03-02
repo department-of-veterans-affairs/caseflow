@@ -7,13 +7,27 @@ describe Hearing do
     Generators::Hearing.build(
       date: date,
       disposition: disposition,
-      hold_open: hold_open
+      hold_open: hold_open,
+      type: type
     )
   end
 
   let(:date) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
+  let(:type) { :video }
+
+  context "#location" do
+    subject { hearing.location }
+
+    it { is_expected.to eq("Baltimore regional office") }
+
+    context "when it's a central office hearing" do
+      let(:type) { :central_office }
+
+      it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
+    end
+  end
 
   context "#no_show?" do
     subject { hearing.no_show? }

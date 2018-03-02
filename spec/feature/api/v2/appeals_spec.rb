@@ -13,6 +13,7 @@ describe "Appeals API v2", type: :request do
     let!(:original) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
+        vacols_id: "1234567",
         vacols_record: {
           template: :remand_decided,
           type: "Original",
@@ -37,6 +38,7 @@ describe "Appeals API v2", type: :request do
     let!(:post_remand) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
+        vacols_id: "7654321",
         vacols_record: {
           template: :ready_to_certify,
           type: "Post Remand",
@@ -116,6 +118,8 @@ describe "Appeals API v2", type: :request do
       get "/api/v2/appeals", nil, headers
 
       expect(response.code).to eq("401")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns 422 if SSN is invalid" do
@@ -131,6 +135,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns 404 if veteran with that SSN isn't found" do
@@ -146,6 +152,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Veteran not found")
+
+      expect(ApiView.count).to eq(1)
     end
 
     it "caches response" do
@@ -175,6 +183,8 @@ describe "Appeals API v2", type: :request do
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(3)
+
+      expect(ApiView.count).to eq(3)
     end
 
     it "returns 500 on any other error" do
@@ -195,6 +205,8 @@ describe "Appeals API v2", type: :request do
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Unknown error occured")
       expect(json["errors"].first["detail"]).to match("Much random error (Sentry event id: a1b2c3)")
+
+      expect(ApiView.count).to eq(0)
     end
 
     it "returns list of appeals for veteran with SSN" do
@@ -214,10 +226,13 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # check the attribtues on the first appeal
+      expect(json["data"].first["attributes"]["appealIds"].length).to eq(2)
+      expect(json["data"].first["attributes"]["appealIds"]).to include("1234567")
       expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].first["attributes"]["description"]).to eq("Service connection, limitation of thigh motion")
       expect(json["data"].first["attributes"]["aod"]).to eq(false)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
       expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
@@ -238,7 +253,7 @@ describe "Appeals API v2", type: :request do
       # check the status on the first appeal
       status = json["data"].first["attributes"]["status"]
       expect(status["type"]).to eq("decision_in_progress")
-      expect(status["details"]["test"]).to eq("Hello World")
+      expect(status["details"]["decisionTimeliness"]).to eq([1, 2])
 
       # check the first appeal's issue
       expect(json["data"].first["attributes"]["issues"])
@@ -296,8 +311,9 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].last["attributes"]["programArea"]).to eq("compensation")
 
       # check stubbed attributes
-      expect(json["data"].first["attributes"]["description"]).to eq("")
       expect(json["data"].first["attributes"]["evidence"]).to eq([])
+
+      expect(ApiView.count).to eq(1)
     end
   end
 end

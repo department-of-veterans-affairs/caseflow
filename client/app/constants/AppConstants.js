@@ -36,5 +36,9 @@ export const LOGO_COLORS = {
   QUEUE: {
     ACCENT: '#11598D',
     OVERLAP: '#0E456C'
+  },
+  EFOLDER: {
+    ACCENT: '#F0835e',
+    OVERLAP: COMMON_COLORS.GREY_LIGHT
   }
 };

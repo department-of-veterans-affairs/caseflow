@@ -1,6 +1,7 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, debounceMs } from '../analytics';
+import moment from 'moment';
 
 export const populateUpcomingHearings = (upcomingHearings) => ({
   type: Constants.POPULATE_UPCOMING_HEARINGS,
@@ -30,6 +31,15 @@ export const handleWorksheetServerError = (err) => ({
     err
   }
 });
+
+export const getWorksheet = (id) => (dispatch) => {
+  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
+    then((response) => {
+      dispatch(populateWorksheet(response.body));
+    }, (err) => {
+      dispatch(handleWorksheetServerError(err));
+    });
+};
 
 export const handleDocketServerError = (err) => ({
   type: Constants.HANDLE_DOCKET_SERVER_ERROR,
@@ -67,6 +77,16 @@ export const setNotes = (hearingIndex, notes, date) => ({
   }
 });
 
+export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
+  type: Constants.SET_HEARING_PREPPED,
+  payload: {
+    hearingId,
+    prepped,
+    date,
+    setEdited
+  }
+});
+
 export const setDisposition = (hearingIndex, disposition, date) => ({
   type: Constants.SET_DISPOSITION,
   payload: {
@@ -99,15 +119,6 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   payload: {
     hearingIndex,
     transcriptRequested,
-    date
-  }
-});
-
-export const setHearingPrepped = (hearingIndex, prepped, date) => ({
-  type: Constants.SET_HEARING_PREPPED,
-  payload: {
-    hearingIndex,
-    prepped,
     date
   }
 });
@@ -180,13 +191,18 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     return;
   }
 
+  dispatch(toggleWorksheetSaving());
+  dispatch(setWorksheetSaveFailedStatus(false));
+
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
     then(() => {
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
     () => {
-      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-        payload: { saveFailed: true } });
+      dispatch(setWorksheetSaveFailedStatus(true));
+    }).
+    finally(() => {
+      dispatch(toggleWorksheetSaving());
     });
 };
 
@@ -194,3 +210,61 @@ export const setHearingViewed = (hearingId) => ({
   type: Constants.SET_HEARING_VIEWED,
   payload: { hearingId }
 });
+
+export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
+  if (!dailyDocket || !dailyDocket[date]) {
+    ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
+      then((response) => {
+        dispatch(populateDailyDocket(response.body, date));
+      }, (err) => {
+        dispatch(handleDocketServerError(err));
+      });
+  }
+};
+
+export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+
+  dispatch(setHearingPrepped(hearingId, prepped,
+    moment(date).format('YYYY-MM-DD'), false));
+
+  ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
+    then((response) => {
+      dispatch(setHearingPrepped(hearingId, response.body.prepped,
+        moment(date).format('YYYY-MM-DD'), false));
+    },
+    () => {
+      // we need better error handling here
+      // eslint-disable-next-line no-console
+      console.log('Prepped save failed');
+    });
+};
+
+export const saveDocket = (docket, date) => (dispatch) => {
+  const hearingsToSave = docket.filter((hearing) => hearing.edited);
+
+  if (hearingsToSave.length === 0) {
+    return;
+  }
+
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+
+  dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+    payload: { saveFailed: false } });
+
+  hearingsToSave.forEach((hearing) => {
+
+    const index = docket.findIndex((x) => x.id === hearing.id);
+
+    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+      then(() => {
+        dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
+          payload: { date,
+            index } });
+      },
+      () => {
+        dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+          payload: { saveFailed: true } });
+      });
+  });
+  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+};

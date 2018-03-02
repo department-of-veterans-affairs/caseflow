@@ -35,4 +35,67 @@ describe IntakeStats do
       end
     end
   end
+
+  context ".intake_series_statuses" do
+    subject { IntakeStats.intake_series_statuses(4.days.ago...Time.zone.now) }
+
+    let(:user) { Generators::User.build }
+
+    let!(:out_of_range_series) do
+      RampElectionIntake.create!(
+        veteran_file_number: "0000",
+        completed_at: 5.days.ago,
+        completion_status: :success,
+        user: user
+      )
+    end
+
+    let!(:successful_series) do
+      [
+        RampElectionIntake.create!(
+          veteran_file_number: "1111",
+          completed_at: 3.hours.ago,
+          completion_status: :success,
+          user: user
+        ),
+        RampElectionIntake.create!(
+          veteran_file_number: "1111",
+          completed_at: 2.hours.ago,
+          completion_status: :error,
+          error_code: :ramp_election_already_complete,
+          user: user
+        )
+      ]
+    end
+
+    let!(:error_series) do
+      [
+        RampElectionIntake.create!(
+          veteran_file_number: "2222",
+          completed_at: 5.hours.ago,
+          completion_status: :error,
+          error_code: :no_active_appeals,
+          user: user
+        ),
+        RampElectionIntake.create!(
+          veteran_file_number: "2222",
+          completed_at: 6.hours.ago,
+          completion_status: :error,
+          error_code: :no_eligible_appeals,
+          user: user
+        ),
+        RampElectionIntake.create!(
+          veteran_file_number: "2222",
+          completed_at: 4.hours.ago,
+          completion_status: :success,
+          error_code: :did_not_receive_ramp_election,
+          user: user
+        )
+      ]
+    end
+
+    context "sumarizes status for series of intakes for the same veteran in the range" do
+      it { is_expected.to eq(%w[no_active_appeals success]) }
+    end
+  end
 end

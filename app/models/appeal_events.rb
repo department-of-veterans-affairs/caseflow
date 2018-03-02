@@ -36,7 +36,7 @@ class AppealEvents
       v1_ssoc_events,
       certification_event,
       activation_event,
-      hearing_events,
+      v1_hearing_events,
       v1_decision_event,
       cavc_decision_events
     ].flatten.select(&:valid?)
@@ -109,6 +109,10 @@ class AppealEvents
 
   def remand_return_event
     AppealEvent.new(type: :remand_return, date: appeal.remand_return_date)
+  end
+
+  def v1_hearing_events
+    appeal.hearings.select(&:closed?).map { |hearing| AppealEvent.new(v1_hearing: hearing) }
   end
 
   def hearing_events

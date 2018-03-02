@@ -1,0 +1,2 @@
+class DraftDecision < AttorneyCaseReview
+end

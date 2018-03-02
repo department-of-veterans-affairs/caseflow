@@ -151,7 +151,7 @@ export default class StyleGuideColors extends React.PureComponent {
         )}
       </div>
 
-      <h3>Logos</h3>
+      <h3 id="logo-colors">Logo Colors</h3>
 
       <p>
         Logos are the only time Caseflow products use colors outside of Web Design
@@ -169,7 +169,7 @@ export default class StyleGuideColors extends React.PureComponent {
         )}
       </div>
 
-      <h3>Reader Categories</h3>
+      <h3 id="reader-categories">Reader Categories</h3>
 
       <div className="sg-colors-swatches">
         {this.Reader.map((name) =>

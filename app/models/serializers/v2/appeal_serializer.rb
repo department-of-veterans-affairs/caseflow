@@ -3,6 +3,8 @@ class V2::AppealSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
+  attribute :vacols_ids, key: :appeal_ids
+
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
   end
@@ -10,6 +12,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :incomplete, key: :incomplete_history
   attribute :type_code, key: :type
   attribute :active?, key: :active
+  attribute :description
   attribute :aod
   attribute :location
   attribute :aoj
@@ -24,10 +27,6 @@ class V2::AppealSerializer < ActiveModel::Serializer
   end
 
   # Stubbed attributes
-  attribute :description do
-    ""
-  end
-
   attribute :evidence do
     []
   end

@@ -82,41 +82,7 @@ describe('PdfUI', () => {
       });
     });
 
-    context('.zoom', () => {
-      it('sets the zoom state', () => {
-        let delta = 0.5;
-        let currentZoom = wrapper.state('scale');
-
-        wrapper.instance().zoom(delta)();
-        expect(wrapper.state('scale')).to.equal(currentZoom + delta);
-      });
-    });
-
     context('clicking', () => {
-      // I'd like to use spies to make sure zoom is called
-      // with the correct values instead of checking state
-      // directly. But it proved to be too difficult to
-      // spy on a closure generated within client code.
-      context('zoomIn', () => {
-        it('updates the scale by .3', () => {
-          let delta = 0.3;
-          let currentZoom = wrapper.state('scale');
-
-          wrapper.find({ name: 'zoomIn' }).simulate('click');
-          expect(wrapper.state('scale')).to.equal(currentZoom + delta);
-        });
-      });
-
-      context('zoomOut', () => {
-        it('updates the scale by -.3', () => {
-          let delta = -0.3;
-          let currentZoom = wrapper.state('scale');
-
-          wrapper.find({ name: 'zoomOut' }).simulate('click');
-          expect(wrapper.state('scale')).to.equal(currentZoom + delta);
-        });
-      });
-
       context('backToClaimsFolder', () => {
         it('calls the stopPlacingAnnotation props', () => {
           const mockStopPlacingAnnotationClick = sinon.spy();

@@ -1,11 +1,8 @@
-<% content_for :page_title do certification_header("Error 500") end %>
-
-<div class="cf-txt-c cf-app-segment cf-app-segment--alt">
-  <h1 class="cf-red-text cf-msg-screen-heading"><% if @error_title %><%= @error_title %><% else %>Something went wrong.<% end %></h1>
-  <% if @error_subtitle %>
-  <h2 class="cf-msg-screen-deck"><%=@error_subtitle%></h2>
-  <% end %>
-  <p class="cf-msg-screen-text">
-    <% if @error_retry_external_service %>Please give <%= @error_retry_external_service %> a few moments to come back online, then <button type="button" class="cf-action-refresh cf-btn-link cf-btn-link--inline">refresh this page</button>. <% end %>
-    If you continue to see this page, please contact the help desk.</p>
-</div>
+<% content_for :full_page_content do %>
+  <%= react_component("Error500", props: {
+    userDisplayName: current_user ? current_user.display_name : "",
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date
+  }) %>
+<% end %>

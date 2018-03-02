@@ -18,7 +18,6 @@ class CaseSelect extends React.PureComponent {
     <IssueList
       appeal={appeal}
       formatLevelsInNewLine
-      tightLevelStyling
       className="issue-list"
     />;
 

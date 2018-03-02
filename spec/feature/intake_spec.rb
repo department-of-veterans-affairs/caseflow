@@ -40,7 +40,8 @@ RSpec.feature "RAMP Intake" do
   let!(:ineligible_appeal) do
     Generators::Appeal.build(
       vbms_id: "77778888C",
-      vacols_record: :activated
+      vacols_record: :activated,
+      issues: issues
     )
   end
 
@@ -51,7 +52,7 @@ RSpec.feature "RAMP Intake" do
 
     scenario "User visits help page" do
       visit "/intake/help"
-      expect(page).to have_content("Welcome to the Intake Help Page!")
+      expect(page).to have_content("Welcome to the Intake Help page!")
     end
 
     scenario "Search for a veteran that does not exist in BGS" do

@@ -5,7 +5,8 @@
     page: "DecisionReviewer",
     feedbackUrl: feedback_url,
     featureToggles: {
-      windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user)
+      windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
+      queueWelcomeGate: FeatureToggle.enabled?(:queue_welcome_gate, user: current_user)
     },
     pdfWorker: asset_path('pdf.worker.js'),
     buildDate: build_date

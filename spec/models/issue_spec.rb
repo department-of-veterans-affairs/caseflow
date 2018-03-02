@@ -180,6 +180,12 @@ describe Issue do
     end
   end
 
+  context "#friendly_description_without_new_material" do
+    subject { issue.friendly_description_without_new_material }
+    let(:codes) { %w[02 15 04 5252] }
+    it { is_expected.to eq("Service connection, limitation of thigh motion") }
+  end
+
   context "#diagnostic_code" do
     subject { issue.diagnostic_code }
 

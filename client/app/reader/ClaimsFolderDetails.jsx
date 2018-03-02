@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
-import IssueList from './IssueList';
+import IssueList from '../queue/components/IssueList';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import { css } from 'glamor';
@@ -63,7 +63,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             </div>
             <div id="claims-folder-issues" {...issueStyling}>
               <b>Issues</b><br />
-              <IssueList appeal={appeal} />
+              <IssueList appeal={appeal} issuesOnly />
             </div>
           </div>}
         </AccordionSection>

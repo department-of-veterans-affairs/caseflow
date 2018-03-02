@@ -28,7 +28,8 @@ class Hearings::WorksheetsController < HearingsController
                                        :contentions,
                                        :military_service,
                                        :evidence,
-                                       :comments_for_attorney)
+                                       :comments_for_attorney,
+                                       :prepped)
   end
 
   def worksheet

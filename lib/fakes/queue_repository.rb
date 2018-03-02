@@ -17,7 +17,11 @@ class Fakes::QueueRepository
         date_assigned: record.date_assigned,
         date_received: record.date_received,
         date_due: record.date_due,
-        docket_number: record.docket_number
+        docket_number: record.docket_number,
+        added_by_first_name: record.added_by_first_name,
+        added_by_middle_name: record.added_by_middle_name,
+        added_by_last_name: record.added_by_last_name,
+        added_by_css_id: record.added_by_css_id
       }
       Appeal.new(task_attrs)
     end
@@ -39,5 +43,9 @@ class Fakes::QueueRepository
     end
 
     appeals
+  end
+
+  def self.reassign_case_to_judge(_decass_hash)
+    true
   end
 end

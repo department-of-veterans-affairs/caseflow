@@ -74,7 +74,7 @@ export class DocketHearingRow extends React.PureComponent {
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
-  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.index, value, this.props.hearingDate);
+  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.hearing.id, value, this.props.hearingDate);
 
   render() {
     const {
@@ -86,7 +86,8 @@ export class DocketHearingRow extends React.PureComponent {
 
     let getRoTime = (date) => {
       return moment(date).tz(roTimeZone).
-        format('h:mm a z');
+        format('h:mm a z').
+        replace(/(\w)(DT|ST)/g, '$1T');
     };
 
     // Appellant differs Veteran

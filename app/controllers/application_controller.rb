@@ -87,6 +87,15 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def verify_queue_phase_two
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_two)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
@@ -159,9 +168,6 @@ class ApplicationController < ApplicationBaseController
   def on_vbms_error
     respond_to do |format|
       format.html do
-        @error_title = "VBMS Failure"
-        @error_subtitle = "Unable to communicate with the VBMS system at this time."
-        @error_retry_external_service = "VBMS"
         render "errors/500", layout: "application", status: 500
       end
 
@@ -172,31 +178,27 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_subject
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    if request.original_fullpath.include? "dispatch"
-      "Caseflow Dispatch"
-    elsif request.original_fullpath.include? "certifications"
-      "Caseflow Certification"
-    elsif request.original_fullpath.include? "reader"
-      "Caseflow Reader"
-    elsif request.original_fullpath.include? "hearings"
-      "Caseflow Hearing Prep"
-    elsif request.original_fullpath.include? "intake"
-      "Caseflow Intake"
-    else
-      "Caseflow"
-    end
+    feedback_hash = {
+      "dispatch" => "Caseflow Dispatch",
+      "certifications" => "Caseflow Certification",
+      "reader" => "Caseflow Reader",
+      "hearings" => "Caseflow Hearing Prep",
+      "intake" => "Caseflow Intake",
+      "queue" => "Caseflow Queue"
+    }
+    subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
+    subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
-  def feedback_url
+  def feedback_url(redirect = nil)
     # :nocov:
     unless ENV["CASEFLOW_FEEDBACK_URL"]
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
     # :nocov:
 
-    param_object = { redirect: request.original_url, subject: feedback_subject }
+    redirect_url = redirect || request.original_url
+    param_object = { redirect: redirect_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end

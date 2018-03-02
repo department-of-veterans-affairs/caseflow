@@ -96,8 +96,8 @@ describe ExternalApi::EfolderService do
         # since loading vacols data is also wrapped through MetricsService, and we don't want that call to also
         # return the expected_response.
         appeal.check_and_load_vacols_data!
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).twice
-        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).twice
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).once
         subject
       end
     end
@@ -254,7 +254,7 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
         end
       end
 
@@ -477,7 +477,7 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
         end
       end
     end
@@ -499,7 +499,7 @@ describe ExternalApi::EfolderService do
         it "raises DocumentRetrievalError" do
           allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
           allow(HTTPI).to receive(:get).and_return(http_resp_400).once
-          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err, "400")
         end
       end
     end

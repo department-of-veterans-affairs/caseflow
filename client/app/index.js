@@ -7,9 +7,18 @@ import _ from 'lodash';
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
 import { Certification } from './certification/Certification';
+
+// Dispatch
+import EstablishClaimContainer from './containers/EstablishClaimPage/EstablishClaimContainer';
 import ManageEstablishClaim from './manageEstablishClaim/index';
+import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
+
 import Hearings from './hearings/index';
 import Help from './help/index';
+import Error500 from './errors/Error500';
+import Error404 from './errors/Error404';
+import Unauthorized from './containers/Unauthorized';
+import OutOfService from './containers/OutOfService';
 import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
@@ -24,8 +33,14 @@ const COMPONENTS = {
   // This is the older admin page that should eventually get merged into
   // the above EstablishClaimAdmin
   ManageEstablishClaim,
+  EstablishClaimContainer,
+  CaseWorker,
   Login,
   TestUsers,
+  Error404,
+  Error500,
+  OutOfService,
+  Unauthorized,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -48,6 +63,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   if (module.hot) {
     module.hot.accept([
       './containers/BaseContainer',
+      './containers/EstablishClaimPage/EstablishClaimContainer',
       './login/index',
       './test/TestUsers',
       './certification/Certification',

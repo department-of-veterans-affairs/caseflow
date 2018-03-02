@@ -85,7 +85,7 @@ module Fakes::Data::AppealData
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         date_due: "2018-02-13 00:00:00 UTC".to_datetime,
         signed_date: nil,
-        vbms_id: "DEMO123",
+        vbms_id: "123C",
         veteran_first_name: "Simple",
         veteran_middle_initial: "A",
         veteran_last_name: "Case",
@@ -193,6 +193,10 @@ module Fakes::Data::AppealData
         appellant_zip: "07932",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Joe",
+        added_by_middle_name: "A",
+        added_by_last_name: "Snuffy",
+        added_by_css_id: "MAPAPPAS",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
         representative: "Virginia Department of Veterans Affairs",
@@ -206,7 +210,8 @@ module Fakes::Data::AppealData
                      "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
             note: "hypertension secondary to DMII."
           }
-        ]
+        ],
+        documents: random_reader_documents(7)
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -228,38 +233,43 @@ module Fakes::Data::AppealData
         appellant_zip: "36838",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: nil,
+        added_by_middle_name: nil,
+        added_by_last_name: nil,
+        added_by_css_id: nil,
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
         representative: "No Representative",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
-            codes: %w[02 12 04 8599],
+            codes: %w[01 12 04 8599],
             labels: ["Compensation", "Service connection", "Schedular", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: :remanded,
             vacols_sequence_id: 2,
-            codes: %w[02 12 04 8599],
+            codes: %w[06 12 04 8599],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: :remanded,
             vacols_sequence_id: 3,
-            codes: %w[02 15 03 5252],
+            codes: %w[08 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: :remanded,
             vacols_sequence_id: 4,
-            codes: %w[02 15 03 5252],
+            codes: %w[11 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: :allowed,
             vacols_sequence_id: 5,
-            codes: %w[02 15 04 7101],
+            codes: %w[05 15 04 7101],
             labels: ["Compensation",
                      "Service connection",
                      "New and material",
                      "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -281,6 +291,10 @@ module Fakes::Data::AppealData
         appellant_zip: "63873",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Ricky",
+        added_by_middle_name: nil,
+        added_by_last_name: "Tikitembo",
+        added_by_css_id: "HROBERT",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
         representative: "One Time Representative",
@@ -297,7 +311,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         type: "Original",
@@ -320,6 +335,10 @@ module Fakes::Data::AppealData
         appellant_zip: "32883",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: "Dana",
+        added_by_middle_name: "T",
+        added_by_last_name: "Frey",
+        added_by_css_id: "DFREY",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
         representative: "Agent",
@@ -336,7 +355,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -351,6 +371,10 @@ module Fakes::Data::AppealData
         veteran_last_name: "Nino",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
+        added_by_first_name: "Demo",
+        added_by_middle_name: nil,
+        added_by_last_name: "More",
+        added_by_css_id: "DMORE",
         regional_office_key: "RO13",
         representative: "Disabled American Veterans",
         issues: [
@@ -389,6 +413,10 @@ module Fakes::Data::AppealData
         appellant_zip: "67753",
         appellant_country: "USA",
         docket_number: "13 11-265",
+        added_by_first_name: nil,
+        added_by_middle_name: nil,
+        added_by_last_name: nil,
+        added_by_css_id: nil,
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -404,7 +432,8 @@ module Fakes::Data::AppealData
             vacols_sequence_id: 3,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: random_reader_documents(25)
       ),
       Generators::Appeal.build(
         vacols_record: :veteran_is_appellant,
@@ -427,6 +456,10 @@ module Fakes::Data::AppealData
         appellant_zip: "K1M 1C8",
         appellant_country: "CN",
         docket_number: "13 11-265",
+        added_by_first_name: "Jess",
+        added_by_middle_name: "P",
+        added_by_last_name: "Tran",
+        added_by_css_id: "HROBERT",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -466,7 +499,8 @@ module Fakes::Data::AppealData
           { vacols_sequence_id: 12,
             codes: %w[02 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
-        ]
+        ],
+        documents: static_reader_documents
       )
     ].each(&:save)
   end

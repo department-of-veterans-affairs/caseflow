@@ -16,8 +16,9 @@ class ExternalApi::EfolderService
     response = send_efolder_request("/api/v1/files?download=true", user, headers)
 
     if response.error?
-      fail Caseflow::Error::EfolderAccessForbidden if response.try(:code) == 403
-      fail Caseflow::Error::DocumentRetrievalError
+      fail Caseflow::Error::EfolderAccessForbidden, "403" if response.try(:code) == 403
+      fail Caseflow::Error::DocumentRetrievalError, "502" if response.try(:code) == 500
+      fail Caseflow::Error::DocumentRetrievalError, response.code.to_s
     end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
@@ -35,24 +36,27 @@ class ExternalApi::EfolderService
   def self.efolder_v2_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
 
-    response_attrs = {}
-
-    send_efolder_request("/api/v2/manifests", user, headers, method: :post)
+    response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
 
     TRIES.times do
-      response = send_efolder_request("/api/v2/manifests", user, headers)
-
       fail Caseflow::Error::DocumentRetrievalError if response.error?
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
       fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
 
-      break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+      if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+        return generate_response(response_attrs, vbms_id)
+      end
+
       sleep 1
+
+      manifest_id = JSON.parse(response.body)["data"]["id"]
+
+      response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    generate_response(response_attrs, vbms_id)
+    fail Caseflow::Error::DocumentRetrievalError
   end
 
   def self.generate_response(response_attrs, vbms_id)

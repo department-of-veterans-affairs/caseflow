@@ -43,6 +43,8 @@ class VACOLS::Case < VACOLS::Record
     "P" => "RAMP Opt-in",
     "Q" => "Recon Motion Withdrawn",
     "R" => "Reconsideration by Letter",
+    "S" => "Stay",
+    "U" => "Motion to Vacate Denied",
     "V" => "Motion to Vacate Withdrawn",
     "W" => "Withdrawn from Remand",
     "X" => "Remand Failure to Respond"
@@ -115,11 +117,6 @@ class VACOLS::Case < VACOLS::Record
     HEARING_CANCELLED: { vacols_value: "5" },
     NO_BOX_SELECTED: { vacols_value: "5" }
   }.freeze
-
-  # NOTE(jd): This is a list of the valid locations that Caseflow
-  # supports updating an appeal to. This is a subset of the overall locations
-  # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w[50 51 53 54 77 98 99].freeze
 
   JOIN_ISSUE_COUNT = "
     inner join
@@ -224,7 +221,7 @@ class VACOLS::Case < VACOLS::Record
 
   # The attributes that are copied over when the case is cloned because of a remand
   def remand_clone_attributes
-    attributes.slice(
+    slice(
       :bfcorkey, :bfcorlid, :bfdnod, :bfdsoc, :bfd19, :bf41stat, :bfregoff,
       :bfissnr, :bfdorg, :bfdc, :bfic, :bfio, :bfoc, :bfms, :bfsh, :bfso,
       :bfst, :bfdrodec, :bfcasev, :bfdpdcn, :bfddro, :bfdroid, :bfdrortr, :bfro1
@@ -234,8 +231,6 @@ class VACOLS::Case < VACOLS::Record
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
     return unless location
-
-    fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
 
     conn = self.class.connection
 

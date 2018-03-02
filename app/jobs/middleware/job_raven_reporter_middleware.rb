@@ -1,11 +1,12 @@
-# This job captures all shoryuken job exceptions, forward them to Raven and and
-# re-raise the exception to a Shoryuken job runner.
+# This job captures all Shoryuken job exceptions and forwards them to Raven.
 #
 class JobRavenReporterMiddleware
-  def call(_worker, _queue, _msg, _body)
+  def call(_worker, queue, _msg, body)
     yield
   rescue StandardError => ex
-    Raven.capture_exception(ex)
+    tags = { job: body["job_class"], queue: queue }
+    context = { message: body }
+    Raven.capture_exception(ex, tags: tags, extra: context)
     raise
   end
 end

@@ -46,6 +46,10 @@ class Appeal < ActiveRecord::Base
   # These are only set when you pull in a case from the Case Assignment Repository
   attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
 
+  # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
+  # because it is using an Appeal object
+  attr_accessor :added_by_first_name, :added_by_middle_name, :added_by_last_name, :added_by_css_id
+
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
   end
@@ -126,7 +130,7 @@ class Appeal < ActiveRecord::Base
     if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
-      "/queue/#{id}/docs"
+      "/queue/docs_for_dev"
     end
   end
 
@@ -256,6 +260,18 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def compensation_issues
+    issues.select { |issue| issue.program == :compensation }
+  end
+
+  def compensation?
+    !compensation_issues.empty?
+  end
+
+  def fully_compensation?
+    compensation_issues.count == issues.count
+  end
+
   def ramp_election
     RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
@@ -346,23 +362,22 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents_v2!
     AddSeriesIdToDocumentsJob.perform_now(self)
 
-    ids = fetched_documents.map(&:series_id)
-    existing_documents = Document.where(series_id: ids)
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.series_id] = document
+      accumulator[document.vbms_document_id] = document
     end
 
     fetched_documents.map do |document|
       begin
-        if existing_documents[document.series_id]
-          document.merge_into(existing_documents[document.series_id]).save!
-          existing_documents[document.series_id]
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
         else
-          document.save!
-          document
+          create_new_document!(document, ids)
         end
       rescue ActiveRecord::RecordNotUnique
-        Document.find_by(series_id: document.series_id)
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
@@ -543,6 +558,20 @@ class Appeal < ActiveRecord::Base
 
   private
 
+  def create_new_document!(document, ids)
+    document.save!
+
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
+  end
+
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
 
@@ -588,8 +617,7 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if (RequestStore.store[:application] == "reader" || RequestStore.store[:application] == "hearings") &&
-         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      if %w[reader queue hearings].include?(RequestStore.store[:application])
         EFolderService
       else
         VBMSService
@@ -617,13 +645,11 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
-    def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
-
+    def for_api(vbms_id:)
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
+      repository.appeals_by_vbms_id(vbms_id)
         .select(&:api_supported?)
         .reject { |a| a.latest_event_date.nil? }
         .sort_by(&:latest_event_date)

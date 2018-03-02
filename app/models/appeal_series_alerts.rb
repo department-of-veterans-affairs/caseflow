@@ -38,7 +38,8 @@ class AppealSeriesAlerts
         type: :scheduled_hearing,
         details: {
           date: hearing.date.to_date,
-          type: hearing.type
+          type: hearing.type,
+          location: hearing.location
         }
       }
     end
@@ -46,21 +47,19 @@ class AppealSeriesAlerts
 
   def hearing_no_show
     if appeal_series.active?
-      recent_missed_hearing = latest_appeal.hearings.find do |hearing|
+      most_recent_missed_hearing = latest_appeal.hearings.select do |hearing|
         hearing.no_show? && Time.zone.today <= hearing.no_show_excuse_letter_due_date
       end
+        .sort_by(&:date)
+        .last
 
-      return unless recent_missed_hearing
-
-      due_date = latest_appeal.hearings
-        .select(&:no_show?)
-        .map(&:no_show_excuse_letter_due_date)
-        .max
+      return unless most_recent_missed_hearing
 
       {
         type: :hearing_no_show,
         details: {
-          due_date: due_date
+          date: most_recent_missed_hearing.date.to_date,
+          due_date: most_recent_missed_hearing.no_show_excuse_letter_due_date
         }
       }
     end
@@ -101,7 +100,7 @@ class AppealSeriesAlerts
     if appeal_series.status == :at_vso && appeal_series.at_front
       {
         type: :blocked_by_vso,
-        details: {}
+        details: { vso_name: appeal_series.representative }
       }
     end
   end
@@ -124,6 +123,7 @@ class AppealSeriesAlerts
       {
         type: appeal_series.eligible_for_ramp? ? :ramp_eligible : :ramp_ineligible,
         details: {
+          date: appeal_series.ramp_election.notice_date,
           due_date: appeal_series.ramp_election.due_date
         }
       }

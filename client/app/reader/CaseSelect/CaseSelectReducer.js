@@ -8,7 +8,7 @@ export const initialState = {
   receivedAppeals: [],
   search: {
     showErrorMessage: false,
-    showNoAppealsInfoMessage: false
+    noAppealsFoundSearchQueryValue: null
   },
   caseSelectCriteria: {
     searchQuery: ''
@@ -31,7 +31,7 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
       selectedAppealVacolsId: { $set: null },
       search: {
         showErrorMessage: { $set: false },
-        showNoAppealsInfoMessage: { $set: false }
+        noAppealsFoundSearchQueryValue: { $set: null }
       }
     });
   case Constants.SET_CASE_SELECT_SEARCH:
@@ -58,8 +58,10 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
     return update(state, {
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
-        showNoAppealsInfoMessage: { $set: true },
-        showErrorMessage: { $set: false }
+        showErrorMessage: { $set: false },
+        noAppealsFoundSearchQueryValue: {
+          $set: action.payload.searchQuery
+        }
       }
     });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
@@ -70,7 +72,7 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
       },
       search: {
         showErrorMessage: { $set: false },
-        showNoAppealsInfoMessage: { $set: false }
+        noAppealsFoundSearchQueryValue: { $set: null }
       }
     });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
@@ -78,7 +80,7 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showErrorMessage: { $set: true },
-        showNoAppealsInfoMessage: { $set: false }
+        noAppealsFoundSearchQueryValue: { $set: null }
       }
     });
   case Constants.RECEIVE_ASSIGNMENTS:
