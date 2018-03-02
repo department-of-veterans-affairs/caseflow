@@ -123,7 +123,7 @@ class SelectDispositionsView extends React.PureComponent {
         issue.id,
         { duplicate }
       )}
-      label="Vacate and readjudicate this issue. Automatically duplicate vacated issue." />}
+      label="Automatically create vacated issue for readjudication." />}
   </div>;
 
   getKeyForRow = (rowNumber) => rowNumber;
@@ -132,8 +132,8 @@ class SelectDispositionsView extends React.PureComponent {
       header: 'Issues',
       valueFunction: (issue, idx) => <IssueList
         appeal={{ issues: [issue] }}
-        issuesOnly
         singleIssue
+        singleColumn
         idxToDisplay={idx + 1} />
     },
     {

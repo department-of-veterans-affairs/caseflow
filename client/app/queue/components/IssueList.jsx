@@ -7,8 +7,8 @@ import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
 import { boldText } from '../constants';
 import StringUtil from '../../util/StringUtil';
 
-const tableContainerStyling = (issuesOnly) => css({
-  width: issuesOnly ? '100%' : '55rem'
+const tableContainerStyling = (fluid) => css({
+  width: fluid ? '100%' : '55rem'
 });
 const tableStyling = css({
   marginTop: '1rem',
@@ -58,7 +58,8 @@ export default class IssueList extends React.PureComponent {
       appeal,
       issuesOnly,
       singleIssue,
-      idxToDisplay
+      idxToDisplay,
+      singleColumn
     } = this.props;
 
     if (!appeal.issues.length) {
@@ -80,6 +81,18 @@ export default class IssueList extends React.PureComponent {
       }</React.Fragment>;
     }
 
+    if (singleColumn) {
+      return <React.Fragment>{appeal.issues.map((issue, idx) =>
+        <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
+          <td {...leftAlignTd}>
+            {idxToDisplay || (idx + 1)}. Program: {this.formatIssueProgram(issue)}<br />
+            Issue: {issue.type} {this.issueLevels(issue)}<br />
+            Note: {issue.note}
+          </td>
+        </tr>)
+      }</React.Fragment>;
+    }
+
     return <React.Fragment>{appeal.issues.map((issue, idx) =>
       <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
         <td {...leftAlignTd} width="210px">
@@ -93,10 +106,9 @@ export default class IssueList extends React.PureComponent {
         </td>
       </tr>)
     }</React.Fragment>;
-
   };
 
-  render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.singleColumn)}>
     <table {...tableStyling}>
       <tbody>
         {this.getIssues()}
@@ -111,10 +123,12 @@ IssueList.propTypes = {
   }).isRequired,
   issuesOnly: PropTypes.bool,
   singleIssue: PropTypes.bool,
+  singleColumn: PropTypes.bool,
   idxToDisplay: PropTypes.number
 };
 
 IssueList.defaultProps = {
   issuesOnly: false,
-  singleIssue: false
+  singleIssue: false,
+  singleColumn: false
 };
