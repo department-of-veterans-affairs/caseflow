@@ -52,19 +52,28 @@ export default class AppealDetail extends React.PureComponent {
     if (this.getAppealAttr('hearings').length) {
       const lastHearing = this.getLastHearing();
 
-      listElements.splice(2, 0, ...[{
-        label: 'Hearing Preference',
-        value: StringUtil.snakeCaseToCapitalized(lastHearing.type)
-      }, {
-        label: 'Hearing held',
-        value: <React.Fragment>
-          <DateString date={lastHearing.held_on} dateFormat="M/D/YY" style={marginRight} />
-          <Link target="_blank" href={`/hearings/${lastHearing.id}/worksheet`}>View Hearing Worksheet</Link>
-        </React.Fragment>
-      }, {
-        label: 'Judge at hearing',
-        value: lastHearing.held_by
-      }]);
+      if (!_.isNull(lastHearing.disposition)) {
+        listElements.splice(2, 0, ...[{
+          label: 'Hearing Preference',
+          value: StringUtil.snakeCaseToCapitalized(lastHearing.type)
+        }, {
+          label: 'Hearing disposition',
+          value: lastHearing.disposition || ' '
+        }]);
+
+        if (lastHearing.disposition !== 'canceled') {
+          listElements.splice(4, 0, ...[{
+            label: 'Hearing date',
+            value: <React.Fragment>
+              <DateString date={lastHearing.held_on} dateFormat="M/D/YY" style={marginRight}/>
+              <Link target="_blank" href={`/hearings/${lastHearing.id}/worksheet`}>View Hearing Worksheet</Link>
+            </React.Fragment>
+          }, {
+            label: 'Judge at hearing',
+            value: lastHearing.held_by
+          }]);
+        }
+      }
     }
 
     const getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
