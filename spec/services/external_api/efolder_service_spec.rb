@@ -96,8 +96,8 @@ describe ExternalApi::EfolderService do
         # since loading vacols data is also wrapped through MetricsService, and we don't want that call to also
         # return the expected_response.
         appeal.check_and_load_vacols_data!
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).twice
-        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).twice
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).once
         subject
       end
     end

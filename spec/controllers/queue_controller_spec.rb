@@ -1,25 +1,30 @@
 RSpec.describe QueueController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:queue_welcome_gate)
-  end
-
-  after do
-    FeatureToggle.disable!(:queue_welcome_gate)
   end
 
   describe "GET queue/judges" do
     it "should be successful" do
+      FeatureToggle.enable!(:queue_welcome_gate)
       User.authenticate!(roles: ["System Admin"])
       get :judges
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["judges"].size).to eq 3
+      FeatureToggle.disable!(:queue_welcome_gate)
     end
   end
 
   describe "POST queue/tasks/:task_id/complete" do
     let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
+
+    before do
+      FeatureToggle.enable!(:queue_phase_two)
+    end
+
+    after do
+      FeatureToggle.disable!(:queue_phase_two)
+    end
 
     context "when all parameters are present" do
       let(:params) do

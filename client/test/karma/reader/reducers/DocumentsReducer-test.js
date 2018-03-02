@@ -24,7 +24,10 @@ describe('Documents reducer', () => {
         }
       ]);
 
-      expect(state[documents[0].id]).to.deep.equal(documents[0]);
+      expect(state[documents[0].id]).to.deep.equal({
+        ...documents[0],
+        wasUpdated: false
+      });
     });
     it('updates documents object when null is passed', () => {
       const documents = null;
