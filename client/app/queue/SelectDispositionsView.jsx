@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -20,9 +21,9 @@ import {
 import { fullWidth } from './constants';
 import DecisionViewFooter from './components/DecisionViewFooter';
 
-const marginTop = (n) => css({ marginTop: `${n}rem` });
-const marginBottom = (n) => css({ marginBottom: `${n}rem` });
-const marginLeft = (n) => css({ marginLeft: `${n}rem` });
+const marginTop = (margin) => css({ marginTop: `${margin}rem` });
+const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
+const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
 const rowStyling = css({
   '& > tbody > tr > td': {
     verticalAlign: 'top',
@@ -47,10 +48,24 @@ const issueDispositionOptions = [
 ];
 
 class SelectDispositionsView extends React.PureComponent {
-  componentDidMount = () => this.props.pushBreadcrumb({
-    breadcrumb: 'Select Dispositions',
-    path: `/tasks/${this.props.vacolsId}/dispositions`
-  });
+  componentDidMount = () => {
+    const {
+      vacolsId,
+      appeal: { attributes: { issues } }
+    } = this.props;
+
+    this.props.pushBreadcrumb({
+      breadcrumb: 'Select Dispositions',
+      path: `/tasks/${vacolsId}/dispositions`
+    });
+    // wipe dispositions in pending appeal for validation purposes
+    _.each(issues, (issue) =>
+      this.props.updateAppealIssue(
+        vacolsId,
+        issue.id,
+        { disposition: null }
+      ));
+  };
 
   componentWillUnmount = () => {
     // todo: if no edits made, cancel_editing
@@ -64,7 +79,20 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     displayText: 'Finish dispositions',
     classNames: ['cf-right-side'],
-    callback: this.props.goToNextStep
+    callback: () => {
+      const {
+        goToNextStep,
+        appeal: { attributes: { issues } }
+      } = this.props;
+      const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+
+      if (issuesWithoutDisposition.length === 0) {
+        goToNextStep();
+      } else {
+        // todo: highlight missing fields
+        console.warn(`missing issues: ${JSON.stringify(_.map(issuesWithoutDisposition, 'id'))}`);
+      }
+    }
   }];
 
   getDispositionsColumn = (issue) => <div>

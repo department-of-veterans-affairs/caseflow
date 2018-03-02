@@ -40,17 +40,15 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     const {
-      pushBreadcrumb,
       vacolsId,
-      setDecisionOptions,
       task: { attributes: task }
     } = this.props;
 
-    pushBreadcrumb({
+    this.props.pushBreadcrumb({
       breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
       path: `/tasks/${vacolsId}/submit`
     });
-    setDecisionOptions({
+    this.props.setDecisionOptions({
       judge: {
         label: task.added_by_name,
         value: task.added_by_css_id
@@ -79,9 +77,11 @@ class SubmitDecisionView extends React.PureComponent {
         opts: decisionOpts
       } = this.props.decision;
       const requiredParams = ['documentId', 'judge'];
+
       if (decisionType === 'omo') {
         requiredParams.push('omoType');
       }
+
       const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
 
       if (missingParams.length === 0) {
@@ -97,8 +97,6 @@ class SubmitDecisionView extends React.PureComponent {
     const {
       selectingJudge,
       judges,
-      setSelectingJudge,
-      setDecisionOptions,
       decision: { opts: decisionOpts }
     } = this.props;
 
@@ -112,8 +110,8 @@ class SubmitDecisionView extends React.PureComponent {
             value: judge.css_id
           }))}
           onChange={(judge) => {
-            setSelectingJudge(false);
-            setDecisionOptions({ judge });
+            this.props.setSelectingJudge(false);
+            this.props.setDecisionOptions({ judge });
           }}
           hideLabel />
       </React.Fragment>;
