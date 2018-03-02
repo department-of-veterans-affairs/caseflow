@@ -125,6 +125,7 @@ export class PdfFile extends React.PureComponent {
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
+        featureToggles={this.props.featureToggles}
       />
     </div>;
   }
@@ -437,7 +438,7 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}
-            overscanIndicesGetter={this.overscanIndicesGetter}
+            overscanIndicesGetter={this.props.improvedRendering ? this.overscanIndicesGetter : undefined}
             estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
@@ -496,7 +497,7 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
+    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop', 'improvedRendering'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],

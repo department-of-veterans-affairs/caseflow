@@ -129,10 +129,10 @@ export class PdfPage extends React.PureComponent {
     // Call PDFJS to actually draw the page.
     let promise;
 
-    if (this.props.featureToggles.improvedRendering) {
-      promise = addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0)
+    if (this.props.improvedRendering) {
+      promise = addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0);
     } else {
-      promise = page.render;
+      promise = page.render(options);
     }
 
     return promise.then(() => {
@@ -155,7 +155,9 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    removePageFromRenderQueue(this.props.pageIndex);
+    if (this.props.improvedRendering) {
+      removePageFromRenderQueue(this.props.pageIndex);
+    }
     if (this.props.page) {
       this.props.page.cleanup();
       if (this.markInstance) {
@@ -378,6 +380,7 @@ const mapStateToProps = (state, props) => {
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
     windowingOverscan: state.pdfViewer.windowingOverscan,
+    improvedRendering: state.pdfViewer.improvedRendering,
     documentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
     ...state.searchActionReducer
   };
