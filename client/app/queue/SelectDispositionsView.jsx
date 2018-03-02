@@ -79,14 +79,16 @@ class SelectDispositionsView extends React.PureComponent {
       onChange={({ value }) => this.props.updateAppealIssue(
         this.props.vacolsId,
         issue.id,
-        { disposition: value }
+        {
+          disposition: value,
+          duplicate: false
+        }
       )}
       name="Dispositions dropdown" />
     {issue.disposition === 'vacated' && <Checkbox
       name="duplicate-vacated-issue"
       styling={css(marginBottom(0), marginTop(1))}
       value={issue.duplicate}
-      {/* todo: unset duplicate on change disposition != vacated? */}
       onChange={(duplicate) => this.props.updateAppealIssue(
         this.props.vacolsId,
         issue.id,
