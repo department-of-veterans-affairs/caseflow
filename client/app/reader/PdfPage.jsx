@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
-import { addPageToRenderQueue, changePriority, removePageFromRenderQueue } from './PdfJs';
+import { addPageToRenderQueue, changePriority, removePageFromRenderQueue } from './PdfRenderingQueue';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -130,7 +130,13 @@ export class PdfPage extends React.PureComponent {
     let promise;
 
     if (this.props.improvedRendering) {
-      promise = addPageToRenderQueue(page, options, this.props.pageIndex, this.props.isPageVisible ? 1 : 0);
+      promise = addPageToRenderQueue({
+        page,
+        options,
+        pageIndex: this.props.pageIndex,
+        file: this.props.file,
+        priority: this.props.isPageVisible
+      });
     } else {
       promise = page.render(options);
     }
@@ -156,7 +162,10 @@ export class PdfPage extends React.PureComponent {
   componentWillUnmount = () => {
     this.isDrawing = false;
     if (this.props.improvedRendering) {
-      removePageFromRenderQueue(this.props.pageIndex);
+      removePageFromRenderQueue({
+        pageIndex: this.props.pageIndex,
+        file: this.props.file
+      });
     }
     if (this.props.page) {
       this.props.page.cleanup();
@@ -168,7 +177,11 @@ export class PdfPage extends React.PureComponent {
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.isPageVisible !== this.props.isPageVisible) {
-      changePriority(this.props.pageIndex, nextProps.isPageVisible ? 1 : 0);
+      changePriority({
+        pageIndex: this.props.pageIndex,
+        file: this.props.file,
+        priority: nextProps.isPageVisible
+      });
     }
   }
 
@@ -242,7 +255,8 @@ export class PdfPage extends React.PureComponent {
             attrs: {
               overscan: this.props.windowingOverscan,
               documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.pdfInfo.numPages
+              pageCount: this.props.pdfDocument.pdfInfo.numPages,
+              improvedRendering: this.props.improvedRendering
             }
           });
         });
