@@ -1,5 +1,6 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
+import { moveModel } from '../reader/utils';
 import { ACTIONS } from './constants';
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
@@ -83,21 +84,20 @@ const workQueueReducer = (state = initialState, action = {}) => {
         opts: { $merge: action.payload.opts }
       }
     });
-  case ACTIONS.START_EDITING_OBJECT:
-    // todo: use reader/utils/moveModel
+  case ACTIONS.START_EDITING_APPEAL:
     return update(state, {
       pendingChanges: {
-        [action.payload.type]: {
+        appeals: {
           [action.payload.vacolsId]: {
-            $set: state.loadedQueue[action.payload.type][action.payload.vacolsId]
+            $set: state.loadedQueue.appeals[action.payload.vacolsId]
           }
         }
       }
     });
-  case ACTIONS.CANCEL_EDITING_OBJECT:
+  case ACTIONS.CANCEL_EDITING_APPEAL:
     return update(state, {
       pendingChanges: {
-        [action.payload.type]: {
+        appeals: {
           $unset: action.payload.vacolsId
         }
       }
