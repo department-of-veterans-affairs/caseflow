@@ -21,10 +21,6 @@ export default class TextAccessibility extends React.Component {
     'Green'
   ];
 
-  colorVar = (name) => {
-    return (`$color-${name}`).toLowerCase();
-  };
-
   render() {
     return <div>
       <StyleGuideComponentTitle
