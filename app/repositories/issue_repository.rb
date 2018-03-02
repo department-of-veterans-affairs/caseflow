@@ -2,15 +2,16 @@ class IssueRepository
   class IssueCreationError < StandardError; end
   # issue_hash = {
   #   vacols_id: "1234567",
-  #   program: "01",
-  #   issue: "03",
-  #   level_1: "06",
-  #   level_2: "##",
+  #   program: { description: "test", code: "01" },
+  #   issue: { description: "test", code: "01" },
+  #   level_1: { description: "test", code: "01" },
+  #   level_2: { description: "test", code: "01" },
   #   level_3: nil,
   #   note: "something"
   # }
   # :nocov:
   def self.create_vacols_issue(css_id, issue_hash)
+    issue_hash = IssueMapper.transform_issue_hash(issue_hash)
     # Ensure combination of ISSUE codes is valid by querying the VACOLS.ISSREF table
     issue_reference = VACOLS::IssueReference.find_by(
       prog_code: issue_hash[:program],
