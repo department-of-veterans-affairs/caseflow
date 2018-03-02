@@ -79,17 +79,15 @@ class SubmitDecisionView extends React.PureComponent {
         opts: decisionOpts
       } = this.props.decision;
       const requiredParams = ['documentId', 'judge'];
-      const presentParams = _.filter(requiredParams, (param) => _.has(decisionOpts, param));
-
       if (decisionType === 'omo') {
         requiredParams.push('omoType');
       }
+      const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
 
-      if (presentParams.length === requiredParams.length) {
+      if (missingParams.length === 0) {
         this.props.goToNextStep();
       } else {
-        const missingParams = _.difference(requiredParams, presentParams);
-
+        // todo: highlight missing fields
         console.warn(`missing params: ${JSON.stringify(missingParams)}`);
       }
     }
