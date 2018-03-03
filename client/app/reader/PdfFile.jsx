@@ -108,6 +108,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
+    console.log('getPage', rowIndex);
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
     if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
@@ -116,8 +117,6 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-        scrollTop={this.props.scrollTop}
-        scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
@@ -302,7 +301,7 @@ export class PdfFile extends React.PureComponent {
   onScroll = ({ clientHeight, scrollTop, scrollLeft }) => {
     this.scrollTop = scrollTop;
     this.scrollLeft = scrollLeft;
-
+    console.log('Scrolled', scrollTop);
     if (this.grid) {
       let minIndex = 0;
       let minDistance = Infinity;

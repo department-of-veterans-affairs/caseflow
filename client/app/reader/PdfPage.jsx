@@ -37,7 +37,7 @@ const markStyle = css({
   }
 });
 
-export class PdfPage extends React.PureComponent {
+export class PdfPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -156,6 +156,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    console.log('mounting', this.props.pageIndex);
     this.setUpPage();
   }
 
@@ -186,6 +187,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
+    console.log('updating', this.props.pageIndex, prevProps, this.props);
     if (this.props.isPageVisible && !prevProps.isPageVisible) {
       this.measureTimeStartMs = performance.now();
     }
@@ -209,6 +211,12 @@ export class PdfPage extends React.PureComponent {
         }
       }
     }
+  }
+
+  shouldComponentUpdate = (nextProps) => {
+    return (nextProps.scale !== this.props.scale ||
+      nextProps.isPageVisible !== this.props.isPageVisible ||
+      nextProps.isFileVisible !== this.props.isFileVisible);
   }
 
   drawText = (page, text) => {
@@ -271,11 +279,11 @@ export class PdfPage extends React.PureComponent {
   getDimensions = (page) => {
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
-    this.props.setPageDimensions(
-      this.props.file,
-      this.props.pageIndex,
-      { width: viewport.width,
-        height: viewport.height });
+    // this.props.setPageDimensions(
+    //   this.props.file,
+    //   this.props.pageIndex,
+    //   { width: viewport.width,
+    //     height: viewport.height });
   }
 
   getDivDimensions = () => {
@@ -363,10 +371,6 @@ export class PdfPage extends React.PureComponent {
 }
 
 PdfPage.propTypes = {
-  scrollWindowCenter: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number
-  }),
   documentId: PropTypes.number,
   file: PropTypes.string,
   pageIndex: PropTypes.number,

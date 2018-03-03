@@ -1,33 +1,42 @@
 let highPriorityPageArray = [];
 let lowPriorityPageArray = [];
 
-let currentlyRenderingPage = null;
-let renderTask = null;
+let currentlyRenderingPages = [];
 
 const getNextPage = () => highPriorityPageArray.pop() || lowPriorityPageArray.pop();
 
 const renderNextPage = () => {
-  const completeRender = () => {
-    currentlyRenderingPage = null;
+  const completeRender = (page) => {
+    currentlyRenderingPages = currentlyRenderingPages.filter((item) => item.pageIndex !== page.pageIndex || item.file !== page.file );
+    // console.log("COMPLETE RENDER", page, currentlyRenderingPages);
     renderNextPage();
   };
 
-  if (currentlyRenderingPage) {
+  if (currentlyRenderingPages.length >= 4) {
     return;
   }
 
   const page = getNextPage();
-  console.log(page);
-  if (page) {
-    currentlyRenderingPage = page;
 
-    renderTask = page.page.render(page.options);
+  // console.log(page);
+  if (page) {
+    const renderTask = page.page.render(page.options);
+
+    currentlyRenderingPages.push({
+      ...page,
+      renderTask
+    });
+
+    // console.log('currentlyRenderingPages', currentlyRenderingPages);
+    const t0 = performance.now();
+
     renderTask.then(() => {
       page.resolve();
-      completeRender();
+      console.log('time to render', performance.now() - t0);
+      completeRender(page);
     }, () => {
       page.reject();
-      completeRender();
+      completeRender(page);
     });
   }
 };
@@ -40,7 +49,7 @@ const removePageFromQueues = ({ pageIndex, file }) => {
 };
 
 export const changePriority = ({ pageIndex, file, priority }) => {
-  console.log("pageindex", pageIndex, "PRIORITY CHANGED", priority);
+  // console.log("pageindex", pageIndex, "PRIORITY CHANGED", priority);
   const pageToChange = [...highPriorityPageArray, ...lowPriorityPageArray].find(
     (page) => page.pageIndex === pageIndex && page.file === file);
 
@@ -59,10 +68,13 @@ export const changePriority = ({ pageIndex, file, priority }) => {
 };
 
 export const removePageFromRenderQueue = ({ pageIndex, file }) => {
-  if (renderTask && currentlyRenderingPage && pageIndex === currentlyRenderingPage.pageIndex && file === currentlyRenderingPage.file) {
-    console.log("pageindex", pageIndex, "TOTALLY CANCELLED");
-    renderTask.cancel();
+  const currentlyRenderingPage = currentlyRenderingPages.find((page) => pageIndex === page.pageIndex && file === page.file);
+
+  if (currentlyRenderingPage) {
+    // console.log("pageindex", pageIndex, "TOTALLY CANCELLED");
+    currentlyRenderingPage.renderTask.cancel();
   }
+  
   removePageFromQueues({
     pageIndex,
     file
