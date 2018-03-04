@@ -4,6 +4,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextStyles from './Typography/TextStyles';
 import FontFamily from './Typography/FontFamily';
+import TextAccessibility from './Typography/TextAccessibility';
 
 export default class StyleGuideTypography extends React.PureComponent {
 
@@ -24,6 +25,7 @@ export default class StyleGuideTypography extends React.PureComponent {
       </p>
       <TextStyles />
       <FontFamily />
+      <TextAccessibility />
     </div>;
   };
 }
