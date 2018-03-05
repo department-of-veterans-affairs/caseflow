@@ -10,10 +10,6 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(staff.slogid).to_i(16))
 
     staff.assign_attributes(
-      snamef: ::Faker::Name.first_name,
-      snamemi: ::Faker::Name.initials(1),
-      snamel: ::Faker::Name.last_name,
-      stitle: ::Faker::Name.prefix,
       saddrnum: nil,
       saddrst1: ::Faker::Address.street_address,
       saddrst2: random_or_nil(::Faker::Address.secondary_address),
@@ -55,8 +51,7 @@ class Helpers::Sanitizers
     )
 
     vacols_case.correspondent.assign_attributes(
-      ssn: ::Faker::Number.number(9),
-      slogid: ::Faker::Number.number(9) + "S",
+      ssn: random_or_nil(::Faker::Number.number(9)),
       snamef: ::Faker::Name.first_name,
       snamemi: ::Faker::Name.initials(1),
       snamel: ::Faker::Name.last_name,
@@ -77,12 +72,12 @@ class Helpers::Sanitizers
       sorc2: nil,
       sorc3: nil,
       sorc4: nil,
-      sspare1: ::Faker::Name.last_name,
-      sspare2: ::Faker::Name.first_name,
-      sspare3: ::Faker::Name.initials(1),
-      sspare4: ::Faker::Name.suffix,
-      sfnod: random_or_nil(::Faker::Date.between(Date.new(1980), Date.new(2018))),
-      sdob: ::Faker::Date.between(Date.new(1960), Date.new(1990)),
+      sspare1: vacols_case.correspondent.sspare1 ? ::Faker::Name.last_name : nil,
+      sspare2: vacols_case.correspondent.sspare2 ? ::Faker::Name.first_name : nil,
+      sspare3: vacols_case.correspondent.sspare3 ? ::Faker::Name.initials(1) : nil,
+      sspare4: vacols_case.correspondent.sspare4 ? ::Faker::Name.suffix : nil,
+      sfnod: vacols_case.correspondent.sfnod ? ::Faker::Date.between(Date.new(1980), Date.new(2018)) : nil,
+      sdob: random_or_nil(::Faker::Date.between(Date.new(1960), Date.new(1990))),
       sgender: (::Faker::Number.number(1).to_i < 5) ? "M" : "F",
       susrpw: nil,
       susrsec: nil,
@@ -117,6 +112,9 @@ class Helpers::Sanitizers
         tinum: ::Faker::Number.number(7),
         ticukey: nil,
         tidsnt: nil,
+        tiaddrto: nil,
+        tispare3: nil,
+        tiread2: nil,
         tiwpptr: random_or_nil(::Faker::Lorem.sentence),
         tiwpptrt: nil,
         ticlstme: nil,
@@ -130,27 +128,36 @@ class Helpers::Sanitizers
     vacols_case.notes.map do |note|
       note.assign_attributes(
         tskrqact: ::Faker::Lorem.sentence,
-        tskrspn: random_or_nil(::Faker::Lorem.sentence)
+        tskrspn: random_or_nil(::Faker::Lorem.sentence),
+        tsspare2: nil,
+        tsspare3: nil,
+        tsread1: nil,
+        tsread: nil,
+        tskorder: nil,
+        tssys: nil
       )
     end
 
     vacols_case.case_issues.map do |note|
       note.assign_attributes(
-        issdesc: ::Faker::Lorem.sentence
+        issdesc: ::Faker::Lorem.sentence # do better Mark
       )
     end
 
     vacols_case.case_hearings.map do |hearing|
       hearing.assign_attributes(
         repname: ::Faker::Name.name,
-        notes1: random_or_nil(::Faker::Lorem.sentence)
+        notes1: random_or_nil(::Faker::Lorem.sentence),
+        vdbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
+        vdropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
       )
     end
 
     vacols_case.decass.map do |decass|
       decass.assign_attributes(
-        debmcom: random_or_nil(::Faker::Lorem.sentence),
-        deatcom: random_or_nil(::Faker::Lorem.sentence)
+        debmcom: decass.debmcom ? ::Faker::Lorem.sentence : nil,
+        deatcom: decass.deatcom ? ::Faker::Lorem.sentence : nil,
+        dehours: decass.dehours ? ::Faker::Number.number(15) : nil
       )
     end
   end
