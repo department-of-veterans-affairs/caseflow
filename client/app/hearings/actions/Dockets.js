@@ -190,6 +190,13 @@ export const setWorksheetTimeSaved = (timeSaved) => ({
   }
 });
 
+export const setDocketTimeSaved = (timeSaved) => ({
+  type: Constants.SET_DOCKET_TIME_SAVED,
+  payload: {
+    timeSaved
+  }
+});
+
 export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
   payload: {
@@ -258,6 +265,8 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
   const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
   if (hearingsToSave.length === 0) {
+    dispatch(setDocketTimeSaved(now()));
+
     return;
   }
 
@@ -276,6 +285,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
         dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
           payload: { date,
             index } });
+        dispatch(setDocketTimeSaved(now()));
       },
       () => {
         dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,

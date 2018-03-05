@@ -9,7 +9,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
-import { getDate } from '../util/DateUtil';
+import { getDate, now } from '../util/DateUtil';
 
 export class DailyDocketContainer extends React.Component {
 
@@ -52,7 +52,7 @@ export class DailyDocketContainer extends React.Component {
         save={this.props.saveDocket(dailyDocket, this.props.date)}
         spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
-        timeSaved={this.props.docketTimeSaved}
+        timeSaved={this.props.docketTimeSaved || now()}
         saveFailed={this.props.saveDocketFailed}
       />
       <div className="cf-hearings-daily-docket-container">
@@ -70,6 +70,7 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.dailyDocket,
   docketServerError: state.docketServerError,
   docketIsSaving: state.docketIsSaving,
+  docketTimeSaved: state.docketTimeSaved,
   saveDocketFailed: state.saveDocketFailed
 });
 

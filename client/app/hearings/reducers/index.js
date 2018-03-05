@@ -219,6 +219,10 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, { worksheetTimeSaved: { $set: action.payload.timeSaved }
     });
 
+  case Constants.SET_DOCKET_TIME_SAVED:
+    return update(state, { docketTimeSaved: { $set: action.payload.timeSaved }
+    });
+
   case Constants.SET_DOCKET_SAVE_FAILED:
     return update(state, {
       saveDocketFailed: { $set: action.payload.saveFailed }

@@ -47,7 +47,7 @@ AutoSave.propTypes = {
   spinnerColor: PropTypes.string,
   intervalInMs: PropTypes.number,
   save: PropTypes.func.isRequired,
-  timeSaved: PropTypes.string,
+  timeSaved: PropTypes.string.isRequired,
   saveFailed: PropTypes.bool
 };
 
