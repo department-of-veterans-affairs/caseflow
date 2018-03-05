@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -21,7 +22,7 @@ const issueDispositionOptions = [
   [9, 'Withdrawn']
 ];
 
-class SelectDispositionDropdown extends React.Component {
+class SelectIssueDispositionDropdown extends React.Component {
   styling = ({ disposition }) => css({
     '& .Select': {
       border: (this.props.highlightMissingDispositions && !disposition) ? '2px solid red' : 'inherit'
@@ -62,11 +63,11 @@ class SelectDispositionDropdown extends React.Component {
   </div>;
 }
 
-SelectDispositionDropdown.propTypes = {
+SelectIssueDispositionDropdown.propTypes = {
   issue: PropTypes.object.isRequired,
   vacolsId: PropTypes.string.isRequired,
   highlightMissingDispositions: PropTypes.bool
-}
+};
 
 const mapStateToProps = (state) => _.pick(state.queue.ui, 'highlightMissingDispositions');
 
@@ -74,4 +75,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateAppealIssue
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(SelectIssueDispositionDropdown);

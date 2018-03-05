@@ -74,7 +74,7 @@ export const highlightMissingDispositions = (highlight) => ({
   payload: {
     highlight
   }
-})
+});
 
 export const setSelectingJudge = (selectingJudge) => ({
   type: ACTIONS.SET_SELECTING_JUDGE,

@@ -126,7 +126,7 @@ class SubmitDecisionView extends React.PureComponent {
         classNames={['cf-btn-link']}
         willNeverBeLoading
         styling={selectJudgeButtonStyling(selectedJudge)}
-        onClick={() => setSelectingJudge(true)}>
+        onClick={() => this.props.setSelectingJudge(true)}>
         Select {selectedJudge ? 'another' : 'a'} judge
       </Button>
     </React.Fragment>;

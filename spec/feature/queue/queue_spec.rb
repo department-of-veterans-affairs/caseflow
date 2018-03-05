@@ -277,5 +277,70 @@ RSpec.feature "Queue" do
         expect(page.current_path).to eq("/queue/")
       end
     end
+
+    context "selects issue dispositions" do
+      scenario "loads select issue dispositions page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        table_rows = page.find_all("tr[id^='table-row-']")
+        expect(table_rows.length).to eq(appeal.issues.length)
+      end
+
+      scenario "selects all issue dispositions" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        table_rows = page.find_all("tr[id^='table-row-']")
+        expect(table_rows.length).to eq(appeal.issues.length)
+
+        table_rows.each do |row|
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+        end
+
+        safe_click("#finish-dispositions")
+
+        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+      end
+
+      scenario "does not select all issue dispositions" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        table_rows = page.find_all("tr[id^='table-row-']")
+        expect(table_rows.length).to eq(appeal.issues.length)
+
+        [table_rows.first].each do |row|
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+        end
+
+        safe_click("#finish-dispositions")
+
+        table_rows[1..-1].each do |row|
+          dropdown_border = row.find(".Select").native.css_value("border")
+          expect(dropdown_border).to eq("2px solid rgb(255, 0, 0)")
+        end
+      end
+    end
   end
 end

@@ -81,6 +81,7 @@ class SelectDispositionsView extends React.Component {
   }, {
     displayText: 'Finish dispositions',
     classNames: ['cf-right-side'],
+    id: 'finish-dispositions',
     callback: () => {
       const {
         goToNextStep,
