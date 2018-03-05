@@ -198,6 +198,12 @@ class Issue
   end
 
   class << self
+    attr_writer :repository
+
+    def repository
+      @repository ||= IssueRepository
+    end
+
     def load_from_vacols(hash)
       new(
         id: hash["isskey"],
@@ -211,6 +217,14 @@ class Issue
         readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
+    end
+
+    def create!(css_id, issue_hash)
+      repository.create_vacols_issue(css_id, issue_hash.symbolize_keys)
+    rescue ActiveRecord::RecordInvalid, IssueRepository::IssueCreationError => e
+      Rails.logger.warn(e)
+      Raven.capture_exception(e)
+      nil
     end
 
     private
