@@ -2,10 +2,10 @@
 
 <% content_for :full_page_content do %>
   <%= react_component("StatsContainer", props: {
-  	page: "StatsContainer",
-    userDisplayName: current_user.display_name,
-    dropdownUrls: dropdown_urls,
-    feedbackUrl: feedback_url,
-    buildDate: build_date
+	page: "StatsContainer",
+	userDisplayName: current_user.display_name,
+	dropdownUrls: dropdown_urls,
+	feedbackUrl: feedback_url,
+	buildDate: build_date
   }) %>
 <% end %>
