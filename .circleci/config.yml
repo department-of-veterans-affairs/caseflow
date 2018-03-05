@@ -40,4 +40,6 @@ jobs:
 
       - run:
           name: Tests
-          command: rake
+          command: bundle exec rake
+          - environment:
+              TEST_CATEGORY: unit
