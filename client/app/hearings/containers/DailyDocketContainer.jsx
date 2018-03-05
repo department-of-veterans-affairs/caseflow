@@ -52,6 +52,7 @@ export class DailyDocketContainer extends React.Component {
         save={this.props.saveDocket(dailyDocket, this.props.date)}
         spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
+        timeSaved={this.props.docketTimeSaved}
         saveFailed={this.props.saveDocketFailed}
       />
       <div className="cf-hearings-daily-docket-container">

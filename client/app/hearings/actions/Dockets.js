@@ -2,6 +2,7 @@ import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, debounceMs } from '../analytics';
 import moment from 'moment';
+import { now } from '../util/DateUtil';
 
 export const populateUpcomingHearings = (upcomingHearings) => ({
   type: Constants.POPULATE_UPCOMING_HEARINGS,
@@ -179,6 +180,13 @@ export const toggleWorksheetSaving = () => ({
   type: Constants.TOGGLE_WORKSHEET_SAVING
 });
 
+export const setWorksheetTimeSaved = (timeSaved) => ({
+  type: Constants.SET_WORKSHEET_TIME_SAVED,
+  payload: {
+    timeSaved
+  }
+});
+
 export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
   payload: {
@@ -188,6 +196,8 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
 
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
+    dispatch(setWorksheetTimeSaved(now()));
+
     return;
   }
 
@@ -202,6 +212,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
       dispatch(setWorksheetSaveFailedStatus(true));
     }).
     finally(() => {
+      dispatch(setWorksheetTimeSaved());
       dispatch(toggleWorksheetSaving());
     });
 };

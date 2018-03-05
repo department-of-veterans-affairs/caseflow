@@ -11,3 +11,8 @@ export const getDate = (date) => {
   return moment(date).tz('America/New_York').
     format('l');
 };
+
+export const now = () => {
+  return moment().tz('America/New_York').
+    format('h:mm a');
+};

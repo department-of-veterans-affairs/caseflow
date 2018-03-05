@@ -2,12 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import moment from 'moment';
-
-const now = () => {
-  return moment().tz('America/New_York').
-    format('h:mm a');
-};
 
 export default class AutoSave extends React.Component {
 
@@ -32,7 +26,6 @@ export default class AutoSave extends React.Component {
   }
 
   render() {
-    console.log('do we ever get in here?');
     if (this.props.isSaving) {
       const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
@@ -45,7 +38,7 @@ export default class AutoSave extends React.Component {
       return <span className="saving">Save failed.</span>;
     }
 
-    return <span className="saving">Last saved at {now()}</span>;
+    return <span className="saving">Last saved at {this.props.timeSaved}</span>;
   }
 }
 
@@ -54,6 +47,7 @@ AutoSave.propTypes = {
   spinnerColor: PropTypes.string,
   intervalInMs: PropTypes.number,
   save: PropTypes.func.isRequired,
+  timeSaved: PropTypes.string,
   saveFailed: PropTypes.bool
 };
 

@@ -11,6 +11,7 @@ import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
+import { now } from './util/DateUtil';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -21,6 +22,7 @@ import {
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
+  setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
   saveWorksheet,
   saveDocket
@@ -140,6 +142,7 @@ export class HearingWorksheet extends React.PureComponent {
             save={this.save(worksheet, worksheetIssues)}
             spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
             isSaving={this.props.worksheetIsSaving}
+            timeSaved={this.props.worksheetTimeSaved || now()}
             saveFailed={this.props.saveWorksheetFailed}
           />
           <WorksheetHeaderVeteranSelection
@@ -171,7 +174,8 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
   worksheetAppeals: state.worksheetAppeals,
   worksheetIssues: state.worksheetIssues,
-  saveWorksheetFailed: state.saveWorksheetFailed
+  saveWorksheetFailed: state.saveWorksheetFailed,
+  worksheetTimeSaved: state.worksheetTimeSaved
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -180,6 +184,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
+  setWorksheetTimeSaved,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
   saveIssues,
