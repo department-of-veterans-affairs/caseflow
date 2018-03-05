@@ -45,7 +45,7 @@ class SelectDispositionsView extends React.Component {
       appeal: { attributes: { issues } }
     } = this.props;
 
-    this.props.highlightIssueDispositions(false);
+    this.props.highlightMissingDispositions(false);
     this.props.pushBreadcrumb({
       breadcrumb: 'Select Dispositions',
       path: `/tasks/${vacolsId}/dispositions`
