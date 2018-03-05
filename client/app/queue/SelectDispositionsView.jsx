@@ -30,9 +30,6 @@ const rowStyling = css({
       paddingTop: '2rem',
       '&:nth-of-type(2n + 1)': {
         width: '40%'
-      },
-      '> div': {
-        minHeight: '12rem'
       }
     }
   }

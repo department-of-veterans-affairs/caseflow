@@ -22,11 +22,22 @@ const issueDispositionOptions = [
 ];
 
 class SelectIssueDispositionDropdown extends React.Component {
-  styling = ({ disposition }) => css({
-    '& .Select': {
-      border: (this.props.highlight && !disposition) ? '2px solid red' : 'inherit'
+  styling = ({ disposition }) => {
+    const highlight = this.props.highlight && !disposition;
+
+    if (highlight) {
+      return css({
+        borderLeft: '4px solid #cd2026',
+        paddingLeft: '1rem',
+        width: '45rem',
+        minHeight: '8rem'
+      });
     }
-  });
+
+    return css({
+      minHeight: '12rem'
+    });
+  };
 
   render = () => <div {...this.styling(this.props.issue)}>
     <SearchableDropdown
@@ -34,6 +45,7 @@ class SelectIssueDispositionDropdown extends React.Component {
       value={this.props.issue.disposition}
       hideLabel
       searchable={false}
+      errorMessage={(this.props.highlight && !this.props.issue.disposition) ? 'This field is required' : ''}
       options={issueDispositionOptions.map((opt) => ({
         label: `${opt[0]} - ${opt[1]}`,
         value: StringUtil.convertToCamelCase(opt[1])
