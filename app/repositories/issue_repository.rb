@@ -5,7 +5,7 @@ class IssueRepository
   #   program: { description: "test", code: "01" },
   #   issue: { description: "test", code: "01" },
   #   level_1: { description: "test", code: "01" },
-  #   level_2: { description: "test", code: "4567" },
+  #   level_2: { description: "test", code: "07" },
   #   level_3: { description: "test", code: "6789" },
   #   note: "something"
   # }
@@ -17,7 +17,7 @@ class IssueRepository
                             issue: issue_hash[:issue],
                             level_1: issue_hash[:level_1],
                             level_2: issue_hash[:level_2],
-                            level_3: issue_hash[:level_3]).blank?
+                            level_3: issue_hash[:level_3]).size != 1
       fail IssueCreationError, "Combination of Vacols Issue codes is invalid: #{issue_hash}"
     end
 
