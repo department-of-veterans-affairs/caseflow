@@ -114,6 +114,7 @@ class Helpers::Sanitizers
     if folder
       folder.assign_attributes(
         titrnum: ::Faker::Number.number(9) + "S",
+        tinum: ::Faker::Number.number(7),
         ticukey: nil,
         tidsnt: nil,
         tiwpptr: random_or_nil(::Faker::Lorem.sentence),
