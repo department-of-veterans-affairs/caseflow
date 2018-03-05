@@ -32,9 +32,9 @@ class IssueRepository
 
   def self.find_issue_reference(program:, issue:, level_1:, level_2:, level_3:)
     VACOLS::IssueReference.where(prog_code: program, iss_code: issue)
-                          .where("? is null or LEV1_CODE = '##' or LEV1_CODE = ?", level_1, level_1)
-                          .where("? is null or LEV2_CODE = '##' or LEV2_CODE = ?", level_2, level_2)
-                          .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
+      .where("? is null or LEV1_CODE = '##' or LEV1_CODE = ?", level_1, level_1)
+      .where("? is null or LEV2_CODE = '##' or LEV2_CODE = ?", level_2, level_2)
+      .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
   end
   # :nocov:
 end
