@@ -8,16 +8,16 @@ import { boldText } from '../constants';
 import StringUtil from '../../util/StringUtil';
 
 const tableContainerStyling = (fluid) => css({
-  width: fluid ? '100%' : '55rem'
-});
-const tableStyling = css({
-  marginTop: '1rem',
-  marginBottom: '1rem',
-  '& td': {
-    verticalAlign: 'top',
-    border: 'none',
-    paddingTop: 0,
-    backgroundColor: 'inherit'
+  width: fluid ? '100%' : '55rem',
+  '> table': {
+    marginTop: fluid ? '0rem' : '1rem',
+    marginBottom: '1rem',
+    '& td': {
+      verticalAlign: 'top',
+      border: 'none',
+      paddingTop: 0,
+      backgroundColor: 'inherit'
+    }
   }
 });
 const issueLevelStyling = css({
@@ -109,7 +109,7 @@ export default class IssueList extends React.PureComponent {
   };
 
   render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.singleColumn)}>
-    <table {...tableStyling}>
+    <table>
       <tbody>
         {this.getIssues()}
       </tbody>

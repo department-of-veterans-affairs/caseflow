@@ -29,6 +29,7 @@ const rowStyling = css({
     borderBottom: 'none',
     '> td': {
       verticalAlign: 'top',
+      paddingTop: '2rem',
       '&:nth-of-type(2n + 1)': {
         width: '40%'
       },
@@ -50,7 +51,15 @@ const issueDispositionOptions = [
   [9, 'Withdrawn']
 ];
 
-class SelectDispositionsView extends React.PureComponent {
+class SelectDispositionsView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      highlightMissingDispositions: false
+    };
+  }
+
   componentDidMount = () => {
     const {
       vacolsId,
@@ -102,13 +111,18 @@ class SelectDispositionsView extends React.PureComponent {
       if (issuesWithoutDisposition.length === 0) {
         goToNextStep();
       } else {
-        // todo: highlight missing fields
-        console.warn(`missing issues: ${JSON.stringify(_.map(issuesWithoutDisposition, 'id'))}`);
+        this.setState({ highlightMissingDispositions: true });
       }
     }
   }];
 
-  getDispositionsColumn = (issue) => <div>
+  dropdownStyling = ({ disposition }) => css({
+    '& .Select': {
+      border: (this.state.highlightMissingDispositions && !disposition) ? '2px solid red' : 'inherit'
+    }
+  });
+
+  getDispositionsColumn = (issue) => <div {...this.dropdownStyling(issue)}>
     <SearchableDropdown
       placeholder="Select Dispositions"
       value={issue.disposition}
@@ -140,24 +154,20 @@ class SelectDispositionsView extends React.PureComponent {
   </div>;
 
   getKeyForRow = (rowNumber) => rowNumber;
-  getColumns = () => [
-    {
-      header: 'Issues',
-      valueFunction: (issue, idx) => <IssueList
-        appeal={{ issues: [issue] }}
-        singleIssue
-        singleColumn
-        idxToDisplay={idx + 1} />
-    },
-    {
-      header: 'Actions',
-      valueFunction: () => <Link>Edit Issue</Link>
-    },
-    {
-      header: 'Dispositions',
-      valueFunction: this.getDispositionsColumn
-    }
-  ];
+  getColumns = () => [{
+    header: 'Issues',
+    valueFunction: (issue, idx) => <IssueList
+      appeal={{ issues: [issue] }}
+      singleIssue
+      singleColumn
+      idxToDisplay={idx + 1} />
+  }, {
+    header: 'Actions',
+    valueFunction: () => <Link>Edit Issue</Link>
+  }, {
+    header: 'Dispositions',
+    valueFunction: this.getDispositionsColumn
+  }];
 
   render = () => <React.Fragment>
     <AppSegment filledBackground>

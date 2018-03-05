@@ -64,7 +64,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-class Row extends React.PureComponent {
+class Row extends React.Component {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
@@ -84,7 +84,7 @@ class Row extends React.PureComponent {
   }
 }
 
-class BodyRows extends React.PureComponent {
+class BodyRows extends React.Component {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
 
@@ -115,7 +115,7 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class Table extends React.PureComponent {
+export default class Table extends React.Component {
   defaultRowClassNames = () => ''
 
   render() {
@@ -131,8 +131,7 @@ export default class Table extends React.PureComponent {
       tbodyId,
       tbodyRef,
       caption,
-      id,
-      styling
+      id
     } = this.props;
 
     let keyGetter = getKeyForRow;
@@ -148,7 +147,6 @@ export default class Table extends React.PureComponent {
     return <table
       id={id}
       className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
-      {...styling}
       summary={summary} >
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
@@ -181,6 +179,5 @@ Table.propTypes = {
   headerClassName: PropTypes.string,
   className: PropTypes.string,
   caption: PropTypes.string,
-  id: PropTypes.string,
-  styling: PropTypes.object
+  id: PropTypes.string
 };

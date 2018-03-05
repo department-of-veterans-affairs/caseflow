@@ -1,6 +1,5 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
-import { moveModel } from '../reader/utils';
 import { ACTIONS } from './constants';
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
