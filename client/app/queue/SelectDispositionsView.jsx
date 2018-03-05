@@ -15,7 +15,7 @@ import {
   cancelEditingAppeal,
   updateAppealIssue,
   pushBreadcrumb,
-  highlightMissingDispositions
+  highlightMissingFormItems
 } from './QueueActions';
 import { fullWidth } from './constants';
 import DecisionViewFooter from './components/DecisionViewFooter';
@@ -45,7 +45,7 @@ class SelectDispositionsView extends React.Component {
       appeal: { attributes: { issues } }
     } = this.props;
 
-    this.props.highlightMissingDispositions(false);
+    this.props.highlightMissingFormItems(false);
     this.props.pushBreadcrumb({
       breadcrumb: 'Select Dispositions',
       path: `/tasks/${vacolsId}/dispositions`
@@ -92,7 +92,7 @@ class SelectDispositionsView extends React.Component {
       if (issuesWithoutDisposition.length === 0) {
         goToNextStep();
       } else {
-        this.props.highlightMissingDispositions(true);
+        this.props.highlightMissingFormItems(true);
       }
     }
   }];
@@ -153,7 +153,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppeal,
   updateAppealIssue,
   pushBreadcrumb,
-  highlightMissingDispositions
+  highlightMissingFormItems
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);

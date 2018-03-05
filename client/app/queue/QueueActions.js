@@ -69,8 +69,8 @@ export const updateAppealIssue = (appealId, issueId, attributes) => ({
   }
 });
 
-export const highlightMissingDispositions = (highlight) => ({
-  type: ACTIONS.HIGHLIGHT_MISSING_DISPOSITIONS,
+export const highlightMissingFormItems = (highlight) => ({
+  type: ACTIONS.HIGHLIGHT_MISSING_ITEMS,
   payload: {
     highlight
   }

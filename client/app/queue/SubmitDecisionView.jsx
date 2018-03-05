@@ -9,7 +9,8 @@ import _ from 'lodash';
 import {
   setDecisionOptions,
   setSelectingJudge,
-  pushBreadcrumb
+  pushBreadcrumb,
+  highlightMissingFormItems
 } from './QueueActions';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -44,6 +45,7 @@ class SubmitDecisionView extends React.PureComponent {
       task: { attributes: task }
     } = this.props;
 
+    this.props.highlightMissingFormItems(false);
     this.props.pushBreadcrumb({
       breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
       path: `/tasks/${vacolsId}/submit`
@@ -87,8 +89,7 @@ class SubmitDecisionView extends React.PureComponent {
       if (missingParams.length === 0) {
         this.props.goToNextStep();
       } else {
-        // todo: highlight missing fields
-        console.warn(`missing params: ${JSON.stringify(missingParams)}`);
+        this.props.highlightMissingFormItems(true);
       }
     }
   }]
@@ -144,6 +145,7 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
+    const { highlightFormItems } = this.props;
 
     return <React.Fragment>
       <AppSegment filledBackground>
@@ -163,6 +165,7 @@ class SubmitDecisionView extends React.PureComponent {
           required
           options={omoTypes}
           styling={radioFieldStyling}
+          errorMessage={(highlightFormItems && !decisionOpts.omoType) ? 'This field is required' : ''}
         />}
         <Checkbox
           name="overtime"
@@ -175,6 +178,7 @@ class SubmitDecisionView extends React.PureComponent {
           label="Document ID:"
           name="document_id"
           required
+          errorMessage={(highlightFormItems && !decisionOpts.documentId) ? 'This field is required' : ''}
           onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
           value={decisionOpts.documentId}
         />
@@ -205,13 +209,14 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.taskDecision,
   judges: state.queue.judges,
-  selectingJudge: state.queue.ui.selectingJudge
+  ..._.pick(state.queue.ui, 'highlightFormItems', 'selectingJudge')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   setSelectingJudge,
-  pushBreadcrumb
+  pushBreadcrumb,
+  highlightMissingFormItems
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);

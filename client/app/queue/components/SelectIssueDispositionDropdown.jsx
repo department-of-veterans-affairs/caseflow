@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import _ from 'lodash';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -25,7 +24,7 @@ const issueDispositionOptions = [
 class SelectIssueDispositionDropdown extends React.Component {
   styling = ({ disposition }) => css({
     '& .Select': {
-      border: (this.props.highlightMissingDispositions && !disposition) ? '2px solid red' : 'inherit'
+      border: (this.props.highlight && !disposition) ? '2px solid red' : 'inherit'
     }
   });
 
@@ -66,10 +65,12 @@ class SelectIssueDispositionDropdown extends React.Component {
 SelectIssueDispositionDropdown.propTypes = {
   issue: PropTypes.object.isRequired,
   vacolsId: PropTypes.string.isRequired,
-  highlightMissingDispositions: PropTypes.bool
+  highlight: PropTypes.bool
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.ui, 'highlightMissingDispositions');
+const mapStateToProps = (state) => ({
+  highlight: state.queue.ui.highlightFormItems
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateAppealIssue

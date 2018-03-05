@@ -19,7 +19,7 @@ export const initialState = {
   ui: {
     selectingJudge: false,
     breadcrumbs: [],
-    highlightMissingDispositions: false
+    highlightFormItems: false
   },
 
   /**
@@ -122,27 +122,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
-  case ACTIONS.HIGHLIGHT_MISSING_DISPOSITIONS:
+  case ACTIONS.HIGHLIGHT_MISSING_ITEMS:
     return update(state, {
       ui: {
-        highlightMissingDispositions: {
+        highlightFormItems: {
           $set: action.payload.highlight
         }
       }
     });
-  case ACTIONS.UPDATE_OBJECT:
-    return update(state, {
-      pendingChanges: {
-        [action.payload.type]: {
-          [action.payload.vacolsId]: {
-            attributes: {
-              $merge: action.payload.attributes
-            }
-          }
-        }
-      }
-    });
-  // todo: request_edit_object, success, failure
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       ui: {
