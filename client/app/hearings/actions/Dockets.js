@@ -223,7 +223,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
       dispatch(toggleWorksheetSaving(false));
     }).
     finally(() => {
-      dispatch(setWorksheetTimeSaved());
+      dispatch(setWorksheetTimeSaved(now()));
       dispatch(toggleWorksheetSaving(false));
     });
 };
