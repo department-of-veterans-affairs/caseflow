@@ -18,7 +18,8 @@ export const initialState = {
   },
   ui: {
     selectingJudge: false,
-    breadcrumbs: []
+    breadcrumbs: [],
+    highlightMissingDispositions: false
   },
 
   /**
@@ -121,6 +122,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.HIGHLIGHT_MISSING_DISPOSITIONS:
+    return update(state, {
+      ui: {
+        highlightMissingDispositions: {
+          $set: action.payload.highlight
+        }
+      }
+    });
   case ACTIONS.UPDATE_OBJECT:
     return update(state, {
       pendingChanges: {

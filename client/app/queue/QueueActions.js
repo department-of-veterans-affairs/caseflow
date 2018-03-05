@@ -69,6 +69,13 @@ export const updateAppealIssue = (appealId, issueId, attributes) => ({
   }
 });
 
+export const highlightMissingDispositions = (highlight) => ({
+  type: ACTIONS.HIGHLIGHT_MISSING_DISPOSITIONS,
+  payload: {
+    highlight
+  }
+})
+
 export const setSelectingJudge = (selectingJudge) => ({
   type: ACTIONS.SET_SELECTING_JUDGE,
   payload: {

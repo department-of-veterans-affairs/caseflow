@@ -19,7 +19,7 @@ import _ from 'lodash';
  * - @summary {string} table summary
  *
  * see StyleGuideTables.jsx for usage example.
-*/
+ */
 const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
@@ -64,7 +64,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-class Row extends React.Component {
+class Row extends React.PureComponent {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
@@ -84,7 +84,7 @@ class Row extends React.Component {
   }
 }
 
-class BodyRows extends React.Component {
+class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
 
@@ -115,7 +115,7 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class Table extends React.Component {
+export default class Table extends React.PureComponent {
   defaultRowClassNames = () => ''
 
   render() {
@@ -131,7 +131,8 @@ export default class Table extends React.Component {
       tbodyId,
       tbodyRef,
       caption,
-      id
+      id,
+      styling
     } = this.props;
 
     let keyGetter = getKeyForRow;
@@ -147,6 +148,7 @@ export default class Table extends React.Component {
     return <table
       id={id}
       className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
+      {...styling}
       summary={summary} >
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
@@ -179,5 +181,6 @@ Table.propTypes = {
   headerClassName: PropTypes.string,
   className: PropTypes.string,
   caption: PropTypes.string,
-  id: PropTypes.string
+  id: PropTypes.string,
+  styling: PropTypes.object
 };

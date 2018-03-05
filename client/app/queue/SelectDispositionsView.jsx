@@ -3,25 +3,23 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import IssueList from './components/IssueList';
+import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Table from '../components/Table';
-import SearchableDropdown from '../components/SearchableDropdown';
-import Checkbox from '../components/Checkbox';
 
 import {
   cancelEditingAppeal,
   updateAppealIssue,
-  pushBreadcrumb
+  pushBreadcrumb,
+  highlightMissingDispositions
 } from './QueueActions';
 import { fullWidth } from './constants';
 import DecisionViewFooter from './components/DecisionViewFooter';
 
-const marginTop = (margin) => css({ marginTop: `${margin}rem` });
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
 const rowStyling = css({
@@ -40,32 +38,14 @@ const rowStyling = css({
   }
 });
 
-// todo: map to VACOLS attrs
-const issueDispositionOptions = [
-  [1, 'Allowed'],
-  [3, 'Remanded'],
-  [4, 'Denied'],
-  [5, 'Vacated'],
-  [6, 'Dismissed, Other'],
-  [8, 'Dismissed, Death'],
-  [9, 'Withdrawn']
-];
-
 class SelectDispositionsView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      highlightMissingDispositions: false
-    };
-  }
-
   componentDidMount = () => {
     const {
       vacolsId,
       appeal: { attributes: { issues } }
     } = this.props;
 
+    this.props.highlightIssueDispositions(false);
     this.props.pushBreadcrumb({
       breadcrumb: 'Select Dispositions',
       path: `/tasks/${vacolsId}/dispositions`
@@ -111,47 +91,10 @@ class SelectDispositionsView extends React.Component {
       if (issuesWithoutDisposition.length === 0) {
         goToNextStep();
       } else {
-        this.setState({ highlightMissingDispositions: true });
+        this.props.highlightMissingDispositions(true);
       }
     }
   }];
-
-  dropdownStyling = ({ disposition }) => css({
-    '& .Select': {
-      border: (this.state.highlightMissingDispositions && !disposition) ? '2px solid red' : 'inherit'
-    }
-  });
-
-  getDispositionsColumn = (issue) => <div {...this.dropdownStyling(issue)}>
-    <SearchableDropdown
-      placeholder="Select Dispositions"
-      value={issue.disposition}
-      hideLabel
-      searchable={false}
-      options={issueDispositionOptions.map((opt) => ({
-        label: `${opt[0]} - ${opt[1]}`,
-        value: StringUtil.convertToCamelCase(opt[1])
-      }))}
-      onChange={({ value }) => this.props.updateAppealIssue(
-        this.props.vacolsId,
-        issue.id,
-        {
-          disposition: value,
-          duplicate: false
-        }
-      )}
-      name="Dispositions dropdown" />
-    {issue.disposition === 'vacated' && <Checkbox
-      name="duplicate-vacated-issue"
-      styling={css(marginBottom(0), marginTop(1))}
-      value={issue.duplicate}
-      onChange={(duplicate) => this.props.updateAppealIssue(
-        this.props.vacolsId,
-        issue.id,
-        { duplicate }
-      )}
-      label="Automatically create vacated issue for readjudication." />}
-  </div>;
 
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
@@ -166,7 +109,9 @@ class SelectDispositionsView extends React.Component {
     valueFunction: () => <Link>Edit Issue</Link>
   }, {
     header: 'Dispositions',
-    valueFunction: this.getDispositionsColumn
+    valueFunction: (issue) => <SelectIssueDispositionDropdown
+      issue={issue}
+      vacolsId={this.props.vacolsId} />
   }];
 
   render = () => <React.Fragment>
@@ -206,7 +151,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppeal,
   updateAppealIssue,
-  pushBreadcrumb
+  pushBreadcrumb,
+  highlightMissingDispositions
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);
