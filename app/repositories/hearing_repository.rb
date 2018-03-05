@@ -65,11 +65,6 @@ class HearingRepository
       slots_based_on_type(staff: record, type: type, date: date) if record
     end
 
-    def fetch_dockets_slots(regional_office_keys:)
-      records = VACOLS::Staff.where(stafkey: regional_office_keys)
-      records.map {|staff| slots_based_on_type( staff, type, date ) if staff }
-    end
-
     def fetch_dockets_slots(dockets)
       regional_office_keys = dockets.map { |date, docket| docket.regional_office_key }
       records = VACOLS::Staff.where(stafkey: regional_office_keys)
@@ -78,7 +73,7 @@ class HearingRepository
 
       dockets.map do |date, docket| 
         record = hashed_records[docket.regional_office_key]
-        [ date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
+        [ date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if staff && record )]
       end.to_h
     end
 
