@@ -10,8 +10,7 @@ jobs:
           - RAILS_ENV: test
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
-
-      # This is the circleci provided Postgres container. We can only modify
+      # This is the circleci provided Postgres container. We can
       # it via environment variables.
       - image: circleci/postgres:10.2
         environment:
@@ -20,7 +19,6 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-
     steps:
       - checkout
 

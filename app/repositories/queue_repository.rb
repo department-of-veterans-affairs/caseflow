@@ -48,7 +48,7 @@ class QueueRepository
     ActiveRecord::Base.transaction do
       # update DECASS table
       update_decass_record(decass_record,
-                           decass_hash.merge(reassigned_at: VacolsHelper.local_time_with_utc_timezone))
+                           decass_hash.merge(reassigned_at: VacolsHelper.local_date_with_utc_timezone))
 
       # update location with the judge's stafkey
       update_location(decass_record.case, decass_hash[:judge_css_id])
@@ -64,7 +64,7 @@ class QueueRepository
     fail ReassignCaseToJudgeError unless css_id
     staff = VACOLS::Staff.find_by(sdomainid: css_id)
     fail ReassignCaseToJudgeError unless staff
-    case_record.update_vacols_location!(staff.stafkey)
+    case_record.update_vacols_location!(staff.slogid)
   end
 
   def self.update_decass_record(decass_record, decass_hash)
@@ -92,10 +92,13 @@ class QueueRepository
   def self.find_decass_record(task_id)
     # Task ID is a concatantion of the vacols ID and the date assigned
     result = task_id.split("-", 2)
-    fail ReassignCaseToJudgeError if result.size != 2
+    fail ReassignCaseToJudgeError, "Task ID is invalid format: #{task_id}" if result.size != 2
     record = decass_by_vacols_id_and_date_assigned(result.first, result.second.to_date)
     # TODO: check permission that the user can update the record
-    fail ReassignCaseToJudgeError unless record
+    unless record
+      fail ReassignCaseToJudgeError,
+           "Decass record does not exist for vacols_id: #{result.first} and date assigned: #{result.second}"
+    end
     record
   end
 
