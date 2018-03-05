@@ -30,7 +30,7 @@ before_install:
   # Travis has an old version of yarn installed at /usr/local/bin, and that comes first in the PATH,
   # so we need to explicitly point to the version of Yarn we just installed.
   - export YARN=/usr/bin/yarn
-  
+
   - $YARN --version
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
@@ -55,7 +55,7 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
       env: TEST_CATEGORY=api
       script:
         - bundle exec rake spec:parallel:setup:api
@@ -63,7 +63,7 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
       env: TEST_CATEGORY=certification
       script:
         - bundle exec rake spec:parallel:setup:certification
@@ -73,7 +73,7 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
       env: TEST_CATEGORY=dispatch
       script:
         - bundle exec rake spec:parallel:setup:dispatch
@@ -83,7 +83,7 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
       env: TEST_CATEGORY=reader
       script:
         - bundle exec rake spec:parallel:setup:reader
@@ -93,7 +93,17 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
+      env: TEST_CATEGORY=queue
+      script:
+        - bundle exec rake spec:parallel:setup:queue
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:queue
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
+        - bundle exec rake ci:travis_verify_code_coverage
+    -
       env: TEST_CATEGORY=other
       script:
         - bundle exec rake spec:parallel:setup:other
@@ -103,7 +113,7 @@ jobs:
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
-    - 
+    -
       env: TEST_CATEGORY=javascript
       script:
         - cd client

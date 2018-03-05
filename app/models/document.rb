@@ -192,10 +192,37 @@ class Document < ActiveRecord::Base
 
   def content_url
     if reader_with_efolder_api?
-      ExternalApi::EfolderService.efolder_content_url(efolder_id)
+      if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
+        ExternalApi::EfolderService.efolder_content_url(vbms_document_id.tr("{}", ""))
+      else
+        ExternalApi::EfolderService.efolder_content_url(efolder_id)
+      end
     else
       "/document/#{id}/pdf"
     end
+  end
+
+  def copy_metadata_from_document(source_document)
+    source_document.annotations.map do |annotation|
+      annotation.dup.tap do |a|
+        a.document_id = id
+        a.save!
+      end
+    end
+
+    source_document.documents_tags.map do |tag|
+      tag.dup.tap do |t|
+        t.document_id = id
+        t.save!
+      end
+    end
+
+    update_attributes(
+      category_procedural: source_document.category_procedural,
+      category_medical: source_document.category_medical,
+      category_other: source_document.category_other,
+      previous_document_version_id: source_document.id
+    )
   end
 
   private

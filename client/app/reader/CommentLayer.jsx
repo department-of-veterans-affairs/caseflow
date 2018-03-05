@@ -74,6 +74,12 @@ class CommentLayer extends PureComponent {
   // eslint-disable-next-line max-statements
   onCommentDrop = (event) => {
     const dragAndDropPayload = event.dataTransfer.getData('text');
+
+    // Fix for Firefox browsers. Need to call preventDefault() so that
+    // Firefox does not navigate to anything.com.
+    // Issue 2969
+    event.preventDefault();
+
     let dragAndDropData;
 
     // Anything can be dragged and dropped. If the item that was

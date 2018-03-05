@@ -29,7 +29,8 @@ export default class RadioField extends React.Component {
       required,
       errorMessage,
       strongLabel,
-      hideLabel
+      hideLabel,
+      styling
     } = this.props;
 
     required = required || false;
@@ -51,7 +52,7 @@ export default class RadioField extends React.Component {
 
     const labelContents = <span>{(label || name)} {(required && <RequiredIndicator />)}</span>;
 
-    return <fieldset className={radioClass.join(' ')}>
+    return <fieldset className={radioClass.join(' ')} {...styling}>
       <legend className={labelClass}>
         {
           strongLabel ?
@@ -100,5 +101,6 @@ RadioField.propTypes = {
       value: PropTypes.string
     })
   ),
-  value: PropTypes.string
+  value: PropTypes.string,
+  styling: PropTypes.object
 };

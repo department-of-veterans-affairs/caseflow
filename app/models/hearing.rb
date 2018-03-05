@@ -149,6 +149,7 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
+                :user,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
