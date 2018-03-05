@@ -212,7 +212,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.TOGGLE_WORKSHEET_SAVING:
-    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
+    return update(state, { worksheetIsSaving: { $set: action.payload.saving }
     });
 
   case Constants.SET_WORKSHEET_TIME_SAVED:

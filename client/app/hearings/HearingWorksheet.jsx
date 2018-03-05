@@ -175,6 +175,7 @@ const mapStateToProps = (state) => ({
   worksheetAppeals: state.worksheetAppeals,
   worksheetIssues: state.worksheetIssues,
   saveWorksheetFailed: state.saveWorksheetFailed,
+  worksheetIsSaving: state.worksheetIsSaving,
   worksheetTimeSaved: state.worksheetTimeSaved
 });
 

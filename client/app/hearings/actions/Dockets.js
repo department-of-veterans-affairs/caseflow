@@ -176,8 +176,11 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
-export const toggleWorksheetSaving = () => ({
-  type: Constants.TOGGLE_WORKSHEET_SAVING
+export const toggleWorksheetSaving = (saving) => ({
+  type: Constants.TOGGLE_WORKSHEET_SAVING,
+  payload: {
+    saving
+  }
 });
 
 export const setWorksheetTimeSaved = (timeSaved) => ({
@@ -201,7 +204,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     return;
   }
 
-  dispatch(toggleWorksheetSaving());
+  dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
@@ -210,10 +213,11 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     },
     () => {
       dispatch(setWorksheetSaveFailedStatus(true));
+      dispatch(toggleWorksheetSaving(false));
     }).
     finally(() => {
       dispatch(setWorksheetTimeSaved());
-      dispatch(toggleWorksheetSaving());
+      dispatch(toggleWorksheetSaving(false));
     });
 };
 
