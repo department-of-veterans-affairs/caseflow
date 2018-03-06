@@ -82,7 +82,7 @@ EstablishClaimComplete.propTypes = {
   availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
-  employeeCount: PropTypes.string,
+  employeeCount: PropTypes.number,
   firstHeader: PropTypes.string,
   totalCasesAssigned: PropTypes.number,
   totalCasesCompleted: PropTypes.number,
