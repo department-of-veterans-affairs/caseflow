@@ -1,5 +1,6 @@
 import React from 'react';
 import AppFrame from '../../components/AppFrame';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
@@ -17,7 +18,7 @@ const StatsContainer = (props) => <BrowserRouter>
         overlapColor: COLORS.GREY_DARK
       }} />
     <AppFrame>
-      <main className="cf-app-segment cf-app-segment--alt">
+      <AppSegment filledBackground>
         <h2>Caseflow Stats</h2>
 
         <ul>
@@ -31,7 +32,7 @@ const StatsContainer = (props) => <BrowserRouter>
             <a href="/intake/stats">Intake Stats</a>
           </li>
         </ul>
-      </main>
+      </AppSegment>
     </AppFrame>
     <Footer
       appName="Stats"
