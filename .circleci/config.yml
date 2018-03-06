@@ -8,6 +8,7 @@ jobs:
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
+          - BUNDLE_PATH: vendor/bundle
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
@@ -30,9 +31,18 @@ jobs:
           name: Which bundler?
           command: bundle -v
 
+      - restore_cache:
+          keys:
+            - vendor-bundle-{{ checksum "Gemfile.lock" }}
+
       - run:
           name: bundle install
           command: bundle check || bundle install --without production staging
+
+      - save_cache:
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
       - run:
           name: yarn install
@@ -40,6 +50,8 @@ jobs:
 
       - run:
           name: Tests
-          command: bundle exec rake
+          command: |
+            bundle exec rake spec:parallel:setup:unit
+            bundle exec rake spec:parallel:unit
           environment:
             - TEST_CATEGORY: unit
