@@ -62,7 +62,7 @@ GIT
 
 GIT
   remote: https://github.com/lowellrex/childprocess.git
-  revision: 8cf7ff080d1ac5925ae0274fdfa97ce46c5bf3dc
+  revision: 5ed8aa0a8c89b7bbb5c8f03a15f8374ba4575794
   specs:
     childprocess (0.8.0)
       ffi (~> 1.0, >= 1.0.11)
