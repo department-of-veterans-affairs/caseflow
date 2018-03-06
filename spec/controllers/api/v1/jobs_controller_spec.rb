@@ -22,6 +22,7 @@ RSpec.describe Api::V1::JobsController, type: :controller do
     end
 
     it "should successfully start HeartbeatTasksJob asynchronously" do
+      allow(HeartbeatTasksJob).to receive(:perform_later).and_return(HeartbeatTasksJob.new)
       post :create, "job_type": "heartbeat"
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
