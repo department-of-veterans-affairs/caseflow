@@ -8,6 +8,11 @@ module VacolsHelper
     Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
   end
 
+  # The same method as above that returns the date only
+  def self.local_date_with_utc_timezone
+    local_time_with_utc_timezone.beginning_of_day
+  end
+
   # dates in VACOLS are incorrectly recorded as UTC.
   def self.normalize_vacols_datetime(datetime)
     return nil unless datetime
