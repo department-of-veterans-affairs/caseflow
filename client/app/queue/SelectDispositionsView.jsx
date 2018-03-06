@@ -72,7 +72,7 @@ class SelectDispositionsView extends React.Component {
   }
 
   getFooterButtons = () => [{
-    displayText: 'Go back to Select Work Product',
+    displayText: `< Go back to draft decision ${this.props.vbmsId}`,
     classNames: ['cf-btn-link'],
     callback: this.props.goToPrevStep
   }, {

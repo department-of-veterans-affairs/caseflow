@@ -67,7 +67,7 @@ class SubmitDecisionView extends React.PureComponent {
   }
 
   getFooterButtons = () => [{
-    displayText: `Go back to draft decision ${this.props.vbmsId}`,
+    displayText: `< Go back to draft decision ${this.props.vbmsId}`,
     classNames: ['cf-btn-link'],
     callback: this.props.goToPrevStep
   }, {
