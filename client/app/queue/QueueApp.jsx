@@ -68,15 +68,11 @@ class QueueApp extends React.PureComponent {
       window.scrollTo(0, 0);
     };
 
-    return <React.Fragment>
-      <Breadcrumbs />
-      <SubmitDecisionView
-        vacolsId={vacolsId}
-        vbmsId={appeal.vbms_id}
-        goToNextStep={goToNextStep}
-        goToPrevStep={goToPrevStep}
-      />
-    </React.Fragment>;
+    return <SubmitDecisionView
+      vacolsId={vacolsId}
+      vbmsId={appeal.vbms_id}
+      goToNextStep={goToNextStep}
+      goToPrevStep={goToPrevStep} />;
   };
 
   routedSelectDispositions = (props) => {
@@ -91,15 +87,11 @@ class QueueApp extends React.PureComponent {
       window.scrollTo(0, 0);
     };
 
-    return <React.Fragment>
-      <Breadcrumbs />
-      <SelectDispositionsView
-        vacolsId={vacolsId}
-        vbmsId={appeal.vbms_id}
-        goToNextStep={goToNextStep}
-        goToPrevStep={goToPrevStep}
-      />
-    </React.Fragment>;
+    return <SelectDispositionsView
+      vacolsId={vacolsId}
+      vbmsId={appeal.vbms_id}
+      goToNextStep={goToNextStep}
+      goToPrevStep={goToPrevStep} />;
   };
 
   render = () => <BrowserRouter basename="/queue">

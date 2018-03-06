@@ -13,13 +13,12 @@ import {
   highlightMissingFormItems
 } from './QueueActions';
 
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
-import DecisionViewFooter from './components/DecisionViewFooter';
 
 import { fullWidth } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -40,23 +39,20 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
-    const {
-      vacolsId,
-      task: { attributes: task }
-    } = this.props;
+    const { task: { attributes: task } } = this.props;
 
-    this.props.highlightMissingFormItems(false);
-    this.props.pushBreadcrumb({
-      breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
-      path: `/tasks/${vacolsId}/submit`
-    });
     this.props.setDecisionOptions({
       judge: {
         label: task.added_by_name,
         value: task.added_by_css_id
       }
     });
-  }
+  };
+
+  getBreadcrumb = () => ({
+    breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
+    path: `/tasks/${this.props.vacolsId}/submit`
+  });
 
   getDecisionTypeDisplay = () => {
     const {
@@ -64,7 +60,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
 
     return decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
-  }
+  };
 
   getFooterButtons = () => [{
     displayText: `< Go back to draft decision ${this.props.vbmsId}`,
@@ -92,7 +88,7 @@ class SubmitDecisionView extends React.PureComponent {
         this.props.highlightMissingFormItems(true);
       }
     }
-  }]
+  }];
 
   getJudgeSelectComponent = () => {
     const {
@@ -131,7 +127,7 @@ class SubmitDecisionView extends React.PureComponent {
         Select {selectedJudge ? 'another' : 'a'} judge
       </Button>
     </React.Fragment>;
-  }
+  };
 
   render = () => {
     const omoTypes = [{
@@ -148,60 +144,55 @@ class SubmitDecisionView extends React.PureComponent {
     const { highlightFormItems } = this.props;
 
     return <React.Fragment>
-      <AppSegment filledBackground>
-        <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Submit {this.getDecisionTypeDisplay()} for Review
-        </h1>
-        <p className="cf-lead-paragraph" {...subHeadStyling}>
-          Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
-        </p>
-        <hr />
-        {decisionType === 'omo' && <RadioField
-          name="omo_type"
-          label="OMO type:"
-          onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
-          value={decisionOpts.omoType}
-          vertical
-          required
-          options={omoTypes}
-          styling={radioFieldStyling}
-          errorMessage={(highlightFormItems && !decisionOpts.omoType) ? 'This field is required' : ''}
-        />}
-        <Checkbox
-          name="overtime"
-          label="This work product is overtime"
-          onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-          value={decisionOpts.overtime}
-          styling={css(smallBottomMargin, checkboxStyling)}
-        />
-        <TextField
-          label="Document ID:"
-          name="document_id"
-          required
-          errorMessage={(highlightFormItems && !decisionOpts.documentId) ? 'This field is required' : ''}
-          onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
-          value={decisionOpts.documentId}
-        />
-        <span>Submit to judge:</span><br />
-        {this.getJudgeSelectComponent()}
-        <TextareaField
-          label="Notes:"
-          name="notes"
-          value={decisionOpts.notes}
-          onChange={(notes) => this.props.setDecisionOptions({ notes })}
-          styling={textAreaStyling}
-        />
-      </AppSegment>
-      <DecisionViewFooter buttons={this.getFooterButtons()} />
+      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        Submit {this.getDecisionTypeDisplay()} for Review
+      </h1>
+      <p className="cf-lead-paragraph" {...subHeadStyling}>
+        Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
+      </p>
+      <hr />
+      {decisionType === 'omo' && <RadioField
+        name="omo_type"
+        label="OMO type:"
+        onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
+        value={decisionOpts.omoType}
+        vertical
+        required
+        options={omoTypes}
+        styling={radioFieldStyling}
+        errorMessage={(highlightFormItems && !decisionOpts.omoType) ? 'This field is required' : ''}
+      />}
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime}
+        styling={css(smallBottomMargin, checkboxStyling)}
+      />
+      <TextField
+        label="Document ID:"
+        name="document_id"
+        required
+        errorMessage={(highlightFormItems && !decisionOpts.documentId) ? 'This field is required' : ''}
+        onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
+        value={decisionOpts.documentId}
+      />
+      <span>Submit to judge:</span><br />
+      {this.getJudgeSelectComponent()}
+      <TextareaField
+        label="Notes:"
+        name="notes"
+        value={decisionOpts.notes}
+        onChange={(notes) => this.props.setDecisionOptions({ notes })}
+        styling={textAreaStyling}
+      />
     </React.Fragment>;
   };
 }
 
 SubmitDecisionView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
-  goToNextStep: PropTypes.func.isRequired,
-  goToPrevStep: PropTypes.func.isRequired
+  vbmsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -219,4 +210,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightMissingFormItems
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView);
+export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));
