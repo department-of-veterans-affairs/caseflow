@@ -197,11 +197,11 @@ class Hearing < ActiveRecord::Base
       user.nil? || (user.css_id != vacols_css_id)
     end
 
-    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing=nil)
+    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
       transaction do
-        hearing = fetched_hearing || 
-          find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
-  
+        hearing = fetched_hearing ||
+                  find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
+
         # update hearing if user is nil, it's likely when the record doesn't exist and is being created
         # or if vacols record css is different from
         # who it's assigned to in the db.

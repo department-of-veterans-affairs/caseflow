@@ -41,7 +41,8 @@ class Fakes::HearingRepository
   end
 
   def self.number_of_slots(*); end
-  def self.fetch_dockets_slots(*) 
+
+  def self.fetch_dockets_slots(*)
     {}
   end
 

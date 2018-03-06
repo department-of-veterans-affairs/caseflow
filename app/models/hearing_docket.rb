@@ -28,11 +28,11 @@ class HearingDocket
   end
 
   def slots
-    @slots ||= HearingDocket.repository.number_of_slots(	
+    @slots ||= HearingDocket.repository.number_of_slots(
       regional_office_key: regional_office_key,
       type: type,
       date: date
-    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]	
+    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
   def attributes

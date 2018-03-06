@@ -10,7 +10,7 @@ class HearingRepository
       end
 
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-      
+
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
       load_issues(hearings)
       hearings
@@ -19,7 +19,7 @@ class HearingRepository
     def load_issues(hearings)
       children_hearings = hearings.select { |h| h.master_record == false }
       issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
-      
+
       appeal_ids = children_hearings.map(&:appeal_id)
       worksheet_issues = WorksheetIssue.where(appeal: appeal_ids)
       worksheet_issues_appeal_hash = worksheet_issues.map { |issue| Hash[issue.appeal_id, issue] }
@@ -66,14 +66,14 @@ class HearingRepository
     end
 
     def fetch_dockets_slots(dockets)
-      regional_office_keys = dockets.map { |date, docket| docket.regional_office_key }
+      regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
       records = VACOLS::Staff.where(stafkey: regional_office_keys)
 
-      hashed_records = records.reduce({}) {|acc, record| acc.merge(record.stafkey => record) }
+      hashed_records = records.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
 
-      dockets.map do |date, docket| 
+      dockets.map do |date, docket|
         record = hashed_records[docket.regional_office_key]
-        [ date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if staff && record )]
+        [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if staff && record)]
       end.to_h
     end
 
@@ -110,7 +110,7 @@ class HearingRepository
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
         hearing = Hearing.assign_or_create_from_vacols_record(vacols_record,
-          fetched_hearings_hash[vacols_record.hearing_pkseq])
+                                                              fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end
