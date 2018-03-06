@@ -3,9 +3,22 @@ class IssuesController < ApplicationController
 
   def create
     return record_not_found unless appeal
-    record = Issue.create!(current_user.css_id, create_params)
-    return issue_creation_error unless record
+    record = Issue.create!(css_id: current_user.css_id, issue_hash: create_params)
+    return issue_error("Errors occured when creating an issue in VACOLS") unless record
     render json: { issue: record }, status: :created
+  end
+
+  def update
+    return record_not_found unless appeal
+
+    record = Issue.update!(
+      css_id: current_user.css_id,
+      vacols_id: appeal.vacols_id,
+      vacols_sequence_id: params[:vacols_sequence_id],
+      issue_hash: general_params
+    )
+    return issue_error("Errors occured when updating an issue in VACOLS") unless record
+    render json: { issue: record }, status: :ok
   end
 
   private
@@ -14,21 +27,24 @@ class IssuesController < ApplicationController
     @appeal ||= Appeal.find(params[:appeal_id])
   end
 
-  def create_params
+  def general_params
     params.require("issues").permit(:note,
                                     program: [:description, :code],
                                     issue: [:description, :code],
                                     level_1: [:description, :code],
                                     level_2: [:description, :code],
                                     level_3: [:description, :code])
-      .merge(vacols_id: appeal.vacols_id)
   end
 
-  def issue_creation_error
+  def create_params
+    general_params.merge(vacols_id: appeal.vacols_id)
+  end
+
+  def issue_error(message)
     render json: {
       "errors": [
-        "title": "Error Creating VACOLS Issue",
-        "detail": "Errors occured when creating an issue"
+        "title": "Error",
+        "detail": message
       ]
     }, status: 400
   end

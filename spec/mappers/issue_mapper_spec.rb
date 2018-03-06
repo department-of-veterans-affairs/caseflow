@@ -14,18 +14,26 @@ describe IssueMapper do
       {
         program: "02",
         issue: "18",
-        level_1: nil,
         level_2: "07",
         level_3: "##",
-        note: "another one",
-        vacols_id: nil
+        note: "another one"
       }
     end
 
-    subject { IssueMapper.transform_issue_hash(issue_hash) }
+    subject { IssueMapper.transform_and_validate(issue_hash) }
 
-    it "transforms the hash" do
-      expect(subject).to eq expected_result
+    context "when codes are valid" do
+      it "transforms the hash" do
+        allow(IssueRepository).to receive(:find_issue_reference).and_return([OpenStruct.new])
+        expect(subject).to eq expected_result
+      end
+    end
+
+    context "when codes are not valid" do
+      it "raises IssueRepository::IssueError" do
+        allow(IssueRepository).to receive(:find_issue_reference).and_return([])
+        expect { subject }.to raise_error(IssueRepository::IssueError)
+      end
     end
   end
 end

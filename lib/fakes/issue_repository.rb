@@ -1,6 +1,6 @@
 class Fakes::IssueRepository
   class << self
-    def create_vacols_issue(_css_id, issue_hash)
+    def create_vacols_issue(*)
       Fakes::AppealRepository.issue_records ||= {}
       Fakes::AppealRepository.issue_records[issue_hash[:vacols_id]] ||= []
 
@@ -18,6 +18,10 @@ class Fakes::IssueRepository
       Fakes::AppealRepository.issue_records[issue_hash[:vacols_id]] << issue
 
       issue
+    end
+
+    def update_vacols_issue(*)
+      true
     end
   end
 end

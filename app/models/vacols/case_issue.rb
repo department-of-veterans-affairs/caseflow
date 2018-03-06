@@ -4,16 +4,20 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.primary_key = "isskey"
 
   COLUMN_NAMES = {
-    vacols_id: :isskey,
-    vacols_sequence_id: :issseq,
     program: :issprog,
     issue: :isscode,
     level_1: :isslev1,
     level_2: :isslev2,
     level_3: :isslev3,
-    added_by: :issaduser,
     note: :issdesc
   }.freeze
+
+  COLUMN_NAMES_CREATE = COLUMN_NAMES.merge(
+    added_by: :issaduser,
+    vacols_id: :isskey,
+    vacols_sequence_id: :issseq
+  )
+  COLUMN_NAMES_UPDATE = COLUMN_NAMES.merge(updated_by: :issmduser)
 
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
@@ -103,7 +107,7 @@ class VACOLS::CaseIssue < VACOLS::Record
   # rubocop:enable MethodLength
 
   def self.create_issue!(issue_hash)
-    attrs = issue_hash.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+    attrs = issue_hash.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES_CREATE[k]] = v }
 
     MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_hash[:vacols_id]}",
                           service: :vacols,
@@ -116,6 +120,16 @@ class VACOLS::CaseIssue < VACOLS::Record
   def self.generate_sequence_id(vacols_id)
     return unless vacols_id
     descriptions(vacols_id)[vacols_id].count + 1
+  end
+
+  def update_issue!(issue_hash)
+    attrs = issue_hash.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES_UPDATE[k]] = v }
+
+    MetricsService.record("VACOLS: CaseIssue.update_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
+                          service: :vacols,
+                          name: "CaseIssue.update_issue") do
+      update!(attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
+    end
   end
   # :nocov:
 end
