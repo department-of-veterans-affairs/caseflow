@@ -13,6 +13,6 @@ export const getDate = (date) => {
 };
 
 export const now = () => {
-  return moment().tz('America/New_York').
+  return moment().tz(moment.tz.guess()).
     format('h:mm a');
 };
