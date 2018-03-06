@@ -56,10 +56,10 @@ RSpec.describe IssuesController, type: :controller do
       let(:params) do
         {
           note: "test",
-          program: { "description" => "test1", "code" => "01" },
-          issue: { "description" => "test2", "code" => "02" },
-          level_1: { "description" => "test3", "code" => "03" },
-          level_2: { "description" => "test4", "code" => "04" }
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
         }
       end
 
@@ -86,10 +86,10 @@ RSpec.describe IssuesController, type: :controller do
     context "when all parameters are present" do
       let(:params) do
         {
-          program: { "description" => "test1", "code" => "01" },
-          issue: { "description" => "test2", "code" => "02" },
-          level_1: { "description" => "test3", "code" => "03" },
-          level_2: { "description" => "test4", "code" => "04" },
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end
@@ -116,10 +116,10 @@ RSpec.describe IssuesController, type: :controller do
     context "when appeal is not found" do
       let(:params) do
         {
-          program: { "description" => "test1", "code" => "01" },
-          issue: { "description" => "test2", "code" => "02" },
-          level_1: { "description" => "test3", "code" => "03" },
-          level_2: { "description" => "test4", "code" => "04" },
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end
@@ -134,10 +134,10 @@ RSpec.describe IssuesController, type: :controller do
     context "when there is an error" do
       let(:params) do
         {
-          program: { "description" => "test1", "code" => "01" },
-          issue: { "description" => "test2", "code" => "02" },
-          level_1: { "description" => "test3", "code" => "03" },
-          level_2: { "description" => "test4", "code" => "04" },
+          program: { description: "test1", code: "01" },
+          issue: { description: "test2", code: "02" },
+          level_1: { description: "test3", code: "03" },
+          level_2: { description: "test4", code: "04" },
           note: "test"
         }
       end

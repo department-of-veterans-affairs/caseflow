@@ -220,7 +220,7 @@ class Issue
     end
 
     def create!(css_id:, issue_hash:)
-      repository.create_vacols_issue(css_id: css_id, issue_hash: issue_hash.symbolize_keys)
+      repository.create_vacols_issue(css_id: css_id, issue_hash: issue_hash.deep_symbolize_keys)
     rescue ActiveRecord::RecordInvalid, IssueRepository::IssueError => e
       Rails.logger.warn(e)
       Raven.capture_exception(e)
@@ -232,7 +232,7 @@ class Issue
         css_id: css_id,
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
-        issue_hash: issue_hash.symbolize_keys
+        issue_hash: issue_hash.deep_symbolize_keys
       )
     rescue ActiveRecord::RecordInvalid, IssueRepository::IssueError => e
       Rails.logger.warn(e)

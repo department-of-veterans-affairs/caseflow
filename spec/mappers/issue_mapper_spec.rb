@@ -2,10 +2,10 @@ describe IssueMapper do
   context ".transform_issue_hash" do
     let(:issue_hash) do
       {
-        program: { "description" => "compensation", "code" => "02" },
-        issue: { "description" => "service connection", "code" => "18" },
-        level_2: { "description" => "leg", "code" => "07" },
-        level_3: { "description" => "head", "code" => "##" },
+        program: { description: "compensation", code: "02" },
+        issue: { description: "service connection", code: "18" },
+        level_2: { description: "leg", code: "07" },
+        level_3: { description: "head", code: "##" },
         note: "another one"
       }
     end
