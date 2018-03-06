@@ -476,11 +476,6 @@ $color-hearings-saving: $color-gray;
   border-bottom: 1px solid $color-gray-lighter;
 }
 
-@page {
-  size: 8.5in 11in;
-  margin: 0;
-}
-
 @media print {
   h1,
   h2,
@@ -619,4 +614,9 @@ $color-hearings-saving: $color-gray;
       }
     }
   }
+}
+
+@page {
+  size: 8.5in 11in;
+  margin: 0;
 }
