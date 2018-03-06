@@ -94,6 +94,7 @@ RSpec.feature "Reader" do
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
     Capybara.default_max_wait_time = 5
+    Time.zone = "America/New_York"
   end
 
   after do
@@ -215,8 +216,8 @@ RSpec.feature "Reader" do
 
     context "Appeals without any issues" do
       let(:fetched_at_format) { "%D %l:%M%P %Z" }
-      let(:vbms_fetched_ts) { Time.zone.now.in_time_zone("US/Eastern") }
-      let(:vva_fetched_ts) { Time.zone.now.in_time_zone("US/Eastern") }
+      let(:vbms_fetched_ts) { Time.zone.now }
+      let(:vva_fetched_ts) { Time.zone.now }
 
       let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
       let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
