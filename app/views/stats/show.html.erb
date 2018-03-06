@@ -1,13 +1,11 @@
 <% content_for :page_title do %>&nbsp &gt &nbspStats<% end %>
 
-<ul>
-  <li>
-    <%= link_to "Certification Stats", certification_stats_path %>
-  </li>
-  <li>
-    <%= link_to "Dispatch Stats", dispatch_stats_path %>
-  </li>
-  <li>
-    <%= link_to "Intake Stats", intake_stats_path  %>
-  </li>
-</ul>
+<% content_for :full_page_content do %>
+  <%= react_component("StatsContainer", props: {
+	page: "StatsContainer",
+	userDisplayName: current_user.display_name,
+	dropdownUrls: dropdown_urls,
+	feedbackUrl: feedback_url,
+	buildDate: build_date
+  }) %>
+<% end %>
