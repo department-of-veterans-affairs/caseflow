@@ -94,7 +94,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-      {this.props.print}
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
