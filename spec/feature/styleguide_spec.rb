@@ -24,8 +24,10 @@ end
 
 RSpec.feature "Style Guide" do
   scenario "renders and is accessible" do
+    original_driver = Sniffybara::Driver.current_driver
     Sniffybara::Driver.current_driver = :slow_sniffybara
     visit "/styleguide"
     expect(page).to have_content("Caseflow Commons")
+    Sniffybara::Driver.current_driver = original_driver
   end
 end
