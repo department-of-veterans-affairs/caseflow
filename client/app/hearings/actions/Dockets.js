@@ -276,7 +276,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
   dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
     payload: { saveFailed: false } });
 
-  hearingsToSave.forEach((hearing) => {
+  Promise.resolve(hearingsToSave.forEach((hearing) => {
 
     const index = docket.findIndex((x) => x.id === hearing.id);
 
@@ -285,13 +285,14 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
         dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
           payload: { date,
             index } });
-        dispatch(setDocketTimeSaved(now()));
       },
       () => {
         dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
           payload: { saveFailed: true } });
       });
+  })).then(() => {
+    dispatch(setDocketTimeSaved(now()));
+    dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
+      payload: { saving: false } });
   });
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
-    payload: { saving: false } });
 };
