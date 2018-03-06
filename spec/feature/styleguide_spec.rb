@@ -10,7 +10,7 @@ Capybara.register_driver :slow_sniffybara do |app|
                                 disk_cache_dir: cache_directory)
 
   client = Selenium::WebDriver::Remote::Http::Default.new
-  client.timeout = 120 # instead of the default 60
+  client.timeout = 60 # instead of the default 60
 
   options = {
     port: 51_674,
