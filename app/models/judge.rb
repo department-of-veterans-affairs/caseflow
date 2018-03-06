@@ -18,7 +18,7 @@ class Judge
     @upcoming_dockets.map do |date, hearing_docket|
       hearing_docket.slots = dockets_slots[date] ||
                              HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper
-                              .timezone(hearing_docket.regional_office_key)]
+                               .timezone(hearing_docket.regional_office_key)]
       [date, hearing_docket]
     end.to_h
   end
