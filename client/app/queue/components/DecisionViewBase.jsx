@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import {
   pushBreadcrumb,
-  highlightMissingFormItems
+  highlightInvalidFormItems
 } from '../QueueActions';
 
 import Breadcrumbs from './BreadcrumbManager';
@@ -22,7 +22,7 @@ export default function decisionViewBase(ComponentToWrap) {
     getWrappedComponentRef = (ref) => this.wrapped = ref;
 
     componentDidMount = () => {
-      this.props.highlightMissingFormItems(false);
+      this.props.highlightInvalidFormItems(false);
 
       if (this.wrapped.getBreadcrumb) {
         const breadcrumb = this.wrapped.getBreadcrumb();
@@ -50,7 +50,7 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapStateToProps = (state) => _.pick(state.queue.ui, 'breadcrumbs');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
-    highlightMissingFormItems
+    highlightInvalidFormItems
   }, dispatch);
 
   return connect(mapStateToProps, mapDispatchToProps)(WrappedComponent);

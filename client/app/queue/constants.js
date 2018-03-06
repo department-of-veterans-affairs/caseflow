@@ -3,7 +3,9 @@ import { css } from 'glamor';
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
   QUEUE_LOGO_OVERLAP: '#0E456C',
-  QUEUE_LOGO_BACKGROUND: '#D6D7D9'
+  QUEUE_LOGO_BACKGROUND: '#D6D7D9',
+  // $color-secondary-dark in uswds/core/_variables.scss
+  ERROR: '#CD2026'
 };
 
 export const ACTIONS = {
@@ -20,7 +22,7 @@ export const ACTIONS = {
   SET_SELECTING_JUDGE: 'SET_SELECTING_JUDGE',
   PUSH_BREADCRUMB: 'PUSH_BREADCRUMB',
   RESET_BREADCRUMBS: 'RESET_BREADCRUMBS',
-  HIGHLIGHT_MISSING_ITEMS: 'HIGHLIGHT_MISSING_ITEMS'
+  HIGHLIGHT_INVALID_FORM_ITEMS: 'HIGHLIGHT_INVALID_FORM_ITEMS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing

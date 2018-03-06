@@ -10,7 +10,7 @@ import {
   setDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
-  highlightMissingFormItems
+  highlightInvalidFormItems
 } from './QueueActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -82,10 +82,10 @@ class SubmitDecisionView extends React.PureComponent {
 
       const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
 
-      if (missingParams.length === 0) {
+      if (!missingParams.length) {
         this.props.goToNextStep();
       } else {
-        this.props.highlightMissingFormItems(true);
+        this.props.highlightInvalidFormItems(true);
       }
     }
   }];
@@ -102,9 +102,9 @@ class SubmitDecisionView extends React.PureComponent {
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
-          options={_.map(judges, (judge) => ({
+          options={_.map(judges, (judge, value) => ({
             label: judge.full_name,
-            value: judge.css_id
+            value
           }))}
           onChange={(judge) => {
             this.props.setSelectingJudge(false);
@@ -209,7 +209,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
-  highlightMissingFormItems
+  highlightInvalidFormItems
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));

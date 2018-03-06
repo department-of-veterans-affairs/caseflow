@@ -14,7 +14,7 @@ import Table from '../components/Table';
 import {
   cancelEditingAppeal,
   updateAppealIssue,
-  highlightMissingFormItems
+  highlightInvalidFormItems
 } from './QueueActions';
 import { fullWidth } from './constants';
 
@@ -33,7 +33,7 @@ const rowStyling = css({
   }
 });
 
-class SelectDispositionsView extends React.Component {
+class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
     path: `/tasks/${this.props.vacolsId}/dispositions`
@@ -84,10 +84,10 @@ class SelectDispositionsView extends React.Component {
       } = this.props;
       const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
 
-      if (issuesWithoutDisposition.length === 0) {
+      if (!issuesWithoutDisposition.length) {
         goToNextStep();
       } else {
-        this.props.highlightMissingFormItems(true);
+        this.props.highlightInvalidFormItems(true);
       }
     }
   }];
@@ -144,7 +144,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppeal,
   updateAppealIssue,
-  highlightMissingFormItems
+  highlightInvalidFormItems
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

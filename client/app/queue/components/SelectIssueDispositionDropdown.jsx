@@ -6,6 +6,7 @@ import { css } from 'glamor';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
+import { COLORS } from '../constants';
 import StringUtil from '../../util/StringUtil';
 import { updateAppealIssue } from '../QueueActions';
 import Checkbox from '../../components/Checkbox';
@@ -24,7 +25,7 @@ const issueDispositionOptions = [
 const dropdownStyling = (highlight, issueDisposition) => {
   if (highlight && !issueDisposition) {
     return css({
-      borderLeft: '4px solid #cd2026',
+      borderLeft: `4px solid ${COLORS.ERROR}`,
       paddingLeft: '1rem',
       width: '45rem',
       minHeight: '8rem'
@@ -36,7 +37,7 @@ const dropdownStyling = (highlight, issueDisposition) => {
   });
 };
 
-class SelectIssueDispositionDropdown extends React.Component {
+class SelectIssueDispositionDropdown extends React.PureComponent {
   render = () => {
     const {
       highlight,

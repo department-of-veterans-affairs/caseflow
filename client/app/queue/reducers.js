@@ -126,7 +126,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
-  case ACTIONS.HIGHLIGHT_MISSING_ITEMS:
+  case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
       ui: {
         highlightFormItems: {
