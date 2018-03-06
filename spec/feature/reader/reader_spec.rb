@@ -215,11 +215,11 @@ RSpec.feature "Reader" do
 
     context "Appeals without any issues" do
       let(:fetched_at_format) { "%D %l:%M%P %Z" }
-      let(:vbms_fetched_ts) { Time.zone.now }
-      let(:vva_fetched_ts) { Time.zone.now }
+      let(:vbms_fetched_ts) { Time.zone.now.in_time_zone("US/Eastern") }
+      let(:vva_fetched_ts) { Time.zone.now.in_time_zone("US/Eastern") }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(
