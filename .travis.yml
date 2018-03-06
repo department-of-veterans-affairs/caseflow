@@ -41,6 +41,7 @@ before_install:
   - "export DISPLAY=:99.0"
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
+  - "echo $PATH"
   - "/usr/lib/chromium-browser/chromedriver --version"
 
 before_script:
