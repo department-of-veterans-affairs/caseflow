@@ -50,7 +50,7 @@ export default class EstablishClaimCanceled extends React.Component {
 EstablishClaimCanceled.propTypes = {
   availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
-  employeeCount: PropTypes.string,
+  employeeCount: PropTypes.number,
   secondHeader: PropTypes.string,
   totalCasesCompleted: PropTypes.number,
   totalCasesToComplete: PropTypes.number
