@@ -33,7 +33,8 @@ export default function decisionViewBase(ComponentToWrap) {
       }
     };
 
-    getFooterButtons = () => this.wrapped.getFooterButtons ? this.wrapped.getFooterButtons() : [];
+    getFooterButtons = () => this.wrapped && this.wrapped.getFooterButtons ?
+      this.wrapped.getFooterButtons() : [];
 
     render = () => <React.Fragment>
       <Breadcrumbs />

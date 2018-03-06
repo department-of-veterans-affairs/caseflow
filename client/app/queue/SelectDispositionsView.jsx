@@ -132,7 +132,9 @@ class SelectDispositionsView extends React.Component {
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired
+  vbmsId: PropTypes.string.isRequired,
+  goToPrevStep: PropTypes.func,
+  goToNextStep: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
