@@ -19,6 +19,7 @@ import Error500 from './errors/Error500';
 import Error404 from './errors/Error404';
 import Unauthorized from './containers/Unauthorized';
 import OutOfService from './containers/OutOfService';
+import StatsContainer from './containers/stats/StatsContainer';
 import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
@@ -41,6 +42,7 @@ const COMPONENTS = {
   Error500,
   OutOfService,
   Unauthorized,
+  StatsContainer,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -66,6 +68,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './containers/EstablishClaimPage/EstablishClaimContainer',
       './login/index',
       './test/TestUsers',
+      './containers/stats/StatsContainer',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
       './hearings/index',
