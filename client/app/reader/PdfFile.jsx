@@ -13,7 +13,7 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-// import { PDFJS } from 'pdfjs-dist';
+import { PDFJS } from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
@@ -21,7 +21,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
-var pdfjsLib = require('pdfjs-dist');
+// var pdfjsLib = require('pdfjs-dist');
 const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
@@ -42,7 +42,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    debugger;
     PDFJS.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {
@@ -110,7 +109,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
-    console.log('getPage', rowIndex);
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
     if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
@@ -303,7 +301,7 @@ export class PdfFile extends React.PureComponent {
   onScroll = ({ clientHeight, scrollTop, scrollLeft }) => {
     this.scrollTop = scrollTop;
     this.scrollLeft = scrollLeft;
-    console.log('Scrolled', scrollTop);
+
     if (this.grid) {
       let minIndex = 0;
       let minDistance = Infinity;
