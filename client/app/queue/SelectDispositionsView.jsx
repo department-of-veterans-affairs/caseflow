@@ -55,7 +55,7 @@ class SelectDispositionsView extends React.PureComponent {
       ));
   };
 
-  componentWillUnmount = () => {
+  goToPrevStep = () => {
     const {
       appeal: { attributes: { issues } },
       vacolsId
@@ -63,33 +63,26 @@ class SelectDispositionsView extends React.PureComponent {
     const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
 
     // If the user hasn't selected a disposition for all issues and they're
-    // navigating away, they've canceled the checkout process.
+    // navigating back to the start, they've canceled the checkout process.
     if (issuesWithoutDisposition.length > 0) {
       this.props.cancelEditingAppeal(vacolsId);
     }
+
+    return true;
+  }
+
+  validateForm = () => {
+    const { appeal: { attributes: { issues } } } = this.props;
+    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+
+    return !issuesWithoutDisposition.length;
   }
 
   getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`,
-    classNames: ['cf-btn-link'],
-    callback: this.props.goToPrevStep
+    displayText: `< Go back to draft decision ${this.props.vbmsId}`
   }, {
     displayText: 'Finish dispositions',
-    classNames: ['cf-right-side'],
-    id: 'finish-dispositions',
-    callback: () => {
-      const {
-        goToNextStep,
-        appeal: { attributes: { issues } }
-      } = this.props;
-      const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
-
-      if (!issuesWithoutDisposition.length) {
-        goToNextStep();
-      } else {
-        this.props.highlightInvalidFormItems(true);
-      }
-    }
+    id: 'finish-dispositions'
   }];
 
   getKeyForRow = (rowNumber) => rowNumber;

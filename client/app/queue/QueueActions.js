@@ -46,6 +46,10 @@ export const setDecisionOptions = (opts) => ({
   }
 });
 
+export const resetDecisionOptions = () => ({
+  type: ACTIONS.RESET_DECISION_OPTIONS
+});
+
 export const startEditingAppeal = (vacolsId) => ({
   type: ACTIONS.START_EDITING_APPEAL,
   payload: {

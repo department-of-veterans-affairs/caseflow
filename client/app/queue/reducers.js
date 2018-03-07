@@ -88,6 +88,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.RESET_DECISION_OPTIONS:
+    return update(state, {
+      pendingChanges: {
+        taskDecision: {
+          $set: initialState.pendingChanges.taskDecision
+        }
+      }
+    });
   case ACTIONS.START_EDITING_APPEAL:
     return update(state, {
       pendingChanges: {

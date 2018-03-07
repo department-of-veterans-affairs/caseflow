@@ -8,6 +8,7 @@ import _ from 'lodash';
 
 import {
   setDecisionOptions,
+  resetDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems
@@ -62,32 +63,32 @@ class SubmitDecisionView extends React.PureComponent {
     return decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
   };
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`,
-    classNames: ['cf-btn-link'],
-    callback: this.props.goToPrevStep
-  }, {
-    displayText: 'Submit',
-    classNames: ['cf-right-side'],
-    callback: () => {
-      const {
-        type: decisionType,
-        opts: decisionOpts
-      } = this.props.decision;
-      const requiredParams = ['documentId', 'judge'];
+  goToPrevStep = () => {
+    this.props.resetDecisionOptions();
 
-      if (decisionType === 'omo') {
-        requiredParams.push('omoType');
-      }
+    return true;
+  }
 
-      const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
+  validateForm = () => {
+    const {
+      type: decisionType,
+      opts: decisionOpts
+    } = this.props.decision;
+    const requiredParams = ['documentId', 'judge'];
 
-      if (!missingParams.length) {
-        this.props.goToNextStep();
-      } else {
-        this.props.highlightInvalidFormItems(true);
-      }
+    if (decisionType === 'omo') {
+      requiredParams.push('omoType');
     }
+
+    const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
+
+    return !missingParams.length;
+  }
+
+  getFooterButtons = () => [{
+    displayText: `< Go back to draft decision ${this.props.vbmsId}`
+  }, {
+    displayText: 'Submit'
   }];
 
   getJudgeSelectComponent = () => {
@@ -207,6 +208,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
+  resetDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems

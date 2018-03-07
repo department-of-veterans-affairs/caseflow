@@ -33,8 +33,48 @@ export default function decisionViewBase(ComponentToWrap) {
       }
     };
 
-    getFooterButtons = () => this.wrapped && this.wrapped.getFooterButtons ?
-      this.wrapped.getFooterButtons() : [];
+    getFooterButtons = () => {
+      const getButtons = this.wrapped && this.wrapped.getFooterButtons;
+
+      if (!getButtons) {
+        return [{}, {}];
+      }
+
+      const [backButton, nextButton] = getButtons();
+
+      _.defaults(backButton, {
+        classNames: ['cf-btn-link'],
+        callback: this.goToPrevStep
+      });
+      _.defaults(nextButton, {
+        classNames: ['cf-right-side'],
+        callback: this.goToNextStep
+      });
+
+      return [backButton, nextButton];
+    };
+
+    goToPrevStep = () => {
+      const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
+
+      if (!prevStepHook) {
+        return this.props.goToPrevStep();
+      }
+
+      if (prevStepHook()) {
+        this.props.goToPrevStep();
+      }
+    };
+
+    goToNextStep = () => {
+      const validation = this.wrapped && this.wrapped.validateForm;
+
+      if (validation && validation()) {
+        this.props.goToNextStep();
+      } else {
+        this.props.highlightInvalidFormItems(true);
+      }
+    };
 
     render = () => <React.Fragment>
       <Breadcrumbs />
