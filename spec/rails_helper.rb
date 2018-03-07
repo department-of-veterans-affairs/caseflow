@@ -79,8 +79,8 @@ Capybara.register_driver(:sniffybara_headless) do |app|
 
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
-  chrome_options.args << '--headless'
-  chrome_options.args << '--disable-gpu'
+  chrome_options.args << "--headless"
+  chrome_options.args << "--disable-gpu"
 
   options = {
     port: 51_674,
