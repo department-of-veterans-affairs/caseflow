@@ -2,7 +2,8 @@ class Fakes::IssueRepository
   CODE_KEYS = [:program, :issue, :level_1, :level_2, :level_3].freeze
 
   class << self
-    def create_vacols_issue!(css_id:, issue_attrs:)
+    def create_vacols_issue!(args)
+      issue_attrs = args[:issue_attrs]
       unless issue_attrs[:program] && issue_attrs[:issue] && issue_attrs[:level_1]
         fail IssueRepository::IssueError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
       end
@@ -24,8 +25,9 @@ class Fakes::IssueRepository
       issue
     end
 
-    def update_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
-      record = find_issue(vacols_id, vacols_sequence_id)
+    def update_vacols_issue!(args)
+      issue_attrs = args[:issue_attrs]
+      record = find_issue(args[:vacols_id], args[:vacols_sequence_id])
       record.codes = CODE_KEYS.collect { |k| issue_attrs[k] }.compact
       record.note = issue_attrs[:note]
       record

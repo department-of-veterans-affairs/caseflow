@@ -1,9 +1,7 @@
 class IssuesController < ApplicationController
   before_action :verify_queue_phase_two
 
-  EXCEPTIONS = [ActiveRecord::RecordInvalid, IssueRepository::IssueError].freeze
-
-  rescue_from *EXCEPTIONS do |e|
+  rescue_from ActiveRecord::RecordInvalid, IssueRepository::IssueError do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
     Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
