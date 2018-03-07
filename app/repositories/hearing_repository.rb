@@ -8,7 +8,6 @@ class HearingRepository
         VACOLS::CaseHearing.upcoming_for_judge(css_id) +
           VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       end
-
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
 
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
