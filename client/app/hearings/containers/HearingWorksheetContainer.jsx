@@ -10,6 +10,8 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
 
+const PRINT_WINDOW_TIMEOUT_IN_MS = 150;
+
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
@@ -34,7 +36,7 @@ export class HearingWorksheetContainer extends React.Component {
       window.onafterprint = this.afterPrint;
       setTimeout(() => {
         window.print();
-      }, 150);
+      }, PRINT_WINDOW_TIMEOUT_IN_MS);
     }
   }
 
