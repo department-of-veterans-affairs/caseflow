@@ -9,8 +9,6 @@ class Fakes::IssueRepository
 
       init_issue_records(issue_attrs[:vacols_id])
 
-      issue_attrs.stringify_keys!
-
       issue = Generators::Issue.build(
         disposition: nil,
         close_date: nil,
@@ -27,7 +25,6 @@ class Fakes::IssueRepository
     end
 
     def update_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
-      issue_attrs.stringify_keys!
       record = find_issue(vacols_id, vacols_sequence_id)
       record.codes = CODE_KEYS.collect { |k| issue_attrs[k] }.compact
       record.note = issue_attrs[:note]
