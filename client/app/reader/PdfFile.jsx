@@ -13,7 +13,7 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+// import { PDFJS } from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
@@ -21,6 +21,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
+var pdfjsLib = require('pdfjs-dist');
 const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
@@ -41,6 +42,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    debugger;
     PDFJS.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {
@@ -108,6 +110,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
+    console.log('getPage', rowIndex);
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
     if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
@@ -116,8 +119,6 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-        scrollTop={this.props.scrollTop}
-        scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
@@ -302,7 +303,7 @@ export class PdfFile extends React.PureComponent {
   onScroll = ({ clientHeight, scrollTop, scrollLeft }) => {
     this.scrollTop = scrollTop;
     this.scrollLeft = scrollLeft;
-
+    console.log('Scrolled', scrollTop);
     if (this.grid) {
       let minIndex = 0;
       let minDistance = Infinity;
@@ -402,6 +403,11 @@ export class PdfFile extends React.PureComponent {
     </div>;
   }
 
+  overscanIndicesGetter = ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
+    overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
+    overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+  })
+
   render() {
     if (this.props.loadError) {
       return <div>{this.displayErrorMessage()}</div>;
@@ -432,6 +438,7 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}
+            overscanIndicesGetter={this.props.improvedRendering ? this.overscanIndicesGetter : undefined}
             estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
@@ -490,7 +497,7 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
+    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop', 'improvedRendering'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],

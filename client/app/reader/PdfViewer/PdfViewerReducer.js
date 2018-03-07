@@ -29,7 +29,8 @@ export const initialState = {
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
   scale: 1,
-  windowingOverscan: _.random(5, 10)
+  windowingOverscan: _.random(5, 10),
+  improvedRendering: false
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -155,6 +156,10 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
   case Constants.SET_WINDOWING_OVERSCAN:
     return update(state, {
       windowingOverscan: { $set: action.payload.overscanValue }
+    });
+  case Constants.TOGGLE_IMPROVED_RENDERING:
+    return update(state, {
+      improvedRendering: { $set: action.payload.toggleValue }
     });
   default:
     return state;

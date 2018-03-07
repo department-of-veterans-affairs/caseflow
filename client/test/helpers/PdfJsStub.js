@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { PDFJS } from 'pdfjs-dist';
 
 const numPages = 3;
 

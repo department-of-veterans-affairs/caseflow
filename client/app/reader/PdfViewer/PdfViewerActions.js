@@ -152,3 +152,10 @@ export const handleSetOverscanValue = (overscanValue) => ({
     overscanValue
   }
 });
+
+export const toggleImprovedRendering = (toggleValue) => ({
+  type: Constants.TOGGLE_IMPROVED_RENDERING,
+  payload: {
+    toggleValue
+  }
+});
