@@ -1,26 +1,27 @@
 describe IssueMapper do
-  context ".transform_issue_hash" do
-    let(:issue_hash) do
+  context ".transform_issue_attrs" do
+    let(:issue_attrs) do
       {
-        program: { description: "compensation", code: "02" },
-        issue: { description: "service connection", code: "18" },
-        level_2: { description: "leg", code: "07" },
-        level_3: { description: "head", code: "##" },
+        program: "02",
+        issue: "18",
+        level_2: "03",
+        level_3: nil,
         note: "another one"
       }
     end
 
     let(:expected_result) do
+      # level_1 is not passed, level_3 is passed with nil value
       {
-        program: "02",
-        issue: "18",
-        level_2: "07",
-        level_3: "##",
-        note: "another one"
+        issprog: "02",
+        isscode: "18",
+        isslev2: "03",
+        isslev3: nil,
+        issdesc: "another one"
       }
     end
 
-    subject { IssueMapper.transform_and_validate(issue_hash) }
+    subject { IssueMapper.rename_and_validate_vacols_attrs(issue_attrs) }
 
     context "when codes are valid" do
       it "transforms the hash" do

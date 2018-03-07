@@ -39,11 +39,11 @@ class IssuesController < ApplicationController
 
   def issue_params
     params.require("issues").permit(:note,
-                                    program: [:description, :code],
-                                    issue: [:description, :code],
-                                    level_1: [:description, :code],
-                                    level_2: [:description, :code],
-                                    level_3: [:description, :code])
+                                    :program,
+                                    :issue,
+                                    :level_1,
+                                    :level_2,
+                                    :level_3)
   end
 
   def create_params

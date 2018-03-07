@@ -10,7 +10,7 @@ module IssueMapper
   }.freeze
 
   def self.rename_and_validate_vacols_attrs(issue_attrs)
-    issue_attrs = slice_attributes(issue_attrs.deep_symbolize_keys)
+    issue_attrs = slice_attributes(issue_attrs.symbolize_keys)
     if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
                                             issue: issue_attrs[:isscode],
                                             level_1: issue_attrs[:isslev1],
@@ -23,8 +23,9 @@ module IssueMapper
 
   def self.slice_attributes(issue_attrs)
     [:program, :issue, :level_1, :level_2, :level_3, :note, :vacols_id].each_with_object({}) do |k, result|
-      next unless issue_attrs[k]
-      result[COLUMN_NAMES[k]] = issue_attrs[k].is_a?(Hash) ? issue_attrs[k].try(:[], :code) : issue_attrs[k]
+      # skip only if the key is not passed, if the key is passed and the value is nil - include that
+      next unless issue_attrs.keys.include? k
+      result[COLUMN_NAMES[k]] = issue_attrs[k]
       result
     end
   end
