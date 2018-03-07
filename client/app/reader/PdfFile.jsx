@@ -8,8 +8,8 @@ import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
-} from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
+  setPageDimensions } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
@@ -63,6 +63,8 @@ export class PdfFile extends React.PureComponent {
         return this.loadingTask;
       }).
       then((pdfDocument) => {
+        this.setPageDimensions(pdfDocument);
+
         if (this.loadingTask.destroyed) {
           pdfDocument.destroy();
         } else {
@@ -75,6 +77,23 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
+  }
+
+  setPageDimensions = (pdfDocument) => {
+    let viewports = [];
+
+    _.range(0, pdfDocument.pdfInfo.numPages).forEach((index) => {
+      pdfDocument.getPage(index + 1).then((page) => {
+        viewports[index] = _.pick(page.getViewport(1), ['width', 'height']);
+
+        if (viewports.length === pdfDocument.pdfInfo.numPages) {
+          this.props.setPageDimensions(this.props.file, viewports);
+        }
+      },
+      () => {
+        // Eventually we should send a sentry error? Or metrics?
+      });
+    });
   }
 
   componentWillUnmount = () => {
@@ -127,24 +146,24 @@ export class PdfFile extends React.PureComponent {
     </div>;
   }
 
-  pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
+  pageDimensions = (index) => _.get(this.props.pageDimensions, [this.props.file, index])
 
   isHorizontal = () => this.props.rotation === 90 || this.props.rotation === 270;
 
   pageHeight = (index) => {
     if (this.isHorizontal()) {
-      return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+      return _.get(this.pageDimensions(index), ['width'], PDF_PAGE_WIDTH);
     }
 
-    return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+    return _.get(this.pageDimensions(index), ['height'], PDF_PAGE_HEIGHT);
   }
 
   pageWidth = (index) => {
     if (this.isHorizontal()) {
-      return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+      return _.get(this.pageDimensions(index), ['height'], PDF_PAGE_HEIGHT);
     }
 
-    return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+    return _.get(this.pageDimensions(index), ['width'], PDF_PAGE_WIDTH);
   }
 
   getRowHeight = ({ index }) => {
@@ -436,7 +455,7 @@ export class PdfFile extends React.PureComponent {
               marginBottom: `-${PAGE_MARGIN}px`
             }}
             overscanIndicesGetter={this.overscanIndicesGetter}
-            estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
+            estimatedRowSize={(PDF_PAGE_HEIGHT + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
@@ -479,18 +498,13 @@ const mapDispatchToProps = (dispatch) => ({
     clearDocumentLoadError,
     setDocScrollPosition,
     updateSearchIndexPage,
-    updateSearchRelativeIndex
+    updateSearchRelativeIndex,
+    setPageDimensions
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => {
-  const dimensionValues = _.filter(state.pdf.pageDimensions, (dimension) => dimension.file === props.file);
-  const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
-  const baseWidth = _.get(dimensionValues, [0, 'width'], PDF_PAGE_WIDTH);
-
   return {
-    baseHeight,
-    baseWidth,
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),

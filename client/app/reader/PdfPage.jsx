@@ -236,22 +236,11 @@ export class PdfPage extends React.PureComponent {
             }
           });
         });
-        this.getDimensions(page);
       }).
         catch(() => {
           // We might need to do something else here.
         });
     }
-  }
-
-  getDimensions = (page) => {
-    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
-
-    this.props.setPageDimensions(
-      this.props.file,
-      this.props.pageIndex,
-      { width: viewport.width,
-        height: viewport.height });
   }
 
   getDivDimensions = () => {
@@ -358,7 +347,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state, props) => {
   return {
-    pageDimensions: _.get(state.pdf.pageDimensions, [`${props.file}-${props.pageIndex}`]),
+    pageDimensions: _.get(state.pdf.pageDimensions, [props.file, props.pageIndex]),
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props),
