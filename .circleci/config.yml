@@ -32,9 +32,10 @@ jobs:
           command: bundle -v
 
       - restore_cache:
-          keys:
-            - vendor-bundle-{{ checksum "Gemfile.lock" }}
-            - dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+
+      - restore_cache:
+          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: bundle install
