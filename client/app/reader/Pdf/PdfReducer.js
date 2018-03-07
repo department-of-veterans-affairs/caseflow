@@ -40,12 +40,31 @@ export const pdfReducer = (state = initialState, action = {}) => {
     // return state;
     const width = _.get(state.pageDimensions, [`${action.payload.file}-${action.payload.pageIndex}`, 'width']);
     const height = _.get(state.pageDimensions, [`${action.payload.file}-${action.payload.pageIndex}`, 'height']);
-
-    if (Math.abs(width - action.payload.dimensions.width) < 5 && Math.abs(height - action.payload.dimensions.height) < 5) {
+    // console.log('width', width, action.payload);
+    if (width && Math.abs(width - action.payload.dimensions.width) < 5 && height && Math.abs(height - action.payload.dimensions.height) < 5) {
       return state;
     }
 
-    // if ()
+    if (!_.filter(state.pageDimensions, (page) => page.file === action.payload.file).length) {
+      const pages = _.range(0, action.payload.numPages).reduce((acc, index) => {
+        acc[`${action.payload.file}-${index}`] = {
+          ...action.payload.dimensions,
+          file: action.payload.file,
+          pageIndex: index
+        };
+
+        return acc;
+      }, {});
+
+      return update(
+        state,
+        {
+          pageDimensions: {
+            $merge: pages
+          }
+        }
+      );
+    }
 
     return update(
       state,
