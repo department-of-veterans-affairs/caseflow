@@ -44,8 +44,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
       vacolsId
     } = this.props;
 
-    return <div
-      className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
+    return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
       <SearchableDropdown
         placeholder="Select Dispositions"
         value={issue.disposition}

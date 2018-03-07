@@ -39,7 +39,7 @@ class HearingWorksheetIssueFields extends PureComponent {
       return <div className="cf-form-textarea">
         <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
         { this.props.readOnly ?
-          <p>{allowedFields[field].value}</p> :
+          <p className="cf-hearings-print-worksheet-header">{allowedFields[field].value}</p> :
           <Textarea aria-label={field} name={field}
             id={`${issue.id}-issue-${field}`}
             value={allowedFields[field].value || ''}
