@@ -8,7 +8,6 @@ import Comment from './Comment';
 import EditComment from './EditComment';
 import WindowSlider from './WindowSlider';
 import Button from '../components/Button';
-import ToggleButton from '../components/ToggleButton';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
@@ -19,7 +18,7 @@ import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
 import { setOpenedAccordionSections, togglePdfSidebar,
-  handleFinishScrollToSidebarComment, toggleImprovedRendering } from '../reader/PdfViewer/PdfViewerActions';
+  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
   updateAnnotationContent, updateAnnotationRelevantDate
@@ -101,27 +100,6 @@ export class PdfSidebar extends React.Component {
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
-  onToggleClick = (name) => {
-    if (name === 'new_rendering') {
-      this.props.toggleImprovedRendering(true);
-    } else {
-      this.props.toggleImprovedRendering(false);
-    }
-  }
-
-  improveRenderingToggle = () => <ToggleButton
-    active={this.props.improvedRendering ? 'standard_rendering' : 'new_rendering'}
-    onClick={this.onToggleClick}>
-    <Button
-      name="standard_rendering">
-      Standard
-    </Button>
-    <Button
-      name="new_rendering">
-      New
-    </Button>
-  </ToggleButton>
-
   render() {
     let comments = [];
 
@@ -184,7 +162,6 @@ export class PdfSidebar extends React.Component {
       <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
         this.commentListElement = commentListElement;
       }}>
-        { this.props.featureToggles.improvedRendering && this.improveRenderingToggle()}
         { this.props.featureToggles.windowSlider && <WindowSlider /> }
         <Accordion style="outline"
           onChange={this.onAccordionOpenOrClose}
@@ -287,8 +264,7 @@ const mapStateToProps = (state, ownProps) => {
     error: state.pdfViewer.pdfSideBarError,
     appeal: state.pdfViewer.loadedAppeal,
     openedAccordionSections: state.pdfViewer.openedAccordionSections,
-    hidePdfSidebar: state.pdfViewer.hidePdfSidebar,
-    improvedRendering: state.pdfViewer.improvedRendering
+    hidePdfSidebar: state.pdfViewer.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -301,8 +277,7 @@ const mapDispatchToProps = (dispatch) => ({
     updateAnnotationRelevantDate,
     cancelEditAnnotation,
     requestEditAnnotation,
-    handleFinishScrollToSidebarComment,
-    toggleImprovedRendering
+    handleFinishScrollToSidebarComment
   }, dispatch)
 });
 

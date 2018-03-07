@@ -13,7 +13,6 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist';
-import { addPageToRenderQueue, changePriority, removePageFromRenderQueue } from './PdfRenderingQueue';
 import { collectHistogram } from '../util/Metrics';
 
 import { css } from 'glamor';
@@ -37,11 +36,12 @@ const markStyle = css({
   }
 });
 
-export class PdfPage extends React.Component {
+export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.isDrawing = false;
+    this.renderTask = null;
     this.marks = [];
     this.measureTimeStartMs = null;
   }
@@ -126,22 +126,10 @@ export class PdfPage extends React.Component {
       viewport
     };
 
+    this.renderTask = page.render(options);
+
     // Call PDFJS to actually draw the page.
-    let promise;
-
-    if (this.props.improvedRendering) {
-      promise = addPageToRenderQueue({
-        page,
-        options,
-        pageIndex: this.props.pageIndex,
-        file: this.props.file,
-        priority: this.props.isPageVisible
-      });
-    } else {
-      promise = page.render(options);
-    }
-
-    return promise.then(() => {
+    return this.renderTask.then(() => {
       this.isDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -156,18 +144,16 @@ export class PdfPage extends React.Component {
   }
 
   componentDidMount = () => {
-    console.log('mounting', this.props.pageIndex);
     this.setUpPage();
   }
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    if (this.props.improvedRendering) {
-      removePageFromRenderQueue({
-        pageIndex: this.props.pageIndex,
-        file: this.props.file
-      });
+
+    if (this.renderTask) {
+      this.renderTask.cancel();
     }
+
     if (this.props.page) {
       this.props.page.cleanup();
       if (this.markInstance) {
@@ -176,18 +162,7 @@ export class PdfPage extends React.Component {
     }
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    if (nextProps.isPageVisible !== this.props.isPageVisible) {
-      changePriority({
-        pageIndex: this.props.pageIndex,
-        file: this.props.file,
-        priority: nextProps.isPageVisible
-      });
-    }
-  }
-
   componentDidUpdate = (prevProps) => {
-    console.log('updating', this.props.pageIndex, prevProps, this.props);
     if (this.props.isPageVisible && !prevProps.isPageVisible) {
       this.measureTimeStartMs = performance.now();
     }
@@ -211,12 +186,6 @@ export class PdfPage extends React.Component {
         }
       }
     }
-  }
-
-  shouldComponentUpdate = (nextProps) => {
-    return (nextProps.scale !== this.props.scale ||
-      nextProps.isPageVisible !== this.props.isPageVisible ||
-      nextProps.isFileVisible !== this.props.isFileVisible);
   }
 
   drawText = (page, text) => {
@@ -263,8 +232,7 @@ export class PdfPage extends React.Component {
             attrs: {
               overscan: this.props.windowingOverscan,
               documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.pdfInfo.numPages,
-              improvedRendering: this.props.improvedRendering
+              pageCount: this.props.pdfDocument.pdfInfo.numPages
             }
           });
         });
@@ -279,11 +247,11 @@ export class PdfPage extends React.Component {
   getDimensions = (page) => {
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
-    // this.props.setPageDimensions(
-    //   this.props.file,
-    //   this.props.pageIndex,
-    //   { width: viewport.width,
-    //     height: viewport.height });
+    this.props.setPageDimensions(
+      this.props.file,
+      this.props.pageIndex,
+      { width: viewport.width,
+        height: viewport.height });
   }
 
   getDivDimensions = () => {
@@ -398,7 +366,6 @@ const mapStateToProps = (state, props) => {
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
     windowingOverscan: state.pdfViewer.windowingOverscan,
-    improvedRendering: state.pdfViewer.improvedRendering,
     documentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
     ...state.searchActionReducer
   };
