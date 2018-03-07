@@ -42,9 +42,8 @@ before_install:
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
   - "echo $PATH"
-  - "echo 'PATH ^, LD_LIBRARY_PATH v'"
-  - "echo $LD_LIBRARY_PATH"
   - "sudo find / -name libbase.so 2> /dev/null"
+  - "ls /usr/lib | cat"
   - "/usr/lib/chromium-browser/chromedriver --version"
 
 before_script:
