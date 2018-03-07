@@ -32,7 +32,13 @@ export const handleWorksheetServerError = (err) => ({
   }
 });
 
+export const fetchingWorksheet = () => ({
+  type: Constants.FETCHING_WORKSHEET
+});
+
 export const getWorksheet = (id) => (dispatch) => {
+  dispatch(fetchingWorksheet());
+
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
       dispatch(populateWorksheet(response.body));

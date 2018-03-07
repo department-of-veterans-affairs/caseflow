@@ -19,7 +19,8 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId)) {
+    if ((!nextProps.fetchingWorksheet && !nextProps.worksheet) ||
+      (this.props.hearingId !== nextProps.hearingId)) {
       this.props.getWorksheet(nextProps.hearingId);
     }
   }
@@ -30,9 +31,14 @@ export class HearingWorksheetContainer extends React.Component {
     const query = querystring.parse(window.location.search.slice(1));
 
     if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
-      window.print();
+      window.onafterprint = this.afterPrint;
+      setTimeout(() => {
+        window.print();
+      }, 150);
     }
   }
+
+  afterPrint = () => window.close();
 
   render() {
     if (this.props.worksheetServerError) {
@@ -61,7 +67,8 @@ export class HearingWorksheetContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  worksheetServerError: state.worksheetServerError
+  worksheetServerError: state.worksheetServerError,
+  fetchingWorksheet: state.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => ({
