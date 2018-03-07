@@ -38,12 +38,12 @@ class Fakes::VBMSService
       when 3
         File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
       when 4
-        File.join(Rails.root, "lib", "pdfs", "War_and_Peace_NT.pdf")
+        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       when 5
         File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
       else
         file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-        file = File.join(Rails.root, "lib", "pdfs", "War_and_Peace_NT.pdf") unless File.exist?(file)
+        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
         file
       end
     IO.binread(path)
