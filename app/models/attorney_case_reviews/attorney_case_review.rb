@@ -8,17 +8,19 @@ class AttorneyCaseReview < ActiveRecord::Base
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
-  EXCEPTIONS = [QueueRepository::ReassignCaseToJudgeError, VacolsHelper::MissingRequiredFieldError].freeze
+  EXCEPTIONS = [QueueRepository::ReassignCaseToJudgeError,
+                VacolsHelper::MissingRequiredFieldError,
+                ActiveRecord::RecordInvalid].freeze
 
   class << self
     attr_writer :repository
 
     def complete!(params)
       transaction do
-        # Save to the Caseflow DB first to ensure required fields are present
-        record = create(params)
-        return unless record.valid?
         begin
+          # Save to the Caseflow DB first to ensure required fields are present
+          record = create!(params)
+
           repository.reassign_case_to_judge(
             task_id: record.task_id,
             judge_css_id: record.reviewing_judge.css_id,

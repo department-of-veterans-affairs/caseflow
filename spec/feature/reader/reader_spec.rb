@@ -94,6 +94,7 @@ RSpec.feature "Reader" do
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
     Capybara.default_max_wait_time = 5
+    Time.zone = "America/New_York"
   end
 
   after do
@@ -218,8 +219,8 @@ RSpec.feature "Reader" do
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(
@@ -893,6 +894,7 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[1].type
+
         expect(page).to have_content("IN THE APPEAL", wait: 10)
 
         expect(page).to have_css(".page")
@@ -1509,6 +1511,53 @@ RSpec.feature "Reader" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
       expect(page).to have_content("Unable to load document")
+    end
+  end
+
+  # This test appears to mess with mocked data, so we run it last...
+  context "Document is updated" do
+    let(:series_id) { SecureRandom.uuid }
+    let(:document_ids_in_series) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:fetch_documents_responses) do
+      document_ids_in_series.map do |document_id|
+        {
+          documents: [Generators::Document.build(vbms_document_id: document_id, series_id: series_id)],
+          manifest_vbms_fetched_at: Time.now.utc,
+          manifest_vva_fetched_at: Time.now.utc
+        }
+      end
+    end
+    let(:appeal) do
+      Generators::Appeal.create
+    end
+
+    before do
+      FeatureToggle.enable!(:efolder_api_v2)
+      allow(VBMSService).to receive(:fetch_documents_for).with(appeal, anything).and_return(
+        fetch_documents_responses[0],
+        fetch_documents_responses[1]
+      )
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_api_v2)
+    end
+
+    it "should alert user" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+      expect(page).to have_content("Document Viewer")
+
+      add_comment("test comment")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+
+      expect(page).to have_content("This document has been updated")
+
+      click_on "Got It"
+      expect(page).to_not have_content("This document has been updated")
+      expect(page).to have_content("test comment")
     end
   end
 end
