@@ -3,22 +3,6 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
-  COLUMN_NAMES = {
-    program: :issprog,
-    issue: :isscode,
-    level_1: :isslev1,
-    level_2: :isslev2,
-    level_3: :isslev3,
-    note: :issdesc
-  }.freeze
-
-  COLUMN_NAMES_CREATE = COLUMN_NAMES.merge(
-    added_by: :issaduser,
-    vacols_id: :isskey,
-    vacols_sequence_id: :issseq
-  )
-  COLUMN_NAMES_UPDATE = COLUMN_NAMES.merge(updated_by: :issmduser)
-
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
   # :nocov:
@@ -111,7 +95,7 @@ class VACOLS::CaseIssue < VACOLS::Record
                           service: :vacols,
                           name: "CaseIssue.create_issue") do
       create!(issue_attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
-                          issseq: generate_sequence_id(issue_attrs[:isskey])))
+                                issseq: generate_sequence_id(issue_attrs[:isskey])))
     end
   end
 
