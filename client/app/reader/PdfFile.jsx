@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -7,7 +8,8 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIMENSION_SCALE, PAGE_MARGIN
+} from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
   setPageDimensions } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
@@ -20,8 +22,6 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
-
-const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -80,19 +80,18 @@ export class PdfFile extends React.PureComponent {
   }
 
   setPageDimensions = (pdfDocument) => {
-    let viewports = [];
+    const promises = _.range(0, pdfDocument.pdfInfo.numPages).map((index) => {
+      return pdfDocument.getPage(pageNumberOfPageIndex(index));
+    });
 
-    _.range(0, pdfDocument.pdfInfo.numPages).forEach((index) => {
-      pdfDocument.getPage(index + 1).then((page) => {
-        viewports[index] = _.pick(page.getViewport(1), ['width', 'height']);
-
-        if (viewports.length === pdfDocument.pdfInfo.numPages) {
-          this.props.setPageDimensions(this.props.file, viewports);
-        }
-      },
-      () => {
-        // Eventually we should send a sentry error? Or metrics?
+    Promise.all(promises).then((pages) => {
+      const viewports = pages.map((page) => {
+        return _.pick(page.getViewport(PAGE_DIMENSION_SCALE), ['width', 'height']);
       });
+
+      this.props.setPageDimensions(this.props.file, viewports);
+    }, () => {
+      // Eventually we should send a sentry error? Or metrics?
     });
   }
 

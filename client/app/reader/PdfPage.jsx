@@ -10,7 +10,8 @@ import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN
+} from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist';
 import { collectHistogram } from '../util/Metrics';
@@ -18,14 +19,6 @@ import { collectHistogram } from '../util/Metrics';
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
-
-// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
-// We need it defined here to be able to expand/contract margin between pages
-// as we zoom.
-const PAGE_MARGIN_BOTTOM = 25;
-
-// Base scale used to calculate dimensions and draw text.
-const PAGE_DIMENSION_SCALE = 1;
 
 const markStyle = css({
   '& mark': {
@@ -80,7 +73,7 @@ export class PdfPage extends React.PureComponent {
       if (scrollToMark) {
         // Mark parent elements are absolutely-positioned divs. Account for search bar and margin height.
         this.props.setDocScrollPosition(
-          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10) - PAGE_MARGIN_BOTTOM
+          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10) - PAGE_MARGIN
         );
       }
     } else {
@@ -277,7 +270,7 @@ export class PdfPage extends React.PureComponent {
     // between the current width and current height. We need to undo that translation to get things to align.
     const translateX = Math.sin((this.props.rotation / 180) * Math.PI) * (outerDivHeight - outerDivWidth) / 2;
     const divPageStyle = {
-      marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
+      marginBottom: `${PAGE_MARGIN * this.props.scale}px`,
       width: `${outerDivWidth}px`,
       height: `${outerDivHeight}px`,
       verticalAlign: 'top',
