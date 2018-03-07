@@ -106,14 +106,12 @@ class VACOLS::CaseIssue < VACOLS::Record
   end
   # rubocop:enable MethodLength
 
-  def self.create_issue!(issue_hash)
-    attrs = issue_hash.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES_CREATE[k]] = v }
-
-    MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_hash[:vacols_id]}",
+  def self.create_issue!(issue_attrs)
+    MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_attrs[:isskey]}",
                           service: :vacols,
                           name: "CaseIssue.create_issue") do
-      create!(attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
-                          issseq: generate_sequence_id(issue_hash[:vacols_id])))
+      create!(issue_attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
+                          issseq: generate_sequence_id(issue_attrs[:isskey])))
     end
   end
 
@@ -122,13 +120,11 @@ class VACOLS::CaseIssue < VACOLS::Record
     descriptions(vacols_id)[vacols_id].count + 1
   end
 
-  def update_issue!(issue_hash)
-    attrs = issue_hash.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES_UPDATE[k]] = v }
-
+  def update_issue!(issue_attrs)
     MetricsService.record("VACOLS: CaseIssue.update_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
                           service: :vacols,
                           name: "CaseIssue.update_issue") do
-      update!(attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
+      update!(issue_attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
   # :nocov:

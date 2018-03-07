@@ -33,7 +33,9 @@ class Fakes::IssueRepository
       Fakes::AppealRepository.issue_records ||= {}
       Fakes::AppealRepository.issue_records[vacols_id] ||= []
 
-      record = Fakes::AppealRepository.issue_records[vacols_id].find { |i| i.vacols_sequence_id == vacols_sequence_id.to_i }
+      record = Fakes::AppealRepository.issue_records[vacols_id]
+        .find { |i| i.vacols_sequence_id == vacols_sequence_id.to_i }
+
       unless record
         msg = "Cannot find issue with vacols ID: #{vacols_id} and sequence ID: #{vacols_sequence_id} in VACOLS"
         fail IssueRepository::IssueError, msg

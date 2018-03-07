@@ -219,25 +219,20 @@ class Issue
       )
     end
 
-    def create!(css_id:, issue_hash:)
-      repository.create_vacols_issue(css_id: css_id, issue_hash: issue_hash.deep_symbolize_keys)
-    rescue ActiveRecord::RecordInvalid, IssueRepository::IssueError => e
-      Rails.logger.warn(e)
-      Raven.capture_exception(e)
-      nil
+    def create_in_vacols!(css_id:, issue_attrs:)
+      repository.create_vacols_issue!(
+        css_id: css_id,
+        issue_attrs: issue_attrs
+      )
     end
 
-    def update!(css_id:, vacols_id:, vacols_sequence_id:, issue_hash:)
-      repository.update_vacols_issue(
+    def update_in_vacols!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
+      repository.update_vacols_issue!(
         css_id: css_id,
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
-        issue_hash: issue_hash.deep_symbolize_keys
+        issue_attrs: issue_attrs
       )
-    rescue ActiveRecord::RecordInvalid, IssueRepository::IssueError => e
-      Rails.logger.warn(e)
-      Raven.capture_exception(e)
-      nil
     end
 
     private

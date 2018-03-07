@@ -1,44 +1,28 @@
 class IssueRepository
   class IssueError < StandardError; end
+
   # :nocov:
-  # issue_hash = {
-  #   vacols_id: "1234567",
-  #   program: { description: "test", code: "01" },
-  #   issue: { description: "test", code: "01" },
-  #   level_1: { description: "test", code: "01" },
-  #   level_2: { description: "test", code: "07" },
-  #   level_3: { description: "test", code: "6789" },
-  #   note: "something"
-  # }
-  def self.create_vacols_issue(css_id:, issue_hash:)
-    issue_hash = IssueMapper.transform_and_validate(issue_hash)
+  def self.create_vacols_issue!(css_id:, issue_attrs:)
+    issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(issue_attrs)
     staff = find_staff_record(css_id)
 
-    record = VACOLS::CaseIssue.create_issue!(issue_hash.merge(added_by: staff.slogid))
-    fail IssueError, "Issue could not be created in VACOLS: #{issue_hash[:vacols_id]}" unless record
+    record = VACOLS::CaseIssue.create_issue!(issue_attrs.merge(issaduser: staff.slogid))
 
     Issue.load_from_vacols(record.attributes)
   end
 
-  # issue_hash = {
-  #   program: { description: "test", code: "01" },
-  #   issue: { description: "test", code: "01" },
-  #   level_1: { description: "test", code: "01" },
-  #   level_2: { description: "test", code: "07" },
-  #   level_3: { description: "test", code: "6789" },
-  #   note: "something"
-  # }
-  def self.update_vacols_issue(css_id:, vacols_id:, vacols_sequence_id:, issue_hash:)
+  def self.update_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
     record = VACOLS::CaseIssue.find_by(isskey: vacols_id, issseq: vacols_sequence_id)
 
     unless record
       fail IssueError, "Cannot find issue with vacols ID: #{vacols_id} and sequence ID: #{vacols_sequence_id} in VACOLS"
     end
 
-    issue_hash = IssueMapper.transform_and_validate(issue_hash)
+    issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(issue_attrs)
     staff = find_staff_record(css_id)
 
-    record.update_issue!(issue_hash.merge(updated_by: staff.slogid))
+    record.update_issue!(issue_attrs.merge(issmduser: staff.slogid))
+
     Issue.load_from_vacols(record.attributes)
   end
 

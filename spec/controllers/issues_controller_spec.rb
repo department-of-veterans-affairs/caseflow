@@ -59,7 +59,7 @@ RSpec.describe IssuesController, type: :controller do
           program: { description: "test1", code: "01" },
           issue: { description: "test2", code: "02" },
           level_1: { description: "test3", code: "03" },
-          level_2: { description: "test4", code: "04" },
+          level_2: { description: "test4", code: "04" }
         }
       end
 
