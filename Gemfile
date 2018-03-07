@@ -120,6 +120,7 @@ group :development, :test do
   gem "bundler-audit"
 
   # Testing tools
+  gem "childprocess", git: "https://github.com/lowellrex/childprocess.git"
   gem "faker"
   gem "rspec"
   gem "rspec-rails"
