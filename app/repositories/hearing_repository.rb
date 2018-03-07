@@ -27,7 +27,7 @@ class HearingRepository
       hearings.map do |hearing|
         next if hearing.master_record
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        hearing_worksheet_issues = worksheet_issues_appeal_hash[hearing.appeal_id]
+        hearing_worksheet_issues = worksheet_issues_appeal_hash[hearing.appeal_id] || []
         next unless hearing_worksheet_issues.empty?
         issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
       end
@@ -73,7 +73,7 @@ class HearingRepository
 
       dockets.map do |date, docket|
         record = hashed_records[docket.regional_office_key]
-        [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if staff && record)]
+        [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
       end.to_h
     end
 
