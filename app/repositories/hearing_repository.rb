@@ -2,7 +2,6 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
-      css_id = "BVAPSORISIO"
       records = MetricsService.record("VACOLS: HearingRepository.upcoming_hearings_for_judge: #{css_id}",
                                       service: :vacols,
                                       name: "upcoming_hearings_for_judge") do
