@@ -59,39 +59,23 @@ class QueueApp extends React.PureComponent {
   routedSubmitDecision = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const goToPrevStep = () => {
-      props.history.push(`/tasks/${vacolsId}`);
-      window.scrollTo(0, 0);
-    };
-    const goToNextStep = () => {
-      props.history.push('/');
-      window.scrollTo(0, 0);
-    };
 
     return <SubmitDecisionView
       vacolsId={vacolsId}
       vbmsId={appeal.vbms_id}
-      goToNextStep={goToNextStep}
-      goToPrevStep={goToPrevStep} />;
+      prevStep="/"
+      nextStep={`/tasks/${vacolsId}`} />;
   };
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
     const appeal = this.props.appeals[vacolsId].attributes;
-    const goToPrevStep = () => {
-      props.history.push(`/tasks/${vacolsId}`);
-      window.scrollTo(0, 0);
-    };
-    const goToNextStep = () => {
-      props.history.push(`/tasks/${vacolsId}/submit`);
-      window.scrollTo(0, 0);
-    };
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
       vbmsId={appeal.vbms_id}
-      goToNextStep={goToNextStep}
-      goToPrevStep={goToPrevStep} />;
+      prevStep={`/tasks/${vacolsId}`}
+      nextStep={`/tasks/${vacolsId}/submit`} />;
   };
 
   render = () => <BrowserRouter basename="/queue">

@@ -2,6 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 
 import {
   pushBreadcrumb,
@@ -54,15 +55,20 @@ export default function decisionViewBase(ComponentToWrap) {
       return [backButton, nextButton];
     };
 
+    goToStep = (url) => {
+      this.props.history.push(url);
+      window.scrollTo(0, 0);
+    }
+
     goToPrevStep = () => {
       const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
 
       if (!prevStepHook) {
-        return this.props.goToPrevStep();
+        return this.goToStep(this.props.prevStep);
       }
 
       if (prevStepHook()) {
-        this.props.goToPrevStep();
+        return this.goToStep(this.props.prevStep);
       }
     };
 
@@ -70,7 +76,7 @@ export default function decisionViewBase(ComponentToWrap) {
       const validation = this.wrapped && this.wrapped.validateForm;
 
       if (validation && validation()) {
-        this.props.goToNextStep();
+        this.goToStep(this.props.nextStep);
       } else {
         this.props.highlightInvalidFormItems(true);
       }
@@ -93,5 +99,5 @@ export default function decisionViewBase(ComponentToWrap) {
     highlightInvalidFormItems
   }, dispatch);
 
-  return connect(mapStateToProps, mapDispatchToProps)(WrappedComponent);
+  return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));
 }
