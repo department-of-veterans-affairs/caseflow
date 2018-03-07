@@ -6,6 +6,15 @@ class Helpers::Sanitizers
     nil
   end
 
+  def self.white_list(record, array_of_fields)
+    hash_to_nil_fields = (record.attribute_names - array_of_fields).reduce({}) do |acc, field|
+      acc[field] = nil
+      acc
+    end
+
+    record.assign_attributes(hash_to_nil_fields)
+  end
+
   def self.sanitize_staff(staff)
     ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(staff.slogid).to_i(16))
 
@@ -126,15 +135,11 @@ class Helpers::Sanitizers
     end
 
     vacols_case.notes.map do |note|
+      white_list(%w[tasknum tsktknm tskstfas tskactcd tskclass tskrqact tskrspn tskdassn tskdtc tskddue tskdcls
+                    tskstown tskstat tskownts tskclstm tskadusr tskadtm tskmdusr tskmdtm tsactive tsspare1])
       note.assign_attributes(
         tskrqact: ::Faker::Lorem.sentence,
-        tskrspn: random_or_nil(::Faker::Lorem.sentence),
-        tsspare2: nil,
-        tsspare3: nil,
-        tsread1: nil,
-        tsread: nil,
-        tskorder: nil,
-        tssys: nil
+        tskrspn: random_or_nil(::Faker::Lorem.sentence)
       )
     end
 
