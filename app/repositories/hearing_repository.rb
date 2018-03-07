@@ -2,6 +2,7 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
+      css_id = "BVAPSORISIO"
       records = MetricsService.record("VACOLS: HearingRepository.upcoming_hearings_for_judge: #{css_id}",
                                       service: :vacols,
                                       name: "upcoming_hearings_for_judge") do
@@ -20,19 +21,12 @@ class HearingRepository
       issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
 
       appeal_ids = children_hearings.map(&:appeal_id)
-      worksheet_issues = WorksheetIssue.where(appeal: appeal_ids)
+      worksheet_issues_for_appeals_hash = worksheet_issues_for_appeals(appeal_ids)
       
-      # mapping all issues to an appeal_id in a hash
-      worksheet_issues_appeal_hash = worksheet_issues.reduce({}) do |hash, issue|
-        hash[issue.appeal_id] ||= []
-        hash[issue.appeal_id] << issue
-        hash
-      end
-
       hearings.map do |hearing|
         next if hearing.master_record
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        hearing_worksheet_issues = worksheet_issues_appeal_hash[hearing.appeal_id]
+        hearing_worksheet_issues = worksheet_issues_for_appeals_hash[hearing.appeal_id]
         next unless hearing_worksheet_issues.empty?
         issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
       end
@@ -71,7 +65,7 @@ class HearingRepository
     end
 
     def fetch_dockets_slots(dockets)
-      #fetching all the RO keys of the dockets
+      # fetching all the RO keys of the dockets
       regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
 
       # fetching data of all dockets staff based on the regional office keys
@@ -125,6 +119,14 @@ class HearingRepository
     end
 
     private
+    
+    def worksheet_issues_for_appeals(appeal_ids)
+      WorksheetIssue.issues_for_appeals(appeal_ids)
+        .each_with_object({}) do |issue, hash|
+        hash[issue.appeal_id] ||= []
+        hash[issue.appeal_id] << issue
+      end
+    end
 
     def master_record?(record)
       record.master_record_type.present?
