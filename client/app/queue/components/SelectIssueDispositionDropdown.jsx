@@ -27,7 +27,6 @@ const dropdownStyling = (highlight, issueDisposition) => {
     return css({
       borderLeft: `4px solid ${COLORS.ERROR}`,
       paddingLeft: '1rem',
-      width: '45rem',
       minHeight: '8rem'
     });
   }
