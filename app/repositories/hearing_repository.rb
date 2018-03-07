@@ -22,13 +22,19 @@ class HearingRepository
 
       appeal_ids = children_hearings.map(&:appeal_id)
       worksheet_issues = WorksheetIssue.where(appeal: appeal_ids)
-      worksheet_issues_appeal_hash = worksheet_issues.map { |issue| Hash[issue.appeal_id, issue] }
+      
+      # mapping all issues to an appeal_id in a hash
+      worksheet_issues_appeal_hash = worksheet_issues.reduce({}) do |hash, issue|
+        hash[issue.appeal_id] ||= []
+        hash[issue.appeal_id] << issue
+        hash
+      end
 
       hearings.map do |hearing|
         next if hearing.master_record
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
         hearing_worksheet_issues = worksheet_issues_appeal_hash[hearing.appeal_id]
-        next unless hearing_worksheet_issues
+        next unless hearing_worksheet_issues.empty?
         issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
       end
     end
@@ -66,13 +72,17 @@ class HearingRepository
     end
 
     def fetch_dockets_slots(dockets)
+      #fetching all the RO keys of the dockets
       regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
-      records = VACOLS::Staff.where(stafkey: regional_office_keys)
 
-      hashed_records = records.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
+      # fetching data of all dockets staff based on the regional office keys
+      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
+      ro_staff_hash = ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
 
+      # returns a hash of docket date (string) as key and number of slots for the docket
+      # as they key
       dockets.map do |date, docket|
-        record = hashed_records[docket.regional_office_key]
+        record = ro_staff_hash[docket.regional_office_key]
         [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
       end.to_h
     end
