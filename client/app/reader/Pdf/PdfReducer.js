@@ -20,6 +20,14 @@ export const pdfReducer = (state = initialState, action = {}) => {
       scrollToComment: { $set: action.payload.scrollToComment }
     });
   case Constants.SET_UP_PAGE_DIMENSIONS:
+  {
+    // const width = _.get(state.pageDimensions, [`${action.payload.file}-${action.payload.pageIndex}`, 'width']);
+    // const height = _.get(state.pageDimensions, [`${action.payload.file}-${action.payload.pageIndex}`, 'height']);
+
+    // if (width === action.payload.dimensions.width && height === action.payload.dimensions.height) {
+    //   return state;
+    // }
+
     return update(
       state,
       {
@@ -34,6 +42,7 @@ export const pdfReducer = (state = initialState, action = {}) => {
         }
       }
     );
+  }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,

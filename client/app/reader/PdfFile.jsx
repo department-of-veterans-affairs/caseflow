@@ -13,7 +13,7 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+// import { PDFJS } from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
@@ -21,6 +21,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
+var pdfjsLib = require('pdfjs-dist');
 const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
@@ -41,6 +42,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    debugger;
     PDFJS.workerSrc = this.props.pdfWorker;
 
     let requestOptions = {

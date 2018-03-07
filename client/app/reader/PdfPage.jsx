@@ -12,7 +12,7 @@ import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } fro
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { PDFJS } from 'pdfjs-dist';
 import { addPageToRenderQueue, changePriority, removePageFromRenderQueue } from './PdfRenderingQueue';
 import { collectHistogram } from '../util/Metrics';
 
