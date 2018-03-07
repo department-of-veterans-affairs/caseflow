@@ -90,7 +90,9 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
-Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
+# Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
+Capybara.default_driver = :sniffybara_headless
+
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 20
 
