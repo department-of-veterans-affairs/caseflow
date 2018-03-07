@@ -1,7 +1,7 @@
 class IssuesController < ApplicationController
   before_action :verify_queue_phase_two
 
-  EXCEPTIONS = [ActiveRecord::RecordInvalid, IssueRepository::IssueError]
+  EXCEPTIONS = [ActiveRecord::RecordInvalid, IssueRepository::IssueError].freeze
 
   rescue_from *EXCEPTIONS do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
