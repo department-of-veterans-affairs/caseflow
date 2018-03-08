@@ -5,7 +5,6 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions } from '../reader/Pdf/PdfActions';
 import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
@@ -332,7 +331,6 @@ PdfPage.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setPageDimensions,
     setDocScrollPosition,
     setSearchIndexToHighlight
   }, dispatch)
