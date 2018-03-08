@@ -88,7 +88,7 @@ export default class IssueList extends React.PureComponent {
             {idxToDisplay || (idx + 1)}.
           </td>
           <td>
-            <div{...issueMarginTop}><span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}</div>
+            <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
             <div{...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.issueLevels(issue)}</div>
             <div{...issueMarginTop}><span {...boldText}>Note:</span> {issue.note}</div>
           </td>
