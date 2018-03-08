@@ -379,6 +379,11 @@ class RegionalOffice
       city: "San Diego", state: "CA",
       timezone: "America/Los_Angeles"
     },
+    "RO78" => {
+      label: "Legacy RO (RO78)",
+      city: "Unknown", state: "??",
+      timezone: "America/New_York"
+    },
     "RO79" => { city: "St. Paul Regional Loan Center", state: "MN", timezone: "America/Chicago" },
     "RO80" => { city: "Philadelphia Insurance Center", state: "PA", timezone: "America/New_York" },
     "RO81" => { city: "Philadelphia Pension Center", state: "PA", timezone: "America/New_York" },

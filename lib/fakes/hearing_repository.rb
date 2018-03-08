@@ -42,6 +42,10 @@ class Fakes::HearingRepository
 
   def self.number_of_slots(*); end
 
+  def self.fetch_dockets_slots(*)
+    {}
+  end
+
   def self.appeals_ready_for_hearing(vbms_id)
     Fakes::AppealRepository.appeals_ready_for_hearing(vbms_id)
   end

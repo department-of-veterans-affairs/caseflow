@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180221163923) do
+ActiveRecord::Schema.define(version: 20180306144550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 20180221163923) do
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
     t.integer "appeal_series_id"
+    t.boolean "issues_pulled"
   end
 
   add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
@@ -206,7 +207,7 @@ ActiveRecord::Schema.define(version: 20180221163923) do
   add_index "document_views", ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string  "vbms_document_id",    null: false
+    t.string  "vbms_document_id",             null: false
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
@@ -215,10 +216,11 @@ ActiveRecord::Schema.define(version: 20180221163923) do
     t.string  "file_number"
     t.string  "description"
     t.string  "series_id"
+    t.integer "previous_document_version_id"
   end
 
   add_index "documents", ["file_number"], name: "index_documents_on_file_number", using: :btree
-  add_index "documents", ["series_id"], name: "index_documents_on_series_id", unique: true, using: :btree
+  add_index "documents", ["series_id"], name: "index_documents_on_series_id", using: :btree
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
   create_table "documents_tags", force: :cascade do |t|

@@ -3,9 +3,11 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
+  validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
+
   # :nocov:
   def remand_clone_attributes
-    attributes.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
+    slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
   end
 
   # rubocop:disable MethodLength
@@ -87,5 +89,27 @@ class VACOLS::CaseIssue < VACOLS::Record
     end
   end
   # rubocop:enable MethodLength
+
+  def self.create_issue!(issue_attrs)
+    MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_attrs[:isskey]}",
+                          service: :vacols,
+                          name: "CaseIssue.create_issue") do
+      create!(issue_attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
+                                issseq: generate_sequence_id(issue_attrs[:isskey])))
+    end
+  end
+
+  def self.generate_sequence_id(vacols_id)
+    return unless vacols_id
+    descriptions(vacols_id)[vacols_id].count + 1
+  end
+
+  def update_issue!(issue_attrs)
+    MetricsService.record("VACOLS: CaseIssue.update_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
+                          service: :vacols,
+                          name: "CaseIssue.update_issue") do
+      update!(issue_attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
+    end
+  end
   # :nocov:
 end

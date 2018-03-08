@@ -59,13 +59,13 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 ### OSX
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
-2) Unzip both packages into `/opt/oracle/instantclient_11_2`
+2) Unzip both packages into `/opt/oracle/instantclient_12_2`
 
 3) Setup both packages according to the Oracle documentation:
 ```
 export OCI_DIR=/opt/oracle/instantclient_12_1
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
+cd /opt/oracle/instantclient_12_2
+sudo ln -s libclntsh.dylib.12.1 libclntsh.dylib
 ```
 
 If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
