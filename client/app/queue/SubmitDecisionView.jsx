@@ -167,7 +167,7 @@ class SubmitDecisionView extends React.PureComponent {
         name="overtime"
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime}
+        value={decisionOpts.overtime || false}
         styling={css(smallBottomMargin, checkboxStyling)}
       />
       <TextField
