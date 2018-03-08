@@ -21,7 +21,7 @@ class HearingRepository
 
       appeal_ids = children_hearings.map(&:appeal_id)
       worksheet_issues_for_appeals_hash = worksheet_issues_for_appeals(appeal_ids)
-      
+
       hearings.map do |hearing|
         next if hearing.master_record
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
@@ -118,7 +118,7 @@ class HearingRepository
     end
 
     private
-    
+
     def worksheet_issues_for_appeals(appeal_ids)
       WorksheetIssue.issues_for_appeals(appeal_ids)
         .each_with_object({}) do |issue, hash|
