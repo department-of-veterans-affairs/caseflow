@@ -27,14 +27,13 @@ jobs:
           name: Setup prereqs
           command: ci-bin/setup-circleci-prereqs
 
-      - run:
-          name: Which bundler?
-          command: bundle -v
+      - restore_cache:
+          name: Restore bundler cache
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
 
       - restore_cache:
-          keys:
-            - vendor-bundle-{{ checksum "Gemfile.lock" }}
-            - dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          name: Restore yarn cache
+          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: bundle install
