@@ -56,4 +56,8 @@ jobs:
       - run:
           name: Tests
           command: |
-            bundle exec rspec
+            mkdir -p ~/test-results/rspec
+            bundle exec rspec --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml
+
+      - store_test_results:
+          path: ~/test-results
