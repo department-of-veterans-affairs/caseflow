@@ -96,19 +96,19 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 ## Start up local VACOLS container
 To set up our local copy of VACOLS, run
 ```
-rake local:setup
+rake local:vacols:setup
 ```
 To start the container after it's been setup, run
 ```
-rake local:start
+rake local:vacols:start
 ```
 To stop the container, run
 ```
-rake local:stop
+rake local:vacols:stop
 ```
 To view the logs, run
 ```
-rake local:logs
+rake local:vacols:logs
 ```
 
 ## Seeding the local VACOLS container
