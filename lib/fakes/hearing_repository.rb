@@ -90,15 +90,6 @@ class Fakes::HearingRepository
     )
   end
 
-  def self.generate_past_hearings(number_of_hearings, user)
-    number_of_hearings.times.each do |i|
-      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user,
-                                                                 date: 365.days.ago.beginning_of_day +
-      ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes))
-      create_appeal_stream(hearing, i) if i % 5 == 0
-    end
-  end
-
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
@@ -127,5 +118,16 @@ class Fakes::HearingRepository
       notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
       regional_office_key: %w[RO11 RO10 RO42 RO43 RO28 RO44][i % 6]
     }
+  end
+
+  private
+  
+  def self.generate_past_hearings(number_of_hearings, user)
+    number_of_hearings.times.each do |i|
+      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user,
+                                                                 date: 365.days.ago.beginning_of_day +
+      ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes))
+      create_appeal_stream(hearing, i) if i % 5 == 0
+    end
   end
 end
