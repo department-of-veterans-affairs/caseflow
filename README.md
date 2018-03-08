@@ -96,19 +96,19 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 ## Start up local VACOLS container
 To set up our local copy of VACOLS, run
 ```
-rake local_vacols:setup
+rake local:setup
 ```
 To start the container after it's been setup, run
 ```
-rake local_vacols:start
+rake local:start
 ```
 To stop the container, run
 ```
-rake local_vacols:stop
+rake local:stop
 ```
 To view the logs, run
 ```
-rake local_vacols:logs
+rake local:logs
 ```
 
 ## Seeding the local VACOLS container
@@ -121,9 +121,9 @@ export VACOLS_PASSWORD=<pw_from_credstash (vacols.uat.db_password)>
 export VACOLS_USERNAME=<pw_from_credstash (vacols.uat.db_username)>
 ```
 3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
-4) `RAILS_ENV=ssh_forwarding rake local_vacols:dump_data` to dump the data to CSV files
-5) `RAILS_ENV=local_vacols rake local_vacols:seed` to load the data from the CSV files into your local VACOLS
-6) `rails s -e local_vacols` to start the server connected to local VACOLS or `rails c -e local_vacols` to start the rails console connected to local VACOLS.
+4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
+5) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+6) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
 
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:

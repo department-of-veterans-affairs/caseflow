@@ -1,11 +1,19 @@
 require "faker"
 
+# In order to add a new table to this sanitization list, you'll need to add two methods.
+# If the new table's class name is VACOLS::KlassName, you'll need a method called white_list_klassname
+# that returns a string array with all of the attributes in that class to allow into our local data.
+# You'll also need a method called sanitize_klassname which assigns_attributes to any fields you want
+# to fake out. The first line of this method should use a key from the table to seed the Faker randomization
+# so that our randomizations are deterministic for a given row.
 class Helpers::Sanitizers
+  # Utility method to randomly either write a value, or nil
   def self.random_or_nil(value)
     return value if ::Faker::Number.number(1).to_i < 5
     nil
   end
 
+  # Utility method to nil out values that are not white listed
   def self.white_list(record, array_of_fields)
     hash_to_nil_fields = (record.attribute_names - array_of_fields).reduce({}) do |acc, field|
       acc[field] = nil
@@ -15,11 +23,35 @@ class Helpers::Sanitizers
     record.assign_attributes(hash_to_nil_fields)
   end
 
+  # Entry method that calls the given klass' white_list and sanitize methods
+  def self.sanitize(klass, record)
+    table_name = klass.name.split("::")[1].downcase
+
+    white_list(record, send("white_list_#{table_name}"))
+    send("sanitize_#{table_name}", record)
+  end
+
+  # Staff table
+  def self.white_list_staff
+    %w[stafkey susrsec susrtyp ssalut snamef snamemi snamel slogid stitle sorg sdept saddrst1
+       saddrst2 saddrcty saddrstt saddrcnty saddrzip stelw stelwex stelfax stelh staduser stadtime
+       stmduser stmdtime stc1 stc2 stc3 stc4 snotes sorc1 sorc2 sorc3 sorc4 sactive ssys smemgrp
+       sfoiasec srptsec sattyid svlj]
+  end
+
   def self.sanitize_staff(staff)
     ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(staff.slogid).to_i(16))
 
+    case staff[:stafkey]
+    when "ZZHU"
+      sdomainid = "READER"
+    when "PSORISIO"
+      sdomainid = "HEARING PREP"
+    else
+      sdomainid = "FAKELOGIN" + staff.slogid
+    end
+
     staff.assign_attributes(
-      saddrnum: nil,
       saddrst1: ::Faker::Address.street_address,
       saddrst2: random_or_nil(::Faker::Address.secondary_address),
       saddrcty: ::Faker::Address.city,
@@ -31,11 +63,14 @@ class Helpers::Sanitizers
       stelwex: random_or_nil(::Faker::PhoneNumber.phone_number),
       stelh: random_or_nil(::Faker::PhoneNumber.phone_number),
       snotes: random_or_nil(::Faker::Lorem.sentence),
-      sspare1: nil,
-      sspare2: nil,
-      sspare3: nil,
-      sdomainid: "FAKELOGIN" + staff.slogid
+      sdomainid: sdomainid
     )
+  end
+
+  # Travel Board
+  def self.white_list_travel_board
+    %w[tbyear tbtrip tbleg tbro tbstdate tbenddate tbmem1 tbmem2 tbmem3 tbmem4 tbaty1 tbaty2
+       tbaty3 tbaty4 tbadduser tbaddtime tbmoduser tbmodtime tbcancel tbbvapoc tbropoc]
   end
 
   def self.sanitize_travel_board(travel_board)
@@ -47,25 +82,86 @@ class Helpers::Sanitizers
     )
   end
 
-  def self.sanitize_case(vacols_case)
-    ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
+  # Issref
+  def self.white_list_issref
+    %w[prog_code prog_desc iss_code iss_desc lev1_code lev1_desc lev2_code lev2_desc lev3_code lev3_desc]
+  end
 
-    vacols_case.assign_attributes(
-      bfcorlid: ::Faker::Number.number(9) + "S",
-      bfcaseva: nil,
-      bfcasevb: nil,
-      bfcasevc: nil,
-      bfic: nil,
-      bfio: nil
+  def self.sanitize_issref(issref)
+    # Nothing to sanitize in this table
+  end
+
+  # Vftypes
+  def self.white_list_vftypes
+    %w[ftkey ftdesc ftadusr ftadtim ftmdusr ftmdtim ftactive fttype ftsys ftspare1 ftspare2 ftspare3]
+  end
+
+  def self.sanitize_vftypes(vftypes)
+    # Nothing to sanitize in this table
+  end
+
+  # Folder
+  def self.white_list_folder
+    %w[ticknum ticorkey tistkey tinum tifiloc titrnum tidrecv tiddue
+       tidcls tiwpptr tiaduser tiadtime timduser timdtime tiresp1 tikeywrd
+       tispare1 tispare2 tisubj1 tisubj tisubj2
+       tiagor tiasbt tigwui tihepc tiaids timgas tiptsd tiradb tiradn tisarc tisexh titoba tinosc
+       ti38us tinnme tinwgr tipres titrtm tinoot tioctime tiocuser tidktime tidkuser tipulac
+       ticerullo tiplnod tiplwaiver tiplexpress tisnl tivbms]
+  end
+
+  def self.sanitize_folder(folder)
+    ::Faker::Config.random = Random.new(folder.ticknum.to_i)
+
+    folder.assign_attributes(
+      titrnum: ::Faker::Number.number(9) + "S",
+      tinum: ::Faker::Number.number(7),
+      tiwpptr: random_or_nil(::Faker::Lorem.sentence)
     )
+  end
 
-    vacols_case.correspondent.assign_attributes(
+  # Representative
+  def self.white_list_representative
+    %w[repkey repaddtime reptype repso replast repfirst repmi repsuf repaddr1 repaddr2
+       repcity repst repzip repphone repnotes repmoduser repmodtime repdirpay repdfee
+       repfeerecv replastdoc repfeedisp repcorkey repacknw]
+  end
+
+  def self.sanitize_representative(representative)
+    ::Faker::Config.random = Random.new(representative.repkey.to_i)
+
+    representative.assign_attributes(
+      replast: ::Faker::Name.last_name,
+      repfirst: ::Faker::Name.first_name,
+      repmi: ::Faker::Name.initials(1),
+      repsuf: ::Faker::Name.suffix,
+      repaddr1: ::Faker::Address.street_address,
+      repaddr2: ::Faker::Address.secondary_address,
+      repcity: ::Faker::Address.city,
+      repst: ::Faker::Address.state_abbr,
+      repzip: ::Faker::Address.zip_code,
+      repphone: ::Faker::PhoneNumber.phone_number,
+      repnotes: random_or_nil(::Faker::Lorem.sentence)
+    )
+  end
+
+  # Vftypes
+  def self.white_list_correspondent
+    %w[stafkey susrtyp salutation snamef snamemi snamel slogid stitle sorg
+       sdept saddrst1 saddrst2 saddrcty saddrstt saddrcnty saddrzip stelw stelwex
+       stelfax stelh staduser stadtime stmduser stmdtime snotes
+       sactive sspare1 sspare2 sspare3 sspare4 ssn sfnod sdob sgender]
+  end
+
+  def self.sanitize_correspondent(correspondent)
+    ::Faker::Config.random = Random.new(correspondent.stafkey.to_i)
+
+    correspondent.assign_attributes(
       ssn: random_or_nil(::Faker::Number.number(9)),
       snamef: ::Faker::Name.first_name,
       snamemi: ::Faker::Name.initials(1),
       snamel: ::Faker::Name.last_name,
       stitle: ::Faker::Name.prefix,
-      saddrnum: nil,
       saddrst1: ::Faker::Address.street_address,
       saddrst2: random_or_nil(::Faker::Address.secondary_address),
       saddrcty: ::Faker::Address.city,
@@ -77,93 +173,98 @@ class Helpers::Sanitizers
       stelwex: random_or_nil(::Faker::PhoneNumber.phone_number),
       stelh: random_or_nil(::Faker::PhoneNumber.phone_number),
       snotes: random_or_nil(::Faker::Lorem.sentence),
-      sorc1: nil,
-      sorc2: nil,
-      sorc3: nil,
-      sorc4: nil,
-      sspare1: vacols_case.correspondent.sspare1 ? ::Faker::Name.last_name : nil,
-      sspare2: vacols_case.correspondent.sspare2 ? ::Faker::Name.first_name : nil,
-      sspare3: vacols_case.correspondent.sspare3 ? ::Faker::Name.initials(1) : nil,
-      sspare4: vacols_case.correspondent.sspare4 ? ::Faker::Name.suffix : nil,
-      sfnod: vacols_case.correspondent.sfnod ? ::Faker::Date.between(Date.new(1980), Date.new(2018)) : nil,
+      sspare1: correspondent.sspare1 ? ::Faker::Name.last_name : nil,
+      sspare2: correspondent.sspare2 ? ::Faker::Name.first_name : nil,
+      sspare3: correspondent.sspare3 ? ::Faker::Name.initials(1) : nil,
+      sspare4: correspondent.sspare4 ? ::Faker::Name.suffix : nil,
+      sfnod: correspondent.sfnod ? ::Faker::Date.between(Date.new(1980), Date.new(2018)) : nil,
       sdob: random_or_nil(::Faker::Date.between(Date.new(1960), Date.new(1990))),
-      sgender: (::Faker::Number.number(1).to_i < 5) ? "M" : "F",
-      susrpw: nil,
-      susrsec: nil,
-      stc1: nil,
-      stc2: nil,
-      stc3: nil,
-      stc4: nil,
-      ssys: nil
+      sgender: (::Faker::Number.number(1).to_i < 5) ? "M" : "F"
     )
+  end
 
-    representative = vacols_case.representative
-    if representative
-      representative.assign_attributes(
-        replast: ::Faker::Name.last_name,
-        repfirst: ::Faker::Name.first_name,
-        repmi: ::Faker::Name.initials(1),
-        repsuf: ::Faker::Name.suffix,
-        repaddr1: ::Faker::Address.street_address,
-        repaddr2: ::Faker::Address.secondary_address,
-        repcity: ::Faker::Address.city,
-        repst: ::Faker::Address.state_abbr,
-        repzip: ::Faker::Address.zip_code,
-        repphone: ::Faker::PhoneNumber.phone_number,
-        repnotes: random_or_nil(::Faker::Lorem.sentence)
-      )
-    end
+  # Issue
+  def self.white_list_caseissue
+    %w[isskey issseq issprog isscode isslev1 isslev2 isslev3 issdc issdcls issadtime issaduser issmdtime
+       issmduser issdesc isssel issgr issdev]
+  end
 
-    folder = vacols_case.folder
-    if folder
-      folder.assign_attributes(
-        titrnum: ::Faker::Number.number(9) + "S",
-        tinum: ::Faker::Number.number(7),
-        ticukey: nil,
-        tidsnt: nil,
-        tiaddrto: nil,
-        tispare3: nil,
-        tiread2: nil,
-        tiwpptr: random_or_nil(::Faker::Lorem.sentence),
-        tiwpptrt: nil,
-        ticlstme: nil,
-        tiactive: nil,
-        tiread1: nil,
-        timt: nil,
-        tisys: nil
-      )
-    end
+  def self.sanitize_caseissue(issue)
+    ::Faker::Config.random = Random.new(issue.isskey.to_i)
 
-    vacols_case.notes.map do |note|
-      white_list(%w[tasknum tsktknm tskstfas tskactcd tskclass tskrqact tskrspn tskdassn tskdtc tskddue tskdcls
-                    tskstown tskstat tskownts tskclstm tskadusr tskadtm tskmdusr tskmdtm tsactive tsspare1])
-      note.assign_attributes(
-        tskrqact: ::Faker::Lorem.sentence,
-        tskrspn: random_or_nil(::Faker::Lorem.sentence)
-      )
-    end
+    issue.assign_attributes(
+      issdesc: ::Faker::Lorem.sentence # do better Mark
+    )
+  end
 
-    vacols_case.case_issues.map do |note|
-      note.assign_attributes(
-        issdesc: ::Faker::Lorem.sentence # do better Mark
-      )
-    end
+  # Note
+  def self.white_list_note
+    %w[tasknum tsktknm tskstfas tskactcd tskclass tskrqact tskrspn tskdassn tskdtc tskddue tskdcls
+       tskstown tskstat tskownts tskclstm tskadusr tskadtm tskmdusr tskmdtm tsactive tsspare1]
+  end
 
-    vacols_case.case_hearings.map do |hearing|
-      hearing.assign_attributes(
-        repname: ::Faker::Name.name,
-        notes1: random_or_nil(::Faker::Lorem.sentence),
-        vdbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
-        vdropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
-      )
-    end
+  def self.sanitize_note(note)
+    ::Faker::Config.random = Random.new(note.tsktknm.to_i)
 
-    vacols_case.decass.map do |decass|
-      decass.assign_attributes(
-        debmcom: decass.debmcom ? ::Faker::Lorem.sentence : nil,
-        deatcom: decass.deatcom ? ::Faker::Lorem.sentence : nil,
-        dehours: decass.dehours ? ::Faker::Number.number(15) : nil
-      )
-    end
+    note.assign_attributes(
+      tskrqact: ::Faker::Lorem.sentence,
+      tskrspn: random_or_nil(::Faker::Lorem.sentence)
+    )
+  end
+
+  # CaseHearing
+  def self.white_list_casehearing
+    %w[hearing_pkseq hearing_type folder_nr hearing_date hearing_disp board_member notes1
+       team room rep_state mduser mdtime reqdate clsdate recmed consent conret
+       contapes tranreq transent wbtapes wbbackup wbsent recprob taskno adduser addtime
+       aod holdays vdkey repname vdbvapoc vdropoc canceldate]
+  end
+
+  def self.sanitize_casehearing(hearing)
+    ::Faker::Config.random = Random.new(hearing.hearing_pkseq)
+
+    hearing.assign_attributes(
+      repname: ::Faker::Name.name,
+      notes1: random_or_nil(::Faker::Lorem.sentence),
+      vdbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
+      vdropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
+    )
+  end
+
+  # Decass
+  def self.white_list_decass
+    %w[defolder deatty deteam depdiff defdiff deassign dereceive dehours deprod detrem dearem deoq
+       deadusr deadtim deprogrev deatcom debmcom demdusr demdtim delock dememid decomp dedeadline
+       deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 dedocid derecommend]
+  end
+
+  def self.sanitize_decass(decass)
+    ::Faker::Config.random = Random.new(decass.defolder.to_i)
+
+    decass.assign_attributes(
+      debmcom: decass.debmcom ? ::Faker::Lorem.sentence : nil,
+      deatcom: decass.deatcom ? ::Faker::Lorem.sentence : nil,
+      dehours: decass.dehours ? ::Faker::Number.number(1).to_d : nil
+    )
+  end
+
+  # Case
+  def self.white_list_case
+    %w[bfkey bfddec bfcorkey bfcorlid bfdcn bfdocind bfpdnum bfdpdcn bforgtic bfdorg bfdthurb bfdnod
+       bfdsoc bfd19 bf41stat bfmstat bfmpro bfdmcon bfregoff bfissnr bfrdmref bfcasev
+       bfboard bfbsasgn bfattid bfdasgn bfcclkid bfdqrsnt bfdlocin bfdloout
+       bfstasgn bfcurloc bfnrcopy bfmemid bfdmem bfnrci bfcallup bfcallyymm bfhines bfdcfld1
+       bfdcfld2 bfdcfld3 bfac bfdc bfha bfms bfoc bfsh bfso bfhr bfst bfdrodec bfssoc1
+       bfssoc2 bfssoc3 bfssoc4 bfssoc5 bfdtb bftbind bfdcue bfdvin bfdvout bfddro bfdroid bfddvwrk
+       bfddvdsp bfddvret bfdrortr bfro1 bflot bfbox bfdtbready bfarc bfdarcin bfdarcout bfarcdisp
+       bfsub bfrocdoc bfdrocket bfdcertool]
+  end
+
+  def self.sanitize_case(vacols_case)
+    ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
+
+    vacols_case.assign_attributes(
+      bfcorlid: ::Faker::Number.number(9) + "S"
+    )
   end
 end

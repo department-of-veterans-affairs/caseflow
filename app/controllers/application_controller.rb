@@ -206,7 +206,7 @@ class ApplicationController < ApplicationBaseController
         Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
-        Rails.env.local_vacols?
+        Rails.env.local?
     end
   end
 end

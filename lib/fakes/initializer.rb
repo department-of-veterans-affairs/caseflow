@@ -6,7 +6,7 @@ class Fakes::Initializer
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       Judge.repository = Fakes::JudgeRepository
       AttorneyCaseReview.repository = Fakes::QueueRepository
-      if rails_env && !rails_env.local_vacols?
+      if rails_env && !rails_env.local?
         User.appeal_repository = Fakes::AppealRepository
         WorkQueue.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
@@ -26,7 +26,7 @@ class Fakes::Initializer
         Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.development? || rails_env.demo? || rails_env.local_vacols?
+      if rails_env.development? || rails_env.demo? || rails_env.local?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
