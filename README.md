@@ -288,3 +288,4 @@ Rails.cache.write(:degraded_service_banner, :auto)
 ![BrowserStack logo](./browserstack-logo.png)
 
 Thanks to [BrowserStack](https://www.browserstack.com/) for providing free support to this open-source project.
+
