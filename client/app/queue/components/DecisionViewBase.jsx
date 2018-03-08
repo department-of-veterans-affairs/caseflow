@@ -38,7 +38,7 @@ export default function decisionViewBase(ComponentToWrap) {
       const getButtons = this.wrapped && this.wrapped.getFooterButtons;
 
       if (!getButtons) {
-        return [{}, {}];
+        return [];
       }
 
       const [backButton, nextButton] = getButtons();

@@ -84,10 +84,13 @@ export default class IssueList extends React.PureComponent {
     if (singleColumn) {
       return <React.Fragment>{appeal.issues.map((issue, idx) =>
         <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
-          <td {...leftAlignTd}>
-            {idxToDisplay || (idx + 1)}. Program: {this.formatIssueProgram(issue)}<br />
-            Issue: {issue.type} {this.issueLevels(issue)}<br />
-            Note: {issue.note}
+          <td {...leftAlignTd} width="10px">
+            {idxToDisplay || (idx + 1)}.
+          </td>
+          <td>
+            <div{...issueMarginTop}><span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}</div>
+            <div{...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.issueLevels(issue)}</div>
+            <div{...issueMarginTop}><span {...boldText}>Note:</span> {issue.note}</div>
           </td>
         </tr>)
       }</React.Fragment>;

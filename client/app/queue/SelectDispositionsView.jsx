@@ -26,7 +26,7 @@ const rowStyling = css({
     '> td': {
       verticalAlign: 'top',
       paddingTop: '2rem',
-      '&:nth-of-type(2n + 1)': {
+      '&:first-of-type': {
         width: '40%'
       }
     }

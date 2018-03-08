@@ -49,7 +49,6 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         placeholder="Select Dispositions"
         value={issue.disposition}
         hideLabel
-        searchable={false}
         errorMessage={(highlight && !issue.disposition) ? 'This field is required' : ''}
         options={issueDispositionOptions.map((opt) => ({
           label: `${opt[0]} - ${opt[1]}`,
