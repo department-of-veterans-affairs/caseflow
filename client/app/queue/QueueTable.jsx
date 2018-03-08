@@ -103,15 +103,16 @@ class QueueTable extends React.PureComponent {
   ];
 
   createLoadPromise = (task) => () => {
-    if (!_.isUndefined(this.props.appeals[task.vacolsId].attributes.docCount)) {
+    if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
       return Promise.resolve();
     }
 
     const url = this.getAppealForTask(task, 'number_of_documents_url');
+    const vbmsId = this.getAppealForTask(task, 'vbms_id');
     const requestOptions = {
       withCredentials: true,
       timeout: true,
-      headers: { 'FILE-NUMBER': task.vacolsId }
+      headers: { 'FILE-NUMBER': vbmsId }
     };
 
     return ApiUtil.get(url, requestOptions).

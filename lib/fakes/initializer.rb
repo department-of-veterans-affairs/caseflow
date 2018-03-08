@@ -12,6 +12,7 @@ class Fakes::Initializer
         Hearing.repository = Fakes::HearingRepository
         HearingDocket.repository = Fakes::HearingRepository
         Appeal.repository = Fakes::AppealRepository
+        Issue.repository = Fakes::IssueRepository
       end
     end
 

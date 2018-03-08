@@ -84,7 +84,6 @@ export class HearingWorksheet extends React.PureComponent {
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      veteranLawJudge={this.props.veteran_law_judge}
       appellant={appellant}
     />;
 
@@ -95,7 +94,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-      {this.props.print && worksheetHeader}
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
@@ -134,6 +132,10 @@ export class HearingWorksheet extends React.PureComponent {
       'cf-app-segment--alt': !this.props.print
     });
 
+    const printWrapperClassNames = classNames('cf-hearings-worksheet', {
+      'cf-app-segment--alt cf_hearing_body': this.props.print
+    });
+
     return <div>
       {!this.props.print &&
         <div>
@@ -149,19 +151,28 @@ export class HearingWorksheet extends React.PureComponent {
           />
         </div>
       }
+      {!this.props.print &&
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
         {secondWorksheetPage}
       </div>
+      }
+      {this.props.print &&
+    <div className={printWrapperClassNames}>
+      {firstWorksheetPage}
+      <PrintPageBreak />
+      {secondWorksheetPage}
+    </div>
+      }
       {!this.props.print &&
-      <div className="cf-push-right">
-        <Link
-          onClick={this.openPdf(worksheet, worksheetIssues)}
-          button="secondary">
+        <div className="cf-push-right">
+          <Link
+            onClick={this.openPdf(worksheet, worksheetIssues)}
+            button="secondary">
           Save as PDF
-        </Link>
-      </div>
+          </Link>
+        </div>
       }
     </div>;
   }

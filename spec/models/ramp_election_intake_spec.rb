@@ -8,6 +8,8 @@ describe RampElectionIntake do
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:appeal_vacols_record) { :ready_to_certify }
+  let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+  let(:issues) { [compensation_issue] }
 
   let(:intake) do
     RampElectionIntake.new(
@@ -21,7 +23,8 @@ describe RampElectionIntake do
     Generators::Appeal.build(
       vbms_id: "64205555C",
       vacols_record: appeal_vacols_record,
-      veteran: veteran
+      veteran: veteran,
+      issues: issues
     )
   end
 
@@ -218,6 +221,8 @@ describe RampElectionIntake do
       RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
     end
 
+    let(:education_issue) { Generators::Issue.build(template: :education) }
+
     context "the ramp election is complete" do
       let!(:complete_intake) do
         RampElectionIntake.create!(
@@ -237,9 +242,36 @@ describe RampElectionIntake do
     context "there are no active appeals" do
       let(:appeal_vacols_record) { :full_grant_decided }
 
-      it "adds no_eligible_appeals and returns false" do
+      it "adds no_active_appeals and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("no_active_appeals")
+      end
+    end
+
+    context "there are no active compensation appeals" do
+      let(:issues) { [education_issue] }
+
+      it "adds no_active_compensation_appeals and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("no_active_compensation_appeals")
+      end
+    end
+
+    context "there are no active fully compensation appeals" do
+      let(:issues) { [compensation_issue, education_issue] }
+
+      it "adds no_active_fully_compensation_appeals and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("no_active_fully_compensation_appeals")
+      end
+    end
+
+    context "there are active but not eligible appeals" do
+      let(:appeal_vacols_record) { :pending_hearing }
+
+      it "adds no_eligible_appeals and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("no_eligible_appeals")
       end
     end
 

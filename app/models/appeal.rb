@@ -130,7 +130,7 @@ class Appeal < ActiveRecord::Base
     if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
-      "/queue/#{id}/docs"
+      "/queue/docs_for_dev"
     end
   end
 
@@ -258,6 +258,18 @@ class Appeal < ActiveRecord::Base
 
   def eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def compensation_issues
+    issues.select { |issue| issue.program == :compensation }
+  end
+
+  def compensation?
+    !compensation_issues.empty?
+  end
+
+  def fully_compensation?
+    compensation_issues.count == issues.count
   end
 
   def ramp_election
