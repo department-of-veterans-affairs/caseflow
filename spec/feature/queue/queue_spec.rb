@@ -278,69 +278,41 @@ RSpec.feature "Queue" do
       end
     end
 
-    context "selects issue dispositions" do
-      scenario "loads select issue dispositions page" do
-        appeal = vacols_appeals.first
-        visit "/queue"
+    scenario "selects issue dispositions" do
+      appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+      visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
+      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      safe_click(".Select-control")
+      safe_click("div[id$='--option-0']")
 
-        expect(page).to have_content("Select Dispositions")
+      expect(page).to have_content("Select Dispositions")
 
-        table_rows = page.find_all("tr[id^='table-row-']")
-        expect(table_rows.length).to eq(appeal.issues.length)
+      table_rows = page.find_all("tr[id^='table-row-']")
+      expect(table_rows.length).to eq(appeal.issues.length)
+
+      # do not select all dispositions
+      table_rows[0..0].each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
       end
 
-      scenario "selects all issue dispositions" do
-        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
-        visit "/queue"
+      safe_click("#finish-dispositions")
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
-
-        expect(page).to have_content("Select Dispositions")
-
-        table_rows = page.find_all("tr[id^='table-row-']")
-        expect(table_rows.length).to eq(appeal.issues.length)
-
-        table_rows.each do |row|
-          row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
-        end
-
-        safe_click("#finish-dispositions")
-
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+      table_rows[1..-1].each do |row|
+        dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
+        expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
       end
 
-      scenario "does not select all issue dispositions" do
-        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
-        visit "/queue"
-
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
-
-        expect(page).to have_content("Select Dispositions")
-
-        table_rows = page.find_all("tr[id^='table-row-']")
-        expect(table_rows.length).to eq(appeal.issues.length)
-
-        table_rows[0..0].each do |row|
-          row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
-        end
-
-        safe_click("#finish-dispositions")
-
-        table_rows[1..-1].each do |row|
-          dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
-          expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
-        end
+      # select all dispositions
+      table_rows.each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
       end
+
+      safe_click("#finish-dispositions")
+
+      expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
     end
   end
 end
