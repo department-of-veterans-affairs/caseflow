@@ -27,7 +27,7 @@ import { findElementById } from '../../helpers';
 const vacolsId = 'reader_id1';
 
 const sleep = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 // This is the route history preset in react router
@@ -390,7 +390,7 @@ describe('DecisionReviewer', () => {
   // I think the approach below is reasonable.
   describe('without ApiUtil stubbing', () => {
     beforeEach(() => {
-      const store = getStore();
+      store = getStore();
 
       wrapper = getWrapper(store);
     });
