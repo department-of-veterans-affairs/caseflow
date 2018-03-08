@@ -28,6 +28,9 @@ const rowStyling = css({
       paddingTop: '2rem',
       '&:first-of-type': {
         width: '40%'
+      },
+      '&:nth-of-type(3)': {
+        width: '35%'
       }
     }
   }

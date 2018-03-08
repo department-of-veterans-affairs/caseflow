@@ -21,7 +21,10 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 
-import { fullWidth } from './constants';
+import {
+  fullWidth,
+  ERROR_FIELD_REQUIRED
+} from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -161,7 +164,7 @@ class SubmitDecisionView extends React.PureComponent {
         required
         options={omoTypes}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.omoType) ? 'This field is required' : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.omoType) ? ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
@@ -174,7 +177,7 @@ class SubmitDecisionView extends React.PureComponent {
         label="Document ID:"
         name="document_id"
         required
-        errorMessage={(highlightFormItems && !decisionOpts.documentId) ? 'This field is required' : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.documentId) ? ERROR_FIELD_REQUIRED : ''}
         onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
         value={decisionOpts.documentId}
       />

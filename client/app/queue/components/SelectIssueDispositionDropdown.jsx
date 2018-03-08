@@ -6,7 +6,10 @@ import { css } from 'glamor';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-import { COLORS } from '../constants';
+import {
+  COLORS,
+  ERROR_FIELD_REQUIRED
+} from '../constants';
 import StringUtil from '../../util/StringUtil';
 import { updateAppealIssue } from '../QueueActions';
 import Checkbox from '../../components/Checkbox';
@@ -49,7 +52,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         placeholder="Select Dispositions"
         value={issue.disposition}
         hideLabel
-        errorMessage={(highlight && !issue.disposition) ? 'This field is required' : ''}
+        errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
         options={issueDispositionOptions.map((opt) => ({
           label: `${opt[0]} - ${opt[1]}`,
           value: StringUtil.convertToCamelCase(opt[1])

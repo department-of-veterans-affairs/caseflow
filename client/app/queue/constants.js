@@ -41,3 +41,5 @@ export const TASK_ACTIONS = {
   VIEW_APPEAL_INFO: 'view-appeal-info',
   QUEUE_TO_READER: 'queue-to-reader'
 };
+
+export const ERROR_FIELD_REQUIRED = 'This field is required';
