@@ -116,7 +116,6 @@ export class Dockets extends React.Component {
     const upcomingRowObjects = this.getRowObjects(groupedHearings.upcoming);
     let pastRowObjects = this.getRowObjects(groupedHearings.past);
 
-    pastRowObjects = {};
     const tabs = [
       {
         label: 'Upcoming',
