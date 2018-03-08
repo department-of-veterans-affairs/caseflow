@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { PDFJS } from 'pdfjs-dist';
 
 const numPages = 3;
 
@@ -31,12 +31,12 @@ export default {
   beforeEach() {
     // We return a pdfInfo object that contains
     // a field numPages.
-    let getDocument = sinon.stub(PDFJS, 'getDocument');
+    this.getDocument = sinon.stub(PDFJS, 'getDocument');
 
-    getDocument.resolves(this.pdfDocument);
+    this.getDocument.resolves(this.pdfDocument);
   },
 
   afterEach() {
-    PDFJS.getDocument.restore();
+    this.getDocument.restore();
   }
 };
