@@ -72,14 +72,14 @@ class SelectDispositionsView extends React.PureComponent {
     }
 
     return true;
-  }
+  };
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
     const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
 
     return !issuesWithoutDisposition.length;
-  }
+  };
 
   getFooterButtons = () => [{
     displayText: `< Go back to draft decision ${this.props.vbmsId}`
@@ -91,11 +91,7 @@ class SelectDispositionsView extends React.PureComponent {
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList
-      appeal={{ issues: [issue] }}
-      singleIssue
-      singleColumn
-      idxToDisplay={idx + 1} />
+    valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
   }, {
     header: 'Actions',
     valueFunction: () => <Link>Edit Issue</Link>

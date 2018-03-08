@@ -22,7 +22,8 @@ const tableContainerStyling = (fluid) => css({
 });
 const issueLevelStyling = css({
   display: 'inline-block',
-  width: '100%'
+  width: '100%',
+  marginLeft: '4.5rem'
 });
 const leftAlignTd = css({
   paddingLeft: 0,
@@ -40,10 +41,6 @@ export default class IssueList extends React.PureComponent {
     </span>
   </div>);
 
-  issueTypeLabel = (issue) => <React.Fragment>
-    <span {...boldText}>Issue:</span> {issue.type}
-  </React.Fragment>;
-
   formatIssueProgram = (issue) => {
     const programWords = StringUtil.titleCase(issue.program).split(' ');
     const acronyms = ['vba', 'bva', 'vre', 'nca'];
@@ -57,10 +54,9 @@ export default class IssueList extends React.PureComponent {
     const {
       appeal,
       issuesOnly,
-      singleIssue,
       idxToDisplay,
-      singleColumn
     } = this.props;
+    const singleIssue = appeal.issues.length === 1;
 
     if (!appeal.issues.length) {
       return <tr>
@@ -81,28 +77,14 @@ export default class IssueList extends React.PureComponent {
       }</React.Fragment>;
     }
 
-    if (singleColumn) {
-      return <React.Fragment>{appeal.issues.map((issue, idx) =>
-        <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
-          <td {...leftAlignTd} width="10px">
-            {idxToDisplay || (idx + 1)}.
-          </td>
-          <td>
-            <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
-            <div{...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.issueLevels(issue)}</div>
-            <div{...issueMarginTop}><span {...boldText}>Note:</span> {issue.note}</div>
-          </td>
-        </tr>)
-      }</React.Fragment>;
-    }
-
     return <React.Fragment>{appeal.issues.map((issue, idx) =>
       <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
-        <td {...leftAlignTd} width="210px">
-          {idx + 1}. <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
+        <td {...leftAlignTd} width="10px">
+          {idx + 1}.
         </td>
         <td>
-          {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
+          <span {...boldText}>Program:</span> {this.formatIssueProgram(issue)}
+          <div{...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.issueLevels(issue)}</div>
           <div {...noteMarginTop}>
             <span {...boldText}>Note:</span> {issue.note}
           </div>
@@ -111,7 +93,7 @@ export default class IssueList extends React.PureComponent {
     }</React.Fragment>;
   };
 
-  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.singleColumn)}>
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
     <table>
       <tbody>
         {this.getIssues()}
@@ -125,13 +107,9 @@ IssueList.propTypes = {
     issues: PropTypes.array
   }).isRequired,
   issuesOnly: PropTypes.bool,
-  singleIssue: PropTypes.bool,
-  singleColumn: PropTypes.bool,
   idxToDisplay: PropTypes.number
 };
 
 IssueList.defaultProps = {
-  issuesOnly: false,
-  singleIssue: false,
-  singleColumn: false
+  issuesOnly: false
 };
