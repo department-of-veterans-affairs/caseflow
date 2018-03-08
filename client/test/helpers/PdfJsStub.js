@@ -31,12 +31,12 @@ export default {
   beforeEach() {
     // We return a pdfInfo object that contains
     // a field numPages.
-    let getDocument = sinon.stub(PDFJS, 'getDocument');
+    this.getDocument = sinon.stub(PDFJS, 'getDocument');
 
-    getDocument.resolves(this.pdfDocument);
+    this.getDocument.resolves(this.pdfDocument);
   },
 
   afterEach() {
-    PDFJS.getDocument.restore();
+    this.getDocument.restore();
   }
 };
