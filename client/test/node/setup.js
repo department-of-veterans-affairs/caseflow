@@ -18,6 +18,7 @@ let jsdom = require('jsdom').jsdom;
 global.document = jsdom('<html><head></head><body><div id="app" /></body></html>');
 global.window = document.defaultView;
 global.HTMLElement = global.window.HTMLElement;
+global.Element = global.window.Element;
 
 // eslint-disable-next-line no-empty-function
 global.window.analyticsPageView = () => {};

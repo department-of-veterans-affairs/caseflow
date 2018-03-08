@@ -24,11 +24,9 @@ export const pdfReducer = (state = initialState, action = {}) => {
       state,
       {
         pageDimensions: {
-          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+          [action.payload.file]: {
             $set: {
-              ...action.payload.dimensions,
-              file: action.payload.file,
-              pageIndex: action.payload.pageIndex
+              ...action.payload.dimensions
             }
           }
         }
