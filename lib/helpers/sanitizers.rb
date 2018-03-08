@@ -68,12 +68,12 @@ class Helpers::Sanitizers
   end
 
   # Travel Board
-  def self.white_list_travel_board
+  def self.white_list_travelboardschedule
     %w[tbyear tbtrip tbleg tbro tbstdate tbenddate tbmem1 tbmem2 tbmem3 tbmem4 tbaty1 tbaty2
        tbaty3 tbaty4 tbadduser tbaddtime tbmoduser tbmodtime tbcancel tbbvapoc tbropoc]
   end
 
-  def self.sanitize_travel_board(travel_board)
+  def self.sanitize_travelboardschedule(travel_board)
     ::Faker::Config.random = Random.new((travel_board.tbyear + travel_board.tbtrip.to_s).to_i)
 
     travel_board.assign_attributes(
@@ -154,7 +154,7 @@ class Helpers::Sanitizers
   end
 
   def self.sanitize_correspondent(correspondent)
-    ::Faker::Config.random = Random.new(correspondent.stafkey.to_i)
+    ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(correspondent.stafkey).to_i(16))
 
     correspondent.assign_attributes(
       ssn: random_or_nil(::Faker::Number.number(9)),
