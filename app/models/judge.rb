@@ -14,7 +14,7 @@ class Judge
     # get bulk slots for all the dockets from vacols
     dockets_slots = get_dockets_slots(@upcoming_dockets)
 
-    # assign number of slots to it's corresponding docket
+    # assign number of slots to its corresponding docket
     @upcoming_dockets.map do |date, hearing_docket|
       hearing_docket.slots = dockets_slots[date] ||
                              HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper
