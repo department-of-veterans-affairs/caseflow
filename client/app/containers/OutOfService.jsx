@@ -19,8 +19,9 @@ const OutOfService = (props) => <BrowserRouter>
       }} />
     <AppFrame>
       <StatusMessage title="Technical Difficulties">
-       It looks like Caseflow is experiencing technical difficulties right now.
-       We apologize for any inconvenience. Please check back in a little bit.
+       Caseflow is experiencing technical difficulties right now.<br />
+       You can track updates on our <a href=" https://dsva.statuspage.io" target="_blank">
+       Caseflow Status page </a>
       </StatusMessage>
     </AppFrame>
     <Footer
