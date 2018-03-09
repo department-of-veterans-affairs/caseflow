@@ -17,7 +17,7 @@ $color-hearings-saving: $color-gray;
 }
 
 .hearings {
-  td {
+  td:nth-child(3) {
     text-transform: capitalize;
   }
 
