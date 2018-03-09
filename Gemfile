@@ -137,6 +137,9 @@ group :development, :test, :local do
   gem "activerecord-import"
 
   gem "danger", "5.5.5"
+
+  # For CircleCI test metadata analysis
+  gem "rspec_junit_formatter"
 end
 
 group :development do
