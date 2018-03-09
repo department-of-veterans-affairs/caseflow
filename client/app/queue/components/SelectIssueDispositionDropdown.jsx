@@ -61,7 +61,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           disposition: value,
           duplicate: false
         })}
-        name="Dispositions dropdown" />
+        name={`dispositions_dropdown_${issue.id}`} />
       {issue.disposition === 'vacated' && <Checkbox
         name="duplicate-vacated-issue"
         styling={css({
