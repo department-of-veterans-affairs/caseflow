@@ -93,11 +93,7 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
-    Capybara.default_max_wait_time = 5
-  end
-
-  after do
-    Capybara.default_max_wait_time = 2
+    Time.zone = "America/New_York"
   end
 
   let(:vacols_record) { :remand_decided }
@@ -218,8 +214,8 @@ RSpec.feature "Reader" do
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(

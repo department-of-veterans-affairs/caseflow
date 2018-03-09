@@ -176,22 +176,42 @@ describe Hearing do
     end
   end
 
-  context ".create_from_vacols_record" do
+  context ".assign_or_create_from_vacols_record" do
     let(:vacols_record) do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
     let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
 
-    subject { Hearing.create_from_vacols_record(vacols_record) }
+    context "create vacols record" do
+      subject { Hearing.assign_or_create_from_vacols_record(vacols_record) }
 
-    it "should create a hearing record" do
-      subject
-      hearing = Hearing.find_by(vacols_id: "1234")
-      expect(hearing.present?).to be true
-      expect(hearing.appeal.vacols_id).to eq "5678"
-      expect(hearing.user).to eq user
-      expect(hearing.prepped).to be_falsey
+      it "should create a hearing record" do
+        subject
+        hearing = Hearing.find_by(vacols_id: "1234")
+        expect(hearing.present?).to be true
+        expect(hearing.appeal.vacols_id).to eq "5678"
+        expect(hearing.user).to eq user
+        expect(hearing.prepped).to be_falsey
+      end
+    end
+
+    context "assign vacols record" do
+      let(:vacols_record) do
+        OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
+      end
+
+      let!(:existing_user) { User.create(css_id: vacols_record[:css_id], station_id: "123") }
+      let!(:user) { User.create(css_id: "1112", station_id: "123") }
+      let!(:hearing) { Hearing.create(vacols_id: "1234", user: user) }
+      subject { Hearing.assign_or_create_from_vacols_record(vacols_record, hearing) }
+
+      it "should create a hearing record and reassign user" do
+        expect(subject.present?).to be true
+        expect(subject.appeal.vacols_id).to eq "5678"
+        expect(subject.user).to eq existing_user
+        expect(subject.prepped).to be_falsey
+      end
     end
   end
 
