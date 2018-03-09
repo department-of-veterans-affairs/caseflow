@@ -29,10 +29,13 @@ class Fakes::VBMSService
   end
 
   def self.load_vbms_ids_mappings
-    return if @load_vbms_ids_mappings
+    file_path = Rails.root.join("vacols", "vbms_setup.csv")
+
+    return if !File.exist?(file_path) || @load_vbms_ids_mappings
+
     @load_vbms_ids_mappings = true
     @document_records ||= {}
-    CSV.foreach(Rails.root.join("vacols", "vbms_setup.csv"), headers: true) do |row|
+    CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
       @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
     end
