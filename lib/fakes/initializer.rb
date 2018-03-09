@@ -6,7 +6,7 @@ class Fakes::Initializer
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       Judge.repository = Fakes::JudgeRepository
       AttorneyCaseReview.repository = Fakes::QueueRepository
-      if rails_env && !rails_env.local?
+      if !rails_env || !rails_env.local?
         User.appeal_repository = Fakes::AppealRepository
         WorkQueue.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
