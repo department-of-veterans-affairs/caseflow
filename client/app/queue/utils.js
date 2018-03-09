@@ -1,4 +1,6 @@
+import React from 'react';
 import _ from 'lodash';
+import { redText } from './constants';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -40,4 +42,16 @@ export const sortTasks = ({ tasks = {}, appeals = {} }) => {
   _.each(partitionedTasks, _.reverse);
 
   return _.flatten(partitionedTasks);
+};
+
+export const renderAppealType = (appeal) => {
+  const {
+    attributes: { aod, type }
+  } = appeal;
+  const cavc = type === 'Court Remand';
+
+  return <React.Fragment>
+    {aod && <span><span {...redText}>AOD</span>, </span>}
+    {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
+  </React.Fragment>;
 };
