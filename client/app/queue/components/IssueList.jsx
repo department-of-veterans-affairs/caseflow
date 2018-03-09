@@ -54,7 +54,7 @@ export default class IssueList extends React.PureComponent {
     const {
       appeal,
       issuesOnly,
-      idxToDisplay,
+      idxToDisplay
     } = this.props;
     const singleIssue = appeal.issues.length === 1;
 

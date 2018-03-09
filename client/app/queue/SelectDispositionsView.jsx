@@ -20,8 +20,8 @@ import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
-const rowStyling = css({
-  '& > tbody > tr': {
+const tbodyStyling = css({
+  '& > tr': {
     borderBottom: 'none',
     '> td': {
       verticalAlign: 'top',
@@ -29,7 +29,7 @@ const rowStyling = css({
       '&:first-of-type': {
         width: '40%'
       },
-      '&:nth-of-type(3)': {
+      '&:last-of-type': {
         width: '35%'
       }
     }
@@ -114,7 +114,7 @@ class SelectDispositionsView extends React.PureComponent {
       columns={this.getColumns}
       rowObjects={this.props.appeal.attributes.issues}
       getKeyForRow={this.getKeyForRow}
-      styling={rowStyling}
+      bodyStyling={tbodyStyling}
     />
     <div {...marginLeft(1.5)}>
       <Link>Add Issue</Link>
