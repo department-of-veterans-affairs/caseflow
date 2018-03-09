@@ -55,7 +55,20 @@ RSpec.feature "Queue" do
   end
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
+  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks([]) }
+
+  def get_appeal_type_text(appeal)
+    type_str = ""
+
+    if appeal.aod
+      type_str << "AOD, "
+    end
+    if appeal.type.eql? "Court Remand"
+      type_str << "CAVC"
+    end
+
+    type_str
+  end
 
   context "search for appeals using veteran id" do
     scenario "appeal not found" do
@@ -170,7 +183,7 @@ RSpec.feature "Queue" do
       end
 
       scenario "appeal has no hearing" do
-        appeal = vacols_tasks.select { |a| a.hearings.empty? }.first
+        appeal = vacols_appeals.select { |a| a.hearings.empty? }.first
         appeal_ro = appeal.regional_office
 
         visit "/queue"
@@ -179,7 +192,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing Preference")
 
-        expect(page).to have_content("Type: #{appeal.type}")
+        expect(page).to have_content("Type: #{get_appeal_type_text(appeal)}")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
