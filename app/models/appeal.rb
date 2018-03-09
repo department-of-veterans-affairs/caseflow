@@ -736,12 +736,12 @@ class Appeal < ActiveRecord::Base
       convert_file_number_to_vacols(file_number)
     end
 
-    # Returns a hash of appeals with appeal_id as keys and 
+    # Returns a hash of appeals with appeal_id as keys and
     # related appeals as values. These are appeals
     # fetched based on the vbms_id.
     def fetch_appeal_streams(appeals)
       appeal_vbms_ids = appeals.reduce({}) { |acc, appeal| acc.merge(appeal.vbms_id => appeal.id) }
-  
+
       appeals = Appeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
         appeal_id = appeal_vbms_ids[appeal.vbms_id]
         acc[appeal_id] ||= []
