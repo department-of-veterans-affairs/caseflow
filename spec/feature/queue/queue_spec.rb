@@ -170,7 +170,8 @@ RSpec.feature "Queue" do
       end
 
       scenario "appeal has no hearing" do
-        appeal = vacols_tasks.select { |a| a.hearings.empty? }.first
+        task = vacols_tasks.select { |t| t.hearings.empty? }.first
+        appeal = vacols_appeals.select { |a| a.vacols_id.eql? task.vacols_id }.first
         appeal_ro = appeal.regional_office
 
         visit "/queue"
@@ -179,7 +180,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing Preference")
 
-        expect(page).to have_content("Type: #{appeal.type}")
+        expect(page).to have_content("Type: CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
