@@ -10,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
+import { renderAppealType } from './utils';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -33,7 +34,7 @@ export default class AppealDetail extends React.PureComponent {
   getListElements = () => {
     const listElements = [{
       label: 'Type',
-      value: this.getAppealAttr('type')
+      value: renderAppealType(this.props.appeal)
     }, {
       label: 'Power of Attorney',
       value: this.getAppealAttr('power_of_attorney')
