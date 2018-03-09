@@ -56,7 +56,8 @@ export default class TabWindow extends React.Component {
     let {
       name,
       tabs,
-      fullPage
+      fullPage,
+      bodyStyling
     } = this.props;
 
     return <div>
@@ -76,7 +77,7 @@ export default class TabWindow extends React.Component {
           </button>
         )}
       </div>
-      <div className="cf-tab-window-body-full-screen">
+      <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
         {tabs[this.state.currentPage].page}
       </div>
     </div>;

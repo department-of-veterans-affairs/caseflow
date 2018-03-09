@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -7,21 +8,20 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
-} from '../reader/Pdf/PdfActions';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIMENSION_SCALE, PAGE_MARGIN
+} from './constants';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
+  setPageDimensions } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { PDFJS } from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
-
-const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -63,6 +63,8 @@ export class PdfFile extends React.PureComponent {
         return this.loadingTask;
       }).
       then((pdfDocument) => {
+        this.setPageDimensions(pdfDocument);
+
         if (this.loadingTask.destroyed) {
           pdfDocument.destroy();
         } else {
@@ -75,6 +77,22 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
+  }
+
+  setPageDimensions = (pdfDocument) => {
+    const promises = _.range(0, pdfDocument.pdfInfo.numPages).map((index) => {
+      return pdfDocument.getPage(pageNumberOfPageIndex(index));
+    });
+
+    Promise.all(promises).then((pages) => {
+      const viewports = pages.map((page) => {
+        return _.pick(page.getViewport(PAGE_DIMENSION_SCALE), ['width', 'height']);
+      });
+
+      this.props.setPageDimensions(this.props.file, viewports);
+    }, () => {
+      // Eventually we should send a sentry error? Or metrics?
+    });
   }
 
   componentWillUnmount = () => {
@@ -116,8 +134,6 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-        scrollTop={this.props.scrollTop}
-        scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
@@ -129,24 +145,24 @@ export class PdfFile extends React.PureComponent {
     </div>;
   }
 
-  pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
+  pageDimensions = (index) => _.get(this.props.pageDimensions, [this.props.file, index])
 
   isHorizontal = () => this.props.rotation === 90 || this.props.rotation === 270;
 
   pageHeight = (index) => {
     if (this.isHorizontal()) {
-      return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+      return _.get(this.pageDimensions(index), ['width'], PDF_PAGE_WIDTH);
     }
 
-    return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+    return _.get(this.pageDimensions(index), ['height'], PDF_PAGE_HEIGHT);
   }
 
   pageWidth = (index) => {
     if (this.isHorizontal()) {
-      return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+      return _.get(this.pageDimensions(index), ['height'], PDF_PAGE_HEIGHT);
     }
 
-    return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+    return _.get(this.pageDimensions(index), ['width'], PDF_PAGE_WIDTH);
   }
 
   getRowHeight = ({ index }) => {
@@ -402,6 +418,11 @@ export class PdfFile extends React.PureComponent {
     </div>;
   }
 
+  overscanIndicesGetter = ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
+    overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
+    overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+  })
+
   render() {
     if (this.props.loadError) {
       return <div>{this.displayErrorMessage()}</div>;
@@ -432,7 +453,8 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}
-            estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
+            overscanIndicesGetter={this.overscanIndicesGetter}
+            estimatedRowSize={(PDF_PAGE_HEIGHT + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
@@ -475,18 +497,13 @@ const mapDispatchToProps = (dispatch) => ({
     clearDocumentLoadError,
     setDocScrollPosition,
     updateSearchIndexPage,
-    updateSearchRelativeIndex
+    updateSearchRelativeIndex,
+    setPageDimensions
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => {
-  const dimensionValues = _.filter(state.pdf.pageDimensions, (dimension) => dimension.file === props.file);
-  const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
-  const baseWidth = _.get(dimensionValues, [0, 'width'], PDF_PAGE_WIDTH);
-
   return {
-    baseHeight,
-    baseWidth,
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),

@@ -5,10 +5,12 @@ import * as Constants from '../../../app/reader/constants';
 describe('PdfViewer', () => {
   describe('getNextAnnotationIconPageCoords', () => {
     const dimensions = {
-      'test-1': {
-        width: 1000,
-        height: 2000
-      }
+      test: [
+        {
+          width: 1000,
+          height: 2000
+        }
+      ]
     };
     const file = 'test';
     const noRotation = 0;
@@ -19,7 +21,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -38,7 +40,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -57,7 +59,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -76,7 +78,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -96,7 +98,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 0
             },
@@ -115,7 +117,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 0,
               y: 100
             },
@@ -134,7 +136,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 960,
               y: 300
             },
@@ -153,7 +155,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 0,
               y: 1960
             },
@@ -176,7 +178,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -195,7 +197,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -214,7 +216,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
@@ -233,7 +235,7 @@ describe('PdfViewer', () => {
           getNextAnnotationIconPageCoords(
             Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
             {
-              pageIndex: 1,
+              pageIndex: 0,
               x: 100,
               y: 200
             },
