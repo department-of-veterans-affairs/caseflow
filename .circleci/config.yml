@@ -57,7 +57,8 @@ jobs:
           name: Tests
           command: |
             mkdir -p ~/test-results/rspec
-            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml
+            testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split)
+            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
       - store_test_results:
           path: ~/test-results
