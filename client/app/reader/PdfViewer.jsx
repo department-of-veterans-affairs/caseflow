@@ -51,7 +51,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
     }
   });
 
-  const pageCoordsBounds = pageDimensions[`${file}-${pageIndex}`];
+  const pageCoordsBounds = pageDimensions[file][pageIndex];
 
   // This calculation is not quite right, because we are not using the scale
   // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where

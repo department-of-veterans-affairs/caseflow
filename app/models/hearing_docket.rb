@@ -3,6 +3,7 @@ class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
 
+  attr_writer :slots
   attr_accessor :date, :type, :regional_office_name, :hearings, :user, :regional_office_key
   attr_accessor :master_record, :hearings_count
 
@@ -26,6 +27,14 @@ class HearingDocket
     )
   end
 
+  def slots
+    @slots ||= HearingDocket.repository.number_of_slots(
+      regional_office_key: regional_office_key,
+      type: type,
+      date: date
+    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
+  end
+
   def attributes
     {
       date: date,
@@ -33,14 +42,6 @@ class HearingDocket
       master_record: master_record,
       hearings_count: hearings_count
     }
-  end
-
-  def slots
-    HearingDocket.repository.number_of_slots(
-      regional_office_key: regional_office_key,
-      type: type,
-      date: date
-    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
   class << self

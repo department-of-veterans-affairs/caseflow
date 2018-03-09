@@ -8,12 +8,56 @@ jobs:
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
+          - BUNDLE_PATH: vendor/bundle
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
+      # This is the circleci provided Postgres container. We can
+      # it via environment variables.
+      - image: circleci/postgres:10.2
+        environment:
+          - POSTGRES_USER: root
+            POSTGRES_DB: caseflow_certification_test
 
+      # This is the circleci provided Redis container.
+      - image: circleci/redis:4.0.8
     steps:
       - checkout
 
       - run:
-          name: Make CircleCI report OK so folks are not confused while we set it up
-          command: "true"
+          name: Setup prereqs
+          command: ci-bin/setup-circleci-prereqs
+
+      - restore_cache:
+          name: Restore bundler cache
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: bundle install
+          command: bundle check || bundle install --without production staging
+
+      - save_cache:
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: yarn install
+          command: cd client && yarn install --frozen-lockfile
+
+      - save_cache:
+          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run:
+          name: Tests
+          command: |
+            mkdir -p ~/test-results/rspec
+            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml
+
+      - store_test_results:
+          path: ~/test-results

@@ -93,12 +93,7 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
-    Capybara.default_max_wait_time = 5
     Time.zone = "America/New_York"
-  end
-
-  after do
-    Capybara.default_max_wait_time = 2
   end
 
   let(:vacols_record) { :remand_decided }
