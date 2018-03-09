@@ -53,8 +53,10 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
-  getRowObjects = (hearings) => {
-    const docketIndex = Object.keys(hearings).sort();
+  getRowObjects = (hearings, reverseSort = false) => {
+    let docketIndex = Object.keys(hearings).sort();
+
+    docketIndex = reverseSort ? docketIndex.reverse() : docketIndex;
     const rowObjects = docketIndex.map((docketDate) => {
 
       let docket = hearings[docketDate];
@@ -117,7 +119,7 @@ export class Dockets extends React.Component {
     }, defaultGroupedHearings);
 
     const upcomingRowObjects = this.getRowObjects(groupedHearings.upcoming);
-    let pastRowObjects = this.getRowObjects(groupedHearings.past);
+    let pastRowObjects = this.getRowObjects(groupedHearings.past, true);
 
     const tabs = [
       {
