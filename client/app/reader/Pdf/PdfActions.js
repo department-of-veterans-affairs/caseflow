@@ -7,11 +7,10 @@ export const onScrollToComment = (scrollToComment) => ({
 
 /** PDF Page **/
 
-export const setPageDimensions = (file, pageIndex, dimensions) => ({
+export const setPageDimensions = (file, dimensions) => ({
   type: Constants.SET_UP_PAGE_DIMENSIONS,
   payload: {
     file,
-    pageIndex,
     dimensions
   }
 });
