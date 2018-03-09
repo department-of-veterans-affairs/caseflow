@@ -29,7 +29,10 @@ const tabBodyStyling = css({
 export class Dockets extends React.Component {
 
   getType = (type) => {
-    return (type === 'central_office') ? 'CO' : type;
+    const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+
+    return (type === 'central_office') ? 'CO' :
+      capitalizeFirstChar(type);
   }
 
   getKeyForRow = (index) => {

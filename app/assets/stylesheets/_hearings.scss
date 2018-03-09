@@ -17,10 +17,6 @@ $color-hearings-saving: $color-gray;
 }
 
 .hearings {
-  td:nth-child(3) {
-    text-transform: capitalize;
-  }
-
   thead > tr {
     display: inline-table;
     width: 100%;
