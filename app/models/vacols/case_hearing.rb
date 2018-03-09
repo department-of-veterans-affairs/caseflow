@@ -45,7 +45,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   # :nocov:
   class << self
-    def upcoming_for_judge(css_id)
+    def hearings_for_judge(css_id)
       id = connection.quote(css_id)
 
       select_hearings.where("staff.sdomainid = #{id}")
