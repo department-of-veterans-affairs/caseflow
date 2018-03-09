@@ -47,7 +47,7 @@
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.6.414",
+    "pdfjs-dist": "1.10.97",
     "prop-types": "^15.6.0",
     "rc-collapse": "^1.7.6",
     "react": "^16.2.0",
