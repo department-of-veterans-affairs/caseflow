@@ -74,7 +74,7 @@ RSpec.feature "Hearings" do
       docket2_type = get_type(2)
 
       expect(docket1_type).to eql("CO")
-      expect(docket2_type).to eql("video")
+      expect(docket2_type).to eql("Video")
 
       # Verify hearings count in each docket
 
