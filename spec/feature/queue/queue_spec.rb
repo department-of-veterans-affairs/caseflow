@@ -55,19 +55,16 @@ RSpec.feature "Queue" do
   end
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks([]) }
+  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
   def get_appeal_type_text(appeal)
-    type_str = ""
+    type_str = [appeal.type.eql?("Court Remand") ? "CAVC" : appeal.type]
 
     if appeal.aod
-      type_str << "AOD, "
-    end
-    if appeal.type.eql? "Court Remand"
-      type_str << "CAVC"
+      type_str.insert(0, "AOD")
     end
 
-    type_str
+    type_str.join(", ")
   end
 
   context "search for appeals using veteran id" do
@@ -183,7 +180,8 @@ RSpec.feature "Queue" do
       end
 
       scenario "appeal has no hearing" do
-        appeal = vacols_appeals.select { |a| a.hearings.empty? }.first
+        task = vacols_tasks.select { |t| t.hearings.empty? }.first
+        appeal = vacols_appeals.select { |a| a.vacols_id.eql? task.vacols_id }.first
         appeal_ro = appeal.regional_office
 
         visit "/queue"
