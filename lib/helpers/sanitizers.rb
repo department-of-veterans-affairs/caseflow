@@ -44,7 +44,7 @@ class Helpers::Sanitizers
   end
 
   def self.sanitize_staff(staff)
-    ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(staff.slogid).to_i(16))
+    ::Faker::Config.random = Random.new(Digest::SHA256.hexdigest(staff.slogid).to_i(16))
 
     sdomainid = case staff[:stafkey]
                 when "ZZHU"
@@ -161,7 +161,7 @@ class Helpers::Sanitizers
   end
 
   def self.sanitize_correspondent(correspondent)
-    ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(correspondent.stafkey).to_i(16))
+    ::Faker::Config.random = Random.new(Digest::SHA256.hexdigest(correspondent.stafkey).to_i(16))
 
     correspondent.assign_attributes(
       ssn: random_or_nil(::Faker::Number.number(9)),
