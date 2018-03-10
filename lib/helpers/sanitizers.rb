@@ -1,5 +1,9 @@
 require "faker"
 
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/AbcSize
+
 # In order to add a new table to this sanitization list, you'll need to add two methods.
 # If the new table's class name is VACOLS::KlassName, you'll need a method called white_list_klassname
 # that returns a string array with all of the attributes in that class to allow into our local data.
@@ -33,23 +37,23 @@ class Helpers::Sanitizers
 
   # Staff table
   def self.white_list_staff
-    %w[stafkey susrsec susrtyp ssalut snamef snamemi snamel slogid stitle sorg sdept saddrst1
+    %w[stafkey susrtyp ssalut snamef snamemi snamel slogid stitle sorg sdept saddrst1
        saddrst2 saddrcty saddrstt saddrcnty saddrzip stelw stelwex stelfax stelh staduser stadtime
-       stmduser stmdtime stc1 stc2 stc3 stc4 snotes sorc1 sorc2 sorc3 sorc4 sactive ssys smemgrp
-       sfoiasec srptsec sattyid svlj]
+       stmduser stmdtime stc1 stc2 stc3 stc4 snotes sactive smemgrp
+       sattyid svlj]
   end
 
   def self.sanitize_staff(staff)
     ::Faker::Config.random = Random.new(Digest::MD5.hexdigest(staff.slogid).to_i(16))
 
-    case staff[:stafkey]
-    when "ZZHU"
-      sdomainid = "READER"
-    when "PSORISIO"
-      sdomainid = "HEARING PREP"
-    else
-      sdomainid = "FAKELOGIN" + staff.slogid
-    end
+    sdomainid = case staff[:stafkey]
+                when "ZZHU"
+                  "READER"
+                when "PSORISIO"
+                  "HEARING PREP"
+                else
+                  "FAKELOGIN" + staff.slogid
+                end
 
     staff.assign_attributes(
       saddrst1: ::Faker::Address.street_address,
@@ -60,7 +64,7 @@ class Helpers::Sanitizers
       saddrzip: ::Faker::Address.zip_code,
       stelw: ::Faker::PhoneNumber.phone_number,
       stelfax: random_or_nil(::Faker::PhoneNumber.phone_number),
-      stelwex: random_or_nil(::Faker::PhoneNumber.phone_number),
+      stelwex: random_or_nil(::Faker::PhoneNumber.extension),
       stelh: random_or_nil(::Faker::PhoneNumber.phone_number),
       snotes: random_or_nil(::Faker::Lorem.sentence),
       sdomainid: sdomainid
@@ -107,7 +111,7 @@ class Helpers::Sanitizers
        tispare1 tispare2 tisubj1 tisubj tisubj2
        tiagor tiasbt tigwui tihepc tiaids timgas tiptsd tiradb tiradn tisarc tisexh titoba tinosc
        ti38us tinnme tinwgr tipres titrtm tinoot tioctime tiocuser tidktime tidkuser tipulac
-       ticerullo tiplnod tiplwaiver tiplexpress tisnl tivbms]
+       ticerullo tivbms tiread2]
   end
 
   def self.sanitize_folder(folder)
@@ -116,7 +120,10 @@ class Helpers::Sanitizers
     folder.assign_attributes(
       titrnum: ::Faker::Number.number(9) + "S",
       tinum: ::Faker::Number.number(7),
-      tiwpptr: random_or_nil(::Faker::Lorem.sentence)
+      tiwpptr: random_or_nil(::Faker::Lorem.sentence),
+      tispare1: folder.tispare1 ? ::Faker::Name.last_name : nil,
+      tispare2: folder.tispare2 ? ::Faker::Name.first_name : nil,
+      tiread2: folder.tiread2 ? ::Fakes::Number.number(7) : nil
     )
   end
 
@@ -147,7 +154,7 @@ class Helpers::Sanitizers
 
   # Vftypes
   def self.white_list_correspondent
-    %w[stafkey susrtyp salutation snamef snamemi snamel slogid stitle sorg
+    %w[stafkey susrtyp ssalut snamef snamemi snamel slogid stitle sorg
        sdept saddrst1 saddrst2 saddrcty saddrstt saddrcnty saddrzip stelw stelwex
        stelfax stelh staduser stadtime stmduser stmdtime snotes
        sactive sspare1 sspare2 sspare3 sspare4 ssn sfnod sdob sgender]
@@ -158,10 +165,14 @@ class Helpers::Sanitizers
 
     correspondent.assign_attributes(
       ssn: random_or_nil(::Faker::Number.number(9)),
+      ssalut: ::Faker::Name.suffix,
       snamef: ::Faker::Name.first_name,
       snamemi: ::Faker::Name.initials(1),
       snamel: ::Faker::Name.last_name,
+      slogid: ::Faker::Number.number(9) + "S",
       stitle: ::Faker::Name.prefix,
+      sorg: random_or_nil(::Faker::Lorem.sentence),
+      sdept: random_or_nil(::Faker::Lorem.sentence),
       saddrst1: ::Faker::Address.street_address,
       saddrst2: random_or_nil(::Faker::Address.secondary_address),
       saddrcty: ::Faker::Address.city,
@@ -170,7 +181,7 @@ class Helpers::Sanitizers
       saddrzip: ::Faker::Address.zip_code,
       stelw: ::Faker::PhoneNumber.phone_number,
       stelfax: random_or_nil(::Faker::PhoneNumber.phone_number),
-      stelwex: random_or_nil(::Faker::PhoneNumber.phone_number),
+      stelwex: random_or_nil(::Faker::PhoneNumber.extension),
       stelh: random_or_nil(::Faker::PhoneNumber.phone_number),
       snotes: random_or_nil(::Faker::Lorem.sentence),
       sspare1: correspondent.sspare1 ? ::Faker::Name.last_name : nil,
@@ -200,7 +211,7 @@ class Helpers::Sanitizers
   # Note
   def self.white_list_note
     %w[tasknum tsktknm tskstfas tskactcd tskclass tskrqact tskrspn tskdassn tskdtc tskddue tskdcls
-       tskstown tskstat tskownts tskclstm tskadusr tskadtm tskmdusr tskmdtm tsactive tsspare1]
+       tskstown tskstat tskadusr tskadtm tskmdusr tskmdtm tsactive]
   end
 
   def self.sanitize_note(note)
@@ -225,6 +236,7 @@ class Helpers::Sanitizers
 
     hearing.assign_attributes(
       repname: ::Faker::Name.name,
+      rep_state: ::Faker::Address.state_abbr,
       notes1: random_or_nil(::Faker::Lorem.sentence),
       vdbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
       vdropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
@@ -250,21 +262,27 @@ class Helpers::Sanitizers
 
   # Case
   def self.white_list_case
-    %w[bfkey bfddec bfcorkey bfcorlid bfdcn bfdocind bfpdnum bfdpdcn bforgtic bfdorg bfdthurb bfdnod
+    %w[bfkey bfddec bfcorkey bfcorlid bfdcn bfdocind bfpdnum bfdpdcn bforgtic bfdorg bfdnod
        bfdsoc bfd19 bf41stat bfmstat bfmpro bfdmcon bfregoff bfissnr bfrdmref bfcasev
        bfboard bfbsasgn bfattid bfdasgn bfcclkid bfdqrsnt bfdlocin bfdloout
        bfstasgn bfcurloc bfnrcopy bfmemid bfdmem bfnrci bfcallup bfcallyymm bfhines bfdcfld1
        bfdcfld2 bfdcfld3 bfac bfdc bfha bfms bfoc bfsh bfso bfhr bfst bfdrodec bfssoc1
        bfssoc2 bfssoc3 bfssoc4 bfssoc5 bfdtb bftbind bfdcue bfdvin bfdvout bfddro bfdroid bfddvwrk
        bfddvdsp bfddvret bfdrortr bfro1 bflot bfbox bfdtbready bfarc bfdarcin bfdarcout bfarcdisp
-       bfsub bfrocdoc bfdrocket bfdcertool]
+       bfsub bfdcertool]
   end
 
   def self.sanitize_case(vacols_case)
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
-      bfcorlid: ::Faker::Number.number(9) + "S"
+      bfcorlid: ::Faker::Number.number(9) + "S",
+      bfcclkid: ::Faker::Number.number(7)
     )
   end
 end
+
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/PerceivedComplexity
+# rubocop:enable Metrics/AbcSize

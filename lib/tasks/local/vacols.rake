@@ -143,6 +143,21 @@ namespace :local do
       end
     end
 
+    def dateshift_field(items, date_shift, k)
+      items.map! do |item|
+        item[k] = item[k] + date_shift if item[k]
+        item
+      end
+    end
+
+    def truncate_string(items, sql_type, k)
+      max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
+      items.map! do |item|
+        item[k] = item[k][0..max_index] if item[k]
+        item
+      end
+    end
+
     def read_csv(klass, date_shift)
       items = []
       klass.delete_all
@@ -152,16 +167,9 @@ namespace :local do
       end
       klass.columns_hash.each do |k, v|
         if v.type == :datetime
-          items.map! do |item|
-            item[k] = item[k] + date_shift if item[k]
-            item
-          end
+          dateshift_field(items, date_shift, k)
         elsif v.type == :string
-          max_index = /\((\d*)\)/.match(v.sql_type)[1].to_i - 1
-          items.map! do |item|
-            item[k] = item[k][0..max_index] if item[k]
-            item
-          end
+          truncate_string(items, v.sql_type, k)
         end
       end
 
