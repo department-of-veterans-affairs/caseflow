@@ -35,7 +35,7 @@ module Fakes::Data::AppealData
 
   def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
     seeded_random = Random.new(seed)
-    (0..num_documents).to_a.reduce([]) do |acc, number|
+    @random_documents ||= (0..num_documents).to_a.reduce([]) do |acc, number|
       acc << Generators::Document.build(
         vbms_document_id: number,
         type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
@@ -68,12 +68,21 @@ module Fakes::Data::AppealData
   ].freeze
 
   def self.redacted_reader_documents
-    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
+    @redacted_documents ||= READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
       Generators::Document.build(
         vbms_document_id: (100 + index),
         type: doc_type
       )
     end
+  end
+
+  def self.document_mapping
+    {
+      "static_documents" => static_reader_documents,
+      "no_categories" => reader_docs_no_categories,
+      "random_documents" => random_reader_documents(1000),
+      "redacted_documents" => redacted_reader_documents
+    }
   end
 
   def self.default_records

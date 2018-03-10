@@ -59,13 +59,13 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 ### OSX
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
-2) Unzip both packages into `/opt/oracle/instantclient_12_2`
+2) Unzip both packages into `/opt/oracle/instantclient_<version_number>` where `<version_number>` is consistent with step 3. Most of us are using `<version_number>=12_2`.
 
 3) Setup both packages according to the Oracle documentation:
 ```
-export OCI_DIR=/opt/oracle/instantclient_12_1
-cd /opt/oracle/instantclient_12_2
-sudo ln -s libclntsh.dylib.12.1 libclntsh.dylib
+export OCI_DIR=/opt/oracle/instantclient_<version_number>
+cd /opt/oracle/instantclient_<version_number>
+sudo ln -s libclntsh.dylib.<version_number> libclntsh.dylib
 ```
 
 If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
@@ -96,20 +96,34 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 ## Start up local VACOLS container
 To set up our local copy of VACOLS, run
 ```
-rake local_vacols:setup
+rake local:vacols:setup
 ```
 To start the container after it's been setup, run
 ```
-rake local_vacols:start
+rake local:vacols:start
 ```
 To stop the container, run
 ```
-rake local_vacols:stop
+rake local:vacols:stop
 ```
 To view the logs, run
 ```
-rake local_vacols:logs
+rake local:vacols:logs
 ```
+
+## Seeding the local VACOLS container
+To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
+
+1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
+2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
+```
+export VACOLS_PASSWORD=<pw_from_credstash (vacols.uat.db_password)>
+export VACOLS_USERNAME=<pw_from_credstash (vacols.uat.db_username)>
+```
+3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
+4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
+5) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+6) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
 
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
