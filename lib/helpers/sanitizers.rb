@@ -123,7 +123,7 @@ class Helpers::Sanitizers
       tiwpptr: random_or_nil(::Faker::Lorem.sentence),
       tispare1: folder.tispare1 ? ::Faker::Name.last_name : nil,
       tispare2: folder.tispare2 ? ::Faker::Name.first_name : nil,
-      tiread2: folder.tiread2 ? ::Fakes::Number.number(7) : nil
+      tiread2: folder.tiread2 ? ::Faker::Number.number(7) : nil
     )
   end
 
