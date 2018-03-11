@@ -1,11 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import Table from '../components/Table';
+import TabWindow from '../components/TabWindow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { css } from 'glamor';
+
+const tableBorder = css({
+  border: '1px solid #dadbdc',
+  marginTop: '0px'
+});
+
+const tableBodyStyling = css({
+  display: 'block',
+  maxHeight: '65vh',
+  overflow: 'auto',
+  width: '100%'
+});
+
+const tabBodyStyling = css({
+  paddingTop: '0px'
+});
+
 export class Dockets extends React.Component {
 
   getType = (type) => {
@@ -18,11 +38,11 @@ export class Dockets extends React.Component {
 
   linkToDailyDocket = (docket) => {
     if (docket.master_record) {
-      return moment(docket.date).format('l');
+      return moment(docket.date).format('ddd M/DD/YYYY');
     }
 
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-      {moment(docket.date).format('l')}
+      {moment(docket.date).format('ddd M/DD/YYYY')}
     </Link>;
   }
 
@@ -30,10 +50,28 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
+  getRowObjects = (hearings, reverseSort = false) => {
+    let docketIndex = Object.keys(hearings).sort();
+
+    docketIndex = reverseSort ? docketIndex.reverse() : docketIndex;
+    const rowObjects = docketIndex.map((docketDate) => {
+
+      let docket = hearings[docketDate];
+
+      return {
+        date: this.linkToDailyDocket(docket),
+        start_time: getDateTime(docket.date),
+        type: this.getType(docket.type),
+        regional_office: docket.regional_office_name,
+        slots: docket.slots,
+        scheduled: this.getScheduledCount(docket)
+      };
+    });
+
+    return rowObjects;
+  }
+
   render() {
-
-    const docketIndex = Object.keys(this.props.upcomingHearings).sort();
-
     const columns = [
       {
         header: 'Date',
@@ -63,32 +101,62 @@ export class Dockets extends React.Component {
       }
     ];
 
-    const rowObjects = docketIndex.map((docketDate) => {
+    const defaultGroupedHearings = {
+      upcoming: {},
+      past: {}
+    };
 
-      let docket = this.props.upcomingHearings[docketDate];
+    const groupedHearings = _.reduce(this.props.upcomingHearings, (result, value, key) => {
+      const dateMoment = moment(value.date);
+      const pastOrUpcoming = dateMoment.isAfter(new Date().setHours(0, 0, 0, 0)) ? 'upcoming' : 'past';
 
-      return {
-        date: this.linkToDailyDocket(docket),
-        start_time: getDateTime(docket.date),
-        type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
-        slots: docket.slots,
-        scheduled: this.getScheduledCount(docket)
-      };
-    });
+      result[pastOrUpcoming][key] = value;
+
+      return result;
+    }, defaultGroupedHearings);
+
+    const upcomingRowObjects = this.getRowObjects(groupedHearings.upcoming);
+    let pastRowObjects = this.getRowObjects(groupedHearings.past, true);
+
+    const tabs = [
+      {
+        label: 'Upcoming',
+        page: _.size(upcomingRowObjects) ? <Table
+          className="hearings"
+          columns={columns}
+          rowObjects={upcomingRowObjects}
+          summary="Your Upcoming Hearing Days?"
+          getKeyForRow={this.getKeyForRow}
+          styling={tableBorder}
+          bodyStyling={tableBodyStyling}
+        /> : <p>You currently have no hearings scheduled.</p>
+      },
+      {
+        label: 'Past',
+        page: _.size(pastRowObjects) ? <Table
+          className="hearings"
+          columns={columns}
+          rowObjects={pastRowObjects}
+          summary="Your Past Hearing Days?"
+          getKeyForRow={this.getKeyForRow}
+          styling={tableBorder}
+          bodyStyling={tableBodyStyling}
+        /> : <p>You have not held any hearings in the past 365 days.</p>
+      }
+    ];
 
     return <AppSegment extraClassNames="cf-hearings-schedule" filledBackground>
       <div className="cf-hearings-title-and-judge">
         <h1>Your Hearing Days</h1>
         <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
       </div>
-      <Table
+
+      <TabWindow
         className="dockets"
-        columns={columns}
-        rowObjects={rowObjects}
-        summary="Your Hearing Days?"
-        getKeyForRow={this.getKeyForRow}
-      />
+        bodyStyling={tabBodyStyling}
+        name="dockets"
+        tabs={tabs}
+        onChange={this.onTabSelected} />
     </AppSegment>;
   }
 }

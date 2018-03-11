@@ -211,7 +211,11 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? || Rails.env.test? || Rails.env.demo? || Rails.env.ssh_forwarding?
+      Rails.env.development? ||
+        Rails.env.test? ||
+        Rails.env.demo? ||
+        Rails.env.ssh_forwarding? ||
+        Rails.env.local?
     end
   end
 end
