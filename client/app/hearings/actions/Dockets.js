@@ -261,26 +261,6 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     });
 };
 
-// export const saveHearings = (hearings, docket, date) => (dispatch) => {
-//   new Promise((resolve) => {
-//     hearings.forEach((hearing) => {
-//
-//       const index = docket.findIndex((x) => x.id === hearing.id);
-//
-//       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-//         then(() => {
-//           dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
-//             payload: { date,
-//               index } });
-//         },
-//         () => {
-//           dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-//             payload: { saveFailed: true } });
-//         });
-//     });
-//   });
-// };
-
 export const saveDocket = (docket, date) => (dispatch) => () => {
   const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
