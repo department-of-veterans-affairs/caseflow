@@ -261,6 +261,26 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     });
 };
 
+// export const saveHearings = (hearings, docket, date) => (dispatch) => {
+//   new Promise((resolve) => {
+//     hearings.forEach((hearing) => {
+//
+//       const index = docket.findIndex((x) => x.id === hearing.id);
+//
+//       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+//         then(() => {
+//           dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
+//             payload: { date,
+//               index } });
+//         },
+//         () => {
+//           dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+//             payload: { saveFailed: true } });
+//         });
+//     });
+//   });
+// };
+
 export const saveDocket = (docket, date) => (dispatch) => () => {
   const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
@@ -270,29 +290,43 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
     return;
   }
 
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
-    payload: { saving: true } });
+  dispatch({
+    type: Constants.TOGGLE_DOCKET_SAVING,
+    payload: { saving: true }
+  });
+  dispatch({
+    type: Constants.SET_DOCKET_SAVE_FAILED,
+    payload: { saveFailed: false }
+  });
 
-  dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-    payload: { saveFailed: false } });
+  let apiRequests = [];
 
-  Promise.resolve(hearingsToSave.forEach((hearing) => {
-
+  hearingsToSave.forEach((hearing) => {
     const index = docket.findIndex((x) => x.id === hearing.id);
+    const promise = new Promise((resolve) => {
+      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+        then(() => {
+          dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
+            payload: { date,
+              index } });
+        },
+        () => {
+          dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+        }).
+        finally(() => {
+          resolve();
+        });
+    });
 
-    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-      then(() => {
-        dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
-          payload: { date,
-            index } });
-      },
-      () => {
-        dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-          payload: { saveFailed: true } });
-      });
-  })).then(() => {
+    apiRequests.push(promise);
+  });
+
+  Promise.all(apiRequests).then(() => {
     dispatch(setDocketTimeSaved(now()));
-    dispatch({ type: Constants.TOGGLE_DOCKET_SAVING,
-      payload: { saving: false } });
+    dispatch({
+      type: Constants.TOGGLE_DOCKET_SAVING,
+      payload: { saving: false }
+    });
   });
 };
