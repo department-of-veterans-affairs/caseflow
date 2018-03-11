@@ -46,7 +46,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   # :nocov:
   class << self
     def hearings_for_judge(css_id)
-      id = connection.quote(css_id)
+      id = connection.quote(css_id.upcase)
 
       select_hearings.where("staff.sdomainid = #{id}")
         .where("hearing_date > ?", 1.year.ago.beginning_of_day)
