@@ -36,7 +36,7 @@ export default class AutoSave extends React.Component {
       const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
       return <div className="saving">Saving...
-        <div className="loadingSymbol">{loadingSymbolHtml('', '100%', color)}</div>
+      <div className="loadingSymbol">{loadingSymbolHtml('', '100%', color)}</div>
       </div>;
     }
 

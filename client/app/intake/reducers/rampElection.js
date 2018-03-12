@@ -9,8 +9,8 @@ const formatAppeals = (appeals) => {
     {
       id: appeal.id,
       issues: appeal.issues.map(
-        ({ program_description, ...rest }) => ({
-          programDescription: program_description,
+        ({ program_description: programDescription, ...rest }) => ({
+          programDescription,
           ...rest
         })
       )

@@ -8,7 +8,7 @@ export default function StyleGuideSuccessMessages() {
     'VACOLS Updated: Changed Location to 98'];
 
   let successMessage = <span>Joe Snuffy's (ID #222222222) claim has been processed.
-    <br /> You can now establish the next claim or return to your Work History.</span>;
+  <br /> You can now establish the next claim or return to your Work History.</span>;
 
   let wayToGo = <span>Way to go!</span>;
 

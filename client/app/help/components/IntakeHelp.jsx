@@ -45,7 +45,7 @@ class IntakeHelp extends React.Component {
     Intake will guide Claims Assistants (CAs) through the process of notifying Veterans, updating
     necessary systems, and creating End Products (EPs). Intake was built by the Digital Service at
     VA (DSVA) and will create process improvements for many areas of the VA. Learn more:
-        <a target="_blank" href="/assets/intake_trainingguide-49068fd152891d233ef926cc49c3058627c7756716c4badd64067aee25db63cd.pdf">Training Guide</a>
+      <a target="_blank" href="/assets/intake_trainingguide-49068fd152891d233ef926cc49c3058627c7756716c4badd64067aee25db63cd.pdf">Training Guide</a>
       </p>
 
       <h2 id="how-was-intake-developed">2. How was Intake developed?</h2>
@@ -103,7 +103,7 @@ class IntakeHelp extends React.Component {
       <h2 id="still-need-help">9. What if I still need help?</h2>
       <p>If you require further assistance after reviewing the FAQs, Quick Reference Guide, or Training
     Guide, please contact the Caseflow Product Support Team by phone(1-844-876-5548) or email
-        <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+      <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>
 
     </div>;

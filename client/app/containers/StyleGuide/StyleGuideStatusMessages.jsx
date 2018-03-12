@@ -18,7 +18,7 @@ export default class StyleGuideStatusMessages extends React.PureComponent {
       <p>Status messages are shown when Caseflow encounters an error such as 500 or 400
     http error codes. They are also shown when a user doesn’t have access to view a
     particular page or application. These messages are more neutral with a
-        <code>dark-grey</code> title, an explanation of what is going on, and next steps
+      <code>dark-grey</code> title, an explanation of what is going on, and next steps
     the user can take.</p>
       <StatusMessage
         title="Claim Held"
