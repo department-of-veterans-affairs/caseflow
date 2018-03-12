@@ -10,8 +10,6 @@ class AnnotationController < ApplicationController
     # :nocov:
   end
 
-  ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
-
   def create
     annotation = Annotation.create!(annotation_params.merge(user_id: current_user.id))
     render json: { id: annotation.id }
@@ -34,6 +32,6 @@ class AnnotationController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles(ANNOTATION_AUTHORIZED_ROLES.join(" "))
+    verify_authorized_roles("Reader")
   end
 end
