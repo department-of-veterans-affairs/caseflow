@@ -77,9 +77,7 @@ class Fakes::HearingRepository
 
   def self.create_already_held_hearing_for_appeal(i, appeal)
     user = User.find_by_css_id("Hearing Prep")
-    attrs = random_attrs(i)
-    attrs[:disposition] = :held
-    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
+    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal, disposition: :held))
   end
 
   def self.create_appeal_stream(hearing, i)
