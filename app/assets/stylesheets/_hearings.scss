@@ -222,7 +222,6 @@ $color-hearings-saving: $color-gray;
     }
 
     .cf-hearings-docket-actions {
-      padding: .75em .32em 0;
       width: 45%;
       text-align: center;
       background-color: $color-gray-lightest;
@@ -245,6 +244,11 @@ $color-hearings-saving: $color-gray;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
+      margin-top: 0 !important;
+    }
+
+    .cf-form-checkbox {
+      margin-top: 32px;
     }
   }
 }
