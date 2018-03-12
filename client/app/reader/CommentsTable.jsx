@@ -11,14 +11,11 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
   const groupedAnnotations = _(annotationsPerDocument).
     map((notes) =>
       notes.map((note) => {
-        const {
-          type: docType,
-          serialized_receipt_date: serializedReceiptDate
-        } = documents.filter((doc) => doc.id === note.documentId)[0];
+        const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
 
         return _.extend({}, note, {
-          docType,
-          serializedReceiptDate
+          docType: type,
+          serialized_receipt_date
         });
       })).
     flatten().

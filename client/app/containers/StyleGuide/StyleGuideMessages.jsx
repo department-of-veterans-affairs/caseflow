@@ -13,7 +13,7 @@ export default class StyleGuideMessages extends React.PureComponent {
       <p>Messages are a frequent layout used in Caseflow. These messages are shown
     when the user has completed a task, when there is an error, and to indicate status.</p>
       <p>All messages are shown in the standard App Canvas. The messages contain a
-      <code>heading 1</code>, whose colors vary based on context, and <code>lead</code>
+        <code>heading 1</code>, whose colors vary based on context, and <code>lead</code>
       follow-up text. The follow up text often contains context and instructions
       on what the user can do next.</p>
       <StyleGuideSuccessMessages />

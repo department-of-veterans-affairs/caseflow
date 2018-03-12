@@ -612,7 +612,7 @@ export class ClipboardIcon extends React.PureComponent {
             0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0
             0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0
             12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-      fill="#5B616B" fillRule="evenodd" /></svg>;
+        fill="#5B616B" fillRule="evenodd" /></svg>;
 
   }
 }
