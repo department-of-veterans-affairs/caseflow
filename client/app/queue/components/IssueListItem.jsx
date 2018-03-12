@@ -20,8 +20,8 @@ const leftAlignTd = css({
 });
 
 export default class IssueListItem extends React.PureComponent {
-  formatIdx = (idx) => <td {...leftAlignTd} width="10px">
-    {this.props.idxToDisplay || (idx + 1)}.
+  formatIdx = () => <td {...leftAlignTd} width="10px">
+    {this.props.idx}.
   </td>;
 
   formatLevels = (issue) => issue.levels.map((level, idx) =>
@@ -43,8 +43,7 @@ export default class IssueListItem extends React.PureComponent {
   render = () => {
     const {
       issue,
-      issuesOnly,
-      idx
+      issuesOnly
     } = this.props;
     let issueContent = <span />;
 
@@ -63,7 +62,7 @@ export default class IssueListItem extends React.PureComponent {
     }
 
     return <React.Fragment>
-      {this.formatIdx(idx)}
+      {this.formatIdx()}
       <td {...minimalLeftPadding}>
         {issueContent}
       </td>
@@ -74,7 +73,6 @@ export default class IssueListItem extends React.PureComponent {
 IssueListItem.propTypes = {
   issue: PropTypes.object.isRequired,
   issuesOnly: PropTypes.bool,
-  idxToDisplay: PropTypes.number,
   idx: PropTypes.number.isRequired
 };
 

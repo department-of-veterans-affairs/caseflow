@@ -37,7 +37,7 @@ export default class IssueList extends React.PureComponent {
 
     return <React.Fragment>{issues.map((issue, idx) =>
       <tr key={`${issue.id}_${issue.vacols_sequence_id}`} {...bottomBorder(singleIssue)}>
-        <IssueListItem issue={issue} idx={idx} {...this.props} />
+        <IssueListItem issue={issue} idx={this.props.idxToDisplay || (idx + 1)} {...this.props} />
       </tr>)
     }</React.Fragment>;
   };
