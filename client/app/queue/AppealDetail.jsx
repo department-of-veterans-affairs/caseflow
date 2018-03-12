@@ -34,6 +34,9 @@ export default class AppealDetail extends React.PureComponent {
   getHearingInfo = () => {
     const hearing = this.getLastHearing();
     const listElements = [{
+      label: 'Hearing preference',
+      value: StringUtil.titleCase(hearing.type)
+    }, {
       label: 'Hearing disposition',
       value: StringUtil.titleCase(hearing.disposition.split('_').join(' '))
     }];
