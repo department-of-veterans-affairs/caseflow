@@ -95,10 +95,12 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 
 ## Start up your docker based environment
 
-We use docker and docker-compose to mock a production environment locally.  A redis, postgres and OracleDB (VACOLS) will be pulled
-and mocked locally.
+We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required, but slowly learning how docker works is encouraged.
+Please ask a team member for an overview, and/or slowly review the docs linked.
 
-Setup your postgres user.  Run this in your CLI, or add this to your shell configuration `~/.bashrc`
+Your development setup of caseflow currently runs Redis, postgres and OracleDB (VACOLS) in Docker.
+
+Setup your postgres user.  Run this in your CLI, or better yet, add this to your shell configuration `~/.bashrc`
 
 ```
 export POSTGRES_USER=postgres
@@ -108,7 +110,7 @@ export POSTGRES_PASSWORD=postgres
 Start all containers
 ```
 docker-compose up -d
-# run without -d to start your environment in the foreground
+# run without -d to start your environment and view container logging in the foreground
 
 docker-compose ps
 # this shows you the status of all of your dependencies
