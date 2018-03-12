@@ -43,19 +43,19 @@ export default class AppealDetail extends React.PureComponent {
 
     if (hearing.disposition.includes('cancel')) {
       return listElements;
-    } else {
-      return listElements.concat([{
-        label: 'Hearing held',
-        value: <React.Fragment>
-          <DateString date={hearing.held_on} dateFormat="M/D/YY" style={marginRight} />
-          <Link target="_blank" href={`/hearings/${hearing.id}/worksheet`}>View Hearing Worksheet</Link>
-        </React.Fragment>
-      }, {
-        label: 'Judge at hearing',
-        value: hearing.held_by
-      }]);
     }
-  }
+
+    return listElements.concat([{
+      label: 'Hearing held',
+      value: <React.Fragment>
+        <DateString date={hearing.held_on} dateFormat="M/D/YY" style={marginRight} />
+        <Link target="_blank" href={`/hearings/${hearing.id}/worksheet`}>View Hearing Worksheet</Link>
+      </React.Fragment>
+    }, {
+      label: 'Judge at hearing',
+      value: hearing.held_by
+    }]);
+  };
 
   getListElements = () => {
     const listElements = [{
