@@ -139,10 +139,13 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :page_title
 
+  # Verifies that the user has any of the roles passed
   def verify_authorized_roles(*roles)
-    return true if current_user && roles.all? { |r| current_user.can?(r) }
+    return true if current_user && roles.any? { |r| current_user.can?(r) }
+
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
+
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end

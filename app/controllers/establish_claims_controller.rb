@@ -127,12 +127,8 @@ class EstablishClaimsController < TasksController
     verify_authorized_roles("Manage Claim Establishment")
   end
 
-  def manager?
-    current_user.can?("Manage Claim Establishment")
-  end
-
   def verify_access
-    manager? || verify_authorized_roles("Establish Claim")
+    verify_authorized_roles("Manage Claim Establishment", "Establish Claim")
   end
 
   def logo_name
