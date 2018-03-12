@@ -111,5 +111,13 @@ class VACOLS::CaseIssue < VACOLS::Record
       update!(issue_attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
+
+  def delete_issue!
+    MetricsService.record("VACOLS: CaseIssue.delete_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
+                          service: :vacols,
+                          name: "CaseIssue.delete_issue") do
+      delete!
+    end
+  end
   # :nocov:
 end

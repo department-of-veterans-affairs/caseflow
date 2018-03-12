@@ -29,6 +29,17 @@ class IssuesController < ApplicationController
     render json: { issue: record }, status: :ok
   end
 
+  def destroy
+    return record_not_found unless appeal
+
+    record = Issue.delete_in_vacols!(
+      css_id: current_user.css_id,
+      vacols_id: appeal.vacols_id,
+      vacols_sequence_id: params[:vacols_sequence_id]
+    )
+    render json: {}, status: :ok
+  end
+
   private
 
   def appeal

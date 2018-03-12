@@ -141,4 +141,48 @@ RSpec.describe IssuesController, type: :controller do
       end
     end
   end
+
+  describe "DELETE appeals/:appeal_id/issues/:vacols_sequence_id" do
+    context "when deleted successfully" do
+      let(:result_params) do
+        {
+          css_id: "DSUSER",
+          vacols_id: appeal.vacols_id,
+          vacols_sequence_id: "1",
+        }
+      end
+      it "should be successful" do
+        allow(Fakes::IssueRepository).to receive(:delete_vacols_issue!)
+          .with(result_params).and_return({})
+        post :destroy, appeal_id: appeal.id, vacols_sequence_id: 1
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "when appeal is not found" do
+      it "should return not found" do
+        post :destroy, appeal_id: 45_545_454, vacols_sequence_id: 1, issues: {}
+        expect(response.status).to eq 404
+      end
+    end
+
+    context "when there is an error" do
+      let(:result_params) do
+        {
+          css_id: "DSUSER",
+          vacols_id: appeal.vacols_id,
+          vacols_sequence_id: "1",
+        }
+      end
+      it "should not be successful" do
+        allow(Fakes::IssueRepository).to receive(:delete_vacols_issue!)
+          .with(result_params).and_raise(IssueRepository::IssueError.new("Cannot find issue"))
+        post :destroy, appeal_id: appeal.id, vacols_sequence_id: 1
+        expect(response.status).to eq 400
+        error = JSON.parse(response.body)["errors"].first
+        expect(error["title"]).to eq "IssueRepository::IssueError"
+        expect(error["detail"]).to eq "Cannot find issue"
+      end
+    end
+  end
 end
