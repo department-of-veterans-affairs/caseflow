@@ -1,0 +1,83 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { css } from 'glamor';
+import _ from 'lodash';
+
+import { boldText } from '../constants';
+import StringUtil from '../../util/StringUtil';
+
+const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
+const noteMarginTop = css({ marginTop: '1.5rem' });
+const issueMarginTop = css({ marginTop: '0.5rem' });
+const issueLevelStyling = css({
+  display: 'inline-block',
+  width: '100%',
+  marginLeft: '4.5rem'
+});
+const leftAlignTd = css({
+  paddingLeft: 0,
+  paddingRight: 0
+});
+
+export default class IssueListItem extends React.PureComponent {
+  formatIdx = (idx) => <td {...leftAlignTd} width="10px">
+    {this.props.idxToDisplay || (idx + 1)}.
+  </td>;
+
+  formatLevels = (issue) => issue.levels.map((level, idx) =>
+    <div key={idx} {...issueMarginTop}>
+      <span key={level} {...issueLevelStyling}>
+        {idx === 1 ? _.last(issue.description) : level}
+      </span>
+    </div>);
+
+  formatProgram = (issue) => {
+    const programWords = StringUtil.titleCase(issue.program).split(' ');
+    const acronyms = ['vba', 'bva', 'vre', 'nca'];
+
+    return programWords.map((word) =>
+      acronyms.includes(word.toLowerCase()) ? word.toUpperCase() : word
+    ).join(' ');
+  };
+
+  render = () => {
+    const {
+      issue,
+      issuesOnly,
+      idx
+    } = this.props;
+    let issueContent = <span />;
+
+    if (issuesOnly) {
+      issueContent = <React.Fragment>
+        {issue.type} {issue.levels.join(', ')}
+      </React.Fragment>;
+    } else {
+      issueContent = <React.Fragment>
+        <span {...boldText}>Program:</span> {this.formatProgram(issue)}
+        <div {...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.formatLevels(issue)}</div>
+        <div {...noteMarginTop}>
+          <span {...boldText}>Note:</span> {issue.note}
+        </div>
+      </React.Fragment>;
+    }
+
+    return <React.Fragment>
+      {this.formatIdx(idx)}
+      <td {...minimalLeftPadding}>
+        {issueContent}
+      </td>
+    </React.Fragment>;
+  };
+}
+
+IssueListItem.propTypes = {
+  issue: PropTypes.object.isRequired,
+  issuesOnly: PropTypes.bool,
+  idxToDisplay: PropTypes.number,
+  idx: PropTypes.number.isRequired
+};
+
+IssueListItem.defaultProps = {
+  issuesOnly: false
+};
