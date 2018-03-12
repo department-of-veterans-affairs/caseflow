@@ -476,7 +476,12 @@ class Appeal < ActiveRecord::Base
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def worksheet_issues
-    issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
+    if super.empty?
+      transaction do
+        issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+        update!(issues_pulled: true)
+      end
+    end
     super
   end
 
@@ -734,6 +739,19 @@ class Appeal < ActiveRecord::Base
       fail ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
+    end
+
+    # Returns a hash of appeals with appeal_id as keys and
+    # related appeals as values. These are appeals
+    # fetched based on the vbms_id.
+    def fetch_appeal_streams(appeals)
+      appeal_vbms_ids = appeals.reduce({}) { |acc, appeal| acc.merge(appeal.vbms_id => appeal.id) }
+
+      Appeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
+        appeal_id = appeal_vbms_ids[appeal.vbms_id]
+        acc[appeal_id] ||= []
+        acc[appeal_id] << appeal
+      end
     end
 
     private
