@@ -476,7 +476,12 @@ class Appeal < ActiveRecord::Base
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def worksheet_issues
-    issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
+    if super.empty?
+      transaction do
+        issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+        update!(issues_pulled: true)
+      end
+    end
     super
   end
 
