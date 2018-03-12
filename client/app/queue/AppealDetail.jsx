@@ -35,10 +35,10 @@ export default class AppealDetail extends React.PureComponent {
     const hearing = this.getLastHearing();
     const listElements = [{
       label: 'Hearing preference',
-      value: StringUtil.titleCase(hearing.type)
+      value: StringUtil.snakeCaseToCapitalized(hearing.type)
     }, {
       label: 'Hearing disposition',
-      value: StringUtil.titleCase(hearing.disposition.split('_').join(' '))
+      value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
     }];
 
     if (hearing.disposition.includes('cancel')) {
