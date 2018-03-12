@@ -100,7 +100,7 @@ RSpec.feature "Hearings" do
       day1 = get_day(1)
       day2 = get_day(2)
 
-      expect(day1 + 3.days).to eql(day2)
+      expect(day2 + 3.days).to eql(day1)
 
       # Verify docket types
 
@@ -116,8 +116,8 @@ RSpec.feature "Hearings" do
       docket2_hearings = get_hearings(2)
 
       # the first one is a master record
-      expect(docket1_hearings).to eql("1")
-      expect(docket2_hearings).to eql("0")
+      expect(docket1_hearings).to eql("0")
+      expect(docket2_hearings).to eql("1")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
