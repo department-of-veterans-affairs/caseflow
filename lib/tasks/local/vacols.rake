@@ -1,4 +1,5 @@
 require "csv"
+require "rainbow"
 
 namespace :local do
   namespace :vacols do
@@ -110,6 +111,10 @@ namespace :local do
         :decass
       ).find(ids)
 
+
+      # Sanitize Staff table first to get a list of mappings from old to new slogid
+      write_csv(VACOLS::Staff, VACOLS::Staff.all)
+
       # In order to add a new table, you'll also need to add a sanitize and white_list method
       # to the Helpers::Sanitizers class.
       write_csv(VACOLS::Case, cases)
@@ -120,7 +125,6 @@ namespace :local do
       write_csv(VACOLS::Note, cases.map(&:notes))
       write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
       write_csv(VACOLS::Decass, cases.map(&:decass))
-      write_csv(VACOLS::Staff, VACOLS::Staff.all)
       write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
       write_csv(VACOLS::Issref, VACOLS::Issref.all)
       write_csv(
@@ -130,6 +134,9 @@ namespace :local do
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
+      Helpers::Sanitizers.errors.each do |error|
+        puts Rainbow(error).red
+      end
     end
 
     private
@@ -180,9 +187,9 @@ namespace :local do
       CSV.open(Rails.root.join("vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
-        rows.flatten.each do |row|
+        rows.flatten.each_with_index do |row, row_index|
           next if row.nil?
-          Helpers::Sanitizers.sanitize(klass, row)
+          Helpers::Sanitizers.sanitize(klass, row, row_index)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
           csv << attributes.values
         end
