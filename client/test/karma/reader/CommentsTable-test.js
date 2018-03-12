@@ -40,14 +40,14 @@ describe('CommentsTable', () => {
         documentId: 15,
         comment: 'This is an example comment',
         relevant_date: '2018-05-05',
-        serializedReceiptDate: '2016-10-23',
+        serialized_receipt_date: '2016-10-23',
         docType: 'NOD'
       },
       {
         comment: 'Hello World!',
         documentId: 12,
         relevant_date: null,
-        serializedReceiptDate: '2017-06-05',
+        serialized_receipt_date: '2017-06-05',
         docType: 'SOC'
       }
     ]);
