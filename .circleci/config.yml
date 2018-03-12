@@ -38,7 +38,7 @@ jobs:
 
       - run:
           name: bundle install
-          command: bundle check || bundle install --without production staging
+          command: bundle check || bundle install --deployment --without production staging ssh_forwarding local
 
       - save_cache:
           key: vendor-bundle-{{ checksum "Gemfile.lock" }}

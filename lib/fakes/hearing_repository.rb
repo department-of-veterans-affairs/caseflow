@@ -5,7 +5,7 @@ class Fakes::HearingRepository
     attr_accessor :master_records
   end
 
-  def self.upcoming_hearings_for_judge(css_id)
+  def self.fetch_hearings_for_judge(css_id)
     user = User.find_by_css_id(css_id)
     records.select { |h| h.user_id == user.id }
   end
@@ -90,12 +90,23 @@ class Fakes::HearingRepository
     )
   end
 
+  def self.generate_past_hearings(number_of_hearings, user)
+    number_of_hearings.times.each do |i|
+      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user,
+                                                                 date: 365.days.ago.beginning_of_day +
+      ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes))
+      create_appeal_stream(hearing, i) if i % 5 == 0
+    end
+  end
+
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
+
+    generate_past_hearings(10, user)
     4.times.each do |i|
       Generators::Hearings::MasterRecord.build(
         user_id: user.id,
