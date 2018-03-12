@@ -93,25 +93,38 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
-## Start up local VACOLS container
-To set up our local copy of VACOLS, run
+## Start up your docker based environment
+
+We use docker and docker-compose to mock a production environment locally.  A redis, postgres and OracleDB (VACOLS) will be pulled
+and mocked locally.
+
+Setup your postgres user.  Run this in your CLI, or add this to your shell configuration `~/.bashrc`
+
 ```
-rake local:vacols:setup
-```
-To start the container after it's been setup, run
-```
-rake local:vacols:start
-```
-To stop the container, run
-```
-rake local:vacols:stop
-```
-To view the logs, run
-```
-rake local:vacols:logs
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
 ```
 
-## Seeding the local VACOLS container
+Start all containers
+```
+docker-compose up -d
+# run without -d to start your environment in the foreground
+
+docker-compose ps
+# this shows you the status of all of your dependencies
+```
+
+## Setup your Database Schema
+```
+rake db:setup
+rake db:seed
+
+# setup local VACOLS (FAKOLS)
+rake local:vacols:setup
+rake local:vacols:seed
+```
+
+## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
