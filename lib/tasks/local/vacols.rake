@@ -22,7 +22,8 @@ namespace :local do
       if schema_complete
         puts "Schema loaded"
       else
-        puts "Schema loading failed.  Please make sure your VACOLS container is running. Try running:\n\n$ docker-compose ps\n$ docker-compose up -d"
+        puts "Schema loading failed.  Please make sure your VACOLS container is running."
+        puts "Try running:\n\n$ docker-compose ps\n$ docker-compose up -d"
       end
     end
 
