@@ -235,6 +235,11 @@ describe AppealSeries do
         it { is_expected.to eq(:reconsideration) }
       end
 
+      context "when an unmatched merge" do
+        let(:disposition) { "Merged Appeal" }
+        it { is_expected.to eq(:merged) }
+      end
+
       context "when any other disposition" do
         let(:disposition) { "Not a real disposition" }
         it { is_expected.to eq(:other_close) }
