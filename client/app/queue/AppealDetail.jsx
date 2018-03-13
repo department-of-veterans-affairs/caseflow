@@ -41,7 +41,7 @@ export default class AppealDetail extends React.PureComponent {
       value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
     }];
 
-    if (hearing.disposition.includes('cancel')) {
+    if (hearing.disposition === 'cancelled') {
       return listElements;
     }
 
