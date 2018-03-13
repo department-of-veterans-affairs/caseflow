@@ -40,7 +40,7 @@ class Judge
   end
 
   def upcoming_hearings
-    Hearing.repository.upcoming_hearings_for_judge(user.css_id).sort_by(&:date)
+    Hearing.repository.fetch_hearings_for_judge(user.css_id).sort_by(&:date)
   end
 
   def get_dockets_slots(dockets)

@@ -25,7 +25,7 @@ RSpec.feature "Hearings" do
           appellant_last_name: "AppellantLastName",
           veteran_first_name: "VeteranFirstName",
           veteran_last_name: "VeteranLastName#{id}",
-          date: 5.days.from_now,
+          date: 5000.days.from_now,
           type: "video",
           master_record: false
         )
@@ -35,12 +35,26 @@ RSpec.feature "Hearings" do
         id: 3,
         user: current_user,
         type: "central_office",
-        date: Time.zone.now,
+        date: 2500.days.from_now,
         master_record: true
+      )
+      Generators::Hearing.create(
+        id: 4,
+        user: current_user,
+        type: "central_office",
+        date: 3.days.ago,
+        master_record: true
+      )
+      Generators::Hearing.create(
+        id: 5,
+        user: current_user,
+        type: "central_office",
+        date: 6.days.ago,
+        master_record: false
       )
     end
 
-    scenario "Shows dockets for each day" do
+    scenario "Shows upcoming dockets for upcoming day" do
       visit "/hearings/dockets"
 
       expect(page).to have_content("Your Hearing Days")
@@ -49,11 +63,10 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("VLJ: Lauren Roth")
 
       # Verify dates
-
       day1 = get_day(1)
       day2 = get_day(2)
 
-      expect(day1 + 5.days).to eql(day2)
+      expect(day1 + 2500.days).to eql(day2)
 
       # Verify docket types
 
@@ -78,16 +91,46 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Welcome to the Hearings Help page!")
     end
 
+    scenario "Shows past dockets for each day" do
+      visit "/hearings/dockets"
+
+      click_on("dockets-tab-1")
+
+      # Verify dates
+      day1 = get_day(1)
+      day2 = get_day(2)
+
+      expect(day2 + 3.days).to eql(day1)
+
+      # Verify docket types
+
+      docket1_type = get_type(1)
+      docket2_type = get_type(2)
+
+      expect(docket1_type).to eql("CO")
+      expect(docket2_type).to eql("CO")
+
+      # Verify hearings count in each docket
+
+      docket1_hearings = get_hearings(1)
+      docket2_hearings = get_hearings(2)
+
+      # the first one is a master record
+      expect(docket1_hearings).to eql("0")
+      expect(docket2_hearings).to eql("1")
+    end
+
     scenario "Upcoming docket days correctly handles master records" do
       visit "/hearings/dockets"
-      expect(page).to have_link(5.days.from_now.strftime("%-m/%-d/%Y"))
+      expect(page).to have_link(5000.days.from_now.strftime("%-m/%-d/%Y"))
       expect(page).not_to have_link(Time.zone.now.strftime("%-m/%-d/%Y"))
     end
 
     scenario "Shows a daily docket" do
-      visit "/hearings/dockets/2017-01-06"
+      visit "/hearings/dockets/2030-09-10"
+
       expect(page).to have_content("Daily Docket")
-      expect(page).to have_content("1/6/2017")
+      expect(page).to have_content("9/10/2030")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
@@ -96,7 +139,8 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Daily docket saves to the backend" do
-      visit "/hearings/dockets/2017-01-01"
+      visit "/hearings/dockets/2023-11-06"
+
       fill_in "3.notes", with: "This is a note about the hearing!"
       find(".cf-hearings-prepped").find(".cf-form-checkbox").click
       find(".dropdown-3-disposition").click
@@ -106,7 +150,7 @@ RSpec.feature "Hearings" do
       find(".dropdown-3-aod").click
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
-      visit "/hearings/dockets/2017-01-01"
+      visit "/hearings/dockets/2023-11-06"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
       expect(page).to have_content("60 days")
@@ -116,7 +160,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Link on daily docket opens worksheet in new tab" do
-      visit "/hearings/dockets/2017-01-06"
+      visit "/hearings/dockets/2023-11-06"
       link_cell = find(".cf-hearings-docket-appellant", match: :first)
 
       # Link should be bolded before the worksheet has been viewed
@@ -137,7 +181,7 @@ RSpec.feature "Hearings" do
       end
 
       # If we refresh the page, the view hearing link should still be unbolded.
-      visit "/hearings/dockets/2017-01-06"
+      visit "/hearings/dockets/2023-11-06"
       link_cell = find(".cf-hearings-docket-appellant", match: :first)
       expect(link_cell).to_not have_css("strong a")
     end
@@ -262,7 +306,8 @@ end
 # helpers
 
 def get_day(row)
-  parts = find(:xpath, "//tbody/tr[#{row}]/td[1]").text.split("/").map(&:to_i)
+  date_row = find(:xpath, "//tbody/tr[#{row}]/td[1]").text
+  parts = date_row[/\d{1,2}\/\d{1,2}\/\d{4}/].split("/").map(&:to_i)
   Date.new(parts[2], parts[0], parts[1])
 end
 
