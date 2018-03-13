@@ -46,9 +46,54 @@ export const setDecisionOptions = (opts) => ({
   }
 });
 
+export const resetDecisionOptions = () => ({
+  type: ACTIONS.RESET_DECISION_OPTIONS
+});
+
+export const startEditingAppeal = (vacolsId) => ({
+  type: ACTIONS.START_EDITING_APPEAL,
+  payload: {
+    vacolsId
+  }
+});
+
+export const cancelEditingAppeal = (vacolsId) => ({
+  type: ACTIONS.CANCEL_EDITING_APPEAL,
+  payload: {
+    vacolsId
+  }
+});
+
+export const updateAppealIssue = (appealId, issueId, attributes) => ({
+  type: ACTIONS.UPDATE_APPEAL_ISSUE,
+  payload: {
+    appealId,
+    issueId,
+    attributes
+  }
+});
+
+export const highlightInvalidFormItems = (highlight) => ({
+  type: ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS,
+  payload: {
+    highlight
+  }
+});
+
 export const setSelectingJudge = (selectingJudge) => ({
   type: ACTIONS.SET_SELECTING_JUDGE,
   payload: {
     selectingJudge
   }
+});
+
+export const pushBreadcrumb = (...crumbs) => ({
+  type: ACTIONS.PUSH_BREADCRUMB,
+  payload: {
+    crumbs: [...crumbs]
+  }
+});
+
+export const resetBreadcrumbs = () => ({
+  type: ACTIONS.RESET_BREADCRUMBS
 });
