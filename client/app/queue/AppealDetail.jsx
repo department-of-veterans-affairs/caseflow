@@ -42,7 +42,7 @@ export default class AppealDetail extends React.PureComponent {
       return listElements;
     }
 
-    listElements.concat({
+    listElements.splice(1, 0, {
       label: 'Hearing disposition',
       value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
     });
