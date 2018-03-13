@@ -383,35 +383,6 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("Welcome to Caseflow Intake!")
       end
 
-      scenario "Complete intake for RAMP Election form fails due to unknown error" do
-        allow(VBMSService).to receive(:establish_claim!).and_raise(unknown_error)
-
-        RampElection.create!(
-          veteran_file_number: "12341234",
-          notice_date: Date.new(2017, 8, 7)
-        )
-
-        intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
-        intake.start!
-
-        visit "/intake"
-
-        within_fieldset("Which review lane did the veteran select?") do
-          find("label", text: "Higher Level Review with Informal Conference").click
-        end
-
-        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
-        safe_click "#button-submit-review"
-
-        expect(page).to have_content("Finish processing Higher-Level Review election")
-
-        click_label("confirm-finish")
-        safe_click "button#button-submit-review"
-
-        expect(page).to have_content("Please try again. If the problem persists, please contact Caseflow support.")
-      end
-
-
       scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
         allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
