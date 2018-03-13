@@ -94,7 +94,7 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if matching_ramp_election.successfully_received?
+    if matching_ramp_election.completed?
       self.error_code = :ramp_election_already_complete
       @error_data = { receipt_date: matching_ramp_election.receipt_date }
 
