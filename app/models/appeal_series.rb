@@ -122,7 +122,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def fetch_docket
-    return unless %w[original post_remand].include?(type_code) && form9_date && !aod
+    return unless active? && %w[original post_remand].include?(type_code) && form9_date && !aod
     DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
   end
 
@@ -191,6 +191,7 @@ class AppealSeries < ActiveRecord::Base
     end
   end
 
+  # rubocop:disable MethodLength
   def disambiguate_status_complete
     case latest_appeal.disposition
     when "Allowed", "Denied"
@@ -208,10 +209,13 @@ class AppealSeries < ActiveRecord::Base
       :death
     when "Reconsideration by Letter"
       :reconsideration
+    when "Merged Appeal"
+      :merged
     else
       :other_close
     end
   end
+  # rubocop:enable MethodLength
 
   def disambiguate_status_remand
     post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
