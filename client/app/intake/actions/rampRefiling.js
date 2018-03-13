@@ -198,8 +198,16 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
         return true;
       },
       (error) => {
+        const responseObject = JSON.parse(error.response.text);
+        const responseErrorCode = responseObject.error_code;
+        const responseErrorData = responseObject.error_data;
+
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          payload: {
+            responseErrorCode,
+            responseErrorData
+          },
           meta: { analytics }
         });
         throw error;

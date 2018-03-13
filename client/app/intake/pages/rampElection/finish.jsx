@@ -11,29 +11,10 @@ import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../../actions/rampElection';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
-
-class CompleteIntakeErrorAlert extends React.PureComponent {
-  render() {
-    const errorObject = {
-      duplicate_ep: {
-        title: 'An EP for this claim already exists in VBMS',
-        body: `An EP ${this.props.completeIntakeErrorData} for this Veteran's claim was created` +
-         'outside Caseflow. Please tell your manager as soon as possible so they can resolve the issue.'
-      },
-      default: {
-        title: 'Something went wrong',
-        body: 'Please try again. If the problem persists, please contact Caseflow support.'
-      }
-    }[this.props.completeIntakeErrorCode || 'default'];
-
-    return <Alert title={errorObject.title} type="error" lowerMargin>
-      {errorObject.body}
-    </Alert>;
-  }
-}
 
 class Finish extends React.PureComponent {
   getIssuesAlertContent = (appeals) => {

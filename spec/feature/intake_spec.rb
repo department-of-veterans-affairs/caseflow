@@ -752,6 +752,51 @@ RSpec.feature "RAMP Intake" do
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
       end
+
+      scenario "Complete intake for RAMP Refiling fails due to duplicate EP" do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        ramp_election = RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 5.days.ago,
+          receipt_date: 4.days.ago,
+          end_product_reference_id: Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { status_type_code: "CLR" }
+          ).claim_id
+        )
+
+        Generators::Contention.build(
+          claim_id: ramp_election.end_product_reference_id,
+          text: "Left knee rating increase"
+        )
+
+        Generators::Contention.build(
+          claim_id: ramp_election.end_product_reference_id,
+          text: "Left shoulder service connection"
+        )
+
+        visit "/intake/search"
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        within_fieldset("Which review lane did the Veteran select?") do
+          find("label", text: "Higher Level Review", match: :prefer_exact).click
+        end
+        safe_click "#button-submit-review"
+        click_label("confirm-outside-caseflow-steps")
+        find("label", text: "Left knee rating increase").click
+        find("label", text: "Left shoulder service connection").click
+        find("label", text: "The veteran's form lists at least one ineligible contention").click
+        safe_click "#finish-intake"
+
+        expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
+      end
     end
   end
 
