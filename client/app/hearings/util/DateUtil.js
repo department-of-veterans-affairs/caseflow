@@ -12,4 +12,7 @@ export const getDate = (date) => {
     format('l');
 };
 
-export const now = () => moment().tz(moment.tz.guess()).format('h:mm a');
+export const now = () => {
+  return moment().tz(moment.tz.guess()).
+    format('h:mm a');
+};
