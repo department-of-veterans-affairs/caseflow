@@ -103,6 +103,7 @@ Your development setup of caseflow currently runs Redis, postgres and OracleDB (
 Setup your postgres user.  Run this in your CLI, or better yet, add this to your shell configuration `~/.bashrc`
 
 ```
+export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
