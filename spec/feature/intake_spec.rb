@@ -51,6 +51,10 @@ RSpec.feature "RAMP Intake" do
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
   end
 
+  let(:unknown_error) do
+    VBMS::HTTPError.new("500", "<faultstring>Unknown</faultstring>")
+  end
+
   context "As a user with Admin Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Admin Intake"])
@@ -378,6 +382,35 @@ RSpec.feature "RAMP Intake" do
         visit "/intake/finish"
         expect(page).to have_content("Welcome to Caseflow Intake!")
       end
+
+      scenario "Complete intake for RAMP Election form fails due to unknown error" do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(unknown_error)
+
+        RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: Date.new(2017, 8, 7)
+        )
+
+        intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+        intake.start!
+
+        visit "/intake"
+
+        within_fieldset("Which review lane did the veteran select?") do
+          find("label", text: "Higher Level Review with Informal Conference").click
+        end
+
+        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_content("Finish processing Higher-Level Review election")
+
+        click_label("confirm-finish")
+        safe_click "button#button-submit-review"
+
+        expect(page).to have_content("Please try again. If the problem persists, please contact Caseflow support.")
+      end
+
 
       scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
         allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
@@ -771,11 +804,6 @@ RSpec.feature "RAMP Intake" do
           text: "Left knee rating increase"
         )
 
-        Generators::Contention.build(
-          claim_id: ramp_election.end_product_reference_id,
-          text: "Left shoulder service connection"
-        )
-
         visit "/intake/search"
         scroll_element_in_to_view(".cf-submit.usa-button")
         within_fieldset("Which form are you processing?") do
@@ -791,7 +819,6 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
         click_label("confirm-outside-caseflow-steps")
         find("label", text: "Left knee rating increase").click
-        find("label", text: "Left shoulder service connection").click
         find("label", text: "The veteran's form lists at least one ineligible contention").click
         safe_click "#finish-intake"
 
