@@ -34,9 +34,7 @@ class Fakes::QueueRepository
     # Create fake hearings for the first appeal if one doesn't already exist
     2.times { |i| Fakes::HearingRepository.create_already_held_hearing_for_appeal(i, appeal) } if appeal.hearings.empty?
 
-    appeals[1..-2].each.with_index do |a, i|
-      Fakes::HearingRepository.create_hearing_for_appeal(i, a) if a.hearings.empty?
-    end
+    Fakes::HearingRepository.create_hearing_for_appeal(2, appeals[1]) if appeal.hearings.empty?
 
     # The fake appeal repository returns `true` by default for aod, so let's make
     # only the first appeal AOD.
