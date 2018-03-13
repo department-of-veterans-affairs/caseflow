@@ -6,7 +6,11 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import StringUtil from '../util/StringUtil';
-import { updateAppealIssue } from './QueueActions';
+import {
+  updateAppealIssue,
+  startEditingAppealIssue,
+  cancelEditingAppealIssue
+} from './QueueActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -37,11 +41,21 @@ const itemList = [{
   value: 'compensation'
 }];
 
-export class AddEditIssueView extends React.Component {
+class AddEditIssueView extends React.Component {
+  componentDidMount = () => {
+    const {
+      issueId,
+      vacolsId
+    } = this.props;
+
+    this.props.startEditingAppealIssue(vacolsId, issueId);
+  };
+  componentWillUnmount = () => this.props.cancelEditingAppealIssue();
+
   getFooterButtons = () => [{
     displayText: '< Go back to Select Dispositions'
   }, {
-    displayText: `${StringUtil.titleCase(this.props.action)} issue`
+    displayText: 'Save'
   }];
 
   updateIssue = (attributes) => this.props.updateAppealIssue(
@@ -52,21 +66,14 @@ export class AddEditIssueView extends React.Component {
 
   getIssueValue = (value) => _.get(this.props.issue, value, '');
 
-  goToPrevStep = () => {
-    if (this.props.action === 'add') {
-      // delete issue
-    } else {
-      // reset values
-    }
-  }
-
   validateForm = () => {
-    const { issue } = this.props;
-    const fields = ['program', 'type', 'levels', 'note'];
-    const missingFields = _.filter(fields, (field) => _.has(issue, field));
-
-    return !missingFields.length;
-  }
+    // const { issue } = this.props;
+    // const fields = ['program', 'type', 'levels', 'note'];
+    // const missingFields = _.filter(fields, (field) => _.has(issue, field));
+    //
+    // return !missingFields.length;
+    return true;
+  };
 
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -126,20 +133,16 @@ AddEditIssueView.propTypes = {
   issue: PropTypes.object
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const props = {
-    appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId]
-  };
-
-  if (ownProps.issueId) {
-    props.issue = _.find(props.appeal.attributes.issues, (issue) => issue.id === ownProps.issueId);
-  }
-
-  return props;
-};
+const mapStateToProps = (state, ownProps) => ({
+  highlight: state.queue.ui.highlightFormItems,
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  issue: state.queue.pendingChanges.editingIssue
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue
+  updateAppealIssue,
+  startEditingAppealIssue,
+  cancelEditingAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

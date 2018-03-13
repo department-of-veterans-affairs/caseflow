@@ -31,7 +31,8 @@ export const initialState = {
     taskDecision: {
       type: '',
       opts: {}
-    }
+    },
+    editingIssue: {}
   }
 };
 
@@ -114,10 +115,38 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.UPDATE_APPEAL_ISSUE: {
+  case ACTIONS.START_EDITING_APPEAL_ISSUE: {
+    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
+
+    return update(state, {
+      pendingChanges: {
+        editingIssue: {
+          $set: _.find(issues, (issue) => issue.id === action.payload.issueId)
+        }
+      }
+    });
+  }
+  case ACTIONS.CANCEL_EDITING_APPEAL_ISSUE:
+    return update(state, {
+      pendingChanges: {
+        editingIssue: {
+          $set: {}
+        }
+      }
+    });
+  case ACTIONS.UPDATE_APPEAL_ISSUE:
+    return update(state, {
+      pendingChanges: {
+        editingIssue: {
+          $merge: action.payload.attributes
+        }
+      }
+    });
+  case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
     const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
     const issueIdx = _.findIndex(issues, (issue) => issue.id === action.payload.issueId);
 
+    // todo: if (issueIdx === -1) { push }
     return update(state, {
       pendingChanges: {
         appeals: {
@@ -125,11 +154,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
             attributes: {
               issues: {
                 [issueIdx]: {
-                  $merge: action.payload.attributes
+                  $merge: state.pendingChanges.editingIssue
                 }
               }
             }
           }
+        },
+        editingIssue: {
+          $set: {}
         }
       }
     });

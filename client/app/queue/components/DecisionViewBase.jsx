@@ -75,10 +75,12 @@ export default function decisionViewBase(ComponentToWrap) {
     goToNextStep = () => {
       const validation = this.wrapped && this.wrapped.validateForm;
 
-      if (validation && validation()) {
+      if (!validation) {
+        return this.props.highlightInvalidFormItems(true);
+      }
+
+      if (validation()) {
         this.goToStep(this.props.nextStep);
-      } else {
-        this.props.highlightInvalidFormItems(true);
       }
     };
 

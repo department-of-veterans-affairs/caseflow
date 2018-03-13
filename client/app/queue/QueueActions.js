@@ -64,6 +64,18 @@ export const cancelEditingAppeal = (vacolsId) => ({
   }
 });
 
+export const startEditingAppealIssue = (appealId, issueId) => ({
+  type: ACTIONS.START_EDITING_APPEAL_ISSUE,
+  payload: {
+    appealId,
+    issueId
+  }
+});
+
+export const cancelEditingAppealIssue = () => ({
+  type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
+});
+
 export const updateAppealIssue = (appealId, issueId, attributes) => ({
   type: ACTIONS.UPDATE_APPEAL_ISSUE,
   payload: {
