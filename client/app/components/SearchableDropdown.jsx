@@ -66,8 +66,9 @@ class SearchableDropdown extends Component {
       searchable
     } = this.props;
 
-    const dropdownStyling = css({
-      '& .Select-menu-outer': this.props.dropdownStyling
+    const styling = css({
+      ...this.props.styling,
+      '& .Select-menu-outer': this.props.dropdownMenuStyling
     });
 
     const SelectComponent = creatable ? Select.Creatable : Select;
@@ -113,7 +114,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} {...dropdownStyling}>
+    return <div className={dropdownClasses} {...styling}>
       <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
@@ -151,7 +152,8 @@ SearchableDropdown.propTypes = {
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
-  dropdownStyling: PropTypes.object
+  dropdownMenuStyling: PropTypes.object,
+  styling: PropTypes.object
 };
 
 export default SearchableDropdown;

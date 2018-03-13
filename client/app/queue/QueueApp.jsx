@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
+import StringUtil from '../util/StringUtil';
 
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
@@ -15,6 +16,7 @@ import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
+import AddEditIssueView from './AddEditIssueView';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Breadcrumbs from './components/BreadcrumbManager';
 
@@ -78,6 +80,11 @@ class QueueApp extends React.PureComponent {
       nextStep={`/tasks/${vacolsId}/submit`} />;
   };
 
+  routedAddEditIssue = (props) => <AddEditIssueView
+    nextStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    {...props.match.params} />;
+
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
       wideApp
@@ -110,6 +117,11 @@ class QueueApp extends React.PureComponent {
               return `Draft Decision | Submit ${reviewActionType}`;
             }}
             render={this.routedSubmitDecision} />
+          <PageRoute
+            exact
+            path="/tasks/:vacolsId/dispositions/:action/:issueId"
+            title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
+            render={this.routedAddEditIssue} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"

@@ -92,8 +92,7 @@ class QueueDetailView extends React.PureComponent {
         options={draftDecisionOptions}
         onChange={this.changeRoute}
         hideLabel
-        dropdownStyling={dropdownMenuStyling}
-        searchable={false} />}
+        dropdownMenuStyling={dropdownMenuStyling} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />
