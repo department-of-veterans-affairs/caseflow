@@ -208,6 +208,8 @@ class AppealSeries < ActiveRecord::Base
       :death
     when "Reconsideration by Letter"
       :reconsideration
+    when "Merged Appeal"
+      :merged
     else
       :other_close
     end
