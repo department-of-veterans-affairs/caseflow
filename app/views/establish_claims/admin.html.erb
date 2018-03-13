@@ -2,7 +2,7 @@
 <%= react_component("EstablishClaimAdmin", props: {
   userDisplayName: current_user.display_name,
   dropdownUrls: dropdown_urls,
-  feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+  feedbackUrl: feedback_url,
   buildDate: build_date
 }) %>
 <% end %>

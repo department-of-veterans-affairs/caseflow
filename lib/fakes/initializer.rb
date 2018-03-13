@@ -1,47 +1,57 @@
 class Fakes::Initializer
   class << self
-    def load!
+    def load!(rails_env: nil)
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
-      Hearing.repository = Fakes::HearingRepository
-      HearingDocket.repository = Fakes::HearingRepository
-      Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.appeal_repository = Fakes::AppealRepository
+      Judge.repository = Fakes::JudgeRepository
+      AttorneyCaseReview.repository = Fakes::QueueRepository
+      if !rails_env || !rails_env.local?
+        User.appeal_repository = Fakes::AppealRepository
+        WorkQueue.repository = Fakes::QueueRepository
+        Hearing.repository = Fakes::HearingRepository
+        HearingDocket.repository = Fakes::HearingRepository
+        Appeal.repository = Fakes::AppealRepository
+        Issue.repository = Fakes::IssueRepository
+      end
     end
 
     # This method is called only 1 time during application bootup
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def app_init!(rails_env)
-      if rails_env.ssh_forwarding?
+      if rails_env.ssh_forwarding? && !running_rake_command?
         User.authentication_service = Fakes::AuthenticationService
         # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
         # set this up in Fakes::AppealRepository.seed! which we don't call for this environment.
-        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::AppealRepository.static_reader_documents }
+        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.development? || rails_env.demo?
+      if rails_env.development? || rails_env.demo? || rails_env.local?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
         if running_rake_command?
-          load!
+          load!(rails_env: rails_env)
         else
-          load_fakes_and_seed!
+          load_fakes_and_seed!(rails_env: rails_env)
         end
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # This setup method is called on every request during development
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env, app_name: nil)
-      load_fakes_and_seed!(app_name: app_name) if rails_env.development?
+      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.development?
     end
 
     private
 
-    def load_fakes_and_seed!(app_name: nil)
-      load!
+    def load_fakes_and_seed!(rails_env:, app_name: nil)
+      load!(rails_env: rails_env)
 
       User.authentication_service.vacols_regional_offices = {
         "DSUSER" => "DSUSER",
@@ -61,7 +71,7 @@ class Fakes::Initializer
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
-      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
+      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings" || app_name == "reader"
     end
 
     def running_rake_command?

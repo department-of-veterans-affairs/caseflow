@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import IssueList from './IssueList';
+import IssueList from '../queue/components/IssueList';
 import EditableField from '../components/EditableField';
 import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDescription
 } from './Documents/DocumentsActions';
@@ -47,7 +47,7 @@ class SideBarDocumentInformation extends PureComponent {
         </p>
         <div className="cf-pdf-meta-title">
           <strong>Issues: </strong>
-          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" />
+          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" issuesOnly />
         </div>
       </div>;
     }

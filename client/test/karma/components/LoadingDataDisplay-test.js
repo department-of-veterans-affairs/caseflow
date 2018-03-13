@@ -12,7 +12,7 @@ describe('LoadingDataDisplay', () => {
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createEternalPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: loadingScreenMessage
         }}
       >
@@ -31,7 +31,7 @@ describe('LoadingDataDisplay', () => {
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}
@@ -45,12 +45,12 @@ describe('LoadingDataDisplay', () => {
     });
   });
 
-  it('shows fail component', () => {
-    const createFailingPromise = () => Promise.reject();
+  it('shows props msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 502 });
     const wrapper = mount(
       <LoadingDataDisplay
         createLoadPromise={createFailingPromise}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}
@@ -64,6 +64,42 @@ describe('LoadingDataDisplay', () => {
     });
   });
 
+  it('shows access denied msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 403 });
+    const wrapper = mount(
+      <LoadingDataDisplay
+        createLoadPromise={createFailingPromise}
+        loadingComponentProps={{
+          message: 'loading message'
+        }}
+      >
+        <p>Request succeeded</p>
+      </LoadingDataDisplay>
+    );
+
+    return wait().then(() => {
+      expect(wrapper.text()).to.include('you do not have the necessary level of access');
+    });
+  });
+
+  it('shows not found msg in fail component', () => {
+    const createFailingPromise = () => Promise.reject({ status: 404 });
+    const wrapper = mount(
+      <LoadingDataDisplay
+        createLoadPromise={createFailingPromise}
+        loadingComponentProps={{
+          message: 'loading message'
+        }}
+      >
+        <p>Request succeeded</p>
+      </LoadingDataDisplay>
+    );
+
+    return wait().then(() => {
+      expect(wrapper.text()).to.include('not find the information');
+    });
+  });
+
   it('slow loading state', function() {
     const SLOW_TIMEOUT_MS = 4000;
 
@@ -73,7 +109,7 @@ describe('LoadingDataDisplay', () => {
       <LoadingDataDisplay
         createLoadPromise={createSlowPromise}
         slowLoadThresholdMs={SLOW_TIMEOUT_MS / 10}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
       >
@@ -96,7 +132,7 @@ describe('LoadingDataDisplay', () => {
         createLoadPromise={createSlowPromise}
         slowLoadThresholdMs={TIMEOUT_MS / 20}
         timeoutMs={TIMEOUT_MS / 10}
-        loadingScreenProps={{
+        loadingComponentProps={{
           message: 'loading message'
         }}
         failStatusMessageChildren={<p>Fail message</p>}

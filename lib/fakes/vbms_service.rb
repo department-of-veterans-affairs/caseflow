@@ -1,4 +1,5 @@
 require "ostruct"
+require "csv"
 
 class VBMSCaseflowLogger
   def self.log(event, data)
@@ -27,6 +28,19 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_ids_by_file_number
   end
 
+  def self.load_vbms_ids_mappings
+    file_path = Rails.root.join("vacols", "vbms_setup.csv")
+
+    return if !File.exist?(file_path) || @load_vbms_ids_mappings
+
+    @load_vbms_ids_mappings = true
+    @document_records ||= {}
+    CSV.foreach(file_path, headers: true) do |row|
+      row_hash = row.to_h
+      @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+    end
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
@@ -51,6 +65,8 @@ class Fakes::VBMSService
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal, _user = nil)
+    load_vbms_ids_mappings
+
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     fetched_at_format = "%FT%T.%LZ"
     {
@@ -58,6 +74,19 @@ class Fakes::VBMSService
       manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
       documents: (document_records || {})[appeal.vbms_id] || @documents || []
     }
+  end
+
+  def self.fetch_document_series_for(appeal)
+    Document.where(file_number: appeal.sanitized_vbms_id).map do |document|
+      (0..document.id % 3).map do |index|
+        OpenStruct.new(
+          document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
+          series_id: "TEST_SERIES_#{document.id}",
+          version: index + 1,
+          received_at: document.received_at
+        )
+      end
+    end
   end
 
   def self.upload_document_to_vbms(appeal, form8)

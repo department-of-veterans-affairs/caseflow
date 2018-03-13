@@ -1,4 +1,6 @@
 class Reader::DocumentsController < Reader::ApplicationController
+  EXCEPTIONS = [Caseflow::Error::DocumentRetrievalError, Caseflow::Error::EfolderAccessForbidden].freeze
+
   # rubocop:disable Metrics/MethodLength
   def index
     respond_to do |format|
@@ -20,7 +22,7 @@ class Reader::DocumentsController < Reader::ApplicationController
         end
       end
     end
-  rescue Caseflow::Error::DocumentRetrievalError => e
+  rescue *EXCEPTIONS => e
     respond_to_doc_retrieval_error(e)
   end
   # rubocop:enable Metrics/MethodLength
@@ -71,7 +73,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def respond_to_doc_retrieval_error(e)
-    render json: { "errors": ["status": 502, "title": e.to_s, "detail": e.message] }, status: 502
+    render json: { "errors": ["status": e.message, "title": e.to_s, "detail": e.message] }, status: e.message
   end
 
   def appeal_id

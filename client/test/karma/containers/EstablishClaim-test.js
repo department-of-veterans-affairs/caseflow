@@ -20,7 +20,7 @@ describe('EstablishClaim', () => {
       const task = {
         appeal: {
           vbms_id: '516517691',
-          decision_type: 'Remand',
+          dispatch_decision_type: 'Remand',
           decisions: [{
             label: null
           }],
@@ -127,7 +127,7 @@ describe('EstablishClaim', () => {
     let task, wrapper;
 
     const mountApp = (decisionType, stationOfJurisdiction = '397') => {
-      task.appeal.decision_type = decisionType;
+      task.appeal.dispatch_decision_type = decisionType;
 
       wrapper = mount(<EstablishClaim
         regionalOfficeCities={{}}
@@ -162,7 +162,7 @@ describe('EstablishClaim', () => {
       task = {
         appeal: {
           vbms_id: '516517691',
-          decision_type: 'Remand',
+          dispatch_decision_type: 'Remand',
           decisions: [{
             label: null
           }],

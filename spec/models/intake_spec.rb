@@ -3,6 +3,9 @@ describe Intake do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  class TestIntake < Intake; end
+  class AnotherTestIntake < Intake; end
+
   let(:veteran_file_number) { "64205050" }
 
   let(:detail) do
@@ -10,9 +13,15 @@ describe Intake do
   end
 
   let(:user) { Generators::User.build }
+  let(:another_user) { Generators::User.build(full_name: "David Schwimmer") }
 
   let(:intake) do
-    Intake.new(veteran_file_number: veteran_file_number, detail: detail, user: user)
+    TestIntake.new(
+      veteran_file_number: veteran_file_number,
+      detail: detail,
+      user: user,
+      started_at: 15.minutes.ago
+    )
   end
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
@@ -142,6 +151,59 @@ describe Intake do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
       end
+    end
+
+    context "duplicate in progress intake already exists" do
+      let!(:other_intake) do
+        TestIntake.create!(
+          veteran_file_number: veteran_file_number,
+          user: another_user,
+          started_at: 15.minutes.ago
+        )
+      end
+
+      it "adds veteran_not_accessible and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("duplicate_intake_in_progress")
+        expect(intake.error_data).to eq(processed_by: "David Schwimmer")
+      end
+    end
+
+    context "duplicate intake exists, but isn't in progress" do
+      let!(:other_intake) do
+        TestIntake.create!(
+          veteran_file_number: veteran_file_number,
+          user: another_user,
+          started_at: 15.minutes.ago,
+          completed_at: 10.minutes.ago
+        )
+      end
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "in progress intake exists on same file number, but not same type" do
+      let!(:other_intake) do
+        AnotherTestIntake.create!(
+          veteran_file_number: veteran_file_number,
+          user: another_user,
+          started_at: 15.minutes.ago
+        )
+      end
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "in progress intake exists on same type, but not same file number" do
+      let!(:other_intake) do
+        TestIntake.create!(
+          veteran_file_number: "22226666",
+          user: another_user,
+          started_at: 15.minutes.ago
+        )
+      end
+
+      it { is_expected.to be_truthy }
     end
 
     context "when number is valid (even with extra spaces)" do

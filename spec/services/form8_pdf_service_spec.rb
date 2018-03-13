@@ -50,9 +50,8 @@ describe Form8PdfService do
     end
 
     it "should save a file in s3" do
-      path = S3Service.files[form8.pdf_filename]
-      expect(path).to_not be nil
-      expect(File.exist?(path)).to eq true
+      file_content = S3Service.files[form8.pdf_filename]
+      expect(file_content).to_not be nil
     end
 
     it "should delete temporary file" do

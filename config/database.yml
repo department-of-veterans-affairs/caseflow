@@ -11,9 +11,6 @@ default: &default
   timeout: 5000
   variables:
     statement_timeout: 30_000 # 30 seconds
-
-development:
-  <<: *default
   host: <%= ENV['POSTGRES_HOST'] %>
   username: <%= ENV['POSTGRES_USER'] || `whoami` %>
   # If we set the value to nil when the variable isn't present,
@@ -21,6 +18,9 @@ development:
   <% if ENV['POSTGRES_PASSWORD'] %>
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
+
+development:
+  <<: *default
   database: caseflow_certification_development
 
 demo:
@@ -30,6 +30,10 @@ demo:
 ssh_forwarding:
   <<: *default
   database: caseflow_certification_ssh_forwarding
+
+local:
+  <<: *default
+  database: caseflow_certification_local
 
 staging:
   <<: *default
@@ -46,6 +50,15 @@ development_vacols:
   pool: 5
   timeout: 5000
   database: db/development-vacols.sqlite3
+
+# Docker setup
+local_vacols:
+ adapter: oracle_enhanced
+ host: localhost
+ port: 1521
+ username: VACOLS
+ password: VACOLS
+ database: BVAP.localdomain
 
 demo_vacols:
   adapter: sqlite3

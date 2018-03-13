@@ -43,6 +43,7 @@ class Document < ActiveRecord::Base
     "Supplemental Statement of Case (SSOC)",
     "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
     "Rating Decision - Codesheet",
+    "Rating Decision - Narrative",
     "VA 21-526EZ, Fully Developed Claim (Compensation)",
     "VA 21-527EZ, Fully Developed Claim (Pension)"
   ].freeze
@@ -86,7 +87,8 @@ class Document < ActiveRecord::Base
     new(efolder_id: hash["id"],
         type: type_from_vbms_type(hash["type_id"]),
         received_at: hash["received_at"],
-        vbms_document_id: hash["external_document_id"],
+        vbms_document_id: hash["external_document_id"] || hash["version_id"],
+        series_id: hash["series_id"],
         file_number: file_number)
   end
 
@@ -169,14 +171,15 @@ class Document < ActiveRecord::Base
       alt_types: alt_types,
       received_at: received_at,
       filename: filename,
-      vbms_document_id: vbms_document_id
+      vbms_document_id: vbms_document_id,
+      series_id: series_id
     )
 
     document
   end
 
   def category_case_summary
-    CASE_SUMMARY_TYPES.include?(type) || received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF
+    CASE_SUMMARY_TYPES.include?(type) || (received_at && received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF)
   end
 
   def serialized_vacols_date
@@ -189,10 +192,37 @@ class Document < ActiveRecord::Base
 
   def content_url
     if reader_with_efolder_api?
-      ExternalApi::EfolderService.efolder_content_url(efolder_id)
+      if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
+        ExternalApi::EfolderService.efolder_content_url(vbms_document_id.tr("{}", ""))
+      else
+        ExternalApi::EfolderService.efolder_content_url(efolder_id)
+      end
     else
       "/document/#{id}/pdf"
     end
+  end
+
+  def copy_metadata_from_document(source_document)
+    source_document.annotations.map do |annotation|
+      annotation.dup.tap do |a|
+        a.document_id = id
+        a.save!
+      end
+    end
+
+    source_document.documents_tags.map do |tag|
+      tag.dup.tap do |t|
+        t.document_id = id
+        t.save!
+      end
+    end
+
+    update_attributes(
+      category_procedural: source_document.category_procedural,
+      category_medical: source_document.category_medical,
+      category_other: source_document.category_other,
+      previous_document_version_id: source_document.id
+    )
   end
 
   private

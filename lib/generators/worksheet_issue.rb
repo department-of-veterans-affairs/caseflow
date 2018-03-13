@@ -4,10 +4,8 @@ class Generators::WorksheetIssue
   class << self
     def default_attrs
       {
-        description: "15 - Service connection \n03 - All Others \n5252 - Thigh, limitation of flexion of",
-        levels: "All Others \nThigh, limitation of flexion of",
-        program: :compensation,
-        name: :service_connection,
+        description: "Comp: SC\n03 - All Others; 5252 - Thigh, limitation of flexion of",
+        disposition: "Remanded\n01/05/1996",
         vacols_sequence_id: 1
       }
     end

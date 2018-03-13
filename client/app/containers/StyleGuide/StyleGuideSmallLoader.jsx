@@ -1,7 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import SmallLoader from '../../components/SmallLoader';
-import * as AppConstants from '../../constants/AppConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 export default class StyleGuideSmallLoader extends React.PureComponent {
 
@@ -19,7 +19,7 @@ export default class StyleGuideSmallLoader extends React.PureComponent {
 
       <SmallLoader
         message="Loading..."
-        spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_READER}
+        spinnerColor={LOGO_COLORS.READER.ACCENT}
       />
     </div>;
 

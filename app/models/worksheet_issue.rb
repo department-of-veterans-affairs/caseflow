@@ -6,15 +6,16 @@ class WorksheetIssue < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
 
+  scope :issues_for_appeals, ->(appeal_ids) { where(appeal: appeal_ids) }
+
   validates :appeal, :vacols_sequence_id, presence: true
 
   class << self
     def create_from_issue(appeal, issue)
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
-        record.update(program: issue.program.try(:capitalize),
-                      name: issue.type,
-                      levels: issue.description.join("; "),
-                      notes: issue.note,
+        record.update(notes: issue.note,
+                      description: issue.formatted_program_type_levels,
+                      disposition: issue.formatted_disposition,
                       from_vacols: true)
       end
     end

@@ -372,6 +372,264 @@ describe Appeal do
     end
   end
 
+  context "#find_or_create_documents_v2!" do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      FeatureToggle.enable!(:efolder_api_v2)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+      FeatureToggle.disable!(:efolder_api_v2)
+    end
+    let(:series_id) { "TEST_SERIES_ID" }
+
+    let(:documents) do
+      [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
+    end
+
+    context "when there is no existing document" do
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "saves retrieved documents" do
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when there are documents with same series_id" do
+      let!(:saved_documents) do
+        [
+          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
+          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
+        ]
+      end
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "adds new retrieved documents" do
+        expect(Document.count).to eq(2)
+        expect(Document.first.type).to eq(saved_documents[0].type)
+
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(4)
+        expect(Document.first.type).to eq("Form 9")
+        expect(Document.second.type).to eq("NOD")
+      end
+
+      context "when existing document has comments, tags, and categories" do
+        let(:older_comment) { "OLD_TEST_COMMENT" }
+        let(:comment) { "TEST_COMMENT" }
+        let(:tag) { "TEST_TAG" }
+        let!(:existing_annotations) do
+          [
+            Generators::Annotation.create(
+              comment: older_comment,
+              x: 1,
+              y: 2,
+              document_id: saved_documents[0].id
+            ),
+            Generators::Annotation.create(
+              comment: comment,
+              x: 1,
+              y: 2,
+              document_id: saved_documents[1].id
+            )
+          ]
+        end
+        let!(:document_tag) do
+          [
+            DocumentsTag.create(
+              tag_id: Generators::Tag.create(text: "NOT USED TAG").id,
+              document_id: saved_documents[0].id
+            ),
+            DocumentsTag.create(
+              tag_id: Generators::Tag.create(text: tag).id,
+              document_id: saved_documents[1].id
+            )
+          ]
+        end
+
+        it "copies metdata to new document" do
+          expect(Annotation.count).to eq(2)
+          expect(Annotation.second.comment).to eq(comment)
+          expect(DocumentsTag.count).to eq(2)
+
+          appeal.find_or_create_documents_v2!
+
+          expect(Annotation.count).to eq(3)
+          expect(Document.second.annotations.first.comment).to eq(comment)
+          expect(Document.third.annotations.first.comment).to eq(comment)
+
+          expect(DocumentsTag.count).to eq(3)
+          expect(Document.second.documents_tags.first.tag.text).to eq(tag)
+          expect(Document.third.documents_tags.first.tag.text).to eq(tag)
+
+          expect(Document.second.category_medical).to eq(true)
+          expect(Document.third.category_medical).to eq(true)
+        end
+
+        context "when the API returns two documents with the same series_id" do
+          let(:documents) do
+            [
+              Generators::Document.build(type: "NOD", series_id: series_id),
+              Generators::Document.build(type: "SOC"),
+              saved_documents[1]
+            ]
+          end
+
+          it "copies metadata from the most recently saved document not returned by the API" do
+            appeal.find_or_create_documents_v2!
+
+            expect(Document.third.annotations.first.comment).to eq(older_comment)
+          end
+        end
+      end
+
+      context "when API returns doc that is already saved" do
+        let!(:saved_documents) do
+          Generators::Document.create(
+            type: "Form 9",
+            series_id: series_id,
+            vbms_document_id: documents[0].vbms_document_id
+          )
+        end
+        it "updates existing document" do
+          expect(Document.count).to eq(1)
+          expect(Document.first.type).to eq(saved_documents.type)
+
+          returned_documents = appeal.find_or_create_documents_v2!
+          expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+          expect(Document.count).to eq(2)
+          expect(Document.first.type).to eq("NOD")
+        end
+      end
+    end
+
+    context "when there is a document with no series_id" do
+      let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+      let!(:saved_document) do
+        Generators::Document.create(
+          type: "Form 9",
+          vbms_document_id: vbms_document_id,
+          series_id: nil,
+          file_number: appeal.sanitized_vbms_id
+        )
+      end
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
+          [[
+            OpenStruct.new(
+              vbms_filename: "test_file",
+              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
+              document_id: vbms_document_id,
+              version_id: vbms_document_id,
+              series_id: series_id,
+              version: 0,
+              mime_type: "application/pdf",
+              received_at: rand(100).days.ago,
+              downloaded_from: "VBMS"
+            ),
+            OpenStruct.new(
+              vbms_filename: "test_file",
+              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
+              document_id: "DIFFERENT_ID",
+              version_id: "DIFFERENT_ID",
+              series_id: series_id,
+              version: 1,
+              mime_type: "application/pdf",
+              received_at: rand(100).days.ago,
+              downloaded_from: "VBMS"
+            )
+          ]]
+        )
+      end
+
+      it "adds series_id" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+        expect(Document.first.series_id).to eq(nil)
+
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        # Adds series id to existing document
+        expect(Document.first.series_id).to eq(series_id)
+        expect(Document.count).to eq(3)
+      end
+    end
+  end
+
+  context "#find_or_create_documents!" do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+    end
+    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+
+    let(:documents) do
+      [
+        Generators::Document.build(
+          type: "NOD",
+          vbms_document_id: vbms_document_id
+        ),
+        Generators::Document.build(type: "SOC")
+      ]
+    end
+
+    context "when there is no existing document" do
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "saves retrieved documents" do
+        returned_documents = appeal.find_or_create_documents!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when there is a document with same vbms_document_id" do
+      let!(:saved_document) { Generators::Document.create(type: "Form 9", vbms_document_id: vbms_document_id) }
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "updates retrieved documents" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+
+        returned_documents = appeal.find_or_create_documents!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq("NOD")
+      end
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
@@ -528,8 +786,8 @@ describe Appeal do
     end
   end
 
-  context "#case_assignment_exists?" do
-    subject { appeal.case_assignment_exists? }
+  context "#case_assignment_exists" do
+    subject { appeal.case_assignment_exists }
 
     it { is_expected.to be_truthy }
   end
@@ -599,7 +857,8 @@ describe Appeal do
 
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:issues) { [] }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues) }
     let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
@@ -683,6 +942,11 @@ describe Appeal do
 
         context "when appeal is a remand" do
           let(:vacols_record) { :remand_decided }
+
+          # Add non_new_material_allowed issue to make sure it still works
+          let(:issues) do
+            [Generators::Issue.build(disposition: :allowed)]
+          end
 
           it "closes the remand in VACOLS" do
             expect(Fakes::AppealRepository).to receive(:close_remand!).with(
@@ -861,9 +1125,9 @@ describe Appeal do
     end
   end
 
-  context "#partial_grant?" do
+  context "#partial_grant_on_dispatch?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-    subject { appeal.partial_grant? }
+    subject { appeal.partial_grant_on_dispatch? }
 
     context "when no allowed issues" do
       let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
@@ -889,12 +1153,12 @@ describe Appeal do
     end
   end
 
-  context "#full_grant?" do
+  context "#full_grant_on_dispatch?" do
     let(:issues) { [] }
     let(:appeal) do
       Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
     end
-    subject { appeal.full_grant? }
+    subject { appeal.full_grant_on_dispatch? }
 
     context "when status is Remand" do
       let(:status) { "Remand" }
@@ -926,27 +1190,84 @@ describe Appeal do
     end
   end
 
-  context "#remand?" do
-    subject { appeal.remand? }
-    context "is false if status is not remand" do
+  context "#remand_on_dispatch?" do
+    subject { appeal.remand_on_dispatch? }
+
+    context "status is not remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete") }
-      it { is_expected.to be_falsey }
+      it { is_expected.to be false }
     end
 
-    context "is true if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
-      it { is_expected.to be_truthy }
-    end
-
-    context "is true if new-material allowed issue" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
-          Generators::Issue.build(disposition: :remanded)
-        ]
-      end
+    context "status is remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-      it { is_expected.to be_truthy }
+
+      context "contains at least one new-material allowed issue" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context "contains no new-material allowed issues" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be true }
+      end
+    end
+  end
+
+  context "#compensation_issues" do
+    subject { appeal.compensation_issues }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
+
+    it { is_expected.to eq([compensation_issue]) }
+  end
+
+  context "#compensation?" do
+    subject { appeal.compensation? }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:education_issue) { Generators::Issue.build(template: :education) }
+
+    context "when there are no compensation issues" do
+      let(:issues) { [education_issue] }
+      it { is_expected.to be false }
+    end
+
+    context "when there is at least 1 compensation issue" do
+      let(:issues) { [education_issue, compensation_issue] }
+      it { is_expected.to be true }
+    end
+  end
+
+  context "#fully_compensation?" do
+    subject { appeal.fully_compensation? }
+
+    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+    let(:education_issue) { Generators::Issue.build(template: :education) }
+
+    context "when there is at least one non-compensation issue" do
+      let(:issues) { [education_issue, compensation_issue] }
+      it { is_expected.to be false }
+    end
+
+    context "when there are all compensation issues" do
+      let(:issues) { [compensation_issue] }
+      it { is_expected.to be true }
     end
   end
 
@@ -1014,8 +1335,8 @@ describe Appeal do
     end
   end
 
-  context "#decision_type" do
-    subject { appeal.decision_type }
+  context "#dispatch_decision_type" do
+    subject { appeal.dispatch_decision_type }
     context "when it has a mix of allowed and granted issues" do
       let(:issues) do
         [
@@ -1358,8 +1679,16 @@ describe Appeal do
       )
     end
 
-    it "returns poa loaded with BGS values" do
+    it "returns poa loaded with BGS values by default" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+
+    context "#power_of_attorney(load_bgs_record: false)" do
+      subject { appeal.power_of_attorney(load_bgs_record: false) }
+
+      it "returns poa without fetching BGS values if desired" do
+        is_expected.to have_attributes(bgs_representative_type: nil, bgs_representative_name: nil)
+      end
     end
 
     context "#power_of_attorney.bgs_representative_address" do
@@ -1421,9 +1750,7 @@ describe Appeal do
         { worksheet_issues_attributes: [{
           remand: true,
           vha: true,
-          program: "Wheel",
-          name: "Spoon",
-          levels: "Cabbage\nPickle",
+          description: "Cabbage\nPickle",
           notes: "Donkey\nCow",
           from_vacols: true,
           vacols_sequence_id: 1
@@ -1441,9 +1768,7 @@ describe Appeal do
         expect(issue.deny).to eq false
         expect(issue.dismiss).to eq false
         expect(issue.vha).to eq true
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
@@ -1461,9 +1786,7 @@ describe Appeal do
         expect(issue.remand).to eq(true)
         expect(issue.allow).to eq(false)
         expect(issue.dismiss).to eq(false)
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Tomato"
 
         # soft delete an issue
@@ -1578,9 +1901,7 @@ describe Appeal do
   end
 
   context ".for_api" do
-    subject { Appeal.for_api(appellant_ssn: ssn) }
-
-    let(:ssn) { "999887777" }
+    subject { Appeal.for_api(vbms_id: "999887777S") }
 
     let!(:veteran_appeals) do
       [
@@ -1606,48 +1927,6 @@ describe Appeal do
     it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
-    end
-
-    context "when ssn is nil" do
-      let(:ssn) { nil }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is less than 9 characters" do
-      let(:ssn) { "99887777" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is more than 9 characters" do
-      let(:ssn) { "9998877777" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when ssn is non-numeric" do
-      let(:ssn) { "99988777A" }
-
-      it "raises InvalidSSN error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
-      end
-    end
-
-    context "when SSN not found in BGS" do
-      before do
-        Fakes::BGSService.ssn_not_found = true
-      end
-
-      it "raises ActiveRecord::RecordNotFound error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-      end
     end
   end
 

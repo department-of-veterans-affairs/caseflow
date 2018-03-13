@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180110165318) do
+ActiveRecord::Schema.define(version: 20180306144550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,12 @@ ActiveRecord::Schema.define(version: 20180110165318) do
 
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
+
+  create_table "api_views", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string   "vbms_id"
+    t.integer  "api_key_id"
+  end
 
   create_table "appeal_series", force: :cascade do |t|
     t.boolean "incomplete",          default: false
@@ -84,10 +90,24 @@ ActiveRecord::Schema.define(version: 20180110165318) do
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
     t.integer "appeal_series_id"
+    t.boolean "issues_pulled"
   end
 
   add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
+
+  create_table "attorney_case_reviews", force: :cascade do |t|
+    t.string   "document_id"
+    t.integer  "reviewing_judge_id"
+    t.integer  "attorney_id"
+    t.string   "work_product"
+    t.boolean  "overtime",           default: false
+    t.string   "type"
+    t.text     "note"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.string   "task_id"
+  end
 
   create_table "certification_cancellations", force: :cascade do |t|
     t.integer "certification_id"
@@ -162,6 +182,22 @@ ActiveRecord::Schema.define(version: 20180110165318) do
     t.datetime "created_at"
   end
 
+  create_table "docket_snapshots", force: :cascade do |t|
+    t.integer  "docket_count"
+    t.date     "latest_docket_month"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "docket_tracers", force: :cascade do |t|
+    t.integer "docket_snapshot_id"
+    t.date    "month"
+    t.integer "ahead_count"
+    t.integer "ahead_and_ready_count"
+  end
+
+  add_index "docket_tracers", ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true, using: :btree
+
   create_table "document_views", force: :cascade do |t|
     t.integer  "document_id",     null: false
     t.integer  "user_id",         null: false
@@ -171,7 +207,7 @@ ActiveRecord::Schema.define(version: 20180110165318) do
   add_index "document_views", ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string  "vbms_document_id",    null: false
+    t.string  "vbms_document_id",             null: false
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
@@ -179,11 +215,15 @@ ActiveRecord::Schema.define(version: 20180110165318) do
     t.string  "type"
     t.string  "file_number"
     t.string  "description"
+    t.string  "series_id"
+    t.integer "previous_document_version_id"
   end
 
+  add_index "documents", ["file_number"], name: "index_documents_on_file_number", using: :btree
+  add_index "documents", ["series_id"], name: "index_documents_on_series_id", using: :btree
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
-  create_table "documents_tags", id: false, force: :cascade do |t|
+  create_table "documents_tags", force: :cascade do |t|
     t.integer "document_id", null: false
     t.integer "tag_id",      null: false
   end
@@ -293,6 +333,7 @@ ActiveRecord::Schema.define(version: 20180110165318) do
     t.string  "evidence"
     t.string  "military_service"
     t.string  "comments_for_attorney"
+    t.boolean "prepped"
   end
 
   create_table "intakes", force: :cascade do |t|
@@ -313,7 +354,7 @@ ActiveRecord::Schema.define(version: 20180110165318) do
 
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number",      null: false
-    t.date   "notice_date",              null: false
+    t.date   "notice_date"
     t.date   "receipt_date"
     t.string "option_selected"
     t.string "end_product_reference_id"
@@ -427,18 +468,17 @@ ActiveRecord::Schema.define(version: 20180110165318) do
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false
     t.boolean  "dismiss",            default: false
-    t.string   "program"
-    t.string   "name"
-    t.string   "levels"
     t.string   "description"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
     t.string   "notes"
+    t.string   "disposition"
   end
 
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
+  add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
 end

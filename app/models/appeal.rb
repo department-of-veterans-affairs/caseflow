@@ -17,10 +17,12 @@ class Appeal < ActiveRecord::Base
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
-  vacols_attr_accessor :appellant_city, :appellant_state
+  vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
+  vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -42,7 +44,11 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
+
+  # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
+  # because it is using an Appeal object
+  attr_accessor :added_by_first_name, :added_by_middle_name, :added_by_last_name, :added_by_css_id
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -120,9 +126,17 @@ class Appeal < ActiveRecord::Base
     documents.size
   end
 
+  def number_of_documents_url
+    if document_service == ExternalApi::EfolderService
+      ExternalApi::EfolderService.efolder_files_url
+    else
+      "/queue/docs_for_dev"
+    end
+  end
+
   def number_of_documents_after_certification
     return 0 unless certification_date
-    documents.count { |d| d.received_at > certification_date }
+    documents.count { |d| d.received_at && d.received_at > certification_date }
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
@@ -173,8 +187,10 @@ class Appeal < ActiveRecord::Base
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings
@@ -244,6 +260,18 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def compensation_issues
+    issues.select { |issue| issue.program == :compensation }
+  end
+
+  def compensation?
+    !compensation_issues.empty?
+  end
+
+  def fully_compensation?
+    compensation_issues.count == issues.count
+  end
+
   def ramp_election
     RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
@@ -254,8 +282,8 @@ class Appeal < ActiveRecord::Base
     location_code == LOCATION_CODES[location]
   end
 
-  def case_assignment_exists?
-    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
+  cache_attribute :case_assignment_exists do
+    self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
@@ -331,7 +359,9 @@ class Appeal < ActiveRecord::Base
     save ? find_or_create_documents! : fetched_documents
   end
 
-  def find_or_create_documents!
+  def find_or_create_documents_v2!
+    AddSeriesIdToDocumentsJob.perform_now(self)
+
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
@@ -339,43 +369,73 @@ class Appeal < ActiveRecord::Base
     end
 
     fetched_documents.map do |document|
-      if existing_documents[document.vbms_document_id]
-        document.merge_into(existing_documents[document.vbms_document_id])
-      else
-        begin
-          document.save!
-          document
-        rescue ActiveRecord::RecordNotUnique
-          Document.find_by_vbms_document_id(document.vbms_document_id)
+      begin
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
+        else
+          create_new_document!(document, ids)
         end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
 
-  def partial_grant?
+  def find_or_create_documents!
+    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
+                                                                  user: RequestStore.store[:current_user])
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.vbms_document_id] = document
+    end
+
+    fetched_documents.map do |document|
+      begin
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
+        else
+          document.save!
+          document
+        end
+      rescue ActiveRecord::RecordNotUnique
+        Document.find_by_vbms_document_id(document.vbms_document_id)
+      end
+    end
+  end
+
+  # These three methods are used to decide whether the appeal is processed
+  # as a partial grant, remand, or full grant when dispatching it.
+  def partial_grant_on_dispatch?
     status == "Remand" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def full_grant?
+  def full_grant_on_dispatch?
     status == "Complete" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def remand?
-    status == "Remand" && issues.none?(&:non_new_material_allowed?)
+  def remand_on_dispatch?
+    remand? && issues.none?(&:non_new_material_allowed?)
+  end
+
+  def dispatch_decision_type
+    return "Full Grant" if full_grant_on_dispatch?
+    return "Partial Grant" if partial_grant_on_dispatch?
+    return "Remand" if remand_on_dispatch?
   end
 
   def active?
     status != "Complete"
   end
 
-  def merged?
-    disposition == "Merged Appeal"
+  def remand?
+    status == "Remand"
   end
 
-  def decision_type
-    return "Full Grant" if full_grant?
-    return "Partial Grant" if partial_grant?
-    return "Remand" if remand?
+  def merged?
+    disposition == "Merged Appeal"
   end
 
   def special_issues
@@ -416,7 +476,12 @@ class Appeal < ActiveRecord::Base
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def worksheet_issues
-    issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
+    unless issues_pulled
+      transaction do
+        issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+        update!(issues_pulled: true)
+      end
+    end
     super
   end
 
@@ -433,6 +498,10 @@ class Appeal < ActiveRecord::Base
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
+    # If testing against a local eFolder express instance then we want to pass DEMO
+    # values, so we should not sanitize the vbms_id.
+    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
     # ensure 8 digits if "C"-type id
@@ -472,7 +541,7 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
+      methods: [:veteran_full_name, :veteran_first_name, :veteran_last_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
@@ -493,6 +562,20 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  def create_new_document!(document, ids)
+    document.save!
+
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
@@ -539,8 +622,7 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if RequestStore.store[:application] == "reader" &&
-         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      if %w[reader queue hearings].include?(RequestStore.store[:application])
         EFolderService
       else
         VBMSService
@@ -568,13 +650,11 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
-    def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
-
+    def for_api(vbms_id:)
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
+      repository.appeals_by_vbms_id(vbms_id)
         .select(&:api_supported?)
         .reject { |a| a.latest_event_date.nil? }
         .sort_by(&:latest_event_date)
@@ -659,6 +739,19 @@ class Appeal < ActiveRecord::Base
       fail ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
+    end
+
+    # Returns a hash of appeals with appeal_id as keys and
+    # related appeals as values. These are appeals
+    # fetched based on the vbms_id.
+    def fetch_appeal_streams(appeals)
+      appeal_vbms_ids = appeals.reduce({}) { |acc, appeal| acc.merge(appeal.vbms_id => appeal.id) }
+
+      Appeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
+        appeal_id = appeal_vbms_ids[appeal.vbms_id]
+        acc[appeal_id] ||= []
+        acc[appeal_id] << appeal
+      end
     end
 
     private

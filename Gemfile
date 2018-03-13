@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7cacaa8f607666ba0f4b971640cf3a4c21db1b83"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6be9e1e95b1a012af1fb5b7aa292ec7123281dc2"
 
 gem "moment_timezone-rails"
 
@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "9266698668bf361bf5df06990d06da59abb7c608"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e30db7fdf6f5c28c09d6081d062cad80820240a0"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5dda05573d424d557be7a09052ab24b0dc6a5c5f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -92,7 +92,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging do
+group :production, :staging, :ssh_forwarding, :local do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -103,7 +103,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :development, :test do
+group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -130,12 +130,16 @@ group :development, :test do
   gem "timecop"
 
   gem "database_cleaner"
-  gem "konacha"
-  gem "poltergeist" # For legacy JS tests. Remove when we're all React
+
   # to save and open specific page in capybara tests
   gem "launchy"
 
+  gem "activerecord-import"
+
   gem "danger", "5.5.5"
+
+  # For CircleCI test metadata analysis
+  gem "rspec_junit_formatter"
 end
 
 group :development do

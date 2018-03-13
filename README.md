@@ -13,15 +13,14 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 Install dependencies via Homebrew:
 
     brew install postgresql redis chromedriver rbenv
-    
+
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
 Then run the following:
 
-    # rbenv install <the version of Ruby defined in .travis.yml>
-    # For example:
-    # rbenv install 2.2.4
-
+    cd caseflow
+    rbenv install $(cat .ruby-version)
+    rbenv rehash
     gem install bundler
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
@@ -44,6 +43,88 @@ For the frontend, you'll need to install Node and the relevant npm modules. [Ins
 
     cd client && yarn
 
+
+## Set up Docker
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. After installation is complete, run:
+```
+docker login -u dsvaappeals
+```
+
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to
+accept the license agreement for [this docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+
+## Set up Oracle
+You'll need to install the libraries required to connect to the VACOLS Oracle database:
+
+### OSX
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+
+2) Unzip both packages into `/opt/oracle/instantclient_<version_number>` where `<version_number>` is consistent with step 3. Most of us are using `<version_number>=12_2`.
+
+3) Setup both packages according to the Oracle documentation:
+```
+export OCI_DIR=/opt/oracle/instantclient_<version_number>
+cd /opt/oracle/instantclient_<version_number>
+sudo ln -s libclntsh.dylib.<version_number> libclntsh.dylib
+```
+
+If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
+
+### Windows
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+
+2) Unzip both packages into `[DIR]`
+
+3) Add `[DIR]` to your `PATH`
+
+### Linux
+Note: This has only been tested on Debian based OS. However, it should also work
+for Fedora based OS.
+
+ 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
+
+ 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
+
+ 1. Setup both packages according to the Oracle documentation:
+
+```sh
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
+cd /opt/oracle/instantclient_11_2
+sudo ln -s libclntsh.so.12.1 libclntsh.so
+```
+
+## Start up local VACOLS container
+To set up our local copy of VACOLS, run
+```
+rake local:vacols:setup
+```
+To start the container after it's been setup, run
+```
+rake local:vacols:start
+```
+To stop the container, run
+```
+rake local:vacols:stop
+```
+To view the logs, run
+```
+rake local:vacols:logs
+```
+
+## Seeding the local VACOLS container
+To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
+
+1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
+2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
+```
+export VACOLS_PASSWORD=<pw_from_credstash (vacols.uat.db_password)>
+export VACOLS_USERNAME=<pw_from_credstash (vacols.uat.db_username)>
+```
+3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
+4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
+5) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+6) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
+
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
@@ -54,10 +135,12 @@ NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABL
 You may wish to do this if you are debugging our NewRelic integration, for instance.
 
 ## Running Caseflow in isolation
+
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
 
     bundle install --without production staging
+    rbenv rehash
 
 Set up and seed the DB
 
@@ -88,46 +171,6 @@ From this view you can start a new task and go through the flow of establishing 
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
-
-### Set up Oracle
-First you'll need to install the libraries required to connect to the VACOLS Oracle database:
-
-#### OSX
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
-
-2) Unzip both packages into `/opt/oracle/instantclient_11_2`
-
-3) Setup both packages according to the Oracle documentation:
-```
-export OCI_DIR=/opt/oracle/instantclient_12_1
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
-```
-
-If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
-
-#### Windows
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
-
-2) Unzip both packages into `[DIR]`
-
-3) Add `[DIR]` to your `PATH`
-
-#### Linux
-Note: This has only been tested on Debian based OS. However, it should also work
-for Fedora based OS.
-
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
-
- 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
-
- 1. Setup both packages according to the Oracle documentation:
- 
-```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.so.12.1 libclntsh.so
-```
 
 ### Environment variables
 

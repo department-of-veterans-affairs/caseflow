@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
-import { SET_VIEWING_DOCUMENTS_OR_COMMENTS, DOCUMENTS_OR_COMMENTS_ENUM } from '../DocumentList/actionTypes';
 
 export const initialState = {};
 
@@ -15,7 +14,8 @@ const documentsReducer = (state = initialState, action = {}) => {
       doc.id, {
         ...doc,
         receivedAt: doc.received_at,
-        listComments: false
+        listComments: false,
+        wasUpdated: !_.isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
       }
     ]).
       fromPairs().
@@ -36,11 +36,6 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case SET_VIEWING_DOCUMENTS_OR_COMMENTS:
-    return _.mapValues(state, (doc) => ({
-      ...doc,
-      listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-    }));
   case Constants.TOGGLE_COMMENT_LIST:
     return update(state, {
       [action.payload.docId]: {
@@ -190,6 +185,14 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         description: {
           $set: action.payload.description
+        }
+      }
+    });
+  case Constants.CLOSE_DOCUMENT_UPDATED_MODAL:
+    return update(state, {
+      [action.payload.docId]: {
+        wasUpdated: {
+          $set: false
         }
       }
     });

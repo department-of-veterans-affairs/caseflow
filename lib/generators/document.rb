@@ -5,6 +5,7 @@ class Generators::Document
     def default_attrs
       {
         vbms_document_id: generate_external_id,
+        series_id: generate_external_id,
         filename: "filename.pdf",
         received_at: 3.days.ago,
         type: ["Form 8", "Form 9", "NOD", "SOC", "SSOC"].sample,

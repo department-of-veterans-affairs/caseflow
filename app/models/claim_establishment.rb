@@ -22,7 +22,7 @@ class ClaimEstablishment < ActiveRecord::Base
   # returns the type of a decision based on appeal data
   # If a type is not matched, it returns nil
   def self.get_decision_type(appeal)
-    DECSION_TYPES[appeal.decision_type]
+    DECSION_TYPES[appeal.dispatch_decision_type]
   end
 
   def sent_email

@@ -1,12 +1,12 @@
 require('babel-polyfill');
 
-// @department-of-veterans-affairs/appeals-frontend-toolkit has ES6 that we need to compile.
+// @department-of-veterans-affairs/caseflow-frontend-toolkit has ES6 that we need to compile.
 // These tests do not use our normal webpack setup, and instead
 // use Mocha's compilation functionality. Normally, mocha does
 // not compile anything in node_modules. To get around that, we
 // use this module.
 import babelNodeModules from 'babel-node-modules';
-babelNodeModules(['@department-of-veterans-affairs/appeals-frontend-toolkit']);
+babelNodeModules(['@department-of-veterans-affairs/caseflow-frontend-toolkit']);
 
 import enzyme from 'enzyme';
 import EnzymeAdapterReact16 from 'enzyme-adapter-react-16';
@@ -18,6 +18,7 @@ let jsdom = require('jsdom').jsdom;
 global.document = jsdom('<html><head></head><body><div id="app" /></body></html>');
 global.window = document.defaultView;
 global.HTMLElement = global.window.HTMLElement;
+global.Element = global.window.Element;
 
 // eslint-disable-next-line no-empty-function
 global.window.analyticsPageView = () => {};

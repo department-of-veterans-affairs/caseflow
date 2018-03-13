@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { setOptionSelected, setReceiptDate, setAppealDocket,
   submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -27,7 +28,8 @@ class Review extends React.PureComponent {
       receiptDate,
       receiptDateError,
       appealDocket,
-      appealDocketError
+      appealDocketError,
+      submitInvalidOptionError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -59,19 +61,24 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+      { submitInvalidOptionError && <Alert title="Something went wrong" type="error">
+        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+
+      { toggleIneligibleError(hasInvalidOption, optionSelected) &&
+        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />
-        <Button
-          name="begin-next-intake"
-          onClick={this.beginNextIntake}
-          loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-          legacyStyling={false}>
+          <Button
+            name="begin-next-intake"
+            onClick={this.beginNextIntake}
+            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+            legacyStyling={false}>
             Begin next intake
-        </Button>
-      </Alert>
+          </Button>
+        </Alert>
       }
+
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
@@ -120,7 +127,8 @@ export default connect(
     requestStatus: state.rampRefiling.requestStatus,
     intakeId: state.intake.id,
     appealDocket: state.rampRefiling.appealDocket,
-    appealDocketError: state.rampRefiling.appealDocketError
+    appealDocketError: state.rampRefiling.appealDocketError,
+    submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
@@ -146,7 +154,7 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={this.props.hasInvalidOption}
+      disabled={toggleIneligibleError(this.props.hasInvalidOption, this.props.optionSelected)}
     >
       Continue to next step
     </Button>;
@@ -157,7 +165,8 @@ const ReviewNextButtonConnected = connect(
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
     rampRefiling,
-    hasInvalidOption: rampRefiling.hasInvalidOption
+    hasInvalidOption: rampRefiling.hasInvalidOption,
+    optionSelected: rampRefiling.optionSelected
   }),
   (dispatch) => bindActionCreators({
     submitReview

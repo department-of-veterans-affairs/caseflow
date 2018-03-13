@@ -6,26 +6,19 @@ class ExternalApi::EfolderService
   def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
     # to return the list of documents associated with the appeal
-    sanitized_vbms_id = if Rails.application.config.use_efolder_locally && appeal.vbms_id =~ /DEMO/
-                          # If testing against a local eFolder express instance then we want to pass DEMO
-                          # values, so we should not sanitize the vbms_id.
-                          appeal.vbms_id.to_s
-                        else
-                          appeal.sanitized_vbms_id.to_s
-                        end
-
-    return efolder_v2_api(sanitized_vbms_id, user) if FeatureToggle.enabled?(:efolder_api_v2, user: user)
-    efolder_v1_api(sanitized_vbms_id, user)
+    return efolder_v2_api(appeal.sanitized_vbms_id.to_s, user) if FeatureToggle.enabled?(:efolder_api_v2, user: user)
+    efolder_v1_api(appeal.sanitized_vbms_id.to_s, user)
   end
 
   def self.efolder_v1_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
 
-    response = get_efolder_response("/api/v1/files?download=true", user, headers)
+    response = send_efolder_request("/api/v1/files?download=true", user, headers)
 
     if response.error?
-      fail Caseflow::Error::EfolderAccessForbidden if response.try(:code) == 403
-      fail Caseflow::Error::DocumentRetrievalError
+      fail Caseflow::Error::EfolderAccessForbidden, "403" if response.try(:code) == 403
+      fail Caseflow::Error::DocumentRetrievalError, "502" if response.try(:code) == 500
+      fail Caseflow::Error::DocumentRetrievalError, response.code.to_s
     end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
@@ -43,22 +36,27 @@ class ExternalApi::EfolderService
   def self.efolder_v2_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
 
-    response_attrs = {}
+    response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
 
     TRIES.times do
-      response = get_efolder_response("/api/v2/manifests", user, headers)
-
       fail Caseflow::Error::DocumentRetrievalError if response.error?
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
       fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
 
-      break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+      if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
+        return generate_response(response_attrs, vbms_id)
+      end
+
       sleep 1
+
+      manifest_id = JSON.parse(response.body)["data"]["id"]
+
+      response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    generate_response(response_attrs, vbms_id)
+    fail Caseflow::Error::DocumentRetrievalError
   end
 
   def self.generate_response(response_attrs, vbms_id)
@@ -73,6 +71,11 @@ class ExternalApi::EfolderService
       manifest_vva_fetched_at: vva_status.present? ? vva_status["fetched_at"] : nil,
       documents: documents.map { |efolder_document| Document.from_efolder(efolder_document, vbms_id) }
     }
+  end
+
+  def self.efolder_files_url
+    # TODO: support v2
+    URI(efolder_base_url + "/api/v1/files").to_s
   end
 
   def self.efolder_content_url(id)
@@ -91,7 +94,7 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
-  def self.get_efolder_response(endpoint, user, headers = {})
+  def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
     url = URI.escape(efolder_base_url + endpoint)
@@ -106,7 +109,12 @@ class ExternalApi::EfolderService
     MetricsService.record("eFolder GET request to #{url}",
                           service: :efolder,
                           name: endpoint) do
-      HTTPI.get(request)
+      case method
+      when :get
+        HTTPI.get(request)
+      when :post
+        HTTPI.post(request)
+      end
     end
   end
 end

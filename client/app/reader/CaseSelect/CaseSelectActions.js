@@ -38,8 +38,11 @@ export const requestAppealUsingVeteranId = () => ({
   }
 });
 
-export const fetchedNoAppealsUsingVeteranId = () => ({
-  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
+export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
+  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID,
+  payload: {
+    searchQuery
+  }
 });
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
@@ -62,7 +65,7 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
         const returnedObject = JSON.parse(response.text);
 
         if (_.size(returnedObject.appeals) === 0) {
-          dispatch(fetchedNoAppealsUsingVeteranId());
+          dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }

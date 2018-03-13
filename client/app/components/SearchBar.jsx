@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { closeIcon, loadingSymbolHtml } from './RenderFunctions';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -65,7 +66,7 @@ export default class SearchBar extends React.Component {
 
   clearInput = () => this.input.value = '';
 
-  getInternalField = (spinnerColor = '#ffffff') => {
+  getInternalField = (spinnerColor = COLORS.WHITE) => {
     if (this.props.loading) {
       return <div className="search-text-spinner">
         { loadingSymbolHtml('', '25px', spinnerColor) }

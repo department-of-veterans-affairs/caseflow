@@ -1,33 +1,33 @@
 import React from 'react';
-
-// components
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideColors extends React.PureComponent {
 
   Colors = {
     Base: '#212121',
-    'Gray-dark': '#323a45',
+    'Gray-dark': COLORS.GREY_DARK,
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
-    'Gray-lighter': '#d6d7d9',
+    'Gray-lighter': COLORS.GREY_LIGHT,
     'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
-    White: '#ffffff',
+    White: COLORS.WHITE,
     Secondary: '#e31c3d',
     Green: '#2e8540',
-    'Primary-alt': '#02bfe7',
+    'Primary-alt': COLORS.PRIMARY_ALT,
     'Secondary-lightest': '#f9dede',
     'Green-lightest': '#e7f4e4',
     'Primary-alt-lightest': '#e1f3f8',
     'Gold-lightest': '#fff1d2',
-    Dispatch: '#844e9f',
+    Dispatch: LOGO_COLORS.DISPATCH.ACCENT,
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
-    Certification: '#459fd7',
-    Reader: '#417505',
-    'Case Summary': '#ffcc4e',
-    Intake: '#ffcc4e',
+    Certification: LOGO_COLORS.CERTIFICATION.ACCENT,
+    Reader: LOGO_COLORS.READER.ACCENT,
+    'Case Summary': LOGO_COLORS.INTAKE.ACCENT,
+    Intake: LOGO_COLORS.INTAKE.ACCENT,
     Procedural: '#5a94ec',
     Medical: '#ff6868',
     'Other Evidence': '#3ad2cf'
@@ -61,14 +61,6 @@ export default class StyleGuideColors extends React.PureComponent {
     'Certification',
     'Reader',
     'Intake'
-  ];
-
-  Combos = [
-    'Base',
-    'Gray',
-    'Primary',
-    'Secondary',
-    'Green'
   ];
 
   Reader = [
@@ -151,7 +143,7 @@ export default class StyleGuideColors extends React.PureComponent {
         )}
       </div>
 
-      <h3>Logos</h3>
+      <h3 id="logo-colors">Logo Colors</h3>
 
       <p>
         Logos are the only time Caseflow products use colors outside of Web Design
@@ -169,7 +161,7 @@ export default class StyleGuideColors extends React.PureComponent {
         )}
       </div>
 
-      <h3>Reader Categories</h3>
+      <h3 id="reader-categories">Reader Categories</h3>
 
       <div className="sg-colors-swatches">
         {this.Reader.map((name) =>
@@ -181,36 +173,6 @@ export default class StyleGuideColors extends React.PureComponent {
           </div>
         )}
       </div>
-
-      <h3 id="text-accessibility">Text Accessibility</h3>
-
-      <p>
-        WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by
-        everyone, regardless of disability or user device. To meet these standards, text
-        and interactive elements should have a color contrast ratio of at least 4.5:1.
-        This ensures that viewers who cannot see the full color spectrum are able to
-        read the text.
-      </p>
-
-      <p>
-        The options below offer color palette combinations that fall within the range of
-        Section 508 compliant foreground/background color contrast ratios. To ensure that
-        text remains accessible, use only these permitted color combinations.
-      </p>
-
-      <p>
-        If you choose to customize beyond this palette, this color contrast tool is a
-        useful resource for testing the compliance of any color combination.
-      </p>
-
-      <h4>Fully Accessible Text Combinations</h4>
-
-      {this.Combos.map((name) =>
-        <div className="sg-colors-combo" key={name}
-          style={{ color: this.Colors[name] }}>
-          <b>{name.toLowerCase()} - on white</b>
-        </div>
-      )}
     </div>;
   }
 }

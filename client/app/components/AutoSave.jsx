@@ -1,14 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
-import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
-import moment from 'moment';
-
-const now = () => {
-  return moment().tz('America/New_York').
-    format('h:mm a').
-    replace(/(p|a)m/, '$1.m.');
-};
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export default class AutoSave extends React.Component {
 
@@ -34,10 +27,10 @@ export default class AutoSave extends React.Component {
 
   render() {
     if (this.props.isSaving) {
-      const color = this.props.spinnerColor || LOADING_INDICATOR_COLOR_DEFAULT;
+      const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
-      return <div className="saving">Saving...
-        <div className="loadingSymbol">{loadingSymbolHtml('', '100%', color)}</div>
+      return <div className="saving">
+        <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
       </div>;
     }
 
@@ -45,7 +38,7 @@ export default class AutoSave extends React.Component {
       return <span className="saving">Save failed.</span>;
     }
 
-    return <span className="saving">Last saved at {now()}</span>;
+    return <span className="saving">Last saved at {this.props.timeSaved}</span>;
   }
 }
 
@@ -54,6 +47,7 @@ AutoSave.propTypes = {
   spinnerColor: PropTypes.string,
   intervalInMs: PropTypes.number,
   save: PropTypes.func.isRequired,
+  timeSaved: PropTypes.string.isRequired,
   saveFailed: PropTypes.bool
 };
 

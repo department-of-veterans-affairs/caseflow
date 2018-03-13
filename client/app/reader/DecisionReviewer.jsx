@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
+import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
@@ -18,7 +19,8 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -97,8 +99,6 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
-        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -130,42 +130,56 @@ export class DecisionReviewer extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
-  render() {
-    const Router = this.props.router || BrowserRouter;
+  getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
+    `${appeal.veteran_first_name.charAt(0)}. \
+      ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
-        <NavigationBar
-          appName="Reader"
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
-          <div className="cf-wide-app section--document-list">
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-            <PageRoute
-              exact
-              title="Claims Folder | Caseflow Reader"
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              title="Document Viewer | Caseflow Reader"
-              breadcrumb="Document Viewer"
-              path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer} />
-          </div>
-        </NavigationBar>
-        <Footer
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </div>
-    </Router>;
+  render() {
+    const queueEnabled = this.props.featureToggles.queueWelcomeGate;
+
+    const { vacolsId } = this.props.match.params;
+    const defaultUrl = queueEnabled ? `/${vacolsId}/documents/` : '/';
+    const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
+
+    return <React.Fragment>
+      <NavigationBar
+        wideApp
+        appName="Reader"
+        logoProps={{
+          accentColor: LOGO_COLORS.READER.ACCENT,
+          overlapColor: LOGO_COLORS.READER.OVERLAP
+        }}
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}
+        defaultUrl={defaultUrl}>
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer} />
+        <AppFrame wideApp>
+          <PageRoute
+            exact
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb={claimsFolderBreadcrumb}
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
+          {!queueEnabled && <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+          }
+        </AppFrame>
+      </NavigationBar>
+      <Footer
+        wideApp
+        appName="Reader"
+        feedbackUrl={this.props.feedbackUrl}
+        buildDate={this.props.buildDate} />
+    </React.Fragment>
+    ;
   }
 }
 
@@ -178,18 +192,22 @@ DecisionReviewer.propTypes = {
   // Required actions
   onScrollToComment: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func,
-
-  // These two properties are exclusively for testing purposes
-  router: PropTypes.func,
-  routerProps: PropTypes.object
+  setCategoryFilter: PropTypes.func
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+
+  const getAssignmentFromCaseSelect = (caseSelect, match) =>
+    match && match.params.vacolsId ?
+      _.find(caseSelect.assignments, { vacols_id: match.params.vacolsId }) :
+      null;
+
   return {
     documentFilters: state.documentList.pdfList.filters,
     storeDocuments: state.documents,
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
+      state.pdfViewer.loadedAppeal
   };
 };
 
@@ -201,4 +219,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer));

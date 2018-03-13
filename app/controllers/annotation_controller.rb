@@ -2,12 +2,13 @@ class AnnotationController < ApplicationController
   before_action :verify_access
 
   rescue_from ActiveRecord::RecordInvalid do |e|
+    # This is prevented in the UI and should never happen.
+    # :nocov:
     Rails.logger.error "AnnotationController failed validation: #{e.message}"
 
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    # :nocov:
   end
-
-  ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
 
   def create
     annotation = Annotation.create!(annotation_params.merge(user_id: current_user.id))
@@ -15,7 +16,7 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    Annotation.find(params.require(:id)).delete
+    Annotation.find(params.require(:id)).destroy
     render json: {}
   end
 
@@ -31,6 +32,6 @@ class AnnotationController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles(ANNOTATION_AUTHORIZED_ROLES.join(" "))
+    verify_authorized_roles("Reader")
   end
 end

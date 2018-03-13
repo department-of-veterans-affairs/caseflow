@@ -44,9 +44,6 @@ export const documentCategories = {
   }
 };
 
-// colors
-export const READER_COLOR = '#417505';
-
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 
@@ -59,3 +56,11 @@ export const PDF_PAGE_HEIGHT = 1056;
 // Defined in _search_bar.scss > .cf-search-bar. Max height of
 // search bar, used as offset when scrolling to search results
 export const SEARCH_BAR_HEIGHT = 50;
+
+// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
+// We need it defined here to be able to expand/contract margin between pages
+// as we zoom.
+export const PAGE_MARGIN = 25;
+
+// Base scale used to calculate dimensions and draw text.
+export const PAGE_DIMENSION_SCALE = 1;

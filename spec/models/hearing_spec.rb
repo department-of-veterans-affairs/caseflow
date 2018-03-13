@@ -7,13 +7,27 @@ describe Hearing do
     Generators::Hearing.build(
       date: date,
       disposition: disposition,
-      hold_open: hold_open
+      hold_open: hold_open,
+      type: type
     )
   end
 
   let(:date) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
+  let(:type) { :video }
+
+  context "#location" do
+    subject { hearing.location }
+
+    it { is_expected.to eq("Baltimore regional office") }
+
+    context "when it's a central office hearing" do
+      let(:type) { :central_office }
+
+      it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
+    end
+  end
 
   context "#no_show?" do
     subject { hearing.no_show? }
@@ -69,7 +83,7 @@ describe Hearing do
       Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
     end
     let!(:appeal3) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
     end
     let!(:appeal4) do
       Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
@@ -77,7 +91,7 @@ describe Hearing do
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
 
     it "returns active appeals with no decision date and with form9 date" do
-      expect(subject.size).to eq 2
+      expect(subject.size).to eq 3
     end
   end
 
@@ -162,21 +176,42 @@ describe Hearing do
     end
   end
 
-  context ".create_from_vacols_record" do
+  context ".assign_or_create_from_vacols_record" do
     let(:vacols_record) do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
     let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
 
-    subject { Hearing.create_from_vacols_record(vacols_record) }
+    context "create vacols record" do
+      subject { Hearing.assign_or_create_from_vacols_record(vacols_record) }
 
-    it "should create a hearing record" do
-      subject
-      hearing = Hearing.find_by(vacols_id: "1234")
-      expect(hearing.present?).to be true
-      expect(hearing.appeal.vacols_id).to eq "5678"
-      expect(hearing.user).to eq user
+      it "should create a hearing record" do
+        subject
+        hearing = Hearing.find_by(vacols_id: "1234")
+        expect(hearing.present?).to be true
+        expect(hearing.appeal.vacols_id).to eq "5678"
+        expect(hearing.user).to eq user
+        expect(hearing.prepped).to be_falsey
+      end
+    end
+
+    context "assign vacols record" do
+      let(:vacols_record) do
+        OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
+      end
+
+      let!(:existing_user) { User.create(css_id: vacols_record[:css_id], station_id: "123") }
+      let!(:user) { User.create(css_id: "1112", station_id: "123") }
+      let!(:hearing) { Hearing.create(vacols_id: "1234", user: user) }
+      subject { Hearing.assign_or_create_from_vacols_record(vacols_record, hearing) }
+
+      it "should create a hearing record and reassign user" do
+        expect(subject.present?).to be true
+        expect(subject.appeal.vacols_id).to eq "5678"
+        expect(subject.user).to eq existing_user
+        expect(subject.prepped).to be_falsey
+      end
     end
   end
 
@@ -191,7 +226,8 @@ describe Hearing do
           evidence: "Medical exam done on 10/10/2003",
           witness: "Jane Smith attended",
           contentions: "The veteran believes their neck is hurt",
-          comments_for_attorney: "Look for neck-related records"
+          comments_for_attorney: "Look for neck-related records",
+          prepped: true
         }
       end
 
@@ -202,6 +238,7 @@ describe Hearing do
         expect(hearing.witness).to eq "Jane Smith attended"
         expect(hearing.contentions).to eq "The veteran believes their neck is hurt"
         expect(hearing.comments_for_attorney).to eq "Look for neck-related records"
+        expect(hearing.prepped).to be_truthy
       end
     end
 

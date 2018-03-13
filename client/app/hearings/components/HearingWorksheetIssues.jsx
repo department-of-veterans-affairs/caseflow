@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
-import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -25,19 +24,9 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'counter'
       },
       {
-        header: 'Program',
+        header: `Appeal Stream ${appealKey + 1}`,
         align: 'left',
-        valueName: 'program'
-      },
-      {
-        header: 'Issue',
-        align: 'left',
-        valueName: 'issue'
-      },
-      {
-        header: 'Levels 1-3',
-        align: 'left',
-        valueName: 'levels'
+        valueName: 'description'
       },
       {
         header: 'Notes',
@@ -45,13 +34,21 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'notes'
       },
       {
-        header: 'Preliminary Impressions',
+        header: 'Disposition',
         align: 'left',
-        valueName: 'actions'
+        valueName: 'disposition'
       }
     ];
 
-    if (!this.props.print) {
+    if (!this.props.prior) {
+      columns.push({
+        header: 'Preliminary Impressions',
+        align: 'left',
+        valueName: 'actions'
+      });
+    }
+
+    if (!this.props.print && !this.props.prior) {
       columns.push({
         header: '',
         align: 'left',
@@ -59,37 +56,29 @@ class HearingWorksheetIssues extends PureComponent {
       });
     }
 
-    const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
-
-    const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
+    const rowObjects = Object.keys(this.props.issues).map((issue, key) => {
 
       let issueRow = worksheetIssues[issue];
 
       return {
         counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
-        program: <HearingWorksheetIssueFields
+        description: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
-          field="program"
-          maxLength={30}
-        />,
-        issue: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="name"
-          maxLength={100}
-        />,
-        levels: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="levels"
-          maxLength={100}
+          field="description"
+          maxLength={200}
         />,
         notes: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="notes"
-          readOnly={this.props.print}
+          readOnly={this.props.print || this.props.prior}
+          maxLength={100}
+        />,
+        disposition: <HearingWorksheetIssueFields
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="disposition"
           maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
@@ -126,6 +115,8 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
+  issues: PropTypes.object.isRequired,
+  prior: PropTypes.bool,
   worksheetStreamsAppeal: PropTypes.object.isRequired,
   countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
 };

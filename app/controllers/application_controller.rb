@@ -1,10 +1,10 @@
 class ApplicationController < ApplicationBaseController
   before_action :set_application
   before_action :set_timezone,
-                :setup_fakes,
-                :check_whats_new_cookie
+                :setup_fakes
   before_action :set_raven_user
   before_action :verify_authentication
+  before_action :set_paper_trail_whodunnit
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -87,6 +87,15 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def verify_queue_phase_two
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_two)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
@@ -118,12 +127,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :test_user?
 
-  def check_whats_new_cookie
-    client_last_seen_version = cookies[:whats_new]
-    @show_whats_new_indicator = client_last_seen_version.nil? ||
-                                client_last_seen_version != WhatsNewService.version
-  end
-
   def verify_authentication
     return true if current_user && current_user.authenticated?
 
@@ -136,10 +139,13 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :page_title
 
+  # Verifies that the user has any of the roles passed
   def verify_authorized_roles(*roles)
-    return true if current_user && roles.all? { |r| current_user.can?(r) }
+    return true if current_user && roles.any? { |r| current_user.can?(r) }
+
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
+
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
@@ -165,9 +171,6 @@ class ApplicationController < ApplicationBaseController
   def on_vbms_error
     respond_to do |format|
       format.html do
-        @error_title = "VBMS Failure"
-        @error_subtitle = "Unable to communicate with the VBMS system at this time."
-        @error_retry_external_service = "VBMS"
         render "errors/500", layout: "application", status: 500
       end
 
@@ -177,29 +180,28 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
-  def feedback_url
+  def feedback_subject
+    feedback_hash = {
+      "dispatch" => "Caseflow Dispatch",
+      "certifications" => "Caseflow Certification",
+      "reader" => "Caseflow Reader",
+      "hearings" => "Caseflow Hearing Prep",
+      "intake" => "Caseflow Intake",
+      "queue" => "Caseflow Queue"
+    }
+    subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
+    subject.nil? ? "Caseflow" : feedback_hash[subject]
+  end
+
+  def feedback_url(redirect = nil)
     # :nocov:
     unless ENV["CASEFLOW_FEEDBACK_URL"]
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
     # :nocov:
 
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    subject = if request.original_fullpath.include? "dispatch"
-                "Caseflow Dispatch"
-              elsif request.original_fullpath.include? "certifications"
-                "Caseflow Certification"
-              elsif request.original_fullpath.include? "reader"
-                "Caseflow Reader"
-              elsif request.original_fullpath.include? "hearings"
-                "Caseflow Hearing Prep"
-              else
-                # default to just plain Caseflow.
-                "Caseflow"
-              end
-
-    param_object = { redirect: request.original_url, subject: subject }
+    redirect_url = redirect || request.original_url
+    param_object = { redirect: redirect_url, subject: feedback_subject }
 
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
@@ -212,7 +214,11 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? || Rails.env.test? || Rails.env.demo? || Rails.env.ssh_forwarding?
+      Rails.env.development? ||
+        Rails.env.test? ||
+        Rails.env.demo? ||
+        Rails.env.ssh_forwarding? ||
+        Rails.env.local?
     end
   end
 end

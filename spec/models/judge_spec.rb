@@ -2,6 +2,7 @@ describe Judge do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
     Time.zone = "America/Chicago"
+    Judge.repository = Fakes::JudgeRepository
   end
 
   context ".upcoming_dockets" do
@@ -44,6 +45,34 @@ describe Judge do
     it "excludes hearings for another judge" do
       hearing_ids = subject.map { |key, _v| subject[key].hearings.map(&:id) }.flatten
       expect(hearing_ids).to_not include(hearing_another_judge.id)
+    end
+  end
+
+  context ".create_from_vacols" do
+    let(:staff_record) do
+      OpenStruct.new(
+        sdomainid: "CSS1",
+        snamef: "Jenny",
+        snamel: "Jackson"
+      )
+    end
+
+    subject { Judge.create_from_vacols(staff_record) }
+
+    it "should create a user record with a judge station ID" do
+      expect(subject.class).to eq User
+      expect(subject.css_id).to eq "CSS1"
+      expect(subject.station_id).to eq "101"
+      expect(subject.full_name).to eq "Jenny Jackson"
+    end
+  end
+
+  context ".list_all" do
+    it "should cache the values" do
+      expect(Fakes::JudgeRepository).to receive(:find_all_judges).once
+      Judge.list_all
+      # call a second time, should get from the cache
+      Judge.list_all
     end
   end
 

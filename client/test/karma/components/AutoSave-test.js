@@ -2,7 +2,8 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import AutoSave from '../../../app/components/AutoSave';
-import * as AppConstants from '../../../app/constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { LOGO_COLORS } from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
 // eslint-disable-next-line no-unused-vars
 import DailyDocketContainer from '../../../app/hearings/containers/DailyDocketContainer';
@@ -29,7 +30,7 @@ describe('AutoSave', () => {
         />
       );
 
-      const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_DEFAULT}"]`).first();
+      const spinner = wrapper.find(`[fill="${COLORS.GREY_DARK}"]`).first();
 
       expect(spinner).to.have.length(1);
     });
@@ -38,12 +39,12 @@ describe('AutoSave', () => {
       const wrapper = mount(
         <AutoSave
           isSaving
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+          spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
           save={saveFunction}
         />
       );
 
-      const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}"]`).first();
+      const spinner = wrapper.find(`[fill="${LOGO_COLORS.HEARINGS.ACCENT}"]`).first();
 
       expect(spinner).to.have.length(1);
     });

@@ -37,12 +37,20 @@ class Review extends React.PureComponent {
     }));
 
     return <div>
-      <h1>Review { veteranName }'s opt-in election</h1>
-      <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
+      <h1>Review { veteranName }'s Opt-In Election Form</h1>
+
+      <DateSelector
+        name="receipt-date"
+        label="What is the Receipt Date of this form?"
+        value={receiptDate}
+        onChange={this.props.setReceiptDate}
+        errorMessage={receiptDateError}
+        strongLabel
+      />
 
       <RadioField
         name="opt-in-election"
-        label="Which election did the Veteran select?"
+        label="Which review lane did the veteran select?"
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}
@@ -50,14 +58,6 @@ class Review extends React.PureComponent {
         value={optionSelected}
       />
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date for this election form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
-        strongLabel
-      />
     </div>;
   }
 }

@@ -38,7 +38,7 @@ export default class StyleGuideIndex extends React.PureComponent {
   }
 
   render() {
-    return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
+    return <div className="cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
           componentLinks.map((link, i) => {

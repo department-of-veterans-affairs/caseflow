@@ -26,7 +26,7 @@ class Test::UsersController < ApplicationController
       name: "Reader",
       links: {
         welcome_gate: "/reader/appeal",
-        document_list: "/reader/appeal/reader_id1/documents"
+        document_list: "/reader/appeal/111111/documents"
       }
     },
     {

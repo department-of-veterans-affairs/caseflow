@@ -93,11 +93,7 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
-    Capybara.default_max_wait_time = 5
-  end
-
-  after do
-    Capybara.default_max_wait_time = 2
+    Time.zone = "America/New_York"
   end
 
   let(:vacols_record) { :remand_decided }
@@ -194,15 +190,16 @@ RSpec.feature "Reader" do
 
       scenario "filtering comments" do
         click_on "Comments"
-        expect(page).to have_content("Comments.")
+        expect(page).to have_content("Sorted by relevant date")
       end
 
       scenario "clear all filters" do
-        click_on "Comments"
-        expect(page).to have_content("Comments.")
-
+        # category filter is only visible when DocumentsTable displayed, but affects Comments
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
+
+        click_on "Comments"
+        expect(page).to have_content("Sorted by relevant date")
 
         # When the "clear filters" button is clicked, the filtering message is reset,
         # and focus goes back on the Document toggle.
@@ -217,8 +214,8 @@ RSpec.feature "Reader" do
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(
@@ -242,7 +239,7 @@ RSpec.feature "Reader" do
       scenario "Claims folder details issues show no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
-        expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+        expect(find("#claims-folder-issues").text).to have_content("No issues on appeal")
       end
 
       context "When both document source manifest retrieval times are set" do
@@ -330,12 +327,13 @@ RSpec.feature "Reader" do
         expect(page).to have_content("Documents")
 
         # Test that the title changed. Functionality in PageRoute.jsx
-        expect(page).to have_title("Claims Folder | Caseflow Reader")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+        expect(page).to have_title("#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Claims Folder")
 
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
 
-        click_on "Caseflow"
+        click_on "Caseflow", match: :first
         expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
 
@@ -747,10 +745,9 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content(documents[2].type)
 
         # Filtering the document list should work in "Comments" mode.
-        find("#categories-header svg").click
-        find(".checkbox-wrapper-procedural").click
-        expect(page).to have_content(documents[0].type)
-        expect(page).not_to have_content(documents[1].type)
+        fill_in "searchBar", with: "form"
+        expect(page).not_to have_content(documents[0].type)
+        expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
         expect(page).not_to have_content("another comment")
@@ -892,6 +889,7 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[1].type
+
         expect(page).to have_content("IN THE APPEAL", wait: 10)
 
         expect(page).to have_css(".page")
@@ -1118,11 +1116,11 @@ RSpec.feature "Reader" do
       end
 
       doc_0_categories =
-        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       doc_1_categories =
-        get_aria_labels all(".cf-wide-app table tr:nth-child(2) .cf-document-category-icons li", count: 3)
+        get_aria_labels all("table tr:nth-child(2) .cf-document-category-icons li", count: 3)
       expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
       click_on documents[0].type
@@ -1137,7 +1135,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       doc_0_categories =
-        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       click_on documents[1].type
@@ -1176,7 +1174,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content(regional_office)
 
       # all the current issues listed in the UI
-      issue_list = all(".claims-folder-issues li")
+      issue_list = all("#claims-folder-issues tr")
       expect(issue_list.count).to eq(appeal_info["issues"].length)
       issue_list.each_with_index do |issue, index|
         expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
@@ -1411,9 +1409,9 @@ RSpec.feature "Reader" do
       open_search_bar
       expect(scroll_top).to be(0)
 
-      fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "just"
 
-      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
       first_match_scroll_top = scroll_top
 
@@ -1422,7 +1420,8 @@ RSpec.feature "Reader" do
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top
 
-      # this doc has 2 matches for "decision", search index wraps around
+      # this doc has 3 matches for "decision", search index wraps around
+      find(".cf-next-match").click
       find(".cf-next-match").click
       expect(scroll_top).to eq(first_match_scroll_top)
     end
@@ -1507,6 +1506,53 @@ RSpec.feature "Reader" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
       expect(page).to have_content("Unable to load document")
+    end
+  end
+
+  # This test appears to mess with mocked data, so we run it last...
+  context "Document is updated" do
+    let(:series_id) { SecureRandom.uuid }
+    let(:document_ids_in_series) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:fetch_documents_responses) do
+      document_ids_in_series.map do |document_id|
+        {
+          documents: [Generators::Document.build(vbms_document_id: document_id, series_id: series_id)],
+          manifest_vbms_fetched_at: Time.now.utc,
+          manifest_vva_fetched_at: Time.now.utc
+        }
+      end
+    end
+    let(:appeal) do
+      Generators::Appeal.create
+    end
+
+    before do
+      FeatureToggle.enable!(:efolder_api_v2)
+      allow(VBMSService).to receive(:fetch_documents_for).with(appeal, anything).and_return(
+        fetch_documents_responses[0],
+        fetch_documents_responses[1]
+      )
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_api_v2)
+    end
+
+    it "should alert user" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+      expect(page).to have_content("Document Viewer")
+
+      add_comment("test comment")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on Document.last.type
+
+      expect(page).to have_content("This document has been updated")
+
+      click_on "Got It"
+      expect(page).to_not have_content("This document has been updated")
+      expect(page).to have_content("test comment")
     end
   end
 end

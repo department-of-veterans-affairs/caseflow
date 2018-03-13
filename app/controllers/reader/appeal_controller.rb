@@ -1,7 +1,10 @@
 class Reader::AppealController < Reader::ApplicationController
   def index
     respond_to do |format|
-      format.html { render(:index) }
+      format.html do
+        return redirect_to "/queue" if feature_enabled?(:queue_welcome_gate)
+        render(:index)
+      end
       format.json do
         MetricsService.record "Get assignments for #{current_user.id}" do
           render json: {

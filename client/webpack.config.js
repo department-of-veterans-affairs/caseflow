@@ -1,3 +1,3 @@
 module.exports = require(
-  '@department-of-veterans-affairs/appeals-frontend-toolkit/config/getWebpackConfig'
+  '@department-of-veterans-affairs/caseflow-frontend-toolkit/config/getWebpackConfig'
 )(__dirname, './app/index');

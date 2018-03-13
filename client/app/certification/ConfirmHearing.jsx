@@ -311,7 +311,7 @@ export class ConfirmHearing extends React.Component {
 
             /* TODO: restore the accessibility stuff here.
               also, we should stop using rails pdf viewer */
-            <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}>
+            <LoadingContainer color={AppConstants.LOGO_COLORS.CERTIFICATION.ACCENT}>
               <iframe
                 className="cf-doc-embed cf-iframe-with-loading form9-viewer"
                 title="Form8 PDF"

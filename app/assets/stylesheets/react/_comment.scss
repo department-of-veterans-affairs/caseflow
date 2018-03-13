@@ -48,6 +48,16 @@
   }
 }
 
+// Max width is enforced so the size of this comment box
+// fits with existing textareas in style guide
+.comment-size-container {
+  max-width: 430px;
+
+  .cf-form-textarea {
+    margin-bottom: 20px;
+  }
+}
+
 .comment-horizontal-container {
   display: inline-block;
   width: 100%;

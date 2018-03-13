@@ -2,10 +2,45 @@ import React from 'react';
 
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import Logo from '../../components/Logo';
+import CaseflowLogo from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/CaseflowLogo';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {
+
+    const logos = [
+      {
+        accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+        overlapColor: LOGO_COLORS.DISPATCH.OVERLAP,
+        appName: 'Dispatch'
+      },
+      {
+        accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+        overlapColor: LOGO_COLORS.HEARINGS.OVERLAP,
+        appName: 'Hearings Prep'
+      },
+      {
+        accentColor: LOGO_COLORS.INTAKE.ACCENT,
+        overlapColor: LOGO_COLORS.INTAKE.OVERLAP,
+        appName: 'Intake'
+      },
+      {
+        accentColor: LOGO_COLORS.READER.ACCENT,
+        overlapColor: LOGO_COLORS.READER.OVERLAP,
+        appName: 'Reader'
+      },
+      {
+        accentColor: LOGO_COLORS.CERTIFICATION.ACCENT,
+        overlapColor: LOGO_COLORS.CERTIFICATION.OVERLAP,
+        appName: 'Certification'
+      },
+      {
+        accentColor: LOGO_COLORS.EFOLDER.ACCENT,
+        overlapColor: LOGO_COLORS.EFOLDER.OVERLAP,
+        appName: 'eFolder Express'
+      }
+    ];
+
     return <div>
       <StyleGuideComponentTitle
         title="Logos"
@@ -23,27 +58,11 @@ export default class StyleLogos extends React.PureComponent {
         When refering to the whole Caseflow system, you should use the
         non-colored Caseflow logo.
       </p>
-      <p>
-        <Logo app="efolder" /><b>eFolder Express</b>
-      </p>
-      <p>
-        <Logo app="certification" /><b>Certification</b>
-      </p>
-      <p>
-        <Logo app="dispatch" /><b>Dispatch</b>
-      </p>
-      <p>
-        <Logo app="reader" /><b>Reader</b>
-      </p>
-      <p>
-        <Logo app="intake" /><b>Intake</b>
-      </p>
-      <p>
-        <Logo app="feedback" /><b>Feedback</b>
-      </p>
-      <p>
-        <Logo /><b>General Logo</b>
-      </p>
+      {
+        logos.map(({ appName, ...logoProps }) => <p key={appName} className="cf-styleguide-logo-row">
+          <CaseflowLogo {...logoProps} /><strong>{appName}</strong>
+        </p>)
+      }
     </div>;
   }
 }

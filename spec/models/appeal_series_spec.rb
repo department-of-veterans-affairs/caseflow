@@ -1,8 +1,13 @@
 describe AppealSeries do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
+  end
+
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [latest_appeal] }
   let(:latest_appeal) do
     Generators::Appeal.build(
+      type: type,
       nod_date: nod_date,
       soc_date: soc_date,
       ssoc_dates: ssoc_dates,
@@ -15,6 +20,7 @@ describe AppealSeries do
     )
   end
 
+  let(:type) { "Original" }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
@@ -24,6 +30,27 @@ describe AppealSeries do
   let(:disposition) { nil }
   let(:location_code) { "77" }
   let(:status) { "Advance" }
+
+  context "#vacols_ids" do
+    subject { series.vacols_ids }
+
+    let(:appeals) do
+      [
+        Generators::Appeal.build(
+          vacols_id: "1234567",
+          status: "Active",
+          last_location_change_date: 1.day.ago
+        ),
+        Generators::Appeal.build(
+          vacols_id: "7654321",
+          status: "Active",
+          last_location_change_date: 2.days.ago
+        )
+      ]
+    end
+
+    it { is_expected.to eq %w[1234567 7654321] }
+  end
 
   context "#latest_appeal" do
     subject { series.latest_appeal.vacols_id }
@@ -208,6 +235,11 @@ describe AppealSeries do
         it { is_expected.to eq(:reconsideration) }
       end
 
+      context "when an unmatched merge" do
+        let(:disposition) { "Merged Appeal" }
+        it { is_expected.to eq(:merged) }
+      end
+
       context "when any other disposition" do
         let(:disposition) { "Not a real disposition" }
         it { is_expected.to eq(:other_close) }
@@ -258,6 +290,57 @@ describe AppealSeries do
         expect(subject[:details]).to eq({})
       end
     end
+
+    context "when it is in remand ssoc status" do
+      let(:status) { "Remand" }
+      let(:decision_date) { 3.days.ago }
+      let(:ssoc_dates) { [1.year.ago, 1.day.ago] }
+
+      it "returns a details hash with the most recent ssoc" do
+        expect(subject[:type]).to eq(:remand_ssoc)
+        expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
+        expect(subject[:details][:return_timeliness]).to eq([1, 2])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 10])
+      end
+    end
+
+    context "when it has been decided by the board" do
+      let(:status) { "Remand" }
+      let(:disposition) { "Allowed" }
+      before do
+        latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
+        latest_appeal.issues << Generators::Issue.build(disposition: :remanded)
+        latest_appeal.issues << Generators::Issue.build(disposition: :field_grant)
+      end
+
+      it "returns a details hash with the decided issues" do
+        expect(subject[:type]).to eq(:remand)
+        expect(subject[:details][:remand_timeliness]).to eq([7, 17])
+        expect(subject[:details][:issues].length).to eq(2)
+        expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
+        expect(subject[:details][:issues].first[:description]).to eq("Service connection, limitation of thigh motion")
+      end
+    end
+
+    context "when it is at VSO" do
+      let(:status) { "Active" }
+      let(:location_code) { "55" }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:at_vso)
+        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
+      end
+    end
+
+    context "when it is pending a form 9" do
+      let(:form9_date) { nil }
+
+      it "returns a details hash with the vso name" do
+        expect(subject[:type]).to eq(:pending_form9)
+        expect(subject[:details][:certification_timeliness]).to eq([2, 12])
+        expect(subject[:details][:ssoc_timeliness]).to eq([7, 20])
+      end
+    end
   end
 
   context "#alerts" do
@@ -267,6 +350,93 @@ describe AppealSeries do
     it "returns list of alerts" do
       expect(!subject.empty?).to be_truthy
       expect(subject.first[:type]).to eq(:form9_needed)
+    end
+  end
+
+  context "#docket" do
+    subject { series.docket }
+
+    before { DocketSnapshot.create }
+
+    context "when the appeal is original and not aod" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+
+      it "has a docket" do
+        expect(subject).to_not be_nil
+      end
+    end
+
+    context "when the appeal is post-cavc" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+      let(:type) { "Court Remand" }
+
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when the appeal is aod" do
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when there is no form 9" do
+      before { series.appeals.each { |appeal| appeal.aod = false } }
+      let(:form9_date) { nil }
+
+      it "does not have a docket" do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
+  context "#docket_hash" do
+    subject { series.docket_hash }
+
+    context "when the docket is nil" do
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
+  context "#description" do
+    subject { series.description }
+
+    context "when there is a single issue" do
+      before do
+        latest_appeal.issues << Generators::Issue.build
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    end
+
+    context "when that issue is new and materials" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 04 5252])
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    end
+
+    context "when there are multiple issues" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
+        latest_appeal.issues << Generators::Issue.build(vacols_sequence_id: 2)
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 03 9432], vacols_sequence_id: 3)
+      end
+
+      it { is_expected.to eq("Service connection, limitation of thigh motion, and 2 others") }
+    end
+
+    context "when those issues do not have commas" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
+        latest_appeal.issues << Generators::Issue.build(codes: %w[02 12 05], vacols_sequence_id: 2)
+      end
+
+      it { is_expected.to eq("100% rating for individual unemployability and 1 other") }
     end
   end
 end

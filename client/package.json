@@ -6,7 +6,7 @@
   "version": "0.0.1",
   "scripts": {
     "test": "yarn run test:karma && yarn run test:legacy",
-    "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register js:babel-core/register",
+    "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register",
     "test:karma": "NODE_ENV=test karma start",
     "test:karma:watch": "yarn run test:karma --no-single-run",
     "test:legacy:watch": "yarn run test:legacy --watch",
@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/appeals-frontend-toolkit": "^1.0.0",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.3",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -37,6 +37,7 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.3",
+    "glamor": "^2.20.40",
     "history": "^4.5.1",
     "immutability-helper": "^2.4.0",
     "imports-loader": "^0.7.1",
@@ -46,7 +47,7 @@
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.6.414",
+    "pdfjs-dist": "1.10.97",
     "prop-types": "^15.6.0",
     "rc-collapse": "^1.7.6",
     "react": "^16.2.0",
@@ -73,12 +74,12 @@
     "webpack": "^3.10.0"
   },
   "devDependencies": {
-    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
+    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.2",
     "babel-eslint": "^8.0.2",
     "babel-node-modules": "^0.0.1",
     "chai": "^3.5.0",
     "enzyme": "^3.3.0",
-    "eslint": "^4.9.0",
+    "eslint": "4.9.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.5.1",
@@ -87,6 +88,8 @@
     "karma-firefox-launcher": "^1.0.1",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.3",
+    "karma-mocha-snapshot": "^0.2.1",
+    "karma-snapshot": "^0.5.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.3",
     "mocha": "^3.1.2",

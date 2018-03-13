@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '../components/Button';
 import DateSelector from '../components/DateSelector';
+import SaveableTextArea from '../components/SaveableTextArea';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
@@ -14,9 +14,13 @@ export default class EditComment extends React.Component {
     this.shouldAutosave = true;
   }
 
+  isSaveDisabled = () => (
+    this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)
+  )
+
   handleAutoSave = () => {
     // only autosave when a comment exists
-    if (this.shouldAutosave && this.props.comment.comment) {
+    if (this.shouldAutosave && !this.isSaveDisabled()) {
       this.onSaveCommentEdit();
     }
   }
@@ -42,7 +46,7 @@ export default class EditComment extends React.Component {
     this.handleAutoSave();
   }
 
-  onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
+  onChange = (event) => this.props.onChange(event, this.props.comment.uuid);
 
   onChangeDate = (relevantDate) => this.props.onChangeDate(relevantDate, this.props.comment.uuid);
 
@@ -67,31 +71,17 @@ export default class EditComment extends React.Component {
         type="date"
         strongLabel
       />
-      <textarea
-        className="comment-container comment-textarea"
-        name="Edit Comment"
-        aria-label="Edit Comment"
+      <SaveableTextArea
+        name="Edit comment"
+        hideLabel
         onKeyDown={this.keyListener}
         id={this.props.id}
         onChange={this.onChange}
         value={this.props.comment.comment}
+        onCancelClick={this.onCancelCommentEdit}
+        onSaveClick={this.onSaveCommentEdit}
+        disabled={this.isSaveDisabled()}
       />
-      <div className="comment-save-button-container">
-        <span className="cf-right-side">
-          <Button
-            name="cancel"
-            classNames={['cf-btn-link']}
-            onClick={this.onCancelCommentEdit}>
-              Cancel
-          </Button>
-          <Button
-            disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
-            name="save"
-            onClick={this.onSaveCommentEdit}>
-              Save
-          </Button>
-        </span>
-      </div>
     </div>;
   }
 }

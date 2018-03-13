@@ -1,15 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Link from '../components/Link';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
-import * as AppConstants from '../constants/AppConstants';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
+import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
+import { now } from './util/DateUtil';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -20,8 +22,10 @@ import {
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
+  setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
-  saveWorksheet
+  saveWorksheet,
+  saveDocket
 } from './actions/Dockets';
 
 import { saveIssues } from './actions/Issue';
@@ -31,11 +35,11 @@ class WorksheetFormEntry extends React.PureComponent {
     const textAreaProps = {
       minRows: 3,
       maxRows: 5000,
+      value: this.props.value || '',
       ..._.pick(
         this.props,
         [
           'name',
-          'value',
           'onChange',
           'id',
           'minRows'
@@ -53,16 +57,21 @@ class WorksheetFormEntry extends React.PureComponent {
 }
 export class HearingWorksheet extends React.PureComponent {
 
-  componentDidMount() {
-    document.title = `${this.props.worksheet.appellant_mi_formatted}'s ${document.title}`;
+  componentDidUpdate(prevProps) {
+    if (prevProps.worksheet !== this.props.worksheet) {
+      document.title = `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
+    }
   }
 
   save = (worksheet, worksheetIssues) => () => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
     this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
+  };
+
+  openPdf = (worksheet, worksheetIssues) => () => {
+    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
+      window.open(`${window.location.pathname}/print`, '_blank');
+    });
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
@@ -72,14 +81,11 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
-    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
-
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      veteranLawJudge={this.props.veteran_law_judge}
       appellant={appellant}
     />;
 
@@ -90,7 +96,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-      {this.props.print && worksheetHeader}
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
@@ -129,32 +134,49 @@ export class HearingWorksheet extends React.PureComponent {
       'cf-app-segment--alt': !this.props.print
     });
 
+    const printWrapperClassNames = classNames('cf-hearings-worksheet', {
+      'cf-app-segment--alt cf_hearing_body': this.props.print
+    });
+
     return <div>
       {!this.props.print &&
-            <AutoSave
-              save={this.save(worksheet, worksheetIssues)}
-              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-              isSaving={this.props.worksheetIsSaving}
-              saveFailed={this.props.saveWorksheetFailed}
-            />
+        <div>
+          <AutoSave
+            save={this.save(worksheet, worksheetIssues)}
+            spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+            isSaving={this.props.worksheetIsSaving}
+            timeSaved={this.props.worksheetTimeSaved || now()}
+            saveFailed={this.props.saveWorksheetFailed}
+          />
+          <WorksheetHeaderVeteranSelection
+            openPdf={this.openPdf}
+            history={this.props.history}
+            save={this.save(worksheet, worksheetIssues)}
+          />
+        </div>
       }
+      {!this.props.print &&
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
         {secondWorksheetPage}
       </div>
+      }
+      {this.props.print &&
+    <div className={printWrapperClassNames}>
+      {firstWorksheetPage}
+      <PrintPageBreak />
+      {secondWorksheetPage}
+    </div>
+      }
       {!this.props.print &&
-      <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+        <div className="cf-push-right">
+          <Link
+            onClick={this.openPdf(worksheet, worksheetIssues)}
+            button="secondary">
           Save as PDF
-        </Link>
-        <Link
-          name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
-          button="primary"
-          target="_blank">
-            Review eFolder</Link>
-      </div>
+          </Link>
+        </div>
       }
     </div>;
   }
@@ -163,7 +185,10 @@ export class HearingWorksheet extends React.PureComponent {
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
   worksheetAppeals: state.worksheetAppeals,
-  worksheetIssues: state.worksheetIssues
+  worksheetIssues: state.worksheetIssues,
+  saveWorksheetFailed: state.saveWorksheetFailed,
+  worksheetIsSaving: state.worksheetIsSaving,
+  worksheetTimeSaved: state.worksheetTimeSaved
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -172,9 +197,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
+  setWorksheetTimeSaved,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
-  saveIssues
+  saveIssues,
+  saveDocket
 }, dispatch);
 
 export default connect(

@@ -1,0 +1,12 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Queue", props: {
+    userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    featureToggles: {
+      phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user)
+    }
+  }) %>
+<% end %>

@@ -51,7 +51,7 @@ describe AssociatedVacolsModel do
     context "fields not set trigger a call to load data" do
       it do
         model.bar = "hello"
-        Rails.logger.should_receive(:warn).with(/Future Error/)
+        expect(Raven).to receive(:capture_exception)
         expect(model.foo).to eq("bar")
       end
     end

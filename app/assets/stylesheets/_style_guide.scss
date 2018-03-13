@@ -41,6 +41,15 @@ $color-tab-text-hover: #1f5593;
   }
 }
 
+.cf-styleguide-logo-row {
+  display: flex;
+  align-items: center;
+
+  strong {
+    padding-left: .5em;
+  }
+}
+
 .cf-sg-content {
   padding-left: 12.5em;
 }
@@ -257,18 +266,8 @@ pre {
   height: 400px;
 }
 
-.cf-sg-footer {
-  .cf-app-footer {
-    margin-top: 0;
-  }
-}
-
 .cf-sg-alert-lite {
   max-width: 320px;
-}
-
-.sg-nav-wrap .cf-app-width {
-  width: 100%;
 }
 
 .cf-form-checkbox .cf-required {

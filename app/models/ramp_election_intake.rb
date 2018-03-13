@@ -5,6 +5,8 @@ class RampElectionIntake < Intake
     did_not_receive_ramp_election: "did_not_receive_ramp_election",
     ramp_election_already_complete: "ramp_election_already_complete",
     no_eligible_appeals: "no_eligible_appeals",
+    no_active_compensation_appeals: "no_active_compensation_appeals",
+    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     no_active_appeals: "no_active_appeals"
   }.merge(Intake::ERROR_CODES)
 
@@ -55,29 +57,36 @@ class RampElectionIntake < Intake
     eligible_appeals.map do |appeal|
       {
         id: appeal.id,
-        issues: appeal.issues.map(&:description_attributes)
+        issues: appeal.compensation_issues.map(&:description_attributes)
       }
     end
   end
 
-  def veteran_ramp_elections
-    @veteran_ramp_elections ||= RampElection.where(veteran_file_number: veteran_file_number).all
-  end
-
   def ui_hash
-    super.merge(notice_date: ramp_election.notice_date,
-                option_selected: ramp_election.option_selected,
-                receipt_date: ramp_election.receipt_date,
-                end_product_description: ramp_election.end_product_description,
-                appeals: serialized_appeal_issues)
+    super.merge(
+      notice_date: ramp_election.notice_date,
+      option_selected: ramp_election.option_selected,
+      receipt_date: ramp_election.receipt_date,
+      end_product_description: ramp_election.end_product_description,
+      appeals: serialized_appeal_issues
+    )
   end
 
   private
 
-  # Appeals in VACOLS that will be closed out in favor
-  # of a new format review
+  # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
-    active_veteran_appeals.select(&:eligible_for_ramp?)
+    active_fully_compensation_appeals.select(&:eligible_for_ramp?)
+  end
+
+  # Temporarily only allow RAMP appeals with 100% compensation issues.
+  # TODO: Take this out when we allow partial closing of appeals.
+  def active_fully_compensation_appeals
+    active_veteran_appeals.select(&:fully_compensation?)
+  end
+
+  def active_compensation_appeals
+    active_veteran_appeals.select(&:compensation?)
   end
 
   def active_veteran_appeals
@@ -85,15 +94,18 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if veteran_ramp_elections.empty?
-      self.error_code = :did_not_receive_ramp_election
-
-    elsif !matching_ramp_election
+    if matching_ramp_election.completed?
       self.error_code = :ramp_election_already_complete
-      @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
+      @error_data = { receipt_date: matching_ramp_election.receipt_date }
 
     elsif active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
+
+    elsif active_compensation_appeals.empty?
+      self.error_code = :no_active_compensation_appeals
+
+    elsif active_fully_compensation_appeals.empty?
+      self.error_code = :no_active_fully_compensation_appeals
 
     elsif eligible_appeals.empty?
       self.error_code = :no_eligible_appeals
@@ -101,6 +113,10 @@ class RampElectionIntake < Intake
   end
 
   def matching_ramp_election
-    @matching_ramp_election ||= veteran_ramp_elections.reject(&:successfully_received?).first
+    @ramp_election_on_create ||= veteran_ramp_elections.all.first || veteran_ramp_elections.build
+  end
+
+  def veteran_ramp_elections
+    RampElection.where(veteran_file_number: veteran_file_number)
   end
 end

@@ -4,13 +4,18 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import BackToQueueLink from './BackToQueueLink';
+import LastRetrievalInfo from './LastRetrievalInfo';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
+import CommentsTable from './CommentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
@@ -33,43 +38,57 @@ export class PdfListView extends React.Component {
 
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
+    let tableView;
 
-    return <div className="usa-grid">
-      <div className="cf-app">
-        <div className="cf-app-segment cf-app-segment--alt">
+    if (noDocuments) {
+      tableView = <NoSearchResults />;
+    } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
+      tableView = <CommentsTable
+        documents={this.props.documents}
+        onJumpToComment={this.props.onJumpToComment}
+      />;
+    } else {
+      tableView = <DocumentsTable
+        documents={this.props.documents}
+        documentPathBase={this.props.documentPathBase}
+        onJumpToComment={this.props.onJumpToComment}
+        sortBy={this.props.sortBy}
+        docFilterCriteria={this.props.docFilterCriteria}
+        showPdf={this.props.showPdf}
+      />;
+    }
+
+    return <div>
+      { this.props.queueRedirectUrl && <BackToQueueLink
+        queueRedirectUrl={this.props.queueRedirectUrl}
+        queueTaskType={this.props.queueTaskType}
+        veteranFullName={this.props.appeal.veteran_full_name}
+        vbmsId={this.props.appeal.vbms_id} /> }
+      <AppSegment filledBackground>
+        <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
           />
-          { noDocuments ?
-            <NoSearchResults /> :
-            <DocumentsTable
-              documents={this.props.documents}
-              documentPathBase={this.props.documentPathBase}
-              onJumpToComment={this.props.onJumpToComment}
-              sortBy={this.props.sortBy}
-              docFilterCriteria={this.props.docFilterCriteria}
-              showPdf={this.props.showPdf}
-            />}
+          {tableView}
         </div>
-      </div>
-      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
-      { this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        <div className="cf-red-text">Unable to display VVA documents at this time</div> }
+      </AppSegment>
+      <LastRetrievalInfo />
     </div>;
   }
 }
 
 const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
-    ..._.pick(state.documentList, 'docFilterCriteria'),
+    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt
+    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
+    queueRedirectUrl: state.documentList.queueRedirectUrl,
+    queueTaskType: state.documentList.queueTaskType
   };
 };
 

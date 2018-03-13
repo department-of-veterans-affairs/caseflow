@@ -57,9 +57,9 @@ class Search extends React.PureComponent {
       },
       ramp_election_already_complete: {
         title: 'Opt-in already processed in Caseflow',
-        body: `A RAMP opt-in with the notice date ${searchErrorData.duplicateNoticeDate}` +
-          ' was already processed in Caseflow. Please ensure this' +
-          ' is a duplicate election form, and proceed to the next intake.'
+        body: `A RAMP opt-in with the receipt date ${searchErrorData.duplicateReceiptDate}` +
+          ' was already processed in Caseflow.' +
+          ' Caseflow does not currently support more than one RAMP Election for a Veteran.'
       },
       no_active_appeals: {
         title: 'Ineligible to participate in RAMP: no active appeals',
@@ -68,6 +68,15 @@ class Search extends React.PureComponent {
       no_eligible_appeals: {
         title: 'Ineligible to participate in RAMP: appeal is at the Board',
         body: rampIneligibleInstructions
+      },
+      no_active_compensation_appeals: {
+        title: 'Ineligible to participate in RAMP: appeal does not contain any compensation issues',
+        body: rampIneligibleInstructions
+      },
+      no_active_fully_compensation_appeals: {
+        title: 'Ineligible to participate in RAMP: appeal contains non-compensation issues',
+        body: 'Caseflow temporarily does not support closing appeals with any non-compensation issues.' +
+          'Please contact Caseflow Support on how to proceed.'
       },
       no_complete_ramp_election: {
         title: 'No RAMP Opt-In Election',
@@ -83,6 +92,12 @@ class Search extends React.PureComponent {
       ramp_election_no_issues: {
         title: 'This Veteran has a pending RAMP EP with no contentions',
         body: 'Please ensure contentions were added to the original RAMP Election EP'
+      },
+      duplicate_intake_in_progress: {
+        title: `${searchErrorData.duplicateProcessedBy} already started processing this form`,
+        body: `We noticed that ${searchErrorData.duplicateProcessedBy} may be in the middle of ` +
+         'processing the same form for this Veteran in Caseflow. Please confirm they will ' +
+         'complete this intake, then move on to the next mail item.'
       },
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',

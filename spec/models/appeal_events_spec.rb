@@ -151,8 +151,8 @@ describe AppealEvents do
         Generators::Hearing.create(disposition: :held, date: 4.days.ago, appeal: appeal)
       end
 
-      let!(:cancelled_hearing) do
-        Generators::Hearing.build(disposition: :cancelled, date: 3.days.ago, appeal: appeal)
+      let!(:no_show_hearing) do
+        Generators::Hearing.build(disposition: :no_show, date: 3.days.ago, appeal: appeal)
       end
 
       let!(:hearing_not_closed) do
@@ -171,13 +171,13 @@ describe AppealEvents do
         events.select { |event| event.type == :hearing_held }
       end
 
-      let(:hearing_cancelled_event) do
-        events.find { |event| event.type == :hearing_cancelled && event.date == 3.days.ago }
+      let(:no_show_hearing_event) do
+        events.find { |event| event.type == :hearing_no_show && event.date == 3.days.ago }
       end
 
       it "adds hearing events for all closed hearings associated with the appeal" do
         expect(hearing_held_events.length).to eq(1)
-        expect(hearing_cancelled_event.date).to_not be_nil
+        expect(no_show_hearing_event.date).to_not be_nil
       end
     end
 

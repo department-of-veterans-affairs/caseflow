@@ -1,21 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../actions/Dockets';
+import { getDailyDocket, saveDocket } from '../actions/Dockets';
 import _ from 'lodash';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
-import * as AppConstants from '../../constants/AppConstants';
-import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from '../constants/constants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
-import ApiUtil from '../../util/ApiUtil';
+import { getDate, now } from '../util/DateUtil';
 
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    this.props.getDailyDocket();
-    document.title += ` ${this.props.date}`;
+    this.props.getDailyDocket(null, this.props.date);
+    document.title += ` ${getDate(this.props.date)}`;
   }
 
   render() {
@@ -33,7 +33,7 @@ export class DailyDocketContainer extends React.Component {
     if (!dailyDocket) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
-          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+          <LoadingContainer color={LOGO_COLORS.HEARINGS.ACCENT}>
             <div className="cf-image-loader">
             </div>
             <p className="cf-txt-c">Loading hearings, please wait...</p>
@@ -49,9 +49,10 @@ export class DailyDocketContainer extends React.Component {
     return <div>
 
       <AutoSave
-        save={this.props.save(dailyDocket, this.props.date)}
-        spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+        save={this.props.saveDocket(dailyDocket, this.props.date)}
+        spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
+        timeSaved={this.props.docketTimeSaved || now()}
         saveFailed={this.props.saveDocketFailed}
       />
       <div className="cf-hearings-daily-docket-container">
@@ -67,64 +68,22 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dailyDocket: state.dailyDocket,
-  docketServerError: state.docketServerError
+  docketServerError: state.docketServerError,
+  docketIsSaving: state.docketIsSaving,
+  docketTimeSaved: state.docketTimeSaved,
+  saveDocketFailed: state.saveDocketFailed
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDailyDocket: (dailyDocket, date) => () => {
-    if (!dailyDocket[date]) {
-      ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
-        then((response) => {
-          dispatch(Actions.populateDailyDocket(response.body, date));
-        }, (err) => {
-          dispatch(Actions.handleDocketServerError(err));
-        });
-    }
-  },
-  save: (docket, date) => () => {
-    const hearingsToSave = docket.filter((hearing) => hearing.edited);
-
-    if (hearingsToSave.length === 0) {
-      return;
-    }
-
-    dispatch({ type: TOGGLE_DOCKET_SAVING });
-
-    dispatch({ type: SET_DOCKET_SAVE_FAILED,
-      payload: { saveFailed: false } });
-
-    hearingsToSave.forEach((hearing) => {
-
-      const index = docket.findIndex((x) => x.id === hearing.id);
-
-      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-        then(() => {
-          dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
-            payload: { date,
-              index } });
-        },
-        () => {
-          dispatch({ type: SET_DOCKET_SAVE_FAILED,
-            payload: { saveFailed: true } });
-        });
-    });
-    dispatch({ type: TOGGLE_DOCKET_SAVING });
-  }
+  ...bindActionCreators({
+    getDailyDocket,
+    saveDocket
+  }, dispatch)
 });
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps,
-    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket, ownProps.date)
-  };
-};
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+  mapDispatchToProps
 )(DailyDocketContainer);
 
 DailyDocketContainer.propTypes = {

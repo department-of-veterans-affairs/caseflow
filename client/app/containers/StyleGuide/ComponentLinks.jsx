@@ -35,8 +35,12 @@ export const componentLinks = [
       name: 'Palette'
     },
     {
-      anchor: '#logos',
-      name: 'Logos'
+      anchor: '#logo-colors',
+      name: 'Logo Colors'
+    },
+    {
+      anchor: '#reader-categories',
+      name: 'Reader Categories'
     }]
   },
   {
@@ -177,6 +181,14 @@ export const componentLinks = [
     {
       anchor: '#inline-form',
       name: 'Inline Form'
+    },
+    {
+      anchor: '#save-long-text',
+      name: 'Save long text'
+    },
+    {
+      anchor: '#save-short-text',
+      name: 'Save short text'
     }]
   },
   {

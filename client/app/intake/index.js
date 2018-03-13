@@ -4,7 +4,7 @@ import IntakeFrame from './IntakeFrame';
 import { intakeReducer, mapDataToInitialIntake } from './reducers/intake';
 import { rampElectionReducer, mapDataToInitialRampElection } from './reducers/rampElection';
 import { rampRefilingReducer, mapDataToInitialRampRefiling } from './reducers/rampRefiling';
-import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 
 const reducer = combineReducers({
   intake: intakeReducer,

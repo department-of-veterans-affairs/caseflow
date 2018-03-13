@@ -1,7 +1,6 @@
 require "ostruct"
 
 # frozen_string_literal: true
-# rubocop:disable Metrics/ClassLength
 class Fakes::AppealRepository
   class << self
     attr_accessor :issue_records
@@ -23,31 +22,12 @@ class Fakes::AppealRepository
       user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
       appeal = user_case_assignments.first
       # Create fake hearings for the first appeal if one doesn't already exist
-      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).empty?
+      2.times { |i| Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) } if Hearing
+          .where(appeal: appeal).empty?
+
       user_case_assignments
     end
   end
-
-  READER_REDACTED_DOCS = [
-    "VA 8 Certification of Appeal",
-    "Supplemental Statement of the Case",
-    "CAPRI",
-    "Notice of Disagreement",
-    "Rating Decision - Codesheet",
-    "Rating Decision - Narrative",
-    "Correspondence",
-    "VA 21-526EZ, Fully Developed Claim",
-    "STR - Medical",
-    "Military Personnel Record",
-    "Private Medical Treatment Record",
-    "Map-D Development Letter",
-    "Third Party Correspondence",
-    "VA 9 Appeal to Board of Appeals",
-    "Correspondence",
-    "VA 21-4142 Authorization to Disclose Information to VA",
-    "VA 21-4138 Statement in Support of Claim",
-    "VA Memo"
-  ].freeze
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
   RAISE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
@@ -78,7 +58,7 @@ class Fakes::AppealRepository
   end
 
   def self.update_location_after_dispatch!(appeal:)
-    return if appeal.full_grant?
+    return unless appeal.active?
     self.location_updated_for = appeal
   end
 
@@ -105,7 +85,21 @@ class Fakes::AppealRepository
   end
 
   def self.appeals_ready_for_hearing(vbms_id)
-    Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
+    Rails.logger.info("Load faked appeals ready for hearing for vbms id: #{vbms_id}")
+
+    return_records = MetricsService.record "load appeals ready for hearing for vbms_id #{vbms_id}" do
+      records.select do |_, r|
+        (r[:vbms_id] == vbms_id &&
+        (r[:decision_date].nil? || r[:disposition] == "Remanded")) # &&
+        # r[:form9_date])
+      end
+    end
+
+    return_records.map do |vacols_id, r|
+      Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
+        appeal.assign_from_vacols(r)
+      end
+    end
   end
 
   def self.close_undecided_appeal!(*); end
@@ -168,7 +162,6 @@ class Fakes::AppealRepository
 
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
-
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def self.seed!(app_name: nil)
     return if Rails.env.test?
@@ -179,7 +172,6 @@ class Fakes::AppealRepository
     # relevant to our current app
     seed_certification_data! if app_name.nil? || app_name == "certification"
     seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
-    seed_reader_data! if app_name.nil? || app_name == "reader"
     seed_intake_data! if app_name.nil? || app_name == "intake"
   end
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
@@ -333,125 +325,6 @@ class Fakes::AppealRepository
     seed_appeal_not_ready!
   end
 
-  def self.static_reader_documents
-    [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9",
-                                 category_medical: true, category_procedural: true),
-      Generators::Document.build(
-        vbms_document_id: 5,
-        type: "This is a very long document type let's see what it does to the UI!",
-        received_at: 7.days.ago,
-        category_other: true
-      ),
-      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
-                                 category_medical: true, category_procedural: true, category_other: true)
-    ]
-  end
-
-  def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
-    seeded_random = Random.new(seed)
-    (0..num_documents).to_a.reduce([]) do |acc, number|
-      acc << Generators::Document.build(
-        vbms_document_id: number,
-        type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
-        category_procedural: seeded_random.rand(10) == 1,
-        category_medical: seeded_random.rand(10) == 1,
-        category_other: seeded_random.rand(10) == 1
-      )
-    end
-  end
-
-  def self.redacted_reader_documents
-    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
-      Generators::Document.build(
-        vbms_document_id: (100 + index),
-        type: doc_type
-      )
-    end
-  end
-
-  # rubocop:disable Metrics/MethodLength
-  def self.seed_reader_data!
-    Generators::Appeal.build(
-      vacols_id: "reader_id1",
-      vbms_id: "DEMO123",
-      vacols_record: {
-        template: :ready_to_certify,
-        veteran_first_name: "Joe",
-        veteran_last_name: "Smith",
-        type: "Court Remand",
-        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
-        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
-        signed_date: nil,
-        docket_number: "13 11-265",
-        regional_office_key: "RO13"
-      },
-      issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: %w[06 15 26],
-                                       labels: %w[Medical Compensation Osteomyelitis])],
-      documents: static_reader_documents
-    )
-    Generators::Appeal.build(
-      vacols_id: "reader_id2",
-      vbms_id: "DEMO456",
-      vacols_record: {
-        template: :ready_to_certify,
-        veteran_first_name: "Joe",
-        veteran_last_name: "Smith",
-        type: "Remand",
-        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
-        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
-        signed_date: nil,
-        docket_number: "13 11-265",
-        regional_office_key: "RO13"
-      },
-      issues: [Generators::Issue.build(
-        disposition: "Remanded",
-        codes: %w[06 15 13 14 22],
-        labels: ["Medical", "Service connection", "Left knee", "Right knee", "Cervical strain"]
-      )],
-      documents: random_reader_documents(1000, "reader_id2".hash)
-    )
-    Generators::Appeal.build(
-      vacols_id: "reader_id3",
-      vbms_id: "DEMO789",
-      vacols_record: {
-        template: :ready_to_certify,
-        veteran_first_name: "Joe",
-        veteran_last_name: "Smith",
-        type: "Remand",
-        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
-        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
-        signed_date: nil,
-        docket_number: "13 11-265",
-        regional_office_key: "RO13"
-      },
-      issues: [Generators::Issue.build],
-      documents: redacted_reader_documents
-    )
-    Generators::Appeal.build(
-      vacols_id: "reader_id4",
-      vbms_id: "DEMO123",
-      vacols_record: {
-        template: :ready_to_certify,
-        veteran_first_name: "Joe",
-        veteran_last_name: "Smith",
-        type: "Court Remand",
-        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
-        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
-        signed_date: nil,
-        docket_number: "13 11-265",
-        regional_office_key: "RO13"
-      },
-      issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: %w[06 15 26],
-                                       labels: %w[Medical Compensation Osteomyelitis])],
-      documents: static_reader_documents
-    )
-  end
-
   # Intake demo file number guide:
   #
   # 05555555 - 95555555 are valid file numbers for RampElections
@@ -459,6 +332,8 @@ class Fakes::AppealRepository
   # 11555555 has an appeal ineligible for ramp
   # 12555555 has no active appeals
   # 13555555 has no ramp election
+  # 14555555 has no compensation issues
+  # rubocop:disable Metrics/MethodLength
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
 
@@ -517,6 +392,11 @@ class Fakes::AppealRepository
     )
 
     Generators::Appeal.build(
+      vbms_id: "14555555C",
+      issues: (1..2).map { Generators::Issue.build(template: :education) }
+    )
+
+    Generators::Appeal.build(
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
     )
@@ -533,6 +413,25 @@ class Fakes::AppealRepository
 
   def self.remand_return_date(_vacols_id)
     2.days.ago
+  end
+
+  def self.regular_non_aod_docket_count
+    123_456
+  end
+
+  def self.latest_docket_month
+    11.months.ago.to_date.beginning_of_month
+  end
+
+  def self.docket_counts_by_month
+    (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+      {
+        "year" => d.year,
+        "month" => d.month,
+        "cumsum_n" => i * 10_000 + 3456,
+        "cumsum_ready_n" => i * 5000 + 3456
+      }
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

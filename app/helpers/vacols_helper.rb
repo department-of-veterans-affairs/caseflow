@@ -8,6 +8,11 @@ module VacolsHelper
     Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
   end
 
+  # The same method as above that returns the date only
+  def self.local_date_with_utc_timezone
+    local_time_with_utc_timezone.beginning_of_day
+  end
+
   # dates in VACOLS are incorrectly recorded as UTC.
   def self.normalize_vacols_datetime(datetime)
     return nil unless datetime
@@ -24,9 +29,9 @@ module VacolsHelper
     )
   end
 
-  def self.validate_presence(note, required_fields)
+  def self.validate_presence(hash, required_fields)
     missing_keys = []
-    required_fields.each { |k| missing_keys << k unless note[k] }
+    required_fields.each { |k| missing_keys << k unless hash[k] }
     fail(MissingRequiredFieldError, "Required fields: #{missing_keys.join(', ')}") unless missing_keys.empty?
   end
 end

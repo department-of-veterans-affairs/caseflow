@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 // Route augmented with application specific callbacks to change
 // the page title and call google analytics
@@ -40,8 +41,8 @@ class PageRoute extends React.Component {
   renderWithCallback = (params) => {
     const { title, render, component } = this.props;
 
+    document.title = _.isFunction(title) ? title(params) : title;
     if (this.locationChanging) {
-      document.title = title;
       window.analyticsPageView(window.location.pathname);
     }
 

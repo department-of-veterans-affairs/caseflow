@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '../../../components/Button';
-import BareOrderedList from '../../../components/BareOrderedList';
+import BareList from '../../../components/BareList';
 import CancelButton from '../../components/CancelButton';
 import Checkbox from '../../../components/Checkbox';
 import Alert from '../../../components/Alert';
@@ -100,7 +100,7 @@ class Finish extends React.PureComponent {
       }
 
       <p>Please complete the following steps outside Caseflow.</p>
-      <BareOrderedList items={stepFns} />
+      <BareList items={stepFns} />
 
       <Alert title={issuesAlertTitle} type="info">
         { this.getIssuesAlertContent(appeals) }

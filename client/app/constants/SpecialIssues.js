@@ -130,7 +130,7 @@ const SPECIAL_ISSUES = [
   {
     display: 'Private Attorney or Agent',
     specialIssue: 'privateAttorneyOrAgent',
-    stationOfJurisdiction: 'regional',
+    stationOfJurisdiction: null,
     unhandled: null
   },
   {

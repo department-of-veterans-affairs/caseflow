@@ -25,6 +25,26 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
+  if (setEdited) {
+    _.extend(spec, { edited: { $set: true } });
+  }
+
+  return update(state, {
+    dailyDocket: {
+      [action.payload.date]: {
+        $apply: (hearings) => {
+          const changedHearingIndex = _.findIndex(hearings, { id: action.payload.hearingId });
+
+          return update(hearings, {
+            [changedHearingIndex]: spec
+          });
+        }
+      }
+    }
+  });
+};
+
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
@@ -42,7 +62,18 @@ export const newHearingWorksheetState = (state, action, spec) => {
   return update(state, { worksheet: spec });
 };
 
+const getDailyDocketKey = (state, action) => _.findKey(
+  state.dailyDocket,
+  (hearings) => _.some(hearings, { id: action.payload.hearingId })
+);
+
+const getHearingIndex = (state, action, dailyDocketKey) =>
+  _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+  let dailyDocketKey;
+  let hearingIndex;
+
   switch (action.type) {
   case Constants.POPULATE_UPCOMING_HEARINGS:
     return update(state, {
@@ -52,7 +83,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.POPULATE_DAILY_DOCKET:
     return update(state, {
       dailyDocket: {
-        [action.payload.date]: { $set: action.payload.dailyDocket }
+        [action.payload.date]: { $set: _.sortBy(action.payload.dailyDocket, (hearing) => hearing.id) }
       }
     });
 
@@ -95,24 +126,22 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_VIEWED:
-    return (() => {
-      const dailyDocketKey = _.findKey(
-        state.dailyDocket,
-        (hearings) => _.some(hearings, { id: action.payload.hearingId })
-      );
-      const hearingIndex = _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+    dailyDocketKey = getDailyDocketKey(state, action);
+    hearingIndex = getHearingIndex(state, action, dailyDocketKey);
 
-      return update(state, {
-        dailyDocket: {
-          [dailyDocketKey]: {
-            [hearingIndex]: {
-              viewed_by_current_user: { $set: true }
-            }
+    return update(state, {
+      dailyDocket: {
+        [dailyDocketKey]: {
+          [hearingIndex]: {
+            viewed_by_current_user: { $set: true }
           }
         }
-      });
-    })();
+      }
+    });
 
+  case Constants.SET_HEARING_PREPPED:
+    return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } },
+      action.payload.setEdited);
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {
       evidence: { $set: action.payload.evidence }
@@ -141,14 +170,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { notes: { $set: action.payload.notes } });
 
-  case Constants.SET_PROGRAM:
-    return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
+  case Constants.SET_ISSUE_DISPOSITION:
+    return newHearingIssueState(state, action, { disposition: { $set: action.payload.disposition } });
 
-  case Constants.SET_NAME:
-    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
-
-  case Constants.SET_LEVELS:
-    return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });
+  case Constants.SET_DESCRIPTION:
+    return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
 
   case Constants.SET_REOPEN:
     return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
@@ -182,11 +208,19 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
-    return update(state, { docketIsSaving: { $set: !state.isSaving }
+    return update(state, { docketIsSaving: { $set: action.payload.saving }
     });
 
   case Constants.TOGGLE_WORKSHEET_SAVING:
-    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
+    return update(state, { worksheetIsSaving: { $set: action.payload.saving }
+    });
+
+  case Constants.SET_WORKSHEET_TIME_SAVED:
+    return update(state, { worksheetTimeSaved: { $set: action.payload.timeSaved }
+    });
+
+  case Constants.SET_DOCKET_TIME_SAVED:
+    return update(state, { docketTimeSaved: { $set: action.payload.timeSaved }
     });
 
   case Constants.SET_DOCKET_SAVE_FAILED:
