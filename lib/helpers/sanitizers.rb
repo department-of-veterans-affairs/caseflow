@@ -212,7 +212,7 @@ class Helpers::Sanitizers
 
   # Representative
   def white_list_representative
-    %w[repkey repaddtime reptype repsoå repmoduser repmodtime repdirpay repdfee
+    %w[repkey repaddtime reptype repso repmoduser repmodtime repdirpay repdfee
        repfeerecv replastdoc repfeedisp repcorkey repacknw]
   end
 
