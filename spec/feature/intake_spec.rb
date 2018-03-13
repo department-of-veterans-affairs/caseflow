@@ -167,7 +167,7 @@ RSpec.feature "RAMP Intake" do
       end
 
       scenario "Search for a veteran that has a RAMP election already processed" do
-        ramp_election = RampElection.create!(
+        RampElection.create!(
           veteran_file_number: "12341234",
           notice_date: 7.days.ago,
           receipt_date: 5.days.ago,
