@@ -45,6 +45,12 @@ RSpec.feature "RAMP Intake" do
     )
   end
 
+  let(:ep_already_exists_error) do
+    VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+      "A duplicate claim for this EP code already exists in CorpDB. Please " \
+      "use a different EP code modifier. GUID: 13fcd</faultstring>")
+  end
+
   context "As a user with Admin Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Admin Intake"])
@@ -371,6 +377,34 @@ RSpec.feature "RAMP Intake" do
         # Validate that the intake is no longer able to be worked on
         visit "/intake/finish"
         expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
+
+      scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: Date.new(2017, 8, 7)
+        )
+
+        intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+        intake.start!
+
+        visit "/intake"
+
+        within_fieldset("Which review lane did the veteran select?") do
+          find("label", text: "Higher Level Review with Informal Conference").click
+        end
+
+        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_content("Finish processing Higher-Level Review election")
+
+        click_label("confirm-finish")
+        safe_click "button#button-submit-review"
+
+        expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
       end
     end
 

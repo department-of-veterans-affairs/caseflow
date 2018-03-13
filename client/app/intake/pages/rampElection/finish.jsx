@@ -15,6 +15,26 @@ import _ from 'lodash';
 
 const submitText = 'Finish intake';
 
+class CompleteIntakeErrorAlert extends React.PureComponent {
+  render() {
+    const errorObject = {
+      duplicate_ep: {
+        title: 'An EP for this claim already exists in VBMS',
+        body: `An EP ${this.props.completeIntakeErrorData} for this Veteran's claim was created` +
+         'outside Caseflow. Please tell your manager as soon as possible so they can resolve the issue.'
+      },
+      default: {
+        title: 'Something went wrong',
+        body: 'Please try again. If the problem persists, please contact Caseflow support.'
+      }
+    }[this.props.completeIntakeErrorCode || 'default'];
+
+    return <Alert title={errorObject.title} type="error" lowerMargin>
+      {errorObject.body}
+    </Alert>;
+  }
+}
+
 class Finish extends React.PureComponent {
   getIssuesAlertContent = (appeals) => {
     const issueColumns = [
@@ -54,7 +74,9 @@ class Finish extends React.PureComponent {
       appeals,
       requestState,
       finishConfirmed,
-      finishConfirmedError
+      finishConfirmedError,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (rampElectionStatus) {
@@ -94,9 +116,9 @@ class Finish extends React.PureComponent {
       <h1>Finish processing { optionName } election</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <Alert title="Something went wrong" type="error" lowerMargin>
-          Please try again. If the problem persists, please contact Caseflow support.
-        </Alert>
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
       }
 
       <p>Please complete the following steps outside Caseflow.</p>
@@ -166,7 +188,9 @@ export default connect(
     finishConfirmedError: state.rampElection.finishConfirmedError,
     rampElectionStatus: getIntakeStatus(state),
     appeals: state.rampElection.appeals,
-    requestState: state.rampElection.requestStatus.completeIntake
+    requestState: state.rampElection.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.rampElection.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.rampElection.requestStatus.completeIntakeErrorData
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake
