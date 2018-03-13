@@ -27,7 +27,7 @@ RSpec.describe IssuesController, type: :controller do
       it "should be successful" do
         post :create, appeal_id: appeal.id, issues: params
         expect(response.status).to eq 201
-        response_body = JSON.parse(response.body)["issue"]
+        response_body = JSON.parse(response.body)["issues"].first
         expect(response_body["codes"]).to eq %w[01 02 03 04 05]
         expect(response_body["labels"]).to eq "not_loaded"
         expect(response_body["vacols_sequence_id"]).to eq 1
