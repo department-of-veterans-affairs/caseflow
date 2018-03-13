@@ -28,7 +28,7 @@ export default class AppealDetail extends React.PureComponent {
       return {};
     }
 
-    return _.orderBy(hearings, 'held_on', 'desc')[0];
+    return _.orderBy(hearings, 'date', 'desc')[0];
   };
 
   getHearingInfo = () => {
@@ -54,7 +54,7 @@ export default class AppealDetail extends React.PureComponent {
     return listElements.concat([{
       label: 'Hearing date',
       value: <React.Fragment>
-        <DateString date={hearing.held_on} dateFormat="M/D/YY" style={marginRight} />
+        <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
         <Link target="_blank" href={`/hearings/${hearing.id}/worksheet`}>View Hearing Worksheet</Link>
       </React.Fragment>
     }, {
