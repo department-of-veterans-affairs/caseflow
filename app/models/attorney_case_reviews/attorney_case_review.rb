@@ -20,6 +20,20 @@ class AttorneyCaseReview < ActiveRecord::Base
     task_id.split("-", 2).second.to_date
   end
 
+  def reassign_case_to_judge_in_vacols!
+    self.class.repository.reassign_case_to_judge(
+      vacols_id: vacols_id,
+      date_assigned: date_assigned,
+      judge_css_id: reviewing_judge.css_id,
+      decass_attrs: {
+        work_product: work_product,
+        document_id: document_id,
+        overtime: overtime,
+        note: note
+      }
+    )
+  end
+
   class << self
     attr_writer :repository
 
@@ -28,18 +42,7 @@ class AttorneyCaseReview < ActiveRecord::Base
         begin
           # Save to the Caseflow DB first to ensure required fields are present
           record = create!(params)
-
-          repository.reassign_case_to_judge(
-            vacols_id: record.vacols_id,
-            date_assigned: record.date_assigned,
-            judge_css_id: record.reviewing_judge.css_id,
-            decass_attrs: {
-              work_product: record.work_product,
-              document_id: record.document_id,
-              overtime: record.overtime,
-              note: record.note
-            }
-          )
+          record.reassign_case_to_judge_in_vacols!
         # :nocov:
         rescue *EXCEPTIONS => e
           Raven.capture_exception(e)
