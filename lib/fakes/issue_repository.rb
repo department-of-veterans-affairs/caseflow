@@ -31,7 +31,6 @@ class Fakes::IssueRepository
     end
 
     def delete_vacols_issue!(args)
-      issue_attrs = args[:issue_attrs]
       record = find_issue(args[:vacols_id], args[:vacols_sequence_id])
       Fakes::AppealRepository.issue_records[args[:vacols_id]].delete(record)
     end

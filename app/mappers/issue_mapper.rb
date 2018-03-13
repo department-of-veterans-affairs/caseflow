@@ -40,7 +40,7 @@ module IssueMapper
     end
 
     def rename(issue_attrs)
-      [:program, :issue, :level_1, :level_2, :level_3, :note, :vacols_id].each_with_object({}) do |k, result|
+      COLUMN_NAMES.keys.each_with_object({}) do |k, result|
         # skip only if the key is not passed, if the key is passed and the value is nil - include that
         next unless issue_attrs.keys.include? k
         result[COLUMN_NAMES[k]] = issue_attrs[k]
