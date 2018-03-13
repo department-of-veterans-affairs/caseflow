@@ -111,30 +111,32 @@ namespace :local do
         :decass
       ).find(ids)
 
+      sanitizer = Helpers::Sanitizers.new
 
       # Sanitize Staff table first to get a list of mappings from old to new slogid
-      write_csv(VACOLS::Staff, VACOLS::Staff.all)
+      write_csv(VACOLS::Staff, VACOLS::Staff.all, sanitizer)
 
       # In order to add a new table, you'll also need to add a sanitize and white_list method
       # to the Helpers::Sanitizers class.
-      write_csv(VACOLS::Case, cases)
-      write_csv(VACOLS::Folder, cases.map(&:folder))
-      write_csv(VACOLS::Representative, cases.map(&:representative))
-      write_csv(VACOLS::Correspondent, cases.map(&:correspondent))
-      write_csv(VACOLS::CaseIssue, cases.map(&:case_issues))
-      write_csv(VACOLS::Note, cases.map(&:notes))
-      write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
-      write_csv(VACOLS::Decass, cases.map(&:decass))
-      write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
-      write_csv(VACOLS::Issref, VACOLS::Issref.all)
+      write_csv(VACOLS::Case, cases, sanitizer)
+      write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
+      write_csv(VACOLS::Representative, cases.map(&:representative), sanitizer)
+      write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
+      write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
+      write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
+      write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings), sanitizer)
+      write_csv(VACOLS::Decass, cases.map(&:decass), sanitizer)
+      write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all, sanitizer)
+      write_csv(VACOLS::Issref, VACOLS::Issref.all, sanitizer)
       write_csv(
         VACOLS::TravelBoardSchedule,
-        VACOLS::TravelBoardSchedule.where("tbyear > 2016")
+        VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
+        sanitizer
       )
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
-      Helpers::Sanitizers.errors.each do |error|
+      sanitizer.errors.each do |error|
         puts Rainbow(error).red
       end
     end
@@ -183,13 +185,13 @@ namespace :local do
       klass.import(items)
     end
 
-    def write_csv(klass, rows)
+    def write_csv(klass, rows, sanitizer)
       CSV.open(Rails.root.join("vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
         rows.flatten.each_with_index do |row, row_index|
           next if row.nil?
-          Helpers::Sanitizers.sanitize(klass, row, row_index)
+          sanitizer.sanitize(klass, row, row_index)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
           csv << attributes.values
         end

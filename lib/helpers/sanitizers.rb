@@ -11,16 +11,16 @@ require "faker"
 # to fake out. The first line of this method should use a key from the table to seed the Faker randomization
 # so that our randomizations are deterministic for a given row.
 class Helpers::Sanitizers
-  def self.errors
+  def errors
     @errors ||= []
   end
 
-  def self.staff_id_hash
+  def staff_id_hash
     @staff_id_hash ||= {}
   end
 
   # Utility method to randomly either write a value, or nil
-  def self.random_or_nil(value)
+  def random_or_nil(value)
     return value if ::Faker::Number.number(1).to_i < 5
     nil
   end
@@ -28,10 +28,10 @@ class Helpers::Sanitizers
   VETID_REGEX = /((?:^|[^0-9]|SS\ )[0-9]{3}[-\ ]?[0-9]{2}[-\ ]?[0-9]{4}(?![0-9])S?|(?:^|[^0-9]|C )
     [0-9]{1,2}\ ?[0-9]{3}\ ?[0-9]{3}(?![0-9])C?)/x
   EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
-  PHONE_REGEX = /^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$/
+  PHONE_REGEX = /\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})/
   SENTENCE_REGEX = /[^\s]\s[^\s]/
 
-  def self.ignore_pii_in_fields
+  def ignore_pii_in_fields
     %w[VACOLS::Issref-prog_code VACOLS::Issref-prog_desc VACOLS::Issref-iss_code VACOLS::Issref-iss_desc
        VACOLS::Issref-lev1_code VACOLS::Issref-lev1_desc VACOLS::Issref-lev2_code VACOLS::Issref-lev2_desc
        VACOLS::Issref-lev3_code VACOLS::Issref-lev3_desc
@@ -43,14 +43,14 @@ class Helpers::Sanitizers
        VACOLS::Representative-repkey VACOLS::Representative-repcorkey
        VACOLS::Correspondent-stafkey
        VACOLS::CaseIssue-isskey
-       VACOLS::Note-tasknum VACOLS::Note-tsktknm
+       VACOLS::Note-tasknum VACOLS::Note-tsktknm VACOLS::Note-tskstfas
        VACOLS::Decass-defolder
        VACOLS::CaseHearing-folder_nr
        VACOLS::Decass-dedocid
        VACOLS::Staff-stitle VACOLS::Staff-sorg]
   end
 
-  def self.look_for_pii(record)
+  def look_for_pii(record)
     record.attributes.each do |k, v|
       next if !v.kind_of?(String) || ignore_pii_in_fields.include?("#{record.class.name}-#{k}")
 
@@ -62,7 +62,7 @@ class Helpers::Sanitizers
   end
 
   # Utility method to nil out values that are not white listed
-  def self.white_list(record, array_of_fields)
+  def white_list(record, array_of_fields)
     hash_to_nil_fields = (record.attribute_names - array_of_fields).reduce({}) do |acc, field|
       acc[field] = nil
       acc
@@ -71,17 +71,20 @@ class Helpers::Sanitizers
     record.assign_attributes(hash_to_nil_fields)
   end
 
-  def self.switch_slogid(record)
+  def switch_slogid(record)
     record.attributes.each do |k, v|
       record[k] = staff_id_hash[v] if staff_id_hash[v]
     end
   end
 
   # Entry method that calls the given klass' white_list and sanitize methods
-  def self.sanitize(klass, record, record_index)
+  def sanitize(klass, record, record_index)
     table_name = klass.name.split("::")[1].downcase
 
-    exist_hash = record.attributes.map { |k, v| [k, v.nil?] }.to_h
+    puts "klass #{klass} #{record_index}"
+    exist_hash = record.attributes.map do |k, v|
+      [k, v.nil?]
+    end.to_h
 
     white_list(record, send("white_list_#{table_name}"))
     look_for_pii(record)
@@ -90,12 +93,12 @@ class Helpers::Sanitizers
   end
 
   # Staff table
-  def self.white_list_staff
+  def white_list_staff
     %w[stafkey susrtyp ssalut stitle sorg slogid sdept staduser stadtime
        stmduser stmdtime stc1 stc2 stc3 stc4 sactive smemgrp sattyid svlj]
   end
 
-  def self.sanitize_staff(staff, _exist_hash, record_index)
+  def sanitize_staff(staff, _exist_hash, record_index)
     ::Faker::Config.random = Random.new(record_index)
 
     first_name = ::Faker::Name.first_name
@@ -130,12 +133,12 @@ class Helpers::Sanitizers
   end
 
   # Travel Board
-  def self.white_list_travelboardschedule
+  def white_list_travelboardschedule
     %w[tbyear tbtrip tbleg tbro tbstdate tbenddate tbmem1 tbmem2 tbmem3 tbmem4 tbaty1 tbaty2
        tbaty3 tbaty4 tbadduser tbaddtime tbmoduser tbmodtime tbcancel]
   end
 
-  def self.sanitize_travelboardschedule(travel_board, _exist_hash, _record_index)
+  def sanitize_travelboardschedule(travel_board, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new((travel_board.tbyear + travel_board.tbtrip.to_s).to_i)
 
     travel_board.assign_attributes(
@@ -145,25 +148,25 @@ class Helpers::Sanitizers
   end
 
   # Issref
-  def self.white_list_issref
+  def white_list_issref
     %w[prog_code prog_desc iss_code iss_desc lev1_code lev1_desc lev2_code lev2_desc lev3_code lev3_desc]
   end
 
-  def self.sanitize_issref(issref, _exist_hash, _record_index)
+  def sanitize_issref(issref, _exist_hash, _record_index)
     # Nothing to sanitize in this table
   end
 
   # Vftypes
-  def self.white_list_vftypes
+  def white_list_vftypes
     %w[ftkey ftdesc ftadusr ftadtim ftmdusr ftmdtim ftactive fttype ftsys ftspare1 ftspare2 ftspare3]
   end
 
-  def self.sanitize_vftypes(vftypes, _exist_hash, _record_index)
+  def sanitize_vftypes(vftypes, _exist_hash, _record_index)
     # Nothing to sanitize in this table
   end
 
   # Folder
-  def self.white_list_folder
+  def white_list_folder
     %w[ticknum ticorkey tistkey tifiloc tidrecv tiddue
        tidcls tiaduser tiadtime timduser timdtime tiresp1 tikeywrd tisubj1 tisubj tisubj2
        tiagor tiasbt tigwui tihepc tiaids timgas tiptsd tiradb tiradn tisarc tisexh titoba tinosc
@@ -171,7 +174,7 @@ class Helpers::Sanitizers
        ticerullo tivbms]
   end
 
-  def self.sanitize_folder(folder, exist_hash, _record_index)
+  def sanitize_folder(folder, exist_hash, _record_index)
     ::Faker::Config.random = Random.new(folder.ticknum.to_i)
 
     folder.assign_attributes(
@@ -185,12 +188,12 @@ class Helpers::Sanitizers
   end
 
   # Representative
-  def self.white_list_representative
+  def white_list_representative
     %w[repkey repaddtime reptype repsoå repmoduser repmodtime repdirpay repdfee
        repfeerecv replastdoc repfeedisp repcorkey repacknw]
   end
 
-  def self.sanitize_representative(representative, _exist_hash, _record_index)
+  def sanitize_representative(representative, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new(representative.repkey.to_i)
 
     representative.assign_attributes(
@@ -209,11 +212,11 @@ class Helpers::Sanitizers
   end
 
   # Vftypes
-  def self.white_list_correspondent
+  def white_list_correspondent
     %w[stafkey susrtyp staduser stadtime stmduser stmdtime sactive]
   end
 
-  def self.sanitize_correspondent(correspondent, exist_hash, _record_index)
+  def sanitize_correspondent(correspondent, exist_hash, _record_index)
     ::Faker::Config.random = Random.new(Digest::SHA256.hexdigest(correspondent.stafkey).to_i(16))
 
     correspondent.assign_attributes(
@@ -248,12 +251,12 @@ class Helpers::Sanitizers
   end
 
   # Issue
-  def self.white_list_caseissue
+  def white_list_caseissue
     %w[isskey issseq issprog isscode isslev1 isslev2 isslev3 issdc issdcls issadtime issaduser issmdtime
        issmduser isssel issgr issdev]
   end
 
-  def self.sanitize_caseissue(issue, _exist_hash, _record_index)
+  def sanitize_caseissue(issue, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new(issue.isskey.to_i)
 
     issue.assign_attributes(
@@ -262,12 +265,12 @@ class Helpers::Sanitizers
   end
 
   # Note
-  def self.white_list_note
+  def white_list_note
     %w[tasknum tsktknm tskstfas tskactcd tskclass tskdassn tskdtc tskddue tskdcls
        tskstown tskstat tskadusr tskadtm tskmdusr tskmdtm tsactive]
   end
 
-  def self.sanitize_note(note, _exist_hash, _record_index)
+  def sanitize_note(note, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new(note.tsktknm.to_i)
 
     note.assign_attributes(
@@ -277,14 +280,14 @@ class Helpers::Sanitizers
   end
 
   # CaseHearing
-  def self.white_list_casehearing
+  def white_list_casehearing
     %w[hearing_pkseq hearing_type folder_nr hearing_date hearing_disp board_member
        team room mduser mdtime reqdate clsdate recmed consent conret
        contapes tranreq transent wbtapes wbbackup wbsent recprob taskno adduser addtime
        aod holdays vdkey canceldate]
   end
 
-  def self.sanitize_casehearing(hearing, _exist_hash, _record_index)
+  def sanitize_casehearing(hearing, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new(hearing.hearing_pkseq)
 
     hearing.assign_attributes(
@@ -297,13 +300,13 @@ class Helpers::Sanitizers
   end
 
   # Decass
-  def self.white_list_decass
+  def white_list_decass
     %w[defolder deatty deteam depdiff defdiff deassign dereceive deprod detrem dearem deoq
        deadusr deadtim deprogrev demdusr demdtim delock dememid decomp dedeadline
        deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 dedocid derecommend]
   end
 
-  def self.sanitize_decass(decass, exist_hash, _record_index)
+  def sanitize_decass(decass, exist_hash, _record_index)
     ::Faker::Config.random = Random.new(decass.defolder.to_i)
 
     decass.assign_attributes(
@@ -314,7 +317,7 @@ class Helpers::Sanitizers
   end
 
   # Case
-  def self.white_list_case
+  def white_list_case
     %w[bfkey bfddec bfcorkey bfdcn bfdocind bfpdnum bfdpdcn bforgtic bfdorg bfdnod
        bfdsoc bfd19 bf41stat bfmstat bfmpro bfdmcon bfregoff bfissnr bfrdmref bfcasev
        bfboard bfbsasgn bfattid bfdasgn bfdqrsnt bfdlocin bfdloout
@@ -325,7 +328,7 @@ class Helpers::Sanitizers
        bfsub bfdcertool]
   end
 
-  def self.sanitize_case(vacols_case, _exist_hash, _record_index)
+  def sanitize_case(vacols_case, _exist_hash, _record_index)
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
