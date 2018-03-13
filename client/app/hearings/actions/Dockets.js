@@ -2,6 +2,7 @@ import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, debounceMs } from '../analytics';
 import moment from 'moment';
+import { now } from '../util/DateUtil';
 
 export const populateUpcomingHearings = (upcomingHearings) => ({
   type: Constants.POPULATE_UPCOMING_HEARINGS,
@@ -175,8 +176,25 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
-export const toggleWorksheetSaving = () => ({
-  type: Constants.TOGGLE_WORKSHEET_SAVING
+export const toggleWorksheetSaving = (saving) => ({
+  type: Constants.TOGGLE_WORKSHEET_SAVING,
+  payload: {
+    saving
+  }
+});
+
+export const setWorksheetTimeSaved = (timeSaved) => ({
+  type: Constants.SET_WORKSHEET_TIME_SAVED,
+  payload: {
+    timeSaved
+  }
+});
+
+export const setDocketTimeSaved = (timeSaved) => ({
+  type: Constants.SET_DOCKET_TIME_SAVED,
+  payload: {
+    timeSaved
+  }
 });
 
 export const setWorksheetSaveFailedStatus = (saveFailed) => ({
@@ -188,10 +206,12 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
 
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
+    dispatch(setWorksheetTimeSaved(now()));
+
     return;
   }
 
-  dispatch(toggleWorksheetSaving());
+  dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
@@ -200,9 +220,11 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     },
     () => {
       dispatch(setWorksheetSaveFailedStatus(true));
+      dispatch(toggleWorksheetSaving(false));
     }).
     finally(() => {
-      dispatch(toggleWorksheetSaving());
+      dispatch(setWorksheetTimeSaved(now()));
+      dispatch(toggleWorksheetSaving(false));
     });
 };
 
@@ -239,32 +261,52 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     });
 };
 
-export const saveDocket = (docket, date) => (dispatch) => {
+export const saveDocket = (docket, date) => (dispatch) => () => {
   const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
   if (hearingsToSave.length === 0) {
+    dispatch(setDocketTimeSaved(now()));
+
     return;
   }
 
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+  dispatch({
+    type: Constants.TOGGLE_DOCKET_SAVING,
+    payload: { saving: true }
+  });
+  dispatch({
+    type: Constants.SET_DOCKET_SAVE_FAILED,
+    payload: { saveFailed: false }
+  });
 
-  dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-    payload: { saveFailed: false } });
+  let apiRequests = [];
 
   hearingsToSave.forEach((hearing) => {
-
     const index = docket.findIndex((x) => x.id === hearing.id);
+    const promise = new Promise((resolve) => {
+      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+        then(() => {
+          dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
+            payload: { date,
+              index } });
+        },
+        () => {
+          dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+        }).
+        finally(() => {
+          resolve();
+        });
+    });
 
-    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-      then(() => {
-        dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
-          payload: { date,
-            index } });
-      },
-      () => {
-        dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-          payload: { saveFailed: true } });
-      });
+    apiRequests.push(promise);
   });
-  dispatch({ type: Constants.TOGGLE_DOCKET_SAVING });
+
+  Promise.all(apiRequests).then(() => {
+    dispatch(setDocketTimeSaved(now()));
+    dispatch({
+      type: Constants.TOGGLE_DOCKET_SAVING,
+      payload: { saving: false }
+    });
+  });
 };

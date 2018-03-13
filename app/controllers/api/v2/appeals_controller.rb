@@ -25,7 +25,10 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def appeals
-    @appeals ||= AppealHistory.for_api(vbms_id: vbms_id)
+    # Appeals API is currently limited to VBA appeals
+    @appeals ||= AppealHistory.for_api(vbms_id: vbms_id).select do |series|
+      series.aoj == :vba
+    end
   end
 
   def vbms_id
