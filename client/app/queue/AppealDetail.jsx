@@ -36,10 +36,16 @@ export default class AppealDetail extends React.PureComponent {
     const listElements = [{
       label: 'Hearing preference',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
-    }, {
+    }];
+
+    if (_.isNull(hearing.disposition)) {
+      return listElements;
+    }
+
+    listElements.concat({
       label: 'Hearing disposition',
       value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
-    }];
+    });
 
     if (hearing.disposition === 'cancelled') {
       return listElements;
@@ -76,7 +82,7 @@ export default class AppealDetail extends React.PureComponent {
       }
     }];
 
-    if (this.getLastHearing().disposition) {
+    if (this.getAppealAttr('hearings').length) {
       listElements.splice(2, 0, ...this.getHearingInfo());
     }
 
