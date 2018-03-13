@@ -202,7 +202,7 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
 
         try {
           responseObject = JSON.parse(error.response.text);
-        } catch (e) {}
+        } catch (ex) { /* pass */ }
 
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
