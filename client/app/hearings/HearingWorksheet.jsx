@@ -87,10 +87,16 @@ export class HearingWorksheet extends React.PureComponent {
       appellant={appellant}
     />;
 
+    const veteranNameBottom = <div className="cf-push-right">
+      {worksheet.veteran_fi_last_formatted},
+      <span className="cf-print-number" />
+      </div>;
+
     const firstWorksheetPage = <div>
       {worksheetHeader}
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
+      {veteranNameBottom}
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
@@ -126,6 +132,7 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
       </form>
+        <div className="cf-push-right">{veteranNameBottom}</div>
     </div>;
 
     const wrapperClassNames = classNames('cf-hearings-worksheet', {
