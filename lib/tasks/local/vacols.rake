@@ -113,7 +113,10 @@ namespace :local do
 
       sanitizer = Helpers::Sanitizers.new
 
-      # Sanitize Staff table first to get a list of mappings from old to new slogid
+      VACOLS::Staff.all.each_with_index do |staff, row_index|
+        sanitizer.generate_staff_mapping(staff, row_index)
+      end
+
       write_csv(VACOLS::Staff, VACOLS::Staff.all, sanitizer)
 
       # In order to add a new table, you'll also need to add a sanitize and white_list method
@@ -126,7 +129,16 @@ namespace :local do
       write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
       write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings), sanitizer)
       write_csv(VACOLS::Decass, cases.map(&:decass), sanitizer)
-      write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all, sanitizer)
+
+      # We do not dump all of the vftypes table since there are some rows that seem not relevant to our work and
+      # may contain things we should not check in. Instead we're scoping it to Diagnostic Codes (DG), and remand
+      # reasons (RR, R5, and IIRC).
+      write_csv(
+        VACOLS::Vftypes,
+        VACOLS::Vftypes.where("ftkey LIKE ? OR ftkey LIKE ? OR ftkey LIKE ? OR ftkey LIKE ?",
+                              "DG%", "RR%", "R5%", "IIRC%"),
+        sanitizer
+      )
       write_csv(VACOLS::Issref, VACOLS::Issref.all, sanitizer)
       write_csv(
         VACOLS::TravelBoardSchedule,
@@ -189,9 +201,9 @@ namespace :local do
       CSV.open(Rails.root.join("vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
-        rows.flatten.each_with_index do |row, row_index|
+        rows.flatten.each do |row|
           next if row.nil?
-          sanitizer.sanitize(klass, row, row_index)
+          sanitizer.sanitize(klass, row)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
           csv << attributes.values
         end

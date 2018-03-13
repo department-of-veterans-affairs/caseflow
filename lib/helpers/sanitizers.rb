@@ -31,13 +31,13 @@ class Helpers::Sanitizers
   PHONE_REGEX = /\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})/
   SENTENCE_REGEX = /[^\s]\s[^\s]/
 
+  # Anything in this array will not throw PII warnings even if it looks like PII.
+  # Note Staff-snamel is only used when it's associated with a numerical location or RO, in
+  # those situations it's a description of the location, not an actual last name.
   def ignore_pii_in_fields
-    %w[VACOLS::Issref-prog_code VACOLS::Issref-prog_desc VACOLS::Issref-iss_code VACOLS::Issref-iss_desc
-       VACOLS::Issref-lev1_code VACOLS::Issref-lev1_desc VACOLS::Issref-lev2_code VACOLS::Issref-lev2_desc
-       VACOLS::Issref-lev3_code VACOLS::Issref-lev3_desc
-       VACOLS::Vftypes-ftkey VACOLS::Vftypes-ftdesc VACOLS::Vftypes-ftadusr VACOLS::Vftypes-ftadtim
-       VACOLS::Vftypes-ftmdusr VACOLS::Vftypes-ftmdtim VACOLS::Vftypes-ftactive VACOLS::Vftypes-fttype
-       VACOLS::Vftypes-ftsys VACOLS::Vftypes-ftspare1 VACOLS::Vftypes-ftspare2 VACOLS::Vftypes-ftspare3
+    %w[VACOLS::Issref-prog_desc VACOLS::Issref-iss_desc VACOLS::Issref-lev1_desc VACOLS::Issref-lev2_desc
+       VACOLS::Issref-lev3_desc
+       VACOLS::Vftypes-ftdesc VACOLS::Vftypes-ftsys
        VACOLS::Case-bfkey VACOLS::Case-bfcorkey
        VACOLS::Folder-ticknum VACOLS::Folder-ticorkey
        VACOLS::Representative-repkey VACOLS::Representative-repcorkey
@@ -47,12 +47,13 @@ class Helpers::Sanitizers
        VACOLS::Decass-defolder
        VACOLS::CaseHearing-folder_nr
        VACOLS::Decass-dedocid
-       VACOLS::Staff-stitle VACOLS::Staff-sorg]
+       VACOLS::Staff-stitle VACOLS::Staff-sorg
+       VACOLS::Staff-snamel]
   end
 
   def look_for_pii(record)
     record.attributes.each do |k, v|
-      next if !v.kind_of?(String) || ignore_pii_in_fields.include?("#{record.class.name}-#{k}")
+      next if !v.is_a?(String) || ignore_pii_in_fields.include?("#{record.class.name}-#{k}")
 
       errors.push("WARNING -- Probable vetid: #{record.class.name}-#{k}-#{v}") if VETID_REGEX.match(v)
       errors.push("WARNING -- Probable email: #{record.class.name}-#{k}-#{v}") if EMAIL_REGEX.match(v)
@@ -73,62 +74,84 @@ class Helpers::Sanitizers
 
   def switch_slogid(record)
     record.attributes.each do |k, v|
-      record[k] = staff_id_hash[v] if staff_id_hash[v]
+      record[k] = staff_id_hash[v][:login] if staff_id_hash[v]
     end
   end
 
   # Entry method that calls the given klass' white_list and sanitize methods
-  def sanitize(klass, record, record_index)
+  def sanitize(klass, record)
     table_name = klass.name.split("::")[1].downcase
 
-    puts "klass #{klass} #{record_index}"
     exist_hash = record.attributes.map do |k, v|
-      [k, v.nil?]
+      [k, !v.nil?]
     end.to_h
 
     white_list(record, send("white_list_#{table_name}"))
     look_for_pii(record)
+    send("sanitize_#{table_name}", record, exist_hash)
     switch_slogid(record)
-    send("sanitize_#{table_name}", record, exist_hash, record_index)
   end
 
   # Staff table
   def white_list_staff
-    %w[stafkey susrtyp ssalut stitle sorg slogid sdept staduser stadtime
+    %w[stafkey susrtyp ssalut stitle snamel sorg slogid sdept staduser stadtime
        stmduser stmdtime stc1 stc2 stc3 stc4 sactive smemgrp sattyid svlj]
   end
 
-  def sanitize_staff(staff, _exist_hash, record_index)
-    ::Faker::Config.random = Random.new(record_index)
+  RO_REGEX = /^RO\d\d?$/
+  LOCATION_REGEX = /^\d+$/
 
-    first_name = ::Faker::Name.first_name
-    last_name = ::Faker::Name.last_name
-    login = (first_name[0..0] + last_name[0..7]).upcase
+  def generate_staff_mapping(staff, record_index)
+    if RO_REGEX.match(staff.stafkey) || LOCATION_REGEX.match(staff.stafkey)
+      staff_id_hash[staff.stafkey] = {
+        login: staff.slogid,
+        stafkey: staff.stafkey,
+        first_name: nil,
+        middle_initial: nil,
+        last_name: staff.snamel
+      }
+    else
+      ::Faker::Config.random = Random.new(record_index)
 
-    count = staff_id_hash.values.count(login)
+      first_name = ::Faker::Name.first_name
+      last_name = ::Faker::Name.last_name
+      login = (first_name[0..0] + last_name[0..7]).upcase
 
-    login = "#{login}#{count}" if count > 0
+      count = staff_id_hash.values.select { |row_hash| row_hash[:login][0..8] == login }.count
 
-    staff_id_hash[staff.slogid] = login
+      login = "#{login}#{count}" if count > 0
 
+      staff_id_hash[staff.stafkey] = {
+        login: login,
+        stafkey: login,
+        first_name: first_name,
+        middle_initial: ::Faker::Name.initials(1),
+        last_name: last_name
+      }
+    end
+  end
+
+  def sanitize_staff(staff, exist_hash)
+    row_hash = staff_id_hash[staff.stafkey]
+    # binding.pry if row_hash.nil?
     staff.assign_attributes(
-      snamef: first_name,
-      snamemi: ::Faker::Name.initials(1),
-      snamel: last_name,
-      slogid: login,
-      stafkey: login,
-      saddrst1: ::Faker::Address.street_address,
-      saddrst2: random_or_nil(::Faker::Address.secondary_address),
-      saddrcty: ::Faker::Address.city,
-      saddrstt: ::Faker::Address.state_abbr,
-      saddrcnty: ::Faker::Address.country_code_long,
-      saddrzip: ::Faker::Address.zip_code,
-      stelw: ::Faker::PhoneNumber.phone_number,
-      stelfax: random_or_nil(::Faker::PhoneNumber.phone_number),
-      stelwex: random_or_nil(::Faker::PhoneNumber.extension),
-      stelh: random_or_nil(::Faker::PhoneNumber.phone_number),
-      snotes: random_or_nil(::Faker::Lorem.sentence),
-      sdomainid: "BVA#{login}"
+      snamef: row_hash[:first_name],
+      snamemi: row_hash[:middle_initial],
+      snamel: row_hash[:last_name],
+      slogid: row_hash[:login],
+      stafkey: row_hash[:login],
+      saddrst1: exist_hash["saddrst1"] ? ::Faker::Address.street_address : nil,
+      saddrst2: exist_hash["saddrst2"] ? ::Faker::Address.secondary_address : nil,
+      saddrcty: exist_hash["saddrcty"] ? ::Faker::Address.city : nil,
+      saddrstt: exist_hash["saddrstt"] ? ::Faker::Address.state_abbr : nil,
+      saddrcnty: exist_hash["saddrcnty"] ? ::Faker::Address.country_code_long : nil,
+      saddrzip: exist_hash["saddrzip"] ? ::Faker::Address.zip_code : nil,
+      stelw: exist_hash["stelw"] ? ::Faker::PhoneNumber.phone_number : nil,
+      stelfax: exist_hash["stelfax"] ? ::Faker::PhoneNumber.phone_number : nil,
+      stelwex: exist_hash["stelwex"] ? ::Faker::PhoneNumber.extension : nil,
+      stelh: exist_hash["stelh"] ? ::Faker::PhoneNumber.phone_number : nil,
+      snotes: exist_hash["snotes"] ? ::Faker::Lorem.sentence : nil,
+      sdomainid: exist_hash["sdomainid"] ? "BVA#{row_hash[:login]}" : nil
     )
   end
 
@@ -138,7 +161,7 @@ class Helpers::Sanitizers
        tbaty3 tbaty4 tbadduser tbaddtime tbmoduser tbmodtime tbcancel]
   end
 
-  def sanitize_travelboardschedule(travel_board, _exist_hash, _record_index)
+  def sanitize_travelboardschedule(travel_board, _exist_hash)
     ::Faker::Config.random = Random.new((travel_board.tbyear + travel_board.tbtrip.to_s).to_i)
 
     travel_board.assign_attributes(
@@ -152,7 +175,7 @@ class Helpers::Sanitizers
     %w[prog_code prog_desc iss_code iss_desc lev1_code lev1_desc lev2_code lev2_desc lev3_code lev3_desc]
   end
 
-  def sanitize_issref(issref, _exist_hash, _record_index)
+  def sanitize_issref(issref, _exist_hash)
     # Nothing to sanitize in this table
   end
 
@@ -161,7 +184,7 @@ class Helpers::Sanitizers
     %w[ftkey ftdesc ftadusr ftadtim ftmdusr ftmdtim ftactive fttype ftsys ftspare1 ftspare2 ftspare3]
   end
 
-  def sanitize_vftypes(vftypes, _exist_hash, _record_index)
+  def sanitize_vftypes(vftypes, _exist_hash)
     # Nothing to sanitize in this table
   end
 
@@ -174,7 +197,7 @@ class Helpers::Sanitizers
        ticerullo tivbms]
   end
 
-  def sanitize_folder(folder, exist_hash, _record_index)
+  def sanitize_folder(folder, exist_hash)
     ::Faker::Config.random = Random.new(folder.ticknum.to_i)
 
     folder.assign_attributes(
@@ -193,7 +216,7 @@ class Helpers::Sanitizers
        repfeerecv replastdoc repfeedisp repcorkey repacknw]
   end
 
-  def sanitize_representative(representative, _exist_hash, _record_index)
+  def sanitize_representative(representative, _exist_hash)
     ::Faker::Config.random = Random.new(representative.repkey.to_i)
 
     representative.assign_attributes(
@@ -216,7 +239,7 @@ class Helpers::Sanitizers
     %w[stafkey susrtyp staduser stadtime stmduser stmdtime sactive]
   end
 
-  def sanitize_correspondent(correspondent, exist_hash, _record_index)
+  def sanitize_correspondent(correspondent, exist_hash)
     ::Faker::Config.random = Random.new(Digest::SHA256.hexdigest(correspondent.stafkey).to_i(16))
 
     correspondent.assign_attributes(
@@ -256,7 +279,7 @@ class Helpers::Sanitizers
        issmduser isssel issgr issdev]
   end
 
-  def sanitize_caseissue(issue, _exist_hash, _record_index)
+  def sanitize_caseissue(issue, _exist_hash)
     ::Faker::Config.random = Random.new(issue.isskey.to_i)
 
     issue.assign_attributes(
@@ -270,7 +293,7 @@ class Helpers::Sanitizers
        tskstown tskstat tskadusr tskadtm tskmdusr tskmdtm tsactive]
   end
 
-  def sanitize_note(note, _exist_hash, _record_index)
+  def sanitize_note(note, _exist_hash)
     ::Faker::Config.random = Random.new(note.tsktknm.to_i)
 
     note.assign_attributes(
@@ -287,7 +310,7 @@ class Helpers::Sanitizers
        aod holdays vdkey canceldate]
   end
 
-  def sanitize_casehearing(hearing, _exist_hash, _record_index)
+  def sanitize_casehearing(hearing, _exist_hash)
     ::Faker::Config.random = Random.new(hearing.hearing_pkseq)
 
     hearing.assign_attributes(
@@ -306,7 +329,7 @@ class Helpers::Sanitizers
        deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 dedocid derecommend]
   end
 
-  def sanitize_decass(decass, exist_hash, _record_index)
+  def sanitize_decass(decass, exist_hash)
     ::Faker::Config.random = Random.new(decass.defolder.to_i)
 
     decass.assign_attributes(
@@ -328,7 +351,7 @@ class Helpers::Sanitizers
        bfsub bfdcertool]
   end
 
-  def sanitize_case(vacols_case, _exist_hash, _record_index)
+  def sanitize_case(vacols_case, _exist_hash)
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
