@@ -18,7 +18,7 @@ module QueueMapper
   }.freeze
 
   def self.rename_and_validate_decass_attrs(decass_attrs)
-    response = COLUMN_NAMES.keys.each_with_object({}) do |k, result|
+    update_attrs = COLUMN_NAMES.keys.each_with_object({}) do |k, result|
       # skip only if the key is not passed, if the key is passed and the value is nil - include that
       next unless decass_attrs.keys.include? k
 
@@ -29,8 +29,8 @@ module QueueMapper
       result[COLUMN_NAMES[k]] = decass_attrs[k]
       result
     end
-    VacolsHelper.validate_presence(response, [:deprod, :dedocid])
-    response.merge(dereceive: VacolsHelper.local_date_with_utc_timezone)
+    VacolsHelper.validate_presence(update_attrs, [:deprod, :dedocid])
+    update_attrs.merge(dereceive: VacolsHelper.local_date_with_utc_timezone)
   end
 
   def self.work_product_to_vacols_code(work_product, overtime)
