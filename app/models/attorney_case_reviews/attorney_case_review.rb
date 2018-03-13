@@ -8,9 +8,17 @@ class AttorneyCaseReview < ActiveRecord::Base
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
-  EXCEPTIONS = [QueueRepository::ReassignCaseToJudgeError,
+  EXCEPTIONS = [QueueRepository::QueueError,
                 VacolsHelper::MissingRequiredFieldError,
                 ActiveRecord::RecordInvalid].freeze
+
+  def vacols_id
+    task_id.split("-", 2).first
+  end
+
+  def date_assigned
+    task_id.split("-", 2).second.to_date
+  end
 
   class << self
     attr_writer :repository
@@ -22,12 +30,15 @@ class AttorneyCaseReview < ActiveRecord::Base
           record = create!(params)
 
           repository.reassign_case_to_judge(
-            task_id: record.task_id,
+            vacols_id: record.vacols_id,
+            date_assigned: record.date_assigned,
             judge_css_id: record.reviewing_judge.css_id,
-            work_product: record.work_product,
-            document_id: record.document_id,
-            overtime: record.overtime,
-            note: record.note
+            decass_attrs: {
+              work_product: record.work_product,
+              document_id: record.document_id,
+              overtime: record.overtime,
+              note: record.note
+            }
           )
         # :nocov:
         rescue *EXCEPTIONS => e
