@@ -21,7 +21,7 @@ class AttorneyCaseReview < ActiveRecord::Base
   end
 
   def reassign_case_to_judge_in_vacols!
-    self.class.repository.reassign_case_to_judge(
+    AttorneyCaseReview.repository.reassign_case_to_judge(
       vacols_id: vacols_id,
       date_assigned: date_assigned,
       judge_css_id: reviewing_judge.css_id,
