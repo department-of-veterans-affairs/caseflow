@@ -6,8 +6,8 @@ export default class CompleteIntakeErrorAlert extends React.PureComponent {
     const errorObject = {
       duplicate_ep: {
         title: 'An EP for this claim already exists in VBMS',
-        body: `An EP ${this.props.completeIntakeErrorData} for this Veteran's claim was created` + ' ' +
-              'outside Caseflow. Please tell your manager as soon as possible so they can resolve the issue.'
+        body: `An EP ${this.props.completeIntakeErrorData} for this Veteran's claim was created` +
+              ' outside Caseflow. Please tell your manager as soon as possible so they can resolve the issue.'
       },
       default: {
         title: 'Something went wrong',

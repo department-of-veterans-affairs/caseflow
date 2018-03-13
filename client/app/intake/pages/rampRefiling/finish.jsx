@@ -4,7 +4,6 @@ import CancelButton from '../../components/CancelButton';
 import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import Table from '../../../components/Table';
-import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, RAMP_INTAKE_STATES, REQUEST_STATE } from '../../constants';
 import { connect } from 'react-redux';
