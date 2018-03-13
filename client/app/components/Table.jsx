@@ -19,7 +19,7 @@ import _ from 'lodash';
  * - @summary {string} table summary
  *
  * see StyleGuideTables.jsx for usage example.
-*/
+ */
 const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
@@ -183,5 +183,6 @@ Table.propTypes = {
   headerClassName: PropTypes.string,
   className: PropTypes.string,
   caption: PropTypes.string,
-  id: PropTypes.string
+  id: PropTypes.string,
+  styling: PropTypes.object
 };
