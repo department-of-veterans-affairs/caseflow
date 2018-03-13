@@ -35,12 +35,15 @@ describe AttorneyCaseReview do
     context "when all parameters are present and Vacols update is successful" do
       before do
         allow(QueueRepository).to receive(:reassign_case_to_judge).with(
-          task_id: "123456-2013-12-06",
+          vacols_id: "123456",
+          date_assigned: "2013-12-06".to_date,
           judge_css_id: judge.css_id,
-          work_product: "OMO - IME",
-          document_id: "123456789.1234",
-          overtime: true,
-          note: "something"
+          decass_attrs: {
+            work_product: "OMO - IME",
+            document_id: "123456789.1234",
+            overtime: true,
+            note: "something"
+          }
         ).and_return(true)
       end
 
