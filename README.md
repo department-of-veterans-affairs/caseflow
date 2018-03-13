@@ -116,6 +116,15 @@ docker-compose ps
 # this shows you the status of all of your dependencies
 ```
 
+Turning off dependencies
+```
+# this stops all containers
+docker-compose down
+
+# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
+docker-compose down -v
+```
+
 ## Setup your Database Schema
 ```
 rake db:setup
