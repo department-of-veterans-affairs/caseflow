@@ -108,6 +108,12 @@ export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
 
+**Note: If you previously have had redis and postgres installed via brew and would like to switch to docker, do the following:**
+```
+brew services stop postgresql
+brew services stop redis
+```
+
 Start all containers
 ```
 docker-compose up -d
