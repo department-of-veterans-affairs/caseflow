@@ -164,10 +164,10 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Hearing preference: #{hearing.type.capitalize}")
 
         if hearing.disposition.eql? :cancelled
-          expect(page).not_to have_content("Hearing held")
+          expect(page).not_to have_content("Hearing date")
           expect(page).not_to have_content("Judge at hearing")
         else
-          expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
+          expect(page).to have_content("Hearing date: #{hearing.date.strftime('%-m/%-e/%y')}")
           expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
 
           worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
