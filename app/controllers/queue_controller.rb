@@ -1,22 +1,20 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
+  before_action :verify_welcome_gate_access, except: :complete
+  before_action :verify_queue_phase_two, only: :complete
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
-  def verify_access
-    # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
-    # :nocov:
+  def index
+    render "queue/index"
   end
 
-  def index
-    return redirect_to "/unauthorized" unless verify_access
-
-    render "queue/index"
+  def complete
+    record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, task_id: params[:task_id]))
+    return attorney_case_review_error unless record
+    render json: record
   end
 
   def tasks
@@ -35,9 +33,9 @@ class QueueController < ApplicationController
     render json: { judges: Judge.list_all }
   end
 
-  def document_count
-    # used for local dev. see Appeal.number_of_documents_url
-    appeal = Appeal.find(params[:appeal_id])
+  def dev_document_count
+    # only used for local dev. see Appeal.number_of_documents_url
+    appeal = Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"])
     render json: {
       data: {
         attributes: {
@@ -50,6 +48,33 @@ class QueueController < ApplicationController
   end
 
   private
+
+  def verify_welcome_gate_access
+    # :nocov:
+    return true if feature_enabled?(:queue_welcome_gate)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
+  def attorney_case_review_error
+    render json: {
+      "errors": [
+        "title": "Error Completing Attorney Case Review",
+        "detail": "Errors occured when completing attorney case review"
+      ]
+    }, status: 400
+  end
+
+  def complete_params
+    params.require("queue").permit(:type,
+                                   :reviewing_judge_id,
+                                   :document_id,
+                                   :work_product,
+                                   :overtime,
+                                   :note)
+  end
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(

@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import IssueList from '../reader/IssueList';
+import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
 import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
+import { renderAppealType } from './utils';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -33,7 +34,7 @@ export default class AppealDetail extends React.PureComponent {
   getListElements = () => {
     const listElements = [{
       label: 'Type',
-      value: this.getAppealAttr('type')
+      value: renderAppealType(this.props.appeal)
     }, {
       label: 'Power of Attorney',
       value: this.getAppealAttr('power_of_attorney')
@@ -84,14 +85,7 @@ export default class AppealDetail extends React.PureComponent {
       {this.getListElements()}
     </ul>
     <h2>Issues</h2>
-    <IssueList
-      appeal={_.pick(this.props.appeal.attributes, 'issues')}
-      formatLevelsInNewLine
-      displayIssueProgram
-      displayIssueNote
-      spaceBetweenIssues
-      leftAlignList
-      displayLabels />
+    <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
   </div>;
 }
 

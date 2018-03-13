@@ -130,7 +130,7 @@ class Appeal < ActiveRecord::Base
     if document_service == ExternalApi::EfolderService
       ExternalApi::EfolderService.efolder_files_url
     else
-      "/queue/#{id}/docs"
+      "/queue/docs_for_dev"
     end
   end
 
@@ -260,6 +260,18 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def compensation_issues
+    issues.select { |issue| issue.program == :compensation }
+  end
+
+  def compensation?
+    !compensation_issues.empty?
+  end
+
+  def fully_compensation?
+    compensation_issues.count == issues.count
+  end
+
   def ramp_election
     RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
@@ -350,23 +362,22 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents_v2!
     AddSeriesIdToDocumentsJob.perform_now(self)
 
-    ids = fetched_documents.map(&:series_id)
-    existing_documents = Document.where(series_id: ids)
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.series_id] = document
+      accumulator[document.vbms_document_id] = document
     end
 
     fetched_documents.map do |document|
       begin
-        if existing_documents[document.series_id]
-          document.merge_into(existing_documents[document.series_id]).save!
-          existing_documents[document.series_id]
+        if existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
         else
-          document.save!
-          document
+          create_new_document!(document, ids)
         end
       rescue ActiveRecord::RecordNotUnique
-        Document.find_by(series_id: document.series_id)
+        Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
   end
@@ -465,7 +476,12 @@ class Appeal < ActiveRecord::Base
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def worksheet_issues
-    issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
+    unless issues_pulled
+      transaction do
+        issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+        update!(issues_pulled: true)
+      end
+    end
     super
   end
 
@@ -547,6 +563,20 @@ class Appeal < ActiveRecord::Base
 
   private
 
+  def create_new_document!(document, ids)
+    document.save!
+
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
+  end
+
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
 
@@ -592,8 +622,7 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if (RequestStore.store[:application] == "reader" || RequestStore.store[:application] == "hearings") &&
-         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      if %w[reader queue hearings].include?(RequestStore.store[:application])
         EFolderService
       else
         VBMSService
@@ -710,6 +739,19 @@ class Appeal < ActiveRecord::Base
       fail ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
+    end
+
+    # Returns a hash of appeals with appeal_id as keys and
+    # related appeals as values. These are appeals
+    # fetched based on the vbms_id.
+    def fetch_appeal_streams(appeals)
+      appeal_vbms_ids = appeals.reduce({}) { |acc, appeal| acc.merge(appeal.vbms_id => appeal.id) }
+
+      Appeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
+        appeal_id = appeal_vbms_ids[appeal.vbms_id]
+        acc[appeal_id] ||= []
+        acc[appeal_id] << appeal
+      end
     end
 
     private

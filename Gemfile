@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "416f7a4ee49c7c80160e97416e7c7b0a7bd20a4a"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e30db7fdf6f5c28c09d6081d062cad80820240a0"
 
 # PDF Tools
 gem "pdf-forms"
@@ -92,7 +92,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging do
+group :production, :staging, :ssh_forwarding, :local do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -103,7 +103,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :development, :test do
+group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -134,7 +134,12 @@ group :development, :test do
   # to save and open specific page in capybara tests
   gem "launchy"
 
+  gem "activerecord-import"
+
   gem "danger", "5.5.5"
+
+  # For CircleCI test metadata analysis
+  gem "rspec_junit_formatter"
 end
 
 group :development do

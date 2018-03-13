@@ -4,10 +4,12 @@ RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_welcome_gate)
+    FeatureToggle.enable!(:queue_phase_two)
   end
 
   after do
     FeatureToggle.disable!(:queue_welcome_gate)
+    FeatureToggle.disable!(:queue_phase_two)
   end
 
   let(:documents) do
@@ -96,6 +98,7 @@ RSpec.feature "Queue" do
       click_on "Okay"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+      expect(page).to have_link("Back to Your Queue", href: "/queue")
     end
   end
 
@@ -167,7 +170,8 @@ RSpec.feature "Queue" do
       end
 
       scenario "appeal has no hearing" do
-        appeal = vacols_tasks.select { |a| a.hearings.empty? }.first
+        task = vacols_tasks.select { |t| t.hearings.empty? }.first
+        appeal = vacols_appeals.select { |a| a.vacols_id.eql? task.vacols_id }.first
         appeal_ro = appeal.regional_office
 
         visit "/queue"
@@ -176,7 +180,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing Preference")
 
-        expect(page).to have_content("Type: #{appeal.type}")
+        expect(page).to have_content("Type: CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
@@ -224,12 +228,92 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).to have_content("Back to Your Queue")
+        expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
         click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
 
         expect(page).to have_content("Back to Draft Decision - #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
+    end
+  end
+
+  context "loads decision views" do
+    context "submits decision" do
+      scenario "loads submit omo decision page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+
+        expect(page).to have_link("Your Queue", href: "/queue/")
+        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
+        expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
+
+        expect(page).to have_content("Go back to draft decision #{appeal.vbms_id}")
+      end
+
+      scenario "submits omo decision" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+
+        expect(page).to have_content("Submit OMO for Review")
+
+        click_label("omo-type_omo")
+        click_label("overtime")
+        fill_in "document_id", with: "12345"
+        fill_in "notes", with: "notes"
+
+        safe_click("#select-judge")
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-1']")
+        expect(page).to have_content("Andrew Mackenzie")
+
+        safe_click("button.cf-right-side")
+        expect(page.current_path).to eq("/queue/")
+      end
+    end
+
+    scenario "selects issue dispositions" do
+      appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+      visit "/queue"
+
+      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      safe_click(".Select-control")
+      safe_click("div[id$='--option-0']")
+
+      expect(page).to have_content("Select Dispositions")
+
+      table_rows = page.find_all("tr[id^='table-row-']")
+      expect(table_rows.length).to eq(appeal.issues.length)
+
+      # do not select all dispositions
+      table_rows[0..0].each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
+      end
+
+      safe_click("#finish-dispositions")
+
+      table_rows[1..-1].each do |row|
+        dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
+        expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
+      end
+
+      # select all dispositions
+      table_rows.each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
+      end
+
+      safe_click("#finish-dispositions")
+
+      expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
     end
   end
 end

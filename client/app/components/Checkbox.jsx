@@ -34,7 +34,6 @@ export default class Checkbox extends React.Component {
     }
 
     return <div className={classNames.join(' ')} {...styling}>
-
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
       <div className="cf-form-checkbox">
         <input

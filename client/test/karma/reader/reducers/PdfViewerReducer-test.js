@@ -8,6 +8,33 @@ describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(pdfViewerReducer, pdfViewerReducer(state, {}));
 
+  describe(Constants.SET_ZOOM_LEVEL, () => {
+    it('stores scale value when received', () => {
+      const scale = 0.5;
+      const state = reduceActions([
+        {
+          type: Constants.SET_ZOOM_LEVEL,
+          payload: {
+            scale
+          }
+        }
+      ]);
+
+      expect(state.scale).to.deep.equal(scale);
+    });
+
+    it('shows undefined scale when nothing is passed', () => {
+      const state = reduceActions([
+        {
+          type: Constants.SET_ZOOM_LEVEL,
+          payload: { }
+        }
+      ]);
+
+      expect(state.scale).to.equal(undefined);
+    });
+  });
+
   describe(Constants.SET_LOADED_APPEAL_ID, () => {
     it('updates loadedAppealId object when received', () => {
       const vacolsId = 1;

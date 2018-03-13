@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-import BackToQueueLink from '../reader/BackToQueueLink';
 import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
@@ -13,13 +13,12 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
+import SubmitDecisionView from './SubmitDecisionView';
+import SelectDispositionsView from './SelectDispositionsView';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { connect } from 'react-redux';
+import Breadcrumbs from './components/BreadcrumbManager';
 
-const appStyling = css({
-  paddingTop: '3rem'
-});
-
+const appStyling = css({ paddingTop: '3rem' });
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
     '& .usa-alert-info, & .usa-alert-error': {
@@ -38,7 +37,11 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseSelectSearch
-      navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
+      navigateToPath={(path) => {
+        const redirectUrl = encodeURIComponent(window.location.pathname);
+
+        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
+      }}
       alwaysShowCaseSelectionModal
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
@@ -47,11 +50,33 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <BackToQueueLink collapseTopMargin useReactRouter queueRedirectUrl="/" />
+    <Breadcrumbs />
     <QueueDetailView
       vacolsId={props.match.params.vacolsId}
       featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
+
+  routedSubmitDecision = (props) => {
+    const { vacolsId } = props.match.params;
+    const appeal = this.props.appeals[vacolsId].attributes;
+
+    return <SubmitDecisionView
+      vacolsId={vacolsId}
+      vbmsId={appeal.vbms_id}
+      prevStep={`/tasks/${vacolsId}`}
+      nextStep="/" />;
+  };
+
+  routedSelectDispositions = (props) => {
+    const { vacolsId } = props.match.params;
+    const appeal = this.props.appeals[vacolsId].attributes;
+
+    return <SelectDispositionsView
+      vacolsId={vacolsId}
+      vbmsId={appeal.vbms_id}
+      prevStep={`/tasks/${vacolsId}`}
+      nextStep={`/tasks/${vacolsId}/submit`} />;
+  };
 
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
@@ -79,17 +104,17 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/tasks/:vacolsId/submit"
-            title={(props) => {
-              const decisionType = props.location.state.type === 'omo' ? 'OMO' : 'Draft Decision';
+            title={() => {
+              const reviewActionType = this.props.reviewActionType === 'omo' ? 'OMO' : 'Draft Decision';
 
-              return `Draft Decision | Submit ${decisionType}`;
+              return `Draft Decision | Submit ${reviewActionType}`;
             }}
-            render={(props) => <span>Submit {props.location.state.type} page</span>} />
+            render={this.routedSubmitDecision} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
-            render={() => <span>Select issue dispositions</span>} />
+            render={this.routedSelectDispositions} />
         </div>
       </AppFrame>
       <Footer
@@ -111,7 +136,8 @@ QueueApp.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
-  ..._.pick(state.queue.loadedQueue, 'appeals')
+  ..._.pick(state.queue.loadedQueue, 'appeals'),
+  reviewActionType: state.queue.pendingChanges.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);

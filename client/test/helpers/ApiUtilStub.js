@@ -26,10 +26,10 @@ export default {
   },
 
   afterEach() {
-    ApiUtil.patch.restore();
-    ApiUtil.post.restore();
-    ApiUtil.get.restore();
-    ApiUtil.delete.restore();
-    ApiUtil.put.restore();
+    this.apiPatch.restore();
+    this.apiPost.restore();
+    this.apiGet.restore();
+    this.apiDelete.restore();
+    this.apiPut.restore();
   }
 };

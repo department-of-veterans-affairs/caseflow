@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
-import { getReaderLink } from './util/index';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 
 // TODO Move all stream related to streams container
@@ -80,13 +79,11 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
-    let readerLink = getReaderLink(worksheet.appeal_vacols_id);
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      veteranLawJudge={this.props.veteran_law_judge}
       appellant={appellant}
     />;
 
@@ -97,7 +94,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-      {this.props.print && worksheetHeader}
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
@@ -136,6 +132,10 @@ export class HearingWorksheet extends React.PureComponent {
       'cf-app-segment--alt': !this.props.print
     });
 
+    const printWrapperClassNames = classNames('cf-hearings-worksheet', {
+      'cf-app-segment--alt cf_hearing_body': this.props.print
+    });
+
     return <div>
       {!this.props.print &&
         <div>
@@ -151,25 +151,28 @@ export class HearingWorksheet extends React.PureComponent {
           />
         </div>
       }
+      {!this.props.print &&
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
         {secondWorksheetPage}
       </div>
+      }
+      {this.props.print &&
+    <div className={printWrapperClassNames}>
+      {firstWorksheetPage}
+      <PrintPageBreak />
+      {secondWorksheetPage}
+    </div>
+      }
       {!this.props.print &&
-      <div className="cf-push-right">
-        <Link
-          onClick={this.openPdf(worksheet, worksheetIssues)}
-          button="secondary">
+        <div className="cf-push-right">
+          <Link
+            onClick={this.openPdf(worksheet, worksheetIssues)}
+            button="secondary">
           Save as PDF
-        </Link>
-        <Link
-          name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
-          button="primary"
-          target="_blank">
-            Review Claims Folder</Link>
-      </div>
+          </Link>
+        </div>
       }
     </div>;
   }

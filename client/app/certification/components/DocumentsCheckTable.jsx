@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FoundIcon from '../components/FoundIcon';
-import NotFoundIcon from '../components/NotFoundIcon';
-import Table from '../components/Table';
+import FoundIcon from '../../components/FoundIcon';
+import NotFoundIcon from '../../components/NotFoundIcon';
+import Table from '../../components/Table';
 
 const found = <div><FoundIcon /><span>&emsp;Found in VBMS</span></div>;
 

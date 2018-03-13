@@ -198,6 +198,12 @@ class Issue
   end
 
   class << self
+    attr_writer :repository
+
+    def repository
+      @repository ||= IssueRepository
+    end
+
     def load_from_vacols(hash)
       new(
         id: hash["isskey"],
@@ -210,6 +216,22 @@ class Issue
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
+      )
+    end
+
+    def create_in_vacols!(css_id:, issue_attrs:)
+      repository.create_vacols_issue!(
+        css_id: css_id,
+        issue_attrs: issue_attrs
+      )
+    end
+
+    def update_in_vacols!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
+      repository.update_vacols_issue!(
+        css_id: css_id,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: issue_attrs
       )
     end
 

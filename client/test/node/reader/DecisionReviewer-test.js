@@ -26,6 +26,10 @@ import { findElementById } from '../../helpers';
 
 const vacolsId = 'reader_id1';
 
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 // This is the route history preset in react router
 // prior to tests running
 const INITIAL_ENTRIES = [
@@ -55,40 +59,45 @@ const getStore = () => createStore(
 
 const getWrapper = (store) => mount(
   <Provider store={store}>
-    <DecisionReviewer
-      featureToggles={{}}
-      userDisplayName="Name"
-      feedbackUrl="fakeurl"
-      dropdownUrls={[{
-        title: 'title',
-        link: 'link'
-      }]}
-      pdfWorker="worker"
-      url="url"
-      router={MemoryRouter}
-      routerTestProps={{
-        initialEntries: INITIAL_ENTRIES
-      }}
-
-    />
+    <MemoryRouter initialEntries={INITIAL_ENTRIES}>
+      <DecisionReviewer
+        featureToggles={{}}
+        userDisplayName="Name"
+        feedbackUrl="fakeurl"
+        dropdownUrls={[{
+          title: 'title',
+          link: 'link'
+        }]}
+        pdfWorker="worker"
+        url="url"
+      />
+    </MemoryRouter>
   </Provider>, { attachTo: document.getElementById('app') });
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
+  const setUpDocuments = (store) => {
+    // We simulate receiving the documents from the endpoint, and dispatch the
+    // required actions to skip past the loading screen and avoid stubing out
+    // the API call to the index endpoint.
+    store.dispatch(onReceiveDocs(documents, vacolsId));
+    store.dispatch(onReceiveAnnotations(annotations));
+  };
+
   let wrapper;
+  let store;
+  let autoSizerStub;
 
   describe('with ApiUtil stubbing', () => {
-
-    let setUpDocuments;
-
-    beforeEach(() => {
+    beforeEach(async() => {
       PdfJsStub.beforeEach();
       ApiUtilStub.beforeEach();
 
       /* eslint-disable no-underscore-dangle */
-      sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
+      autoSizerStub = sinon.stub(AutoSizer.prototype, 'render');
+      autoSizerStub.callsFake(function () {
         return <div ref={this._setRef}>
           {this.props.children({ width: 200,
             height: 100 })}
@@ -96,30 +105,21 @@ describe('DecisionReviewer', () => {
       });
       /* eslint-enable no-underscore-dangle */
 
-      const store = getStore();
-
-      setUpDocuments = () => {
-      // We simulate receiving the documents from the endpoint, and dispatch the
-      // required actions to skip past the loading screen and avoid stubing out
-      // the API call to the index endpoint.
-        store.dispatch(onReceiveDocs(documents, vacolsId));
-        store.dispatch(onReceiveAnnotations(annotations));
-        wrapper.update();
-      };
-
+      store = getStore();
+      setUpDocuments(store);
       wrapper = getWrapper(store);
+      await sleep();
+      wrapper.update();
     });
 
     afterEach(() => {
       wrapper.detach();
       ApiUtilStub.afterEach();
       PdfJsStub.afterEach();
-      AutoSizer.prototype.render.restore();
+      autoSizerStub.restore();
     });
 
     context('PDF list view', () => {
-      beforeEach(() => setUpDocuments());
-
       context('when expanded comments', () => {
         it('can view comments', () => {
           expect(wrapper.text()).to.not.include('Test Comment');
@@ -390,7 +390,7 @@ describe('DecisionReviewer', () => {
   // I think the approach below is reasonable.
   describe('without ApiUtil stubbing', () => {
     beforeEach(() => {
-      const store = getStore();
+      store = getStore();
 
       wrapper = getWrapper(store);
     });

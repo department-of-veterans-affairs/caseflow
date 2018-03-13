@@ -4,32 +4,17 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import { NO_ISSUES_ON_APPEAL_MSG } from './constants';
-import { boldText } from '../queue/constants';
-import StringUtil from '../util/StringUtil';
 
 const issueListStyle = css({
   display: 'inline'
 });
-const labelStyle = (displayIssueProgram) => css({
-  marginLeft: displayIssueProgram ? '1.5em' : null
-});
-const issueLevelStyle = (displayIssueProgram) => css({
+const issueLevelStyle = css({
   marginBottom: 0,
-  marginTop: 0,
-  marginLeft: displayIssueProgram ? '12em' : null
-});
-const issueNoteStyle = css({
-  marginTop: '1rem',
-  marginLeft: '12em'
-});
-const issueLiStyle = (spaceBetweenIssues) => css({
-  marginTop: spaceBetweenIssues ? '2rem' : null
-});
-const issueOlStyle = (leftAlignList) => css({
-  paddingLeft: leftAlignList ? '1.5rem' : null
+  marginTop: 0
 });
 
-// todo: move to queue after Reader welcome gate deprecation
+// todo: deprecate this with Reader Welcome Gate.
+// this has been superseded by queue/components/IssueList.jsx everywhere besides CaseSelect.
 export default class IssueList extends React.PureComponent {
 
   csvIssueLevels = (issue) => issue.levels ? issue.levels.join(', ') : '';
@@ -40,53 +25,29 @@ export default class IssueList extends React.PureComponent {
    */
   issueLevels = (issue, formatLevelsInNewLine = this.props.formatLevelsInNewLine) => {
     if (formatLevelsInNewLine) {
-      const { displayIssueProgram } = this.props;
-
-      return issue.levels.map((level, idx) =>
-        <p {...issueLevelStyle(displayIssueProgram)} key={level}>
-          {displayIssueProgram && idx === 1 ? issue.levels_with_codes[idx] : level}
+      return issue.levels.map((level) =>
+        <p {...issueLevelStyle} key={level}>
+          {level}
         </p>);
     }
 
     return this.csvIssueLevels(issue);
   };
 
-  issueTypeLabel = (issue) => {
-    const label = issue.type;
-
-    if (this.props.displayLabels) {
-      return <span {...labelStyle(this.props.displayIssueProgram)}>
-        <span {...boldText}>Issue:</span> {label}
-      </span>;
-    }
-
-    return label;
-  };
-
   render = () => {
     const {
       appeal,
-      className,
-      spaceBetweenIssues,
-      displayIssueProgram,
-      displayIssueNote,
-      leftAlignList
+      className
     } = this.props;
     let listContent = NO_ISSUES_ON_APPEAL_MSG;
 
     if (!_.isEmpty(appeal.issues)) {
-      listContent = <ol className={className} {...issueOlStyle(leftAlignList)}>
+      listContent = <ol className={className}>
         {appeal.issues.map((issue) =>
-          <li key={`${issue.id}_${issue.vacols_sequence_id}`} {...issueLiStyle(spaceBetweenIssues)}>
-            {displayIssueProgram && <span>
-              <span {...boldText}>Program:</span> {StringUtil.titleCase(issue.program)}
-            </span>}
+          <li key={`${issue.id}_${issue.vacols_sequence_id}`}>
             <span>
-              {this.issueTypeLabel(issue)} {this.issueLevels(issue)}
+              {issue.type} {this.issueLevels(issue)}
             </span>
-            {displayIssueNote && issue.note && <div {...issueNoteStyle}>
-              <span {...boldText}>Note:</span> {issue.note}
-            </div>}
           </li>
         )}
       </ol>;
@@ -101,20 +62,10 @@ export default class IssueList extends React.PureComponent {
 IssueList.propTypes = {
   appeal: PropTypes.object.isRequired,
   className: PropTypes.string,
-  formatLevelsInNewLine: PropTypes.bool,
-  spaceBetweenIssues: PropTypes.bool,
-  leftAlignList: PropTypes.bool,
-  displayIssueProgram: PropTypes.bool,
-  displayIssueNote: PropTypes.bool,
-  displayLabels: PropTypes.bool
+  formatLevelsInNewLine: PropTypes.bool
 };
 
 IssueList.defaultProps = {
   className: '',
-  formatLevelsInNewLine: false,
-  spaceBetweenIssues: false,
-  leftAlignList: false,
-  displayIssueProgram: false,
-  displayIssueNote: false,
-  displayLabels: false
+  formatLevelsInNewLine: false
 };

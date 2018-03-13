@@ -44,4 +44,8 @@ class Fakes::QueueRepository
 
     appeals
   end
+
+  def self.reassign_case_to_judge(_decass_hash)
+    true
+  end
 end

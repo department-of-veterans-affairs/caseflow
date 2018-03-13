@@ -86,7 +86,8 @@ export class DocketHearingRow extends React.PureComponent {
 
     let getRoTime = (date) => {
       return moment(date).tz(roTimeZone).
-        format('h:mm a z');
+        format('h:mm a z').
+        replace(/(\w)(DT|ST)/g, '$1T');
     };
 
     // Appellant differs Veteran

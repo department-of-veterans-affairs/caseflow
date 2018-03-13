@@ -137,6 +137,13 @@ export const handleFinishScrollToSidebarComment = () => ({
   }
 });
 
+export const setZoomLevel = (scale) => ({
+  type: Constants.SET_ZOOM_LEVEL,
+  payload: {
+    scale
+  }
+});
+
 /** Windowing parameters **/
 
 export const handleSetOverscanValue = (overscanValue) => ({

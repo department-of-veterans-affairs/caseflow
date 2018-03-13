@@ -1,5 +1,5 @@
 import React from 'react';
-import Alert from '../components/Alert';
+import Alert from '../../components/Alert';
 
 // TODO: refactor to use shared components where necessary
 const DocumentsNotMatchingBox = () =>

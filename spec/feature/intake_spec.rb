@@ -40,8 +40,24 @@ RSpec.feature "RAMP Intake" do
   let!(:ineligible_appeal) do
     Generators::Appeal.build(
       vbms_id: "77778888C",
-      vacols_record: :activated
+      vacols_record: :activated,
+      issues: issues
     )
+  end
+
+  context "As a user with Admin Intake role" do
+    let!(:current_user) do
+      User.authenticate!(roles: ["Admin Intake"])
+    end
+
+    scenario "Has access to intake mail" do
+      # Admin Intake has the same access as Mail Intake, but to save time,
+      # just check that they can access the intake screen
+      visit "/intake"
+
+      expect(page).to_not have_content("You aren't authorized")
+      expect(page).to have_content("Which form are you processing?")
+    end
   end
 
   context "As a user with Mail Intake role" do
@@ -705,7 +721,7 @@ RSpec.feature "RAMP Intake" do
     end
   end
 
-  context "As a user without Mail Intake role" do
+  context "As a user with unauthorized role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Not Mail Intake"])
     end

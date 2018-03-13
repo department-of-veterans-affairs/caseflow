@@ -9,7 +9,8 @@ class UnpreparedDenialsReport < Report
       "File No",
       "First",
       "Last",
-      "Decision Date"
+      "Decision Date",
+      "Outcoder"
     ]
   end
 
@@ -19,7 +20,8 @@ class UnpreparedDenialsReport < Report
       appeal.sanitized_vbms_id,
       appeal.veteran_first_name,
       appeal.veteran_last_name,
-      appeal.decision_date
+      appeal.decision_date,
+      appeal.outcoder_last_name
     ]
   end
 

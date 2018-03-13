@@ -149,6 +149,7 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
+                :user,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
@@ -196,19 +197,22 @@ class Hearing < ActiveRecord::Base
       user.nil? || (user.css_id != vacols_css_id)
     end
 
-    def create_from_vacols_record(vacols_record)
+    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
       transaction do
-        find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          # update hearing if user is nil, it's likely when the record doesn't exist and is being created
-          # or if vacols record css is different from
-          # who it's assigned to in the db.
-          if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
-            hearing.update(
-              appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-              user: User.find_by(css_id: vacols_record.css_id)
-            )
-          end
+        hearing = fetched_hearing ||
+                  find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
+
+        # update hearing if user is nil, it's likely when the record doesn't exist and is being created
+        # or if vacols record css is different from
+        # who it's assigned to in the db.
+        if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
+          hearing.update(
+            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+            user: User.find_by(css_id: vacols_record.css_id)
+          )
         end
+
+        hearing
       end
     end
   end

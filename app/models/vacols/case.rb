@@ -9,6 +9,8 @@ class VACOLS::Case < VACOLS::Record
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
   has_many   :case_hearings,   foreign_key: :folder_nr
+  has_many   :decass,          foreign_key: :defolder
+  has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
 
   class InvalidLocationError < StandardError; end
 
@@ -43,6 +45,8 @@ class VACOLS::Case < VACOLS::Record
     "P" => "RAMP Opt-in",
     "Q" => "Recon Motion Withdrawn",
     "R" => "Reconsideration by Letter",
+    "S" => "Stay",
+    "U" => "Motion to Vacate Denied",
     "V" => "Motion to Vacate Withdrawn",
     "W" => "Withdrawn from Remand",
     "X" => "Remand Failure to Respond"
@@ -219,7 +223,7 @@ class VACOLS::Case < VACOLS::Record
 
   # The attributes that are copied over when the case is cloned because of a remand
   def remand_clone_attributes
-    attributes.slice(
+    slice(
       :bfcorkey, :bfcorlid, :bfdnod, :bfdsoc, :bfd19, :bf41stat, :bfregoff,
       :bfissnr, :bfdorg, :bfdc, :bfic, :bfio, :bfoc, :bfms, :bfsh, :bfso,
       :bfst, :bfdrodec, :bfcasev, :bfdpdcn, :bfddro, :bfdroid, :bfdrortr, :bfro1

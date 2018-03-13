@@ -12,7 +12,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         id: issue.id,
         labels: issue.labels,
         codes: issue.codes,
-        levels_with_codes: issue.levels_with_codes
+        description: issue.description
       }
     end
   end
@@ -47,7 +47,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :veteran_full_name
   attribute :veteran_date_of_birth
   attribute :veteran_gender
-  attribute :vbms_id
+  attribute :vbms_id do
+    object.sanitized_vbms_id
+  end
   attribute :vacols_id
   attribute :type
   attribute :aod
