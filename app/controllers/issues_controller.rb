@@ -10,34 +10,34 @@ class IssuesController < ApplicationController
   def create
     return record_not_found unless appeal
 
-    record = Issue.create_in_vacols!(
+    Issue.create_in_vacols!(
       css_id: current_user.css_id,
       issue_attrs: create_params
     )
-    render json: { issue: record }, status: :created
+    render json: { issues: appeal.issues }, status: :created
   end
 
   def update
     return record_not_found unless appeal
 
-    record = Issue.update_in_vacols!(
+    Issue.update_in_vacols!(
       css_id: current_user.css_id,
       vacols_id: appeal.vacols_id,
       vacols_sequence_id: params[:vacols_sequence_id],
       issue_attrs: issue_params
     )
-    render json: { issue: record }, status: :ok
+    render json: { issues: appeal.issues }, status: :ok
   end
 
   def destroy
     return record_not_found unless appeal
 
-    record = Issue.delete_in_vacols!(
+    Issue.delete_in_vacols!(
       css_id: current_user.css_id,
       vacols_id: appeal.vacols_id,
       vacols_sequence_id: params[:vacols_sequence_id]
     )
-    render json: {}, status: :ok
+    render json: { issues: appeal.issues }, status: :ok
   end
 
   private

@@ -148,7 +148,7 @@ RSpec.describe IssuesController, type: :controller do
         {
           css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
-          vacols_sequence_id: "1",
+          vacols_sequence_id: "1"
         }
       end
       it "should be successful" do
@@ -171,7 +171,7 @@ RSpec.describe IssuesController, type: :controller do
         {
           css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
-          vacols_sequence_id: "1",
+          vacols_sequence_id: "1"
         }
       end
       it "should not be successful" do
