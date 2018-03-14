@@ -12,10 +12,7 @@ class QueueController < ApplicationController
   end
 
   def complete
-    record = AttorneyCaseReview.complete!(complete_params.merge(
-                                            attorney: current_user,
-                                            task_id: params[:task_id]
-    ))
+    record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, task_id: params[:task_id]))
     return attorney_case_review_error unless record
 
     response = { attorney_case_review: record }
