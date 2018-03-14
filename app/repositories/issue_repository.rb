@@ -3,35 +3,47 @@ class IssueRepository
 
   # :nocov:
   def self.create_vacols_issue!(css_id:, issue_attrs:)
-    validate_access!(css_id, issue_attrs[:vacols_id])
+    MetricsService.record("VACOLS: IssueRepository.create_vacols_issue! for #{issue_attrs[:vacols_id]}",
+                          service: :vacols,
+                          name: "IssueRepository.create_vacols_issue!") do
+      validate_access!(css_id, issue_attrs[:vacols_id])
 
-    issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
-      slogid: slogid_based_on_css_id(css_id),
-      action: :create,
-      issue_attrs: issue_attrs
-    )
+      issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
+        slogid: slogid_based_on_css_id(css_id),
+        action: :create,
+        issue_attrs: issue_attrs
+      )
 
-    VACOLS::CaseIssue.create_issue!(issue_attrs)
+      VACOLS::CaseIssue.create_issue!(issue_attrs)
+    end
   end
 
   def self.update_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
-    validate_access!(css_id, vacols_id)
-    validate_issue_presence!(vacols_id, vacols_sequence_id)
+    MetricsService.record("VACOLS: IssueRepository.update_vacols_issue! for vacols ID #{vacols_id} and sequence ID: #{vacols_sequence_id}",
+                          service: :vacols,
+                          name: "IssueRepository.update_vacols_issue!") do
+      validate_access!(css_id, vacols_id)
+      validate_issue_presence!(vacols_id, vacols_sequence_id)
 
-    issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
-      slogid: slogid_based_on_css_id(css_id),
-      action: :update,
-      issue_attrs: issue_attrs
-    )
+      issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
+        slogid: slogid_based_on_css_id(css_id),
+        action: :update,
+        issue_attrs: issue_attrs
+      )
 
-    VACOLS::CaseIssue.update_issue!(vacols_id, vacols_sequence_id, issue_attrs)
+      VACOLS::CaseIssue.update_issue!(vacols_id, vacols_sequence_id, issue_attrs)
+    end
   end
 
   def self.delete_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:)
-    validate_access!(css_id, vacols_id)
-    validate_issue_presence!(vacols_id, vacols_sequence_id)
+    MetricsService.record("VACOLS: IssueRepository.delete_vacols_issue! for vacols ID #{vacols_id} and sequence ID: #{vacols_sequence_id}",
+                          service: :vacols,
+                          name: "IssueRepository.delete_vacols_issue!") do
+      validate_access!(css_id, vacols_id)
+      validate_issue_presence!(vacols_id, vacols_sequence_id)
 
-    VACOLS::CaseIssue.delete_issue!(vacols_id, vacols_sequence_id)
+      VACOLS::CaseIssue.delete_issue!(vacols_id, vacols_sequence_id)
+    end
   end
 
   def self.validate_issue_presence!(vacols_id, vacols_sequence_id)
