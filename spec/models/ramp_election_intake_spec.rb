@@ -215,24 +215,20 @@ describe RampElectionIntake do
 
   context "#validate_start" do
     subject { intake.validate_start }
+    let(:end_product_reference_id) { nil }
     let!(:ramp_appeal) { appeal }
-
     let!(:ramp_election) do
-      RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
+      RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 6.days.ago,
+        end_product_reference_id: end_product_reference_id
+      )
     end
 
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
     context "the ramp election is complete" do
-      let!(:complete_intake) do
-        RampElectionIntake.create!(
-          user: user,
-          detail: ramp_election,
-          completed_at: Time.zone.now,
-          completion_status: :success
-        )
-      end
-
+      let(:end_product_reference_id) { 1 }
       it "adds ramp_election_already_complete and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("ramp_election_already_complete")
