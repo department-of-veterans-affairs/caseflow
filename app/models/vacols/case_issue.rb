@@ -91,25 +91,21 @@ class VACOLS::CaseIssue < VACOLS::Record
   # rubocop:enable MethodLength
 
   def self.create_issue!(issue_attrs)
-    MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_attrs[:isskey]}",
-                          service: :vacols,
-                          name: "CaseIssue.create_issue") do
-      create!(issue_attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
-                                issseq: generate_sequence_id(issue_attrs[:isskey])))
-    end
+    create!(issue_attrs.merge(issseq: generate_sequence_id(issue_attrs[:isskey])))
   end
 
   def self.generate_sequence_id(vacols_id)
     return unless vacols_id
-    descriptions(vacols_id)[vacols_id].count + 1
+    last_issue = (descriptions(vacols_id)[vacols_id] || []).sort_by { |k| k["issseq"] }.last
+    last_issue.present? ? last_issue["issseq"] + 1 : 1
   end
 
-  def update_issue!(issue_attrs)
-    MetricsService.record("VACOLS: CaseIssue.update_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
-                          service: :vacols,
-                          name: "CaseIssue.update_issue") do
-      update!(issue_attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
-    end
+  def self.update_issue!(isskey, issseq, issue_attrs)
+    where(isskey: isskey, issseq: issseq).update_all(issue_attrs)
+  end
+
+  def self.delete_issue!(isskey, issseq)
+    where(isskey: isskey, issseq: issseq).delete_all
   end
   # :nocov:
 end
