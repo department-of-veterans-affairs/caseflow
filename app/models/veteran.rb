@@ -80,7 +80,7 @@ class Veteran
   end
 
   def found?
-    bgs_record != :not_found && bgs_record[:file_number]
+    @accessible == false || (bgs_record != :not_found && bgs_record[:file_number])
   end
 
   def accessible?
@@ -139,6 +139,11 @@ class Veteran
 
   def fetch_bgs_record
     self.class.bgs.fetch_veteran_info(file_number)
+  rescue BGS::ShareError => error
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    raise error unless error.message =~ /Sensitive File/
+
+    @accessible = false
   end
 
   def vbms_attributes
