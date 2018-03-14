@@ -161,7 +161,7 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).to have_content("Hearing preference: #{hearing.type.capitalize}")
+        expect(page).to have_content("Hearing preference: #{hearing.type.to_s.split('_').map(&:capitalize).join(' ')}")
 
         if hearing.disposition.eql? :cancelled
           expect(page).not_to have_content("Hearing held")
