@@ -3,7 +3,7 @@ class IssueRepository
 
   # :nocov:
   def self.create_vacols_issue!(css_id:, issue_attrs:)
-    MetricsService.record("VACOLS: IssueRepository.create_vacols_issue! for #{issue_attrs[:vacols_id]}",
+    MetricsService.record("VACOLS: create_vacols_issue! for #{issue_attrs[:vacols_id]}",
                           service: :vacols,
                           name: "IssueRepository.create_vacols_issue!") do
       validate_access!(css_id, issue_attrs[:vacols_id])
@@ -19,7 +19,7 @@ class IssueRepository
   end
 
   def self.update_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:, issue_attrs:)
-    MetricsService.record("VACOLS: IssueRepository.update_vacols_issue! for vacols ID #{vacols_id} and sequence ID: #{vacols_sequence_id}",
+    MetricsService.record("VACOLS: update_vacols_issue! for vacols ID #{vacols_id} and sequence: #{vacols_sequence_id}",
                           service: :vacols,
                           name: "IssueRepository.update_vacols_issue!") do
       validate_access!(css_id, vacols_id)
@@ -36,7 +36,7 @@ class IssueRepository
   end
 
   def self.delete_vacols_issue!(css_id:, vacols_id:, vacols_sequence_id:)
-    MetricsService.record("VACOLS: IssueRepository.delete_vacols_issue! for vacols ID #{vacols_id} and sequence ID: #{vacols_sequence_id}",
+    MetricsService.record("VACOLS: delete_vacols_issue! for vacols ID #{vacols_id} and sequence: #{vacols_sequence_id}",
                           service: :vacols,
                           name: "IssueRepository.delete_vacols_issue!") do
       validate_access!(css_id, vacols_id)
