@@ -84,7 +84,7 @@ Rails.application.routes.draw do
   end
 
   resources :appeals, only: [] do
-    resources :issues, only: [:create, :update, :delete], param: :vacols_sequence_id
+    resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
   namespace :hearings do

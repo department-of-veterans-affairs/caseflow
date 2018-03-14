@@ -7,14 +7,18 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-[View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
-
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install postgresql redis chromedriver rbenv
+    brew install postgresql redis chromedriver rbenv nvm yarn
 
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
+Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
+- Run `mkdir ~/.nvm`
+- Add the following to your shell login script:
+        export NVM_DIR="$HOME/.nvm"
+        . "/usr/local/opt/nvm/nvm.sh"
+
+Before continuing, source your shell login script, e.g., `source ~/.profile` or `source ~/.bashrc`.
 
 Then run the following:
 
@@ -22,6 +26,8 @@ Then run the following:
     rbenv install $(cat .ruby-version)
     rbenv rehash
     gem install bundler
+
+*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`. 
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
 

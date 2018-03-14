@@ -235,6 +235,14 @@ class Issue
       )
     end
 
+    def delete_in_vacols!(css_id:, vacols_id:, vacols_sequence_id:)
+      repository.delete_vacols_issue!(
+        css_id: css_id,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
+      )
+    end
+
     private
 
     def parse_codes_from_vacols(hash)
