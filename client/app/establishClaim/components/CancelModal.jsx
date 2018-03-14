@@ -70,7 +70,7 @@ export const CancelModal = ({
   </div>;
 };
 
-CancelModal.PropTypes = {
+CancelModal.propTypes = {
   cancelFeedback: PropTypes.string.isRequired,
   errorMessage: PropTypes.string,
   isCancelModalSubmitting: PropTypes.bool.isRequired,
