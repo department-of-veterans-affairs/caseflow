@@ -7,14 +7,18 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-[View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
-
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install postgresql redis chromedriver rbenv
+    brew install postgresql redis chromedriver rbenv nvm yarn
 
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
+Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
+- Run `mkdir ~/.nvm`
+- Add the following to your shell login script:
+        export NVM_DIR="$HOME/.nvm"
+        . "/usr/local/opt/nvm/nvm.sh"
+
+Before continuing, source your shell login script, e.g., `source ~/.profile` or `source ~/.bashrc`.
 
 Then run the following:
 
@@ -22,6 +26,8 @@ Then run the following:
     rbenv install $(cat .ruby-version)
     rbenv rehash
     gem install bundler
+
+*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`. 
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
 
@@ -59,13 +65,13 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 ### OSX
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
-2) Unzip both packages into `/opt/oracle/instantclient_12_2`
+2) Unzip both packages into `/opt/oracle/instantclient_<version_number>` where `<version_number>` is consistent with step 3. Most of us are using `<version_number>=12_2`.
 
 3) Setup both packages according to the Oracle documentation:
 ```
-export OCI_DIR=/opt/oracle/instantclient_12_1
-cd /opt/oracle/instantclient_12_2
-sudo ln -s libclntsh.dylib.12.1 libclntsh.dylib
+export OCI_DIR=/opt/oracle/instantclient_<version_number>
+cd /opt/oracle/instantclient_<version_number>
+sudo ln -s libclntsh.dylib.<version_number> libclntsh.dylib
 ```
 
 If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
@@ -96,20 +102,34 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 ## Start up local VACOLS container
 To set up our local copy of VACOLS, run
 ```
-rake local_vacols:setup
+rake local:vacols:setup
 ```
 To start the container after it's been setup, run
 ```
-rake local_vacols:start
+rake local:vacols:start
 ```
 To stop the container, run
 ```
-rake local_vacols:stop
+rake local:vacols:stop
 ```
 To view the logs, run
 ```
-rake local_vacols:logs
+rake local:vacols:logs
 ```
+
+## Seeding the local VACOLS container
+To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
+
+1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
+2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
+```
+export VACOLS_PASSWORD=<pw_from_credstash (vacols.uat.db_password)>
+export VACOLS_USERNAME=<pw_from_credstash (vacols.uat.db_username)>
+```
+3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
+4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
+5) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+6) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
 
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:

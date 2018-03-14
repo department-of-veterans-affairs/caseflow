@@ -161,25 +161,32 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
-        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
-        expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+        expect(page).to have_content("Hearing preference: #{hearing.type.to_s.split('_').map(&:capitalize).join(' ')}")
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
-        expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        if hearing.disposition.eql? :cancelled
+          expect(page).not_to have_content("Hearing held")
+          expect(page).not_to have_content("Judge at hearing")
+        else
+          expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
+          expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+
+          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
+          expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        end
       end
 
       scenario "appeal has no hearing" do
-        appeal = vacols_tasks.select { |a| a.hearings.empty? }.first
+        task = vacols_tasks.select { |t| t.hearings.empty? }.first
+        appeal = vacols_appeals.select { |a| a.vacols_id.eql? task.vacols_id }.first
         appeal_ro = appeal.regional_office
 
         visit "/queue"
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).not_to have_content("Hearing Preference")
+        expect(page).not_to have_content("Hearing preference")
 
-        expect(page).to have_content("Type: #{appeal.type}")
+        expect(page).to have_content("Type: CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
@@ -276,6 +283,43 @@ RSpec.feature "Queue" do
         safe_click("button.cf-right-side")
         expect(page.current_path).to eq("/queue/")
       end
+    end
+
+    scenario "selects issue dispositions" do
+      appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+      visit "/queue"
+
+      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      safe_click(".Select-control")
+      safe_click("div[id$='--option-0']")
+
+      expect(page).to have_content("Select Dispositions")
+
+      table_rows = page.find_all("tr[id^='table-row-']")
+      expect(table_rows.length).to eq(appeal.issues.length)
+
+      # do not select all dispositions
+      table_rows[0..0].each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
+      end
+
+      safe_click("#finish-dispositions")
+
+      table_rows[1..-1].each do |row|
+        dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
+        expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
+      end
+
+      # select all dispositions
+      table_rows.each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
+      end
+
+      safe_click("#finish-dispositions")
+
+      expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
     end
   end
 end
