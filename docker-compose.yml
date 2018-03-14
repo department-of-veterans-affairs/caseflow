@@ -23,11 +23,8 @@ services:
     image: postgres:9.3.14
     ports:
       - "5432:5432"
-    volumes:
-     - ./local/postgres/data/pg-data:/var/lib/postgressql/data
     environment:
      - POSTGRES_PASSWORD=postgres
-     - PGDATA=/var/lib/postgressql/data
 
 volumes:
   u01:

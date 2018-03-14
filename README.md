@@ -109,8 +109,15 @@ Your development setup of caseflow currently runs Redis, postgres and OracleDB (
 Setup your postgres user.  Run this in your CLI, or better yet, add this to your shell configuration `~/.bashrc`
 
 ```
+export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
+```
+
+**Note: If you previously have had redis and postgres installed via brew and would like to switch to docker, do the following:**
+```
+brew services stop postgresql
+brew services stop redis
 ```
 
 Start all containers
@@ -122,14 +129,23 @@ docker-compose ps
 # this shows you the status of all of your dependencies
 ```
 
+Turning off dependencies
+```
+# this stops all containers
+docker-compose down
+
+# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
+docker-compose down -v
+```
+
 ## Setup your Database Schema
 ```
-rake db:setup
-rake db:seed
+rake [RAILS_ENV=<local|test|development>] db:setup
+rake [RAILS_ENV=<local|test|development>] db:seed
 
 # setup local VACOLS (FAKOLS)
-rake local:vacols:setup
-rake local:vacols:seed
+rake [RAILS_ENV=<local|test|development>] local:vacols:setup
+rake [RAILS_ENV=<local|test|development>] local:vacols:seed
 ```
 
 ## Manually seeding your local VACOLS container
