@@ -49,7 +49,7 @@ class IntakesController < ApplicationController
   def complete
     current_intake.complete!(params)
     render json: current_intake.ui_hash
-  rescue Caseflow::Error::EstablishClaimFailedInVBMS => error
+  rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
       error_data: current_intake.detail.pending_end_product_description

@@ -71,6 +71,10 @@ class Intake < ActiveRecord::Base
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  def complete!(_request_params)
+    fail NotImplementedError
+  end
+
   # Optional step to load data into the Caseflow DB that will be used for the intake
   def preload_intake_data!
     nil
