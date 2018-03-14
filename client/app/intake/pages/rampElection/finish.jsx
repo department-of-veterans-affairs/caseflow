@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../../actions/rampElection';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
@@ -54,7 +55,9 @@ class Finish extends React.PureComponent {
       appeals,
       requestState,
       finishConfirmed,
-      finishConfirmedError
+      finishConfirmedError,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (rampElectionStatus) {
@@ -94,9 +97,9 @@ class Finish extends React.PureComponent {
       <h1>Finish processing { optionName } election</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <Alert title="Something went wrong" type="error" lowerMargin>
-          Please try again. If the problem persists, please contact Caseflow support.
-        </Alert>
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
       }
 
       <p>Please complete the following steps outside Caseflow.</p>
@@ -166,7 +169,9 @@ export default connect(
     finishConfirmedError: state.rampElection.finishConfirmedError,
     rampElectionStatus: getIntakeStatus(state),
     appeals: state.rampElection.appeals,
-    requestState: state.rampElection.requestStatus.completeIntake
+    requestState: state.rampElection.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.rampElection.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.rampElection.requestStatus.completeIntakeErrorData
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake
