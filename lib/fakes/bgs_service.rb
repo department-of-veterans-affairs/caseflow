@@ -1,3 +1,5 @@
+require "bgs"
+
 class Fakes::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
@@ -213,6 +215,9 @@ class Fakes::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
+    # BGS throws a ShareError if the veteran has too high sensitivity
+    fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)
+
     (self.class.veteran_records || {})[vbms_id]
   end
 

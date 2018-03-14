@@ -1,7 +1,7 @@
 version: '3'
 services:
   vacols-db:
-    build: .
+    build: ./local/vacols/.
     container_name: VACOLS_DB
     image: vacols_db
     tty: true
@@ -13,6 +13,18 @@ services:
       - "u02:/u02"
     ports:
       - "1521:1521"
+
+  appeals-redis:
+    image: redis:2.8.23
+    ports:
+      - "6379:6379"
+
+  appeals-postgres:
+    image: postgres:9.3.14
+    ports:
+      - "5432:5432"
+    environment:
+     - POSTGRES_PASSWORD=postgres
 
 volumes:
   u01:
