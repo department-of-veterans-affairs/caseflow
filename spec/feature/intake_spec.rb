@@ -21,12 +21,15 @@ RSpec.feature "RAMP Intake" do
     ]
   end
 
+  let(:inaccessible) { false }
+
   let!(:appeal) do
     Generators::Appeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,
-      veteran: veteran
+      veteran: veteran,
+      inaccessible: inaccessible
     )
   end
 
@@ -83,6 +86,25 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
+    end
+
+    context "Veteran has too high of a sensitivity level for user" do
+      let(:inaccessible) { true }
+
+      scenario "Search for a veteran with a sensitivity error" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("You don't have permission to view this veteran's information")
+      end
     end
 
     scenario "Search for a veteran who's form is already being processed" do
