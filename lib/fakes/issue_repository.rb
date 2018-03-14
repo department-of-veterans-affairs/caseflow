@@ -21,8 +21,6 @@ class Fakes::IssueRepository
       )
 
       Fakes::AppealRepository.issue_records[issue_attrs[:vacols_id]] << issue
-
-      issue
     end
 
     def update_vacols_issue!(args)
@@ -30,7 +28,11 @@ class Fakes::IssueRepository
       record = find_issue(args[:vacols_id], args[:vacols_sequence_id])
       record.codes = CODE_KEYS.collect { |k| issue_attrs[k] }.compact
       record.note = issue_attrs[:note]
-      record
+    end
+
+    def delete_vacols_issue!(args)
+      record = find_issue(args[:vacols_id], args[:vacols_sequence_id])
+      Fakes::AppealRepository.issue_records[args[:vacols_id]].delete(record)
     end
 
     def find_issue(vacols_id, vacols_sequence_id)
