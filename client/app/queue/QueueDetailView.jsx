@@ -17,9 +17,11 @@ import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
   startEditingAppeal,
+} from './QueueActions';
+import {
   pushBreadcrumb,
   resetBreadcrumbs
-} from './QueueActions';
+} from './uiReducer/actions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });

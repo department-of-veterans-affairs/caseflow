@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import {
   pushBreadcrumb,
   highlightInvalidFormItems
-} from '../QueueActions';
+} from '../uiReducer/actions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
@@ -49,7 +49,8 @@ export default function decisionViewBase(ComponentToWrap) {
       });
       _.defaults(nextButton, {
         classNames: ['cf-right-side'],
-        callback: this.goToNextStep
+        callback: this.goToNextStep,
+        disabled: this.props.pendingSave
       });
 
       return [backButton, nextButton];
@@ -92,7 +93,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.queue.ui, 'breadcrumbs');
+  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'pendingSave');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     highlightInvalidFormItems

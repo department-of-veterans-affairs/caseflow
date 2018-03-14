@@ -5,15 +5,17 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
 
 import {
   setDecisionOptions,
   resetDecisionOptions,
+  saveDecision
+} from './QueueActions';
+import {
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems
-} from './QueueActions';
+} from './uiReducer/actions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -21,6 +23,7 @@ import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
 
 import {
   fullWidth,
@@ -84,7 +87,7 @@ class SubmitDecisionView extends React.PureComponent {
       requiredParams.push('omoType');
     }
 
-    const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
+    const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
     return !missingParams.length;
   };
@@ -98,32 +101,21 @@ class SubmitDecisionView extends React.PureComponent {
       }
     } = this.props;
     const params = {
-      queue: {
-        work_product: decision.omoType, // todo: generify omoType field name
-        reviewing_judge_id: decision.judge.value,
-        document_id: decision.documentId,
-        type: decisionType,
-        overtime: decision.overtime || false,
-        note: decision.notes
-      }
-    };
-
-    ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, { data: params }).then(
-      () => {
-        // todo: display success banner on /queue (#4479)
-        return true;
-      },
-      (resp) => {
-        const errors = JSON.parse(resp.response.text).errors;
-
-        if (errors.length) {
-          console.table(errors[0]);
+      data: {
+        queue: {
+          work_product: decision.omoType, // todo: generify omoType field name
+          reviewing_judge_id: decision.judge.value,
+          document_id: decision.documentId,
+          type: decisionType,
+          overtime: decision.overtime || false,
+          note: decision.notes
         }
-
-        return false;
       }
-    );
-  };
+    }
+
+    // todo: proceed on request resolve
+    return this.props.saveDecision(vacolsId, params);
+  }
 
   getFooterButtons = () => [{
     displayText: `< Go back to draft decision ${this.props.vbmsId}`
@@ -182,7 +174,10 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const { highlightFormItems } = this.props;
+    const {
+      highlightFormItems,
+      error
+    } = this.props;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -191,6 +186,9 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
       </p>
+      {error.visible && <Alert title={error.message.title} type="error">
+        {error.message.detail}
+      </Alert>}
       <hr />
       {decisionType.includes('OMO') && <RadioField
         name="omo_type"
@@ -243,7 +241,8 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
-  ..._.pick(state.queue.ui, 'highlightFormItems', 'selectingJudge')
+  error: state.ui.errorState.decision,
+  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -251,7 +250,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  saveDecision
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));

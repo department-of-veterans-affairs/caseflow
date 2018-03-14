@@ -14,8 +14,8 @@ import Table from '../components/Table';
 import {
   cancelEditingAppeal,
   updateAppealIssue,
-  highlightInvalidFormItems
 } from './QueueActions';
+import { highlightInvalidFormItems } from './uiReducer/actions'
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });

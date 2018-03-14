@@ -1,9 +1,12 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
-import { ACTIONS } from './constants';
-import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 import { combineReducers } from 'redux';
 import _ from 'lodash';
+
+import { ACTIONS } from './constants';
+
+import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import uiReducer from './uiReducer/reducer';
 
 export const initialState = {
   judges: {},
@@ -11,11 +14,6 @@ export const initialState = {
     appeals: {},
     tasks: {},
     loadedUserId: null
-  },
-  ui: {
-    selectingJudge: false,
-    breadcrumbs: [],
-    highlightFormItems: false
   },
 
   /**
@@ -134,42 +132,13 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
-  case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
-    return update(state, {
-      ui: {
-        highlightFormItems: {
-          $set: action.payload.highlight
-        }
-      }
-    });
-  case ACTIONS.SET_SELECTING_JUDGE:
-    return update(state, {
-      ui: {
-        selectingJudge: { $set: action.payload.selectingJudge }
-      }
-    });
-  case ACTIONS.PUSH_BREADCRUMB:
-    return update(state, {
-      ui: {
-        breadcrumbs: {
-          $push: action.payload.crumbs
-        }
-      }
-    });
-  case ACTIONS.RESET_BREADCRUMBS:
-    return update(state, {
-      ui: {
-        breadcrumbs: {
-          $set: []
-        }
-      }
-    });
   default:
     return state;
   }
 };
 
 const rootReducer = combineReducers({
+  ui: uiReducer,
   queue: workQueueReducer,
   caseSelect: caseSelectReducer
 });
