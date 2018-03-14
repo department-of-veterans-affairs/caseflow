@@ -47,10 +47,11 @@ class QueueDetailView extends React.PureComponent {
 
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
+    const decisionType = props.value === 'omo' ? 'OMORequest' : 'DraftDecision';
 
     // Move the current appeal to pendingChanges before loading any decision flow views.
     this.props.startEditingAppeal(this.props.vacolsId);
-    this.props.setCaseReviewActionType(props.value);
+    this.props.setCaseReviewActionType(decisionType);
     this.props.history.push(`${this.props.history.location.pathname}/${route}`);
   }
 

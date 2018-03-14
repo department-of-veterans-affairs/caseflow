@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
+import ApiUtil from '../util/ApiUtil';
 
 import {
   setDecisionOptions,
@@ -70,7 +71,7 @@ class SubmitDecisionView extends React.PureComponent {
     this.props.resetDecisionOptions();
 
     return true;
-  }
+  };
 
   validateForm = () => {
     const {
@@ -79,14 +80,50 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
     const requiredParams = ['documentId', 'judge'];
 
-    if (decisionType === 'omo') {
+    if (decisionType.includes('OMO')) {
       requiredParams.push('omoType');
     }
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
 
     return !missingParams.length;
-  }
+  };
+
+  goToNextStep = () => {
+    const {
+      vacolsId,
+      decision: {
+        type: decisionType,
+        opts: decision
+      }
+    } = this.props;
+    const params = {
+      queue: {
+        work_product: decision.omoType, // todo: generify omoType field name
+        reviewing_judge_id: decision.judge.value,
+        document_id: decision.documentId,
+        type: decisionType,
+        overtime: decision.overtime || false,
+        note: decision.notes
+      }
+    };
+
+    ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, { data: params }).then(
+      () => {
+        // todo: display success banner on /queue (#4479)
+        return true;
+      },
+      (resp) => {
+        const errors = JSON.parse(resp.response.text).errors;
+
+        if (errors.length) {
+          console.table(errors[0]);
+        }
+
+        return false;
+      }
+    );
+  };
 
   getFooterButtons = () => [{
     displayText: `< Go back to draft decision ${this.props.vbmsId}`
@@ -136,10 +173,10 @@ class SubmitDecisionView extends React.PureComponent {
   render = () => {
     const omoTypes = [{
       displayText: 'VHA - OMO',
-      value: 'omo'
+      value: 'OMO - VHA'
     }, {
       displayText: 'VHA - IME',
-      value: 'ime'
+      value: 'OMO - IME'
     }];
     const {
       type: decisionType,
@@ -155,7 +192,7 @@ class SubmitDecisionView extends React.PureComponent {
         Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
       </p>
       <hr />
-      {decisionType === 'omo' && <RadioField
+      {decisionType.includes('OMO') && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
