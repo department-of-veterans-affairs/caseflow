@@ -4,66 +4,43 @@ namespace :local do
   namespace :vacols do
     desc "Starts and sets up a dockerized local VACOLS"
     task setup: :environment do
-      Dir.chdir(Rails.root.join("vacols")) do
-        puts "Removing existing volumes"
-        `docker-compose down -v`
-        puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
-        `docker-compose up &> '../tmp/vacols.log' &`
+      puts "Stopping vacols-db and removing existing volumes"
+      `docker-compose stop vacols-db`
+      `docker-compose rm -f -v vacols-db`
+      puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
+      `docker-compose up vacols-db &> './tmp/vacols.log' &`
 
-        # Loop until setup is complete. At most 10 minutes
-        puts "Waiting for the database to be ready"
-        setup_complete = false
-        600.times do
-          if `grep -q 'Done ! The database is ready for use' ../tmp/vacols.log; echo $?` == "0\n"
-            setup_complete = true
+      # Loop until setup is complete. At most 10 minutes
+      puts "Waiting for the database to be ready"
+      setup_complete = false
+      600.times do
+        if `grep -q 'Done ! The database is ready for use' ./tmp/vacols.log; echo $?` == "0\n"
+          setup_complete = true
+          break
+        end
+        sleep 1
+      end
+
+      if setup_complete
+        puts "Updating schema"
+        schema_complete = false
+        120.times do
+          output = `docker exec --tty -i VACOLS_DB bash -c \
+          "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
+          if !output.include?("SP2-0640: Not connected")
+            schema_complete = true
             break
           end
           sleep 1
         end
 
-        if setup_complete
-          puts "Updating schema"
-          schema_complete = false
-          120.times do
-            output = `docker exec --tty -i VACOLS_DB bash -c \
-            "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
-            if !output.include?("SP2-0640: Not connected")
-              schema_complete = true
-              break
-            end
-            sleep 1
-          end
-
-          if schema_complete
-            puts "Schema loaded"
-          else
-            puts "Schema load failed"
-          end
+        if schema_complete
+          puts "Schema loaded"
         else
-          puts "Failed to setup database"
+          puts "Schema load failed"
         end
-      end
-    end
-
-    desc "Starts up existing database"
-    task start: :environment do
-      Dir.chdir(Rails.root.join("vacols")) do
-        puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
-        `docker-compose up &> '../tmp/vacols.log' &`
-      end
-    end
-
-    desc "Stops a running database"
-    task stop: :environment do
-      Dir.chdir(Rails.root.join("vacols")) do
-        `docker-compose down`
-      end
-    end
-
-    desc "Outputs logs from database"
-    task logs: :environment do
-      Dir.chdir(Rails.root.join("vacols")) do
-        puts `cat '../tmp/vacols.log'`
+      else
+        puts "Failed to setup database"
       end
     end
 
@@ -92,7 +69,7 @@ namespace :local do
       puts "Getting data from VACOLS, sanitizing it, and dumping it to local files."
 
       case_descriptors = []
-      CSV.foreach(Rails.root.join("vacols", "cases.csv"), headers: true) do |row|
+      CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
         case_descriptors << row.to_h
       end
 
@@ -135,7 +112,7 @@ namespace :local do
     private
 
     def vbms_record_from_case(cases, case_descriptors)
-      CSV.open(Rails.root.join("vacols", "vbms_setup.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("local/vacols", "vbms_setup.csv"), "wb") do |csv|
         csv << %w[vbms_id documents]
         cases.each_with_index do |c, i|
           csv << [c.bfcorlid, case_descriptors[i]["vbms_id"]]
@@ -161,7 +138,7 @@ namespace :local do
     def read_csv(klass, date_shift)
       items = []
       klass.delete_all
-      CSV.foreach(Rails.root.join("vacols", klass.name + "_dump.csv"), headers: true) do |row|
+      CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
         h = row.to_h
         items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
       end
@@ -177,7 +154,7 @@ namespace :local do
     end
 
     def write_csv(klass, rows)
-      CSV.open(Rails.root.join("vacols", klass.name + "_dump.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
         rows.flatten.each do |row|
