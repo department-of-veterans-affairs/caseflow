@@ -9,24 +9,43 @@ module IssueMapper
     vacols_id: :isskey
   }.freeze
 
-  def self.rename_and_validate_vacols_attrs(issue_attrs)
-    issue_attrs = slice_attributes(issue_attrs.symbolize_keys)
-    if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
-                                            issue: issue_attrs[:isscode],
-                                            level_1: issue_attrs[:isslev1],
-                                            level_2: issue_attrs[:isslev2],
-                                            level_3: issue_attrs[:isslev3]).size != 1
-      fail IssueRepository::IssueError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
-    end
-    issue_attrs
-  end
+  class << self
+    def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
+      issue_attrs = rename(issue_attrs.symbolize_keys)
 
-  def self.slice_attributes(issue_attrs)
-    [:program, :issue, :level_1, :level_2, :level_3, :note, :vacols_id].each_with_object({}) do |k, result|
-      # skip only if the key is not passed, if the key is passed and the value is nil - include that
-      next unless issue_attrs.keys.include? k
-      result[COLUMN_NAMES[k]] = issue_attrs[k]
-      result
+      validate!(issue_attrs)
+
+      case action
+      when :create
+        issue_attrs[:issaduser] = slogid
+        issue_attrs[:issadtime] = VacolsHelper.local_time_with_utc_timezone
+      when :update
+        issue_attrs[:issmduser] = slogid
+        issue_attrs[:issmdtime] = VacolsHelper.local_time_with_utc_timezone
+      end
+      issue_attrs
+    end
+
+    private
+
+    def validate!(issue_attrs)
+      return if (issue_attrs.keys & [:issprog, :isscode, :isslev1, :isslev2, :isslev3]).empty?
+      if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
+                                              issue: issue_attrs[:isscode],
+                                              level_1: issue_attrs[:isslev1],
+                                              level_2: issue_attrs[:isslev2],
+                                              level_3: issue_attrs[:isslev3]).size != 1
+        fail IssueRepository::IssueError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
+      end
+    end
+
+    def rename(issue_attrs)
+      COLUMN_NAMES.keys.each_with_object({}) do |k, result|
+        # skip only if the key is not passed, if the key is passed and the value is nil - include that
+        next unless issue_attrs.keys.include? k
+        result[COLUMN_NAMES[k]] = issue_attrs[k]
+        result
+      end
     end
   end
 end

@@ -29,7 +29,7 @@ class Fakes::VBMSService
   end
 
   def self.load_vbms_ids_mappings
-    file_path = Rails.root.join("vacols", "vbms_setup.csv")
+    file_path = Rails.root.join("local", "vacols", "vbms_setup.csv")
 
     return if !File.exist?(file_path) || @load_vbms_ids_mappings
 

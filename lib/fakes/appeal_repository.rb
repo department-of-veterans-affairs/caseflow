@@ -333,6 +333,7 @@ class Fakes::AppealRepository
   # 12555555 has no active appeals
   # 13555555 has no ramp election
   # 14555555 has no compensation issues
+  # 16555555 throws a sensitivity error
   # rubocop:disable Metrics/MethodLength
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
@@ -399,6 +400,11 @@ class Fakes::AppealRepository
     Generators::Appeal.build(
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
+    )
+
+    Generators::Appeal.build(
+      vbms_id: "16555555C",
+      inaccessible: true
     )
   end
   # rubocop:enable Metrics/MethodLength

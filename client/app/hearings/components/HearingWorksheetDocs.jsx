@@ -72,7 +72,7 @@ class HearingWorksheetDocs extends Component {
             <div>Docs since Certification:</div>
             <div>{appeal.cached_number_of_documents_after_certification}</div>
           </div>
-
+          <div className="cf-hearings-divider"></div>
         </div>
         </div>;
       })}
