@@ -7,7 +7,7 @@ class IntakesController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Mail Intake")
+    verify_authorized_roles("Mail Intake", "Admin Intake")
   end
 
   def verify_feature_enabled

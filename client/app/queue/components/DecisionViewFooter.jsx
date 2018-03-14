@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 const DecisionViewFooter = ({ buttons }) => <div {...fullWidth}>
   {buttons.map((button, idx) => <Button
+    id={button.id}
     key={idx}
     onClick={button.callback || _.noop}
     willNeverBeLoading
