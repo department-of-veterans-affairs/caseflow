@@ -6,12 +6,26 @@ module IssueMapper
     level_2: :isslev2,
     level_3: :isslev3,
     note: :issdesc,
+    disposition: :issdc,
+    disposition_date: :issdcls,
     vacols_id: :isskey
+  }.freeze
+
+  DISPOSITIONS = {
+    "1" => "Allowed",
+    "3" => "Remanded",
+    "4" => "Denied",
+    "5" => "Vacated",
+    "6" => "Dismissed, Other",
+    "8" => "Dismissed, Death",
+    "9" => "Withdrawn"
   }.freeze
 
   class << self
     def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
       issue_attrs = rename(issue_attrs.symbolize_keys)
+
+      return {} if issue_attrs.blank?
 
       validate!(issue_attrs)
 
@@ -43,6 +57,13 @@ module IssueMapper
       COLUMN_NAMES.keys.each_with_object({}) do |k, result|
         # skip only if the key is not passed, if the key is passed and the value is nil - include that
         next unless issue_attrs.keys.include? k
+
+        if k == :disposition
+          code = DISPOSITIONS.key(issue_attrs[k])
+          fail IssueRepository::IssueError, "Not allowed disposition: #{issue_attrs}" unless code
+          issue_attrs[k] = code
+        end
+
         result[COLUMN_NAMES[k]] = issue_attrs[k]
         result
       end
