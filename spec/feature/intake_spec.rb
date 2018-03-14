@@ -167,17 +167,11 @@ RSpec.feature "RAMP Intake" do
       end
 
       scenario "Search for a veteran that has a RAMP election already processed" do
-        ramp_election = RampElection.create!(
+        RampElection.create!(
           veteran_file_number: "12341234",
           notice_date: 7.days.ago,
-          receipt_date: 5.days.ago
-        )
-
-        RampElectionIntake.create!(
-          user: current_user,
-          detail: ramp_election,
-          completed_at: Time.zone.now,
-          completion_status: :success
+          receipt_date: 5.days.ago,
+          end_product_reference_id: "786767"
         )
 
         # Validate you're redirected back to the form select page if you haven't started yet
