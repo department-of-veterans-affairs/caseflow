@@ -1,4 +1,3 @@
-import ApiUtil from '../util/ApiUtil';
 import { ACTIONS } from './constants';
 import { ACTIONS as UIACTIONS } from './uiReducer/constants';
 import {
@@ -59,21 +58,20 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const saveDecision = (vacolsId, params) => (dispatch) => {
+export const requestSaveDecision = () => (dispatch) => {
   dispatch(hideErrorMessage('decision'));
   dispatch({ type: UIACTIONS.REQUEST_SAVE_DECISION });
+};
 
-  ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, params).then(
-    () => {
-      // todo: display success banner on /queue (#4479)
-      dispatch({ type: UIACTIONS.SAVE_DECISION_SUCCESS });
-    },
-    (resp) => {
-      const errors = JSON.parse(resp.response.text).errors;
+export const saveDecisionSuccess = () => ({
+  type: UIACTIONS.SAVE_DECISION_SUCCESS
+});
 
-      dispatch(showErrorMessage('decision', errors[0]));
-      dispatch({ type: UIACTIONS.SAVE_DECISION_FAILURE });
-    });
+export const saveDecisionFailure = (resp) => (dispatch) => {
+  const errors = JSON.parse(resp.response.text).errors;
+
+  dispatch(showErrorMessage('decision', errors[0]));
+  dispatch({ type: UIACTIONS.SAVE_DECISION_FAILURE });
 };
 
 export const startEditingAppeal = (vacolsId) => ({

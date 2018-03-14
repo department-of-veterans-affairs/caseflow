@@ -16,7 +16,7 @@ import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
-  startEditingAppeal,
+  startEditingAppeal
 } from './QueueActions';
 import {
   pushBreadcrumb,

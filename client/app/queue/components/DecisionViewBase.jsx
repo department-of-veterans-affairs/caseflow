@@ -59,7 +59,7 @@ export default function decisionViewBase(ComponentToWrap) {
     goToStep = (url) => {
       this.props.history.push(url);
       window.scrollTo(0, 0);
-    }
+    };
 
     goToPrevStep = () => {
       const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
@@ -77,7 +77,23 @@ export default function decisionViewBase(ComponentToWrap) {
         return this.props.highlightInvalidFormItems(true);
       }
 
-      if (!nextStepHook || (nextStepHook && nextStepHook())) {
+      if (!nextStepHook) {
+        return this.goToStep(this.props.nextStep);
+      }
+
+      const hookResult = nextStepHook();
+
+      // If nextStepHook returns a Promise (i.e. when submitting a decision),
+      // wait until the Promise has resolved to proceed.
+      if (hookResult.then && _.isFunction(hookResult.then)) {
+        return hookResult.then((result) => {
+          if (!result) {
+            return this.props.highlightInvalidFormItems(true);
+          }
+
+          return this.goToStep(this.props.nextStep);
+        });
+      } else if (hookResult === true) {
         return this.goToStep(this.props.nextStep);
       }
     };

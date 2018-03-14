@@ -5,11 +5,14 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
+import ApiUtil from '../util/ApiUtil';
 
 import {
   setDecisionOptions,
   resetDecisionOptions,
-  saveDecision
+  requestSaveDecision,
+  saveDecisionSuccess,
+  saveDecisionFailure
 } from './QueueActions';
 import {
   setSelectingJudge,
@@ -100,10 +103,11 @@ class SubmitDecisionView extends React.PureComponent {
         opts: decision
       }
     } = this.props;
+    // todo: generify omoType field name
     const params = {
       data: {
         queue: {
-          work_product: decision.omoType, // todo: generify omoType field name
+          work_product: decision.omoType,
           reviewing_judge_id: decision.judge.value,
           document_id: decision.documentId,
           type: decisionType,
@@ -111,10 +115,21 @@ class SubmitDecisionView extends React.PureComponent {
           note: decision.notes
         }
       }
-    }
+    };
 
-    // todo: proceed on request resolve
-    return this.props.saveDecision(vacolsId, params);
+    this.props.requestSaveDecision();
+
+    return ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, params).then(
+      () => {
+        // todo: display success banner on /queue (#4479)
+        this.props.saveDecisionSuccess();
+        return true;
+      },
+      (resp) => {
+        this.props.saveDecisionFailure(resp);
+        return false;
+      }
+    );
   }
 
   getFooterButtons = () => [{
@@ -251,7 +266,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems,
-  saveDecision
+  requestSaveDecision,
+  saveDecisionSuccess,
+  saveDecisionFailure
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));
