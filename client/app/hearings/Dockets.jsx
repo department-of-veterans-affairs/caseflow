@@ -9,6 +9,9 @@ import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
+import { CATEGORIES, ACTIONS } from './analytics';
+
+const PAST_HEARING_TAB_INDEX = 1;
 
 const tableBorder = css({
   border: '1px solid #dadbdc',
@@ -28,6 +31,23 @@ const tabBodyStyling = css({
 
 export class Dockets extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      viewingPastTab: false
+    };
+  }
+
+  onTabSelected = (tabNumber) => {
+    if (tabNumber === PAST_HEARING_TAB_INDEX) {
+      this.togglePastDocketsTab(true);
+      window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, ACTIONS.PAST_HEARINGS_TAB);
+    } else {
+      this.togglePastDocketsTab(false);
+    }
+  }
+
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
@@ -39,14 +59,27 @@ export class Dockets extends React.Component {
     return index;
   }
 
+  dateClicked = () => {
+    const action = this.state.viewingPastTab ? ACTIONS.OPEN_PAST_HEARING_DOCKET :
+      ACTIONS.OPEN_CURRENT_HEARING_DOCKET;
+
+    window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, action);
+  }
+
   linkToDailyDocket = (docket) => {
     if (docket.master_record) {
       return moment(docket.date).format('ddd M/DD/YYYY');
     }
 
-    return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
+    return <Link onClick={this.dateClicked} to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
       {moment(docket.date).format('ddd M/DD/YYYY')}
     </Link>;
+  }
+
+  togglePastDocketsTab = (isPastTab) => {
+    this.setState({
+      viewingPastTab: isPastTab
+    });
   }
 
   getScheduledCount = (docket) => {
