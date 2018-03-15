@@ -89,7 +89,7 @@ export default function decisionViewBase(ComponentToWrap) {
       const hookResult = nextStepHook();
 
       // nextStepHook may return a Promise, in which case do nothing here.
-      if (hookResult && hookResult === true) {
+      if (hookResult === true) {
         return this.goToStep(this.props.nextStep);
       }
     };

@@ -55,8 +55,13 @@ class QueueDetailView extends React.PureComponent {
       vacolsId,
       history
     } = this.props;
-    const route = props.value === 'omo' ? 'submit' : 'dispositions';
-    const decisionType = props.value === 'omo' ? 'OMORequest' : 'DraftDecision';
+    let route = 'dispositions';
+    let decisionType = 'DraftDecision';
+
+    if (props.value === 'omo') {
+      route = 'submit';
+      decisionType = 'OMORequest';
+    }
 
     this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
