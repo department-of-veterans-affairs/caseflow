@@ -20,6 +20,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
+    parallelism: 2
     steps:
       - checkout
 
@@ -57,7 +58,8 @@ jobs:
           name: Tests
           command: |
             mkdir -p ~/test-results/rspec
-            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml
+            testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
+            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
       - store_test_results:
           path: ~/test-results
