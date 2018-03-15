@@ -50,7 +50,7 @@ export default function decisionViewBase(ComponentToWrap) {
       _.defaults(nextButton, {
         classNames: ['cf-right-side'],
         callback: this.goToNextStep,
-        disabled: this.props.pendingSave
+        disabled: this.props.savePending
       });
 
       return [backButton, nextButton];
@@ -95,7 +95,7 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     componentDidUpdate = (prevProps) => {
-      if (prevProps.pendingSave && !this.props.pendingSave) {
+      if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
           this.goToStep(this.props.nextStep);
         } else {
@@ -115,7 +115,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'pendingSave', 'saveSuccessful');
+  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'savePending', 'saveSuccessful');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     highlightInvalidFormItems

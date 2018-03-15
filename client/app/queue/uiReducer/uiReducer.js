@@ -13,7 +13,7 @@ export const initialState = {
   breadcrumbs: [],
   highlightFormItems: false,
   errorState: initialErrorState,
-  pendingSave: false,
+  savePending: false,
   saveSuccessful: null
 };
 
@@ -55,17 +55,17 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.REQUEST_SAVE:
     return update(state, {
-      pendingSave: { $set: true },
+      savePending: { $set: true },
       saveSuccessful: { $set: null }
     });
   case ACTIONS.SAVE_SUCCESS:
     return update(state, {
-      pendingSave: { $set: false },
+      savePending: { $set: false },
       saveSuccessful: { $set: true }
     });
   case ACTIONS.SAVE_FAILURE:
     return update(state, {
-      pendingSave: { $set: false },
+      savePending: { $set: false },
       saveSuccessful: { $set: false }
     });
   case ACTIONS.RESET_ERROR_MESSAGES:
