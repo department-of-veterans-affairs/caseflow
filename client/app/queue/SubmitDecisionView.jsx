@@ -93,10 +93,10 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['documentId', 'judge'];
+    const requiredParams = ['document_id', 'judge'];
 
     if (decisionType.includes('OMO')) {
-      requiredParams.push('workProduct');
+      requiredParams.push('work_product');
     }
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
@@ -111,19 +111,16 @@ class SubmitDecisionView extends React.PureComponent {
       appeal: { attributes: { issues } },
       decision: {
         type: decisionType,
-        opts: decision
+        opts: decisionOpts
       }
     } = this.props;
     const params = {
       data: {
         queue: {
-          work_product: decision.workProduct,
-          reviewing_judge_id: this.props.judges[decision.judge.value].id,
-          document_id: decision.documentId,
+          reviewing_judge_id: this.props.judges[decisionOpts.judge.value].id,
           type: decisionType,
-          overtime: decision.overtime || false,
-          note: decision.notes,
-          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons'))
+          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')),
+          ...decisionOpts
         }
       }
     };
@@ -223,13 +220,13 @@ class SubmitDecisionView extends React.PureComponent {
       {decisionType.includes('OMO') && <RadioField
         name="omo_type"
         label="OMO type:"
-        onChange={(workProduct) => this.props.setDecisionOptions({ workProduct })}
-        value={decisionOpts.workProduct}
+        onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
+        value={decisionOpts.work_product}
         vertical
         required
         options={omoTypes}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.workProduct) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
@@ -242,16 +239,16 @@ class SubmitDecisionView extends React.PureComponent {
         label="Document ID:"
         name="document_id"
         required
-        errorMessage={(highlightFormItems && !decisionOpts.documentId) ? ERROR_FIELD_REQUIRED : ''}
-        onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
-        value={decisionOpts.documentId}
+        errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
+        onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
+        value={decisionOpts.document_id}
       />
       {this.getJudgeSelectComponent()}
       <TextareaField
         label="Notes:"
         name="notes"
         value={decisionOpts.notes}
-        onChange={(notes) => this.props.setDecisionOptions({ notes })}
+        onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
     </React.Fragment>;
