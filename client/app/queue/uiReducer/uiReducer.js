@@ -2,10 +2,8 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 
 const initialErrorState = {
-  decision: {
-    visible: false,
-    message: null
-  }
+  visible: false,
+  message: null
 };
 
 export const initialState = {
@@ -17,17 +15,15 @@ export const initialState = {
   saveSuccessful: null
 };
 
-const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) => update(state, {
+const setErrorMessageState = (state, isVisible = false, errorMsg = null) => update(state, {
   errorState: {
-    [errorType]: {
-      visible: { $set: isVisible },
-      message: { $set: isVisible ? errorMsg : null }
-    }
+    visible: { $set: isVisible },
+    message: { $set: isVisible ? errorMsg : null }
   }
 });
 
-const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
-const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
+const hideErrorMessage = (state) => setErrorMessageState(state);
+const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -73,9 +69,9 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       errorState: { $set: initialErrorState }
     });
   case ACTIONS.HIDE_ERROR_MESSAGE:
-    return hideErrorMessage(state, action.payload.messageType);
+    return hideErrorMessage(state);
   case ACTIONS.SHOW_ERROR_MESSAGE:
-    return showErrorMessage(state, action.payload.messageType, action.payload.errorMessage);
+    return showErrorMessage(state, action.payload.errorMessage);
   default:
     return state;
   }

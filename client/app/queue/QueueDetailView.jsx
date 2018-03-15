@@ -18,7 +18,8 @@ import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
   startEditingAppeal,
-  cancelEditingAppeal
+  cancelEditingAppeal,
+  resetDecisionOptions
 } from './QueueActions';
 import {
   pushBreadcrumb,
@@ -57,6 +58,7 @@ class QueueDetailView extends React.PureComponent {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
     const decisionType = props.value === 'omo' ? 'OMORequest' : 'DraftDecision';
 
+    this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.cancelEditingAppeal(vacolsId);
     }
@@ -126,6 +128,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   startEditingAppeal,
   cancelEditingAppeal,
+  resetDecisionOptions,
   pushBreadcrumb,
   resetBreadcrumbs
 }, dispatch);

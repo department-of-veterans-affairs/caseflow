@@ -130,8 +130,7 @@ class SubmitDecisionView extends React.PureComponent {
 
     this.props.requestSave(
       params,
-      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`,
-      'decision'
+      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`
     );
   }
 
@@ -271,7 +270,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
-  error: state.ui.errorState.decision,
+  error: state.ui.errorState,
   ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 

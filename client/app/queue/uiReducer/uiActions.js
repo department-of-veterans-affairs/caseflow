@@ -5,19 +5,15 @@ export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
 });
 
-export const showErrorMessage = (messageType, errorMessage) => ({
+export const showErrorMessage = (errorMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
-    messageType,
     errorMessage
   }
 });
 
-export const hideErrorMessage = (messageType) => ({
-  type: ACTIONS.HIDE_ERROR_MESSAGE,
-  payload: {
-    messageType
-  }
+export const hideErrorMessage = () => ({
+  type: ACTIONS.HIDE_ERROR_MESSAGE
 });
 
 export const highlightInvalidFormItems = (highlight) => ({
@@ -49,19 +45,19 @@ export const saveSuccess = () => ({
   type: ACTIONS.SAVE_SUCCESS
 });
 
-export const saveFailure = (resp, messageType) => (dispatch) => {
+export const saveFailure = (resp) => (dispatch) => {
   const errors = JSON.parse(resp.response.text).errors;
 
-  dispatch(showErrorMessage(messageType, errors[0]));
+  dispatch(showErrorMessage(errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 };
 
-export const requestSave = (params, url, messageType) => (dispatch) => {
-  dispatch(hideErrorMessage(messageType));
+export const requestSave = (params, url) => (dispatch) => {
+  dispatch(hideErrorMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
   return ApiUtil.post(url, params).then(
     () => dispatch(saveSuccess()),
-    (resp) => dispatch(saveFailure(resp, messageType))
+    (resp) => dispatch(saveFailure(resp))
   );
 };
