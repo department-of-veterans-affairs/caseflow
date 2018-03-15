@@ -63,6 +63,8 @@ export const mapDataToInitialRampElection = (data = { serverIntake: {} }) => (
     isComplete: false,
     finishConfirmed: false,
     finishConfirmedError: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED,
       completeIntake: REQUEST_STATE.NOT_STARTED
@@ -183,6 +185,12 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
       requestStatus: {
         completeIntake: {
           $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });

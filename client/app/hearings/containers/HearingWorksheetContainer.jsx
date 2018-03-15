@@ -10,6 +10,8 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
 
+const PRINT_WINDOW_TIMEOUT_IN_MS = 150;
+
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
@@ -19,7 +21,8 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId)) {
+    if (!nextProps.worksheetServerError && ((!nextProps.fetchingWorksheet &&
+        !nextProps.worksheet) || (this.props.hearingId !== nextProps.hearingId))) {
       this.props.getWorksheet(nextProps.hearingId);
     }
   }
@@ -30,9 +33,14 @@ export class HearingWorksheetContainer extends React.Component {
     const query = querystring.parse(window.location.search.slice(1));
 
     if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
-      window.print();
+      window.onafterprint = this.afterPrint;
+      setTimeout(() => {
+        window.print();
+      }, PRINT_WINDOW_TIMEOUT_IN_MS);
     }
   }
+
+  afterPrint = () => window.close();
 
   render() {
     if (this.props.worksheetServerError) {
@@ -61,7 +69,8 @@ export class HearingWorksheetContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  worksheetServerError: state.worksheetServerError
+  worksheetServerError: state.worksheetServerError,
+  fetchingWorksheet: state.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => ({
