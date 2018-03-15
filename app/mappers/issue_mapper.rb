@@ -11,7 +11,7 @@ module IssueMapper
     vacols_id: :isskey
   }.freeze
 
-  ALLOWED_DISPOSITION_CODES = ["1", "3", "4", "5", "6", "8", "9"]
+  ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
 
   class << self
     def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
