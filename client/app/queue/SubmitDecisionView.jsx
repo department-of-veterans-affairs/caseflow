@@ -94,7 +94,7 @@ class SubmitDecisionView extends React.PureComponent {
     const requiredParams = ['documentId', 'judge'];
 
     if (decisionType.includes('OMO')) {
-      requiredParams.push('omoType');
+      requiredParams.push('workProduct');
     }
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
@@ -110,11 +110,10 @@ class SubmitDecisionView extends React.PureComponent {
         opts: decision
       }
     } = this.props;
-    // todo: generify omoType field name
     const params = {
       data: {
         queue: {
-          work_product: decision.omoType,
+          work_product: decision.workProduct,
           reviewing_judge_id: decision.judge.value,
           document_id: decision.documentId,
           type: decisionType,
@@ -203,13 +202,13 @@ class SubmitDecisionView extends React.PureComponent {
       {decisionType.includes('OMO') && <RadioField
         name="omo_type"
         label="OMO type:"
-        onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
-        value={decisionOpts.omoType}
+        onChange={(workProduct) => this.props.setDecisionOptions({ workProduct })}
+        value={decisionOpts.workProduct}
         vertical
         required
         options={omoTypes}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.omoType) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.workProduct) ? ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
