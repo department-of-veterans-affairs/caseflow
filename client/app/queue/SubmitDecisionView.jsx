@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
 
 import {
   setDecisionOptions,
@@ -71,12 +70,12 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
 
     switch (decisionType) {
-      case 'OMORequest':
-        return 'OMO';
-      case 'DraftDecision':
-        return 'Draft Decision';
-      default:
-        return StringUtil.titleCase(decisionType);
+    case 'OMORequest':
+      return 'OMO';
+    case 'DraftDecision':
+      return 'Draft Decision';
+    default:
+      return StringUtil.titleCase(decisionType);
     }
   };
 
