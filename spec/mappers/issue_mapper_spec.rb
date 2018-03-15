@@ -96,7 +96,7 @@ describe IssueMapper do
         let(:issue_attrs) { {} }
 
         it "returns empty hash" do
-          expect(subject).to be({})
+          expect(subject).to eq({})
         end
       end
 
