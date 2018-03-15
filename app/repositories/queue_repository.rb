@@ -9,6 +9,10 @@ class QueueRepository
     end
   end
 
+  def self.can_access_task?(css_id, vacols_id)
+    tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
+  end
+
   def self.appeals_from_tasks(tasks)
     vacols_ids = tasks.map(&:vacols_id)
 

@@ -19,7 +19,8 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId)) {
+    if (!nextProps.worksheetServerError &&
+      (!this.props.worksheet || (this.props.hearingId !== nextProps.hearingId))) {
       this.props.getWorksheet(nextProps.hearingId);
     }
   }

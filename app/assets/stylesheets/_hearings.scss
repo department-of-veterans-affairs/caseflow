@@ -515,10 +515,10 @@ $color-hearings-saving: $color-gray;
   left: -99999px;
 }
 
-.cf-hearing-divider {
-  margin: 2px auto;
-  border-bottom: 1px solid $color-gray-lighter;
+.cf-hearings-print-worksheet-header {
+  font-size: 11px;
 }
+
 
 
 @media print {
@@ -526,6 +526,7 @@ $color-hearings-saving: $color-gray;
   h2,
   h3 {
     font-family: sans-serif;
+    font-size: 11px;
   }
 
 
@@ -543,15 +544,18 @@ $color-hearings-saving: $color-gray;
       height: 0;
   }
 
+    tr {
+      border-bottom: 1px solid $color-gray-lighter;
+  }
+
+}
+
+  .cf-help-divider {
+    display: none;
  }
 
-  .cf-hearings-print-worksheet-header {
-    font-size: 11px;
- }
-
-  .cf-tab-divider {
+  .cf-hearings-divider {
     border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: -2em;
   }
 
   .cf-tab-navigation {
@@ -577,8 +581,6 @@ $color-hearings-saving: $color-gray;
 
   .cf-active + .cf-tab {
     border-left: none;
-    border-bottom: 1px solid $color-gray-lighter;
-
  }
 
   .cf-active > span {
@@ -601,7 +603,8 @@ $color-hearings-saving: $color-gray;
 
   .cf-hearings-worksheet {
     table {
-      margin-bottom: -3em;
+      margin: 1em 0 0;
+
    }
 }
 
@@ -620,6 +623,7 @@ $color-hearings-saving: $color-gray;
       font-size: 11px;
       margin-top: 0;
     }
+
  }
 
   .cf-tab-window-body-full-screen {
