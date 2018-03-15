@@ -5,6 +5,7 @@ class HearingsController < ApplicationController
 
   def update
     hearing.update(update_params)
+    raise error
     render json: hearing.to_hash(current_user.id)
   end
 

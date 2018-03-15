@@ -85,6 +85,14 @@ export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
     prepped,
     date,
     setEdited
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: 'hearing-prepped',
+      label: prepped,
+      debounceMs
+    }
   }
 });
 
@@ -94,6 +102,12 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
     hearingIndex,
     disposition,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: 'disposition-selected'
+    }
   }
 });
 
@@ -112,6 +126,13 @@ export const setAod = (hearingIndex, aod, date) => ({
     hearingIndex,
     aod,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: 'aod-selected',
+      label: aod
+    }
   }
 });
 
@@ -121,6 +142,13 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     hearingIndex,
     transcriptRequested,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: 'transcript-requested',
+      label: transcriptRequested
+    }
   }
 });
 
@@ -250,14 +278,13 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     moment(date).format('YYYY-MM-DD'), false));
 
   ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
-    then((response) => {
-      dispatch(setHearingPrepped(hearingId, response.body.prepped,
-        moment(date).format('YYYY-MM-DD'), false));
+    then(() => {
+      // request was successful
     },
     () => {
-      // we need better error handling here
-      // eslint-disable-next-line no-console
-      console.log('Prepped save failed');
+      // request failed, resetting value
+      dispatch(setHearingPrepped(hearingId, !prepped,
+        moment(date).format('YYYY-MM-DD'), false));
     });
 };
 
