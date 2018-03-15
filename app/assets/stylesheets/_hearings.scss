@@ -638,14 +638,18 @@ $color-hearings-saving: $color-gray;
     break-after: page;
   }
 
- body {
-  counter-reset: page 0;
-}
+  .cf-footer {
+    break-after: page;
+ }
 
- .cf-print-number::before {
-   counter-increment: page;
-   content: "Page " counter(page) " of " counter(page);
-   margin-left: 8px;
+  body {
+    counter-reset: page 0;
+ }
+
+  .cf-print-number::before {
+    counter-increment: page;
+    content: 'Page ' counter(page) ' of ' counter(page);
+    margin-left: 5px;
 }
 
   .cf-hearings-worksheet {
