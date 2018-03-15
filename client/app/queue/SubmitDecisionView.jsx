@@ -107,15 +107,11 @@ class SubmitDecisionView extends React.PureComponent {
   goToNextStep = () => {
     const {
       vacolsId,
-      task: {
-        attributes: { assigned_on }
-      },
+      task: { attributes: { assigned_on } },
+      appeal: { attributes: { issues } },
       decision: {
         type: decisionType,
         opts: decision
-      },
-      appeal: {
-        attributes: { issues }
       }
     } = this.props;
     const params = {

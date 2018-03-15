@@ -35,7 +35,7 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     getFooterButtons = () => {
-      const getButtons = this.wrapped && this.wrapped.getFooterButtons;
+      const getButtons = _.get(this.wrapped, 'getFooterButtons');
 
       if (!getButtons) {
         return [];
@@ -62,7 +62,7 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     goToPrevStep = () => {
-      const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
+      const prevStepHook = _.get(this.wrapped, 'goToPrevStep');
 
       if (!prevStepHook || prevStepHook()) {
         return this.goToStep(this.props.prevStep);
@@ -71,12 +71,12 @@ export default function decisionViewBase(ComponentToWrap) {
 
     goToNextStep = () => {
       // This handles moving to the next step in the flow. The wrapped
-      // component's validateForm is used to synchronously trigger highlighting
-      // form elements based on its return value. If present, the wrapped
-      // goToNextStep hook dispatches a proceed/invalid action asynchronously,
-      // which this responds to in componentDidUpdate.
-      const validation = this.wrapped && this.wrapped.validateForm;
-      const nextStepHook = this.wrapped && this.wrapped.goToNextStep;
+      // component's validateForm is used to trigger highlighting form
+      // elements. If present, the wrapped goToNextStep hook dispatches
+      // a proceed/invalid action asynchronously, which this responds
+      // to in componentDidUpdate.
+      const validation = _.get(this.wrapped, 'validateForm');
+      const nextStepHook = _.get(this.wrapped, 'goToNextStep');
 
       if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
