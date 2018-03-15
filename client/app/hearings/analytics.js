@@ -12,5 +12,10 @@ export const ACTIONS = {
   OPEN_PAST_HEARINGS_TAB: 'open-past-hearing-tab',
   OPEN_PAST_HEARING_DOCKET: 'open-past-hearing-docket',
   OPEN_CURRENT_HEARING_DOCKET: 'open-current-hearing-docket',
-  GO_BACK_TO_HEARING_DAYS: 'go-back-to-hearing-days'
+  GO_BACK_TO_HEARING_DAYS: 'go-back-to-hearing-days',
+
+  OPEN_PAST_ISSUES_TAB: 'open-past-issues-tab',
+  CLICK_ON_SAVE_TO_PDF: 'click-on-save-to-pdf',
+  SELECT_VETERAN_FROM_DROPDOWN: 'select-veteran-from-dropdown',
+  CLICK_ON_REVIEW_CLAIMS_FOLDER: 'click-on-review-claims-folder'
 };

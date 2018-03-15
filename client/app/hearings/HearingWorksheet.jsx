@@ -12,6 +12,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 import { now } from './util/DateUtil';
+import { CATEGORIES, ACTIONS } from './analytics';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -69,6 +70,7 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
+    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_SAVE_TO_PDF);
     Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
       window.open(`${window.location.pathname}/print`, '_blank');
     });
