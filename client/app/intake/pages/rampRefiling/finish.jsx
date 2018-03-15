@@ -4,7 +4,6 @@ import CancelButton from '../../components/CancelButton';
 import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import Table from '../../../components/Table';
-import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, RAMP_INTAKE_STATES, REQUEST_STATE } from '../../constants';
 import { connect } from 'react-redux';
@@ -13,6 +12,7 @@ import { setIssueSelected, setHasIneligibleIssue, setOutsideCaseflowStepsConfirm
   processFinishError } from '../../actions/rampRefiling';
 import _ from 'lodash';
 import classNames from 'classnames';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   onCheckIssue = (issueId) => (checked) => this.props.setIssueSelected(issueId, checked)
@@ -36,7 +36,9 @@ class Finish extends React.PureComponent {
       outsideCaseflowStepsConfirmed,
       outsideCaseflowStepsError,
       issuesSelectedError,
-      requestState
+      requestState,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -92,9 +94,9 @@ class Finish extends React.PureComponent {
       <h1>Finish processing RAMP Selection form</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <Alert title="Something went wrong" type="error" lowerMargin>
-          Please try again. If the problem persists, please contact Caseflow support.
-        </Alert>
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
       }
 
       <ol className="cf-bare-list" ref={this.setOutsideCaseflowStepsNode}>
@@ -182,7 +184,9 @@ export default connect(
     outsideCaseflowStepsError: state.rampRefiling.outsideCaseflowStepsError,
     issuesSelectedError: state.rampRefiling.issuesSelectedError,
     finishErrorProcessed: state.rampRefiling.finishErrorProcessed,
-    requestState: state.rampRefiling.requestStatus.completeIntake
+    requestState: state.rampRefiling.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.rampRefiling.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.rampRefiling.requestStatus.completeIntakeErrorData
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected,
