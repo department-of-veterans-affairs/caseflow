@@ -98,8 +98,21 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
         return true;
       },
       (error) => {
+        let responseObject = {};
+
+        try {
+          responseObject = JSON.parse(error.response.text);
+        } catch (ex) { /* pass */ }
+
+        const responseErrorCode = responseObject.error_code;
+        const responseErrorData = responseObject.error_data;
+
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          payload: {
+            responseErrorCode,
+            responseErrorData
+          },
           meta: { analytics }
         });
         throw error;
