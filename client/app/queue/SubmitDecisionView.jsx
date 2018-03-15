@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import {
   setDecisionOptions,
@@ -50,13 +51,16 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
+    const judge = this.props.judges[task.added_by_css_id];
 
-    this.props.setDecisionOptions({
-      judge: {
-        label: task.added_by_name,
-        value: task.added_by_css_id
-      }
-    });
+    if (judge) {
+      this.props.setDecisionOptions({
+        judge: {
+          label: task.added_by_name,
+          value: judge.id
+        }
+      });
+    }
   };
 
   getBreadcrumb = () => ({
@@ -139,11 +143,18 @@ class SubmitDecisionView extends React.PureComponent {
     const {
       selectingJudge,
       judges,
-      decision: { opts: decisionOpts }
+      decision: { opts: decisionOpts },
+      highlightFormItems
     } = this.props;
+    let componentContent = <span />;
+    const selectedJudge = _.get(decisionOpts.judge, 'label');
+    const shouldDisplayError = highlightFormItems && !selectedJudge;
+    const fieldClasses = classNames({
+      'usa-input-error': shouldDisplayError
+    });
 
     if (selectingJudge) {
-      return <React.Fragment>
+      componentContent = <React.Fragment>
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
@@ -157,21 +168,27 @@ class SubmitDecisionView extends React.PureComponent {
           }}
           hideLabel />
       </React.Fragment>;
+    } else {
+      componentContent = <React.Fragment>
+        {selectedJudge && <span>{selectedJudge}</span>}
+        <Button
+          id="select-judge"
+          classNames={['cf-btn-link']}
+          willNeverBeLoading
+          styling={selectJudgeButtonStyling(selectedJudge)}
+          onClick={() => this.props.setSelectingJudge(true)}>
+          Select {selectedJudge ? 'another' : 'a'} judge
+        </Button>
+      </React.Fragment>;
     }
 
-    const selectedJudge = _.get(decisionOpts.judge, 'label');
-
-    return <React.Fragment>
-      {selectedJudge && <span>{selectedJudge}</span>}
-      <Button
-        id="select-judge"
-        classNames={['cf-btn-link']}
-        willNeverBeLoading
-        styling={selectJudgeButtonStyling(selectedJudge)}
-        onClick={() => this.props.setSelectingJudge(true)}>
-        Select {selectedJudge ? 'another' : 'a'} judge
-      </Button>
-    </React.Fragment>;
+    return <div className={fieldClasses}>
+      <div>Submit to judge:</div>
+      {shouldDisplayError && <span className="usa-input-error-message">
+        {ERROR_FIELD_REQUIRED}
+      </span>}
+      {componentContent}
+    </div>;
   };
 
   render = () => {
@@ -228,7 +245,6 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
         value={decisionOpts.documentId}
       />
-      <span>Submit to judge:</span><br />
       {this.getJudgeSelectComponent()}
       <TextareaField
         label="Notes:"
