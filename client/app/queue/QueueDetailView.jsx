@@ -21,7 +21,7 @@ import {
 import {
   pushBreadcrumb,
   resetBreadcrumbs
-} from './uiReducer/actions';
+} from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });

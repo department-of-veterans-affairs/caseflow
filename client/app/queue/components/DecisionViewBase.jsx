@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import {
   pushBreadcrumb,
   highlightInvalidFormItems
-} from '../uiReducer/actions';
+} from '../uiReducer/uiActions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';

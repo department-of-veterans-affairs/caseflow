@@ -1,4 +1,4 @@
-import { ACTIONS } from './constants';
+import { ACTIONS } from './uiConstants';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES

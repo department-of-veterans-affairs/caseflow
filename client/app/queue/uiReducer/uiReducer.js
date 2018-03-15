@@ -1,5 +1,5 @@
 import { update } from '../../util/ReducerUtil';
-import { ACTIONS } from './constants';
+import { ACTIONS } from './uiConstants';
 
 const initialErrorState = {
   decision: {

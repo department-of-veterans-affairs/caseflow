@@ -1,9 +1,9 @@
 import { ACTIONS } from './constants';
-import { ACTIONS as UIACTIONS } from './uiReducer/constants';
+import { ACTIONS as UIACTIONS } from './uiReducer/uiConstants';
 import {
   showErrorMessage,
   hideErrorMessage
-} from './uiReducer/actions';
+} from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({

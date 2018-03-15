@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { ACTIONS } from './constants';
 
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
-import uiReducer from './uiReducer/reducer';
+import uiReducer from './uiReducer/uiReducer';
 
 export const initialState = {
   judges: {},

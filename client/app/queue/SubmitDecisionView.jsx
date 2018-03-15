@@ -18,7 +18,7 @@ import {
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems
-} from './uiReducer/actions';
+} from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
