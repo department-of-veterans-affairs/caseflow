@@ -27,6 +27,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
+import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
@@ -183,7 +184,7 @@ class SubmitDecisionView extends React.PureComponent {
     }
 
     return <div className={fieldClasses}>
-      <div>Submit to judge:</div>
+      <label>Submit to judge: <RequiredIndicator /></label>
       {shouldDisplayError && <span className="usa-input-error-message">
         {ERROR_FIELD_REQUIRED}
       </span>}
