@@ -70,7 +70,14 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType
     } = this.props.decision;
 
-    return decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
+    switch (decisionType) {
+      case 'OMORequest':
+        return 'OMO';
+      case 'DraftDecision':
+        return 'Draft Decision';
+      default:
+        return StringUtil.titleCase(decisionType);
+    }
   };
 
   goToPrevStep = () => {
