@@ -49,7 +49,8 @@ class Search extends React.PureComponent {
       },
       veteran_not_accessible: {
         title: 'You don\'t have permission to view this veteran\'s information​',
-        body: 'Please enter a valid Veteran ID and try again.'
+        body: 'It looks like you do not have the necessary level of access to view this information.' +
+          ' Please alert your manager so they can assign the form to someone else.'
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',

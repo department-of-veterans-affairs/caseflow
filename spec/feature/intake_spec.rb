@@ -21,12 +21,15 @@ RSpec.feature "RAMP Intake" do
     ]
   end
 
+  let(:inaccessible) { false }
+
   let!(:appeal) do
     Generators::Appeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,
-      veteran: veteran
+      veteran: veteran,
+      inaccessible: inaccessible
     )
   end
 
@@ -43,6 +46,16 @@ RSpec.feature "RAMP Intake" do
       vacols_record: :activated,
       issues: issues
     )
+  end
+
+  let(:ep_already_exists_error) do
+    VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+      "A duplicate claim for this EP code already exists in CorpDB. Please " \
+      "use a different EP code modifier. GUID: 13fcd</faultstring>")
+  end
+
+  let(:unknown_error) do
+    VBMS::HTTPError.new("500", "<faultstring>Unknown</faultstring>")
   end
 
   context "As a user with Admin Intake role" do
@@ -83,6 +96,25 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
+    end
+
+    context "Veteran has too high of a sensitivity level for user" do
+      let(:inaccessible) { true }
+
+      scenario "Search for a veteran with a sensitivity error" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("You don't have permission to view this veteran's information")
+      end
     end
 
     scenario "Search for a veteran who's form is already being processed" do
@@ -365,6 +397,34 @@ RSpec.feature "RAMP Intake" do
         # Validate that the intake is no longer able to be worked on
         visit "/intake/finish"
         expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
+
+      scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: Date.new(2017, 8, 7)
+        )
+
+        intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+        intake.start!
+
+        visit "/intake"
+
+        within_fieldset("Which review lane did the veteran select?") do
+          find("label", text: "Higher Level Review with Informal Conference").click
+        end
+
+        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_content("Finish processing Higher-Level Review election")
+
+        click_label("confirm-finish")
+        safe_click "button#button-submit-review"
+
+        expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
       end
     end
 
@@ -711,6 +771,45 @@ RSpec.feature "RAMP Intake" do
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+      end
+
+      scenario "Complete intake for RAMP Refiling fails due to duplicate EP" do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        ramp_election = RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 5.days.ago,
+          receipt_date: 4.days.ago,
+          end_product_reference_id: Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { status_type_code: "CLR" }
+          ).claim_id
+        )
+
+        Generators::Contention.build(
+          claim_id: ramp_election.end_product_reference_id,
+          text: "Left knee rating increase"
+        )
+
+        visit "/intake/search"
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        within_fieldset("Which review lane did the Veteran select?") do
+          find("label", text: "Higher Level Review", match: :prefer_exact).click
+        end
+        safe_click "#button-submit-review"
+        click_label("confirm-outside-caseflow-steps")
+        find("label", text: "Left knee rating increase").click
+        find("label", text: "The veteran's form lists at least one ineligible contention").click
+        safe_click "#finish-intake"
+
+        expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
       end
     end
   end
