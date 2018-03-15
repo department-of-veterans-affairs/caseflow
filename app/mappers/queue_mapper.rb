@@ -31,6 +31,8 @@ module QueueMapper
     end
     VacolsHelper.validate_presence(update_attrs, [:deprod, :dedocid])
     update_attrs.merge(dereceive: VacolsHelper.local_date_with_utc_timezone)
+  rescue VacolsHelper::MissingRequiredFieldError => e
+    raise QueueRepository::QueueError, e
   end
 
   def self.work_product_to_vacols_code(work_product, overtime)
