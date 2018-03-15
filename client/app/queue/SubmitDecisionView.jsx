@@ -105,6 +105,9 @@ class SubmitDecisionView extends React.PureComponent {
   goToNextStep = () => {
     const {
       vacolsId,
+      task: {
+        attributes: { assigned_on }
+      },
       decision: {
         type: decisionType,
         opts: decision
@@ -122,8 +125,9 @@ class SubmitDecisionView extends React.PureComponent {
         }
       }
     };
+    const taskId = `${vacolsId}-${assigned_on.split('T')[0]}`;
 
-    return this.props.requestSaveDecision(vacolsId, params);
+    return this.props.requestSaveDecision(taskId, params);
   }
 
   getFooterButtons = () => [{

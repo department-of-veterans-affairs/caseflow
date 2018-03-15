@@ -59,11 +59,11 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const requestSaveDecision = (vacolsId, params) => (dispatch) => {
+export const requestSaveDecision = (taskId, params) => (dispatch) => {
   dispatch(hideErrorMessage('decision'));
   dispatch({ type: UIACTIONS.REQUEST_SAVE_DECISION });
 
-  return ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, params).then(
+  return ApiUtil.post(`/queue/tasks/${taskId}/complete`, params).then(
     () => dispatch(saveDecisionSuccess()),
     (resp) => dispatch(saveDecisionFailure(resp))
   );
