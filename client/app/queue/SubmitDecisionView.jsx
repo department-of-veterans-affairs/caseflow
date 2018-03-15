@@ -93,7 +93,7 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['document_id', 'judge'];
+    const requiredParams = ['document_id', 'reviewing_judge_id'];
 
     if (decisionType.includes('OMO')) {
       requiredParams.push('work_product');
@@ -109,18 +109,14 @@ class SubmitDecisionView extends React.PureComponent {
       vacolsId,
       task: { attributes: { assigned_on } },
       appeal: { attributes: { issues } },
-      decision: {
-        type: decisionType,
-        opts: decisionOpts
-      }
+      decision
     } = this.props;
     const params = {
       data: {
         queue: {
-          reviewing_judge_id: this.props.judges[decisionOpts.judge.value].id,
-          type: decisionType,
+          type: decision.type,
           issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')),
-          ...decisionOpts
+          ...decision.opts
         }
       }
     };
@@ -145,7 +141,7 @@ class SubmitDecisionView extends React.PureComponent {
       highlightFormItems
     } = this.props;
     let componentContent = <span />;
-    const selectedJudge = _.get(decisionOpts.judge, 'label');
+    const selectedJudge = _.get(this.props.judges, decisionOpts.reviewing_judge_id);
     const shouldDisplayError = highlightFormItems && !selectedJudge;
     const fieldClasses = classNames({
       'usa-input-error': shouldDisplayError
@@ -160,15 +156,15 @@ class SubmitDecisionView extends React.PureComponent {
             label: judge.full_name,
             value
           }))}
-          onChange={(judge) => {
+          onChange={({ value }) => {
             this.props.setSelectingJudge(false);
-            this.props.setDecisionOptions({ judge });
+            this.props.setDecisionOptions({ reviewing_judge_id: value });
           }}
           hideLabel />
       </React.Fragment>;
     } else {
       componentContent = <React.Fragment>
-        {selectedJudge && <span>{selectedJudge}</span>}
+        {selectedJudge && <span>{selectedJudge.full_name}</span>}
         <Button
           id="select-judge"
           classNames={['cf-btn-link']}

@@ -41,7 +41,7 @@ export const setCaseReviewActionType = (type) => ({
 });
 
 export const setDecisionOptions = (opts) => (dispatch) => {
-  dispatch(hideErrorMessage('decision'));
+  dispatch(hideErrorMessage());
   dispatch({
     type: ACTIONS.SET_DECISION_OPTIONS,
     payload: {
