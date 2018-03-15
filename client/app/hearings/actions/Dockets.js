@@ -147,7 +147,7 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
       action: 'transcript-requested',
-      label: transcriptRequested
+      label: transcriptRequested ? 'checked' : 'unchecked'
     }
   }
 });
