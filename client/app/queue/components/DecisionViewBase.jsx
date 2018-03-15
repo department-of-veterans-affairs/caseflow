@@ -70,6 +70,11 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     goToNextStep = () => {
+      // This handles moving to the next step in the flow. The wrapped
+      // component's validateForm is used to synchronously trigger highlighting
+      // form elements based on its return value. If present, the wrapped
+      // goToNextStep hook dispatches a proceed/invalid action asynchronously,
+      // which this responds to in componentDidUpdate.
       const validation = this.wrapped && this.wrapped.validateForm;
       const nextStepHook = this.wrapped && this.wrapped.goToNextStep;
 
@@ -83,20 +88,21 @@ export default function decisionViewBase(ComponentToWrap) {
 
       const hookResult = nextStepHook();
 
-      // If nextStepHook returns a Promise (i.e. when submitting a decision),
-      // wait until the Promise has resolved to proceed.
-      if (hookResult.then && _.isFunction(hookResult.then)) {
-        return hookResult.then((result) => {
-          if (!result) {
-            return this.props.highlightInvalidFormItems(true);
-          }
-
-          return this.goToStep(this.props.nextStep);
-        });
-      } else if (hookResult === true) {
+      // nextStepHook may return a Promise, in which case do nothing here.
+      if (hookResult && hookResult === true) {
         return this.goToStep(this.props.nextStep);
       }
     };
+
+    componentDidUpdate = (prevProps) => {
+      if (prevProps.pendingSave && !this.props.pendingSave) {
+        if (this.props.saveSuccessful) {
+          this.goToStep(this.props.nextStep);
+        } else {
+          this.props.highlightInvalidFormItems(true);
+        }
+      }
+    }
 
     render = () => <React.Fragment>
       <Breadcrumbs />
@@ -109,7 +115,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'pendingSave');
+  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'pendingSave', 'saveSuccessful');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     highlightInvalidFormItems

@@ -117,19 +117,7 @@ class SubmitDecisionView extends React.PureComponent {
       }
     };
 
-    this.props.requestSaveDecision();
-
-    return ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, params).then(
-      () => {
-        // todo: display success banner on /queue (#4479)
-        this.props.saveDecisionSuccess();
-        return true;
-      },
-      (resp) => {
-        this.props.saveDecisionFailure(resp);
-        return false;
-      }
-    );
+    return this.props.requestSaveDecision(vacolsId, params);
   }
 
   getFooterButtons = () => [{

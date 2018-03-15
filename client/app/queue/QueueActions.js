@@ -4,6 +4,7 @@ import {
   showErrorMessage,
   hideErrorMessage
 } from './uiReducer/actions';
+import ApiUtil from '../util/ApiUtil';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -58,9 +59,14 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const requestSaveDecision = () => (dispatch) => {
+export const requestSaveDecision = (vacolsId, params) => (dispatch) => {
   dispatch(hideErrorMessage('decision'));
   dispatch({ type: UIACTIONS.REQUEST_SAVE_DECISION });
+
+  return ApiUtil.post(`/queue/tasks/${vacolsId}/complete`, params).then(
+    () => dispatch(saveDecisionSuccess()),
+    (resp) => dispatch(saveDecisionFailure(resp))
+  );
 };
 
 export const saveDecisionSuccess = () => ({

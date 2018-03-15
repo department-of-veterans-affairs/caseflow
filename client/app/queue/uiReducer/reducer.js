@@ -13,7 +13,8 @@ export const initialState = {
   breadcrumbs: [],
   highlightFormItems: false,
   errorState: initialErrorState,
-  pendingSave: false
+  pendingSave: false,
+  saveSuccessful: null
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) => update(state, {
@@ -54,12 +55,18 @@ const workqueueUiReducer = (state = initialState, action = {}) => {
       });
     case ACTIONS.REQUEST_SAVE_DECISION:
       return update(state, {
-        pendingSave: { $set: true }
+        pendingSave: { $set: true },
+        saveSuccessful: { $set: null }
       });
     case ACTIONS.SAVE_DECISION_SUCCESS:
+      return update(state, {
+        pendingSave: { $set: false },
+        saveSuccessful: { $set: true }
+      });
     case ACTIONS.SAVE_DECISION_FAILURE:
       return update(state, {
-        pendingSave: { $set: false }
+        pendingSave: { $set: false },
+        saveSuccessful: { $set: false }
       });
     case ACTIONS.RESET_ERROR_MESSAGES:
       return update(state, {
