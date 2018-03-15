@@ -1,10 +1,5 @@
 import { ACTIONS } from './constants';
-import { ACTIONS as UIACTIONS } from './uiReducer/uiConstants';
-import {
-  showErrorMessage,
-  hideErrorMessage
-} from './uiReducer/uiActions';
-import ApiUtil from '../util/ApiUtil';
+import { hideErrorMessage } from './uiReducer/uiActions';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -58,27 +53,6 @@ export const setDecisionOptions = (opts) => (dispatch) => {
 export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
-
-export const saveDecisionSuccess = () => ({
-  type: UIACTIONS.SAVE_DECISION_SUCCESS
-});
-
-export const saveDecisionFailure = (resp) => (dispatch) => {
-  const errors = JSON.parse(resp.response.text).errors;
-
-  dispatch(showErrorMessage('decision', errors[0]));
-  dispatch({ type: UIACTIONS.SAVE_DECISION_FAILURE });
-};
-
-export const requestSaveDecision = (taskId, params) => (dispatch) => {
-  dispatch(hideErrorMessage('decision'));
-  dispatch({ type: UIACTIONS.REQUEST_SAVE_DECISION });
-
-  return ApiUtil.post(`/queue/tasks/${taskId}/complete`, params).then(
-    () => dispatch(saveDecisionSuccess()),
-    (resp) => dispatch(saveDecisionFailure(resp))
-  );
-};
 
 export const startEditingAppeal = (vacolsId) => ({
   type: ACTIONS.START_EDITING_APPEAL,

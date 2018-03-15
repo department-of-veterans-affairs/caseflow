@@ -53,17 +53,17 @@ const workqueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload.highlight
       }
     });
-  case ACTIONS.REQUEST_SAVE_DECISION:
+  case ACTIONS.REQUEST_SAVE:
     return update(state, {
       pendingSave: { $set: true },
       saveSuccessful: { $set: null }
     });
-  case ACTIONS.SAVE_DECISION_SUCCESS:
+  case ACTIONS.SAVE_SUCCESS:
     return update(state, {
       pendingSave: { $set: false },
       saveSuccessful: { $set: true }
     });
-  case ACTIONS.SAVE_DECISION_FAILURE:
+  case ACTIONS.SAVE_FAILURE:
     return update(state, {
       pendingSave: { $set: false },
       saveSuccessful: { $set: false }

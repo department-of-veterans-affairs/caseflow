@@ -1,4 +1,5 @@
 import { ACTIONS } from './uiConstants';
+import ApiUtil from '../../util/ApiUtil';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
@@ -43,3 +44,24 @@ export const pushBreadcrumb = (...crumbs) => ({
 export const resetBreadcrumbs = () => ({
   type: ACTIONS.RESET_BREADCRUMBS
 });
+
+export const saveSuccess = () => ({
+  type: ACTIONS.SAVE_SUCCESS
+});
+
+export const saveFailure = (resp, messageType) => (dispatch) => {
+  const errors = JSON.parse(resp.response.text).errors;
+
+  dispatch(showErrorMessage(messageType, errors[0]));
+  dispatch({ type: ACTIONS.SAVE_FAILURE });
+};
+
+export const requestSave = (objId, params, url, messageType) => (dispatch) => {
+  dispatch(hideErrorMessage(messageType));
+  dispatch({ type: ACTIONS.REQUEST_SAVE });
+
+  return ApiUtil.post(url, params).then(
+    () => dispatch(saveSuccess()),
+    (resp) => dispatch(saveFailure(resp, messageType))
+  );
+};

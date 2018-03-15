@@ -9,15 +9,13 @@ import classNames from 'classnames';
 
 import {
   setDecisionOptions,
-  resetDecisionOptions,
-  requestSaveDecision,
-  saveDecisionSuccess,
-  saveDecisionFailure
+  resetDecisionOptions
 } from './QueueActions';
 import {
   setSelectingJudge,
   pushBreadcrumb,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  requestSave
 } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -131,7 +129,12 @@ class SubmitDecisionView extends React.PureComponent {
     };
     const taskId = `${vacolsId}-${assigned_on.split('T')[0]}`;
 
-    return this.props.requestSaveDecision(taskId, params);
+    this.props.requestSave(
+      taskId,
+      params,
+      `/queue/tasks/${taskId}/complete`,
+      'decision'
+    )
   }
 
   getFooterButtons = () => [{
@@ -280,9 +283,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSelectingJudge,
   pushBreadcrumb,
   highlightInvalidFormItems,
-  requestSaveDecision,
-  saveDecisionSuccess,
-  saveDecisionFailure
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));
