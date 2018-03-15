@@ -278,13 +278,14 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
     moment(date).format('YYYY-MM-DD'), false));
 
   ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
-    then(() => {
-      // request was successful
+    then((response) => {
+      dispatch(setHearingPrepped(hearingId, response.body.prepped,
+        moment(date).format('YYYY-MM-DD'), false));
     },
     () => {
-      // request failed, resetting value
-      dispatch(setHearingPrepped(hearingId, !prepped,
-        moment(date).format('YYYY-MM-DD'), false));
+      // we need better error handling here
+      // eslint-disable-next-line no-console
+      console.log('Prepped save failed');
     });
 };
 
