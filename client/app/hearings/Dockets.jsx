@@ -30,7 +30,6 @@ const tabBodyStyling = css({
 });
 
 export class Dockets extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -86,10 +85,14 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
-  getRowObjects = (hearings, reverseSort = false) => {
-    let docketIndex = Object.keys(hearings).sort();
+  onTabSelected = (tabNumber) => {
+    if (tabNumber === PAST_HEARING_TAB_INDEX) {
+      window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, ACTIONS.PAST_HEARINGS_TAB);
+    }
+  }
 
-    docketIndex = reverseSort ? docketIndex.reverse() : docketIndex;
+  getRowObjects = (hearings) => {
+    const docketIndex = Object.keys(hearings).sort();
     const rowObjects = docketIndex.map((docketDate) => {
 
       let docket = hearings[docketDate];
