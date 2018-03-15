@@ -12,7 +12,6 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Table from '../components/Table';
 
 import {
-  cancelEditingAppeal,
   updateAppealIssue,
   setDecisionOptions
 } from './QueueActions';
@@ -59,22 +58,6 @@ class SelectDispositionsView extends React.PureComponent {
       ));
 
     this.props.setDecisionOptions({ workProduct: 'Decision' });
-  };
-
-  goToPrevStep = () => {
-    const {
-      appeal: { attributes: { issues } },
-      vacolsId
-    } = this.props;
-    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
-
-    // If the user hasn't selected a disposition for all issues and they're
-    // navigating back to the start, they've canceled the checkout process.
-    if (issuesWithoutDisposition.length > 0) {
-      this.props.cancelEditingAppeal(vacolsId);
-    }
-
-    return true;
   };
 
   validateForm = () => {
@@ -137,7 +120,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  cancelEditingAppeal,
   updateAppealIssue,
   highlightInvalidFormItems,
   setDecisionOptions

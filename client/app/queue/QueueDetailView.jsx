@@ -16,7 +16,8 @@ import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
-  startEditingAppeal
+  startEditingAppeal,
+  cancelEditingAppeal
 } from './QueueActions';
 import {
   pushBreadcrumb,
@@ -48,13 +49,19 @@ class QueueDetailView extends React.PureComponent {
   }
 
   changeRoute = (props) => {
+    const {
+      vacolsId,
+      history
+    } = this.props;
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
     const decisionType = props.value === 'omo' ? 'OMORequest' : 'DraftDecision';
 
-    // Move the current appeal to pendingChanges before loading any decision flow views.
-    this.props.startEditingAppeal(this.props.vacolsId);
+    if (this.props.changedAppeals.includes(vacolsId)) {
+      this.props.cancelEditingAppeal(vacolsId);
+    }
+    this.props.startEditingAppeal(vacolsId);
     this.props.setCaseReviewActionType(decisionType);
-    this.props.history.push(`${this.props.history.location.pathname}/${route}`);
+    history.push(`${history.location.pathname}/${route}`);
   }
 
   render = () => {
@@ -110,12 +117,14 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  changedAppeals: _.keys(state.queue.pendingChanges.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   startEditingAppeal,
+  cancelEditingAppeal,
   pushBreadcrumb,
   resetBreadcrumbs
 }, dispatch);
