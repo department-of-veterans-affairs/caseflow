@@ -7,14 +7,18 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-[View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
-
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install postgresql redis chromedriver rbenv
+    brew install postgresql redis chromedriver rbenv nvm yarn
 
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
+Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
+- Run `mkdir ~/.nvm`
+- Add the following to your shell login script:
+        export NVM_DIR="$HOME/.nvm"
+        . "/usr/local/opt/nvm/nvm.sh"
+
+Before continuing, source your shell login script, e.g., `source ~/.profile` or `source ~/.bashrc`.
 
 Then run the following:
 
@@ -22,6 +26,8 @@ Then run the following:
     rbenv install $(cat .ruby-version)
     rbenv rehash
     gem install bundler
+
+*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`. 
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
 
@@ -93,25 +99,56 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
-## Start up local VACOLS container
-To set up our local copy of VACOLS, run
+## Start up your docker based environment
+
+We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required, but slowly learning how docker works is encouraged.
+Please ask a team member for an overview, and/or slowly review the docs linked.
+
+Your development setup of caseflow currently runs Redis, postgres and OracleDB (VACOLS) in Docker.
+
+Setup your postgres user.  Run this in your CLI, or better yet, add this to your shell configuration `~/.bashrc`
+
 ```
-rake local:vacols:setup
-```
-To start the container after it's been setup, run
-```
-rake local:vacols:start
-```
-To stop the container, run
-```
-rake local:vacols:stop
-```
-To view the logs, run
-```
-rake local:vacols:logs
+export POSTGRES_HOST=localhost
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
 ```
 
-## Seeding the local VACOLS container
+**Note: If you previously have had redis and postgres installed via brew and would like to switch to docker, do the following:**
+```
+brew services stop postgresql
+brew services stop redis
+```
+
+Start all containers
+```
+docker-compose up -d
+# run without -d to start your environment and view container logging in the foreground
+
+docker-compose ps
+# this shows you the status of all of your dependencies
+```
+
+Turning off dependencies
+```
+# this stops all containers
+docker-compose down
+
+# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
+docker-compose down -v
+```
+
+## Setup your Database Schema
+```
+rake [RAILS_ENV=<local|test|development>] db:setup
+rake [RAILS_ENV=<local|test|development>] db:seed
+
+# setup local VACOLS (FAKOLS)
+rake [RAILS_ENV=<local|test|development>] local:vacols:setup
+rake [RAILS_ENV=<local|test|development>] local:vacols:seed
+```
+
+## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
