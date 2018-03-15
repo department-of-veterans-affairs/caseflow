@@ -77,7 +77,6 @@ export default class TabWindow extends React.Component {
           </button>
         )}
       </div>
-      <div className="cf-tab-divider"></div>
       <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
         {tabs[this.state.currentPage].page}
       </div>
