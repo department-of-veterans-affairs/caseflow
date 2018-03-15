@@ -141,26 +141,26 @@ export class HearingWorksheet extends React.PureComponent {
     return <div>
       {!this.props.print &&
         <div>
-          <AutoSave
-            save={this.save(worksheet, worksheetIssues)}
-            spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
-            isSaving={this.props.worksheetIsSaving}
-            timeSaved={this.props.worksheetTimeSaved || now()}
-            saveFailed={this.props.saveWorksheetFailed}
-          />
-          <WorksheetHeaderVeteranSelection
-            openPdf={this.openPdf}
-            history={this.props.history}
-            save={this.save(worksheet, worksheetIssues)}
-          />
+          <div>
+            <AutoSave
+              save={this.save(worksheet, worksheetIssues)}
+              spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+              isSaving={this.props.worksheetIsSaving}
+              timeSaved={this.props.worksheetTimeSaved || now()}
+              saveFailed={this.props.saveWorksheetFailed}
+            />
+            <WorksheetHeaderVeteranSelection
+              openPdf={this.openPdf}
+              history={this.props.history}
+              save={this.save(worksheet, worksheetIssues)}
+            />
+          </div>
+          <div className={wrapperClassNames}>
+            {firstWorksheetPage}
+            <PrintPageBreak />
+            {secondWorksheetPage}
+          </div>
         </div>
-      }
-      {!this.props.print &&
-      <div className={wrapperClassNames}>
-        {firstWorksheetPage}
-        <PrintPageBreak />
-        {secondWorksheetPage}
-      </div>
       }
       {this.props.print &&
     <div className={printWrapperClassNames}>
