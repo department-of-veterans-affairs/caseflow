@@ -134,7 +134,7 @@ class SubmitDecisionView extends React.PureComponent {
       params,
       `/queue/tasks/${taskId}/complete`,
       'decision'
-    )
+    );
   }
 
   getFooterButtons = () => [{

@@ -64,7 +64,7 @@ export default function decisionViewBase(ComponentToWrap) {
     goToPrevStep = () => {
       const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
 
-      if (!prevStepHook || (prevStepHook && prevStepHook())) {
+      if (!prevStepHook || prevStepHook()) {
         return this.goToStep(this.props.prevStep);
       }
     };
@@ -78,7 +78,7 @@ export default function decisionViewBase(ComponentToWrap) {
       const validation = this.wrapped && this.wrapped.validateForm;
       const nextStepHook = this.wrapped && this.wrapped.goToNextStep;
 
-      if (!validation || (validation && !validation())) {
+      if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
       }
 

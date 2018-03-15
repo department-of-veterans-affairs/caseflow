@@ -29,7 +29,7 @@ const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) => u
 const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
 const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
 
-const workqueueUiReducer = (state = initialState, action = {}) => {
+const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
@@ -81,4 +81,4 @@ const workqueueUiReducer = (state = initialState, action = {}) => {
   }
 };
 
-export default workqueueUiReducer;
+export default workQueueUiReducer;
