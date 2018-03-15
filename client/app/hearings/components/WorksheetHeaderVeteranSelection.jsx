@@ -7,7 +7,7 @@ import FoundIcon from '../../components/FoundIcon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { populateDailyDocket, getDailyDocket, getWorksheet,
+import { populateDailyDocket, getDailyDocket,
   setPrepped } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -123,7 +123,6 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     populateDailyDocket,
     getDailyDocket,
-    getWorksheet,
     setPrepped
   }, dispatch)
 });
