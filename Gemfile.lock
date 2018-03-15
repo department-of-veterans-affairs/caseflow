@@ -16,17 +16,17 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 6be9e1e95b1a012af1fb5b7aa292ec7123281dc2
-  ref: 6be9e1e95b1a012af1fb5b7aa292ec7123281dc2
+  revision: 5e6830534124f578f43c619c8620c0560365aa55
+  ref: 5e6830534124f578f43c619c8620c0560365aa55
   specs:
-    caseflow (0.3.2)
+    caseflow (0.3.4)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
       jquery-rails
       momentjs-rails
       neat
-      rails (= 4.2.7.1)
+      rails (>= 4.2.7.1)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
@@ -166,7 +166,7 @@ GEM
     cork (0.3.0)
       colored2 (~> 3.1)
     crass (1.0.3)
-    d3-rails (4.10.2)
+    d3-rails (4.13.0)
       railties (>= 3.1)
     danger (5.5.5)
       claide (~> 1.0)
