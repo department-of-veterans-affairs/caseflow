@@ -55,7 +55,7 @@ jobs:
             - ~/.cache/yarn
 
       - run:
-          name: Tests
+          name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
