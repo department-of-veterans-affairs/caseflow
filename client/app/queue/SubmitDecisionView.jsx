@@ -127,12 +127,10 @@ class SubmitDecisionView extends React.PureComponent {
         }
       }
     };
-    const taskId = `${vacolsId}-${assigned_on.split('T')[0]}`;
 
     this.props.requestSave(
-      taskId,
       params,
-      `/queue/tasks/${taskId}/complete`,
+      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`,
       'decision'
     );
   }
