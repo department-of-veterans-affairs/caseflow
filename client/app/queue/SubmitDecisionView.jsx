@@ -113,6 +113,9 @@ class SubmitDecisionView extends React.PureComponent {
       decision: {
         type: decisionType,
         opts: decision
+      },
+      appeal: {
+        attributes: { issues }
       }
     } = this.props;
     const params = {
@@ -123,7 +126,8 @@ class SubmitDecisionView extends React.PureComponent {
           document_id: decision.documentId,
           type: decisionType,
           overtime: decision.overtime || false,
-          note: decision.notes
+          note: decision.notes,
+          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons'))
         }
       }
     };

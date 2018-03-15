@@ -13,7 +13,8 @@ import Table from '../components/Table';
 
 import {
   cancelEditingAppeal,
-  updateAppealIssue
+  updateAppealIssue,
+  setDecisionOptions
 } from './QueueActions';
 import { highlightInvalidFormItems } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
@@ -56,6 +57,8 @@ class SelectDispositionsView extends React.PureComponent {
         issue.id,
         { disposition: null }
       ));
+
+    this.props.setDecisionOptions({ workProduct: 'Decision' });
   };
 
   goToPrevStep = () => {
@@ -136,7 +139,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppeal,
   updateAppealIssue,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  setDecisionOptions
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
