@@ -519,8 +519,6 @@ $color-hearings-saving: $color-gray;
   font-size: 11px;
 }
 
-
-
 @media print {
   h1,
   h2,
@@ -529,8 +527,15 @@ $color-hearings-saving: $color-gray;
     font-size: 11px;
   }
 
-
   .cf-hearings-worksheet-issues {
+
+    input[type="checkbox"] {
+      display: none;
+    }
+    input[type="checkbox"][checked="checked"] {
+      display: inline-block;
+    }
+
     td {
       padding: 0 .5em;
     }
