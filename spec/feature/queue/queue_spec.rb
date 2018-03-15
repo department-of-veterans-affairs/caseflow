@@ -282,6 +282,7 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Andrew Mackenzie")
 
         safe_click("button.cf-right-side")
+        sleep 1
         expect(page.current_path).to eq("/queue/")
       end
     end
