@@ -9,7 +9,7 @@ jobs:
         environment:
           - RAILS_ENV: test
           - BUNDLE_PATH: vendor/bundle
-          - COVERAGE_DIR:/home/circleci/coverage
+          - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
