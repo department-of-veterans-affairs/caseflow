@@ -122,7 +122,7 @@ describe IssueMapper do
 
         context "when not valid disposition" do
           let(:issue_attrs) do
-            { disposition: "Incorrect", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+            { disposition: "Advance Allowed in Field", disposition_date: VacolsHelper.local_date_with_utc_timezone }
           end
 
           it "raises IssueRepository::IssueError" do

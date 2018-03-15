@@ -11,15 +11,7 @@ module IssueMapper
     vacols_id: :isskey
   }.freeze
 
-  DISPOSITIONS = {
-    "1" => "Allowed",
-    "3" => "Remanded",
-    "4" => "Denied",
-    "5" => "Vacated",
-    "6" => "Dismissed, Other",
-    "8" => "Dismissed, Death",
-    "9" => "Withdrawn"
-  }.freeze
+  ALLOWED_DISPOSITION_CODES = ["1", "3", "4", "5", "6", "8", "9"]
 
   class << self
     def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
@@ -59,8 +51,10 @@ module IssueMapper
         next unless issue_attrs.keys.include? k
 
         if k == :disposition
-          code = DISPOSITIONS.key(issue_attrs[k])
-          fail IssueRepository::IssueError, "Not allowed disposition: #{issue_attrs}" unless code
+          code = VACOLS::Case::DISPOSITIONS.key(issue_attrs[k])
+          unless ALLOWED_DISPOSITION_CODES.include? code
+            fail IssueRepository::IssueError, "Not allowed disposition: #{issue_attrs}"
+          end
           issue_attrs[k] = code
         end
 
