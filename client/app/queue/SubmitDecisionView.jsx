@@ -117,7 +117,7 @@ class SubmitDecisionView extends React.PureComponent {
       data: {
         queue: {
           work_product: decision.workProduct,
-          reviewing_judge_id: decision.judge.value,
+          reviewing_judge_id: this.props.judges[decision.judge.value].id,
           document_id: decision.documentId,
           type: decisionType,
           overtime: decision.overtime || false,
