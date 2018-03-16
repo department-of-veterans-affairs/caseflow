@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText } from '../constants';
-import StringUtil from '../../util/StringUtil';
+import { boldText, ISSUE_PROGRAMS } from '../constants';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -31,15 +30,6 @@ export default class IssueListItem extends React.PureComponent {
       </span>
     </div>);
 
-  formatProgram = (issue) => {
-    const programWords = StringUtil.titleCase(issue.program).split(' ');
-    const acronyms = ['vba', 'bva', 'vre', 'nca'];
-
-    return programWords.map((word) =>
-      acronyms.includes(word.toLowerCase()) ? word.toUpperCase() : word
-    ).join(' ');
-  };
-
   render = () => {
     const {
       issue,
@@ -53,7 +43,7 @@ export default class IssueListItem extends React.PureComponent {
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
-        <span {...boldText}>Program:</span> {this.formatProgram(issue)}
+        <span {...boldText}>Program:</span> {ISSUE_PROGRAMS[issue.program]}
         <div {...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.formatLevels(issue)}</div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {issue.note}

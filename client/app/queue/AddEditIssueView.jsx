@@ -16,7 +16,10 @@ import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 
-import { fullWidth } from './constants';
+import {
+  fullWidth,
+  ISSUE_PROGRAMS
+} from './constants';
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -83,7 +86,10 @@ class AddEditIssueView extends React.Component {
       name="Program:"
       styling={dropdownMarginTop}
       placeholder="Select program"
-      options={itemList}
+      options={_.map(ISSUE_PROGRAMS, (label, value) => ({
+        label,
+        value
+      }))}
       onChange={({ value }) => this.updateIssue({ program: value })}
       value={this.getIssueValue('program')} />
     <SearchableDropdown
