@@ -57,7 +57,7 @@ class SelectDispositionsView extends React.PureComponent {
         { disposition: null }
       ));
 
-    this.props.setDecisionOptions({ workProduct: 'Decision' });
+    this.props.setDecisionOptions({ work_product: 'Decision' });
   };
 
   validateForm = () => {
