@@ -143,7 +143,7 @@ export class DocketHearingRow extends React.PureComponent {
             {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
           </span>
         </td>
-        <td className="cf-hearings-docket-rep">{hearing.representative}</td>
+        <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
             label="Disposition"
