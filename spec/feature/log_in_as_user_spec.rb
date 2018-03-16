@@ -7,7 +7,7 @@ RSpec.feature "Log in as User" do
   end
 
   after do
-    User.deauthenticate!
+    User.unauthenticate!
   end
 
   scenario "Non authorized user will not see the feature" do
