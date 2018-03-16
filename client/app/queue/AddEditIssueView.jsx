@@ -9,7 +9,8 @@ import StringUtil from '../util/StringUtil';
 import {
   updateAppealIssue,
   startEditingAppealIssue,
-  cancelEditingAppealIssue
+  cancelEditingAppealIssue,
+  saveEditedAppealIssue
 } from './QueueActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -53,7 +54,6 @@ class AddEditIssueView extends React.Component {
 
     this.props.startEditingAppealIssue(vacolsId, issueId);
   };
-  componentWillUnmount = () => this.props.cancelEditingAppealIssue();
 
   getFooterButtons = () => [{
     displayText: '< Go back to Select Dispositions'
@@ -69,12 +69,21 @@ class AddEditIssueView extends React.Component {
 
   getIssueValue = (value) => _.get(this.props.issue, value, '');
 
+  goToPrevStep = () => {
+    this.props.cancelEditingAppealIssue();
+    return true;
+  }
+
   validateForm = () => {
     // const { issue } = this.props;
     // const fields = ['program', 'type', 'levels', 'note'];
     // const missingFields = _.filter(fields, (field) => _.has(issue, field));
     //
     // return !missingFields.length;
+
+    // todo: move to goToNextStep hook once `connect-omo-to-backend` merged
+    this.props.saveEditedAppealIssue(this.props.vacolsId, this.props.issueId);
+
     return true;
   };
 
@@ -148,7 +157,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateAppealIssue,
   startEditingAppealIssue,
-  cancelEditingAppealIssue
+  cancelEditingAppealIssue,
+  saveEditedAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

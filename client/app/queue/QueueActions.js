@@ -85,6 +85,14 @@ export const updateAppealIssue = (appealId, issueId, attributes) => ({
   }
 });
 
+export const saveEditedAppealIssue = (appealId, issueId) => ({
+  type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
+  payload: {
+    appealId,
+    issueId
+  }
+});
+
 export const highlightInvalidFormItems = (highlight) => ({
   type: ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS,
   payload: {
