@@ -15,14 +15,14 @@ export const initialState = {
   saveSuccessful: null
 };
 
-const setErrorMessageState = (state, isVisible = false, errorMsg = null) => update(state, {
+const setErrorMessageState = (state, isVisible, errorMsg = null) => update(state, {
   errorState: {
     visible: { $set: isVisible },
     message: { $set: isVisible ? errorMsg : null }
   }
 });
 
-const hideErrorMessage = (state) => setErrorMessageState(state);
+const hideErrorMessage = (state) => setErrorMessageState(state, false);
 const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
