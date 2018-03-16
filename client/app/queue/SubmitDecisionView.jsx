@@ -29,7 +29,8 @@ import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -95,7 +96,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
     const requiredParams = ['document_id', 'reviewing_judge_id'];
 
-    if (decisionType.includes('OMO')) {
+    if (decisionType === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
     }
 
@@ -213,7 +214,7 @@ class SubmitDecisionView extends React.PureComponent {
         {error.message.detail}
       </Alert>}
       <hr />
-      {decisionType.includes('OMO') && <RadioField
+      {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}

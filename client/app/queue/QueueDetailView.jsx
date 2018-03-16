@@ -13,7 +13,7 @@ import AppellantDetail from './AppellantDetail';
 import TabWindow from '../components/TabWindow';
 import SearchableDropdown from '../components/SearchableDropdown';
 
-import { fullWidth, CATEGORIES } from './constants';
+import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
@@ -56,11 +56,11 @@ class QueueDetailView extends React.PureComponent {
       history
     } = this.props;
     let route = 'dispositions';
-    let decisionType = 'DraftDecision';
+    let decisionType = DECISION_TYPES.DRAFT_DECISION;
 
     if (props.value === 'omo') {
       route = 'submit';
-      decisionType = 'OMORequest';
+      decisionType = DECISION_TYPES.OMO_REQUEST;
     }
 
     this.props.resetDecisionOptions();
