@@ -39,7 +39,12 @@ class QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge(vacols_id:, date_assigned:, judge_css_id:, decass_attrs:)
+  def self.reassign_case_to_judge(attorney_css_id:, vacols_id:, date_assigned:, judge_css_id:, decass_attrs:)
+    unless can_access_task?(attorney_css_id, vacols_id)
+      msg = "Attorney with css ID #{attorney_css_id} cannot access task with vacols ID: #{vacols_id}"
+      fail QueueError, msg
+    end
+
     # update DECASS table
     update_decass_record(vacols_id, date_assigned, decass_attrs)
 

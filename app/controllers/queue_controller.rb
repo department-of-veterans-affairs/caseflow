@@ -14,7 +14,10 @@ class QueueController < ApplicationController
   def complete
     record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, task_id: params[:task_id]))
     return attorney_case_review_error unless record
-    render json: record
+
+    response = { attorney_case_review: record }
+    response[:issues] = record.appeal.issues if record.type == "DraftDecision"
+    render json: response
   end
 
   def tasks
@@ -73,7 +76,8 @@ class QueueController < ApplicationController
                                    :document_id,
                                    :work_product,
                                    :overtime,
-                                   :note)
+                                   :note,
+                                   issues: [:disposition, :vacols_sequence_id, remand_reasons: []])
   end
 
   def json_appeals(appeals)
