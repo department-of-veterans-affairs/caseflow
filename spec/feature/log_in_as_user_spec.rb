@@ -6,6 +6,10 @@ RSpec.feature "Log in as User" do
     User.authenticate!
   end
 
+  after do
+    User.deauthenticate!
+  end
+
   scenario "Non authorized user will not see the feature" do
     visit "test/users"
     expect(page).to have_content("DSUSER")
