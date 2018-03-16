@@ -94,7 +94,7 @@ export class HearingWorksheet extends React.PureComponent {
       {worksheetHeader}
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
-      <WorksheetFooter print={this.props.print} />
+      <div className="cf-print-footer"><WorksheetFooter print={this.props.print} /></div>
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">

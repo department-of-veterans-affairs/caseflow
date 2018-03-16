@@ -642,8 +642,10 @@ $color-hearings-saving: $color-gray;
     break-after: page;
   }
 
-  .cf-footer {
-    break-after: page;
+  .cf-print-footer {
+    position: absolute;
+    bottom: 10px;
+    right: 0;
  }
 
   body {
