@@ -38,15 +38,6 @@ export class Dockets extends React.Component {
     };
   }
 
-  onTabSelected = (tabNumber) => {
-    if (tabNumber === PAST_HEARING_TAB_INDEX) {
-      this.togglePastDocketsTab(true);
-      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.OPEN_PAST_HEARINGS_TAB);
-    } else {
-      this.togglePastDocketsTab(false);
-    }
-  }
-
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
@@ -73,6 +64,15 @@ export class Dockets extends React.Component {
     return <Link onClick={this.dateClicked} to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
       {moment(docket.date).format('ddd M/DD/YYYY')}
     </Link>;
+  }
+
+  onTabSelected = (tabNumber) => {
+    if (tabNumber === PAST_HEARING_TAB_INDEX) {
+      this.togglePastDocketsTab(true);
+      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.OPEN_PAST_HEARINGS_TAB);
+    } else {
+      this.togglePastDocketsTab(false);
+    }
   }
 
   togglePastDocketsTab = (isPastTab) => {
