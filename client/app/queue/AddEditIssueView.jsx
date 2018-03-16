@@ -90,6 +90,17 @@ class AddEditIssueView extends React.Component {
     return true;
   };
 
+  getProgramIssues = (issprog) => {
+    if (!issprog) {
+      return [];
+    }
+
+    return _.map(ISSUE_INFO[issprog].issue, (obj, value) => ({
+      label: obj.description,
+      value
+    }));
+  };
+
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
       {StringUtil.titleCase(this.props.action)} Issue
@@ -115,7 +126,7 @@ class AddEditIssueView extends React.Component {
       name="Issue:"
       styling={dropdownMarginTop}
       placeholder="Select issue"
-      options={itemList}
+      options={this.getProgramIssues(this.getIssueValue('program'))}
       onChange={({ value }) => this.updateIssue({ type: value })}
       value={this.getIssueValue('type')} />
     <SearchableDropdown
