@@ -47,7 +47,7 @@ class Document < ActiveRecord::Base
     "VA 21-526EZ, Fully Developed Claim (Compensation)",
     "VA 21-527EZ, Fully Developed Claim (Pension)",
     "VA 21-22 Appointment of Veterans Serv. Org. as Claimant Rep",
-    "VA 21-22 Appointment of Veterans Serv. Org. as Claimant Rep",
+    "Power of Attorney (incl. VA 21-22, VA 22a)",
     "Hearing Transcript"
   ].freeze
 
