@@ -105,8 +105,8 @@ export default class TestUsers extends React.PureComponent {
             therefore selecting station 405 might lead to an extra Login screen.</p>
           <strong>User Selector:</strong>
           <SearchableDropdown
-            name=""
-            label="Test user dropdown"
+            name="Test user dropdown"
+            hideLabel
             options={userOptions} searchable
             onChange={this.handleUserSelect}
             value={this.state.userSelect} />
