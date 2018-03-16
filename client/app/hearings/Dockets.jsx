@@ -91,8 +91,10 @@ export class Dockets extends React.Component {
     }
   }
 
-  getRowObjects = (hearings) => {
-    const docketIndex = Object.keys(hearings).sort();
+  getRowObjects = (hearings, reverseSort = false) => {
+    let docketIndex = Object.keys(hearings).sort();
+
+    docketIndex = reverseSort ? docketIndex.reverse() : docketIndex;
     const rowObjects = docketIndex.map((docketDate) => {
 
       let docket = hearings[docketDate];
