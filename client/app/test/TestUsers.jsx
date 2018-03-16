@@ -106,6 +106,7 @@ export default class TestUsers extends React.PureComponent {
           <strong>User Selector:</strong>
           <SearchableDropdown
             name=""
+            label="Test user dropdown"
             options={userOptions} searchable
             onChange={this.handleUserSelect}
             value={this.state.userSelect} />

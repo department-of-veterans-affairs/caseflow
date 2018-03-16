@@ -8,8 +8,8 @@ class Fakes::AuthenticationService
 
   def self.get_user_session(user_id)
     user = User.find(user_id)
-    # Take the roles from the either the User's css_id or roles if they have any
-    roles = user[:roles] ? user[:roles] : user.css_id.split(",").map(&:strip)
+    # Take the roles from the User's css_id
+    roles = user.css_id.split(",").map(&:strip)
     if roles.include?("System Admin")
       Functions.grant!("System Admin", users: [user.css_id])
     end
