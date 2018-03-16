@@ -12,5 +12,11 @@ export const ACTIONS = {
   OPEN_PAST_HEARINGS_TAB: 'open-past-hearing-tab',
   OPEN_PAST_HEARING_DOCKET: 'open-past-hearing-docket',
   OPEN_CURRENT_HEARING_DOCKET: 'open-current-hearing-docket',
-  GO_BACK_TO_HEARING_DAYS: 'go-back-to-hearing-days'
+
+  // daily docket
+  GO_BACK_TO_HEARING_DAYS: 'go-back-to-hearing-days',
+  DOCKET_HEARING_PREPPED: 'hearing-prepped',
+  DISPOSITION_SELECTED: 'disposition-selected',
+  AOD_SELECTED: 'aod-selected',
+  TRANSCRIPT_REQUESTED: 'transcript-requested'
 };

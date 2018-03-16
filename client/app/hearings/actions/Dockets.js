@@ -1,6 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, debounceMs } from '../analytics';
+import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
 
@@ -95,9 +95,8 @@ export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'hearing-prepped',
-      label: prepped,
-      debounceMs
+      action: ACTIONS.DOCKET_HEARING_PREPPED,
+      label: prepped
     }
   }
 });
@@ -112,7 +111,8 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'disposition-selected'
+      action: ACTIONS.DISPOSITION_SELECTED,
+      label: disposition
     }
   }
 });
@@ -136,7 +136,7 @@ export const setAod = (hearingIndex, aod, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'aod-selected',
+      action: ACTIONS.AOD_SELECTED,
       label: aod
     }
   }
@@ -152,7 +152,7 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'transcript-requested',
+      action: ACTIONS.TRANSCRIPT_REQUESTED,
       label: transcriptRequested ? 'checked' : 'unchecked'
     }
   }
