@@ -2,8 +2,13 @@ require "rails_helper"
 
 RSpec.feature "Out of Service" do
   context "Across all apps" do
+    before do
+      User.authenticate!(roles: ["Admin Intake"])
+    end
+
     after do
       Rails.cache.write("out_of_service", false)
+      User.unauthenticate!
     end
 
     scenario "When out of service is disabled, it shows Caseflow Home page" do

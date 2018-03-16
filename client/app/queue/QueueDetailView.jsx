@@ -14,7 +14,12 @@ import SearchableDropdown from '../components/SearchableDropdown';
 
 import { fullWidth, CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
-import { setCaseReviewActionType } from './QueueActions';
+import {
+  setCaseReviewActionType,
+  startEditingAppeal,
+  pushBreadcrumb,
+  resetBreadcrumbs
+} from './QueueActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -29,9 +34,22 @@ const draftDecisionOptions = [{
 }];
 
 class QueueDetailView extends React.PureComponent {
+  componentDidMount = () => {
+    this.props.resetBreadcrumbs();
+    this.props.pushBreadcrumb({
+      breadcrumb: 'Your Queue',
+      path: '/'
+    }, {
+      breadcrumb: this.props.appeal.attributes.veteran_full_name,
+      path: `/tasks/${this.props.vacolsId}`
+    });
+  }
+
   changeRoute = (props) => {
     const route = props.value === 'omo' ? 'submit' : 'dispositions';
 
+    // Move the current appeal to pendingChanges before loading any decision flow views.
+    this.props.startEditingAppeal(this.props.vacolsId);
     this.props.setCaseReviewActionType(props.value);
     this.props.history.push(`${this.props.history.location.pathname}/${route}`);
   }
@@ -55,7 +73,7 @@ class QueueDetailView extends React.PureComponent {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
-        Draft Decision - {appeal.veteran_full_name} ({appeal.vbms_id})
+        {appeal.veteran_full_name} ({appeal.vbms_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
@@ -93,7 +111,10 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setCaseReviewActionType
+  setCaseReviewActionType,
+  startEditingAppeal,
+  pushBreadcrumb,
+  resetBreadcrumbs
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));

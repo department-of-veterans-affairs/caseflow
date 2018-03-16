@@ -50,6 +50,14 @@ describe Veteran do
       it { is_expected.to_not be_found }
     end
 
+    context "when veteran is inaccessible" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445566"]
+      end
+
+      it { is_expected.to be_found }
+    end
+
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
         file_number: "445566",

@@ -3,6 +3,8 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
+  class IssueError < StandardError; end
+
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
   # :nocov:
@@ -91,25 +93,51 @@ class VACOLS::CaseIssue < VACOLS::Record
   # rubocop:enable MethodLength
 
   def self.create_issue!(issue_attrs)
-    MetricsService.record("VACOLS: CaseIssue.create_issue! for #{issue_attrs[:isskey]}",
-                          service: :vacols,
-                          name: "CaseIssue.create_issue") do
-      create!(issue_attrs.merge(issadtime: VacolsHelper.local_time_with_utc_timezone,
-                                issseq: generate_sequence_id(issue_attrs[:isskey])))
-    end
+    create!(issue_attrs.merge(issseq: generate_sequence_id(issue_attrs[:isskey])))
   end
 
   def self.generate_sequence_id(vacols_id)
     return unless vacols_id
-    descriptions(vacols_id)[vacols_id].count + 1
+    last_issue = (descriptions(vacols_id)[vacols_id] || []).sort_by { |k| k["issseq"] }.last
+    last_issue.present? ? last_issue["issseq"] + 1 : 1
   end
 
-  def update_issue!(issue_attrs)
-    MetricsService.record("VACOLS: CaseIssue.update_issue! for vacols ID #{isskey} and sequence ID: #{issseq}",
-                          service: :vacols,
-                          name: "CaseIssue.update_issue") do
-      update!(issue_attrs.merge(issmdtime: VacolsHelper.local_time_with_utc_timezone))
-    end
+  def self.update_issue!(isskey, issseq, issue_attrs)
+    where(isskey: isskey, issseq: issseq).update_all(issue_attrs)
+  end
+
+  def self.delete_issue!(isskey, issseq)
+    where(isskey: isskey, issseq: issseq).delete_all
+  end
+
+  def update(*)
+    update_error_message
+  end
+
+  def update!(*)
+    update_error_message
+  end
+
+  def delete
+    delete_error_message
+  end
+
+  def destroy
+    delete_error_message
+  end
+
+  private
+
+  def update_error_message
+    fail IssueError, "Since the primary key is not unique, `update` will update all results
+      with the same `isskey`. Instead use VACOLS::CaseIssue.update_issue!
+      that uses `isskey` and `issseq` to safely update one record"
+  end
+
+  def delete_error_message
+    fail IssueError, "Since the primary key is not unique, `delete` or `destroy`
+      will delete all results with the same `isskey`. Instead use VACOLS::CaseIssue.delete_issue!
+      that uses `isskey` and `issseq` to safely delete one record"
   end
   # :nocov:
 end
