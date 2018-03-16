@@ -47,7 +47,6 @@ class Helpers::Sanitizers
        VACOLS::Note-tasknum VACOLS::Note-tsktknm VACOLS::Note-tskstfas
        VACOLS::Decass-defolder
        VACOLS::CaseHearing-folder_nr
-       VACOLS::Decass-dedocid
        VACOLS::Staff-stitle VACOLS::Staff-sorg
        VACOLS::Staff-snamel]
   end
@@ -311,10 +310,14 @@ class Helpers::Sanitizers
        aod holdays vdkey canceldate]
   end
 
+  ONLY_NUMBER_REGEX = /^\d*$/
+
   def sanitize_casehearing(hearing, _exist_hash)
     ::Faker::Config.random = Random.new(hearing.hearing_pkseq)
 
+    # Note we only keep board_members when they have number IDs, not RO letter IDs
     hearing.assign_attributes(
+      board_member: ONLY_NUMBER_REGEX.match(hearing.board_member) ? hearing.board_member : nil,
       repname: ::Faker::Name.name,
       rep_state: ::Faker::Address.state_abbr,
       notes1: random_or_nil(::Faker::Lorem.sentence),
@@ -327,7 +330,7 @@ class Helpers::Sanitizers
   def white_list_decass
     %w[defolder deatty deteam depdiff defdiff deassign dereceive deprod detrem dearem deoq
        deadusr deadtim deprogrev demdusr demdtim delock dememid decomp dedeadline
-       deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 dedocid derecommend]
+       deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 derecommend]
   end
 
   def sanitize_decass(decass, exist_hash)
@@ -347,7 +350,7 @@ class Helpers::Sanitizers
        bfboard bfbsasgn bfattid bfdasgn bfdqrsnt bfdlocin bfdloout
        bfstasgn bfcurloc bfnrcopy bfmemid bfdmem bfnrci bfcallup bfcallyymm bfhines bfdcfld1
        bfdcfld2 bfdcfld3 bfac bfdc bfha bfms bfoc bfsh bfso bfhr bfst bfdrodec bfssoc1
-       bfssoc2 bfssoc3 bfssoc4 bfssoc5 bfdtb bftbind bfdcue bfdvin bfdvout bfddro bfdroid bfddvwrk
+       bfssoc2 bfssoc3 bfssoc4 bfssoc5 bfdtb bftbind bfdcue bfdvin bfdvout bfddro bfddvwrk
        bfddvdsp bfddvret bfdrortr bfro1 bflot bfbox bfdtbready bfarc bfdarcin bfdarcout bfarcdisp
        bfsub bfdcertool]
   end

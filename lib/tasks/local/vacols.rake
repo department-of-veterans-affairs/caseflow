@@ -184,7 +184,7 @@ namespace :local do
       klass.import(items)
     end
 
-    def write_csv(klass, rows)
+    def write_csv(klass, rows, sanitizer)
       CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
