@@ -1,6 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, debounceMs } from '../analytics';
+import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
 
@@ -33,7 +33,13 @@ export const handleWorksheetServerError = (err) => ({
   }
 });
 
+export const fetchingWorksheet = () => ({
+  type: Constants.FETCHING_WORKSHEET
+});
+
 export const getWorksheet = (id) => (dispatch) => {
+  dispatch(fetchingWorksheet());
+
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
       dispatch(populateWorksheet(response.body));
@@ -78,21 +84,17 @@ export const setNotes = (hearingIndex, notes, date) => ({
   }
 });
 
-export const setHearingPrepped = (hearingId, prepped, date, setEdited,
-  failedRequest = false) => ({
+export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE,
+  submitToGA = true) => ({
+
   type: Constants.SET_HEARING_PREPPED,
-  payload: {
-    hearingId,
-    prepped,
-    date,
-    setEdited
-  },
-  ...!failedRequest && {
+  payload,
+  ...submitToGA && {
     meta: {
       analytics: {
-        category: CATEGORIES.DAILY_DOCKET_PAGE,
-        action: 'hearing-prepped',
-        label: prepped ? 'checked' : 'unchecked'
+        category: gaCategory,
+        action: ACTIONS.DOCKET_HEARING_PREPPED,
+        label: payload.prepped ? 'checked' : 'unchecked'
       }
     }
   }
@@ -108,7 +110,8 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'disposition-selected'
+      action: ACTIONS.DISPOSITION_SELECTED,
+      label: disposition
     }
   }
 });
@@ -132,7 +135,7 @@ export const setAod = (hearingIndex, aod, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'aod-selected',
+      action: ACTIONS.AOD_SELECTED,
       label: aod
     }
   }
@@ -148,8 +151,8 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: 'transcript-requested',
-      label: transcriptRequested
+      action: ACTIONS.TRANSCRIPT_REQUESTED,
+      label: transcriptRequested ? 'checked' : 'unchecked'
     }
   }
 });
@@ -275,18 +278,25 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
 };
 
 export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+  const payload = {
+    hearingId,
+    prepped,
+    date: moment(date).format('YYYY-MM-DD'),
+    setEdited: false
+  };
 
-  dispatch(setHearingPrepped(hearingId, prepped,
-    moment(date).format('YYYY-MM-DD'), false));
+  dispatch(setHearingPrepped(payload,
+    CATEGORIES.HEARING_WORKSHEET_PAGE));
 
   ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
     then(() => {
       // request was successful
     },
     () => {
+      payload.prepped = !prepped;
+
       // request failed, resetting value
-      dispatch(setHearingPrepped(hearingId, !prepped,
-        moment(date).format('YYYY-MM-DD'), false, true));
+      dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
     });
 };
 

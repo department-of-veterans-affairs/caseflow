@@ -38,15 +38,6 @@ export class Dockets extends React.Component {
     };
   }
 
-  onTabSelected = (tabNumber) => {
-    if (tabNumber === PAST_HEARING_TAB_INDEX) {
-      this.togglePastDocketsTab(true);
-      window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, ACTIONS.PAST_HEARINGS_TAB);
-    } else {
-      this.togglePastDocketsTab(false);
-    }
-  }
-
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
@@ -62,7 +53,7 @@ export class Dockets extends React.Component {
     const action = this.state.viewingPastTab ? ACTIONS.OPEN_PAST_HEARING_DOCKET :
       ACTIONS.OPEN_CURRENT_HEARING_DOCKET;
 
-    window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, action);
+    window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, action);
   }
 
   linkToDailyDocket = (docket) => {
@@ -75,6 +66,15 @@ export class Dockets extends React.Component {
     </Link>;
   }
 
+  onTabSelected = (tabNumber) => {
+    if (tabNumber === PAST_HEARING_TAB_INDEX) {
+      this.togglePastDocketsTab(true);
+      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.OPEN_PAST_HEARINGS_TAB);
+    } else {
+      this.togglePastDocketsTab(false);
+    }
+  }
+
   togglePastDocketsTab = (isPastTab) => {
     this.setState({
       viewingPastTab: isPastTab
@@ -85,14 +85,10 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
-  onTabSelected = (tabNumber) => {
-    if (tabNumber === PAST_HEARING_TAB_INDEX) {
-      window.analyticsEvent(CATEGORIES.HEARINGS_PAGE, ACTIONS.PAST_HEARINGS_TAB);
-    }
-  }
+  getRowObjects = (hearings, reverseSort = false) => {
+    let docketIndex = Object.keys(hearings).sort();
 
-  getRowObjects = (hearings) => {
-    const docketIndex = Object.keys(hearings).sort();
+    docketIndex = reverseSort ? docketIndex.reverse() : docketIndex;
     const rowObjects = docketIndex.map((docketDate) => {
 
       let docket = hearings[docketDate];
