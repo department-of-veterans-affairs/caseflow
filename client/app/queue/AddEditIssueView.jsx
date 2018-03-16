@@ -16,6 +16,7 @@ import {
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
+import Button from '../components/Button';
 
 import {
   fullWidth,
@@ -24,6 +25,7 @@ import {
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
+const noLeftPadding = css({ paddingLeft: 0 });
 
 const itemList = [{
   label: 'First',
@@ -91,6 +93,13 @@ class AddEditIssueView extends React.Component {
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
       {StringUtil.titleCase(this.props.action)} Issue
     </h1>
+    <Button
+      willNeverBeLoading
+      styling={noLeftPadding}
+      classNames={['cf-btn-link']}
+      onClick={_.noop}>
+      Delete Issue
+    </Button>
     <SearchableDropdown
       name="Program:"
       styling={dropdownMarginTop}
@@ -108,6 +117,13 @@ class AddEditIssueView extends React.Component {
       options={itemList}
       onChange={({ value }) => this.updateIssue({ type: value })}
       value={this.getIssueValue('type')} />
+    <SearchableDropdown
+      name="Add Stay:"
+      styling={dropdownMarginTop}
+      placeholder="Select stay"
+      options={itemList}
+      onChange={({ value }) => this.updateIssue({ stay: value })}
+      value={this.getIssueValue('stay')} />
     <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
     <SearchableDropdown
       name="Level 1:"
