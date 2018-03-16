@@ -3,6 +3,7 @@ require "faker"
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/CyclomaticComplexity
 # rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/PerceivedComplexity
 
 # In order to add a new table to this sanitization list, you'll need to add two methods.
 # If the new table's class name is VACOLS::KlassName, you'll need a method called white_list_klassname
@@ -365,3 +366,4 @@ end
 # rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/PerceivedComplexity
 # rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/PerceivedComplexity
