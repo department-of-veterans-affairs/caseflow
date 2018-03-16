@@ -48,22 +48,6 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
-// todo: VRE or VR&C?
-export const ISSUE_PROGRAMS = {
-  '01': 'VBA Burial',
-  '02': 'Compensation',
-  '03': 'Education',
-  '04': 'Insurance',
-  '05': 'Loan Guaranty',
-  '06': 'Medical',
-  '07': 'Pension',
-  '08': 'VRE',
-  '09': 'Other',
-  10: 'BVA',
-  11: 'NCA Burial',
-  12: 'Fiduciary'
-};
-
 /*
 {
   `issprog`: {

@@ -20,7 +20,7 @@ import Button from '../components/Button';
 
 import {
   fullWidth,
-  ISSUE_PROGRAMS
+  ISSUE_INFO
 } from './constants';
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -105,8 +105,8 @@ class AddEditIssueView extends React.Component {
       name="Program:"
       styling={dropdownMarginTop}
       placeholder="Select program"
-      options={_.map(ISSUE_PROGRAMS, (label, value) => ({
-        label,
+      options={_.map(ISSUE_INFO, (obj, value) => ({
+        label: obj.description,
         value
       }))}
       onChange={({ value }) => this.updateIssue({ program: value })}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText, ISSUE_PROGRAMS } from '../constants';
+import { boldText, ISSUE_INFO } from '../constants';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -43,7 +43,7 @@ export default class IssueListItem extends React.PureComponent {
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
-        <span {...boldText}>Program:</span> {ISSUE_PROGRAMS[issue.program]}
+        <span {...boldText}>Program:</span> {ISSUE_INFO[issue.program].description}
         <div {...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.formatLevels(issue)}</div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {issue.note}
