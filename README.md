@@ -10,7 +10,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install postgresql redis chromedriver rbenv nvm yarn
+    brew install chromedriver rbenv nvm yarn
 
 Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
 - Run `mkdir ~/.nvm`
@@ -29,11 +29,7 @@ Then run the following:
 
 *NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`.
 
-You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
-
-    brew info redis
-
-    brew info postgresql
+You need to have Chromedriver running to run the Capybara tests. Let `brew` tell you how to do that:
 
     brew info chromedriver
 
