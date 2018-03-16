@@ -26,7 +26,7 @@ RSpec.describe QueueController, type: :controller do
       FeatureToggle.disable!(:queue_phase_two)
     end
 
-    context "when all parameters are present" do
+    context "when all parameters are present to create OMORequest" do
       let(:params) do
         {
           "type": "OMORequest",
@@ -43,9 +43,37 @@ RSpec.describe QueueController, type: :controller do
         post :complete, task_id: "1234567-2016-11-05", queue: params
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        expect(response_body["document_id"]).to eq "123456789.1234"
-        expect(response_body["overtime"]).to eq true
-        expect(response_body["note"]).to eq "something"
+        expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
+        expect(response_body["attorney_case_review"]["overtime"]).to eq true
+        expect(response_body["attorney_case_review"]["note"]).to eq "something"
+        expect(response_body.keys).to_not include "issues"
+      end
+    end
+
+    context "when all parameters are present to create DraftDecision" do
+      let(:params) do
+        {
+          "type": "DraftDecision",
+          "reviewing_judge_id": judge.id,
+          "work_product": "Decision",
+          "document_id": "123456789.1234",
+          "overtime": true,
+          "note": "something",
+          "issues": [{ "disposition": "Remanded", "vacols_sequence_id": 1 },
+                     { "disposition": "Allowed", "vacols_sequence_id": 2 }]
+        }
+      end
+
+      it "should be successful" do
+        allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
+        User.authenticate!(roles: ["System Admin"])
+        post :complete, task_id: "1234567-2016-11-05", queue: params
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
+        expect(response_body["attorney_case_review"]["overtime"]).to eq true
+        expect(response_body["attorney_case_review"]["note"]).to eq "something"
+        expect(response_body.keys).to include "issues"
       end
     end
 

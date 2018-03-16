@@ -50,6 +50,11 @@ class RampReview < ActiveRecord::Base
     end_product_reference_id && end_product.description_with_routing
   end
 
+  def pending_end_product_description
+    # This is for EPs not yet created or that failed to create
+    end_product.modifier
+  end
+
   private
 
   def end_product
