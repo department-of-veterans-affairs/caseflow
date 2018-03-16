@@ -85,12 +85,6 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
-  onTabSelected = (tabNumber) => {
-    if (tabNumber === PAST_HEARING_TAB_INDEX) {
-      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.OPEN_PAST_HEARINGS_TAB);
-    }
-  }
-
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
 
