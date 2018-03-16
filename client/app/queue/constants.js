@@ -43,4 +43,4 @@ export const ERROR_FIELD_REQUIRED = 'This field is required';
 export const DECISION_TYPES = {
   OMO_REQUEST: 'OMORequest',
   DRAFT_DECISION: 'DraftDecision'
-}
+};
