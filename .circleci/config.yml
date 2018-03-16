@@ -67,3 +67,8 @@ jobs:
 
       - store_artifacts:
           path: ~/coverage
+
+      - deploy:
+          name: Verify code coverage
+          command: |
+            rake ci:circleci_verify_code_coverage
