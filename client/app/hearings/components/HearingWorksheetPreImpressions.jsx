@@ -24,21 +24,21 @@ class HearingWorksheetPreImpressions extends PureComponent {
     this.props.onToggleVHA(vha, this.props.issue.id);
 
   render() {
-    let { issue } = this.props;
+    let { issue, print } = this.props;
 
     return <div className="cf-hearings-worksheet-actions">
       <Checkbox label="Re-Open" name={`${issue.id}-${issue.appeal_id}-chk_reopen`}
-        onChange={this.onToggleReopen} value={issue.reopen} />
+        onChange={this.onToggleReopen} value={issue.reopen} disabled={print} />
       <Checkbox label="Allow" name={`${issue.id}-${issue.appeal_id}-chk_allow`}
-        onChange={this.onToggleAllow} value={issue.allow} />
+        onChange={this.onToggleAllow} value={issue.allow} disabled={print} />
       <Checkbox label="Deny" name={`${issue.id}-${issue.appeal_id}-chk_deny`}
-        onChange={this.onToggleDeny} value={issue.deny} />
+        onChange={this.onToggleDeny} value={issue.deny} disabled={print} />
       <Checkbox label="Remand" name={`${issue.id}-${issue.appeal_id}-chk_remand`}
-        onChange={this.onToggleRemand} value={issue.remand} />
+        onChange={this.onToggleRemand} value={issue.remand} disabled={print} />
       <Checkbox label="Dismiss" name={`${issue.id}-${issue.appeal_id}-chk_dismiss`}
-        onChange={this.onToggleDismiss} value={issue.dismiss} />
+        onChange={this.onToggleDismiss} value={issue.dismiss} disabled={print} />
       <Checkbox label="VHA" name={`${issue.id}-${issue.appeal_id}-chk_vha`}
-        onChange={this.onToggleVHA} value={issue.vha} />
+        onChange={this.onToggleVHA} value={issue.vha} disabled={print} />
     </div>;
   }
 }
@@ -58,7 +58,8 @@ const mapStateToProps = (state) => ({
 
 HearingWorksheetPreImpressions.propTypes = {
   issue: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  print: PropTypes.bool
 };
 
 export default connect(

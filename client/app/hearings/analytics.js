@@ -1,7 +1,7 @@
 export const debounceMs = 1000;
 
 export const CATEGORIES = {
-  HEARINGS_PAGE: 'Hearing Days',
+  HEARINGS_DAYS_PAGE: 'Hearing Days',
   DAILY_DOCKET_PAGE: 'Daily Docket',
   HEARING_WORKSHEET_PAGE: 'Hearing Worksheet'
 };
