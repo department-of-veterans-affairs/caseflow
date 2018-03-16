@@ -73,6 +73,7 @@ class AddEditIssueView extends React.Component {
 
   goToPrevStep = () => {
     this.props.cancelEditingAppealIssue();
+
     return true;
   }
 
