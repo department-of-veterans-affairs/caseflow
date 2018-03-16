@@ -435,7 +435,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def merged?
-    disposition == "Merged Appeal" || !disposition.nil?
+    !disposition.nil? && disposition == "Merged Appeal"
   end
 
   def special_issues
