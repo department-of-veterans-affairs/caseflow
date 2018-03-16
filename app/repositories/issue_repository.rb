@@ -30,7 +30,8 @@ class IssueRepository
         issue_attrs: issue_attrs.merge(slogid: slogid_based_on_css_id(css_id))
       )
 
-      # TODO: Need to create remand reasons if a disposition is updated to 'Remanded' for the first time
+      # TODO: Need to only create remand reasons if a disposition is changed to 'Remanded' from something else
+      # TODO: Need to delete remand reasons if a disposition is changed from 'Remanded' to something else
       VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, issue_attrs.delete(:remand_reasons))
 
       VACOLS::CaseIssue.update_issue!(vacols_id, vacols_sequence_id, issue_attrs)
