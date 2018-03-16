@@ -59,7 +59,7 @@ describe QueueMapper do
           note: "Require action4" }
       end
       it "raises an error" do
-        expect { subject }.to raise_error(VacolsHelper::MissingRequiredFieldError)
+        expect { subject }.to raise_error(QueueRepository::QueueError)
       end
     end
 
@@ -71,7 +71,7 @@ describe QueueMapper do
           note: "Require action4" }
       end
       it "raises an error" do
-        expect { subject }.to raise_error(VacolsHelper::MissingRequiredFieldError)
+        expect { subject }.to raise_error(QueueRepository::QueueError)
       end
     end
   end

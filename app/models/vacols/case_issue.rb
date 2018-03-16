@@ -3,6 +3,8 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
+  class IssueError < StandardError; end
+
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
   # :nocov:
@@ -106,6 +108,36 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   def self.delete_issue!(isskey, issseq)
     where(isskey: isskey, issseq: issseq).delete_all
+  end
+
+  def update(*)
+    update_error_message
+  end
+
+  def update!(*)
+    update_error_message
+  end
+
+  def delete
+    delete_error_message
+  end
+
+  def destroy
+    delete_error_message
+  end
+
+  private
+
+  def update_error_message
+    fail IssueError, "Since the primary key is not unique, `update` will update all results
+      with the same `isskey`. Instead use VACOLS::CaseIssue.update_issue!
+      that uses `isskey` and `issseq` to safely update one record"
+  end
+
+  def delete_error_message
+    fail IssueError, "Since the primary key is not unique, `delete` or `destroy`
+      will delete all results with the same `isskey`. Instead use VACOLS::CaseIssue.delete_issue!
+      that uses `isskey` and `issseq` to safely delete one record"
   end
   # :nocov:
 end
