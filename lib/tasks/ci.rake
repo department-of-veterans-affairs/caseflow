@@ -44,7 +44,7 @@ namespace :ci do
     end
   end
 
-  desc "Verify code coverge (via simplecov) on travis, skips if testing is incomplete"
+  desc "Verify code coverage (via simplecov) on travis, skips if testing is incomplete"
   task :travis_verify_code_coverage do
     puts "\nVerifying code coverage"
     require "simplecov"
@@ -76,6 +76,41 @@ namespace :ci do
     if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
       puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
                    This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+      exit!(1)
+    else
+      puts Rainbow("Code coverage threshold met\n").green
+    end
+  end
+
+  desc "Verify code coverage on CircleCI "
+  task :circleci_verify_code_coverage do
+    require "simplecov"
+    require "open-uri"
+    api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts?circle-token=#{ENV['CIRCLE_TOKEN']}"
+
+    artifacts = open(api_url)
+
+    coverage_dir = "/tmp/coverage"
+
+    SimpleCov.coverage_dir(coverage_dir)
+
+    JSON.parse(artifacts)
+      .map { |artifact| JSON.parse(open("#{artifact['url']}?circle-token=#{ENV['CIRCLE_TOKEN']}")) }
+      .each_with_index do |resultset, i|
+      resultset.each_value do |data|
+        result = SimpleCov::Result.from_hash(["command", i].join => data)
+        SimpleCov::ResultMerger.store_result(result)
+      end
+    end
+    result = SimpleCov::ResultMerger.merged_result
+    result.command_name = "RSpec"
+    if result.covered_percentages.empty?
+      puts Rainbow("No valid coverage results were found").red
+      exit!(1)
+    end
+    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
+                    This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green
