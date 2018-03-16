@@ -87,7 +87,7 @@ export class Dockets extends React.Component {
 
   onTabSelected = (tabNumber) => {
     if (tabNumber === PAST_HEARING_TAB_INDEX) {
-      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.PAST_HEARINGS_TAB);
+      window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, ACTIONS.OPEN_PAST_HEARINGS_TAB);
     }
   }
 
