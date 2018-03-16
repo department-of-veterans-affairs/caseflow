@@ -27,7 +27,7 @@ Then run the following:
     rbenv rehash
     gem install bundler
 
-*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`. 
+*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`.
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
 
@@ -154,8 +154,8 @@ To seed the VACOLS container with data you'll need to generate the data for the 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
 2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
 ```
-export VACOLS_PASSWORD=<pw_from_credstash (vacols.uat.db_password)>
-export VACOLS_USERNAME=<pw_from_credstash (vacols.uat.db_username)>
+export VACOLS_USERNAME=`credstash -t appeals-credstash get vacols.facols.db_username`
+export VACOLS_PASSWORD=`credstash -t appeals-credstash get vacols.facols.db_password`
 ```
 3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
 4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
