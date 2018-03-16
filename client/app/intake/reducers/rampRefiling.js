@@ -59,6 +59,8 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     outsideCaseflowStepsError: null,
     endProductDescription: null,
     submitInvalidOptionError: false,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
 
     // This allows us to tap into error events on the finish page and
     // scroll to the right element
@@ -238,6 +240,12 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       requestStatus: {
         completeIntake: {
           $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });

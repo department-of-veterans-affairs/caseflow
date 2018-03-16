@@ -1,5 +1,5 @@
 class QueueRepository
-  class ReassignCaseToJudgeError < StandardError; end
+  class QueueError < StandardError; end
   # :nocov:
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
@@ -7,6 +7,10 @@ class QueueRepository
                           name: "tasks_for_user") do
       tasks_query(css_id)
     end
+  end
+
+  def self.can_access_task?(css_id, vacols_id)
+    tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
   end
 
   def self.appeals_from_tasks(tasks)
@@ -35,43 +39,39 @@ class QueueRepository
     appeals
   end
 
-  # decass_hash = {
-  #  task_id: "123456-2016-10-19",
-  #  judge_css_id: "GRATR_316"
-  #  work_product: "OMO - IME",
-  #  overtime: true,
-  #  document_id: "123456789.1234",
-  #  note: "Require action"
-  # }
-  def self.reassign_case_to_judge(decass_hash)
-    decass_record = find_decass_record(decass_hash[:task_id])
-    ActiveRecord::Base.transaction do
-      # update DECASS table
-      update_decass_record(decass_record,
-                           decass_hash.merge(reassigned_at: VacolsHelper.local_date_with_utc_timezone))
-
-      # update location with the judge's stafkey
-      update_location(decass_record.case, decass_hash[:judge_css_id])
-      true
+  def self.reassign_case_to_judge(attorney_css_id:, vacols_id:, date_assigned:, judge_css_id:, decass_attrs:)
+    unless can_access_task?(attorney_css_id, vacols_id)
+      msg = "Attorney with css ID #{attorney_css_id} cannot access task with vacols ID: #{vacols_id}"
+      fail QueueError, msg
     end
+
+    # update DECASS table
+    update_decass_record(vacols_id, date_assigned, decass_attrs)
+
+    # update location with the judge's slogid
+    update_location(vacols_id, judge_css_id)
+    true
   end
 
-  def self.decass_by_vacols_id_and_date_assigned(vacols_id, date_assigned)
-    VACOLS::Decass.find_by(defolder: vacols_id, deassign: date_assigned)
-  end
-
-  def self.update_location(case_record, css_id)
-    fail ReassignCaseToJudgeError unless css_id
+  def self.update_location(vacols_id, css_id)
     staff = VACOLS::Staff.find_by(sdomainid: css_id)
-    fail ReassignCaseToJudgeError unless staff
-    case_record.update_vacols_location!(staff.slogid)
+    fail QueueError, "Cannot find user with #{css_id} in VACOLS" unless staff
+    VACOLS::Case.find(vacols_id).update_vacols_location!(staff.slogid)
   end
 
-  def self.update_decass_record(decass_record, decass_hash)
-    info = QueueMapper.case_decision_fields_to_vacols_codes(decass_hash)
-    # Validate presence of the required fields after the mapper to ensure correctness
-    VacolsHelper.validate_presence(info, [:work_product, :document_id, :reassigned_at])
-    decass_record.update_decass_record!(info)
+  def self.update_decass_record(vacols_id, date_assigned, decass_attrs)
+    unless VACOLS::Decass.find_by(defolder: vacols_id, deassign: date_assigned)
+      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date assigned: #{date_assigned}"
+      fail QueueError, msg
+    end
+
+    decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+
+    MetricsService.record("VACOLS: update_decass_record! #{vacols_id}",
+                          service: :vacols,
+                          name: "update_decass_record") do
+      VACOLS::Decass.where(defolder: vacols_id, deassign: date_assigned).update_all(decass_attrs)
+    end
   end
 
   def self.tasks_query(css_id)
@@ -88,19 +88,6 @@ class QueueRepository
     VACOLS::Case.aod(vacols_ids)
   end
   # :nocov:
-
-  def self.find_decass_record(task_id)
-    # Task ID is a concatantion of the vacols ID and the date assigned
-    result = task_id.split("-", 2)
-    fail ReassignCaseToJudgeError, "Task ID is invalid format: #{task_id}" if result.size != 2
-    record = decass_by_vacols_id_and_date_assigned(result.first, result.second.to_date)
-    # TODO: check permission that the user can update the record
-    unless record
-      fail ReassignCaseToJudgeError,
-           "Decass record does not exist for vacols_id: #{result.first} and date assigned: #{result.second}"
-    end
-    record
-  end
 
   def self.filter_duplicate_tasks(records)
     # Keep the latest assignment if there are duplicate records

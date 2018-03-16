@@ -87,6 +87,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.FETCHING_WORKSHEET: {
+    return update(state, {
+      fetchingWorksheet: { $set: true }
+    });
+  }
+
   case Constants.POPULATE_WORKSHEET: {
     const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');
     const worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
@@ -97,13 +103,15 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, {
       worksheetIssues: { $set: worksheetIssues },
       worksheetAppeals: { $set: worksheetAppeals },
-      worksheet: { $set: worksheet }
+      worksheet: { $set: worksheet },
+      fetchingWorksheet: { $set: false }
     });
   }
 
   case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
-      worksheetServerError: { $set: action.payload.err }
+      worksheetServerError: { $set: action.payload.err },
+      fetchingWorksheet: { $set: false }
     });
 
   case Constants.HANDLE_DOCKET_SERVER_ERROR:
@@ -208,11 +216,19 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
-    return update(state, { docketIsSaving: { $set: !state.isSaving }
+    return update(state, { docketIsSaving: { $set: action.payload.saving }
     });
 
   case Constants.TOGGLE_WORKSHEET_SAVING:
-    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
+    return update(state, { worksheetIsSaving: { $set: action.payload.saving }
+    });
+
+  case Constants.SET_WORKSHEET_TIME_SAVED:
+    return update(state, { worksheetTimeSaved: { $set: action.payload.timeSaved }
+    });
+
+  case Constants.SET_DOCKET_TIME_SAVED:
+    return update(state, { docketTimeSaved: { $set: action.payload.timeSaved }
     });
 
   case Constants.SET_DOCKET_SAVE_FAILED:

@@ -6,10 +6,6 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  def successfully_received?
-    intakes.where(completion_status: "success").any?
-  end
-
   # RAMP letters request that Veterans respond within 60 days; elections will
   # be accepted after this point, however, so this "due date" is soft.
   def due_date
@@ -18,6 +14,10 @@ class RampElection < RampReview
 
   def response_time
     notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
+  end
+
+  def completed?
+    !!end_product_reference_id
   end
 
   def self.completed

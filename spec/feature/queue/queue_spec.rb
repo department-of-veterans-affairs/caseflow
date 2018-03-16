@@ -161,12 +161,19 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).to have_content("Hearing Preference: #{hearing.type.capitalize}")
-        expect(page).to have_content("Hearing held: #{hearing.date.strftime('%-m/%-e/%y')}")
-        expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+        hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
+        expect(page).to have_content("Hearing preference: #{hearing_preference}")
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
-        expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        if hearing.disposition.eql? :cancelled
+          expect(page).not_to have_content("Hearing date")
+          expect(page).not_to have_content("Judge at hearing")
+        else
+          expect(page).to have_content("Hearing date: #{hearing.date.strftime('%-m/%-e/%y')}")
+          expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+
+          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
+          expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        end
       end
 
       scenario "appeal has no hearing" do
@@ -178,7 +185,7 @@ RSpec.feature "Queue" do
 
         safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
 
-        expect(page).not_to have_content("Hearing Preference")
+        expect(page).not_to have_content("Hearing preference")
 
         expect(page).to have_content("Type: CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
@@ -232,7 +239,7 @@ RSpec.feature "Queue" do
 
         click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
 
-        expect(page).to have_content("Back to Draft Decision - #{appeal.veteran_full_name} (#{appeal.vbms_id})")
+        expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
     end
   end
