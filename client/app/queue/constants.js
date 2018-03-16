@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { css } from 'glamor';
 
 export const COLORS = {
@@ -47,6 +48,7 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
+// todo: VRE or VR&C?
 export const ISSUE_PROGRAMS = {
   '01': 'VBA Burial',
   '02': 'Compensation',
@@ -55,11 +57,11 @@ export const ISSUE_PROGRAMS = {
   '05': 'Loan Guaranty',
   '06': 'Medical',
   '07': 'Pension',
-  '08': 'VRE', // todo: VR&C?
+  '08': 'VRE',
   '09': 'Other',
-  '10': 'BVA',
-  '11': 'NCA Burial',
-  '12': 'Fiduciary',
+  10: 'BVA',
+  11: 'NCA Burial',
+  12: 'Fiduciary'
 };
 
 /*
@@ -121,7 +123,7 @@ export const ISSUE_INFO = {
         description: 'Automobile or adaptive equipment',
         levels: {
           '01': { description: 'Eligibility' },
-          '02': { description: 'Other' },
+          '02': { description: 'Other' }
         }
       },
       '04': {
@@ -174,8 +176,8 @@ export const ISSUE_INFO = {
           '07': { description: 'Other' }
         }
       },
-      '10': { description: 'Forfeiture of benefits' },
-      '11': {
+      10: { description: 'Forfeiture of benefits' },
+      11: {
         description: 'Increased rate for dependents',
         levels: {
           '01': { description: 'Accrued' },
@@ -187,7 +189,7 @@ export const ISSUE_INFO = {
           '07': { description: 'Other' }
         }
       },
-      '12': {
+      12: {
         description: 'Increased rating',
         levels: {
           '01': { description: '10% under 38 C.F.R. 3.324' },
@@ -197,17 +199,17 @@ export const ISSUE_INFO = {
           '05': { description: 'SMC' },
           '06': { description: 'Temporary total' },
           '07': { description: 'Other' },
-          '08': { description: 'Schedular & Extraschedular' },
+          '08': { description: 'Schedular & Extraschedular' }
         }
       },
-      '13': {
+      13: {
         description: 'Overpayment',
         levels: {
           '01': { description: 'Validity of debt' },
           '02': { description: 'Waiver' }
         }
       },
-      '14': {
+      14: {
         description: 'Severance of service connection',
         levels: {
           '01': { description: 'Accrued' },
@@ -215,24 +217,24 @@ export const ISSUE_INFO = {
           '03': { description: 'All others' }
         }
       },
-      '15': {
+      15: {
         description: 'Service connection',
         levels: {
           '01': { description: 'Accrued' },
           '02': { description: 'Dental' },
           '03': { description: 'All Others' },
-          '04': { description: 'New and Material' },
+          '04': { description: 'New and Material' }
         }
       },
-      '16': {
+      16: {
         description: 'Status as a veteran',
         levels: {
           '01': { description: 'Character of discharge' },
           '02': { description: 'Recognized service' },
-          '03': { description: 'Other' },
+          '03': { description: 'Other' }
         }
       },
-      '17': {
+      17: {
         description: 'TDIU',
         levels: {
           '01': { description: 'Accrued' },
@@ -240,7 +242,7 @@ export const ISSUE_INFO = {
           '03': { description: 'Termination' }
         }
       },
-      '18': {
+      18: {
         description: 'Reductions',
         levels: {
           '01': {
@@ -262,28 +264,29 @@ export const ISSUE_INFO = {
               '02': { description: 'Institutionalized payee' },
               '03': { description: 'Removal of dependent' },
               '04': { description: 'Recoupment' },
-              '05': { description: 'Other' },
+              '05': { description: 'Other' }
             }
-          },
+          }
         }
       },
-      '19': {
+      19: {
         description: 'Specially adapted housing',
         levels: {
           '01': { description: 'Eligibility ' },
           '02': { description: 'Other' }
         }
       },
-      '20': {
-        description: 'Survivors & dependents educational assistance (Cha', // todo: cut off in doc
+      20: {
+        // todo: description cut off in doc
+        description: 'Survivors & dependents educational assistance (Cha',
         levels: {
           '01': { description: 'Accrued' },
           '02': { description: 'Eligibility' },
           '03': { description: 'Other' }
         }
       },
-      '21': { description: 'Willfull misconduct/LOD' },
-      '22': { description: 'Eligibility for Substitution' }
+      21: { description: 'Willfull misconduct/LOD' },
+      22: { description: 'Eligibility for Substitution' }
     }
   },
   '03': {
@@ -325,7 +328,7 @@ export const ISSUE_INFO = {
           '02': { description: 'Waiver' }
         }
       },
-      '06': { description: 'Other' },
+      '06': { description: 'Other' }
     }
   },
   '04': {
@@ -361,7 +364,7 @@ export const ISSUE_INFO = {
         levels: {
           '01': { description: 'Timely application' },
           '02': { description: 'Over age 65' },
-          '03': { description: 'Other' },
+          '03': { description: 'Other' }
         }
       },
       '05': {
@@ -371,10 +374,10 @@ export const ISSUE_INFO = {
           '02': { description: 'Testamentary capacity' },
           '03': { description: 'Undue influence' },
           '04': { description: 'Intent of insured' },
-          '05': { description: 'Other' },
+          '05': { description: 'Other' }
         }
       },
-      '06': { description: 'Other' },
+      '06': { description: 'Other' }
     }
   },
   '05': {
@@ -385,7 +388,7 @@ export const ISSUE_INFO = {
       '03': { description: 'Waiver of indebtedness' },
       '04': { description: 'Retroactive release of liability' },
       '05': { description: 'Restoration of entitlement' },
-      '06': { description: 'Other' },
+      '06': { description: 'Other' }
     }
   },
   '06': {
@@ -409,7 +412,7 @@ export const ISSUE_INFO = {
       },
       '05': { description: 'Level of priority for treatment' },
       '06': { description: 'Other' },
-      '07': { description: 'Clothing allowance § 3.810(b) certification' },
+      '07': { description: 'Clothing allowance § 3.810(b) certification' }
     }
   },
   '07': {
@@ -437,19 +440,19 @@ export const ISSUE_INFO = {
           '03': { description: 'Paternity' },
           '04': { description: 'Stepchild' },
           '05': { description: 'Validity of marriage' },
-          '06': { description: 'Other' },
+          '06': { description: 'Other' }
         }
       },
       '09': { description: 'SMP' },
-      '10': {
+      10: {
         description: 'Overpayment',
         levels: {
           '01': { description: 'Validity of debt' },
           '02': { description: 'Waiver' }
         }
       },
-      '11': { description: 'Willful misconduct/LOD' },
-      '12': { description: 'Other' }
+      11: { description: 'Willful misconduct/LOD' },
+      12: { description: 'Other' }
     }
   },
   '08': {
@@ -461,7 +464,7 @@ export const ISSUE_INFO = {
       '04': { description: 'Equipment Purchases' },
       '05': { description: 'Additional Training' },
       '06': { description: 'Change of Program' },
-      '07': { description: 'Other' },
+      '07': { description: 'Other' }
     }
   },
   '09': {
@@ -487,7 +490,7 @@ export const ISSUE_INFO = {
               '01': { description: 'Validity of debt' },
               '02': { description: 'Waiver' }
             }
-          },
+          }
         }
       },
       '03': {
@@ -496,14 +499,14 @@ export const ISSUE_INFO = {
           '01': { description: 'Effective date' },
           '02': { description: 'Eligibility' },
           '03': { description: 'Level of disability' },
-          '04': { description: 'Other' },
+          '04': { description: 'Other' }
         }
       },
       '04': { description: 'Waiver of VA employee indebtedness' },
-      '05': { description: 'Death Gratuity Certification (38 USC 1323)' },
+      '05': { description: 'Death Gratuity Certification (38 USC 1323)' }
     }
   },
-  '10': {
+  10: {
     description: 'BVA',
     issue: {
       '01': {
@@ -518,7 +521,7 @@ export const ISSUE_INFO = {
         levels: {
           '01': { description: 'Compensation' },
           '02': { description: 'Pension' },
-          '03': { description: 'Other' },
+          '03': { description: 'Other' }
         }
       },
       '03': {
@@ -536,41 +539,41 @@ export const ISSUE_INFO = {
             levels: {
               '01': { description: 'Evidence submission' },
               '02': { description: 'Hearing request' },
-              '03': { description: 'Request to change representative' },
+              '03': { description: 'Request to change representative' }
             }
-          },
+          }
         }
       },
       '04': { description: 'Designation of record' }
     }
   },
-  '11': {
+  11: {
     description: 'NCA Burial',
     issue: {
       '01': {
         description: 'Entitlement',
         levels: {
-          '01': {description: 'Reserves/National Guard'},
-          '02': {description: 'Less than 24 months'},
-          '03': {description: 'Character of service'},
-          '04': {description: 'Merchant Marine'},
-          '05': {description: 'No military information'},
-          '06': {description: 'Cadet (service academies)'},
-          '07': {description: 'Adult child with waiver request'},
-          '08': {description: 'Allied forces and non-citizens'},
-          '09': {description: 'Pre-need'},
-          '10': {description: 'Spouse or dependent'},
-          '11': {description: 'Non-qualifying service'},
-          '12': {description: 'ABMC/overseas burial'},
-          '13': {description: 'Pre-WWI/burial site unknown'},
-          '14': {description: 'Marked grave (death prior to 10-18-78)'},
-          '15': {description: 'Marked grave (death on/after 10-18-78 to 10-31-90)'},
+          '01': { description: 'Reserves/National Guard' },
+          '02': { description: 'Less than 24 months' },
+          '03': { description: 'Character of service' },
+          '04': { description: 'Merchant Marine' },
+          '05': { description: 'No military information' },
+          '06': { description: 'Cadet (service academies)' },
+          '07': { description: 'Adult child with waiver request' },
+          '08': { description: 'Allied forces and non-citizens' },
+          '09': { description: 'Pre-need' },
+          10: { description: 'Spouse or dependent' },
+          11: { description: 'Non-qualifying service' },
+          12: { description: 'ABMC/overseas burial' },
+          13: { description: 'Pre-WWI/burial site unknown' },
+          14: { description: 'Marked grave (death prior to 10-18-78)' },
+          15: { description: 'Marked grave (death on/after 10-18-78 to 10-31-90)' }
         }
       },
       '02': { description: 'Other' }
     }
   },
-  '12': {
+  12: {
     description: 'Fiduciary',
     issue: {
       '01': {
