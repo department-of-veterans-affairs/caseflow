@@ -112,8 +112,6 @@ class SeedDB
     @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Hearing Prep", station_id: "283", full_name: "Lauren Roth"))
     @users.push(User.create(css_id: "Mail Intake", station_id: "283", full_name: "Kwame Nkrumah"))
-    @users.push(User.create(css_id: "BVACKASSULKE", station_id: "283", full_name: "Judge 1", roles: ["Reader", "Hearing Prep"]))
-    @users.push(User.create(css_id: "BVASCASPER", station_id: "283", full_name: "Attorney 1", roles: ["Reader"]))
   end
 
   def create_annotations

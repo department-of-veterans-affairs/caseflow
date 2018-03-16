@@ -84,6 +84,16 @@ namespace :local do
       read_csv(VACOLS::Vftypes, date_shift)
       read_csv(VACOLS::Issref, date_shift)
       read_csv(VACOLS::TravelBoardSchedule, date_shift)
+
+      css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
+        User.find_or_create_by(
+          css_id: s.sdomainid
+        ) do |user|
+          user.station_id = "283"
+          user.full_name = "#{s.snamef} + #{s.snamel}"
+        end.css_id
+      end
+      Functions.grant!("System Admin", users: css_ids)
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
