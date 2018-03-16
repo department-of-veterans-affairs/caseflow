@@ -148,10 +148,10 @@ rake [RAILS_ENV=<local|test|development>] local:vacols:seed
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
-2) Get the username and password from [1Password](https://dsvaappeals.1password.com/).  Search for "FACOLS Credentials"
+2) Get the username and password from [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
 ```
-export VACOLS_USERNAME=<FACOLS credentials username>
-export VACOLS_PASSWORD=<FACOLS credentials password>
+export VACOLS_USERNAME=`credstash -t appeals-credstash get vacols.facols.db_username`
+export VACOLS_PASSWORD=`credstash -t appeals-credstash get vacols.facols.db_password`
 ```
 3) `ssh -L 1526:dsva-appeals-vacols-uat-markymark-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <username@uatserveraddress>` to ssh forward the DB connection
 4) `RAILS_ENV=ssh_forwarding rake local:vacols:dump_data` to dump the data to CSV files
