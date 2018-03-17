@@ -18,6 +18,7 @@ import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { DECISION_TYPES } from './constants';
 import Breadcrumbs from './components/BreadcrumbManager';
 
 const appStyling = css({ paddingTop: '3rem' });
@@ -112,7 +113,8 @@ class QueueApp extends React.PureComponent {
             exact
             path="/tasks/:vacolsId/submit"
             title={() => {
-              const reviewActionType = this.props.reviewActionType === 'omo' ? 'OMO' : 'Draft Decision';
+              const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
+                'OMO' : 'Draft Decision';
 
               return `Draft Decision | Submit ${reviewActionType}`;
             }}

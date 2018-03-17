@@ -1,4 +1,5 @@
 import { ACTIONS } from './constants';
+import { hideErrorMessage } from './uiReducer/uiActions';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -39,12 +40,15 @@ export const setCaseReviewActionType = (type) => ({
   }
 });
 
-export const setDecisionOptions = (opts) => ({
-  type: ACTIONS.SET_DECISION_OPTIONS,
-  payload: {
-    opts
-  }
-});
+export const setDecisionOptions = (opts) => (dispatch) => {
+  dispatch(hideErrorMessage());
+  dispatch({
+    type: ACTIONS.SET_DECISION_OPTIONS,
+    payload: {
+      opts
+    }
+  });
+};
 
 export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
@@ -91,29 +95,4 @@ export const saveEditedAppealIssue = (appealId, issueId) => ({
     appealId,
     issueId
   }
-});
-
-export const highlightInvalidFormItems = (highlight) => ({
-  type: ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS,
-  payload: {
-    highlight
-  }
-});
-
-export const setSelectingJudge = (selectingJudge) => ({
-  type: ACTIONS.SET_SELECTING_JUDGE,
-  payload: {
-    selectingJudge
-  }
-});
-
-export const pushBreadcrumb = (...crumbs) => ({
-  type: ACTIONS.PUSH_BREADCRUMB,
-  payload: {
-    crumbs: [...crumbs]
-  }
-});
-
-export const resetBreadcrumbs = () => ({
-  type: ACTIONS.RESET_BREADCRUMBS
 });

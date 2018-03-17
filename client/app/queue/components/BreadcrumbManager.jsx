@@ -20,6 +20,6 @@ class BreadcrumbManager extends React.Component {
   />
 }
 
-const mapStateToProps = (state) => _.pick(state.queue.ui, 'breadcrumbs');
+const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs');
 
 export default connect(mapStateToProps)(BreadcrumbManager);

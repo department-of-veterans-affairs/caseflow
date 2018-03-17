@@ -1,4 +1,5 @@
 require "csv"
+require "rainbow"
 
 namespace :local do
   namespace :vacols do
@@ -60,6 +61,16 @@ namespace :local do
       read_csv(VACOLS::Vftypes, date_shift)
       read_csv(VACOLS::Issref, date_shift)
       read_csv(VACOLS::TravelBoardSchedule, date_shift)
+
+      css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
+        User.find_or_create_by(
+          css_id: s.sdomainid
+        ) do |user|
+          user.station_id = "283"
+          user.full_name = "#{s.snamef} + #{s.snamel}"
+        end.css_id
+      end
+      Functions.grant!("System Admin", users: css_ids)
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -87,26 +98,46 @@ namespace :local do
         :decass
       ).find(ids)
 
+      sanitizer = Helpers::Sanitizers.new
+
+      VACOLS::Staff.all.each_with_index do |staff, row_index|
+        sanitizer.generate_staff_mapping(staff, row_index)
+      end
+
+      write_csv(VACOLS::Staff, VACOLS::Staff.all, sanitizer)
+
       # In order to add a new table, you'll also need to add a sanitize and white_list method
       # to the Helpers::Sanitizers class.
-      write_csv(VACOLS::Case, cases)
-      write_csv(VACOLS::Folder, cases.map(&:folder))
-      write_csv(VACOLS::Representative, cases.map(&:representative))
-      write_csv(VACOLS::Correspondent, cases.map(&:correspondent))
-      write_csv(VACOLS::CaseIssue, cases.map(&:case_issues))
-      write_csv(VACOLS::Note, cases.map(&:notes))
-      write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings))
-      write_csv(VACOLS::Decass, cases.map(&:decass))
-      write_csv(VACOLS::Staff, VACOLS::Staff.all)
-      write_csv(VACOLS::Vftypes, VACOLS::Vftypes.all)
-      write_csv(VACOLS::Issref, VACOLS::Issref.all)
+      write_csv(VACOLS::Case, cases, sanitizer)
+      write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
+      write_csv(VACOLS::Representative, cases.map(&:representative), sanitizer)
+      write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
+      write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
+      write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
+      write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings), sanitizer)
+      write_csv(VACOLS::Decass, cases.map(&:decass), sanitizer)
+
+      # We do not dump all of the vftypes table since there are some rows that seem not relevant to our work and
+      # may contain things we should not check in. Instead we're scoping it to Diagnostic Codes (DG), and remand
+      # reasons (RR, R5, and IIRC).
+      write_csv(
+        VACOLS::Vftypes,
+        VACOLS::Vftypes.where("ftkey LIKE ? OR ftkey LIKE ? OR ftkey LIKE ? OR ftkey LIKE ?",
+                              "DG%", "RR%", "R5%", "IIRC%"),
+        sanitizer
+      )
+      write_csv(VACOLS::Issref, VACOLS::Issref.all, sanitizer)
       write_csv(
         VACOLS::TravelBoardSchedule,
-        VACOLS::TravelBoardSchedule.where("tbyear > 2016")
+        VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
+        sanitizer
       )
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
+      sanitizer.errors.each do |error|
+        puts Rainbow(error).red
+      end
     end
 
     private
@@ -153,13 +184,13 @@ namespace :local do
       klass.import(items)
     end
 
-    def write_csv(klass, rows)
+    def write_csv(klass, rows, sanitizer)
       CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
         rows.flatten.each do |row|
           next if row.nil?
-          Helpers::Sanitizers.sanitize(klass, row)
+          sanitizer.sanitize(klass, row)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
           csv << attributes.values
         end
