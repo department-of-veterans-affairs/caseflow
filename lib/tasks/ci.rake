@@ -102,29 +102,6 @@ namespace :ci do
       SimpleCov::RawCoverage.merge_resultsets(merged, d["coverage"])
     end
     result = SimpleCov::Result.new(merged_results)
-    #merged_resultset = resultsets.reduce({}) do |merged, r|
-      #SimpleCov::RawCoverage.merge_resultsets(merged, r["all"]["coverage"])
-    #end
-    #puts(merged_resultset)
-    #result = SimpleCov::Result.new(merged_resultset)
-    # coverage.each_with_index do |resultset, i|
-    #   resultset.each_value do |data|
-    #     result = SimpleCov::Result.from_hash(["command", i].join => data)
-    #     SimpleCov::ResultMerger.store_result(result)
-    #   end
-    # end
-    # result = SimpleCov::ResultMerger.merged_result
-    # result.command_name = "RSpec"
-
-    # puts(a.to_s)
-    #   .each_with_index do |resultset, i|
-    #   resultset.each_value do |data|
-    #     result = SimpleCov::Result.from_hash(["command", i].join => data)
-    #     SimpleCov::ResultMerger.store_result(result)
-    #   end
-    # end
-    #
-    #
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
       exit!(1)
