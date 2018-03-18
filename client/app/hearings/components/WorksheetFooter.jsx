@@ -10,11 +10,13 @@ class WorksheetFooter extends React.PureComponent {
 
     const veteranName = worksheet.veteran_fi_last_formatted;
 
-    return <div>
+    return <div className="cf-print-footer">
+      {this.props.print &&
       <div className="cf-push-right">
         {veteranName},
         <span className="cf-print-number" />
       </div>
+      }
     </div>;
   }
 

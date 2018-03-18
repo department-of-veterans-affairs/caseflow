@@ -647,12 +647,6 @@ $color-hearings-saving: $color-gray;
     break-after: page;
   }
 
-  .cf-print-footer {
-    position: absolute;
-    bottom: 25px;
-    right: 30px;
- }
-
   body {
     counter-reset: page pages;
  }
@@ -669,9 +663,14 @@ $color-hearings-saving: $color-gray;
   }
 
   .cf-hearings-first-page {
-    min-height: 5in;
     display: flex;
     flex-direction: column;
+
+    .cf-print-footer {
+      position: absolute;
+      bottom: 25px;
+      right: 30px;
+     }
   }
 
   .cf-hearings-worksheet {
