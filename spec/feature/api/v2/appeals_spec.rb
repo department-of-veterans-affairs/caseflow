@@ -271,7 +271,7 @@ describe "Appeals API v2", type: :request do
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w[claim_decision nod soc])
+      expect(event_types).to eq(%w[claim_decision nod soc field_grant])
 
       # check for an alert on the last appeal
       expect(json["data"].last["attributes"]["alerts"].first["type"]).to eq("form9_needed")
