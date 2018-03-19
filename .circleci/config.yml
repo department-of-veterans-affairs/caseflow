@@ -69,6 +69,10 @@ jobs:
           path: ~/coverage
 
       - deploy:
+          name: Lint
+          command: |
+            bundle exec rake lint
+      - deploy:
           name: Verify code coverage
           command: |
-            rake ci:circleci_verify_code_coverage
+            bundle exec rake ci:circleci_verify_code_coverage
