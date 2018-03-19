@@ -261,7 +261,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["issues"])
         .to eq([
                  {
-                   "description" => "Service connection, limitation of thigh motion",
+                   "description" => "Service connection, limitation of thigh motion (flexion)",
                    "diagnosticCode" => "5252",
                    "active" => true,
                    "lastAction" => "remand",
