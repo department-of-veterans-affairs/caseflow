@@ -90,6 +90,46 @@ describe IssueMapper do
           expect { subject }.to raise_error(IssueRepository::IssueError)
         end
       end
+
+      context "when empty" do
+        let(:action) { :update }
+        let(:issue_attrs) { {} }
+
+        it "returns empty hash" do
+          expect(subject).to eq({})
+        end
+      end
+
+      context "when disposition is passed" do
+        let(:action) { :update }
+
+        context "when valid disposition" do
+          let(:issue_attrs) do
+            { disposition: "Withdrawn", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          end
+          let(:expected_result) do
+            {
+              issdc: "9",
+              issdcls: VacolsHelper.local_date_with_utc_timezone,
+              issmduser: "TEST1",
+              issmdtime: VacolsHelper.local_time_with_utc_timezone
+            }
+          end
+          it "transforms the hash" do
+            expect(subject).to eq expected_result
+          end
+        end
+
+        context "when not valid disposition" do
+          let(:issue_attrs) do
+            { disposition: "Advance Allowed in Field", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          end
+
+          it "raises IssueRepository::IssueError" do
+            expect { subject }.to raise_error(IssueRepository::IssueError)
+          end
+        end
+      end
     end
   end
 end

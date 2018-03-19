@@ -24,7 +24,7 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'opt-in election has been processed. Remember to close any pending EPs associated with this appeal.';
+      'opt-in election has been processed.';
 
     return <div>
       <StatusMessage
