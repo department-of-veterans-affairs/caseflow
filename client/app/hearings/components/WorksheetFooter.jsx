@@ -5,28 +5,22 @@ class WorksheetFooter extends React.PureComponent {
 
   render() {
     const {
-      worksheet
+      veteranName
     } = this.props;
 
-    const veteranName = worksheet.veteran_fi_last_formatted;
-
     return <div className="cf-print-footer">
-      {this.props.print &&
       <div className="cf-push-right">
-        {veteranName},
-        <span className="cf-print-number" />
-      </div>
-      }
+      {veteranName},
+      <span className="cf-print-number" />
+    </div>
     </div>;
   }
-
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet
+  veteranName: state.worksheet.veteran_fi_last_formatted
 });
 
 export default connect(
-  mapStateToProps,
-  null
+  mapStateToProps
 )(WorksheetFooter);

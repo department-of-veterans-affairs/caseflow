@@ -100,7 +100,7 @@ export class HearingWorksheet extends React.PureComponent {
       {worksheetHeader}
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
-      <WorksheetFooter print={this.props.print} />
+      {this.props.print && <WorksheetFooter /> }
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
@@ -136,7 +136,7 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
       </form>
-      <WorksheetFooter print={this.props.print} />
+      {this.props.print && <WorksheetFooter />}
     </div>;
 
     const wrapperClassNames = classNames('cf-hearings-worksheet', {
