@@ -284,14 +284,16 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].last["attributes"]["issues"])
         .to eq([
                  {
-                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "description" =>
+                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
                    "diagnosticCode" => "5301",
                    "active" => true,
                    "lastAction" => nil,
                    "date" => nil
                  },
                  {
-                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "description" =>
+                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
                    "diagnosticCode" => "5302",
                    "active" => false,
                    "lastAction" => "field_grant",
