@@ -81,7 +81,7 @@ SelectIssueDispositionDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  highlight: state.queue.ui.highlightFormItems
+  highlight: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

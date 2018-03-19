@@ -8,12 +8,16 @@ import StatusMessage from '../components/StatusMessage';
 import QueueTable from './QueueTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
+import { resetErrorMessages } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 
 class QueueListView extends React.PureComponent {
-  componentDidMount = () => this.props.clearCaseSelectSearch();
+  componentDidMount = () => {
+    this.props.clearCaseSelectSearch();
+    this.props.resetErrorMessages();
+  }
 
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
@@ -45,7 +49,8 @@ const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'app
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    clearCaseSelectSearch
+    clearCaseSelectSearch,
+    resetErrorMessages
   }, dispatch)
 });
 

@@ -42,7 +42,7 @@ export default class IssueList extends React.PureComponent {
     }</React.Fragment>;
   };
 
-  render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.appeal.issues.length === 1)}>
     <table>
       <tbody>
         {this.getIssues()}
