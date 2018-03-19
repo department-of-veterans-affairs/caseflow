@@ -1,4 +1,4 @@
-describe AppealSeriesAlerts do
+describe AppealSeriesIssues do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -71,13 +71,13 @@ describe AppealSeriesAlerts do
       it "combines issues together" do
         expect(subject.length).to eq(2)
         expect(subject.first[:description]).to eq(
-          "Service connection, limitation of thigh motion"
+          "Service connection, limitation of thigh motion (flexion)"
         )
         expect(subject.first[:active]).to be_truthy
         expect(subject.first[:last_action]).to eq(:remand)
         expect(subject.first[:date]).to eq(6.months.ago.to_date)
         expect(subject.last[:description]).to eq(
-          "New and material evidence for service connection, shoulder or arm muscle injury"
+          "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury"
         )
         expect(subject.last[:active]).to be_falsey
         expect(subject.last[:last_action]).to eq(:allowed)
@@ -97,7 +97,7 @@ describe AppealSeriesAlerts do
       let(:original_issues) { [] }
 
       it "returns issues" do
-        expect(subject.first[:description]).to eq("Service connection, limitation of thigh motion")
+        expect(subject.first[:description]).to eq("Service connection, limitation of thigh motion (flexion)")
       end
     end
 
