@@ -84,7 +84,10 @@ class AddEditIssueView extends React.Component {
     //
     // return !missingFields.length;
 
-    // todo: move to goToNextStep hook once `connect-omo-to-backend` merged
+    return true;
+  };
+
+  goToNextStep = () => {
     this.props.saveEditedAppealIssue(this.props.vacolsId, this.props.issueId);
 
     return true;
@@ -177,7 +180,7 @@ AddEditIssueView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  highlight: state.queue.ui.highlightFormItems,
+  highlight: state.ui.highlightFormItems,
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   issue: state.queue.pendingChanges.editingIssue
 });
