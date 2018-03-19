@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :tasks
   has_many :document_views
   has_many :appeal_views

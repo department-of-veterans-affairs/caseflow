@@ -1,4 +1,4 @@
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
   has_many :annotations
   has_many :document_views
   has_many :documents_tags

@@ -59,6 +59,10 @@ Rails.application.configure do
 
   config.google_analytics_account = "UA-74789258-5"
 
+  # Use an evented file watcher to asynchronously detect changes in source code,
+  # routes, locales, etc. This feature depends on the listen gem.
+  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
   # configure pry
   silence_warnings do
     begin
