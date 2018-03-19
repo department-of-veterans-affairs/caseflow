@@ -10,9 +10,9 @@ class WorksheetFooter extends React.PureComponent {
 
     return <div className="cf-print-footer">
       <div className="cf-push-right">
-      {veteranName},
-      <span className="cf-print-number" />
-    </div>
+        {veteranName},
+        <span className="cf-print-number" />
+      </div>
     </div>;
   }
 }
