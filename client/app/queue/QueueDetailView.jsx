@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -12,14 +13,18 @@ import AppellantDetail from './AppellantDetail';
 import TabWindow from '../components/TabWindow';
 import SearchableDropdown from '../components/SearchableDropdown';
 
-import { fullWidth, CATEGORIES } from './constants';
+import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
   startEditingAppeal,
+  cancelEditingAppeal,
+  resetDecisionOptions
+} from './QueueActions';
+import {
   pushBreadcrumb,
   resetBreadcrumbs
-} from './QueueActions';
+} from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -46,12 +51,25 @@ class QueueDetailView extends React.PureComponent {
   }
 
   changeRoute = (props) => {
-    const route = props.value === 'omo' ? 'submit' : 'dispositions';
+    const {
+      vacolsId,
+      history
+    } = this.props;
+    let route = 'dispositions';
+    let decisionType = DECISION_TYPES.DRAFT_DECISION;
 
-    // Move the current appeal to pendingChanges before loading any decision flow views.
-    this.props.startEditingAppeal(this.props.vacolsId);
-    this.props.setCaseReviewActionType(props.value);
-    this.props.history.push(`${this.props.history.location.pathname}/${route}`);
+    if (props.value === 'omo') {
+      route = 'submit';
+      decisionType = DECISION_TYPES.OMO_REQUEST;
+    }
+
+    this.props.resetDecisionOptions();
+    if (this.props.changedAppeals.includes(vacolsId)) {
+      this.props.cancelEditingAppeal(vacolsId);
+    }
+    this.props.startEditingAppeal(vacolsId);
+    this.props.setCaseReviewActionType(decisionType);
+    history.push(`${history.location.pathname}/${route}`);
   }
 
   render = () => {
@@ -107,12 +125,15 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  changedAppeals: _.keys(state.queue.pendingChanges.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   startEditingAppeal,
+  cancelEditingAppeal,
+  resetDecisionOptions,
   pushBreadcrumb,
   resetBreadcrumbs
 }, dispatch);
