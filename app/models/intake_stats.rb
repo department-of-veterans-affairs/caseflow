@@ -20,6 +20,13 @@ class IntakeStats < Caseflow::Stats
       @intake_series_statuses[range] ||= intake_series(range).map { |intakes| intake_series_status(intakes) }
     end
 
+    def total_refilings(range, type)
+      RampRefiling.completed.where(
+        receipt_date: offset_range(range),
+        option_selected: type
+      ).count
+    end
+
     private
 
     # Used to prevent dates on the line from registering for two time periods
@@ -102,6 +109,26 @@ class IntakeStats < Caseflow::Stats
 
     total_ramp_election_already_complete: lambda do |range|
       intake_series_statuses(range).select { |status| status == "ramp_election_already_complete" }.count
+    end,
+
+    total_refilings: lambda do |range|
+      RampRefiling.completed.where(receipt_date: offset_range(range)).count
+    end,
+
+    total_higher_level_review_refilings: lambda do |range|
+      total_refilings(range, :higher_level_review)
+    end,
+
+    total_higher_level_review_with_hearing_refilings: lambda do |range|
+      total_refilings(range, :higher_level_review_with_hearing)
+    end,
+
+    total_supplemental_claim_refilings: lambda do |range|
+      total_refilings(range, :supplemental_claim)
+    end,
+
+    total_appeal_refilings: lambda do |range|
+      total_refilings(range, :appeal)
     end
   }.freeze
 end
