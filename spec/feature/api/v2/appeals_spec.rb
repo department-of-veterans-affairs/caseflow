@@ -232,7 +232,9 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"].first["attributes"]["description"]).to eq("Service connection, limitation of thigh motion")
+      expect(json["data"].first["attributes"]["description"]).to eq(
+        "Service connection, limitation of thigh motion (flexion)"
+      )
       expect(json["data"].first["attributes"]["aod"]).to eq(false)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
       expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
