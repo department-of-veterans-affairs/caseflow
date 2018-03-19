@@ -1010,7 +1010,7 @@ module Constants::Issue
     "9312" => "Alzheimer's disease",
     "9326" => "dementia",
     "9327" => "organic mental disorder",
-    "9400" => "anxiety disorder",
+    "9400" => "generalized anxiety disorder",
     "9403" => "specific phobia",
     "9404" => "obsessive compulsive disorder",
     "9410" => "neurosis",
