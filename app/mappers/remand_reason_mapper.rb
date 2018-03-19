@@ -1,7 +1,7 @@
 module RemandReasonMapper
   class << self
-    def rename_and_validate_vacols_attrs(slogid, remand_reasons)
-      remand_reasons.map do |remand_reason|
+    def convert_to_vacols_format(slogid, remand_reasons)
+      (remand_reasons || []).map do |remand_reason|
         {
           rmdval:  remand_reason[:code],
           rmddev: remand_reason[:after_certification] ? "R2" : "R1",

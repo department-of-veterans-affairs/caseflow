@@ -53,7 +53,6 @@ module IssueMapper
 
         if k == :disposition
           issue_attrs[k] = disposition_to_vacols_format(issue_attrs[k])
-          remand_reasons_to_vacols_format(result, issue_attrs) if issue_attrs[k] == "3"
         end
 
         result[COLUMN_NAMES[k]] = issue_attrs[k]
@@ -67,16 +66,6 @@ module IssueMapper
         fail IssueRepository::IssueError, "Not allowed disposition: #{disposition}"
       end
       code
-    end
-
-    def remand_reasons_to_vacols_format(result, issue_attrs)
-      if issue_attrs[:remand_reasons].empty?
-        fail IssueRepository::IssueError, "Remand reasons are missing"
-      end
-      result[:remand_reasons] = RemandReasonMapper.rename_and_validate_vacols_attrs(
-        issue_attrs[:slogid],
-        issue_attrs[:remand_reasons]
-      )
     end
   end
 end

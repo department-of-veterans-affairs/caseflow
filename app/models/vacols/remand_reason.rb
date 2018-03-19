@@ -9,7 +9,6 @@ class VACOLS::RemandReason < VACOLS::Record
   validates :rmdval, inclusion: { in: CODES }
 
   def self.create_remand_reasons!(rmdkey, rmdissseq, remand_reasons)
-    return if remand_reasons.blank?
-    remand_reasons.each { |remand_reason| create!(remand_reason.merge(rmdkey: rmdkey, rmdissseq: rmdissseq)) }
+    (remand_reasons || []).each { |remand_reason| create!(remand_reason.merge(rmdkey: rmdkey, rmdissseq: rmdissseq)) }
   end
 end
