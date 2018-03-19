@@ -62,6 +62,11 @@ jobs:
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
+      - run:
+          name: Mocha
+          command: |
+            bundle exec rake mocha
+
       - store_test_results:
           path: ~/test-results
 
@@ -72,6 +77,12 @@ jobs:
           name: Lint
           command: |
             bundle exec rake lint
+
+      - deploy:
+          name: Security
+          command: |
+            bundle exec rake security_caseflow
+
       - deploy:
           name: Verify code coverage
           command: |
