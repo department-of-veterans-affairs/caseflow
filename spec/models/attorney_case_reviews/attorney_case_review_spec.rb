@@ -98,14 +98,18 @@ describe AttorneyCaseReview do
           css_id: attorney.css_id,
           vacols_id: "123456",
           vacols_sequence_id: 1,
-          issue_attrs: { disposition: "Allowed", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          issue_attrs: { disposition: "Allowed",
+                         disposition_date: VacolsHelper.local_date_with_utc_timezone,
+                         remand_reasons: nil }
         ).once
 
         expect(IssueRepository).to receive(:update_vacols_issue!).with(
           css_id: attorney.css_id,
           vacols_id: "123456",
           vacols_sequence_id: 2,
-          issue_attrs: { disposition: "Remanded", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          issue_attrs: { disposition: "Remanded",
+                         disposition_date: VacolsHelper.local_date_with_utc_timezone,
+                         remand_reasons: [{ code: "AB", after_certification: true }] }
         ).once
       end
 
@@ -123,7 +127,12 @@ describe AttorneyCaseReview do
         }
       end
       let(:issues) do
-        [{ disposition: "Allowed", vacols_sequence_id: 1 }, { disposition: "Remanded", vacols_sequence_id: 2 }]
+        [
+          { disposition: "Allowed", vacols_sequence_id: 1 },
+          { disposition: "Remanded",
+            vacols_sequence_id: 2,
+            remand_reasons: [{ code: "AB", after_certification: true }] }
+        ]
       end
 
       it "should create DraftDecision record" do
