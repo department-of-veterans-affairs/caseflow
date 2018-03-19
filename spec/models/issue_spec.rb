@@ -167,7 +167,7 @@ describe Issue do
   context "#friendly_description" do
     subject { issue.friendly_description }
 
-    it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    it { is_expected.to eq("Service connection, limitation of thigh motion (flexion)") }
 
     context "when there is an unknown issue code" do
       let(:codes) { %w[99 99 99] }
@@ -183,7 +183,7 @@ describe Issue do
   context "#friendly_description_without_new_material" do
     subject { issue.friendly_description_without_new_material }
     let(:codes) { %w[02 15 04 5252] }
-    it { is_expected.to eq("Service connection, limitation of thigh motion") }
+    it { is_expected.to eq("Service connection, limitation of thigh motion (flexion)") }
   end
 
   context "#diagnostic_code" do
