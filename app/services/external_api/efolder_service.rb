@@ -1,7 +1,7 @@
 require "json"
 
 class ExternalApi::EfolderService
-  TRIES = 20
+  TRIES = 60
 
   def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
