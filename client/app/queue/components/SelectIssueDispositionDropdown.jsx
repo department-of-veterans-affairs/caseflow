@@ -11,7 +11,11 @@ import {
   ERROR_FIELD_REQUIRED
 } from '../constants';
 import StringUtil from '../../util/StringUtil';
-import { updateAppealIssue } from '../QueueActions';
+import {
+  updateAppealIssue,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
+} from '../QueueActions';
 import Checkbox from '../../components/Checkbox';
 
 // todo: map to VACOLS attrs
@@ -40,11 +44,21 @@ const dropdownStyling = (highlight, issueDisposition) => {
 };
 
 class SelectIssueDispositionDropdown extends React.PureComponent {
+  updateIssue = (attributes) => {
+    const {
+      vacolsId,
+      issue: { vacols_sequence_id: issueId }
+    } = this.props;
+
+    this.props.startEditingAppealIssue(vacolsId, issueId);
+    this.props.updateAppealIssue(vacolsId, issueId, attributes);
+    this.props.saveEditedAppealIssue(vacolsId, issueId);
+  }
+
   render = () => {
     const {
       highlight,
-      issue,
-      vacolsId
+      issue
     } = this.props;
 
     return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
@@ -57,7 +71,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           label: `${opt[0]} - ${opt[1]}`,
           value: StringUtil.convertToCamelCase(opt[1])
         }))}
-        onChange={({ value }) => this.props.updateAppealIssue(vacolsId, issue.vacols_sequence_id, {
+        onChange={({ value }) => this.updateIssue({
           disposition: value,
           duplicate: false
         })}
@@ -68,7 +82,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           marginBottom: 0,
           marginTop: '1rem'
         })}
-        onChange={(duplicate) => this.props.updateAppealIssue(vacolsId, issue.vacols_sequence_id, { duplicate })}
+        onChange={(duplicate) => this.updateIssue({ duplicate })}
         label="Automatically create vacated issue for readjudication." />}
     </div>;
   };
@@ -85,7 +99,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue
+  updateAppealIssue,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectIssueDispositionDropdown);

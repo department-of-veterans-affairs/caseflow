@@ -50,11 +50,15 @@ class QueueDetailView extends React.PureComponent {
     });
   }
 
+  goToRoute = (route) => {
+    const dest = new URL(route, `${window.location.href}/`).
+      pathname.replace('/queue', '');
+
+    this.props.history.push(dest);
+  }
+
   changeRoute = (props) => {
-    const {
-      vacolsId,
-      history
-    } = this.props;
+    const { vacolsId } = this.props;
     let route = 'dispositions';
     let decisionType = DECISION_TYPES.DRAFT_DECISION;
 
@@ -69,7 +73,8 @@ class QueueDetailView extends React.PureComponent {
     }
     this.props.startEditingAppeal(vacolsId);
     this.props.setCaseReviewActionType(decisionType);
-    history.push(`${history.location.pathname}/${route}`);
+
+    this.goToRoute(route);
   }
 
   render = () => {
