@@ -154,11 +154,11 @@ export class PdfSidebar extends React.Component {
       width: '28%',
       minWidth: sideBarSmall,
       maxWidth: sideBarLarge,
-      '@media(max-width: 920px)': { width: sideBarSmall},
-      '@media(min-width: 1240px )': { width: sideBarLarge}
+      '@media(max-width: 920px)': { width: sideBarSmall },
+      '@media(min-width: 1240px)': { width: sideBarLarge }
     });
 
-    return <div className={sidebarClass}  {...sidebarWrapper}>
+    return <div className={sidebarClass} {...sidebarWrapper}>
       <div className="cf-sidebar-header">
         <Button
           name="hide menu"

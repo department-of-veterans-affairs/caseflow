@@ -170,8 +170,12 @@ export class PdfUI extends React.Component {
 
     const pdfWrapper = css({
       width: '72%',
-      '@media(max-width: 920px)': { width: 'unset', right: '250px'},
-      '@media(min-width: 1240px )': { width: 'unset', right: '380px'}
+      '@media(max-width: 920px)': {
+        width: 'unset',
+        right: '250px' },
+      '@media(min-width: 1240px )': {
+        width: 'unset',
+        right: '380px' }
     });
 
     return <div className={pdfUiClass} {...pdfWrapper}>
