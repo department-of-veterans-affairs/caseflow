@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
 import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
@@ -167,7 +168,13 @@ export class PdfUI extends React.Component {
       'cf-pdf-container',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
 
-    return <div className={pdfUiClass}>
+    const pdfWrapper = css({
+      width: '72%',
+      '@media(max-width: 920px)': { width: 'unset', right: '250px'},
+      '@media(min-width: 1240px )': { width: 'unset', right: '380px'}
+    });
+
+    return <div className={pdfUiClass} {...pdfWrapper}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.showClaimsFolderNavigation && <Link

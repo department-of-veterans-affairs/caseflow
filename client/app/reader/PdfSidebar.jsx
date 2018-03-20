@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import Comment from './Comment';
 import EditComment from './EditComment';
@@ -143,11 +144,21 @@ export class PdfSidebar extends React.Component {
       </div>;
     });
 
+    let sideBarSmall = '250px';
+    let sideBarLarge = '380px';
     const sidebarClass = classNames(
       'cf-sidebar-wrapper',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
 
-    return <div className={sidebarClass}>
+    const sidebarWrapper = css({
+      width: '28%',
+      minWidth: sideBarSmall,
+      maxWidth: sideBarLarge,
+      '@media(max-width: 920px)': { width: sideBarSmall},
+      '@media(min-width: 1240px )': { width: sideBarLarge}
+    });
+
+    return <div className={sidebarClass}  {...sidebarWrapper}>
       <div className="cf-sidebar-header">
         <Button
           name="hide menu"
