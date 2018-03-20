@@ -2,6 +2,7 @@
 @import 'uswds/core/variables';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
+@import 'variables';
 
 $caseflow-background: #f9f9f9;
 $bookmark-blue: #23abf6;
@@ -725,7 +726,7 @@ input[type="search"].cf-search-input-with-close {
 }
 
 /* On screens that are 1020px or less, set the background color to blue */
-@media screen and (max-width: 920px) {
+@media screen and (max-width: $small-screen) {
   .cf-sidebar-wrapper {
     width: 250px;
   }
@@ -735,7 +736,7 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
-@media screen and (min-width: 1240px) {
+@media screen and (min-width: $large-screen) {
   .cf-sidebar-wrapper {
     width: 380px;
   }
