@@ -65,11 +65,11 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 380px;
+  width: 72%;
   left: 0;
 
   &.hidden-sidebar {
-    right: 0;
+    width: 100%;
   }
 }
 
@@ -118,7 +118,9 @@ svg[aria-hidden=true],
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
-  width: 380px;
+  width: 28%;
+  min-width:250px;
+  max-width:380px;
   top: 0;
   bottom: 0;
   right: 0;
@@ -720,4 +722,25 @@ input[type="search"].cf-search-input-with-close {
 
 .editable-field-btn-link {
   padding: 0 0.5rem 0.5rem 0.75rem;
+}
+
+/* On screens that are 1020px or less, set the background color to blue */
+@media screen and (max-width: 920px) {
+  .cf-sidebar-wrapper {
+    width: 250px;
+  }
+  .cf-pdf-container {
+    right: 250px;
+    width: unset;
+  }
+}
+
+@media screen and (min-width: 1240px) {
+  .cf-sidebar-wrapper {
+    width: 380px;
+  }
+  .cf-pdf-container {
+    right: 380px;
+    width: unset;
+  }
 }
