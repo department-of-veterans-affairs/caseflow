@@ -5,7 +5,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         vacols_sequence_id: issue.vacols_sequence_id,
         levels: issue.levels,
         program: issue.codes[0],
-        type: issue.type,
+        type: issue.codes[1],
         disposition: issue.disposition,
         close_date: issue.close_date,
         note: issue.note,

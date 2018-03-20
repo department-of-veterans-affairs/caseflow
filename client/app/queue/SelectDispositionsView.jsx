@@ -13,7 +13,9 @@ import Table from '../components/Table';
 
 import {
   updateAppealIssue,
-  setDecisionOptions
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 } from './QueueActions';
 import { highlightInvalidFormItems } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
@@ -51,14 +53,21 @@ class SelectDispositionsView extends React.PureComponent {
     // Wipe any previously-set dispositions in the pending
     // appeal's issues for validation purposes.
     _.each(issues, (issue) =>
-      this.props.updateAppealIssue(
-        vacolsId,
+      this.updateIssue(
         issue.vacols_sequence_id,
         { disposition: null }
       ));
 
     this.props.setDecisionOptions({ work_product: 'Decision' });
   };
+
+  updateIssue = (issueId, attributes) => {
+    const { vacolsId } = this.props;
+
+    this.props.startEditingAppealIssue(vacolsId, issueId);
+    this.props.updateAppealIssue(vacolsId, issueId, attributes);
+    this.props.saveEditedAppealIssue(vacolsId, issueId);
+  }
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
@@ -86,6 +95,7 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     header: 'Dispositions',
     valueFunction: (issue) => <SelectIssueDispositionDropdown
+      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
       issue={issue}
       vacolsId={this.props.vacolsId} />
   }];
@@ -124,7 +134,9 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateAppealIssue,
   highlightInvalidFormItems,
-  setDecisionOptions
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

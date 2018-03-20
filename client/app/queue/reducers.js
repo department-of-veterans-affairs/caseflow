@@ -144,7 +144,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
     const { appealId, issueId } = action.payload;
     const issues = state.pendingChanges.appeals[appealId].attributes.issues;
-    const idx = _.findIndex(issues, (issue) => issue.vacols_sequence_id === issueId);
+    const idx = _.findIndex(issues, (issue) => issue.vacols_sequence_id === Number(issueId));
 
     // todo: if (idx === -1) { push }
     return update(state, {
