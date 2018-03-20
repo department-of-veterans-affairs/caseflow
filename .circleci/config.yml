@@ -56,6 +56,11 @@ jobs:
             - ~/.cache/yarn
 
       - run:
+          name: Danger
+          command: |
+            bundle exec danger
+
+      - run:
           name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
