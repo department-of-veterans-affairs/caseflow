@@ -65,10 +65,11 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   position: absolute;
   top: 0;
   bottom: 0;
+  right: 380px;
   left: 0;
 
   &.hidden-sidebar {
-    width: 100%;
+     right: 0;
   }
 }
 
@@ -126,7 +127,7 @@ svg[aria-hidden=true],
   border-top: 1px solid $color-gray-lighter;
 
   &.hidden-sidebar {
-    width: 0;
+    display: none;
   }
 
   .usa-accordion-content {
