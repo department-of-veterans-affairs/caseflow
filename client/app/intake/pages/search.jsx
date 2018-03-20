@@ -52,6 +52,11 @@ class Search extends React.PureComponent {
         body: 'It looks like you do not have the necessary level of access to view this information.' +
           ' Please alert your manager so they can assign the form to someone else.'
       },
+      veteran_not_valid: {
+        title: 'The Veteran\'s profile is missing information required to create an EP.',
+        body: 'Please fill in the following field(s) in the Veteran\'s profile in VBMS or the corporate database,' +
+          ` then retry establishing the EP in Caseflow: ${searchErrorData.veteranMissingFields}.`
+      },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
         body: rampIneligibleInstructions
