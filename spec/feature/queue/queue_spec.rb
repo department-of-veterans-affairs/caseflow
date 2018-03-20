@@ -1,5 +1,7 @@
 require "rails_helper"
 
+include ActionView::Helpers::NumberHelper
+
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
@@ -237,7 +239,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
-        click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
+        click_on "Open #{number_with_delimiter(appeal.documents.length)} documents in Caseflow Reader"
 
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
