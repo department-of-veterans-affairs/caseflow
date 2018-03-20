@@ -21,7 +21,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-    parallelism: 1
+    parallelism: 2
     steps:
       - checkout
 
@@ -55,23 +55,38 @@ jobs:
           paths:
             - ~/.cache/yarn
 
+#      - run:
+#          name: Danger
+#          command: |
+#            bundle exec danger
+
       - run:
           name: RSpec
           command: |
-            mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
-            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
+            mkdir -p ~/test-results-rspec
+            testcategories=$(ci-bin/circleci-test-categories | circleci tests split)
+            ci-bin/circleci-run-test-categories ${testcategories}
 
-      - run:
-          name: Mocha
-          command: |
-            bundle exec rake mocha
+            # - run:
+      #     name: RSpec
+      #     command: |
+      #       mkdir -p ~/test-results/rspec
+      #       testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
+      #       bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
+
 
       - store_test_results:
           path: ~/test-results
 
       - store_artifacts:
           path: ~/coverage
+
+      # Mocha is currently a deploy step because we can't parallelize it
+      # easily.
+      - deploy:
+          name: Mocha
+          command: |
+            bundle exec rake mocha
 
       - deploy:
           name: Lint

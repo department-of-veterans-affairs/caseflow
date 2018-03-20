@@ -11,7 +11,8 @@ if ENV["RAILS_ENV"] == "test"
   SimpleCov.coverage_dir ENV["COVERAGE_DIR"] || nil
   SimpleCov.command_name ENV["TEST_SUBCATEGORY"] || "all"
   if ENV["CIRCLE_NODE_INDEX"]
-    SimpleCov.command_name "RSpec" + ENV["CIRCLE_NODE_INDEX"]
+    SimpleCov.coverage_dir  ENV["COVERAGE_DIR"] + "/" + ENV["TEST_CATEGORY"]
+    SimpleCov.command_name "RSpec" + ENV["TEST_CATEGORY"] + ENV["CIRCLE_NODE_INDEX"]
   end
 end
 

@@ -1,0 +1,8 @@
+#! /bin/bash
+
+for testcategory in "$@"; do
+    export TEST_CATEGORY="${testcategory}"
+    mkdir -p "${COVERAGE_DIR}/${TEST_CATEGORY}"
+    bundle exec rake "spec:parallel:setup:${testcategory}"
+    bundle exec rake "spec:parallel:${testcategory}"
+done
