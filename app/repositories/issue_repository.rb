@@ -9,9 +9,8 @@ class IssueRepository
       validate_access!(css_id, issue_attrs[:vacols_id])
 
       issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
-        slogid: slogid_based_on_css_id(css_id),
         action: :create,
-        issue_attrs: issue_attrs
+        issue_attrs: issue_attrs.merge(slogid: slogid_based_on_css_id(css_id))
       )
 
       VACOLS::CaseIssue.create_issue!(issue_attrs)
@@ -23,12 +22,18 @@ class IssueRepository
                           service: :vacols,
                           name: "IssueRepository.update_vacols_issue!") do
       validate_access!(css_id, vacols_id)
-      validate_issue_presence!(vacols_id, vacols_sequence_id)
+      record = validate_issue_presence!(vacols_id, vacols_sequence_id)
+      slogid = slogid_based_on_css_id(css_id)
+
+      # Create remand reasons only if record's disposition is not 'Remanded' already
+      if record.issdc != "3" && issue_attrs[:disposition] == "Remanded"
+        remand_reasons = RemandReasonMapper.convert_to_vacols_format(slogid, issue_attrs.delete(:remand_reasons))
+        VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+      end
 
       issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
-        slogid: slogid_based_on_css_id(css_id),
         action: :update,
-        issue_attrs: issue_attrs
+        issue_attrs: issue_attrs.merge(slogid: slogid)
       )
 
       VACOLS::CaseIssue.update_issue!(vacols_id, vacols_sequence_id, issue_attrs)
@@ -53,6 +58,7 @@ class IssueRepository
       msg = "Cannot find issue with vacols ID: #{vacols_id} and sequence ID: #{vacols_sequence_id} in VACOLS"
       fail IssueError, msg
     end
+    record
   end
 
   def self.validate_access!(css_id, vacols_id)

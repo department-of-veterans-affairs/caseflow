@@ -10,11 +10,12 @@ describe IssueMapper do
         issue: "18",
         level_2: "03",
         level_3: nil,
-        note: "another one"
+        note: "another one",
+        slogid: "TEST1"
       }
     end
 
-    subject { IssueMapper.rename_and_validate_vacols_attrs(slogid: "TEST1", action: action, issue_attrs: issue_attrs) }
+    subject { IssueMapper.rename_and_validate_vacols_attrs(action: action, issue_attrs: issue_attrs) }
 
     context "when action is create" do
       let(:action) { :create }
@@ -69,7 +70,7 @@ describe IssueMapper do
       end
 
       context "when codes are not passed" do
-        let(:issue_attrs) { { note: "another one" } }
+        let(:issue_attrs) { { note: "another one", slogid: "TEST1" } }
 
         let(:expected_result) do
           {
@@ -105,7 +106,7 @@ describe IssueMapper do
 
         context "when valid disposition" do
           let(:issue_attrs) do
-            { disposition: "Withdrawn", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+            { disposition: "Withdrawn", disposition_date: VacolsHelper.local_date_with_utc_timezone, slogid: "TEST1" }
           end
           let(:expected_result) do
             {

@@ -14,7 +14,8 @@ module IssueMapper
   ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
 
   class << self
-    def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
+    def rename_and_validate_vacols_attrs(action:, issue_attrs:)
+      slogid = issue_attrs[:slogid]
       issue_attrs = rename(issue_attrs.symbolize_keys)
 
       return {} if issue_attrs.blank?
@@ -51,16 +52,20 @@ module IssueMapper
         next unless issue_attrs.keys.include? k
 
         if k == :disposition
-          code = VACOLS::Case::DISPOSITIONS.key(issue_attrs[k])
-          unless ALLOWED_DISPOSITION_CODES.include? code
-            fail IssueRepository::IssueError, "Not allowed disposition: #{issue_attrs}"
-          end
-          issue_attrs[k] = code
+          issue_attrs[k] = disposition_to_vacols_format(issue_attrs[k])
         end
 
         result[COLUMN_NAMES[k]] = issue_attrs[k]
         result
       end
+    end
+
+    def disposition_to_vacols_format(disposition)
+      code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      unless ALLOWED_DISPOSITION_CODES.include? code
+        fail IssueRepository::IssueError, "Not allowed disposition: #{disposition}"
+      end
+      code
     end
   end
 end
