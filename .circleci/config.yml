@@ -55,10 +55,10 @@ jobs:
           paths:
             - ~/.cache/yarn
 
-      - run:
-          name: Danger
-          command: |
-            bundle exec danger
+#      - run:
+#          name: Danger
+#          command: |
+#            bundle exec danger
 
       - run:
           name: RSpec
