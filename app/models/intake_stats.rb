@@ -20,7 +20,7 @@ class IntakeStats < Caseflow::Stats
       @intake_series_statuses[range] ||= intake_series(range).map { |intakes| intake_series_status(intakes) }
     end
 
-    def total_refilings(range, type)
+    def total_refilings_for_option(range, type)
       RampRefiling.completed.where(
         receipt_date: offset_range(range),
         option_selected: type
@@ -116,19 +116,19 @@ class IntakeStats < Caseflow::Stats
     end,
 
     total_higher_level_review_refilings: lambda do |range|
-      total_refilings(range, :higher_level_review)
+      total_refilings_for_option(range, :higher_level_review)
     end,
 
     total_higher_level_review_with_hearing_refilings: lambda do |range|
-      total_refilings(range, :higher_level_review_with_hearing)
+      total_refilings_for_option(range, :higher_level_review_with_hearing)
     end,
 
     total_supplemental_claim_refilings: lambda do |range|
-      total_refilings(range, :supplemental_claim)
+      total_refilings_for_option(range, :supplemental_claim)
     end,
 
     total_appeal_refilings: lambda do |range|
-      total_refilings(range, :appeal)
+      total_refilings_for_option(range, :appeal)
     end
   }.freeze
 end
