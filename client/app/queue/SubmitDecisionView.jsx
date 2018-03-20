@@ -5,14 +5,18 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import {
   setDecisionOptions,
-  resetDecisionOptions,
+  resetDecisionOptions
+} from './QueueActions';
+import {
   setSelectingJudge,
   pushBreadcrumb,
-  highlightInvalidFormItems
-} from './QueueActions';
+  highlightInvalidFormItems,
+  requestSave
+} from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -20,10 +24,13 @@ import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
+import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -44,13 +51,16 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
+    const judge = this.props.judges[task.added_by_css_id];
 
-    this.props.setDecisionOptions({
-      judge: {
-        label: task.added_by_name,
-        value: task.added_by_css_id
-      }
-    });
+    if (judge) {
+      this.props.setDecisionOptions({
+        judge: {
+          label: task.added_by_name,
+          value: judge.id
+        }
+      });
+    }
   };
 
   getBreadcrumb = () => ({
@@ -63,29 +73,59 @@ class SubmitDecisionView extends React.PureComponent {
       type: decisionType
     } = this.props.decision;
 
-    return decisionType === 'omo' ? 'OMO' : StringUtil.titleCase(decisionType);
+    switch (decisionType) {
+    case DECISION_TYPES.OMO_REQUEST:
+      return 'OMO';
+    case DECISION_TYPES.DRAFT_DECISION:
+      return 'Draft Decision';
+    default:
+      return StringUtil.titleCase(decisionType);
+    }
   };
 
   goToPrevStep = () => {
     this.props.resetDecisionOptions();
 
     return true;
-  }
+  };
 
   validateForm = () => {
     const {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['documentId', 'judge'];
+    const requiredParams = ['document_id', 'reviewing_judge_id'];
 
-    if (decisionType === 'omo') {
-      requiredParams.push('omoType');
+    if (decisionType === DECISION_TYPES.OMO_REQUEST) {
+      requiredParams.push('work_product');
     }
 
-    const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param));
+    const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
     return !missingParams.length;
+  };
+
+  goToNextStep = () => {
+    const {
+      vacolsId,
+      task: { attributes: { assigned_on } },
+      appeal: { attributes: { issues } },
+      decision
+    } = this.props;
+    const params = {
+      data: {
+        queue: {
+          type: decision.type,
+          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')),
+          ...decision.opts
+        }
+      }
+    };
+
+    this.props.requestSave(
+      params,
+      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`
+    );
   }
 
   getFooterButtons = () => [{
@@ -98,11 +138,18 @@ class SubmitDecisionView extends React.PureComponent {
     const {
       selectingJudge,
       judges,
-      decision: { opts: decisionOpts }
+      decision: { opts: decisionOpts },
+      highlightFormItems
     } = this.props;
+    let componentContent = <span />;
+    const selectedJudge = _.get(this.props.judges, decisionOpts.reviewing_judge_id);
+    const shouldDisplayError = highlightFormItems && !selectedJudge;
+    const fieldClasses = classNames({
+      'usa-input-error': shouldDisplayError
+    });
 
     if (selectingJudge) {
-      return <React.Fragment>
+      componentContent = <React.Fragment>
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
@@ -110,42 +157,51 @@ class SubmitDecisionView extends React.PureComponent {
             label: judge.full_name,
             value
           }))}
-          onChange={(judge) => {
+          onChange={({ value }) => {
             this.props.setSelectingJudge(false);
-            this.props.setDecisionOptions({ judge });
+            this.props.setDecisionOptions({ reviewing_judge_id: value });
           }}
           hideLabel />
       </React.Fragment>;
+    } else {
+      componentContent = <React.Fragment>
+        {selectedJudge && <span>{selectedJudge.full_name}</span>}
+        <Button
+          id="select-judge"
+          classNames={['cf-btn-link']}
+          willNeverBeLoading
+          styling={selectJudgeButtonStyling(selectedJudge)}
+          onClick={() => this.props.setSelectingJudge(true)}>
+          Select {selectedJudge ? 'another' : 'a'} judge
+        </Button>
+      </React.Fragment>;
     }
 
-    const selectedJudge = _.get(decisionOpts.judge, 'label');
-
-    return <React.Fragment>
-      {selectedJudge && <span>{selectedJudge}</span>}
-      <Button
-        id="select-judge"
-        classNames={['cf-btn-link']}
-        willNeverBeLoading
-        styling={selectJudgeButtonStyling(selectedJudge)}
-        onClick={() => this.props.setSelectingJudge(true)}>
-        Select {selectedJudge ? 'another' : 'a'} judge
-      </Button>
-    </React.Fragment>;
+    return <div className={fieldClasses}>
+      <label>Submit to judge: <RequiredIndicator /></label>
+      {shouldDisplayError && <span className="usa-input-error-message">
+        {ERROR_FIELD_REQUIRED}
+      </span>}
+      {componentContent}
+    </div>;
   };
 
   render = () => {
     const omoTypes = [{
       displayText: 'VHA - OMO',
-      value: 'omo'
+      value: 'OMO - VHA'
     }, {
       displayText: 'VHA - IME',
-      value: 'ime'
+      value: 'OMO - IME'
     }];
     const {
       type: decisionType,
       opts: decisionOpts
     } = this.props.decision;
-    const { highlightFormItems } = this.props;
+    const {
+      highlightFormItems,
+      error
+    } = this.props;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
@@ -154,17 +210,20 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
       </p>
+      {error.visible && <Alert title={error.message.title} type="error">
+        {error.message.detail}
+      </Alert>}
       <hr />
-      {decisionType === 'omo' && <RadioField
+      {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
         name="omo_type"
         label="OMO type:"
-        onChange={(omoType) => this.props.setDecisionOptions({ omoType })}
-        value={decisionOpts.omoType}
+        onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
+        value={decisionOpts.work_product}
         vertical
         required
         options={omoTypes}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.omoType) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
@@ -177,17 +236,16 @@ class SubmitDecisionView extends React.PureComponent {
         label="Document ID:"
         name="document_id"
         required
-        errorMessage={(highlightFormItems && !decisionOpts.documentId) ? ERROR_FIELD_REQUIRED : ''}
-        onChange={(documentId) => this.props.setDecisionOptions({ documentId })}
-        value={decisionOpts.documentId}
+        errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
+        onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
+        value={decisionOpts.document_id}
       />
-      <span>Submit to judge:</span><br />
       {this.getJudgeSelectComponent()}
       <TextareaField
         label="Notes:"
         name="notes"
         value={decisionOpts.notes}
-        onChange={(notes) => this.props.setDecisionOptions({ notes })}
+        onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
     </React.Fragment>;
@@ -206,7 +264,8 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
-  ..._.pick(state.queue.ui, 'highlightFormItems', 'selectingJudge')
+  error: state.ui.errorState,
+  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -214,7 +273,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetDecisionOptions,
   setSelectingJudge,
   pushBreadcrumb,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));

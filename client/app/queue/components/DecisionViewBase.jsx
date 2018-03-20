@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import {
   pushBreadcrumb,
   highlightInvalidFormItems
-} from '../QueueActions';
+} from '../uiReducer/uiActions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
@@ -35,7 +35,7 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     getFooterButtons = () => {
-      const getButtons = this.wrapped && this.wrapped.getFooterButtons;
+      const getButtons = _.get(this.wrapped, 'getFooterButtons');
 
       if (!getButtons) {
         return [];
@@ -49,7 +49,8 @@ export default function decisionViewBase(ComponentToWrap) {
       });
       _.defaults(nextButton, {
         classNames: ['cf-right-side'],
-        callback: this.goToNextStep
+        callback: this.goToNextStep,
+        disabled: this.props.savePending
       });
 
       return [backButton, nextButton];
@@ -58,29 +59,50 @@ export default function decisionViewBase(ComponentToWrap) {
     goToStep = (url) => {
       this.props.history.push(url);
       window.scrollTo(0, 0);
-    }
+    };
 
     goToPrevStep = () => {
-      const prevStepHook = this.wrapped && this.wrapped.goToPrevStep;
+      const prevStepHook = _.get(this.wrapped, 'goToPrevStep');
 
-      if (!prevStepHook) {
-        return this.goToStep(this.props.prevStep);
-      }
-
-      if (prevStepHook()) {
+      if (!prevStepHook || prevStepHook()) {
         return this.goToStep(this.props.prevStep);
       }
     };
 
     goToNextStep = () => {
-      const validation = this.wrapped && this.wrapped.validateForm;
+      // This handles moving to the next step in the flow. The wrapped
+      // component's validateForm is used to trigger highlighting form
+      // elements. If present, the wrapped goToNextStep hook dispatches
+      // a proceed/invalid action asynchronously, which this responds
+      // to in componentDidUpdate.
+      const validation = _.get(this.wrapped, 'validateForm');
+      const nextStepHook = _.get(this.wrapped, 'goToNextStep');
 
-      if (validation && validation()) {
-        this.goToStep(this.props.nextStep);
-      } else {
-        this.props.highlightInvalidFormItems(true);
+      if (!validation || !validation()) {
+        return this.props.highlightInvalidFormItems(true);
+      }
+
+      if (!nextStepHook) {
+        return this.goToStep(this.props.nextStep);
+      }
+
+      const hookResult = nextStepHook();
+
+      // nextStepHook may return a Promise, in which case do nothing here.
+      if (hookResult === true) {
+        return this.goToStep(this.props.nextStep);
       }
     };
+
+    componentDidUpdate = (prevProps) => {
+      if (prevProps.savePending && !this.props.savePending) {
+        if (this.props.saveSuccessful) {
+          this.goToStep(this.props.nextStep);
+        } else {
+          this.props.highlightInvalidFormItems(true);
+        }
+      }
+    }
 
     render = () => <React.Fragment>
       <Breadcrumbs />
@@ -93,7 +115,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.queue.ui, 'breadcrumbs');
+  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'savePending', 'saveSuccessful');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     highlightInvalidFormItems
