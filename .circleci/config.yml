@@ -61,7 +61,7 @@ jobs:
             bundle exec danger
 
       - run:
-          name RSpec
+          name: RSpec
           command: |
             mkdir -p ~/test-results-rspec
             testcategories=$(ci-bin/circleci-test-categories | circleci tests split)
