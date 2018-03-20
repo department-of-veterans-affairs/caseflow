@@ -74,16 +74,19 @@ jobs:
       #       testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
       #       bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
-      - run:
-          name: Mocha
-          command: |
-            bundle exec rake mocha
 
       - store_test_results:
           path: ~/test-results
 
       - store_artifacts:
           path: ~/coverage
+
+      # Mocha is currently a deploy step because we can't parallelize it
+      # easily.
+      - deploy:
+          name: Mocha
+          command: |
+            bundle exec rake mocha
 
       - deploy:
           name: Lint
@@ -95,7 +98,7 @@ jobs:
           command: |
             bundle exec rake security_caseflow
 
-      # - deploy:
-      #     name: Verify code coverage
-      #     command: |
-      #       bundle exec rake ci:circleci_verify_code_coverage
+      - deploy:
+          name: Verify code coverage
+          command: |
+            bundle exec rake ci:circleci_verify_code_coverage

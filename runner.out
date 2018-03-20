@@ -1,0 +1,3083 @@
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+No examples found.
+
+Finished in 0.10138 seconds (files took 5.22 seconds to load)
+0 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 572 / 1108 LOC (51.62%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+QueueRepository
+  .filter_duplicate_tasks
+    should filter duplicate tasks and keep the latest
+
+Finished in 0.12029 seconds (files took 5.35 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 578 / 1113 LOC (51.93%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+HearingRepository
+  .set_vacols_values
+    assigns values properly
+  .hearings_for
+    should create hearing records
+  .slots_based_on_type
+    when it is a central office
+      should eq 11
+    when it is a video, use staff.stc4
+      should eq 12
+    when it is a travel board
+      when it is a Monday, use staff.stc2
+        should eq 8
+      when it is a Tuesday, use staff.stc3
+        should eq 9
+
+Finished in 0.32063 seconds (files took 5.47 seconds to load)
+6 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 941 / 1627 LOC (57.84%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+DraftDecision
+  .create
+    should create AttorneyCaseReview of type DraftDecision
+
+Finished in 0.74727 seconds (files took 5.43 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 593 / 1142 LOC (51.93%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+OMORequest
+  .create
+    should create AttorneyCaseReview of type OMORequest
+
+Finished in 0.69558 seconds (files took 5.92 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 593 / 1142 LOC (51.93%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AttorneyCaseReview
+  .create
+    should validate format of the task ID
+      when correct format
+        should be valid
+      when incorrect format
+        should not be valid
+  .complete!
+    when all parameters are present for OMO Request and Vacols update is successful
+      should create OMORequest record
+    when all parameters are present for Draft Decision and Vacols update is successful
+      should create DraftDecision record
+    when not all required parameters are present and Vacols update is successful
+D, [2018-03-20T14:30:05.691443 #21285] DEBUG -- : Validation failed: Type can't be blank excluded from capture: DSN not set
+      should not create AttorneyCaseReview record
+    when all parameters are present for OMO Request but Vacols update is not successful
+D, [2018-03-20T14:30:05.699521 #21285] DEBUG -- : QueueRepository::QueueError excluded from capture: DSN not set
+      should not create OMORequest record
+    when all parameters are present for Draft Decision but Vacols update is not successful
+D, [2018-03-20T14:30:05.707002 #21285] DEBUG -- : IssueRepository::IssueError excluded from capture: DSN not set
+      should not create DraftDecision record
+    when all parameters are present for Draft Decision but issues are not sent
+      should create DraftDecision record
+
+Finished in 0.7741 seconds (files took 5.54 seconds to load)
+8 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 758 / 1355 LOC (55.94%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RampElectionIntake
+  #cancel!
+    cancels and clears detail values
+  #complete!
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    closes out the appeals correctly and creates an end product
+    if VACOLS closure fails
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      does not complete
+  #serialized_appeal_issues
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    should eq [{:id=>5, :issues=>[{:program_description=>"02 - Compensation", :description=>["15 - Service connecti...ssues=>[{:program_description=>"02 - Compensation", :description=>["15 - Last Issue"], :note=>""}]}]
+  #start!
+    not valid to start
+      does not save intake and returns false
+    valid to start
+      RAMP election with notice_date exists
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+        saves intake and sets detail to ramp election
+      matching RAMP election does not exist
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+        creates a new RAMP election with no notice_date
+  #validate_start
+    the ramp election is complete
+      adds ramp_election_already_complete and returns false
+    there are no active appeals
+      adds no_active_appeals and returns false
+    there are no active compensation appeals
+      adds no_active_compensation_appeals and returns false
+    there are no active fully compensation appeals
+      adds no_active_fully_compensation_appeals and returns false
+    there are active but not eligible appeals
+      adds no_eligible_appeals and returns false
+    there are eligible appeals
+D, [2015-01-01T04:00:00.000000 #21368] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      should eq true
+
+Finished in 0.55362 seconds (files took 5.31 seconds to load)
+13 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1044 / 1668 LOC (62.59%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+DispatchStats
+  .calculate_all!
+    calculates and saves all completed dispatch_stats
+    calculates and saves all started dispatch_stats
+    calculates and saves all canceled dispatch_stats
+    filters remands and partial grants from full grants
+
+Finished in 12.98 seconds (files took 5.55 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 869 / 1524 LOC (57.02%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+VacolsAssignment
+  #from_vacols
+    when there is no information about the case assignment
+      sets all the fields correctly
+    when there is information about the case assignment
+      sets all the fields correctly
+
+Finished in 0.11597 seconds (files took 5.46 seconds to load)
+2 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 609 / 1150 LOC (52.96%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RegionalOffice
+  .find!
+    valid regional office key
+      should have attributes {:key => "RO43", :station_key => "343", :city => "Oakland", :state => "CA", :valid? => true}
+    valid satellite office key
+      should have attributes {:key => "SO43", :city => "Sacremento", :state => "CA", :valid? => true}
+    invalid regional office key
+      raises NotFoundError
+  .for_station
+    returns regional office objects for each RO in the station
+
+Finished in 0.1424 seconds (files took 5.39 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 623 / 1160 LOC (53.71%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RampIssue
+  #source_issue_id=
+    description wasn't set
+      sets description from source issue
+    description was set
+      doesn't set description from source issue
+
+Finished in 0.17412 seconds (files took 5.31 seconds to load)
+2 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 632 / 1199 LOC (52.71%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Veteran
+  #load_bgs_record!
+    returns the veteran with data loaded from BGS
+    when veteran does not exist in BGS
+      should not be found
+    when veteran has no BIRLS record
+      should not be found
+    when veteran is inaccessible
+      should be found
+  #to_vbms_hash
+    returns the correct values
+    when state represents a military address
+      should include {:state => "AA", :city => "APO", :address_type => "OVR"}
+    when a zip code is nil
+      when address line 3 contains a zip code
+        should include {:zip_code => "055411-177"}
+      when address line 3 does not contain a zip code
+        should include {:zip_code => nil}
+    when country is not USA
+      should include {:address_type => "INT"}
+      when state represents a military address
+        should include {:state => "AA", :city => "DPO", :address_type => "OVR"}
+  #accessible?
+    when veteran is too sensitive for user
+      should eq false
+    when veteran is not too sensitive for user
+      should eq true
+  #periods_of_service
+    when a veteran served in multiple places
+      should eq ["Army 06/28/2002 - 06/28/2003, Honorable", "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes"]
+    when a veteran is still serving
+      should eq ["Army 06/28/2002 - "]
+    when a veteran does not have any service information
+      should eq []
+    when a veteran served in one place
+      should eq ["Army 06/28/2002 - 06/28/2003, Honorable for VA Purposes"]
+    when a character of service code is not recognized
+      should eq ["Army 06/28/2002 - 06/28/2003"]
+  #age
+    when they're born in the 1900s
+      should eq 65
+    when they're born in the 2000s
+      should eq 20
+    when the date has already passed this year
+      should eq 35
+
+Finished in 0.17552 seconds (files took 5.52 seconds to load)
+20 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 738 / 1279 LOC (57.7%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+FullName
+  #to_s
+    should eq "Charles Cheese"
+  #formatted
+    readable_full
+      should eq "Charles E Cheese"
+      parts of the name are missing
+        should eq "Charles"
+    readable_short
+      should eq "Charles Cheese"
+    form
+      should eq "Cheese, Charles, E"
+      parts of the name are missing
+        should eq "Cheese, Charles"
+
+Finished in 0.12324 seconds (files took 5.44 seconds to load)
+6 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 604 / 1142 LOC (52.89%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Judge
+  .upcoming_dockets
+    returns a hash of hearing dockets indexed by date
+    returns dockets with hearings grouped by date
+    returns hearings with IDs
+    excludes hearings for another judge
+  .create_from_vacols
+    should create a user record with a judge station ID
+  .list_all
+    should cache the values
+  #docket?
+    returns true if docket exists
+    returns false if docket does not exist
+
+Finished in 0.53063 seconds (files took 5.43 seconds to load)
+8 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 871 / 1561 LOC (55.8%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RampRefilingIntake
+  #start!
+    valid to start
+      saves intake and sets detail to ramp election and loads issues
+  #validate_start
+    there is not a completed ramp election for veteran
+      adds did_not_receive_ramp_election and returns false
+    there is a completed ramp election for veteran
+      the EP associated with original RampElection is still pending
+        adds ramp_election_is_active and returns false
+      the EP associated with original RampElection is closed
+        there are no contentions on the EP
+          adds ramp_election_no_issues and returns false
+        there are contentions on the EP
+          should eq true
+          a saved RampRefiling already exists for the veteran
+            adds ramp_election_no_issues and returns false
+  #complete!
+    when end product is needed
+      saves issues and creates an end product
+      when source_issues is nil
+        works, but does not create an EP
+    when no end product is needed
+      saves issues and does NOT create an end product
+  #cancel!
+    cancels and deletes the refiling record created
+  #save_error!
+    saves as an error and deletes the refiling record created
+
+Finished in 0.4768 seconds (files took 5.44 seconds to load)
+11 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 968 / 1570 LOC (61.66%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+EndProduct
+  #claim_type
+    when claim type code is recognized
+      should eq "BVA Grant (070)"
+    when claim type code is unrecognized
+      should eq "SHAQ4EVER"
+  #status_type
+    when status type code is recognized
+      should eq "Cleared"
+    when claim type code is unrecognized
+      should eq "SHAQ4EVER"
+  #dispatch_conflict?
+    when modifier is a dispatch modifier
+      when active
+        should be truthy
+      when not active
+        should be falsey
+    when modifier isn't dispatch modifier
+      should be falsey
+  #potential_match?
+    when it has a dispatch code
+      when assignable
+        when claim date is 29 days ahead of the decision date
+          should be truthy
+        when claim date is 29 days before the decision date
+          should be truthy
+        when claim date is 31 days ahead of the decision date
+          should be falsey
+        when claim date is 31 days before the decision date
+          should be falsey
+      when not assignable
+        should be falsey
+    when it doesn't have a dispatch code
+      should be falsey
+  #valid?
+    should be truthy
+    when modifier is missing
+      should be falsey
+    when claim_type_code is missing
+      should be falsey
+    when claim_type_code is invalid
+      should be falsey
+    when station_of_jurisdiction is missing
+      should be falsey
+    when claim_date is missing
+      should be falsey
+    when gulf_war_registry is not a boolean
+      should be falsey
+    when suppress_acknowledgement_letter is not a boolean
+      should be falsey
+  #serializable_hash
+    serializes the hash correctly
+  #description
+    when ep_code doesn't exist
+      should be nil
+    when ep_code does exist
+      should eq "170RBVAG - Remand with BVA Grant"
+  #to_vbms_hash
+    maps attributes correctly
+  .from_bgs_hash
+    maps attributes correctly
+  .from_establish_claim_params
+    maps attributes correctly
+
+Finished in 0.74867 seconds (files took 5.46 seconds to load)
+27 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 756 / 1287 LOC (58.74%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Hearing
+  #location
+    should eq "Baltimore regional office"
+    when it's a central office hearing
+      should eq "Board of Veterans' Appeals in Washington, DC"
+  #no_show?
+    should be truthy
+  #held_open?
+    hold_open is nil
+      should be falsey
+    hold_open is zero
+      should be falsey
+    hold_open is positive number
+      should be truthy
+  #hold_release_date
+    when held open
+      should eq Fri, 30 Jan 2015
+    when not held open
+      should eq nil
+  #no_show_excuse_letter_due_date
+    should eq Thu, 15 Jan 2015
+  #active_appeal_streams
+    returns active appeals with no decision date and with form9 date
+  #to_hash_for_worksheet
+    when hearing has appeals ready for hearing
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      should contain appeal streams and associated worksheet issues
+    when a hearing & appeal exist
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      returns expected keys
+  #military_service
+    when military service is not set
+      when appeal is not set
+        should eq nil
+      when appeal is set
+        should load military service from appeal
+    when military service is set
+      should load military service from appeal
+  .issue_count
+    should return the hearing count from all active appeals
+  .assign_or_create_from_vacols_record
+    create vacols record
+      should create a hearing record
+    assign vacols record
+      should create a hearing record and reassign user
+  #update
+    when Vacols does not need an update
+      updates hearing columns
+    when Vacols needs an update
+D, [2015-01-01T04:00:00.000000 #22000] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      updates vacols hearing
+
+Finished in 1.09 seconds (files took 5.46 seconds to load)
+20 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1066 / 1666 LOC (63.99%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealHistory
+  #appeal_series
+    uses existing appeal series when possible
+    regenerates appeal series if a new appeal has been added
+    regenerates appeal series if an appeal has been merged
+    matching on folder number for post-remand field dispositions
+      when there is a matching parent
+        creates a single, joined appeal series
+      when there is no matching parent
+        marks the appeal series as incomplete
+    matching on prior decision date
+      when there is a single matching parent
+        creates a single, joined appeal series
+      when there is no matching parent
+        marks the appeal series as incomplete
+    matching on issues
+      when there is a single matching parent
+        creates a single, joined appeal series
+      when there are multiple matching parents
+        marks the appeal series as incomplete
+      when there is no matching parent
+        marks the appeal series as incomplete
+    merging appeals
+      when there is a matching issue
+        merges the series
+      when the issue description is ambiguous
+        does not merge the series
+      when there are multiple issues, some ambiguous
+        merges the series
+  .for_api
+D, [2018-03-20T14:31:37.796533 #22056] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2018-03-20T14:31:37.796952 #22056] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    returns appeal series
+
+Finished in 0.61163 seconds (files took 5.48 seconds to load)
+14 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 981 / 1658 LOC (59.17%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Issue
+  .load_from_vacols
+    assigns values properly
+    when issues are loaded without label joins
+      raise exceptions for unloaded attributes
+  #cavc_decisions
+    should eq [#<CAVCDecision:0x007fc47b7dc3e0 @appeal_vacols_id="12345678", @issue_vacols_sequence_id=1, @decision_date=Mon, 19 Mar 2018 21:31:45 UTC +00:00, @disposition="CAVC Vacated and Remanded">]
+  #program
+    when the program is known
+      should eq :compensation
+    when the program is not known
+      should be nil
+  #aoj
+    when the aoj is vba, vha, or nca
+      should eq :vba
+    when the issue is not originated from vba, vha, or nca
+      should be nil
+  #type
+    should eq "Service connection"
+  #program_description
+    should eq "02 - Compensation"
+  #description
+    returns an array for each description line
+  #levels
+    should eq ["All Others", "Thigh, limitation of flexion of"]
+    when there are no levels
+      should eq []
+  #levels_with_codes
+    should eq ["03 - All Others", "5252 - Thigh, limitation of flexion of"]
+  #formatted_program_type_levels
+    should eq "Comp: SC\n03 - All Others; 5252 - Thigh, limitation of flexion of"
+  #formatted_disposition
+    should eq "Allowed\n03/16/2018"
+  #friendly_description
+    should eq "Service connection, limitation of thigh motion (flexion)"
+    when there is an unknown issue code
+      should be nil
+    when there is an unknown diagnostic code
+      should be nil
+  #friendly_description_without_new_material
+    should eq "Service connection, limitation of thigh motion (flexion)"
+  #diagnostic_code
+    when the issue codes include a diagnostic code
+      should eq "5252"
+    when there is not an issue code
+      should be nil
+  #category
+    should eq "02-15"
+  #active?
+    when it has a disposition
+      should be falsey
+    when it does not have a disposition
+      should be truthy
+  #allowed?
+    when disposition is allowed
+      should be truthy
+    when disposition is not allowed
+      should be falsey
+  #remanded?
+    when disposition is remanded
+      should be truthy
+    when disposition is not remanded
+      should be falsey
+  #merged?
+    when disposition is merged
+      should be truthy
+    when disposition is not merged
+      should be falsey
+  #new_material?
+    when not new and material
+      should be falsey
+    when new and material
+      should be truthy
+  #not_new_material?
+    is the opposite of new_material?
+  #non_new_material_allowed?
+    when non_new_material
+      should be truthy
+      when allowed disposition
+        should be truthy
+      when non-allowed disposition
+        should be falsey
+    when new material
+      when allowed disposition
+        should be falsey
+      when non-allowed disposition
+        should be falsey
+    when non-allowed disposition
+      returns false
+
+Finished in 0.95929 seconds (files took 5.76 seconds to load)
+39 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 869 / 1437 LOC (60.47%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+CAVCDecision
+  .load_from_vacols
+    assigns values properly
+
+Finished in 0.14732 seconds (files took 5.75 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 587 / 1137 LOC (51.63%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Tag
+  .tag creation
+    creates tag when valid text provided
+    fails when text not provided
+    can't add the same tag twice to a document
+
+Finished in 0.78345 seconds (files took 5.37 seconds to load)
+3 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 632 / 1218 LOC (51.89%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Task
+  .newest_first
+    should eq [#<FakeTask id: 1, appeal_id: 1, type: "FakeTask", user_id: nil, assigned_at: nil, started_at: nil, c...k_version: 0, comment: nil, outgoing_reference_id: nil, aasm_state: "unprepared", prepared_at: nil>]
+  .oldest_first
+    should eq [#<FakeTask id: 4, appeal_id: 4, type: "FakeTask", user_id: nil, assigned_at: nil, started_at: nil, c...k_version: 0, comment: nil, outgoing_reference_id: nil, aasm_state: "unprepared", prepared_at: nil>]
+  .prepared_before_today
+    should eq [#<FakeTask id: 5, appeal_id: 5, type: "FakeTask", user_id: nil, assigned_at: nil, started_at: nil, c...ent: nil, outgoing_reference_id: nil, aasm_state: "unassigned", prepared_at: "2016-02-16 00:00:00">]
+  .to_complete
+    should eq [#<FakeTask id: 9, appeal_id: 9, type: "FakeTask", user_id: nil, assigned_at: nil, started_at: nil, c...mment: nil, outgoing_reference_id: nil, aasm_state: "reviewed", prepared_at: "2016-02-16 00:00:00">]
+  .completed_on
+    should eq [#<FakeTask id: 11, appeal_id: 11, type: "FakeTask", user_id: nil, assigned_at: nil, started_at: nil,...ck_version: 0, comment: nil, outgoing_reference_id: nil, aasm_state: "completed", prepared_at: nil>]
+  .completed_success
+    returns only the successfully completed task
+  #assigned_not_completed
+    should eq [#<FakeTask id: 18, appeal_id: 18, type: "FakeTask", user_id: nil, assigned_at: "2016-02-17 20:59:00"...mment: nil, outgoing_reference_id: nil, aasm_state: "assigned", prepared_at: "2016-02-16 00:00:00">]
+  #progress_status
+    when unprepared
+      should eq "Unassigned"
+    when assigned
+      should eq "Not Started"
+    when started
+      should eq "In Progress"
+    task is completed
+      should eq "Completed"
+  #start!
+    when assigned
+      is successful, sets started_at, and creates a new user quota
+      when a quota already exists
+        doesn't create new quota
+    when not assigned
+      raises InvalidTransition
+  #prepare!
+    when unprepared
+      prepared_at should be nil
+      sets prepared_at
+    when already prepared
+      raises InvalidTransition
+  #complete!
+    when in a non-completable state
+      raises error and doesn't save completion_status
+    when started
+      completes the task with outgoing_reference_id
+    when reviewed
+      completes the task without outgoing_reference_id and creates a quota
+    when completed
+      raises error and doesn't save completion_status
+  #expire!
+    sets status to completed and completion_status to expired
+    recreates a new unprepared task
+    when new task creation fails
+      rolls back state change too
+  #cancel!
+    sets task to cancelled and saves feedback
+  #days_since_creation
+    returns the correct number of days
+  #should_assign?
+    should be truthy
+    if task is invalid
+      invalidates the task and returns false
+    if task isn't accessible by the logged in user
+      should be falsey
+  .any_assignable_to?
+    when user already has an assigned task
+      should eq true
+    when there are assignable tasks
+      should eq true
+    when there are no assignable tasks
+      should eq false
+    when there is an invalid task
+      invalidates that task and returns false
+  .assign_next_to!
+    when user already has an assigned task
+      does nothing and returns the assigned task
+    when user does not have an assigned task
+      when there are assignable tasks
+        assigns only the next assignable task
+        when there is a race condition in assigning a task
+          retries and assigns the next task
+      when there are no assignable tasks
+        does not assign a task and returns nil
+        when there is an invalid task
+          invalidates that task and assigns the next task
+  .completed_by
+    should eq [#<FakeTask id: 69, appeal_id: 65, type: "FakeTask", user_id: 20, assigned_at: nil, started_at: nil, ...ck_version: 0, comment: nil, outgoing_reference_id: nil, aasm_state: "completed", prepared_at: nil>]
+  #completion_status_text
+    when completion_status is nil
+      should eq ""
+    when completion_status does not have special text
+      should eq "Special Issue Emailed"
+    when completion_status has special text
+      should eq "Assigned Existing EP"
+  .todays_quota
+    when team_quota already exists for task today
+      should eq #<TeamQuota id: 9, date: "2016-02-17", task_type: "FakeTask", user_count: 1, created_at: "2016-02-17 20:59:00", updated_at: "2016-02-17 20:59:00">
+    when no team_quota exists for task today
+      should have attributes {:date => Wed, 17 Feb 2016, :task_type => "FakeTask"}
+
+Finished in 1.22 seconds (files took 5.6 seconds to load)
+44 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1059 / 1652 LOC (64.1%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+DocketSnapshot
+  #at_front
+    should be true for an appeal with a form 9 date older than the latest docket month
+    should be true for an appeal with a form 9 date equal to the latest docket month
+    should be false for an appeal with a form 9 date newer than the latest docket month
+  #to_hash
+    includes the expected attributes
+
+Finished in 0.2749 seconds (files took 5.53 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 614 / 1150 LOC (53.39%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealSeries
+  #vacols_ids
+    should eq ["1234567", "7654321"]
+  #latest_appeal
+    when there are multiple active appeals
+      should eq "1234567"
+    when there are no active appeals
+      should eq "1234567"
+  #location
+    when it is in advance status
+      should eq :aoj
+    when it is in remand status
+      should eq :aoj
+    when it is in any other status
+      should eq :bva
+  #program
+    when there is only one program on appeal
+      should eq :compensation
+    when there are multiple programs on appeal
+      should eq :multiple
+  #aoj
+    when the first issue on appeal has no aoj
+      should eq :vba
+  #status
+    when it is in advance status
+      should eq :pending_certification
+      and it has received one or more ssocs
+        should eq :pending_certification_ssoc
+      and it has been certified
+        should eq :on_docket
+      and it has no form 9
+        should eq :pending_form9
+        and it has no soc
+          should eq :pending_soc
+    when it is in active status
+      should eq :decision_in_progress
+      and it is in location 49
+        should eq :stayed
+      and it is in location 55
+        should eq :at_vso
+      and it is in location 20
+        should eq :bva_development
+      and it is in location 18
+        should eq :bva_development
+    when it is in history status
+      when decided by the board
+        should eq :bva_decision
+      when granted by the aoj
+        should eq :field_grant
+      when withdrawn
+        should eq :withdrawn
+      when ftr
+        should eq :ftr
+      when ramp
+        should eq :ramp
+      when death
+        should eq :death
+      when reconsideration by letter
+        should eq :reconsideration
+      when an unmatched merge
+        should eq :merged
+      when any other disposition
+        should eq :other_close
+    when it is in remand status
+      should eq :remand
+      and it has received a post-decision ssoc
+        should eq :remand_ssoc
+      and it has a pre-decision ssoc
+        should eq :remand
+    when it is in motion status
+      should eq :motion
+    when it is in cavc status
+      should eq :cavc
+  #status_hash
+    when there is a valid status
+      returns a hash with a type and details
+    when there is no known status
+      returns an empty details hash
+    when it is in remand ssoc status
+      returns a details hash with the most recent ssoc
+    when it has been decided by the board
+      returns a details hash with the decided issues
+    when it is at VSO
+      returns a details hash with the vso name
+    when it is pending a form 9
+      returns a details hash with the vso name
+  #alerts
+    returns list of alerts
+  #docket
+    when the appeal is original and not aod
+      has a docket
+    when the appeal is post-cavc
+      does not have a docket
+    when the appeal is aod
+      does not have a docket
+    when there is no form 9
+      does not have a docket
+  #docket_hash
+    when the docket is nil
+      returns nil
+  #description
+    when there is a single issue
+      should eq "Service connection, limitation of thigh motion (flexion)"
+    when that issue is new and materials
+      should eq "Service connection, limitation of thigh motion (flexion)"
+    when there are multiple issues
+      should eq "Service connection, limitation of thigh motion (flexion), and 2 others"
+    when those issues do not have commas
+      should eq "100% rating for individual unemployability and 1 other"
+
+Finished in 0.86123 seconds (files took 5.65 seconds to load)
+49 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1267 / 1909 LOC (66.37%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+ApiKey
+  .create!
+    creates a key and digest
+  .authorize
+    when key is not authorized
+      should be falsey
+    when key is authorized
+      should have attributes {:consumer_name => "CaseSlow"}
+
+Finished in 0.14648 seconds (files took 5.42 seconds to load)
+3 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 594 / 1129 LOC (52.61%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RampRefiling
+  #create_issues!
+    creates issues from the source_issue_ids
+  #create_end_product_and_contentions!
+    when no issues that need to be created in VBMS
+      does not try and create end product or contentions
+    when issues need to have contentions created in VBMS
+      sends requests to VBMS to create both the end_product and the uncreated issues
+      when an issue is not created in VBMS
+        raises ContentionCreationFailed
+  #valid?
+    receipt_date
+      when it is nil
+        should equal true
+      when it is after today
+        adds an error to receipt_date
+      when it is before ramp election receipt date
+        adds an error to receipt_date
+      when it is on or after ramp election receipt date and on or before today
+        should equal true
+    option_selected
+      when orginal election was higher level review
+        when higher level review
+          adds an error to option_selected
+        when higher level review with hearing
+          adds an error to option_selected
+        when another option
+          should equal true
+        when nil
+          should equal true
+      when orginal election was higher level review with hearing
+        when higher level review
+          adds an error to option_selected
+        when higher level review with hearing
+          adds an error to option_selected
+        when another option
+          should equal true
+      when orginal election was supplemental claim
+        when higher level review
+          should equal true
+    appeal docket
+      if option selected isn't appeal
+        sets appeal_docket to nil
+      if option selected is appeal
+        when not valid
+          adds an error to appeal_docket
+        when set to valid value
+          should equal true
+
+Finished in 0.90374 seconds (files took 5.53 seconds to load)
+19 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 882 / 1483 LOC (59.47%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+UserQuota
+  .create!
+    saves associated team quota
+  #task_count
+    when no locked task count
+      should eq 3
+    when locked task count
+      should eq 0
+  #tasks_left_count
+    should eq 2
+  #user_name
+    when no user
+      should be nil
+    when user
+      should eq "Sammy Davis Jr"
+  #locked_task_count=
+    should eq 4
+    when setting a negative number
+      should eq 4
+    when setting to a number higher than the teams assignable tasks
+      should eq 4
+    when setting to nil
+      should eq nil
+  #tasks_completed_count
+    should eq 1
+  scopes
+    .locked
+      should eq [#<UserQuota id: 8, team_quota_id: 12, user_id: 12, created_at: "2018-03-20 21:32:40", updated_at: "2018-03-20 21:32:40", locked_task_count: 0>]
+    .unlocked
+      should eq [#<UserQuota id: 11, team_quota_id: 13, user_id: 15, created_at: "2018-03-20 21:32:40", updated_at: "2018-03-20 21:32:40", locked_task_count: nil>]
+
+Finished in 0.42419 seconds (files took 5.34 seconds to load)
+13 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 848 / 1460 LOC (58.08%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+IntakeStats
+  .throttled_calculate_all!
+    when not previously calculated
+      calculates stats
+    when last calculated more than 20 minutes ago
+      calculates stats
+    when last calculated less than 20 minutes ago
+      doesn't recalculate stats
+  .intake_series_statuses
+    sumarizes status for series of intakes for the same veteran in the range
+      should eq ["no_active_appeals", "success"]
+
+Finished in 0.20237 seconds (files took 5.43 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 671 / 1293 LOC (51.89%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealSeriesAlerts
+  #all
+    form9_needed alert
+      includes an alert
+    scheduled_hearing alert
+D, [2015-01-01T04:00:00.000000 #22750] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      includes an alert
+    hearing_no_show alert
+D, [2015-01-01T04:00:00.000000 #22750] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      includes an alert
+      when more than 15 days ago
+D, [2015-01-01T04:00:00.000000 #22750] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+        does not include an alert
+    held_for_evidence alert
+      includes an alert
+      when older than the hold_open time
+        does not include an alert
+    decision_soon alert
+      includes an alert
+    blocked_by_vso alert
+      includes an alert
+    cavc_option alert
+      includes an alert
+      when older than 120 days
+        does not include an alert
+      when not a Board decision
+        does not include an alert
+    ramp alert
+      when notice date is within the last 60 days
+        includes an alert
+      when no longer eligible
+        includes an ineligible alert
+      when not a Board decision
+        does not include an alert
+
+Finished in 0.75012 seconds (files took 5.45 seconds to load)
+14 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 986 / 1609 LOC (61.28%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+WorksheetIssue
+  .create_from_issue
+    should create a worksheet issue
+
+Finished in 0.21915 seconds (files took 5.45 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 689 / 1289 LOC (53.45%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Form8
+  #attributes
+    should have attributes {:appellant_name => "Brad Pitt", :appellant_relationship => "Fancy man", :file_number => "1234QWERTY", :veteran_name => "Joe Patriot"}
+  #update_from_appeal
+    populates _initial_ fields with the same values as their counterparts
+  #attributes
+    does not return initial attributes
+  #update_from_string_params
+    takes string dates passed by the client and turns them into Date objects for persistence
+  #hearing_on_file
+    when hearing_held is set to Yes
+      should eq "Yes"
+    when hearing_held is set to No
+      should be falsey
+  #representative
+    when representative_type isn't other
+      should eq "Joe - Appeal"
+    when representative_type is other
+      should eq "Joe - Bossman"
+  #remarks_rolled
+    rolls over remarks properly
+    rolls over remarks with newlines properly
+    rolls over wrapped text properly
+  #remarks_continued
+    when no fields roll over
+      should be nil
+    when all fields roll over
+      should eq "\n \nContinued:\nREMARKS WOO\n \nService Connection For Continued:\nSERVICE CONNECTION YES\n \nIncreased Rating For Continued:\nINCREASED RATING YEAH\n \nOther Continued:\nOTHER THINGS"
+  #service_connection_for_rolled
+    rolls over properly
+    rolls over and combines with remarks rollover
+  #pdf_location
+    should fetch the PDF from s3 and save it locally if the PDF does not exists locally
+  #document_type_id
+    should eq "178"
+  .from_appeal
+D, [2015-01-01T04:00:00.000000 #22918] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    creates new form8 with values copied over correctly
+
+Finished in 0.95309 seconds (files took 5.39 seconds to load)
+18 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1031 / 1647 LOC (62.6%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+PowerOfAttorney
+  returns vacols values
+  returns bgs values
+  returns bgs address
+  error handling
+D, [2018-03-20T14:33:14.462981 #23028] DEBUG -- : Savon::Error excluded from capture: DSN not set
+    gracefully handles error fetching address
+
+Finished in 0.20691 seconds (files took 5.44 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 726 / 1217 LOC (59.65%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+TeamQuota
+  #task_count_for
+    when assigned task warrants a remainder
+      should eq 4
+    when assigned task needs no remainder
+      should eq 3
+    when there are locked quotas
+      should eq 1
+    when user_quota isn't part of the team_quota
+      raises TeamQuota::MismatchedTeamQuota
+  #tasks_to_assign
+    is the number of tasks
+      should eq 9
+    subtracts the number of locked assigned cases
+      should eq 2
+  #user_quotas
+    when there are no assigned quotas
+      returns unassigned quotas
+    when there are fewer assigned quotas than the user count
+      returns both, with the assigned quotas first
+    when there are the same assigned_quotas as user count
+      returns no unassigned quotas
+  #save!
+    when user count is not set
+      when no recent quotas
+        does sets user_count to most recent quota
+      when there are recent quotas
+        does sets user_count to most recent quota
+    when there are fewer or equal assigned quotas than the user count
+      does not adjust user_count
+    when there are the more assigned_quotas as user count
+      returns no unassigned quotas
+
+Finished in 0.49376 seconds (files took 5.27 seconds to load)
+13 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 818 / 1406 LOC (58.18%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+HearingDocket
+  .from_hearings
+    returns the earliest date
+  #slots
+    should use the default number of slots for the regional office
+      should eq 9
+  #to_hash
+    returns a hash
+  #attributes
+    returns a hash
+
+Finished in 0.35742 seconds (files took 5.46 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 806 / 1487 LOC (54.2%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealSeriesIssues
+  #all
+    when an issue spans a remand
+      combines issues together
+    when a remand has not yet returned
+      is marked as active
+    when there are no issues on one appeal
+      returns issues
+    when there are no issues on any appeal
+      returns an empty array
+    when an appeal was merged
+      does not show as a last_action
+    when a cavc remand has occurred
+      appears as the last action
+
+Finished in 0.31302 seconds (files took 5.44 seconds to load)
+6 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 838 / 1503 LOC (55.76%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AttorneyQueue
+  .tasks_with_appeals
+    returns tasks
+    returns appeals
+
+Finished in 0.39393 seconds (files took 5.38 seconds to load)
+2 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 802 / 1477 LOC (54.3%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+EstablishClaim
+  #should_invalidate?
+    should be falsey
+    appeal status is active
+      should be truthy
+    appeal decision date is nil
+      should be truthy
+    appeal not found in VACOLS
+      should be truthy
+    appeal decision type is nil
+      should be truthy
+  #prepare_with_decision!
+    if the task is invalid
+      returns :invalid and invalidates the task
+    if the task's appeal has no decisions
+      should eq :missing_decision
+    if the task's appeal has decisions
+      if the task's appeal errors out on decision content load
+        propogates exception and does not prepare
+      if the task caches decision content successfully
+        prepares task and caches decision document content
+  #perform!
+    when claim is valid
+      sets status to reviewed and saves appropriate records
+    when claim is invalid
+      raises InvalidEndProductError and rolls back DB changes
+    when VBMS throws an error
+      rolls back DB changes
+      EP already exists error
+        raises duplicate_ep VBMSError
+      EP already exists in BGS error
+        raises duplicate_ep VBMSError
+      Veteran missing SSN error
+        raises missing_ssn VBMSError
+      Veteran missing Postal Code error
+        raises bgs_info_invalid VBMSError
+  #complete_with_review!
+    completes the task
+    updates VACOLS
+D, [2015-01-01T04:00:00.000000 #23341] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    updates the claim establishment
+    when an ep was created
+      when appeal has special issues
+        completes the task as routed_to_ro
+      when appeal doesn't have special issues
+        completes the task as routed_to_arc
+    when an ep wasn't created
+      completes the task as special_issue_vacols_routed
+    when VACOLS raises exception
+      rolls back DB changes
+  #complete_with_email!
+    completes the task
+D, [2015-01-01T04:00:00.000000 #23341] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    updates the claim establishment
+    when completing the task raises an exception
+      rolls back DB changes
+  #assign_existing_end_product!
+    completes the task and sets reference to end product
+    updates VACOLS location
+D, [2015-01-01T04:00:00.000000 #23341] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    updates associated claim establishment
+    when not started
+      raises InvalidTransition
+    when VACOLS update raises error
+      rolls back DB changes
+  #actions_taken
+    when complete
+      when appeal is a Remand or Partial Grant
+        should include "Reviewed Remand decision"
+        should include "VACOLS Updated: Changed Location to 98"
+        when an EP was established for ARC
+          should include "Established EP: 170RMDAMC - ARC-Remand for Station 397 - ARC"
+          should not include /Added Diary Note/
+        when the appeal was routed to an RO in VACOLS
+          should include "VACOLS Updated: Changed Location to 54"
+          should include "VACOLS Updated: Added Diary Note on VAMC"
+      when appeal is a Full Grant
+        should include "Reviewed Full Grant decision"
+        should not include /VACOLS Updated/
+        when an EP was established
+          should include "Established EP: 172BVAG - BVA Grant for Station 351 - Muskogee"
+          when a VBMS Note was added to the EP
+            should include "Added VBMS Note on Radiation; VAMC"
+        when processed via email
+          should include "Sent email to: appealcoach@va.gov in Philadelphia COWAC, PA - re: Radiation Issue(s)"
+        when processed outside of caseflow
+          should include "Processed case outside of Caseflow"
+    when not complete
+      should eq []
+  #completion_status_text
+    when completion status is routed_to_ro
+      should eq "EP created for RO Station 344 - Los Angeles"
+    when completion status is special_issue_emailed
+      should eq "Emailed - Radiation; VAMC Issue(s)"
+    when completion_status doesn't need additional information
+      uses value from Task#completion_status_text
+  #past_weeks
+    returns tasks completed in the specified range
+    returns no tasks outside the specified range
+
+Finished in 2.13 seconds (files took 5.55 seconds to load)
+49 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1461 / 2163 LOC (67.55%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Hearings::MasterRecord
+  #to_hash
+    should return attributes
+
+Finished in 0.1389 seconds (files took 5.58 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 614 / 1153 LOC (53.25%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+DocketSnapshot
+  .create
+    creates a new snapshot and tracers
+    when it is monday
+      should reuse the latest_docket_month from last friday
+    when it is next friday
+      should update the latest_docket_month
+  .latest
+    should return the latest snapshot
+  #docket_tracer_for_form9_date
+    should return the tracer for the start of the month
+
+Finished in 0.37543 seconds (files took 5.42 seconds to load)
+5 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 632 / 1168 LOC (54.11%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+ClaimEstablishment
+  .get_decision_type
+    returns the right decision type based on the appeal information passed in
+  #appeal=
+    sets the decision_type
+  #sent_email
+    when email_recipient is nil
+      should be nil
+    when email_recipient is set
+      should have attributes {:recipient => "johnson@va.gov", :ro_name => "Unknown"}
+      when email_ro_id is set
+        should have attributes {:recipient => "johnson@va.gov", :ro_name => "Providence, RI"}
+
+Finished in 0.22836 seconds (files took 5.48 seconds to load)
+5 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 772 / 1379 LOC (55.98%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealEvent
+  disposition=
+    when disposition is mapped to an event type
+      sets type
+    when disposition is not mapped to an event type
+      sets type to other
+  issue_disposition=
+    when disposition is a field grant
+      sets type
+    when disposition is any other event type
+      sets type to falsey
+  hearing=
+    when disposition is supported
+      sets type and date based off of hearing
+    when disposition is not supported
+      sets type to falsey
+  valid?
+    should be truthy
+    when no type
+      should be falsey
+    when no date
+      should be falsey
+  ==
+    is equal to an object with the same type and date
+  ::EVENT_TYPE_FOR_DISPOSITIONS
+    accounts for all active VACOLS dispositions
+
+Finished in 0.21319 seconds (files took 5.33 seconds to load)
+11 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 696 / 1235 LOC (56.36%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Annotation
+  #save
+    when comment contains some word characters
+      saves to database with correct comment text
+    when comment is an empty string
+      throws an error
+    when comment contains only whitespace
+      throws an error
+
+Finished in 0.73266 seconds (files took 5.41 seconds to load)
+3 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 634 / 1221 LOC (51.92%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+ReaderUser
+  when a reader users do not exist for a user with a reader role
+    all_without_records
+      should return only users without associated reader_users
+      should only return 5 users if 5 is provided as a limit
+    all_by_documents_fetched_at
+      should return reader_users sorted by fetched_at
+      when reader_users have been fetched at within 24 hours
+        should return only readers who fetched documents over 24 hours ago
+
+Finished in 0.38588 seconds (files took 5.51 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 606 / 1139 LOC (53.2%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Document
+  #type?
+    when primary type matches
+      should be truthy
+      persists in database
+    when an alt type matches
+      should be truthy
+    when no types match
+      should be falsy
+  #receipt_date
+    when received_at is nil
+      should be nil
+      persists in database
+    when received_at is a datetime
+      should eq Tue, 20 Mar 2018
+      persists in database
+  #category_case_summary
+    when category is part of case summary
+      should eq true
+    by received_at
+      when document is recently received
+        should eq true
+      when document is not recently received
+        should eq false
+  .content_url
+    EFolderService is ExternalApi::EfolderService
+      application is reader
+        returns the URL for the document in efolder
+      application is not reader
+        returns the URL for the document in VBMS
+    EFolderService is Fakes::VBMSService
+      application is not reader
+        returns the URL for the document in VBMS
+      application is reader
+        returns the URL for the document in VBMS
+  #match_vbms_document_from
+    when there is a match
+      should be matching
+      should have attributes {:received_at => Thu, 22 Mar 2018}
+    when there isn't a match
+      should not be matching
+  #fuzzy_match_vbms_document_from
+    when there is a match
+      should be matching
+      should have attributes {:received_at => Fri, 16 Mar 2018}
+    when there isn't a match
+      should not be matching
+  .from_vbms_document
+    when has alt doc types
+      should have attributes {:type => "Form 9", :alt_types => ["NOD", "SOC"]}
+      persists in database
+    when doesn't have alt doc types
+      should have attributes {:type => "Form 9"}
+  content tests
+    #fetch_and_cache_document_from_vbms
+      loads document content
+    #fetch_content
+      lazy fetches document content
+    #content
+      lazy loads document content
+  #merge_into
+    fills the persisted document with data from the vbms document
+  #serve!
+    writes content to document
+  #file_name
+    returns correct path
+  #default_path
+    returns correct path
+  versioning
+    saves new version on update description
+
+Finished in 0.86512 seconds (files took 5.39 seconds to load)
+32 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 832 / 1432 LOC (58.1%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+User
+  #regional_office
+    when RO can't be determined using station_id
+      should be nil
+    when RO can be determined using station_id
+      should eq "RO01"
+  #roles
+    when roles is nil
+      should eq []
+    when roles has non-aliased roles
+      should eq ["System Admin", "Certify Appeal"]
+    when persisted to database
+      can read from saved attributes
+    when has a role alias
+      is expected to return the aliases as well
+  #timezone
+    when ro is set
+      should eq "America/New_York"
+    when ro isn't set
+      should eq "America/Chicago"
+  CSUM/CSEM users with 'System Admin' function
+    are not admins
+  #display_name
+    when username and RO are both set
+      should eq "Shaner (RO77)"
+    when just username is set
+      should eq "Shaner"
+  #can?
+    when roles are nil
+      should be falsey
+    when roles don't contain the thing
+      should be falsey
+    when roles contains the thing
+      should be truthy
+    when roles don't contain the thing but user is granted the function
+      should be truthy
+    when roles contains the thing but user is denied
+      should be falsey
+    when system admin and roles don't contain the thing
+      should be truthy
+  #admin?
+    when user with roles that are nil
+      should be falsey
+    when user with roles that don't contain admin
+      should be falsey
+    when user with roles that contain admin
+      should be truthy
+  #authenticated?
+    when regional_office set
+      should be truthy
+    when regional_office isn't set
+      should be falsy
+  #authenticate
+    when user enters lowercase RO
+      sets regional_office in the session
+  #current_case_assignments
+    returns empty array when no cases are assigned
+    returns appeal assigned to user
+  #current_case_assignments_with_views
+    returns nil when no cases have been viewed
+    has hash with view
+      should include {"vbms_id" => "3c502cbba", "vacols_id" => "32aa490df", "veteran_full_name" => "Barack A Merica", "viewed" => true}
+  .from_session
+    gets a user object from a session
+      should eq "Anne Merica"
+      persists user to DB
+    returns nil when no user in session
+      should be nil
+  .current_task
+    when there is no current task of the task class
+      should be nil
+    when user has a current task
+      should eq #<FakeTask id: 4, appeal_id: 9, type: "FakeTask", user_id: 40, assigned_at: nil, started_at: nil, com...comment: nil, outgoing_reference_id: nil, aasm_state: "started", prepared_at: "2018-03-19 00:00:00">
+
+Finished in 0.75307 seconds (files took 6.65 seconds to load)
+32 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1108 / 1752 LOC (63.24%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Appeal
+  #documents_with_type
+    when 1 type is passed
+      returns right number of documents and type
+    when 2 types are passed
+      returns right number of documents and type
+  #nod
+    should have attributes {:type => "NOD", :vacols_date => Mon, 29 Dec 2014 12:00:00.000000000 +0000}
+    when nod_date is nil
+      should be nil
+  #soc
+    should have attributes {:type => "SOC", :vacols_date => Wed, 31 Dec 2014 12:00:00.000000000 +0000}
+    when soc_date is nil
+      should be nil
+  #form9
+    should have attributes {:type => "Form 9", :vacols_date => Wed, 31 Dec 2014 12:00:00.000000000 +0000}
+    when form9_date is nil
+      should be nil
+  #aod
+    should be truthy
+  #remand_return_date
+    when the appeal is active
+      should eq nil
+  #ssocs
+    when there are no ssoc dates
+      should eq []
+    when there are ssoc dates
+      returns array of ssoc documents
+  #cavc_decisions
+    should eq [#<CAVCDecision:0x007f8ceda68890 @decision_date=Mon, 01 Sep 2014 12:00:00 UTC +00:00, @appeal_vacols_...x007f8ceda63408 @decision_date=Mon, 01 Sep 2014 12:00:00 UTC +00:00, @appeal_vacols_id="454688865">]
+  #v1_events
+    returns list of events sorted from oldest to newest by date
+  #form9_due_date
+    when the notification date is within the last year
+      should eq Tue, 01 Dec 2015
+    when the notification date is older
+      should eq Sun, 01 Mar 2015
+    when missing notification date or soc date
+      should eq nil
+  #cavc_due_date
+    when there is no decision date
+      should eq nil
+    when there is a decision date
+      should eq Wed, 01 Apr 2015
+  #events
+    returns list of events
+  #documents_match?
+    when there is an nod, soc, and form9 document matching the respective dates
+      should be truthy
+      when ssoc dates don't match
+        should be falsy
+      when received_at is nil
+        should be falsy
+      and ssoc dates match
+        should be truthy
+    when the nod date is mismatched
+      should be falsy
+    when the soc date is mismatched
+      should be falsy
+    when the form9 date is mismatched
+      should be falsy
+    when at least one ssoc doesn't match
+      should be falsy
+    when one of the dates is missing
+D, [2015-01-01T04:00:00.000000 #23934] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      should be falsy
+  #serialized_decision_date
+    when decision date is nil
+      should eq ""
+    when decision date exists
+      should eq "2016/09/06"
+  #number_of_documents
+    should return number of documents
+  #number_of_documents_after_certification
+    when certification_date is nil
+      should eq 0
+    when certification_date is set
+      should eq 1
+  #find_or_create_documents_v2!
+    when there is no existing document
+      saves retrieved documents
+    when there are documents with same series_id
+      adds new retrieved documents
+      when existing document has comments, tags, and categories
+        copies metdata to new document
+        when the API returns two documents with the same series_id
+          copies metadata from the most recently saved document not returned by the API
+      when API returns doc that is already saved
+        updates existing document
+    when there is a document with no series_id
+      adds series_id
+  #find_or_create_documents!
+    when there is no existing document
+      saves retrieved documents
+    when there is a document with same vbms_document_id
+      updates retrieved documents
+  #fetch_documents!
+    when save is false
+      should return documents not saved in the database
+      when efolder_docs_api is disabled
+        loads document content from the VBMS service
+        when application is reader
+          loads document content from the VBMS service
+      when efolder_docs_api is enabled and application is reader
+        loads document content from the efolder service and sets fetched_at attributes
+    when save is true
+      when document exists in the database
+"result: [#<Document id: 24, vbms_document_id: \"8f765c7c7\", category_procedural: nil, category_medical: nil, category_other: nil, received_at: \"2014-12-29\", type: \"NOD\", file_number: \"143136428\", description: nil, series_id: \"0ac15c3bd\", previous_document_version_id: nil>, #<Document id: 25, vbms_document_id: \"9d87e22fb\", category_procedural: nil, category_medical: nil, category_other: nil, received_at: \"2014-12-29\", type: \"SOC\", file_number: \"776594754\", description: nil, series_id: \"bb6df7e2d\", previous_document_version_id: nil>]"
+        should return existing document
+      when efolder_docs_api is disabled
+        loads document content from the VBMS service
+      when efolder_docs_api is enabled and application is reader
+        loads document content from the efolder service
+      when document doesn't exist in the database
+        should return documents saved in the database
+  #manifest_vva_fetched_at
+    instance variables for appeal not yet set
+      returns own attribute and sets manifest_vbms_fetched_at when called
+  #manifest_vbms_fetched_at
+    returns own attribute and sets manifest_vva_fetched_at when called
+  #in_location?
+    when location is not recognized
+      raises error
+    when is in location
+      should be truthy
+    when is not in location
+      should be falsey
+  #case_assignment_exists
+    should be truthy
+  .find_or_create_by_vacols_id
+    persists in database
+    when no appeal exists for VACOLS id
+      when no VACOLS data exists for that appeal
+        raises ActiveRecord::RecordNotFound error
+      when VACOLS data exists for that appeal
+        saves and returns that appeal with updated VACOLS data loaded
+    when appeal with VACOLS id exists in the DB
+      when no VACOLS data exists for that appeal
+        raises ActiveRecord::RecordNotFound error
+      when VACOLS data exists for that appeal
+        saves and returns that appeal with updated VACOLS data loaded
+    sets the vacols_id
+      should eq "123C"
+  .close
+    when called with both appeal and appeals
+      should raise error
+    when multiple appeals
+      closes each appeal
+    when just one appeal
+      when disposition is not valid
+        should raise error
+      when disposition is valid
+        when appeal is not active
+          should raise error
+        when appeal is active and undecided
+          closes the appeal in VACOLS
+        when appeal is a remand
+          closes the remand in VACOLS
+  #certify!
+    when form8 for appeal exists in the DB
+      certifies the appeal using AppealRepository
+      uploads the correct form 8 using AppealRepository
+    when a cancelled certification for an appeal already exists in the DB
+      certifies the correct appeal using AppealRepository
+    when form8 doesn't exist in the DB for appeal
+      throws an error
+  #certified?
+    reads certification date off the appeal
+  #hearing_pending?
+    determines whether an appeal is awaiting a hearing
+  #sanitized_vbms_id
+    left-pads case-number ids
+    left-pads 7-digit case-number ids
+    doesn't left-pad social security ids
+  #fetch_appeals_by_file_number
+    when passed with valid vbms id
+      returns an appeal
+    when passed an invalid vbms id
+      length greater than 9
+        raises ActiveRecord::RecordNotFound error
+      length less than 3
+        raises ActiveRecord::RecordNotFound error
+  .convert_file_number_to_vacols
+    for a file number with less than 9 digits
+      with leading zeros
+        should eq "1234C"
+      with no leading zeros
+        should eq "12345678C"
+    for a file number with 9 digits
+      should eq "123456789S"
+      with letters
+        should eq "123456789S"
+      with leading zeros and letters
+        should eq "123009C"
+    for a file number with more than 9 digits
+      raises InvalidFileNumber error
+  #partial_grant_on_dispatch?
+    when no allowed issues
+      should be falsey
+    when the allowed issues are new material
+      should be falsey
+    when there's a mix of allowed and remanded issues
+      should be truthy
+  #full_grant_on_dispatch?
+    when status is Remand
+      should be falsey
+    when status is Complete
+      when at least one issues is new-material allowed
+        should be falsey
+      when at least one issue is not new-material allowed
+        should be truthy
+  #remand_on_dispatch?
+    status is not remand
+      should equal false
+    status is remand
+      contains at least one new-material allowed issue
+        should equal false
+      contains no new-material allowed issues
+        should equal true
+  #compensation_issues
+    should eq [#<Issue:0x007f8cee8aa8e0 @disposition="Allowed", @close_date=Thu, 25 Dec 2014 12:00:00 UTC +00:00, @...gh, limitation of flexion of"], @note="low back condition", @vacols_sequence_id=1, @id="a4c45dd3e">]
+  #compensation?
+    when there are no compensation issues
+      should equal false
+    when there is at least 1 compensation issue
+      should equal true
+  #fully_compensation?
+    when there is at least one non-compensation issue
+      should equal false
+    when there are all compensation issues
+      should equal true
+  #eligible_for_ramp?
+    is false if status is not advance or remand
+      should be falsey
+    status is remand
+      should be truthy
+    status is advance
+      location is remand_returned_to_bva
+        should be falsey
+      location is not remand_returned_to_bva
+        should be truthy
+  #disposition_remand_priority
+    when disposition is allowed and one of the issues is remanded
+      should eq "Remanded"
+    when disposition is allowed and none of the issues are remanded
+      should eq "Allowed"
+    when disposition is not allowed
+      should eq "Vacated"
+  #dispatch_decision_type
+    when it has a mix of allowed and granted issues
+      should eq "Partial Grant"
+    when it has a non-new-material allowed issue
+      should eq "Full Grant"
+    when it has a remanded issue
+      should eq "Remand"
+  #task_header
+    returns the correct string
+  #outcoded_by_name
+    returns the correct string
+  #station_key
+    when regional office key is mapped to a station
+      should eq "313"
+    when regional office key is one of many mapped to a station
+      should eq "316"
+    when regional office key is not mapped to a station
+      should be nil
+  #decisions
+    when only one decision
+      should eq [#<Document id: nil, vbms_document_id: nil, category_procedural: nil, category_medical: nil, category...A Decision", file_number: nil, description: nil, series_id: nil, previous_document_version_id: nil>]
+    when only one recent decision
+      should eq [#<Document id: nil, vbms_document_id: nil, category_procedural: nil, category_medical: nil, category...A Decision", file_number: nil, description: nil, series_id: nil, previous_document_version_id: nil>]
+    when no recent decision
+      should eq []
+    when no decision_date on appeal
+      should eq []
+    when there are two decisions of the same type
+      should eq [#<Document id: nil, vbms_document_id: nil, category_procedural: nil, category_medical: nil, category...A Decision", file_number: nil, description: nil, series_id: nil, previous_document_version_id: nil>]
+    when there are two decisions of the different types
+      should eq [#<Document id: nil, vbms_document_id: nil, category_procedural: nil, category_medical: nil, category...VA or CAVC", file_number: nil, description: nil, series_id: nil, previous_document_version_id: nil>]
+  #non_canceled_end_products_within_30_days
+{"4313855"=>[{:benefit_claim_id=>"8bf1fa7f8", :claim_receive_date=>"12/12/2014", :claim_type_code=>"172GRANT", :end_product_type_code=>"070", :status_type_code=>"PEND"}, {:benefit_claim_id=>"2705f2e4d", :claim_receive_date=>"12/31/2014", :claim_type_code=>"170RMD", :end_product_type_code=>"070", :status_type_code=>"CLR"}, {:benefit_claim_id=>"b262a18ce", :claim_receive_date=>"12/31/2014", :claim_type_code=>"172BVAG", :end_product_type_code=>"070", :status_type_code=>"CAN"}, {:benefit_claim_id=>"7cda1faa0", :claim_receive_date=>"01/01/2014", :claim_type_code=>"172BVAG", :end_product_type_code=>"070", :status_type_code=>"CLR"}]}
+    returns correct eps
+  #special_issues?
+    is true if any special issues exist
+    is false if no special issues exist
+  #pending_eps
+    returns only pending eps
+  #special_issues
+    when no special issues are true
+      should eq []
+    when one special issue is true
+      should eq ["DIC - death, or accrued benefits - United States"]
+    when many special issues are true
+      should eq 4
+      should include "Foreign claim - compensation claims, dual claims, appeals"
+      should include "Vocational Rehab"
+      should include /Education - GI Bill, dependents educational assistance/
+      should include "U.S. Territory claim - Puerto Rico and Virgin Islands"
+  #veteran
+    returns veteran loaded with BGS values
+  #power_of_attorney
+    returns poa loaded with VACOLS values
+    returns poa loaded with BGS values by default
+    #power_of_attorney(load_bgs_record: false)
+      returns poa without fetching BGS values if desired
+    #power_of_attorney.bgs_representative_address
+      returns address if we are able to retrieve it
+  #issue_categories
+    should include "02-01"
+    should include "02-02"
+    should not include "02-03"
+    returns uniqued issue categories
+  #worksheet_issues
+    when appeal does not have any Vacols issues
+      should eq 0
+    when appeal has Vacols issues
+      should eq 2
+  #update
+    when Vacols does not need an update
+      updates worksheet issues
+  #sanitized_hearing_request_type
+    when central_office
+      should eq :central_office
+    when travel_board
+      when video_hearing_requested
+        should eq :video
+      when video_hearing_requested is false
+        should eq :travel_board
+    when unsupported type
+      should be nil
+  #appellant_last_first_mi
+    should eql "Tester, Joe E."
+    when appellant has no first name
+      should be nil
+  .to_hash
+    when issues parameter is nil and contains additional attributes
+      includes viewed boolean in hash
+      issues is null in hash
+      includes aod, cavc, regional_office and docket_number
+    when issues and viewed attributes are provided
+      includes viewed boolean in hash
+      includes issues in hash
+  .for_api
+D, [2015-01-01T04:00:00.000000 #23934] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #23934] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2015-01-01T04:00:00.000000 #23934] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+    returns filtered appeals with events only for veteran sorted by latest event date
+  .initialize_appeal_without_lazy_load
+    creates an appeals object with attributes (PENDING: Disabled without_lazy_load for appeals for fixing Welcome Gate)
+    appeal does not lazy load vacols data (PENDING: Disabled without_lazy_load for appeals for fixing Welcome Gate)
+  #vbms_id
+    when vbms_id exists in the caseflow DB
+      does not make a request to VACOLS
+    when vbms_id is nil
+      when appeal is in the DB
+        looks up vbms_id in VACOLS and saves
+      when appeal is not in the DB
+        looks up vbms_id in VACOLS but does not save
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) Appeal.initialize_appeal_without_lazy_load creates an appeals object with attributes
+     # Disabled without_lazy_load for appeals for fixing Welcome Gate
+     # ./spec/models/appeal_spec.rb:1946
+
+  2) Appeal.initialize_appeal_without_lazy_load appeal does not lazy load vacols data
+     # Disabled without_lazy_load for appeals for fixing Welcome Gate
+     # ./spec/models/appeal_spec.rb:1950
+
+Finished in 2.26 seconds (files took 5.53 seconds to load)
+161 examples, 0 failures, 2 pending
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 2376 / 2960 LOC (80.27%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+CertificationStats
+  .calculate_all!
+    calculates and saves all calculated certification_stats
+    overwrites incomplete periods
+    does not recalculate complete periods
+
+Finished in 6.92 seconds (files took 5.3 seconds to load)
+3 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 659 / 1242 LOC (53.06%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+RampElection
+  #create_end_product!
+    when option_selected is nil
+      raises error
+    when option_selected is set
+      creates end product and saves end_product_reference_id
+      when option receipt_date is nil
+        raises error
+      when VBMS throws an error
+        raises a parsed EstablishClaimFailedInVBMS error
+  #recreate_issues_from_contentions!
+    when election has a saved refiling associated to it
+      returns false and deletes/creates no issues
+    when election has no refiling
+      destroys previous issues and creates issues from contentions
+  #completed?
+    when there is an end product reference
+      should eq true
+    when there is not an end product reference
+      should eq false
+  #established_end_product
+    when matching end product has not yet been established
+      when end_product_reference_id is nil
+        should be nil
+      when end_product_reference_id is set
+        raises EstablishedEndProductNotFound error
+    when a matching end product has been established
+      should have attributes {:claim_id => "1ede9294e"}
+  #valid?
+    option_selected
+      when saving receipt
+        when it is set
+          when it is a valid option
+            should equal true
+        when it is nil
+          adds error to receipt_date
+    receipt_date
+      when it is nil
+        should equal true
+      when it is after today
+        adds an error to receipt_date
+      when it is before notice_date
+        adds an error to receipt_date
+      when it is on or after notice date and on or before today
+        should equal true
+      when saving receipt
+        when it is nil
+          adds error to receipt_date
+
+Finished in 0.87315 seconds (files took 5.46 seconds to load)
+18 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 887 / 1490 LOC (59.53%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealConcern
+  #regional_office_name
+    should eq "Montgomery, AL"
+
+Finished in 0.12741 seconds (files took 5.29 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 605 / 1145 LOC (52.84%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AssociatedVacolsModel
+  .vacols_attr_accessor
+    getter
+      should eq "bar"
+    call setter before first get
+      should eq "hello"
+    ensure setter sets value
+      should eq "hello"
+    fields not set trigger a call to load data
+      should eq "bar"
+  .vacols_field?
+    returns true for variables set with vacols_attr_accessor
+    returns false for variables set with attr_accessor
+  #assign_from_vacols
+    should eq [1, 2, 3]
+  #vacols_record_exists?
+    loads VACOLS data and returns the result
+  #check_and_load_vacols_data!
+    only loads the data from VACOLS once
+    when VACOLS load fails
+      returns false and only attempts VACOLS load once
+  #field_set?
+    returns false when nothing is set
+    when a different field has been set
+      returns false for the current field
+    when field has been set
+      returns true
+  #mark_field_as_set
+    field_set? returns true after running mark_field_as_set
+
+Finished in 0.16899 seconds (files took 5.34 seconds to load)
+14 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 665 / 1179 LOC (56.4%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+CachedAttributes
+  .clear_cached_attrs!
+    clears the cached attributes
+  assign cache value
+    saves assigned cache value
+  .cache_attribute
+    when no cached value
+      should eq 9
+    caches false boolean values
+      reads from cache
+    when value is nil
+      does not cache
+    when cached value
+      should eq 10
+
+Finished in 0.15877 seconds (files took 5.41 seconds to load)
+6 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 627 / 1151 LOC (54.47%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Intake
+  .build
+    when form_type is supported
+      should be a kind of RampElectionIntake(id: integer, detail_id: integer, detail_type: string, user_id: integer, veteran_fi...d_at: datetime, completed_at: datetime, completion_status: string, error_code: string, type: string)
+      should have attributes {:veteran_file_number => "64205050", :user => #<User id: nil, station_id: "283", css_id: "6fa2876f3", full_name: "Susan Jefferson", email: nil, roles: nil, selected_regional_office: nil>}
+    when form_type is not supported
+      raises error
+  .in_progress
+    returns in progress intakes
+  #complete_with_status!
+    saves intake with proper tagging
+  #validate_start
+    veteran_file_number is null
+      adds invalid_file_number and returns false
+    veteran_file_number has fewer than 8 digits
+      adds invalid_file_number and returns false
+    veteran_file_number has more than 9 digits
+      adds invalid_file_number and returns false
+    veteran_file_number has non-digit characters
+      adds invalid_file_number and returns false
+    veteran_file_number is VACOLS style
+      adds invalid_file_number and returns false
+    veteran not found in bgs
+      adds veteran_not_found and returns false
+    veteran not accessible by user
+      adds veteran_not_accessible and returns false
+    duplicate in progress intake already exists
+      adds veteran_not_accessible and returns false
+    duplicate intake exists, but isn't in progress
+      should be truthy
+    in progress intake exists on same file number, but not same type
+      should be truthy
+    in progress intake exists on same type, but not same file number
+      should be truthy
+    when number is valid (even with extra spaces)
+      should be truthy
+
+Finished in 0.32952 seconds (files took 5.38 seconds to load)
+17 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 815 / 1456 LOC (55.98%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Certification
+  #async_start!
+    when appeal has already been certified
+      returns already_certified and sets the flag
+      does not update certification fields
+    when appeal is missing certification data
+      returns data_missing and sets the flag
+    when a document is mismatched
+      returns mismatched_documents and sets the flag
+      is included in the relevant certification_stats
+    when ssocs are mismatched
+      is included in the relevant certification_stats
+    when multiple docs are mismatched
+      is included in the relevant certification_stats
+    when appeal is ready to start
+      returns success and sets timestamps
+      no ssoc does not trip missing ssoc stat
+      when appeal has ssoc
+        returns success and sets ssoc_required
+      when matching form8 exists
+        when matching form8 is recent
+          updates the form8's certification date
+        when matching form8 is stale (> 48 hrs old)
+          updates the form8's values from appeal
+      when matching form8 doesn't exist
+        creates a new form8
+  #form8
+    when a form8 exists in the db for that certification
+      should eq #<Form8 id: 13, certification_id: 14, vacols_id: nil, appellant_name: nil, appellant_relationship: ni...eference: nil, nod_date: nil, form9_date: nil, ssoc_date_1: nil, ssoc_date_2: nil, ssoc_date_3: nil>
+    when no saved form8 exists
+      should be nil
+  #appeal
+    lazily loads the appeal for the certification
+  #time_to_certify
+    when not completed
+      should be nil
+    when completed
+      when not created (in db)
+        is_expected to be_nil
+      when created
+        returns the time since certification started
+  .complete!
+    should set the user id
+  .find_by_vacols_id
+    when certification exists and it has not been cancelled before
+      loads that certification
+    when certification exists and it has been cancelled before
+      does not find one
+  .find_or_create_by_vacols_id
+    when certification exists with that vacols_id and it has not been cancelled before
+      loads that certification
+    when certification exists with that vacols_id and it has been cancelled before
+      creates a new certification
+    when certification doesn't exist with that vacols_id
+      creates a certification
+  #bgs_rep_address_found?
+    returns true when bgs address is found
+  #fetch_power_of_attorney!
+    returns true when bgs address is found
+  #v2
+    returns only v2 certifications
+  #rep_name, #rep_type
+    when the user indicates that poa matches across bgs and vacols
+      returns representative name from vacols
+      returns representative type from vacols
+    when the user indicates that poa does not match but bgs is correct
+      returns representative type from bgs
+      returns representative name from bgs
+    when bgs and vacols poa are both not correct
+      returns representative type from bgs
+      returns representative name from bgs
+
+Finished in 1.56 seconds (files took 5.55 seconds to load)
+34 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1313 / 1894 LOC (69.32%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+AppealEvents
+  #all
+    claim event
+      when notification_date is set
+        should not be nil
+      when nod_date is not set
+        should be nil
+    nod event
+      when nod_date is set
+        should not be nil
+      when nod_date is not set
+        should be nil
+    soc event
+      when soc_date is set
+        should not be nil
+      when soc_date is not set
+        should be nil
+    form9 event
+      when form9_date is set
+        should not be nil
+      when form9_date is not set
+        should be nil
+    ssoc events
+      when ssoc dates set
+        should eq 2
+      when no ssocs
+        should be empty
+    certification event
+      when certification date is set
+        should not be nil
+      when certification date is not set
+        should be nil
+    remand return event
+      when the appeal is complete
+        should not be nil
+      when the appeal is open
+        should be nil
+    hearing events
+D, [2015-01-01T04:00:00.000000 #24461] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+      adds hearing events for all closed hearings associated with the appeal
+    hearing transcript events
+      adds transcript events for all held hearings associated with the appeal
+    decision event
+      when decision date is set
+        when disposition is valid
+          should not be nil
+      when no decision date
+        should be nil
+    issue event
+      when close date is set
+        should eq 1
+      when no close date
+        should eq 0
+      when the issue close is same as decision date
+        should eq 1
+    cavc decision event
+      when appeal has cavc decisions
+        creates one event per cavc decision date
+      when appeal doesn't have a cavc decision
+        should be empty
+    ramp notice event
+      when the Veteran has been sent a RAMP notice
+        should not be nil
+      when the Veteran has not yet been sent a RAMP notice
+        should be nil
+  #all (v1)
+    when the appeal has a prior decision date
+      filters out events that happened before that date
+    nod event
+      when nod_date is set
+        should not be nil
+      when nod_date is not set
+        should be nil
+    soc event
+      when soc_date is set
+        should not be nil
+      when soc_date is not set
+        should be nil
+    form9 event
+      when form9_date is set
+        should not be nil
+      when form9_date is not set
+        should be nil
+    ssoc events
+      when ssoc dates set
+        should eq 2
+      when an ssoc date falls after certification date
+        should eq 1
+      when no ssocs
+        should be empty
+    certification event
+      when certification date is set
+        should not be nil
+      when certification date is not set
+        should be nil
+    activated event
+      when case_review_date is set
+        should not be nil
+      when case_review_date isn't set
+        should be nil
+    hearing events
+      adds hearing events for all closed hearings associated with the appeal
+    decision event
+      when decision date is set
+        when disposition is valid
+          should not be nil
+      when no decision date
+        should be nil
+    cavc decision event
+      when appeal has cavc decisions
+        creates one event per cavc decision date
+      when appeal doesn't have a cavc decision
+        should be empty
+
+Finished in 0.69123 seconds (files took 5.57 seconds to load)
+44 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1159 / 1842 LOC (62.92%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Session
+  when regional office is not set
+    user should not be authenticated
+  error handling
+I, [2018-03-20T14:36:00.125371 #24517]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.14ms)
+    returns a 400 when the regional_office param is not set
+  when regional office is set
+I, [2018-03-20T14:36:00.141680 #24517]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    user should be authenticated
+I, [2018-03-20T14:36:01.604032 #24517]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+    user should be able to log out
+
+Finished in 1.9 seconds (files took 5.37 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1022 / 1658 LOC (61.64%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Health Check API
+I, [2018-03-20T14:36:08.576724 #24583]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.24ms)
+  returns meta info about the app
+
+Finished in 0.2925 seconds (files took 5.77 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 580 / 1114 LOC (52.06%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Reader Appeal Requests
+  Appeals Find by Veteran ID Endpoint
+    returns not found
+I, [2018-03-20T14:36:15.970632 #24691]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.05ms)
+    passes the request
+I, [2018-03-20T14:36:15.993610 #24691]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.08ms)
+    doesn't return appeals without issues
+  Appeals controller #show in html
+    redirects the page to Case page
+
+Finished in 1.06 seconds (files took 5.58 seconds to load)
+4 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 885 / 1431 LOC (61.84%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+No examples found.
+
+Finished in 0.11172 seconds (files took 5.45 seconds to load)
+0 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 564 / 1099 LOC (51.32%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+No examples found.
+
+Finished in 0.11847 seconds (files took 5.41 seconds to load)
+0 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 564 / 1099 LOC (51.32%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+No examples found.
+
+Finished in 0.11605 seconds (files took 5.34 seconds to load)
+0 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 564 / 1099 LOC (51.32%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+No examples found.
+
+Finished in 0.1773 seconds (files took 5.35 seconds to load)
+0 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 564 / 1099 LOC (51.32%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+PowerOfAttorneyMapper
+  Maps VACOLS POA to POA
+    #get_poa_from_vacols_poa
+      returns None if there's no rep
+      returns poa if rep name is found in vacols case record
+      returns poa if rep name is found in rep table
+      returns blank for representative_name if first and last names are blank in rep table
+      returns blank for representative_name if representative record is nil
+      returns name from rep table if vacols code is blank
+    #get_poa_from_bgs_poa
+      maps BGS rep type to our rep type
+      classifies rep type as 'Other' if we haven't categorized it
+      when no poa is found
+  Maps POA to VACOLS rep code
+    #get_vacols_rep_code_from_poa
+      is nil when representative type is not found
+      maps rep name to vacols code when rep type is a service organization
+      maps to 'Other' when rep type is a service org and rep name is not found
+      handles cases where rep type is not a service org
+
+Finished in 0.2112 seconds (files took 5.04 seconds to load)
+13 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 676 / 1192 LOC (56.71%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+IssueMapper
+  .rename_and_validate_vacols_attrs
+    when action is create
+      when codes are valid
+        transforms the hash
+      when codes are not valid
+        raises IssueRepository::IssueError
+    when action is update
+      when codes are valid
+        transforms the hash
+      when codes are not passed
+        does not validate code combination
+      when codes are not valid
+        raises IssueRepository::IssueError
+      when empty
+        returns empty hash
+      when disposition is passed
+        when valid disposition
+          transforms the hash
+        when not valid disposition
+          raises IssueRepository::IssueError
+
+Finished in 0.20295 seconds (files took 5.19 seconds to load)
+8 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 685 / 1221 LOC (56.1%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+HearingMapper
+  .bfha_vacols_code
+    when disposition is held and it is central office hearing
+      should eq "1"
+    when disposition is held and it is video hearing
+      should eq "6"
+    when disposition is held and it is travel board hearing
+      should eq "2"
+    when disposition is postponed
+      should eq nil
+    when disposition is cancelled
+      should eq "5"
+    when disposition is not held
+      should eq "5"
+  .datetime_based_on_type
+    when travel board
+      uses a regional office timezone to set the zone
+    when video
+      uses a regional office timezone to set the zone
+    when central_office
+      does not use a regional office timezone
+  .hearing_fields_to_vacols_codes
+    when all values are present
+      should convert to Vacols values
+    when some values are missing
+      should skip these values
+    values with nil
+      should clear these values
+    when some values do not need Vacols update
+      should skip these values
+    when aod is not valid
+      raises InvalidAodError error
+    when notes is not valid
+      raises InvalidNotesError error
+    when representative name is not valid
+      raises InvalidNotesError error
+    when addon is not valid
+      raises InvalidNotesError error
+    when aod is false
+      raises InvalidAodError error
+    when disposition is not valid
+      raises InvalidDispositionError error
+    when disposition is nil
+      raises InvalidDispositionError error
+    when transcript_requested is not valid
+      raises InvalidTranscriptRequestedError error
+    when hold_open is not valid
+      raises InvalidHoldOpenError error
+    when hold_open is false
+      raises InvalidHoldOpenError error
+
+Finished in 0.23117 seconds (files took 5.59 seconds to load)
+23 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 801 / 1353 LOC (59.2%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+QueueMapper
+  .rename_and_validate_decass_attrs
+    when all fields are present
+      should eq {:deprod=>:IME, :dedocid=>"123456789.1234", :deatcom=>"Require action4", :dereceive=>2015-01-01 00:00:00.000000000 +0000}
+    when optional note is nil
+      should eq {:deprod=>:OTI, :deatcom=>nil, :dedocid=>"123456789.1234", :dereceive=>2015-01-01 00:00:00.000000000 +0000}
+    when optional note is missing
+      should eq {:deprod=>:IME, :dedocid=>"123456789.1234", :dereceive=>2015-01-01 00:00:00.000000000 +0000}
+    when required document ID is missing
+      raises an error
+    when required work product is missing
+      raises an error
+  .work_product_to_vacols_code
+    when overtime
+      should eq :OTV
+    when not overtime
+      should eq :VHA
+    when unrecognized
+      should eq nil
+
+Finished in 0.1525 seconds (files took 5.47 seconds to load)
+8 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 636 / 1166 LOC (54.55%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Reader
+  User on blacklist
+
+All visited screens will be scanned for 508 accessibility compliance.
+    it redirects to unauthorized
+  Short list of documents
+I, [2018-03-20T14:37:17.984318 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.13ms)
+I, [2018-03-20T14:37:18.086525 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.63ms)
+I, [2018-03-20T14:37:19.212287 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.07ms)
+I, [2018-03-20T14:37:19.351182 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:37:19.362821 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.18ms)
+I, [2018-03-20T14:37:20.632442 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.49ms)
+I, [2018-03-20T14:37:20.724638 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:20.732421 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.73ms)
+    Open document in new tab
+I, [2018-03-20T14:37:21.108700 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.27ms)
+I, [2018-03-20T14:37:21.165452 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.69ms)
+I, [2018-03-20T14:37:27.156121 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:37:34.114043 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.09ms)
+I, [2018-03-20T14:37:36.364758 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+    Progress indicator
+I, [2018-03-20T14:37:37.341908 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.12ms)
+I, [2018-03-20T14:37:37.411155 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.72ms)
+    User visits help page
+I, [2018-03-20T14:37:38.989825 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.87ms)
+I, [2018-03-20T14:37:39.063537 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:39.071179 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.62ms)
+I, [2018-03-20T14:37:40.470871 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:40.522908 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.1ms)
+    Clicking outside pdf or next pdf removes annotation mode
+I, [2018-03-20T14:37:41.117064 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.04ms)
+I, [2018-03-20T14:37:41.176432 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:41.183942 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.52ms)
+I, [2018-03-20T14:37:41.889031 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:42.581147 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:42.875987 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+    Next and Previous buttons move between docs
+I, [2018-03-20T14:37:43.508181 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.91ms)
+I, [2018-03-20T14:37:43.566823 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:43.574044 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.41ms)
+    Rotating documents
+I, [2018-03-20T14:37:44.766739 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.89ms)
+I, [2018-03-20T14:37:44.826593 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:37:44.833978 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.44ms)
+I, [2018-03-20T14:37:46.161319 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+I, [2018-03-20T14:37:46.754302 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:46.846678 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+I, [2018-03-20T14:37:47.829219 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.09ms)
+    Arrow keys to navigate through documents
+I, [2018-03-20T14:37:48.143218 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.22ms)
+I, [2018-03-20T14:37:48.191169 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.51ms)
+    PdfListView Dropdown
+I, [2018-03-20T14:37:49.362584 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.02ms)
+I, [2018-03-20T14:37:49.424587 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.53ms)
+I, [2018-03-20T14:37:49.964234 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:37:50.713306 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.11ms)
+I, [2018-03-20T14:37:51.188454 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:37:51.491848 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.08ms)
+I, [2018-03-20T14:37:52.062858 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.11ms)
+I, [2018-03-20T14:37:52.390831 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    Add, edit, and delete comments
+    Zooming changes the size of pages (PENDING: This test sometimes fails because it cannot find the expected text)
+I, [2018-03-20T14:37:52.744952 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.36ms)
+I, [2018-03-20T14:37:52.808880 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.0ms)
+I, [2018-03-20T14:37:53.222622 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Open single document view and open/close sidebar
+I, [2018-03-20T14:37:54.552523 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.93ms)
+I, [2018-03-20T14:37:54.603032 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.54ms)
+I, [2018-03-20T14:37:55.032689 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    Open and close accordion sidebar menu
+I, [2018-03-20T14:37:59.893560 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.13ms)
+I, [2018-03-20T14:37:59.964415 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.88ms)
+I, [2018-03-20T14:38:00.386432 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+    Document information contains Claims information
+I, [2018-03-20T14:38:02.814738 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.15ms)
+I, [2018-03-20T14:38:02.864666 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.82ms)
+I, [2018-03-20T14:38:03.297916 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:38:04.290888 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Update Document Description
+I, [2018-03-20T14:38:04.704919 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.04ms)
+I, [2018-03-20T14:38:04.756232 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.56ms)
+I, [2018-03-20T14:38:05.154498 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:38:06.196833 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    Update Document Description with Enter
+I, [2018-03-20T14:38:06.525071 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.94ms)
+I, [2018-03-20T14:38:06.575360 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.54ms)
+I, [2018-03-20T14:38:06.984461 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Open and close keyboard shortcuts modal
+I, [2018-03-20T14:38:08.048860 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.76ms)
+I, [2018-03-20T14:38:08.109691 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.56ms)
+I, [2018-03-20T14:38:08.596962 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:09.035920 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:09.106293 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:38:09.291555 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.9ms)
+I, [2018-03-20T14:38:09.338529 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.55ms)
+I, [2018-03-20T14:38:09.503120 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:10.239565 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Categories
+I, [2018-03-20T14:38:10.735309 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.06ms)
+I, [2018-03-20T14:38:10.789455 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.73ms)
+I, [2018-03-20T14:38:11.414229 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Claim Folder Details
+I, [2018-03-20T14:38:12.823271 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.01ms)
+I, [2018-03-20T14:38:12.874199 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.61ms)
+I, [2018-03-20T14:38:13.463266 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    Search and Filter
+I, [2018-03-20T14:38:13.850570 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.0ms)
+I, [2018-03-20T14:38:13.900852 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.51ms)
+I, [2018-03-20T14:38:14.445095 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:14.479557 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.14ms)
+    Document viewer when doc list is filtered
+I, [2018-03-20T14:38:15.168541 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.03ms)
+I, [2018-03-20T14:38:15.220334 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.54ms)
+    When user search term is not found
+I, [2018-03-20T14:38:16.200074 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.19ms)
+I, [2018-03-20T14:38:16.263276 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:16.271287 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.63ms)
+    Search Document Text
+I, [2018-03-20T14:38:17.566916 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.03ms)
+I, [2018-03-20T14:38:17.628878 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:17.636712 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.56ms)
+I, [2018-03-20T14:38:18.489523 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+    Search Text Resets on Change Document
+I, [2018-03-20T14:38:19.168514 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.24ms)
+I, [2018-03-20T14:38:19.237496 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:19.247108 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.84ms)
+    Navigate Search Results with Keyboard
+I, [2018-03-20T14:38:20.572273 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.24ms)
+I, [2018-03-20T14:38:20.633455 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:20.641887 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.53ms)
+    Show and Hide Document Searchbar with Keyboard
+I, [2018-03-20T14:38:21.459229 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.92ms)
+I, [2018-03-20T14:38:21.520439 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:38:21.528178 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.52ms)
+    Navigating Search Results scrolls page
+I, [2018-03-20T14:38:22.755754 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.91ms)
+I, [2018-03-20T14:38:22.805433 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.54ms)
+I, [2018-03-20T14:38:23.217391 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+    Download PDF file
+    Document header filtering message
+I, [2018-03-20T14:38:24.227228 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.12ms)
+I, [2018-03-20T14:38:24.281822 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.6ms)
+      filtering categories
+I, [2018-03-20T14:38:25.440328 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.96ms)
+I, [2018-03-20T14:38:25.490758 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.81ms)
+      filtering tags and comments
+I, [2018-03-20T14:38:26.666290 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.52ms)
+I, [2018-03-20T14:38:26.731316 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.78ms)
+      filtering comments
+I, [2018-03-20T14:38:27.522716 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.93ms)
+I, [2018-03-20T14:38:27.574901 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.5ms)
+      clear all filters
+    Appeals without any issues
+I, [2018-03-20T14:38:28.726943 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (22.61ms)
+      welcome gate issues column shows no issues message
+I, [2018-03-20T14:38:29.249845 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.8ms)
+I, [2018-03-20T14:38:29.300156 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.46ms)
+      Claims folder details issues show no issues message
+I, [2018-03-20T14:38:30.212285 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.08ms)
+I, [2018-03-20T14:38:30.276683 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:38:30.285467 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.48ms)
+      pdf view sidebar shows no issues message
+      When both document source manifest retrieval times are set
+I, [2018-03-20T14:38:31.409777 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.22ms)
+I, [2018-03-20T14:38:31.461920 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.6ms)
+        Both times display on the page
+      When VVA manifest retrieval time is nil
+I, [2018-03-20T14:38:32.184794 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.41ms)
+I, [2018-03-20T14:38:32.235807 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.41ms)
+        Only VBMS time displays on the page
+    Welcome gate page
+I, [2018-03-20T14:38:32.912305 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (15.19ms)
+D, [2018-03-20T14:38:33.261589 #25674] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+D, [2018-03-20T14:38:33.264533 #25674] DEBUG -- : AssociatedVacolsModel::LazyLoadingDisabledError excluded from capture: DSN not set
+I, [2018-03-20T14:38:33.318188 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (3.55ms)
+      View Hearing Worksheet
+I, [2018-03-20T14:38:34.609901 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (13.32ms)
+I, [2018-03-20T14:38:35.134679 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.98ms)
+I, [2018-03-20T14:38:40.670966 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (3.75ms)
+      Enter a case
+I, [2018-03-20T14:38:46.529676 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (13.14ms)
+I, [2018-03-20T14:38:46.727818 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (14.28ms)
+I, [2018-03-20T14:38:57.394416 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.94ms)
+      with multiple appeals
+I, [2018-03-20T14:38:58.559845 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (15.04ms)
+I, [2018-03-20T14:39:01.259643 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.09ms)
+      search for invalid veteran id
+      search for appeals using veteran id
+I, [2018-03-20T14:39:01.898824 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (12.71ms)
+I, [2018-03-20T14:39:02.048373 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.7ms)
+I, [2018-03-20T14:39:02.102167 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.01ms)
+        with one appeal
+      with multiple appeals but cancel search on modal
+I, [2018-03-20T14:39:02.626489 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (13.61ms)
+I, [2018-03-20T14:39:02.795723 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.75ms)
+        using cancel button
+I, [2018-03-20T14:39:03.294813 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (12.78ms)
+I, [2018-03-20T14:39:03.484342 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.29ms)
+        using X button
+I, [2018-03-20T14:39:03.948224 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (17.33ms)
+I, [2018-03-20T14:39:04.131830 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.5ms)
+I, [2018-03-20T14:39:04.333599 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.17ms)
+        and search again
+    Query params in documents URL
+I, [2018-03-20T14:39:04.820493 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.92ms)
+I, [2018-03-20T14:39:04.874888 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.83ms)
+      User enters valid category
+I, [2018-03-20T14:39:05.704178 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.94ms)
+I, [2018-03-20T14:39:05.753512 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.53ms)
+      User enters invalid category
+    when comment box contains only whitespace characters
+I, [2018-03-20T14:39:06.520617 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.22ms)
+I, [2018-03-20T14:39:06.593660 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:39:06.602509 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.49ms)
+      save button is disabled
+I, [2018-03-20T14:39:07.659379 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.76ms)
+I, [2018-03-20T14:39:07.725340 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:39:07.733491 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.66ms)
+      alt+enter shortcut doesn't trigger save
+    existing comment edited to contain only whitespace characters
+I, [2018-03-20T14:39:08.772827 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.17ms)
+I, [2018-03-20T14:39:08.840699 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+I, [2018-03-20T14:39:08.850803 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.56ms)
+      prompts delete modal to appear
+    When there is an existing annotation
+I, [2018-03-20T14:39:09.880565 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.67ms)
+I, [2018-03-20T14:39:09.930387 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.76ms)
+I, [2018-03-20T14:39:10.822531 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+      Documents and Comments toggle button
+I, [2018-03-20T14:39:11.322677 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.76ms)
+I, [2018-03-20T14:39:11.390005 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:39:11.399076 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.52ms)
+      Leave annotation with keyboard
+I, [2018-03-20T14:39:12.677028 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.2ms)
+I, [2018-03-20T14:39:12.730574 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.61ms)
+I, [2018-03-20T14:39:13.258771 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+      Jump to section for a comment
+I, [2018-03-20T14:39:14.191355 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.83ms)
+I, [2018-03-20T14:39:14.242858 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.55ms)
+I, [2018-03-20T14:39:14.673943 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+      Scroll to comment
+I, [2018-03-20T14:39:15.717323 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.74ms)
+I, [2018-03-20T14:39:15.768809 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.6ms)
+I, [2018-03-20T14:39:16.204965 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+      Scroll to comment icon
+I, [2018-03-20T14:39:17.297772 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (1.61ms)
+I, [2018-03-20T14:39:17.345122 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.61ms)
+I, [2018-03-20T14:39:17.784737 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+      Scrolling pages changes page numbers
+      When document 3 is a 147 page document
+I, [2018-03-20T14:39:19.212795 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.52ms)
+I, [2018-03-20T14:39:19.276703 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.68ms)
+I, [2018-03-20T14:39:19.774180 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.04ms)
+        Switch between pages to ensure rendering
+    Tags
+      adding and deleting tags (PENDING: No reason given)
+      Share tags among all documents in a case
+I, [2018-03-20T14:39:21.523700 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.99ms)
+I, [2018-03-20T14:39:21.592479 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.64ms)
+I, [2018-03-20T14:39:22.045079 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+        Shouldn't show auto suggestions
+        Should show correct auto suggestions (PENDING: No reason given)
+  Large number of documents
+I, [2018-03-20T14:39:22.905446 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (3.18ms)
+I, [2018-03-20T14:39:22.982559 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.44ms)
+I, [2018-03-20T14:39:23.865972 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:39:24.213376 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+    Last read indicator
+    Open a document and return to list (PENDING: No reason given)
+I, [2018-03-20T14:39:25.189527 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.53ms)
+I, [2018-03-20T14:39:25.250391 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+I, [2018-03-20T14:39:25.258066 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.43ms)
+    Open the last document on the page and return to list
+  with a single document that errors when we fetch it
+I, [2018-03-20T14:39:26.958212 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.24ms)
+D, [2018-03-20T14:39:27.003020 #25674] DEBUG -- : StandardError excluded from capture: DSN not set
+I, [2018-03-20T14:39:27.058931 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.05ms)
+I, [2018-03-20T14:39:27.069616 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.62ms)
+    causes individual file view will display error message
+  Document is updated
+I, [2018-03-20T14:39:27.712660 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (3.39ms)
+I, [2018-03-20T14:39:27.761374 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.42ms)
+I, [2018-03-20T14:39:28.120802 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.07ms)
+I, [2018-03-20T14:39:28.901638 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.09ms)
+I, [2018-03-20T14:39:29.065085 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (2.38ms)
+I, [2018-03-20T14:39:29.125254 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.67ms)
+I, [2018-03-20T14:39:29.250170 #25674]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.06ms)
+    should alert user
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) Reader Short list of documents Zooming changes the size of pages
+     # This test sometimes fails because it cannot find the expected text
+     # ./spec/feature/reader/reader_spec.rb:938
+
+  2) Reader Short list of documents Tags adding and deleting tags
+     # No reason given
+     # ./spec/feature/reader/reader_spec.rb:1191
+
+  3) Reader Short list of documents Tags Share tags among all documents in a case Should show correct auto suggestions
+     # No reason given
+     # ./spec/feature/reader/reader_spec.rb:1256
+
+  4) Reader Large number of documents Open a document and return to list
+     # No reason given
+     # ./spec/feature/reader/reader_spec.rb:1471
+
+Finished in 2 minutes 18.2 seconds (files took 5.3 seconds to load)
+65 examples, 0 failures, 4 pending
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 2049 / 2615 LOC (78.36%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Help
+
+All visited screens will be scanned for 508 accessibility compliance.
+  user goes to the help page
+  user goes to the Certification Help page
+  user goes to the Dispatch Help page
+  user goes to the Intake Help page
+  user goes to the Reader Help page
+  user goes to the Hearings Help page
+  logo properly goes to homepage
+
+Finished in 8.76 seconds (files took 7 seconds to load)
+7 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 662 / 1164 LOC (56.87%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+ApplicationHelper
+  #current_ga_path
+    returns route's path without resource ids
+    returns route's path when method is POST
+
+Finished in 0.18928 seconds (files took 5.39 seconds to load)
+2 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 604 / 1170 LOC (51.62%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Dropdown
+
+All visited screens will be scanned for 508 accessibility compliance.
+I, [2018-03-20T14:40:04.362883 #26171]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (4.98ms)
+I, [2018-03-20T14:40:04.426112 #26171]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.11ms)
+  Dropdown works on both erb and react pages
+
+Finished in 4.93 seconds (files took 5.54 seconds to load)
+1 example, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 1262 / 2080 LOC (60.67%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Dispatch Stats Dashboard
+
+All visited screens will be scanned for 508 accessibility compliance.
+  Users without manager permissions cannot view page
+  .show#daily
+I, [2015-01-01T09:55:00.000856 #26307]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2015-01-01T09:55:00.000856 #26307]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    switches between the tabs
+  .show
+I, [2015-01-01T09:55:00.000637 #26307]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    loads the correct stats
+
+Finished in 14.38 seconds (files took 5.28 seconds to load)
+3 examples, 0 failures
+
+Coverage report generated for all to /Users/mark/src/caseflow/coverage. 977 / 1578 LOC (61.91%) covered.
+Run options: include {:focus=>true}
+
+All examples were filtered out; ignoring {:focus=>true}
+
+Establish Claim - ARC Dispatch
+  As a manager
+
+All visited screens will be scanned for 508 accessibility compliance.
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>nil, "user_name"=>"Jane Smith", "task_count"=>3, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>2, "locked?"=>false}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>nil, "user_name"=>"Jane Smith", "task_count"=>3, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>2, "locked?"=>false}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+    View quotas and update employee count
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>nil, "user_name"=>"Janet Smith", "task_count"=>1, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>0, "locked?"=>false}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>nil, "user_name"=>"Janet Smith", "task_count"=>3, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>2, "locked?"=>false}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+    Edit individual user quotas
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>5, "user_name"=>"Janet Smith", "task_count"=>5, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>4, "locked?"=>true}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+D, [2016-12-31T16:00:00.000000 #26457] DEBUG -- : No serializer found for resource: {"id"=>1, "team_quota_id"=>1, "user_id"=>2, "created_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "updated_at"=>Sat, 31 Dec 2016 19:00:00 EST -05:00, "locked_task_count"=>5, "user_name"=>"Janet Smith", "task_count"=>5, "tasks_completed_count"=>1, "tasks_completed_count_by_decision_type"=>{"remand"=>1}, "tasks_left_count"=>4, "locked?"=>true}
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::CollectionSerializer with Array (0.0ms)
+    Editing won't work if there's only one user
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    View unprepared tasks page
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    View canceled EPs page
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    View oldest unassigned tasks page
+  As a caseworker
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Assign the correct new task to myself
+    Visit an Establish Claim task that is assigned to another user
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Go back and forward in the browser
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Cannot re-complete a completed task
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Cancel a claims establishment
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Cancel a claim after it has already been completed
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+    Error establishing claim
+    For an appeal with multiple possible decision documents in VBMS
+      Review page lets users choose which document to use (PENDING: This test is failing because of a stale element reference)
+      the EP creation page has a link back to decision review (PENDING: This test is failing because of a stale element reference)
+    For a full grant
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+      Establish a new claim with special issue routed to national office
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+      Establish a new claim with special issue routed to ROJ
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+      Establish a new claim with special issues by routing via email
+      When there is an existing 070 EP
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
+I, [2016-12-31T16:00:00.000000 #26457]  INFO -- : Rendered ActiveModel::Serializer::Null with Hash (0.0ms)
