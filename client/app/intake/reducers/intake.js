@@ -32,7 +32,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     searchErrorCode: null,
     searchErrorData: {
       duplicateReceiptDate: null,
-      duplicateProcessedBy: null
+      duplicateProcessedBy: null,
+      veteranMissingFields: null,
     },
     cancelModalVisible: false,
     veteran: {
@@ -92,7 +93,11 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         },
         duplicateProcessedBy: {
           $set: action.payload.errorData.processed_by
-        }
+        },
+        veteranMissingFields: {
+          $set: action.payload.errorData.veteran_missing_fields && 
+            action.payload.errorData.veteran_missing_fields.join(', ')
+        },
       },
       requestStatus: {
         fileNumberSearch: {
