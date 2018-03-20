@@ -179,14 +179,15 @@ export class PdfUI extends React.Component {
     });
 
     const pdfToolbar = css({
-      '&&': { '@media(max-width: 1240px)': { width: 'max-content' }
+      '&&': { '@media(max-width: 900px)': { width: 'max-content'}
       }
     });
 
     const pdfToolbarRight = css({
-      '&&': { '@media(max-width: 1240px)': {
+      '&&': { '@media(max-width: 900px)': {
         float: 'right'
-      } }
+      }
+      }
     });
 
     return <div className={pdfUiClass} {...pdfWrapper}>

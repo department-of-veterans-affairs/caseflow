@@ -104,9 +104,9 @@ export class PdfSidebar extends React.Component {
   render() {
     let comments = [];
 
-    const {
-      appeal
-    } = this.props;
+    const { appeal } = this.props;
+    const sideBarSmall = '250px';
+    const sideBarLarge = '380px';
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
       if (comment.editing) {
@@ -144,8 +144,6 @@ export class PdfSidebar extends React.Component {
       </div>;
     });
 
-    let sideBarSmall = '250px';
-    let sideBarLarge = '380px';
     const sidebarClass = classNames(
       'cf-sidebar-wrapper',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
