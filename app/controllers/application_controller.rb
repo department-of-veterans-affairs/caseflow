@@ -168,7 +168,8 @@ class ApplicationController < ApplicationBaseController
     @react_routed = true
   end
 
-  def on_vbms_error
+  def on_vbms_error(e)
+    Raven.capture_exception(e)
     respond_to do |format|
       format.html do
         render "errors/500", layout: "application", status: 500

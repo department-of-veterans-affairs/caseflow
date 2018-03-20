@@ -231,7 +231,7 @@ describe AppealEvents do
         [Generators::Issue.build(disposition: issue_disposition, close_date: issue_close_date)]
       end
 
-      let(:issue_disposition) { "Benefits Granted by AOJ" }
+      let(:issue_disposition) { :benefits_granted_by_aoj }
       let(:issue_close_date) { nil }
 
       context "when close date is set" do
