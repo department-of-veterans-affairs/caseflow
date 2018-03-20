@@ -73,6 +73,9 @@ jobs:
       - store_artifacts:
           path: ~/coverage
 
+      - store_artifacts:
+          path: ~/project/tmp
+
       - deploy:
           name: Lint
           command: |

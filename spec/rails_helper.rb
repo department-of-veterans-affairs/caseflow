@@ -39,7 +39,7 @@ require "timeout"
 
 require "capybara"
 require "capybara/rspec"
-require 'capybara-screenshot/rspec'
+require "capybara-screenshot/rspec"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
