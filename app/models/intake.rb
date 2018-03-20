@@ -101,7 +101,7 @@ class Intake < ActiveRecord::Base
 
     elsif !veteran.valid?
       self.error_code = :veteran_not_valid
-      errors = veteran.errors.messages.map { |(key, value)| key }
+      errors = veteran.errors.messages.map { |(key, _value)| key }
       @error_data = { veteran_missing_fields: errors }
 
     elsif duplicate_intake_in_progress

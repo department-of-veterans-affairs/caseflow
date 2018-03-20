@@ -414,7 +414,6 @@ class Fakes::AppealRepository
       veteran: veteran,
       issues: (1..3).map { Generators::Issue.build }
     )
-
   end
   # rubocop:enable Metrics/MethodLength
 

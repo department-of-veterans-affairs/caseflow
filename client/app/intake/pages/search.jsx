@@ -54,8 +54,8 @@ class Search extends React.PureComponent {
       },
       veteran_not_valid: {
         title: 'The Veteran\'s profile is missing information required to create an EP.',
-        body: 'Please fill in the following field(s) in the Veteran\'s profile in VBMS' + 
-          ` or the corporate database, then retry establishing the EP in Caseflow: ${searchErrorData.veteranMissingFields}.`
+        body: 'Please fill in the following field(s) in the Veteran\'s profile in VBMS or the corporate database,' +
+          ` then retry establishing the EP in Caseflow: ${searchErrorData.veteranMissingFields}.`
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
