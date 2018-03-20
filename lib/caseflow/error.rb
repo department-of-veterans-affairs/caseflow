@@ -18,9 +18,9 @@ module Caseflow::Error
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
-        new("duplicate_ep")
+        DuplicateEp.new("duplicate_ep")
       when /A duplicate claim for this EP code already exists/
-        new("duplicate_ep")
+        DuplicateEp.new("duplicate_ep")
       when /The PersonalInfo SSN must not be empty./
         new("missing_ssn")
       when /The PersonalInfo.+must not be empty/
@@ -30,4 +30,6 @@ module Caseflow::Error
       end
     end
   end
+
+  class DuplicateEp < EstablishClaimFailedInVBMS; end
 end
