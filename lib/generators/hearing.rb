@@ -11,7 +11,7 @@ class Generators::Hearing
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },
         representative: "Military Order of the Purple Heart",
-        representative_name: generate_last_name,
+        representative_name: "#{generate_first_name} #{generate_last_name}",
         regional_office_key: RegionalOffice::CITIES.keys.sample,
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
