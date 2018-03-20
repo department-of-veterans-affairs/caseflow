@@ -49,7 +49,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
 
     return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
       <SearchableDropdown
-        placeholder="Select Dispositions"
+        placeholder="Select Disposition"
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
@@ -57,7 +57,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           label: `${opt[0]} - ${opt[1]}`,
           value: StringUtil.convertToCamelCase(opt[1])
         }))}
-        onChange={({ value }) => this.props.updateAppealIssue(vacolsId, issue.id, {
+        onChange={({ value }) => this.props.updateAppealIssue(vacolsId, issue.vacols_sequence_id, {
           disposition: value,
           duplicate: false
         })}
@@ -68,7 +68,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           marginBottom: 0,
           marginTop: '1rem'
         })}
-        onChange={(duplicate) => this.props.updateAppealIssue(vacolsId, issue.id, { duplicate })}
+        onChange={(duplicate) => this.props.updateAppealIssue(vacolsId, issue.vacols_sequence_id, { duplicate })}
         label="Automatically create vacated issue for readjudication." />}
     </div>;
   };

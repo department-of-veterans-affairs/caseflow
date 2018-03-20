@@ -53,7 +53,7 @@ class SelectDispositionsView extends React.PureComponent {
     _.each(issues, (issue) =>
       this.props.updateAppealIssue(
         vacolsId,
-        issue.id,
+        issue.vacols_sequence_id,
         { disposition: null }
       ));
 
@@ -80,7 +80,7 @@ class SelectDispositionsView extends React.PureComponent {
     valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
   }, {
     header: 'Actions',
-    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.id}`}>
+    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
       Edit Issue
     </Link>
   }, {

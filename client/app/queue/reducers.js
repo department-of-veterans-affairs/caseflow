@@ -61,7 +61,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       loadedQueue: {
         appeals: {
-          [action.payload.vacolsId]: {
+          [action.payload.appealId]: {
             attributes: {
               docCount: {
                 $set: action.payload.docCount
@@ -99,8 +99,8 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       pendingChanges: {
         appeals: {
-          [action.payload.vacolsId]: {
-            $set: state.loadedQueue.appeals[action.payload.vacolsId]
+          [action.payload.appealId]: {
+            $set: state.loadedQueue.appeals[action.payload.appealId]
           }
         }
       }
@@ -109,17 +109,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       pendingChanges: {
         appeals: {
-          $unset: action.payload.vacolsId
+          $unset: action.payload.appealId
         }
       }
     });
   case ACTIONS.START_EDITING_APPEAL_ISSUE: {
-    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
+    const { appealId, issueId } = action.payload;
+    const issues = state.pendingChanges.appeals[appealId].attributes.issues;
 
     return update(state, {
       pendingChanges: {
         editingIssue: {
-          $set: _.find(issues, (issue) => issue.id === action.payload.issueId)
+          $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
         }
       }
     });
@@ -141,17 +142,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
-    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
-    const issueIdx = _.findIndex(issues, (issue) => issue.id === action.payload.issueId);
+    const { appealId, issueId } = action.payload;
+    const issues = state.pendingChanges.appeals[appealId].attributes.issues;
+    const idx = _.findIndex(issues, (issue) => issue.vacols_sequence_id === issueId);
 
-    // todo: if (issueIdx === -1) { push }
+    // todo: if (idx === -1) { push }
     return update(state, {
       pendingChanges: {
         appeals: {
-          [action.payload.appealId]: {
+          [appealId]: {
             attributes: {
               issues: {
-                [issueIdx]: {
+                [idx]: {
                   $merge: state.pendingChanges.editingIssue
                 }
               }

@@ -118,7 +118,7 @@ export const ISSUE_INFO = {
         }
       },
       '05': {
-        description: 'Clothng allowance',
+        description: 'Clothing allowance',
         levels: {
           '01': { description: 'Eligibility' },
           '02': { description: 'Other' },
@@ -488,7 +488,9 @@ export const ISSUE_INFO = {
         }
       },
       '04': { description: 'Waiver of VA employee indebtedness' },
-      '05': { description: 'Death Gratuity Certification (38 USC 1323)' }
+      '05': { description: 'Death Gratuity Certification (38 USC 1323)' },
+      // todo: '06'?
+      '07': { description: 'VBMS Access' }
     }
   },
   10: {

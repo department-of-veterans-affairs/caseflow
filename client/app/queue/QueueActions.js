@@ -17,18 +17,18 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = ({ vacolsId, docCount }) => ({
+export const setAppealDocCount = (appealId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    vacolsId,
+    appealId,
     docCount
   }
 });
 
-export const loadAppealDocCountFail = (vacolsId) => ({
+export const loadAppealDocCountFail = (appealId) => ({
   type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
   payload: {
-    vacolsId,
+    appealId,
     docCount: null
   }
 });
@@ -54,17 +54,17 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const startEditingAppeal = (vacolsId) => ({
+export const startEditingAppeal = (appealId) => ({
   type: ACTIONS.START_EDITING_APPEAL,
   payload: {
-    vacolsId
+    appealId
   }
 });
 
-export const cancelEditingAppeal = (vacolsId) => ({
+export const cancelEditingAppeal = (appealId) => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL,
   payload: {
-    vacolsId
+    appealId
   }
 });
 
