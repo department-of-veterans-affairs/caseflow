@@ -21,7 +21,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-    parallelism: 1
+    parallelism: 3
     steps:
       - checkout
 
@@ -95,7 +95,7 @@ jobs:
           command: |
             bundle exec rake security_caseflow
 
-      - deploy:
-          name: Verify code coverage
-          command: |
-            bundle exec rake ci:circleci_verify_code_coverage
+      # - deploy:
+      #     name: Verify code coverage
+      #     command: |
+      #       bundle exec rake ci:circleci_verify_code_coverage
