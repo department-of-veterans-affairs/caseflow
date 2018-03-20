@@ -9,6 +9,7 @@ const DecisionViewFooter = ({ buttons }) => <div {...fullWidth}>
     key={idx}
     onClick={button.callback || _.noop}
     willNeverBeLoading
+    disabled={button.disabled}
     classNames={button.classNames}>
     {button.displayText}
   </Button>)}
