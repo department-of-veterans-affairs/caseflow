@@ -71,10 +71,12 @@ jobs:
           path: ~/test-results
 
       - store_artifacts:
+          name: Store code coverage
           path: ~/coverage
 
       - store_artifacts:
-          path: ~/project/tmp
+          name: Store capybara screenshots
+          path: ~/project/tmp/capybara
 
       - deploy:
           name: Lint
