@@ -66,16 +66,13 @@ jobs:
             mkdir -p ~/test-results-rspec
             testcategories=$(ci-bin/circleci-test-categories | circleci tests split)
             ci-bin/circleci-run-test-categories ${testcategories}
-      # - run:
+
+            # - run:
       #     name: RSpec
       #     command: |
       #       mkdir -p ~/test-results/rspec
       #       testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
       #       bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
-
-      - run:
-          name: RSpec
-          command: |
 
       - run:
           name: Mocha
