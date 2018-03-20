@@ -178,9 +178,20 @@ export class PdfUI extends React.Component {
         right: '380px' }
     });
 
+    const pdfToolbar = css({
+      '&&': { '@media(max-width: 1240px)': { width: 'max-content' }
+      }
+    });
+
+    const pdfToolbarRight = css({
+      '&&': { '@media(max-width: 1240px)': {
+        float: 'right'
+      } }
+    });
+
     return <div className={pdfUiClass} {...pdfWrapper}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
-        <span className="usa-width-one-third cf-pdf-buttons-left">
+        <span className="usa-width-one-third cf-pdf-buttons-left" {...pdfToolbar}>
           { this.props.showClaimsFolderNavigation && <Link
             to={`${this.props.documentPathBase}`}
             name="backToClaimsFolder"
@@ -190,7 +201,7 @@ export class PdfUI extends React.Component {
             &nbsp; Back to claims folder
           </Link> }
         </span>
-        <span className="usa-width-one-third cf-pdf-buttons-center">
+        <span className="usa-width-one-third cf-pdf-buttons-center" {...pdfToolbar}>
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
               <DocumentCategoryIcons doc={this.props.doc} />
@@ -211,7 +222,7 @@ export class PdfUI extends React.Component {
             </span>
           </span>
         </span>
-        <span className="usa-width-one-third cf-pdf-buttons-right">
+        <span className="usa-width-one-third cf-pdf-buttons-right" {...pdfToolbar} {...pdfToolbarRight}>
           Zoom:
           <Button
             name="zoomOut"
