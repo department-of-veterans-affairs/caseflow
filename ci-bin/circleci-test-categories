@@ -1,0 +1,8 @@
+#! /bin/bash
+
+# Print each test category from rake; this lets us use CircleCIs distribution
+# to distribute categories instead of test files.
+bundle exec rake -T |
+       grep spec:parallel:setup: |
+       cut -f 4 -d : |
+       cut -f 1 -d ' '
