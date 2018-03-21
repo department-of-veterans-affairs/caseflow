@@ -8,6 +8,8 @@ jobs:
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
+          - NODE_ENV: test
+          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
           - BUNDLE_PATH: vendor/bundle
           - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
           - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
@@ -56,6 +58,13 @@ jobs:
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+      - run:
+          name: Mocha
+          command: |
+            mkdir -p ~/test-results/mocha
+            pushd client
+            testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
+            node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}
 
       - run:
           name: RSpec
@@ -63,7 +72,6 @@ jobs:
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
-
 
       - store_test_results:
           path: ~/test-results
@@ -79,9 +87,10 @@ jobs:
       # JavaScript tests are a deploy step because currently they are not
       # able to be run in parallel.
       - deploy:
-          name: Mocha
+          name: Karma
           command: |
-            bundle exec rake mocha
+            pushd client
+            node_modules/.bin/karma start
 
       - deploy:
           name: Lint
