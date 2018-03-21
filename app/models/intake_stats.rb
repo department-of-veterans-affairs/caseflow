@@ -21,7 +21,7 @@ class IntakeStats < Caseflow::Stats
     end
 
     def total_refilings_for_option(range, type)
-      RampRefiling.completed.where(
+      RampRefiling.established.where(
         receipt_date: offset_range(range),
         option_selected: type
       ).count
@@ -112,7 +112,7 @@ class IntakeStats < Caseflow::Stats
     end,
 
     total_refilings: lambda do |range|
-      RampRefiling.completed.where(receipt_date: offset_range(range)).count
+      RampRefiling.established.where(receipt_date: offset_range(range)).count
     end,
 
     total_higher_level_review_refilings: lambda do |range|
