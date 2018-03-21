@@ -34,3 +34,6 @@ node_modules
 
 # Generated js bundles
 /app/assets/webpack/*
+
+# JUnit reports from karma
+client/TESTS.xml

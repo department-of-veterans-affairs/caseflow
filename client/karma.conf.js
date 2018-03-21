@@ -1,7 +1,9 @@
 // Forked from:
 // module.exports = require('@department-of-veterans-affairs/caseflow-frontend-toolkit/config/karma.conf');
+/* eslint-disable no-process-env */
 
 const _ = require('lodash');
+const process = require('process');
 const webpackConfig = require('@department-of-veterans-affairs/caseflow-frontend-toolkit/config/getWebpackConfig')(__dirname);
 
 const files = [
@@ -17,7 +19,7 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha', 'snapshot', 'mocha-snapshot'],
-    reporters: ['mocha'],
+    reporters: ['mocha', 'junit'],
     singleRun: true,
 
     browserConsoleLogOptions: {
@@ -32,6 +34,12 @@ module.exports = function(config) {
 
     mochaReporter: {
       showDiff: true
+    },
+
+    junitReporter: {
+      outputDir: process.env.KARMA_JUNIT_OUTPUT_DIR,
+      outputFile: process.env.KARMA_JUNIT_OUTPUT_FILE,
+      useBrowserName: false
     },
 
     preprocessors: _.merge({
