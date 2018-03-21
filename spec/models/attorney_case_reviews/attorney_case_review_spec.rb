@@ -95,10 +95,11 @@ describe AttorneyCaseReview do
           vacols_id: "123456",
           vacols_sequence_id: 1,
           issue_attrs: {
+            vacols_user_id: attorney.vacols_uniq_id,
             disposition: "Vacated",
-            readjudication: true,
             disposition_date: VacolsHelper.local_date_with_utc_timezone,
-            vacols_user_id: attorney.vacols_uniq_id
+            readjudication: true,
+            remand_reasons: nil
           }
         ).once
 
@@ -106,9 +107,10 @@ describe AttorneyCaseReview do
           vacols_id: "123456",
           vacols_sequence_id: 2,
           issue_attrs: {
+            vacols_user_id: attorney.vacols_uniq_id,
             disposition: "Remanded",
             disposition_date: VacolsHelper.local_date_with_utc_timezone,
-            vacols_user_id: attorney.vacols_uniq_id,
+            readjudication: nil,
             remand_reasons: [{ code: "AB", after_certification: true }]
           }
         ).once
