@@ -30,7 +30,14 @@ We check FACOLS data directly into GitHub since the data has been scrubbed of an
 
 To add a new case:
 1) Add a row to this above CSV.
-   - To find a relevant `vacols_id` to use, you can run the rails console in the `ssh_forwarding` environment. This will enable you connect to the datasource RDS instance to peruse the available data. Instructions of connecting can be found [here](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/how-to-setup-ssh-port-forwarding.md). Note the ssh command to run to connect to the datasource RDS instance is: `ssh -L 1526:dsva-appeals-vacols-uat-datasource-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <Your UAT jumpbox ssh config>`. Once connected, you can run any queries you want to find useful cases, then get their `bfkey`s from the `brieff` table and copy them into the `cases.csv` file.
+   - To find a relevant `vacols_id` to use, you can run the rails console in the `ssh_forwarding` environment. This will enable you connect to the datasource RDS instance to peruse the available data. Instructions of connecting can be found [here](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/how-to-setup-ssh-port-forwarding.md). 
+   - The ssh command to run to connect to the datasource RDS instance is: `ssh -L 1526:dsva-appeals-vacols-uat-datasource-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <Your UAT jumpbox ssh config>`.
+   - The username and password for the datasource RDS instance is in [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
+   ```
+   -export VACOLS_USERNAME=<FACOLS credentials username>	+export VACOLS_USERNAME=`credstash -t appeals-credstash get vacols.facols.db_username`
+   -export VACOLS_PASSWORD=<FACOLS credentials password>	+export VACOLS_PASSWORD=`credstash -t appeals-credstash get vacols.facols.db_password`
+   ```
+   - Once connected, you can run any queries you want to find useful cases, then get their `bfkey`s from the `brieff` table and copy them into the `cases.csv` file.
 1) Run the following to retrieve all the data for the cases you added:
    ```
    RAILS_ENV=ssh_forwarding rake local:vacols:dump_data
