@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
-import { getSearchSelectors } from 'redux-search';
 
 const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -69,22 +68,9 @@ export const docListIsFiltered = createSelector(
 
 // text is a selector that returns the text Pages are currently filtered by
 // result is an Array of Page ids that match the current search :text
-export const {
-  text,
-  result
-} = getSearchSelectors({
-  resourceName: 'extractedText',
-  resourceSelector: (resourceName, state) => state.searchActionReducer[resourceName]
-});
-
+export const getSearchTerm = (state) => state.searchActionReducer.searchTerm;
 const getExtractedText = (state) => state.searchActionReducer.extractedText;
 const getFile = (state, props) => props.file;
-
-export const getTextSearch = createSelector(
-  [result, getExtractedText, text, getFile],
-  (pageIds, extractedText, searchText, file) => pageIds.map((pageId) => extractedText[pageId]).
-    filter((pageText) => pageText.file === file)
-);
 
 export const getTextForFile = createSelector(
   [getExtractedText, getFile],
@@ -92,13 +78,24 @@ export const getTextForFile = createSelector(
 );
 
 export const getMatchesPerPageInFile = createSelector(
-  [getTextSearch, text],
-  (matchedPages, txt) => matchedPages.
-    map((page) => ({
+  [getTextForFile, getSearchTerm],
+  (textForFile, searchTerm) => {
+    // This function copied from here:
+    // https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+    const escapeRegExp = (str) => {
+      return str ? str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') : null;
+    };
+
+    const regex = new RegExp(escapeRegExp(searchTerm), 'gi');
+
+    return textForFile.map((page) => ({
       id: page.id,
       pageIndex: page.pageIndex,
-      matches: (page.text.match(new RegExp(txt, 'gi')) || []).length
-    }))
+      matches: (page.text.match(regex) || []).length
+    })).filter((page) => {
+      return page.matches > 0;
+    });
+  }
 );
 
 export const getTotalMatchesInFile = createSelector(
