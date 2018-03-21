@@ -41,11 +41,12 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
       },
       (error) => {
         let responseObject = {};
-        let errorCode = "default";
+        let errorCode = 'default';
+
         try {
           responseObject = JSON.parse(error.response.text);
           errorCode = responseObject.error_code;
-        } catch(ex) { /* pass */ }
+        } catch (ex) { /* pass */ }
 
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
