@@ -179,7 +179,7 @@ export class PdfUI extends React.Component {
     });
 
     const pdfToolbar = css({
-      '&&': { '@media(max-width: 1240px)': { width: 'max-content'}
+      '&&': { '@media(max-width: 1240px)': { width: 'max-content' }
       }
     });
 
