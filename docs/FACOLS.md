@@ -34,8 +34,8 @@ To add a new case:
    - The ssh command to run to connect to the datasource RDS instance is: `ssh -L 1526:dsva-appeals-vacols-uat-datasource-2017-12-13-11-20.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526 <Your UAT jumpbox ssh config>`.
    - The username and password for the datasource RDS instance is in [credstash](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md)
    ```
-   -export VACOLS_USERNAME=<FACOLS credentials username>	+export VACOLS_USERNAME=`credstash -t appeals-credstash get vacols.facols.db_username`
-   -export VACOLS_PASSWORD=<FACOLS credentials password>	+export VACOLS_PASSWORD=`credstash -t appeals-credstash get vacols.facols.db_password`
+   export VACOLS_USERNAME=`credstash -t appeals-credstash get vacols.facols.db_username`
+   export VACOLS_PASSWORD=`credstash -t appeals-credstash get vacols.facols.db_password`
    ```
    - Once connected, you can run any queries you want to find useful cases, then get their `bfkey`s from the `brieff` table and copy them into the `cases.csv` file.
 1) Run the following to retrieve all the data for the cases you added:
