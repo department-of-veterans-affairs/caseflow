@@ -74,6 +74,17 @@ RSpec.feature "Intake Stats Dashboard" do
       )
     end
 
+    # Add an "in progress" refiling to make sure it doesn't show up
+    RampRefiling.create!(
+      ramp_election: RampElection.last,
+      veteran_file_number: "64205555",
+      receipt_date: 45.minutes.ago,
+      option_selected: :appeal,
+      end_product_reference_id: nil,
+      appeal_docket: :direct_review,
+      established_at: nil
+    )
+
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
