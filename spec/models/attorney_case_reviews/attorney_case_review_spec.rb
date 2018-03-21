@@ -1,10 +1,9 @@
 describe AttorneyCaseReview do
   let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
   let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
+
   before do
-    # reset
-    AttorneyCaseReview.repository = QueueRepository
-    Issue.repository = IssueRepository
+    Fakes::Initializer.load!
   end
 
   context ".create" do
@@ -39,11 +38,10 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for OMO Request and Vacols update is successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).with(
-          attorney_css_id: attorney.css_id,
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
           date_assigned: "2013-12-06".to_date,
-          judge_css_id: judge.css_id,
+          judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "OMO - IME",
             document_id: "123456789.1234",
@@ -52,7 +50,7 @@ describe AttorneyCaseReview do
           }
         ).and_return(true)
 
-        expect(IssueRepository).to_not receive(:update_vacols_issue!)
+        expect(Fakes::IssueRepository).to_not receive(:update_vacols_issue!)
       end
 
       let(:params) do
@@ -81,11 +79,10 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for Draft Decision and Vacols update is successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).with(
-          attorney_css_id: attorney.css_id,
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
           date_assigned: "2013-12-06".to_date,
-          judge_css_id: judge.css_id,
+          judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "Decision",
             document_id: "123456789.1234",
@@ -94,18 +91,24 @@ describe AttorneyCaseReview do
           }
         ).and_return(true)
 
-        expect(IssueRepository).to receive(:update_vacols_issue!).with(
-          css_id: attorney.css_id,
+        expect(Fakes::IssueRepository).to receive(:update_vacols_issue!).with(
           vacols_id: "123456",
           vacols_sequence_id: 1,
-          issue_attrs: { disposition: "Allowed", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          issue_attrs: {
+            disposition: "Allowed",
+            disposition_date: VacolsHelper.local_date_with_utc_timezone,
+            vacols_user_id: attorney.vacols_uniq_id
+          }
         ).once
 
-        expect(IssueRepository).to receive(:update_vacols_issue!).with(
-          css_id: attorney.css_id,
+        expect(Fakes::IssueRepository).to receive(:update_vacols_issue!).with(
           vacols_id: "123456",
           vacols_sequence_id: 2,
-          issue_attrs: { disposition: "Remanded", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+          issue_attrs: {
+            disposition: "Remanded",
+            disposition_date: VacolsHelper.local_date_with_utc_timezone,
+            vacols_user_id: attorney.vacols_uniq_id
+          }
         ).once
       end
 
@@ -140,7 +143,7 @@ describe AttorneyCaseReview do
 
     context "when not all required parameters are present and Vacols update is successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_return(true)
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).and_return(true)
       end
 
       let(:params) do
@@ -163,7 +166,8 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for OMO Request but Vacols update is not successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_raise(QueueRepository::QueueError)
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!)
+          .and_raise(Caseflow::Error::QueueRepositoryError)
       end
 
       let(:params) do
@@ -186,8 +190,8 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for Draft Decision but Vacols update is not successful" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_return(true)
-        allow(IssueRepository).to receive(:update_vacols_issue!).and_raise(IssueRepository::IssueError)
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).and_return(true)
+        allow(Fakes::IssueRepository).to receive(:update_vacols_issue!).and_raise(Caseflow::Error::IssueRepositoryError)
       end
 
       let(:params) do
@@ -214,8 +218,8 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for Draft Decision but issues are not sent" do
       before do
-        allow(QueueRepository).to receive(:reassign_case_to_judge).and_return(true)
-        expect(IssueRepository).to_not receive(:update_vacols_issue!)
+        allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).and_return(true)
+        expect(Fakes::IssueRepository).to_not receive(:update_vacols_issue!)
       end
 
       let(:params) do

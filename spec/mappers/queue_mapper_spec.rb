@@ -59,7 +59,7 @@ describe QueueMapper do
           note: "Require action4" }
       end
       it "raises an error" do
-        expect { subject }.to raise_error(QueueRepository::QueueError)
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredFieldError)
       end
     end
 
@@ -71,7 +71,7 @@ describe QueueMapper do
           note: "Require action4" }
       end
       it "raises an error" do
-        expect { subject }.to raise_error(QueueRepository::QueueError)
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredFieldError)
       end
     end
   end

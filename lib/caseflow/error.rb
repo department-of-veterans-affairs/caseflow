@@ -32,4 +32,10 @@ module Caseflow::Error
   end
 
   class DuplicateEp < EstablishClaimFailedInVBMS; end
+
+  class VacolsRepositoryError < StandardError; end
+  class UserRepositoryError < VacolsRepositoryError; end
+  class IssueRepositoryError < VacolsRepositoryError; end
+  class QueueRepositoryError < VacolsRepositoryError; end
+  class MissingRequiredFieldError < VacolsRepositoryError; end
 end
