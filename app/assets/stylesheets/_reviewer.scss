@@ -183,6 +183,8 @@ svg[aria-hidden=true],
   color: $color-white;
   font-size: 15px;
   max-width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .cf-pdf-header {
@@ -195,21 +197,6 @@ svg[aria-hidden=true],
   .category-icons-and-doc-type {
     display: flex;
     justify-content: center;
-  }
-
-  .cf-pdf-buttons {
-    &-left {
-      min-height: 1px;
-      text-align: left;
-    }
-
-    &-right {
-      text-align: right;
-    }
-
-    &-center {
-      text-align: center;
-    }
   }
 }
 
