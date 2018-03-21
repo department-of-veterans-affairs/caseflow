@@ -78,6 +78,7 @@ class AddEditIssueView extends React.Component {
   }
 
   validateForm = () => {
+    // todo: check program/type/level1 at least?
     // const { issue } = this.props;
     // const fields = ['program', 'type', 'levels', 'note'];
     // const missingFields = _.filter(fields, (field) => _.has(issue, field));
@@ -93,80 +94,107 @@ class AddEditIssueView extends React.Component {
     return true;
   };
 
-  getProgramIssues = (issprog) => {
-    if (!issprog) {
-      return [];
-    }
+  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
+    label: obj.description,
+    value
+  }));
 
-    return _.map(ISSUE_INFO[issprog].issue, (obj, value) => ({
-      label: obj.description,
-      value
-    }));
-  };
+  updateIssueCode = (codeIdx, code) => {
+    const codes = _.clone(this.props.issue.codes);
 
-  render = () => <React.Fragment>
-    <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-      {StringUtil.titleCase(this.props.action)} Issue
-    </h1>
-    <Button
-      willNeverBeLoading
-      styling={noLeftPadding}
-      classNames={['cf-btn-link']}
-      onClick={_.noop}>
+    codes.splice(codeIdx, 1, code);
+
+    this.updateIssue({ codes });
+  }
+
+  render = () => {
+    const {
+      issue: {
+        program,
+        type,
+        codes
+      },
+      action
+    } = this.props;
+
+    const programs = ISSUE_INFO;
+    const issues = _.get(programs[program], 'issue');
+    const issueLevels1 = _.get(issues, `${type}.levels`);
+    const issueLevels2 = _.get(issueLevels1, `${_.get(codes, 2)}.levels`);
+    const issueLevels3 = _.get(issueLevels2, `${_.get(codes, 3)}.levels`);
+
+    return <React.Fragment>
+      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        {StringUtil.titleCase(action)} Issue
+      </h1>
+      <Button
+        willNeverBeLoading
+        styling={noLeftPadding}
+        classNames={['cf-btn-link']}
+        onClick={_.noop}>
       Delete Issue
-    </Button>
-    <SearchableDropdown
-      name="Program:"
-      styling={dropdownMarginTop}
-      placeholder="Select program"
-      options={_.map(ISSUE_INFO, (obj, value) => ({
-        label: obj.description,
-        value
-      }))}
-      onChange={({ value }) => this.updateIssue({ program: value })}
-      value={this.getIssueValue('program')} />
-    <SearchableDropdown
-      name="Issue:"
-      styling={dropdownMarginTop}
-      placeholder="Select issue"
-      options={this.getProgramIssues(this.getIssueValue('program'))}
-      onChange={({ value }) => this.updateIssue({ type: value })}
-      value={this.getIssueValue('type')} />
-    <SearchableDropdown
-      name="Add Stay:"
-      styling={dropdownMarginTop}
-      placeholder="Select stay"
-      options={itemList}
-      onChange={({ value }) => this.updateIssue({ stay: value })}
-      value={this.getIssueValue('stay')} />
-    <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
-    <SearchableDropdown
-      name="Level 1:"
-      styling={dropdownMarginTop}
-      placeholder="Select level 1"
-      options={itemList}
-      onChange={({ value }) => this.updateIssue({ level1: value })}
-      value={this.getIssueValue('levels[0]')} />
-    <SearchableDropdown
-      name="Level 2:"
-      styling={dropdownMarginTop}
-      placeholder="Select level 2"
-      options={itemList}
-      onChange={({ value }) => this.updateIssue({ level2: value })}
-      value={this.getIssueValue('levels[1]')} />
-    <SearchableDropdown
-      name="Level 3:"
-      styling={dropdownMarginTop}
-      placeholder="Select level 3"
-      options={itemList}
-      onChange={({ value }) => this.updateIssue({ level3: value })}
-      value={this.getIssueValue('levels[2]')} />
-    <TextField
-      name="Notes:"
-      value={this.getIssueValue('note')}
-      required={false}
-      onChange={(value) => this.updateIssue({ note: value })} />
-  </React.Fragment>;
+      </Button>
+      <SearchableDropdown
+        name="Program:"
+        styling={dropdownMarginTop}
+        placeholder="Select program"
+        options={this.renderIssueAttrs(programs)}
+        onChange={({ value }) => {
+          // todo: will the server check program, or codes[0]?
+          this.updateIssue({ program: value });
+          this.updateIssueCode(0, value);
+        }}
+        value={program} />
+      <SearchableDropdown
+        name="Issue:"
+        styling={dropdownMarginTop}
+        placeholder="Select issue"
+        options={this.renderIssueAttrs(issues)}
+        onChange={({ value }) => {
+          // todo: will the server check type, or codes[1]?
+          this.updateIssue({ type: value });
+          this.updateIssueCode(1, value);
+        }}
+        value={type} />
+      <SearchableDropdown
+        name="Add Stay:"
+        styling={dropdownMarginTop}
+        placeholder="Select stay"
+        options={itemList}
+        onChange={({ value }) => this.updateIssue({ stay: value })}
+        value={this.getIssueValue('stay')} />
+      <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
+      <SearchableDropdown
+        name="Level 1:"
+        styling={dropdownMarginTop}
+        placeholder="Select level 1"
+        options={this.renderIssueAttrs(issueLevels1)}
+        onChange={({ value }) => this.updateIssueCode(2, value)}
+        disabled={_.isUndefined(issueLevels1)}
+        value={this.getIssueValue('codes[2]')} />
+      <SearchableDropdown
+        name="Level 2:"
+        styling={dropdownMarginTop}
+        placeholder="Select level 2"
+        options={this.renderIssueAttrs(issueLevels2)}
+        onChange={({ value }) => this.updateIssueCode(3, value)}
+        disabled={_.isUndefined(issueLevels2)}
+        value={this.getIssueValue('codes[3]')} />
+      <SearchableDropdown
+        name="Level 3:"
+        styling={dropdownMarginTop}
+        placeholder="Select level 3"
+        options={this.renderIssueAttrs(issueLevels3)}
+        onChange={({ value }) => this.updateIssueCode(4, value)}
+        disabled={_.isUndefined(issueLevels3)}
+        value={this.getIssueValue('codes[4]')} />
+      <TextField
+        name="Notes:"
+        value={this.getIssueValue('note')}
+        required={false}
+        onChange={(value) => this.updateIssue({ note: value })} />
+    </React.Fragment>;
+  };
 }
 
 AddEditIssueView.propTypes = {

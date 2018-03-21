@@ -45,10 +45,7 @@ class SelectDispositionsView extends React.PureComponent {
   });
 
   componentDidMount = () => {
-    const {
-      vacolsId,
-      appeal: { attributes: { issues } }
-    } = this.props;
+    const { appeal: { attributes: { issues } } } = this.props;
 
     // Wipe any previously-set dispositions in the pending
     // appeal's issues for validation purposes.

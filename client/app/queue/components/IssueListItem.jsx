@@ -39,27 +39,31 @@ export default class IssueListItem extends React.PureComponent {
     const vacolsIssue = ISSUE_INFO[issue.program].issue[issue.type];
     const issueLevels = [];
 
+    // todo: do this better
     if (vacolsIssue.levels && isslev1 in vacolsIssue.levels) {
       const issueLevel1 = vacolsIssue.levels[isslev1];
+
       issueLevels.push(issueLevel1);
 
       if (isslev2) {
-        if (!issueLevel1.levels) {
-          // diagnostic code, use description (code w/text)
-          issueLevels.push(_.last(description));
-        } else {
+        if (issueLevel1.levels) {
           const issueLevel2 = issueLevel1.levels[isslev2];
+
           issueLevels.push(issueLevel2);
 
           if (isslev3) {
-            if (!issueLevel2.levels) {
+            if (issueLevel2.levels) {
+              const issueLevel3 = issueLevel2.levels[isslev3];
+
+              issueLevels.push(issueLevel3);
+            } else {
               // diagnostic code
               issueLevels.push(_.last(description));
-            } else {
-              const issueLevel3 = issueLevel2.levels[isslev3];
-              issueLevels.push(issueLevel3);
             }
           }
+        } else {
+          // diagnostic code, use description (code w/text)
+          issueLevels.push(_.last(description));
         }
       }
     }
