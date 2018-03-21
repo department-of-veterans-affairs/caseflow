@@ -567,5 +567,47 @@ export const ISSUE_INFO = {
         description: 'Fiduciary Appointment'
       }
     }
+  },
+  13: {
+    description: 'Test Levels',
+    issue: {
+      '01': { description: 'Issue, no sublevels' },
+      '02': {
+        description: 'Issue, 1 sublevel',
+        levels: {
+          '01': { description: 'First Level, no sublevels' },
+          '02': { description: 'First level 2, no sublevels' }
+        }
+      },
+      '03': {
+        description: 'Issue, 2 sublevels',
+        levels: {
+          '01': {
+            description: 'First Level, sublevels',
+            levels: {
+              '01': { description: 'Second Level 1' },
+              '02': { description: 'Second Level 2'}
+            }
+          }
+        }
+      },
+      '04': {
+        description: 'Issue, 3 sublevels',
+        levels: {
+          '01': {
+            description: 'First level, all sublevels',
+            levels: {
+              '01': {
+                description: 'Second level 1',
+                levels: {
+                  '01': { description: 'Third level 1' },
+                  '02': { description: 'Third level 2' }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 };

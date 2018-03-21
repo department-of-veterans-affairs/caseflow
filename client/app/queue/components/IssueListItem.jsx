@@ -38,39 +38,26 @@ export default class IssueListItem extends React.PureComponent {
         ]
       }
     } = this.props;
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
     const issueLevels = [];
+    const vacolsIssue = ISSUE_INFO[program].issue[type];
 
     if (!vacolsIssue) {
       return levels;
     }
 
-    // todo: do this better
-    if (vacolsIssue.levels && isslev1 in vacolsIssue.levels) {
-      const issueLevel1 = vacolsIssue.levels[isslev1];
+    const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
+    const issueLevel2 = _.get(issueLevel1, `levels[${isslev2}]`);
+    const issueLevel3 = _.get(issueLevel2, `levels[${isslev3}]`);
 
-      issueLevels.push(issueLevel1);
+    if (issueLevel1) {
+      issueLevels.push(issueLevel1.description);
 
-      if (isslev2) {
-        if (issueLevel1.levels) {
-          const issueLevel2 = issueLevel1.levels[isslev2];
+      if (issueLevel2 && issueLevel2.levels) {
+        issueLevels.push(issueLevel2.description);
 
-          issueLevels.push(issueLevel2);
-
-          if (isslev3) {
-            if (issueLevel2.levels) {
-              const issueLevel3 = issueLevel2.levels[isslev3];
-
-              issueLevels.push(issueLevel3);
-            } else {
-              // diagnostic code
-              issueLevels.push(_.last(description));
-            }
-          }
-        } else {
-          // diagnostic code, use description (code w/text)
-          issueLevels.push(_.last(description));
-        }
+        issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
+      } else {
+        issueLevels.push(_.last(description));
       }
     }
 
