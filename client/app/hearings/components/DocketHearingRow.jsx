@@ -144,10 +144,10 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-rep">
-        {hearing.representative}
-        <span {...issueCountStyling}>
-          {hearing.representative_name}
-        </span>
+          {hearing.representative}
+          <span {...issueCountStyling}>
+            {hearing.representative_name}
+          </span>
         </td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
