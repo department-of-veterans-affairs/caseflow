@@ -40,7 +40,7 @@ RSpec.describe QueueController, type: :controller do
 
       it "should be successful" do
         User.authenticate!(roles: ["System Admin"])
-        post :complete, params: {task_id: "1234567-2016-11-05", queue: params}
+        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
@@ -67,7 +67,7 @@ RSpec.describe QueueController, type: :controller do
       it "should be successful" do
         allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
         User.authenticate!(roles: ["System Admin"])
-        post :complete, params: {task_id: "1234567-2016-11-05", queue: params}
+        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
@@ -90,7 +90,7 @@ RSpec.describe QueueController, type: :controller do
 
       it "should not be successful" do
         User.authenticate!(roles: ["System Admin"])
-        post :complete, params: {task_id: "1234567-2016-11-05", queue: params}
+        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Error Completing Attorney Case Review"

@@ -11,7 +11,7 @@ RSpec.describe IntakesController do
       intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
       intake.save!
       allow_any_instance_of(Intake).to receive(:complete!)
-      post :complete, params: {id: intake.id}
+      post :complete, params: { id: intake.id }
       expect(response.status).to eq(200)
     end
 
@@ -25,7 +25,7 @@ RSpec.describe IntakesController do
           intake.save!
           allow_any_instance_of(Intake).to receive(:complete!).and_raise(unknown_error)
           expect do
-            post :complete, params: {id: intake.id}
+            post :complete, params: { id: intake.id }
           end.to raise_error(Caseflow::Error::EstablishClaimFailedInVBMS)
         end
       end
@@ -42,7 +42,7 @@ RSpec.describe IntakesController do
           intake.save!
           allow_any_instance_of(Intake).to receive(:complete!).and_raise(duplicate_ep_error)
           allow_any_instance_of(Intake).to receive(:detail).and_return(OpenStruct.new(end_product_description: "hello"))
-          post :complete, params: {id: intake.id}
+          post :complete, params: { id: intake.id }
           expect(response.status).to eq(400)
         end
       end

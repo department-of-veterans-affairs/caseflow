@@ -25,7 +25,7 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       it "should be successful" do
-        post :create, params: {appeal_id: appeal.id, issues: params}
+        post :create, params: { appeal_id: appeal.id, issues: params }
         expect(response.status).to eq 201
         response_body = JSON.parse(response.body)["issues"].first
         expect(response_body["codes"]).to eq %w[01 02 03 04 05]
@@ -37,7 +37,7 @@ RSpec.describe IssuesController, type: :controller do
 
     context "when appeal is not found" do
       it "should return not found" do
-        post :create, params: {appeal_id: "3456789", issues: {}}
+        post :create, params: { appeal_id: "3456789", issues: {} }
         expect(response.status).to eq 404
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe IssuesController, type: :controller do
         allow(Fakes::IssueRepository).to receive(:create_vacols_issue!)
           .with(result_params).and_raise(IssueRepository::IssueError.new("Invalid codes"))
 
-        post :create, params: {appeal_id: appeal.id, issues: params}
+        post :create, params: { appeal_id: appeal.id, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "IssueRepository::IssueError"
@@ -97,14 +97,14 @@ RSpec.describe IssuesController, type: :controller do
       it "should be successful" do
         allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
           .with(result_params).and_return({})
-        post :update, params: {appeal_id: appeal.id, vacols_sequence_id: 1, issues: params}
+        post :update, params: { appeal_id: appeal.id, vacols_sequence_id: 1, issues: params }
         expect(response.status).to eq 200
       end
     end
 
     context "when appeal is not found" do
       it "should return not found" do
-        post :update, params: {appeal_id: 45_545_454, vacols_sequence_id: 1, issues: {}}
+        post :update, params: { appeal_id: 45_545_454, vacols_sequence_id: 1, issues: {} }
         expect(response.status).to eq 404
       end
     end
@@ -133,7 +133,7 @@ RSpec.describe IssuesController, type: :controller do
         allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
           .with(result_params).and_raise(IssueRepository::IssueError.new("Invalid codes"))
 
-        post :update, params: {appeal_id: appeal.id, vacols_sequence_id: 1, issues: params}
+        post :update, params: { appeal_id: appeal.id, vacols_sequence_id: 1, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "IssueRepository::IssueError"
@@ -154,14 +154,14 @@ RSpec.describe IssuesController, type: :controller do
       it "should be successful" do
         allow(Fakes::IssueRepository).to receive(:delete_vacols_issue!)
           .with(result_params).and_return({})
-        post :destroy, params: {appeal_id: appeal.id, vacols_sequence_id: 1}
+        post :destroy, params: { appeal_id: appeal.id, vacols_sequence_id: 1 }
         expect(response.status).to eq 200
       end
     end
 
     context "when appeal is not found" do
       it "should return not found" do
-        post :destroy, params: {appeal_id: 45_545_454, vacols_sequence_id: 1, issues: {}}
+        post :destroy, params: { appeal_id: 45_545_454, vacols_sequence_id: 1, issues: {} }
         expect(response.status).to eq 404
       end
     end
@@ -177,7 +177,7 @@ RSpec.describe IssuesController, type: :controller do
       it "should not be successful" do
         allow(Fakes::IssueRepository).to receive(:delete_vacols_issue!)
           .with(result_params).and_raise(IssueRepository::IssueError.new("Cannot find issue"))
-        post :destroy, params: {appeal_id: appeal.id, vacols_sequence_id: 1}
+        post :destroy, params: { appeal_id: appeal.id, vacols_sequence_id: 1 }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "IssueRepository::IssueError"
