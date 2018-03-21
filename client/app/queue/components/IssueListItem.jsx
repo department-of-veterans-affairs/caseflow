@@ -25,8 +25,10 @@ export default class IssueListItem extends React.PureComponent {
 
   formatLevels = () => {
     const {
-      issue,
       issue: {
+        program,
+        type,
+        levels,
         description,
         codes: [
           , ,
@@ -36,8 +38,12 @@ export default class IssueListItem extends React.PureComponent {
         ]
       }
     } = this.props;
-    const vacolsIssue = ISSUE_INFO[issue.program].issue[issue.type];
+    const vacolsIssue = ISSUE_INFO[program].issue[type];
     const issueLevels = [];
+
+    if (!vacolsIssue) {
+      return levels;
+    }
 
     // todo: do this better
     if (vacolsIssue.levels && isslev1 in vacolsIssue.levels) {
