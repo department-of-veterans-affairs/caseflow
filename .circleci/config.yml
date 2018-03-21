@@ -9,10 +9,11 @@ jobs:
         environment:
           - RAILS_ENV: test
           - BUNDLE_PATH: vendor/bundle
+          - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
-      # it via environment variables.
+      # configure it via environment variables.
       - image: circleci/postgres:10.2
         environment:
           - POSTGRES_USER: root
@@ -20,7 +21,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-    parallelism: 2
+    parallelism: 1
     steps:
       - checkout
 
@@ -55,11 +56,39 @@ jobs:
             - ~/.cache/yarn
 
       - run:
-          name: Tests
+          name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
+      - run:
+          name: Mocha
+          command: |
+            bundle exec rake mocha
+
       - store_test_results:
           path: ~/test-results
+
+      - store_artifacts:
+          name: Store code coverage
+          path: ~/coverage
+
+      - store_artifacts:
+          name: Store capybara screenshots
+          path: ~/project/tmp/capybara
+
+      - deploy:
+          name: Lint
+          command: |
+            bundle exec rake lint
+
+      - deploy:
+          name: Security
+          command: |
+            bundle exec rake security_caseflow
+
+      - deploy:
+          name: Verify code coverage
+          command: |
+            bundle exec rake ci:circleci_verify_code_coverage
