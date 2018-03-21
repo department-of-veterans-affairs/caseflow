@@ -9,7 +9,6 @@ import { annotations } from '../../data/annotations';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { reduxSearch } from 'redux-search';
 import { asyncTest } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import ApiUtil from '../../../app/util/ApiUtil';
