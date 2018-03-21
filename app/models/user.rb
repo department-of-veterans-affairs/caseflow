@@ -34,6 +34,14 @@ class User < ActiveRecord::Base
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
+  def vacols_uniq_id
+    @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
+  end
+
+  def access_to_task?(vacols_id)
+    self.class.user_repository.can_access_task?(css_id, vacols_id)
+  end
+
   def ro_is_ambiguous_from_station_office?
     station_offices.is_a?(Array)
   end
@@ -146,6 +154,7 @@ class User < ActiveRecord::Base
 
   class << self
     attr_writer :appeal_repository
+    attr_writer :user_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -179,6 +188,10 @@ class User < ActiveRecord::Base
 
     def appeal_repository
       @appeal_repository ||= AppealRepository
+    end
+
+    def user_repository
+      @user_repository ||= UserRepository
     end
   end
 end

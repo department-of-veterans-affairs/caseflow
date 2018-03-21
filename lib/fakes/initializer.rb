@@ -12,6 +12,7 @@ class Fakes::Initializer
         Appeal.repository = Fakes::AppealRepository
         Issue.repository = Fakes::IssueRepository
         Judge.repository = Fakes::JudgeRepository
+        User.user_repository = Fakes::UserRepository
         AttorneyCaseReview.repository = Fakes::QueueRepository
       end
     end

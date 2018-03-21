@@ -1,5 +1,4 @@
 class QueueRepository
-  class QueueError < StandardError; end
   # :nocov:
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
@@ -7,10 +6,6 @@ class QueueRepository
                           name: "tasks_for_user") do
       tasks_query(css_id)
     end
-  end
-
-  def self.can_access_task?(css_id, vacols_id)
-    tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
   end
 
   def self.appeals_from_tasks(tasks)
@@ -39,38 +34,29 @@ class QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge(attorney_css_id:, vacols_id:, date_assigned:, judge_css_id:, decass_attrs:)
-    unless can_access_task?(attorney_css_id, vacols_id)
-      msg = "Attorney with css ID #{attorney_css_id} cannot access task with vacols ID: #{vacols_id}"
-      fail QueueError, msg
+  def self.reassign_case_to_judge!(vacols_id:, date_assigned:, judge_vacols_user_id:, decass_attrs:)
+    MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
+                          service: :vacols,
+                          name: "reassign_case_to_judge") do
+      # update DECASS table
+      update_decass_record(vacols_id, date_assigned, decass_attrs)
+
+      # update location with the judge's slogid
+      VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
+      true
     end
-
-    # update DECASS table
-    update_decass_record(vacols_id, date_assigned, decass_attrs)
-
-    # update location with the judge's slogid
-    update_location(vacols_id, judge_css_id)
-    true
-  end
-
-  def self.update_location(vacols_id, css_id)
-    staff = VACOLS::Staff.find_by(sdomainid: css_id)
-    fail QueueError, "Cannot find user with #{css_id} in VACOLS" unless staff
-    VACOLS::Case.find(vacols_id).update_vacols_location!(staff.slogid)
   end
 
   def self.update_decass_record(vacols_id, date_assigned, decass_attrs)
+    check_decass_presence!(vacols_id, date_assigned)
+    decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+    VACOLS::Decass.where(defolder: vacols_id, deassign: date_assigned).update_all(decass_attrs)
+  end
+
+  def self.check_decass_presence!(vacols_id, date_assigned)
     unless VACOLS::Decass.find_by(defolder: vacols_id, deassign: date_assigned)
       msg = "Decass record does not exist for vacols_id: #{vacols_id} and date assigned: #{date_assigned}"
-      fail QueueError, msg
-    end
-
-    decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
-
-    MetricsService.record("VACOLS: update_decass_record! #{vacols_id}",
-                          service: :vacols,
-                          name: "update_decass_record") do
-      VACOLS::Decass.where(defolder: vacols_id, deassign: date_assigned).update_all(decass_attrs)
+      fail Caseflow::Error::QueueRepositoryError, msg
     end
   end
 
