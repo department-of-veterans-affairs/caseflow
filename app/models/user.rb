@@ -90,7 +90,7 @@ class User < ApplicationRecord
   end
 
   def current_task(task_type)
-    tasks.to_complete.find_by(type: task_type)
+    tasks.to_complete.find_by(type: task_type.to_s)
   end
 
   def to_hash

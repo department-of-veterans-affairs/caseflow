@@ -52,7 +52,7 @@ class IssuesController < ApplicationController
                                     :issue,
                                     :level_1,
                                     :level_2,
-                                    :level_3)
+                                    :level_3).to_h
   end
 
   def create_params

@@ -12,15 +12,15 @@ RSpec.describe CertificationCancellationsController, type: :controller do
       end
 
       it "when it passes validation" do
-        post :create, "certification_cancellation" =>
+        post :create, params: {"certification_cancellation" =>
             { "cancellation_reason" => "Test",
-              "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "3" }
+              "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "3" }}
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to match("is_cancelled" => true)
       end
 
       it "when it fails validation" do
-        post :create, { "certification_cancellation" =>
+        post :create, params: { "certification_cancellation" =>
                             { "cancellation_reason" => "",
                               "other_reason" => "", "email" => "test@gmail.com",
                               "certification_id" => "4" } }, accept: :json, format: :json

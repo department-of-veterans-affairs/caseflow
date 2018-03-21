@@ -86,7 +86,7 @@ class Task < ApplicationRecord
     end
 
     def todays_quota
-      TeamQuota.find_or_create_by!(date: Time.zone.today, task_type: self)
+      TeamQuota.find_or_create_by!(date: Time.zone.today, task_type: self.to_s)
     end
 
     private
