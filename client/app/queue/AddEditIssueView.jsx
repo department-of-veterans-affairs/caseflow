@@ -170,7 +170,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 1"
         options={this.renderIssueAttrs(issueLevels1)}
         onChange={({ value }) => this.updateIssueCode(2, value)}
-        disabled={_.isUndefined(issueLevels1)}
+        readOnly={_.isUndefined(issueLevels1)}
         value={this.getIssueValue('codes[2]')} />
       <SearchableDropdown
         name="Level 2:"
@@ -178,7 +178,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 2"
         options={this.renderIssueAttrs(issueLevels2)}
         onChange={({ value }) => this.updateIssueCode(3, value)}
-        disabled={_.isUndefined(issueLevels2)}
+        readOnly={_.isUndefined(issueLevels2)}
         value={this.getIssueValue('codes[3]')} />
       <SearchableDropdown
         name="Level 3:"
@@ -186,7 +186,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 3"
         options={this.renderIssueAttrs(issueLevels3)}
         onChange={({ value }) => this.updateIssueCode(4, value)}
-        disabled={_.isUndefined(issueLevels3)}
+        readOnly={_.isUndefined(issueLevels3)}
         value={this.getIssueValue('codes[4]')} />
       <TextField
         name="Notes:"
