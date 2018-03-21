@@ -21,7 +21,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-    parallelism: 1
+    parallelism: 2
     steps:
       - checkout
 
@@ -62,10 +62,6 @@ jobs:
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
-      - run:
-          name: Mocha
-          command: |
-            bundle exec rake mocha
 
       - store_test_results:
           path: ~/test-results
@@ -77,6 +73,13 @@ jobs:
       - store_artifacts:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
+
+      # JavaScript tests are a deploy step because currently they are not
+      # able to be run in parallel.
+      - deploy:
+          name: Mocha
+          command: |
+            bundle exec rake mocha
 
       - deploy:
           name: Lint
