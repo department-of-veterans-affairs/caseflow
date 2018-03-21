@@ -20,7 +20,8 @@ import Button from '../components/Button';
 
 import {
   fullWidth,
-  ISSUE_INFO
+  ISSUE_INFO,
+  ERROR_FIELD_REQUIRED
 } from './constants';
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -85,7 +86,9 @@ class AddEditIssueView extends React.Component {
     //
     // return !missingFields.length;
 
-    return true;
+    const { issue: { codes } } = this.props;
+
+    return codes && codes.length >= 2;
   };
 
   goToNextStep = () => {
@@ -102,7 +105,9 @@ class AddEditIssueView extends React.Component {
   updateIssueCode = (codeIdx, code) => {
     const codes = _.clone(this.props.issue.codes);
 
-    codes.splice(codeIdx, 1, code);
+    // remove more-specific issue levels on change
+    // i.e. on change Issue, remove all Levels
+    codes.splice(codeIdx, codes.length - codeIdx, code);
 
     this.updateIssue({ codes });
   }
@@ -114,7 +119,8 @@ class AddEditIssueView extends React.Component {
         type,
         codes
       },
-      action
+      action,
+      highlight
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -135,6 +141,7 @@ class AddEditIssueView extends React.Component {
       Delete Issue
       </Button>
       <SearchableDropdown
+        required
         name="Program:"
         styling={dropdownMarginTop}
         placeholder="Select program"
@@ -144,8 +151,10 @@ class AddEditIssueView extends React.Component {
           this.updateIssue({ program: value });
           this.updateIssueCode(0, value);
         }}
+        errorMessage={(highlight && !codes[0]) ? ERROR_FIELD_REQUIRED : ''}
         value={program} />
       <SearchableDropdown
+        required
         name="Issue:"
         styling={dropdownMarginTop}
         placeholder="Select issue"
@@ -155,6 +164,7 @@ class AddEditIssueView extends React.Component {
           this.updateIssue({ type: value });
           this.updateIssueCode(1, value);
         }}
+        errorMessage={(highlight && !codes[1]) ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
       <SearchableDropdown
         name="Add Stay:"

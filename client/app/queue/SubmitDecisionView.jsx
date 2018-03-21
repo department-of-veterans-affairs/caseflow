@@ -13,8 +13,6 @@ import {
 } from './QueueActions';
 import {
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
   requestSave
 } from './uiReducer/uiActions';
 
@@ -272,8 +270,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   resetDecisionOptions,
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
   requestSave
 }, dispatch);
 
