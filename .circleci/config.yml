@@ -8,6 +8,8 @@ jobs:
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
+          - NODE_ENV: test
+          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
           - BUNDLE_PATH: vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
@@ -62,6 +64,12 @@ jobs:
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
+      - run:
+          name: Mocha
+          command: |
+            mkdir -p ~/test-results/mocha
+            testfiles=$(circleci tests glob "client/test/node/**/*.js" | circleci tests split --split-by timings)
+            client/node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register client/test/node/setup.js ${testfiles}
 
       - store_test_results:
           path: ~/test-results
