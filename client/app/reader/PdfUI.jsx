@@ -183,24 +183,34 @@ export class PdfUI extends React.Component {
       // Todo if sidebar is hidden
       width: '32%',
       '&&': { '@media(max-width: 1165px)': {
-        color: 'red' }
+         }
+      }
+    });
+
+    const pdfToolbarLeft = css({
+      '&&': { '@media(max-width: 1165px)': {
+        width: '25%' }
       }
     });
 
     const pdfToolbarRight = css({
-      textAlign: 'right'
+      textAlign: 'right',
+      '&&': { '@media(max-width: 1165px)': {
+        width: '38%'
+       }
+      }
     });
 
     return <div className={pdfUiClass} {...pdfWrapper}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
-        <span {...pdfToolbar}>
+        <span {...pdfToolbar} {...pdfToolbarLeft}>
           { this.props.showClaimsFolderNavigation && <Link
             to={`${this.props.documentPathBase}`}
             name="backToClaimsFolder"
             button="matte"
             onClick={this.onBackToClaimsFolder}>
             <LeftChevron />
-            &nbsp; Back to claims folder
+            &nbsp; Back
           </Link> }
         </span>
         <span {...pdfToolbar}>
