@@ -14,6 +14,10 @@ class RampRefiling < RampReview
     hearing: "hearing"
   }
 
+  def self.completed
+    where.not(intake_completed_at: nil)
+  end
+
   def create_issues!(source_issue_ids:)
     issues.destroy_all unless issues.empty?
 
