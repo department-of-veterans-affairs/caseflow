@@ -454,14 +454,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Missing SSN error
       allow(VBMSService).to receive(:establish_claim!).and_raise(missing_ssn_error)
-
       click_on "Create End Product"
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("This veteran does not have a social security number")
 
       # Client error
       allow(VBMSService).to receive(:establish_claim!).and_raise(client_error)
-
+      expect(Raven).to receive(:capture_exception).with(client_error)
       click_on "Create End Product"
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("System Error")

@@ -14,6 +14,7 @@ class Intake < ApplicationRecord
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
     veteran_not_accessible: "veteran_not_accessible",
+    veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress"
   }.freeze
 
@@ -50,7 +51,6 @@ class Intake < ApplicationRecord
         completed_at: Time.zone.now,
         completion_status: :error
       )
-
       return false
     end
   end
@@ -98,6 +98,11 @@ class Intake < ApplicationRecord
 
     elsif !veteran.accessible?
       self.error_code = :veteran_not_accessible
+
+    elsif !veteran.valid?
+      self.error_code = :veteran_not_valid
+      errors = veteran.errors.messages.map { |(key, _value)| key }
+      @error_data = { veteran_missing_fields: errors }
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress

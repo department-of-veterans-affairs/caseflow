@@ -16,14 +16,6 @@ class RampElection < RampReview
     notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
   end
 
-  def completed?
-    !!end_product_reference_id
-  end
-
-  def self.completed
-    where.not(end_product_reference_id: nil)
-  end
-
   def established_end_product
     @established_end_product ||= fetch_established_end_product
   end

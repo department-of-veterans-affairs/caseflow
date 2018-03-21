@@ -117,6 +117,28 @@ RSpec.feature "RAMP Intake" do
       end
     end
 
+    context "Veteran has missing information" do
+      let(:veteran) do
+        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil)
+      end
+
+      scenario "Search for a veteran with a validation error" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex.")
+      end
+    end
+
     scenario "Search for a veteran who's form is already being processed" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 

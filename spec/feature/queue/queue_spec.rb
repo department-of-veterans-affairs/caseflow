@@ -237,7 +237,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
-        click_on "Open #{appeal.documents.length} documents in Caseflow Reader"
+        click_on "Open #{number_with_delimiter(appeal.documents.length)} documents in Caseflow Reader"
 
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
@@ -271,7 +271,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Submit OMO for Review")
 
-        click_label("omo-type_omo")
+        click_label("omo-type_OMO - VHA")
         click_label("overtime")
         fill_in "document_id", with: "12345"
         fill_in "notes", with: "notes"
@@ -282,6 +282,7 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Andrew Mackenzie")
 
         safe_click("button.cf-right-side")
+        sleep 1
         expect(page.current_path).to eq("/queue/")
       end
     end

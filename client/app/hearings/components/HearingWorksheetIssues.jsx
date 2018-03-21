@@ -15,7 +15,8 @@ class HearingWorksheetIssues extends PureComponent {
       worksheetIssues,
       worksheetStreamsAppeal,
       appealKey,
-      countOfIssuesInPreviousAppeals
+      countOfIssuesInPreviousAppeals,
+      print
     } = this.props;
 
     const columns = [
@@ -72,7 +73,7 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="notes"
-          readOnly={this.props.print || this.props.prior}
+          readOnly={print || this.props.prior}
           maxLength={100}
         />,
         disposition: <HearingWorksheetIssueFields
@@ -84,6 +85,7 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
+          print={print}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
           appeal={worksheetStreamsAppeal}

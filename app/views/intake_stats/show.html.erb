@@ -152,5 +152,57 @@
         </div>
       </div>
     </div>
+
+    <div id="ramp-refilings-received">
+      <div class="cf-stats-section -activity">
+        <h3>RAMP Refilings Received <span class="data-date"></span></h3>
+
+        <div class="cf-stat-panel data-chart" data-key="total_refilings">
+          <h4 class="cf-stat-title">
+            Total
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_refilings">
+            <%= @stats[0].values[:total_refilings] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_higher_level_review_refilings">
+          <h4 class="cf-stat-title">
+            Higher Level Reviews
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_higher_level_review_refilings">
+            <%= @stats[0].values[:total_higher_level_review_refilings] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_higher_level_review_with_hearing_refilings">
+          <h4 class="cf-stat-title">
+            Higher Level Reviews with Hearing
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_higher_level_review_with_hearing_refilings">
+            <%= @stats[0].values[:total_higher_level_review_with_hearing_refilings] %>
+          </div>
+        </div>
+
+        <div class="cf-stat-panel data-chart" data-key="total_supplemental_claim_refilings">
+          <h4 class="cf-stat-title">
+            Supplemental Claims
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_supplemental_claim_refilings">
+            <%= @stats[0].values[:total_supplemental_claim_refilings] %>
+          </div>
+        </div>
+
+
+        <div class="cf-stat-panel data-chart" data-key="total_appeal_refilings">
+          <h4 class="cf-stat-title">
+            Appeals
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_appeal_refilings">
+            <%= @stats[0].values[:total_appeal_refilings] %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
