@@ -323,3 +323,7 @@ RSpec::Matchers.define :excluding do |expected|
     !actual.include?(expected)
   end
 end
+
+RSpec.configure do |config|
+  config.include ActionView::Helpers::NumberHelper
+end
