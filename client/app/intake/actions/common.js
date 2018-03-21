@@ -40,8 +40,12 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
         });
       },
       (error) => {
-        const responseObject = JSON.parse(error.response.text);
-        const errorCode = responseObject.error_code;
+        let responseObject = {};
+        let errorCode = "default";
+        try {
+          responseObject = JSON.parse(error.response.text);
+          errorCode = responseObject.error_code;
+        } catch(ex) { /* pass */ }
 
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
