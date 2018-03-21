@@ -50,18 +50,18 @@ module IssueMapper
       COLUMN_NAMES.keys.each_with_object({}) do |k, result|
         # skip only if the key is not passed, if the key is passed and the value is nil - include that
         next unless issue_attrs.keys.include? k
-
-        if k == :disposition
-          code = VACOLS::Case::DISPOSITIONS.key(issue_attrs[k])
-          unless ALLOWED_DISPOSITION_CODES.include? code
-            fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{issue_attrs}"
-          end
-          issue_attrs[k] = code
-        end
-
+        issue_attrs[k] = disposition_to_vacols_format(issue_attrs[k]) if k == :disposition
         result[COLUMN_NAMES[k]] = issue_attrs[k]
         result
       end
+    end
+
+    def disposition_to_vacols_format(disposition)
+      code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      unless ALLOWED_DISPOSITION_CODES.include? code
+        fail IssueRepository::IssueError, "Not allowed disposition: #{disposition}"
+      end
+      code
     end
   end
 end
