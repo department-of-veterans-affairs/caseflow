@@ -1560,5 +1560,5 @@ end
 # Generate some combination of whitespace characters between 1 and len characters long.
 # Do not include tab character becuase inserting tab will cause Capybara to change the focused DOM element.
 def random_whitespace_no_tab(len = 16)
-  Generators::Random.from_set([" "], len)
+  Generators::Random.from_set([" ", "\n", "\r"], len) + " "
 end
