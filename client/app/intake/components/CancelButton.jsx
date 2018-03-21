@@ -20,8 +20,7 @@ class CancelButton extends React.PureComponent {
 }
 
 const ConnectedCancelButton = connect(
-  ({ rampElection, rampRefiling, intake }) => ({
-    formType: intake.formType,
+  ({ rampElection, rampRefiling }) => ({
     electionLoading: rampElection.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS,
     refilingLoading: rampRefiling.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS
   }),

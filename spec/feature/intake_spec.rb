@@ -377,7 +377,12 @@ RSpec.feature "RAMP Intake" do
         expect(page).to_not have_content("Intake completed")
 
         click_label("confirm-finish")
+
+        expect(page).to have_button('Cancel intake', disabled: false)
+
         safe_click "button#button-submit-review"
+
+        expect(page).to have_button('Cancel intake', disabled: true)
 
         expect(page).to have_content("Intake completed")
         expect(page).to have_content(
