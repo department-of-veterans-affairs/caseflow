@@ -38,6 +38,8 @@ require "timeout"
 # ActiveRecord::Migration.maintain_test_schema!
 
 require "capybara"
+require "capybara/rspec"
+require "capybara-screenshot/rspec"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
@@ -88,6 +90,14 @@ Capybara.register_driver(:sniffybara_headless) do |app|
     options: chrome_options
   }
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
+end
+
+Capybara::Screenshot.register_driver(:parallel_sniffybara) do |driver, path|
+  driver.browser.save_screenshot(path)
+end
+
+Capybara::Screenshot.register_driver(:sniffybara_headless) do |driver, path|
+  driver.browser.save_screenshot(path)
 end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
