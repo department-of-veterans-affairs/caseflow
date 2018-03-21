@@ -95,7 +95,8 @@ describe AttorneyCaseReview do
           vacols_id: "123456",
           vacols_sequence_id: 1,
           issue_attrs: {
-            disposition: "Allowed",
+            disposition: "Vacated",
+            readjudication: true,
             disposition_date: VacolsHelper.local_date_with_utc_timezone,
             vacols_user_id: attorney.vacols_uniq_id
           }
@@ -126,7 +127,10 @@ describe AttorneyCaseReview do
         }
       end
       let(:issues) do
-        [{ disposition: "Allowed", vacols_sequence_id: 1 }, { disposition: "Remanded", vacols_sequence_id: 2 }]
+        [
+          { disposition: "Vacated", vacols_sequence_id: 1, readjudication: true },
+          { disposition: "Remanded", vacols_sequence_id: 2 }
+        ]
       end
 
       it "should create DraftDecision record" do

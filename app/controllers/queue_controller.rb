@@ -77,7 +77,7 @@ class QueueController < ApplicationController
                                    :work_product,
                                    :overtime,
                                    :note,
-                                   issues: [:disposition, :vacols_sequence_id, remand_reasons: []])
+                                   issues: [:disposition, :vacols_sequence_id, :readjudication, remand_reasons: []])
   end
 
   def json_appeals(appeals)
