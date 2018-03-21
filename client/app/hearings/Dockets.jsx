@@ -1,4 +1,5 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -9,6 +10,17 @@ import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
+
+import { CATEGORIES, ACTIONS } from './analytics';
+import { selectDocketsPageTabIndex } from './actions/Dockets';
+
+const UPCOMING_TAB_INDEX = 0;
+const PAST_TAB_INDEX = 1;
+
+export const DOCKETS_TAB_INDEX_MAPPING = {
+  [UPCOMING_TAB_INDEX]: 'Upcoming',
+  [PAST_TAB_INDEX]: 'Past'
+};
 
 const tableBorder = css({
   border: '1px solid #dadbdc',
@@ -39,15 +51,24 @@ export class Dockets extends React.Component {
     return index;
   }
 
+  dateClicked = () => {
+    const action = this.props.docketsTabIndex === PAST_TAB_INDEX ? ACTIONS.OPEN_PAST_HEARING_DOCKET :
+      ACTIONS.OPEN_CURRENT_HEARING_DOCKET;
+
+    window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, action);
+  }
+
   linkToDailyDocket = (docket) => {
     if (docket.master_record) {
       return moment(docket.date).format('ddd M/DD/YYYY');
     }
 
-    return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
+    return <Link onClick={this.dateClicked} to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
       {moment(docket.date).format('ddd M/DD/YYYY')}
     </Link>;
   }
+
+  onTabSelected = (tabNumber) => this.props.selectDocketsPageTabIndex(tabNumber);
 
   getScheduledCount = (docket) => {
     return (docket.master_record ? 0 : docket.hearings_count);
@@ -123,7 +144,7 @@ export class Dockets extends React.Component {
 
     const tabs = [
       {
-        label: 'Upcoming',
+        label: DOCKETS_TAB_INDEX_MAPPING[UPCOMING_TAB_INDEX],
         page: _.size(upcomingRowObjects) ? <Table
           className="hearings"
           columns={columns}
@@ -135,7 +156,7 @@ export class Dockets extends React.Component {
         /> : <p>You currently have no hearings scheduled.</p>
       },
       {
-        label: 'Past',
+        label: DOCKETS_TAB_INDEX_MAPPING[PAST_TAB_INDEX],
         page: _.size(pastRowObjects) ? <Table
           className="hearings"
           columns={columns}
@@ -165,11 +186,17 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  upcomingHearings: state.upcomingHearings
+  upcomingHearings: state.upcomingHearings,
+  docketsTabIndex: state.docketsTabIndex
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  selectDocketsPageTabIndex
+}, dispatch);
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Dockets);
 
 Dockets.propTypes = {

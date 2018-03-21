@@ -12,6 +12,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 import { now } from './util/DateUtil';
+import WorksheetFooter from './components/WorksheetFooter';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -95,10 +96,15 @@ export class HearingWorksheet extends React.PureComponent {
       appellant={appellant}
     />;
 
-    const firstWorksheetPage = <div>
+    const firstWorksheetPage = <div className="cf-hearings-first-page">
       {worksheetHeader}
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
+      {this.props.print &&
+        <WorksheetFooter
+          veteranName={this.props.worksheet.veteran_fi_last_formatted}
+        />
+      }
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
@@ -134,6 +140,11 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
       </form>
+      {this.props.print &&
+        <WorksheetFooter
+          veteranName={this.props.worksheet.veteran_fi_last_formatted}
+        />
+      }
     </div>;
 
     const wrapperClassNames = classNames('cf-hearings-worksheet', {

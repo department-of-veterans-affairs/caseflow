@@ -13,7 +13,7 @@ jobs:
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
-      # it via environment variables.
+      # configure it via environment variables.
       - image: circleci/postgres:10.2
         environment:
           - POSTGRES_USER: root
@@ -71,7 +71,12 @@ jobs:
           path: ~/test-results
 
       - store_artifacts:
+          name: Store code coverage
           path: ~/coverage
+
+      - store_artifacts:
+          name: Store capybara screenshots
+          path: ~/project/tmp/capybara
 
       - deploy:
           name: Lint
