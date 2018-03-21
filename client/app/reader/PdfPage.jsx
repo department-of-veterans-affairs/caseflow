@@ -194,12 +194,13 @@ export class PdfPage extends React.PureComponent {
       container: this.textLayer,
       viewport,
       textDivs: []
-    });
+    }).promise.then(() => {
+      this.markInstance = new Mark(this.textLayer);
 
-    this.markInstance = new Mark(this.textLayer);
-    if (this.props.searchText && !this.props.searchBarHidden) {
-      this.markText();
-    }
+      if (this.props.searchText && !this.props.searchBarHidden) {
+        this.markText();
+      }
+    });
   }
 
   getText = (page) => page.getTextContent()

@@ -6,7 +6,8 @@ const initialState = {
   indexToHighlight: null,
   relativeIndex: 0,
   pageIndexWithMatch: null,
-  extractedText: {}
+  extractedText: {},
+  searchIsLoading: false
 };
 
 export default function searchReducer(state = initialState, action = {}) {
@@ -51,6 +52,12 @@ export default function searchReducer(state = initialState, action = {}) {
     return update(state, {
       searchTerm: {
         $set: action.payload.searchTerm
+      }
+    });
+  case Constants.SET_SEARCH_IS_LOADING:
+    return update(state, {
+      searchIsLoading: {
+        $set: action.payload.searchIsLoading
       }
     });
   default:

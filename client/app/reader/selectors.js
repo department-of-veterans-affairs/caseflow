@@ -80,7 +80,13 @@ export const getTextForFile = createSelector(
 export const getMatchesPerPageInFile = createSelector(
   [getTextForFile, getSearchTerm],
   (textForFile, searchTerm) => {
-    const regex = new RegExp(searchTerm, 'gi');
+    // This function copied from here:
+    // https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+    const escapeRegExp = (str) => {
+      return str ? str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') : null;
+    };
+
+    const regex = new RegExp(escapeRegExp(searchTerm), 'gi');
 
     return textForFile.map((page) => ({
       id: page.id,

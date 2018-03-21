@@ -81,3 +81,10 @@ export const searchText = (searchTerm) => (dispatch) => {
     }
   });
 };
+
+export const setSearchIsLoading = (searchIsLoading) => ({
+  type: Constants.SET_SEARCH_IS_LOADING,
+  payload: {
+    searchIsLoading
+  }
+});
