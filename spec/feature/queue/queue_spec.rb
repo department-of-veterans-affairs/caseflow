@@ -1,7 +1,5 @@
 require "rails_helper"
 
-include ActionView::Helpers::NumberHelper
-
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
