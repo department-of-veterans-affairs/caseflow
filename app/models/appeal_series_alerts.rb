@@ -119,7 +119,7 @@ class AppealSeriesAlerts
   end
 
   def ramp
-    if appeal_series.ramp_election && Time.zone.today <= appeal_series.ramp_election.due_date
+    if appeal_series.ramp_election.try(&:due_date) && Time.zone.today <= appeal_series.ramp_election.due_date
       {
         type: appeal_series.eligible_for_ramp? ? :ramp_eligible : :ramp_ineligible,
         details: {
