@@ -180,8 +180,10 @@ export class PdfUI extends React.Component {
 
     const pdfToolbar = css({
       // 1165px wide is Toolbars 800px Breakpoint
+      // Todo if sidebar is hidden
       width: '32%',
-      '&&': { '@media(max-width: 1165px)': { }
+      '&&': { '@media(max-width: 1165px)': {
+        color: 'red' }
       }
     });
 
