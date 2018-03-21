@@ -70,7 +70,7 @@ RSpec.feature "Intake Stats Dashboard" do
         option_selected: type,
         end_product_reference_id: type == :appeal ? nil : "123",
         appeal_docket: type == :appeal && :direct_review,
-        intake_completed_at: Time.zone.now
+        established_at: Time.zone.now
       )
     end
 

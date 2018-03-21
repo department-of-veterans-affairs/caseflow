@@ -14,8 +14,8 @@ class RampRefiling < RampReview
     hearing: "hearing"
   }
 
-  def self.completed
-    where.not(intake_completed_at: nil)
+  def self.established
+    where.not(established_at: nil)
   end
 
   def create_issues!(source_issue_ids:)

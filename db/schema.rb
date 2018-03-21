@@ -380,7 +380,7 @@ ActiveRecord::Schema.define(version: 20180321153005) do
     t.string   "end_product_reference_id"
     t.boolean  "has_ineligible_issue"
     t.string   "appeal_docket"
-    t.datetime "intake_completed_at"
+    t.datetime "established_at"
   end
 
   add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
