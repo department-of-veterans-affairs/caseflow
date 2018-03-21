@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { createSearchAction } from 'redux-search';
 
 import * as Constants from './actionTypes';
 
@@ -75,5 +74,10 @@ export const updateSearchRelativeIndex = (index) => ({
 
 export const searchText = (searchTerm) => (dispatch) => {
   dispatch(setSearchIndex(0));
-  dispatch(createSearchAction('extractedText')(searchTerm));
+  dispatch({
+    type: Constants.UPDATE_SEARCH_TERM,
+    payload: {
+      searchTerm
+    }
+  });
 };

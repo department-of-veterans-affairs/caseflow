@@ -68,7 +68,7 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
+    const pages = [this.props.file].map((file) => {
       return <PdfFile
         pdfWorker={this.props.pdfWorker}
         documentId={this.props.documentId}

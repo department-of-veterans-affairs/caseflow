@@ -47,6 +47,12 @@ export default function searchReducer(state = initialState, action = {}) {
         $merge: action.payload.textObject
       }
     });
+  case Constants.UPDATE_SEARCH_TERM:
+    return update(state, {
+      searchTerm: {
+        $set: action.payload.searchTerm
+      }
+    });
   default:
     return state;
   }
