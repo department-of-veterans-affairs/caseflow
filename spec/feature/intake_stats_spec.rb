@@ -68,7 +68,7 @@ RSpec.feature "Intake Stats Dashboard" do
         veteran_file_number: "64205555",
         receipt_date: 45.minutes.ago,
         option_selected: type,
-        end_product_reference_id: type == :appeal ? nil : "123",
+        end_product_reference_id: ((type == :appeal) ? nil : "123"),
         appeal_docket: type == :appeal && :direct_review,
         established_at: Time.zone.now
       )
