@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
-import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
+import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN
 } from './constants';
@@ -194,12 +194,13 @@ export class PdfPage extends React.PureComponent {
       container: this.textLayer,
       viewport,
       textDivs: []
-    });
+    }).promise.then(() => {
+      this.markInstance = new Mark(this.textLayer);
 
-    this.markInstance = new Mark(this.textLayer);
-    if (this.props.searchText && !this.props.searchBarHidden) {
-      this.markText();
-    }
+      if (this.props.searchText && !this.props.searchBarHidden) {
+        this.markText();
+      }
+    });
   }
 
   getText = (page) => page.getTextContent()
@@ -341,7 +342,7 @@ const mapStateToProps = (state, props) => {
     pageDimensions: _.get(state.pdf.pageDimensions, [props.file, props.pageIndex]),
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
-    searchText: searchText(state, props),
+    searchText: getSearchTerm(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,

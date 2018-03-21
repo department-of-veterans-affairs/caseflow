@@ -361,7 +361,6 @@ $color-hearings-saving: $color-gray;
 
   }
 
-
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
@@ -522,7 +521,17 @@ $color-hearings-saving: $color-gray;
   font-size: 11px;
 }
 
+.cf-form-textinput {
+  label {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
 
+  p {
+    font-size: 11px;
+    margin-top: 0;
+  }
+}
 
 @media print {
   body {-webkit-print-color-adjust: exact;}
@@ -532,7 +541,6 @@ $color-hearings-saving: $color-gray;
     font-family: sans-serif;
     font-size: 11px;
   }
-
 
   .cf-hearings-worksheet-issues {
     td {
