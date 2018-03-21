@@ -32,14 +32,6 @@ class RampReview < ActiveRecord::Base
     @saving_review = true
   end
 
-  def self.completed
-    where.not(end_product_reference_id: nil)
-  end
-
-  def completed?
-    !!end_product_reference_id
-  end
-
   def higher_level_review?
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end

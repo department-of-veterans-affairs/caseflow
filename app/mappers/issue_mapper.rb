@@ -14,7 +14,8 @@ module IssueMapper
   ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
 
   class << self
-    def rename_and_validate_vacols_attrs(slogid:, action:, issue_attrs:)
+    def rename_and_validate_vacols_attrs(action:, issue_attrs:)
+      slogid = issue_attrs[:vacols_user_id]
       issue_attrs = rename(issue_attrs.symbolize_keys)
 
       return {} if issue_attrs.blank?
@@ -23,10 +24,10 @@ module IssueMapper
 
       case action
       when :create
-        issue_attrs[:issaduser] = slogid
+        issue_attrs[:issaduser] = slogid || RequestStore[:current_user].vacols_uniq_id
         issue_attrs[:issadtime] = VacolsHelper.local_time_with_utc_timezone
       when :update
-        issue_attrs[:issmduser] = slogid
+        issue_attrs[:issmduser] = slogid || RequestStore[:current_user].vacols_uniq_id
         issue_attrs[:issmdtime] = VacolsHelper.local_time_with_utc_timezone
       end
       issue_attrs
@@ -41,7 +42,7 @@ module IssueMapper
                                               level_1: issue_attrs[:isslev1],
                                               level_2: issue_attrs[:isslev2],
                                               level_3: issue_attrs[:isslev3]).size != 1
-        fail IssueRepository::IssueError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
+        fail Caseflow::Error::IssueRepositoryError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
       end
     end
 
@@ -53,7 +54,7 @@ module IssueMapper
         if k == :disposition
           code = VACOLS::Case::DISPOSITIONS.key(issue_attrs[k])
           unless ALLOWED_DISPOSITION_CODES.include? code
-            fail IssueRepository::IssueError, "Not allowed disposition: #{issue_attrs}"
+            fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{issue_attrs}"
           end
           issue_attrs[k] = code
         end
