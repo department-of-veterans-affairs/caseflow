@@ -204,6 +204,15 @@ describe AppealSeriesAlerts do
           expect(alerts.find { |a| a[:type] == :ramp_ineligible }).to be_nil
         end
       end
+
+      context "when a Veteran has opted into RAMP without receiving a letter" do
+        let(:notice_date) { nil }
+
+        it "does not include an alert" do
+          expect(alerts.find { |a| a[:type] == :ramp_eligible }).to be_nil
+          expect(alerts.find { |a| a[:type] == :ramp_ineligible }).to be_nil
+        end
+      end
     end
   end
 end

@@ -125,6 +125,7 @@ group :development, :test, :local do
   gem "rspec-rails"
   # gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem "capybara"
+  gem "capybara-screenshot"
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "master"
   gem "timecop"
