@@ -187,6 +187,7 @@ describe RampRefilingIntake do
           subject
 
           expect(intake.reload).to be_success
+          expect(intake.detail.established_at).to eq(Time.zone.now)
           expect(intake.detail.issues.count).to eq(0)
           expect(intake.detail.has_ineligible_issue).to eq(true)
         end
@@ -203,6 +204,7 @@ describe RampRefilingIntake do
         subject
 
         expect(intake.reload).to be_success
+        expect(intake.detail.established_at).to eq(Time.zone.now)
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
       end
