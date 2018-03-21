@@ -92,6 +92,9 @@ jobs:
             pushd client
             node_modules/.bin/karma start
 
+      - store_test_results:
+          path: ~/test-results
+
       - deploy:
           name: Lint
           command: |
