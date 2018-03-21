@@ -185,9 +185,9 @@ export class PdfUI extends React.Component {
       }
     });
 
-    // const pdfToolbarRight = css({
-    //   textAlign: 'right'
-    // });
+    const pdfToolbarRight = css({
+      textAlign: 'right'
+    });
 
     return <div className={pdfUiClass} {...pdfWrapper}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
