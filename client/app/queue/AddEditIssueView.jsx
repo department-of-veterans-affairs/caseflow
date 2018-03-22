@@ -149,7 +149,6 @@ class AddEditIssueView extends React.Component {
         styling={dropdownMarginTop}
         placeholder="Select issue"
         options={this.renderIssueAttrs(issues)}
-        // todo: server expects type to be called `issue` (IssuesController::issue_params)
         onChange={({ value }) => this.updateIssue({ type: value })}
         errorMessage={(highlight && !type) ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
