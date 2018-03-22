@@ -24,10 +24,10 @@ module IssueMapper
 
       case action
       when :create
-        issue_attrs[:issaduser] = slogid || RequestStore[:current_user].vacols_uniq_id
+        issue_attrs[:issaduser] = slogid
         issue_attrs[:issadtime] = VacolsHelper.local_time_with_utc_timezone
       when :update
-        issue_attrs[:issmduser] = slogid || RequestStore[:current_user].vacols_uniq_id
+        issue_attrs[:issmduser] = slogid
         issue_attrs[:issmdtime] = VacolsHelper.local_time_with_utc_timezone
       end
       issue_attrs
