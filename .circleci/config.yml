@@ -25,7 +25,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
 
