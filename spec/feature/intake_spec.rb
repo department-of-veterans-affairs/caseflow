@@ -423,21 +423,9 @@ RSpec.feature "RAMP Intake" do
       end
 
       scenario "Submitting intake for RAMP Election form disables Cancel while loading", :focus => true do
-
-        complete_stub = double()
-        complete_stub.stub(:complete) { "this is the value to return" }
-        def complete
-          current_intake.complete!(params)
-          render json: current_intake.ui_hash
-        rescue Caseflow::Error::DuplicateEp => error
-          render json: {
-            error_code: error.error_code,
-            error_data: current_intake.detail.pending_end_product_description
-          }, status: 400
-          
-        end
-
-        Fakes::VBMSService.end_product_claim_id = "SHANE9642"
+        allow_any_instance_of(IntakesController).to receive(:complete) {
+          sleep 1
+        }
 
         election = RampElection.create!(
           veteran_file_number: "12341234",
@@ -469,31 +457,17 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
         expect(page).to have_content("Finish processing Higher-Level Review election")
 
-        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-          appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
-          user: current_user,
-          closed_on: Time.zone.today,
-          disposition_code: "P"
-        )
-
         safe_click "button#button-submit-review"
 
         expect(page).to have_content("You must confirm you've completed the steps")
         expect(page).to_not have_content("Intake completed")
 
         click_label("confirm-finish")
-
         expect(page).to have_button("Cancel intake", disabled: false)
 
         safe_click "button#button-submit-review"
 
         expect(page).to have_button("Cancel intake", disabled: true)
-
-        expect(page).to have_content("Intake completed")
-        expect(page).to have_content(
-          "Established EP: 682HLRRRAMP - Higher Level Review Rating for Station 397"
-        )
-
       end
 
       scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
