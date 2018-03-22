@@ -422,9 +422,11 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("Welcome to Caseflow Intake!")
       end
 
-      scenario "Submitting intake for RAMP Election form disables Cancel while loading", :focus => true do
+      scenario "Submitting intake for RAMP Election form disables Cancel while loading" do
+        should_sleep = true
         allow_any_instance_of(IntakesController).to receive(:complete) {
-          sleep 1
+          sleep 0.1 while should_sleep
+          return
         }
 
         election = RampElection.create!(
@@ -435,9 +437,7 @@ RSpec.feature "RAMP Intake" do
         intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
         intake.start!
 
-        # Validate that visiting the finish page takes you back to
-        # the review request page if you haven't yet reviewed the intake
-        visit "/intake/finish"
+        visit "/intake"
 
         within_fieldset("Which review lane did the veteran select?") do
           find("label", text: "Higher Level Review with Informal Conference").click
@@ -446,28 +446,82 @@ RSpec.feature "RAMP Intake" do
         fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
         safe_click "#button-submit-review"
 
-        expect(page).to have_content("Finish processing Higher-Level Review election")
-
         election.reload
-        expect(election.option_selected).to eq("higher_level_review_with_hearing")
-        expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
 
-        # Validate the app redirects you to the appropriate location
         visit "/intake"
         safe_click "#button-submit-review"
-        expect(page).to have_content("Finish processing Higher-Level Review election")
-
         safe_click "button#button-submit-review"
-
-        expect(page).to have_content("You must confirm you've completed the steps")
-        expect(page).to_not have_content("Intake completed")
-
         click_label("confirm-finish")
         expect(page).to have_button("Cancel intake", disabled: false)
 
         safe_click "button#button-submit-review"
 
         expect(page).to have_button("Cancel intake", disabled: true)
+        should_sleep = false
+      end
+
+      scenario "Submitting RAMP refiling form disables Cancel while loading" do
+        should_sleep = true
+        allow_any_instance_of(IntakesController).to receive(:complete) {
+          sleep 0.1 while should_sleep
+          return
+        }
+
+        # Create an RAMP election with a cleared EP
+        ramp_election = RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 5.days.ago,
+          receipt_date: 4.days.ago,
+          end_product_reference_id: Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { status_type_code: "CLR" }
+          ).claim_id
+        )
+
+        Generators::Contention.build(
+          claim_id: ramp_election.end_product_reference_id,
+          text: "Left knee rating increase"
+        )
+
+        Generators::Contention.build(
+          claim_id: ramp_election.end_product_reference_id,
+          text: "Left shoulder service connection"
+        )
+
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        within_fieldset("Which review lane did the Veteran select?") do
+          find("label", text: "Appeal to Board").click
+        end
+
+        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+
+        within_fieldset("Which type of appeal did the Veteran request?") do
+          find("label", text: "Evidence Submission").click
+        end
+
+        safe_click "#button-submit-review"
+        safe_click "#finish-intake"
+        click_label("confirm-outside-caseflow-steps")
+        safe_click "#finish-intake"
+        find("label", text: "Left knee rating increase").click
+        find("label", text: "Left shoulder service connection").click
+        find("label", text: "The veteran's form lists at least one ineligible contention").click
+
+        expect(page).to have_button("Cancel intake", disabled: false)
+
+        safe_click "#finish-intake"
+
+        expect(page).to have_button("Cancel intake", disabled: true)
+        should_sleep = false
       end
 
       scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
