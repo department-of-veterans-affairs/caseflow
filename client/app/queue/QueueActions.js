@@ -80,11 +80,9 @@ export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
 });
 
-export const updateAppealIssue = (appealId, issueId, attributes) => ({
-  type: ACTIONS.UPDATE_APPEAL_ISSUE,
+export const updateEditingAppealIssue = (attributes) => ({
+  type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
   payload: {
-    appealId,
-    issueId,
     attributes
   }
 });

@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import StringUtil from '../util/StringUtil';
 import {
-  updateAppealIssue,
+  updateEditingAppealIssue,
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue
@@ -47,11 +47,7 @@ class AddEditIssueView extends React.Component {
 
   updateIssue = (attributes) => {
     this.props.highlightInvalidFormItems(false);
-    this.props.updateAppealIssue(
-      this.props.vacolsId,
-      this.props.issueId,
-      attributes
-    );
+    this.props.updateEditingAppealIssue(attributes);
   };
 
   updateIssueCode = (codeIdx, code) => {
@@ -238,7 +234,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue,
+  updateEditingAppealIssue,
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,

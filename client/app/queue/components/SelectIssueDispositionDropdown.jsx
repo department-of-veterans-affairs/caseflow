@@ -60,12 +60,13 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
       {issue.disposition === 'vacated' && <Checkbox
-        name="duplicate-vacated-issue"
+        name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
           marginTop: '1rem'
         })}
         onChange={(duplicate) => this.props.updateIssue({ duplicate })}
+        value={issue.duplicate}
         label="Automatically create vacated issue for readjudication." />}
     </div>;
   };

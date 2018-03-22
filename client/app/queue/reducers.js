@@ -133,7 +133,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.UPDATE_APPEAL_ISSUE:
+  case ACTIONS.UPDATE_EDITING_APPEAL_ISSUE:
     return update(state, {
       pendingChanges: {
         editingIssue: {
@@ -154,7 +154,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
             attributes: {
               issues: {
                 [idx]: {
-                  $merge: state.pendingChanges.editingIssue
+                  $set: state.pendingChanges.editingIssue
                 }
               }
             }

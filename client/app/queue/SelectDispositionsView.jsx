@@ -12,7 +12,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Table from '../components/Table';
 
 import {
-  updateAppealIssue,
+  updateEditingAppealIssue,
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue
@@ -62,7 +62,7 @@ class SelectDispositionsView extends React.PureComponent {
     const { vacolsId } = this.props;
 
     this.props.startEditingAppealIssue(vacolsId, issueId);
-    this.props.updateAppealIssue(vacolsId, issueId, attributes);
+    this.props.updateEditingAppealIssue(attributes);
     this.props.saveEditedAppealIssue(vacolsId, issueId);
   }
 
@@ -129,7 +129,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue,
+  updateEditingAppealIssue,
   highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
