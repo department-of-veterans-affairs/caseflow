@@ -437,7 +437,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
-      click_on "Back to claims folder"
+      click_on "Back"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
@@ -1163,7 +1163,7 @@ RSpec.feature "Reader" do
       # Test the document count updates after viewing a document
       expect(page).to have_content("You've viewed 0 out of #{documents.length} documents")
       click_on documents[0].type
-      click_on "Back to claims folder"
+      click_on "Back"
       expect(page).to have_content("You've viewed 1 out of #{documents.length} documents")
 
       find(".rc-collapse-header", text: "Claims folder details").click
@@ -1323,7 +1323,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_no_selector("#button-next")
       expect(page).to have_no_selector("#button-previous")
-      expect(page).to have_content("Back to claims")
+      expect(page).to have_selector("#backToClaimsFolder")
     end
 
     scenario "When user search term is not found" do
@@ -1463,7 +1463,7 @@ RSpec.feature "Reader" do
 
       click_on documents.last.type
       safe_click "#button-previous"
-      click_on "Back to claims folder"
+      click_on "Back"
 
       expect(find("#documents-table-body tr:nth-child(#{documents.count - 1})")).to have_css("#read-indicator")
     end
@@ -1475,7 +1475,7 @@ RSpec.feature "Reader" do
       original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
-      click_on "Back to claims folder"
+      click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect_in_viewport("read-indicator")
@@ -1485,7 +1485,7 @@ RSpec.feature "Reader" do
     scenario "Open the last document on the page and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
-      click_on "Back to claims folder"
+      click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
 
