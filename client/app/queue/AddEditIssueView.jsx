@@ -28,26 +28,6 @@ const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-const itemList = [{
-  label: 'First',
-  value: 1
-}, {
-  label: 'Second',
-  value: 2
-}, {
-  label: 'Third',
-  value: 3
-}, {
-  label: 'All Others',
-  value: 'All Others'
-}, {
-  label: 'Thigh, limitation of flexion of',
-  value: 'Thigh, limitation of flexion of'
-}, {
-  label: 'Compensation',
-  value: 'compensation'
-}];
-
 class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const {
@@ -79,10 +59,14 @@ class AddEditIssueView extends React.Component {
   }
 
   validateForm = () => {
-    // confirm program/type
-    const { issue: { codes } } = this.props;
+    const {
+      issue: {
+        program,
+        type
+      }
+    } = this.props;
 
-    return codes && codes.length >= 2;
+    return program && type;
   };
 
   goToNextStep = () => {
