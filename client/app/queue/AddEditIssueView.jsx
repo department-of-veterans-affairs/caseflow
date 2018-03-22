@@ -133,7 +133,11 @@ class AddEditIssueView extends React.Component {
         styling={dropdownMarginTop}
         placeholder="Select issue"
         options={this.renderIssueAttrs(issues)}
-        onChange={({ value }) => this.updateIssue({ type: value })}
+        onChange={({ value }) => this.updateIssue({
+          type: value,
+          // unset issue levels
+          codes: _.take(codes, 2)
+        })}
         errorMessage={(highlight && !type) ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
       <SearchableDropdown
