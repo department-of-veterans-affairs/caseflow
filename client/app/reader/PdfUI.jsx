@@ -103,11 +103,14 @@ export class PdfUI extends React.Component {
     const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
     const pdfToolbarFooter = css({
+      position: 'absolute',
+      bottom: 0,
+      display: 'flex',
+      alignItems: 'center',
       '&&': { '@media(max-width: 1165px)': {
         '& .left-button-label': { display: 'none' },
-        '& .right-button-label': { display: 'none' },
-
-      }}
+        '& .right-button-label': { display: 'none' }
+      } }
     });
 
     return <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarFooter}>
@@ -205,7 +208,7 @@ export class PdfUI extends React.Component {
     const pdfToolbarRight = css({
       textAlign: 'right',
       '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-       width: '38%',
+        width: '38%',
         '& .cf-pdf-button-text': { display: 'none' } }
       }
     });
