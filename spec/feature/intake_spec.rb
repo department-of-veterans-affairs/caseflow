@@ -98,6 +98,22 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Veteran ID not found")
     end
 
+    scenario "Search for a veteran but search throws an unhandled exception" do
+      expect_any_instance_of(IntakesController).to receive(:create).and_raise("random error")
+      visit "/intake"
+
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Opt-In Election Form").click
+      end
+      safe_click ".cf-submit.usa-button"
+
+      fill_in "Search small", with: "5678"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("Something went wrong")
+    end
+
     context "Veteran has too high of a sensitivity level for user" do
       let(:inaccessible) { true }
 
