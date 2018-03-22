@@ -19,7 +19,7 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha', 'snapshot', 'mocha-snapshot'],
-    reporters: ['mocha', 'junit'],
+    reporters: ['mocha'],
     singleRun: true,
 
     browserConsoleLogOptions: {
