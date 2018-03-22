@@ -90,7 +90,7 @@ jobs:
           name: Karma
           command: |
             pushd client
-            node_modules/.bin/karma start
+            node_modules/.bin/karma start --reporters junit
 
       - store_test_results:
           path: ~/test-results
