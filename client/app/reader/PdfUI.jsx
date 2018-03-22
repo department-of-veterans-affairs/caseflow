@@ -196,7 +196,8 @@ export class PdfUI extends React.Component {
     const pdfToolbarRight = css({
       textAlign: 'right',
       '&&': { '@media(max-width: 1165px)': {
-        width: '38%'
+        width: '38%',
+        '& > em': { display: 'none'}
        }
       }
     });
@@ -235,7 +236,7 @@ export class PdfUI extends React.Component {
           </span>
         </span>
         <span {...pdfToolbar} {...pdfToolbarRight}>
-          Zoom:
+          <em>Zoom:</em>
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
