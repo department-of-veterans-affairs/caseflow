@@ -183,7 +183,7 @@ export class PdfUI extends React.Component {
       // Todo if sidebar is hidden
       width: '32%',
       '&&': { '@media(max-width: 1165px)': {
-         }
+      }
       }
     });
 
@@ -197,8 +197,8 @@ export class PdfUI extends React.Component {
       textAlign: 'right',
       '&&': { '@media(max-width: 1165px)': {
         width: '38%',
-        '& > em': { display: 'none'}
-       }
+        '& .cf-pdf-button-text': { display: 'none' }
+      }
       }
     });
 
@@ -236,7 +236,7 @@ export class PdfUI extends React.Component {
           </span>
         </span>
         <span {...pdfToolbar} {...pdfToolbarRight}>
-          <em>Zoom:</em>
+          <span className="cf-pdf-button-text">Zoom:</span>
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
