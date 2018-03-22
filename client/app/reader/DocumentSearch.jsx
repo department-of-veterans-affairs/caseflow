@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
-import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex
+import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex, setSearchIsLoading
 } from '../reader/PdfSearch/PdfSearchActions';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -20,14 +20,13 @@ export class DocumentSearch extends React.PureComponent {
 
     this.searchTerm = '';
     this.sentAction = {};
-    this.loading = false;
   }
 
   onChange = (value) => {
     this.searchTerm = value;
 
     if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
-      this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
+      this.props.setSearchIsLoading(true);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
     }
@@ -89,7 +88,7 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
-    this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
+    this.props.setSearchIsLoading(!this.props.pdfText.length && this.searchTerm.length > 0);
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
@@ -136,7 +135,7 @@ export class DocumentSearch extends React.PureComponent {
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
-        loading={this.loading}
+        loading={this.props.searchIsLoading}
         spinnerColor={LOGO_COLORS.READER.ACCENT}
       />
       <Button
@@ -164,6 +163,7 @@ DocumentSearch.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
+  searchIsLoading: state.searchActionReducer.searchIsLoading,
   pdfDocument: state.pdf.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
@@ -175,6 +175,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    setSearchIsLoading,
     searchText,
     getDocumentText,
     updateSearchIndex,

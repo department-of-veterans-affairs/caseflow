@@ -151,6 +151,8 @@ To seed the VACOLS container with data you'll need to generate the data for the 
 2) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
 3) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
 
+Review the [FACOLS documentation](docs/FACOLS.md) for information on adding new data.
+
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
