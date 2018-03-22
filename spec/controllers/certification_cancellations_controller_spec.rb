@@ -23,7 +23,7 @@ RSpec.describe CertificationCancellationsController, type: :controller do
         post :create, params: { "certification_cancellation" =>
                             { "cancellation_reason" => "",
                               "other_reason" => "", "email" => "test@gmail.com",
-                              "certification_id" => "4" } }, accept: :json, format: :json
+                              "certification_id" => "4" } }
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to match("is_cancelled" => false)
       end
