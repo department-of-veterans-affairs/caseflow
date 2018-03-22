@@ -66,6 +66,22 @@ class AddEditIssueView extends React.Component {
 
   getIssueValue = (value) => _.get(this.props.issue, value, '');
 
+  getIssueLevels = () => {
+    const {
+      issue: {
+        program,
+        type,
+        codes
+      }
+    } = this.props;
+    const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
+    const issueLevel1 = _.get(vacolsIssues, `${type}.levels`, {});
+    const issueLevel2 = _.get(issueLevel1, `${_.get(codes, 2)}.levels`, {});
+    const issueLevel3 = _.get(issueLevel2, `${_.get(codes, 3)}.levels`, {});
+
+    return [issueLevel1, issueLevel2, issueLevel3];
+  }
+
   goToPrevStep = () => {
     this.props.cancelEditingAppealIssue();
 
@@ -82,11 +98,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
 
     const fieldsToCheck = _.clone(codes);
-
-    const issues = _.get(ISSUE_INFO[program], 'issue', {});
-    const issueLevels1 = _.get(issues, `${type}.levels`, {});
-    const issueLevels2 = _.get(issueLevels1, `${_.get(codes, 2)}.levels`, {});
-    const issueLevels3 = _.get(issueLevels2, `${_.get(codes, 3)}.levels`, {});
+    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevels();
 
     _.each([issueLevels1, issueLevels2, issueLevels3], (level, idx) => {
       // if available options for level, confirm value is set in codes
@@ -122,9 +134,7 @@ class AddEditIssueView extends React.Component {
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[program], 'issue');
-    const issueLevels1 = _.get(issues, `${type}.levels`);
-    const issueLevels2 = _.get(issueLevels1, `${_.get(codes, 2)}.levels`);
-    const issueLevels3 = _.get(issueLevels2, `${_.get(codes, 3)}.levels`);
+    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevels();
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
