@@ -261,7 +261,7 @@ SubmitDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,

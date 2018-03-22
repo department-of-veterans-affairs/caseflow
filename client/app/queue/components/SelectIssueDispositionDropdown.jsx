@@ -12,7 +12,7 @@ import {
   ERROR_FIELD_REQUIRED
 } from '../constants';
 
-// todo: map to VACOLS attrs
+// todo: map to VACOLS attrs (VACOLS::Case::DISPOSITIONS)
 const issueDispositionOptions = [
   [1, 'Allowed'],
   [3, 'Remanded'],
@@ -52,14 +52,14 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
         options={issueDispositionOptions.map((opt) => ({
           label: `${opt[0]} - ${opt[1]}`,
-          value: StringUtil.convertToCamelCase(opt[1])
+          value: opt[1]
         }))}
         onChange={({ value }) => this.props.updateIssue({
           disposition: value,
           duplicate: false
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
-      {issue.disposition === 'vacated' && <Checkbox
+      {issue.disposition === 'Vacated' && <Checkbox
         name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
