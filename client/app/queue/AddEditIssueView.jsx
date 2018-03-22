@@ -155,8 +155,8 @@ class AddEditIssueView extends React.Component {
       <SearchableDropdown
         name="Add Stay:"
         styling={dropdownMarginTop}
-        placeholder="Select stay"
-        options={itemList}
+        placeholder="No current stays"
+        readOnly
         onChange={({ value }) => this.updateIssue({ stay: value })}
         value={this.getIssueValue('stay')} />
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
