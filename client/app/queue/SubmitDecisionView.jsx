@@ -123,9 +123,10 @@ class SubmitDecisionView extends React.PureComponent {
       }
     };
 
+    // task ID is vacols_id concatenated with the date assigned
     this.props.requestSave(
-      params,
-      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`
+      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`,
+      params
     );
   }
 

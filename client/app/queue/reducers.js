@@ -146,7 +146,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const issues = state.pendingChanges.appeals[appealId].attributes.issues;
     const idx = _.findIndex(issues, (issue) => issue.vacols_sequence_id === Number(issueId));
 
-    // todo: if (idx === -1) { push }
+    // todo: if (idx === -1) { push } (#4477)
     return update(state, {
       pendingChanges: {
         appeals: {

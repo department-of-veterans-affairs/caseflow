@@ -52,7 +52,7 @@ export const saveFailure = (resp) => (dispatch) => {
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 };
 
-export const requestSave = (params, url) => (dispatch) => {
+export const requestSave = (url, params) => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
