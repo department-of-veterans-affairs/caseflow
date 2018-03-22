@@ -85,13 +85,7 @@ class AddEditIssueView extends React.Component {
   };
 
   validateForm = () => {
-    const {
-      issue: {
-        program,
-        type,
-        codes
-      }
-    } = this.props;
+    const { issue: { codes } } = this.props;
 
     const fieldsToCheck = _.clone(codes);
     const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevels();
