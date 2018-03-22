@@ -140,9 +140,9 @@ class AddEditIssueView extends React.Component {
     const errorHighlightConditions = {
       program: highlight && !program,
       type: highlight && !type,
-      level1: highlight && !codes[2] && !_.isUndefined(issueLevels1),
-      level2: highlight && !codes[3] && !_.isUndefined(issueLevels2),
-      level3: highlight && !codes[4] && !_.isUndefined(issueLevels3)
+      level1: highlight && !codes[2] && !_.isEmpty(issueLevels1),
+      level2: highlight && !codes[3] && !_.isEmpty(issueLevels2),
+      level3: highlight && !codes[4] && !_.isEmpty(issueLevels3)
     };
 
     return <React.Fragment>
@@ -192,7 +192,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 1"
         options={this.renderIssueAttrs(issueLevels1)}
         onChange={({ value }) => this.updateIssueCode(2, value)}
-        readOnly={_.isUndefined(issueLevels1)}
+        readOnly={_.isEmpty(issueLevels1)}
         errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
         value={this.getIssueValue('codes[2]')} />
       <SearchableDropdown
@@ -201,7 +201,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 2"
         options={this.renderIssueAttrs(issueLevels2)}
         onChange={({ value }) => this.updateIssueCode(3, value)}
-        readOnly={_.isUndefined(issueLevels2)}
+        readOnly={_.isEmpty(issueLevels2)}
         errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
         value={this.getIssueValue('codes[3]')} />
       <SearchableDropdown
@@ -210,7 +210,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select level 3"
         options={this.renderIssueAttrs(issueLevels3)}
         onChange={({ value }) => this.updateIssueCode(4, value)}
-        readOnly={_.isUndefined(issueLevels3)}
+        readOnly={_.isEmpty(issueLevels3)}
         errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
         value={this.getIssueValue('codes[4]')} />
       <TextField
