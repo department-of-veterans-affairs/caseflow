@@ -49,10 +49,8 @@ module.exports = function(config) {
     }, filesPreprocessorObject),
 
     snapshot: {
-      /* eslint-disable no-process-env */
       update: Boolean(process.env.UPDATE),
       prune: Boolean(process.env.PRUNE)
-      /* eslint-enable no-process-env */
     },
 
     webpack: _.merge({
