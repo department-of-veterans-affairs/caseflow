@@ -192,7 +192,7 @@ export class PdfUI extends React.Component {
         right: '380px' }
     });
 
-    const pdfToolbar = css({ width: '32%' });
+    const pdfToolbar = css({ width: '33%' });
 
     const pdfToolbarLeft = css({
       '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
@@ -202,7 +202,7 @@ export class PdfUI extends React.Component {
 
     const pdfToolbarCenter = css({
       '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '20%' }
+        width: '24%' }
       }
     });
 
