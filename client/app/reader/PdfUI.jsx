@@ -102,7 +102,15 @@ export class PdfUI extends React.Component {
   getPdfFooter = () => {
     const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
-    return <div className="cf-pdf-footer cf-pdf-toolbar">
+    const pdfToolbarFooter = css({
+      '&&': { '@media(max-width: 1165px)': {
+        '& .left-button-label': { display: 'none' },
+        '& .right-button-label': { display: 'none' },
+
+      }}
+    });
+
+    return <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarFooter}>
       <div className="cf-pdf-footer-buttons-left">
         { this.props.prevDocId &&
             <Button
@@ -164,6 +172,9 @@ export class PdfUI extends React.Component {
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
+    // PDF Document Viewer is 800px wide or less.
+    const pdfWrapperSmall = 1165;
+
     const pdfUiClass = classNames(
       'cf-pdf-container',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
@@ -179,26 +190,23 @@ export class PdfUI extends React.Component {
     });
 
     const pdfToolbar = css({
-      // 1165px wide is Toolbars 800px Breakpoint
       // Todo if sidebar is hidden
       width: '32%',
-      '&&': { '@media(max-width: 1165px)': {
-      }
+      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: { }
       }
     });
 
     const pdfToolbarLeft = css({
-      '&&': { '@media(max-width: 1165px)': {
+      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
         width: '25%' }
       }
     });
 
     const pdfToolbarRight = css({
       textAlign: 'right',
-      '&&': { '@media(max-width: 1165px)': {
-        width: '38%',
-        '& .cf-pdf-button-text': { display: 'none' }
-      }
+      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+       width: '38%',
+        '& .cf-pdf-button-text': { display: 'none' } }
       }
     });
 
