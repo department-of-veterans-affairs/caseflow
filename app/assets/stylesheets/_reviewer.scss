@@ -21,18 +21,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
-.cf-nav-full-screen {
-  padding: 10px 30px;
-
-  .usa-grid-full {
-    max-width: none;
-  }
-
-  .cf-nav-dropdown {
-    right: 30px;
-  }
-}
-
 .claim-detail-container {
 
   .claim-detail-type-info {
@@ -536,11 +524,6 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.cf-pdf-open-menu {
-  flex: 0 0 auto;
-  margin: 0 17px;
 }
 
 .cf-pdf-doc-type-button-container {

@@ -192,29 +192,32 @@ export class PdfUI extends React.Component {
         right: '380px' }
     });
 
-    const pdfToolbar = css({
-      // Todo if sidebar is hidden
-      width: '32%',
-      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: { }
-      }
-    });
+    const pdfToolbar = css({ width: '32%' });
 
     const pdfToolbarLeft = css({
       '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '25%' }
+        width: '18%' }
+      }
+    });
+
+    const pdfToolbarCenter = css({
+      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+        width: '20%' }
       }
     });
 
     const pdfToolbarRight = css({
       textAlign: 'right',
       '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '38%',
+        width: '44%',
         '& .cf-pdf-button-text': { display: 'none' } }
       }
     });
 
+    const pdfOpensidebarMenu = css({ marginRight: '2%' });
+
     return <div className={pdfUiClass} {...pdfWrapper}>
-      <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
+      <div className="cf-pdf-header cf-pdf-toolbar">
         <span {...pdfToolbar} {...pdfToolbarLeft}>
           { this.props.showClaimsFolderNavigation && <Link
             to={`${this.props.documentPathBase}`}
@@ -225,7 +228,7 @@ export class PdfUI extends React.Component {
             &nbsp; Back
           </Link> }
         </span>
-        <span {...pdfToolbar}>
+        <span {...pdfToolbar} {...pdfToolbarCenter}>
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
               <DocumentCategoryIcons doc={this.props.doc} />
@@ -293,9 +296,9 @@ export class PdfUI extends React.Component {
             <SearchIcon />
           </Button>
           {this.props.hidePdfSidebar &&
-            <span className="cf-pdf-open-menu">
+            <span {...pdfOpensidebarMenu}>
               <Button
-                name="open menu"
+                name="open sidebar menu"
                 classNames={['cf-pdf-button']}
                 onClick={this.props.togglePdfSidebar}>
                 <strong>
