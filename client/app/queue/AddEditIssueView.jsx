@@ -184,7 +184,7 @@ class AddEditIssueView extends React.Component {
         onChange={({ value }) => this.updateIssueCode(2, value)}
         readOnly={_.isUndefined(issueLevels1)}
         errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[2]')}/>
+        value={this.getIssueValue('codes[2]')} />
       <SearchableDropdown
         name="Level 2:"
         styling={dropdownMarginTop}
@@ -193,7 +193,7 @@ class AddEditIssueView extends React.Component {
         onChange={({ value }) => this.updateIssueCode(3, value)}
         readOnly={_.isUndefined(issueLevels2)}
         errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[3]')}/>
+        value={this.getIssueValue('codes[3]')} />
       <SearchableDropdown
         name="Level 3:"
         styling={dropdownMarginTop}
@@ -202,7 +202,7 @@ class AddEditIssueView extends React.Component {
         onChange={({ value }) => this.updateIssueCode(4, value)}
         readOnly={_.isUndefined(issueLevels3)}
         errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[4]')}/>
+        value={this.getIssueValue('codes[4]')} />
       <TextField
         name="Notes:"
         value={this.getIssueValue('note')}
