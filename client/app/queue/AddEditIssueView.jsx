@@ -12,6 +12,7 @@ import {
   cancelEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
+import { highlightInvalidFormItems } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -44,11 +45,24 @@ class AddEditIssueView extends React.Component {
     displayText: 'Save'
   }];
 
-  updateIssue = (attributes) => this.props.updateAppealIssue(
-    this.props.vacolsId,
-    this.props.issueId,
-    attributes
-  );
+  updateIssue = (attributes) => {
+    this.props.highlightInvalidFormItems(false);
+    this.props.updateAppealIssue(
+      this.props.vacolsId,
+      this.props.issueId,
+      attributes
+    );
+  };
+
+  updateIssueCode = (codeIdx, code) => {
+    const codes = _.clone(this.props.issue.codes);
+
+    // remove more-specific issue levels on change
+    // i.e. on change Issue, remove all Levels
+    codes.splice(codeIdx, codes.length - codeIdx, code);
+
+    this.updateIssue({ codes });
+  };
 
   getIssueValue = (value) => _.get(this.props.issue, value, '');
 
@@ -56,17 +70,32 @@ class AddEditIssueView extends React.Component {
     this.props.cancelEditingAppealIssue();
 
     return true;
-  }
+  };
 
   validateForm = () => {
     const {
       issue: {
         program,
-        type
+        type,
+        codes
       }
     } = this.props;
 
-    return program && type;
+    const fieldsToCheck = _.clone(codes);
+
+    const issues = _.get(ISSUE_INFO[program], 'issue', {});
+    const issueLevels1 = _.get(issues, `${type}.levels`, {});
+    const issueLevels2 = _.get(issueLevels1, `${_.get(codes, 2)}.levels`, {});
+    const issueLevels3 = _.get(issueLevels2, `${_.get(codes, 3)}.levels`, {});
+
+    _.each([issueLevels1, issueLevels2, issueLevels3], (level, idx) => {
+      // if available options for level, confirm value is set in codes
+      if (!_.isEmpty(level) && !(codes[idx + 2] in level)) {
+        fieldsToCheck.push(codes[idx + 2]);
+      }
+    });
+
+    return _.every(fieldsToCheck);
   };
 
   goToNextStep = () => {
@@ -79,16 +108,6 @@ class AddEditIssueView extends React.Component {
     label: obj.description,
     value
   }));
-
-  updateIssueCode = (codeIdx, code) => {
-    const codes = _.clone(this.props.issue.codes);
-
-    // remove more-specific issue levels on change
-    // i.e. on change Issue, remove all Levels
-    codes.splice(codeIdx, codes.length - codeIdx, code);
-
-    this.updateIssue({ codes });
-  }
 
   render = () => {
     const {
@@ -107,6 +126,15 @@ class AddEditIssueView extends React.Component {
     const issueLevels2 = _.get(issueLevels1, `${_.get(codes, 2)}.levels`);
     const issueLevels3 = _.get(issueLevels2, `${_.get(codes, 3)}.levels`);
 
+    // only highlight invalid fields with options (i.e. not disabled)
+    const errorHighlightConditions = {
+      program: highlight && !program,
+      type: highlight && !type,
+      level1: highlight && !codes[2] && !_.isUndefined(issueLevels1),
+      level2: highlight && !codes[3] && !_.isUndefined(issueLevels2),
+      level3: highlight && !codes[4] && !_.isUndefined(issueLevels3)
+    };
+
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         {StringUtil.titleCase(action)} Issue
@@ -116,7 +144,7 @@ class AddEditIssueView extends React.Component {
         styling={noLeftPadding}
         classNames={['cf-btn-link']}
         onClick={_.noop}>
-      Delete Issue
+        Delete Issue
       </Button>
       <SearchableDropdown
         required
@@ -125,7 +153,7 @@ class AddEditIssueView extends React.Component {
         placeholder="Select program"
         options={this.renderIssueAttrs(programs)}
         onChange={({ value }) => this.updateIssue({ program: value })}
-        errorMessage={(highlight && !program) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
         value={program} />
       <SearchableDropdown
         required
@@ -135,10 +163,10 @@ class AddEditIssueView extends React.Component {
         options={this.renderIssueAttrs(issues)}
         onChange={({ value }) => this.updateIssue({
           type: value,
-          // unset issue levels
+          // unset issue levels for validation
           codes: _.take(codes, 2)
         })}
-        errorMessage={(highlight && !type) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
       <SearchableDropdown
         name="Add Stay:"
@@ -155,7 +183,8 @@ class AddEditIssueView extends React.Component {
         options={this.renderIssueAttrs(issueLevels1)}
         onChange={({ value }) => this.updateIssueCode(2, value)}
         readOnly={_.isUndefined(issueLevels1)}
-        value={this.getIssueValue('codes[2]')} />
+        errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
+        value={this.getIssueValue('codes[2]')}/>
       <SearchableDropdown
         name="Level 2:"
         styling={dropdownMarginTop}
@@ -163,7 +192,8 @@ class AddEditIssueView extends React.Component {
         options={this.renderIssueAttrs(issueLevels2)}
         onChange={({ value }) => this.updateIssueCode(3, value)}
         readOnly={_.isUndefined(issueLevels2)}
-        value={this.getIssueValue('codes[3]')} />
+        errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
+        value={this.getIssueValue('codes[3]')}/>
       <SearchableDropdown
         name="Level 3:"
         styling={dropdownMarginTop}
@@ -171,11 +201,11 @@ class AddEditIssueView extends React.Component {
         options={this.renderIssueAttrs(issueLevels3)}
         onChange={({ value }) => this.updateIssueCode(4, value)}
         readOnly={_.isUndefined(issueLevels3)}
-        value={this.getIssueValue('codes[4]')} />
+        errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
+        value={this.getIssueValue('codes[4]')}/>
       <TextField
         name="Notes:"
         value={this.getIssueValue('note')}
-        required={false}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };
@@ -201,7 +231,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateAppealIssue,
   startEditingAppealIssue,
   cancelEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  highlightInvalidFormItems
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
