@@ -79,13 +79,7 @@ class AddEditIssueView extends React.Component {
   }
 
   validateForm = () => {
-    // todo: check program/type/level1 at least?
-    // const { issue } = this.props;
-    // const fields = ['program', 'type', 'levels', 'note'];
-    // const missingFields = _.filter(fields, (field) => _.has(issue, field));
-    //
-    // return !missingFields.length;
-
+    // confirm program/type
     const { issue: { codes } } = this.props;
 
     return codes && codes.length >= 2;
@@ -146,12 +140,8 @@ class AddEditIssueView extends React.Component {
         styling={dropdownMarginTop}
         placeholder="Select program"
         options={this.renderIssueAttrs(programs)}
-        onChange={({ value }) => {
-          // todo: will the server check program, or codes[0]?
-          this.updateIssue({ program: value });
-          this.updateIssueCode(0, value);
-        }}
-        errorMessage={(highlight && !codes[0]) ? ERROR_FIELD_REQUIRED : ''}
+        onChange={({ value }) => this.updateIssue({ program: value })}
+        errorMessage={(highlight && !program) ? ERROR_FIELD_REQUIRED : ''}
         value={program} />
       <SearchableDropdown
         required
@@ -159,12 +149,9 @@ class AddEditIssueView extends React.Component {
         styling={dropdownMarginTop}
         placeholder="Select issue"
         options={this.renderIssueAttrs(issues)}
-        onChange={({ value }) => {
-          // todo: will the server check type, or codes[1]?
-          this.updateIssue({ type: value });
-          this.updateIssueCode(1, value);
-        }}
-        errorMessage={(highlight && !codes[1]) ? ERROR_FIELD_REQUIRED : ''}
+        // todo: server expects type to be called `issue` (IssuesController::issue_params)
+        onChange={({ value }) => this.updateIssue({ type: value })}
+        errorMessage={(highlight && !type) ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
       <SearchableDropdown
         name="Add Stay:"

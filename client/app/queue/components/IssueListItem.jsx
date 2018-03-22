@@ -23,7 +23,8 @@ export default class IssueListItem extends React.PureComponent {
     {this.props.idx}.
   </td>;
 
-  formatLevels = () => {
+  // eslint-disable-next-line max-statements
+  getIssueLevels = () => {
     const {
       issue: {
         program,
@@ -52,7 +53,7 @@ export default class IssueListItem extends React.PureComponent {
     if (issueLevel1) {
       issueLevels.push(issueLevel1.description);
 
-      if (issueLevel2 && issueLevel2.levels) {
+      if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
 
         issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
@@ -61,21 +62,25 @@ export default class IssueListItem extends React.PureComponent {
       }
     }
 
-    return issueLevels.map((code, idx) => <div key={idx} {...issueMarginTop}>
-      <span key={code} {...issueLevelStyling}>
-        {_.get(code, 'description', code)}
-      </span>
-    </div>);
+    return issueLevels;
   };
 
-  getIssue = () => {
+  getIssueType = () => {
     const {
       issue: { program, type }
     } = this.props;
-    const vacolsIssue = _.get(ISSUE_INFO[program].issue, type);
+    const vacolsIssue = ISSUE_INFO[program].issue[type];
 
     return _.get(vacolsIssue, 'description');
   };
+
+  formatLevels = () => this.getIssueLevels().map((code, idx) =>
+    <div key={idx} {...issueMarginTop}>
+      <span key={code} {...issueLevelStyling}>
+        {_.get(code, 'description', code)}
+      </span>
+    </div>
+  );
 
   render = () => {
     const {
@@ -97,7 +102,7 @@ export default class IssueListItem extends React.PureComponent {
       issueContent = <React.Fragment>
         <span {...boldText}>Program:</span> {ISSUE_INFO[program].description}
         <div {...issueMarginTop}>
-          <span {...boldText}>Issue:</span> {this.getIssue()} {this.formatLevels()}
+          <span {...boldText}>Issue:</span> {this.getIssueType()} {this.formatLevels()}
         </div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}

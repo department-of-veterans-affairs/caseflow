@@ -586,7 +586,7 @@ export const ISSUE_INFO = {
             description: 'First Level, sublevels',
             levels: {
               '01': { description: 'Second Level 1' },
-              '02': { description: 'Second Level 2'}
+              '02': { description: 'Second Level 2' }
             }
           }
         }
