@@ -89,10 +89,6 @@ jobs:
       - deploy:
           name: Karma
           command: |
-            # We need to nuke the test results directory because we have
-            # already uploaded it previously; this avoids overcounting
-            # test runs in container 0.
-            rm -rf ~/test-results
             mkdir -p ~/test-results/karma
             pushd client
             node_modules/.bin/karma start --reporters junit
