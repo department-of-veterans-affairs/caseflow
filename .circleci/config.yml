@@ -84,11 +84,12 @@ jobs:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
 
-      # JavaScript tests are a deploy step because currently they are not
+      # Karma JavaScript tests are a deploy step because currently they are not
       # able to be run in parallel.
       - deploy:
           name: Karma
           command: |
+            rm -rf ~/test-results
             mkdir -p ~/test-results/karma
             pushd client
             node_modules/.bin/karma start --reporters junit
