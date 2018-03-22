@@ -59,7 +59,7 @@ module IssueMapper
     def disposition_to_vacols_format(disposition)
       code = VACOLS::Case::DISPOSITIONS.key(disposition)
       unless ALLOWED_DISPOSITION_CODES.include? code
-        fail IssueRepository::IssueError, "Not allowed disposition: #{disposition}"
+        fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{disposition}"
       end
       code
     end
