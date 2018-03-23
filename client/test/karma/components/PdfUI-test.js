@@ -62,7 +62,7 @@ describe('PdfUI', () => {
       });
 
       context('when showClaimsFolderNavigation is true', () => {
-        it('renders the back to claims folder button', () => {
+        it('renders the back button that directs to claims folder', () => {
           expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(0);
 
           wrapper.setProps({ showClaimsFolderNavigation: true });
