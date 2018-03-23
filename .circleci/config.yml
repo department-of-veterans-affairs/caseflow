@@ -11,6 +11,8 @@ jobs:
           - NODE_ENV: test
           - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
           - BUNDLE_PATH: vendor/bundle
+          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
+          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -82,13 +84,20 @@ jobs:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
 
-      # JavaScript tests are a deploy step because currently they are not
+      # Karma JavaScript tests are a deploy step because currently they are not
       # able to be run in parallel.
       - deploy:
           name: Karma
           command: |
+            mkdir -p ~/karma-test-results/karma
             pushd client
-            node_modules/.bin/karma start
+            node_modules/.bin/karma start --reporters junit
+
+      # Karma gets its own test results directory because otherwise
+      # we would upload the test results directory twice, doubling
+      # the perceived test count.
+      - store_test_results:
+          path: ~/karma-test-results
 
       - deploy:
           name: Lint
