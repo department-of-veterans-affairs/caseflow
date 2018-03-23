@@ -77,7 +77,7 @@ export default class CaseWorkerIndex extends BaseForm {
       <React.Fragment>
         <NavigationBar
           dropdownUrls={this.props.dropdownUrls}
-          appName="Establish Claim"
+          appName="Dispatch"
           userDisplayName={this.props.userDisplayName}
           defaultUrl="/dispatch/establish-claim/"
           logoProps={{
@@ -120,7 +120,7 @@ export default class CaseWorkerIndex extends BaseForm {
           </div>
         </AppFrame>
         <Footer
-          appName="Establish Claim"
+          appName="Dispatch"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />
       </React.Fragment>
