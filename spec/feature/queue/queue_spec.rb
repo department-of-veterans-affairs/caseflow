@@ -258,7 +258,7 @@ RSpec.feature "Queue" do
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
         expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
 
-        expect(page).to have_content("Go back to draft decision #{appeal.vbms_id}")
+        expect(page).to have_content("Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
         safe_click("button.cf-right-side")
 

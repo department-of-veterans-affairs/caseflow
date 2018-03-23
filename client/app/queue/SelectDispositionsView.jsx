@@ -76,7 +76,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`
+    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
   }, {
     displayText: 'Finish dispositions',
     id: 'finish-dispositions'
