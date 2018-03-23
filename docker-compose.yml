@@ -28,10 +28,14 @@ services:
     environment:
      - POSTGRES_PASSWORD=postgres
 
-  appeals-sqs:
-    image: pafortin/goaws
+  appeals-localstack-aws:
+    image: localstack/localstack
     ports:
-      - "4100:4100"
+      # only expose the SQS port for now
+      - "4567-4583:4567-4583"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=sqs
     volumes:
       - ./local/sqs/conf:/conf
 
