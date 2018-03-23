@@ -60,7 +60,7 @@ export default class EstablishClaimContainer extends React.Component {
       <React.Fragment>
         <NavigationBar
           dropdownUrls={this.props.dropdownUrls}
-          appName="Establish Claim"
+          appName="Dispatch"
           userDisplayName={this.props.userDisplayName}
           defaultUrl="/dispatch/establish-claim/"
           logoProps={{
