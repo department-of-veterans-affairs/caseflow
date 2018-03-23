@@ -50,6 +50,7 @@ export const DECISION_TYPES = {
 };
 
 /*
+https://github.com/department-of-veterans-affairs/appeals-design-research/blob/master/Projects/BVA%20Work%20Queue/Research/Documents/Appendix%20F%20-%20VACOLS%20Issue%20Coding.pdf
 {
   `issprog`: {
     description: `Program Description`,
