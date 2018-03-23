@@ -24,6 +24,41 @@ import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
 
+// PDF Document Viewer is 800px wide or less.
+const pdfWrapperSmall = 1165;
+
+const pdfToolbarStyles = {
+  openSidebarMenu: css({ marginRight: '2%' }),
+  toolbar: css({ width: '33%' }),
+  toolbarLeft: css({
+    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+      width: '18%' }
+    }
+  }),
+  toolbarCenter: css({
+    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+      width: '24%' }
+    }
+  }),
+  toolbarRight: css({
+    textAlign: 'right',
+    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+      width: '44%',
+      '& .cf-pdf-button-text': { display: 'none' } }
+    }
+  }),
+  footer: css({
+    position: 'absolute',
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
+      '& .left-button-label': { display: 'none' },
+      '& .right-button-label': { display: 'none' }
+    } }
+  })
+};
+
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
 //
@@ -102,7 +137,7 @@ export class PdfUI extends React.Component {
   getPdfFooter = () => {
     const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
-    return <div className="cf-pdf-footer cf-pdf-toolbar">
+    return <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
       <div className="cf-pdf-footer-buttons-left">
         { this.props.prevDocId &&
             <Button
@@ -178,31 +213,19 @@ export class PdfUI extends React.Component {
         right: '380px' }
     });
 
-    const pdfToolbar = css({
-      '&&': { '@media(max-width: 1240px)': { width: 'max-content' }
-      }
-    });
-
-    const pdfToolbarRight = css({
-      '&&': { '@media(max-width: 1240px)': {
-        float: 'right'
-      }
-      }
-    });
-
     return <div className={pdfUiClass} {...pdfWrapper}>
-      <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
-        <span className="usa-width-one-third cf-pdf-buttons-left" {...pdfToolbar}>
+      <div className="cf-pdf-header cf-pdf-toolbar">
+        <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
           { this.props.showClaimsFolderNavigation && <Link
             to={`${this.props.documentPathBase}`}
             name="backToClaimsFolder"
             button="matte"
             onClick={this.onBackToClaimsFolder}>
             <LeftChevron />
-            &nbsp; Back to claims folder
+            &nbsp; Back
           </Link> }
         </span>
-        <span className="usa-width-one-third cf-pdf-buttons-center" {...pdfToolbar}>
+        <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
               <DocumentCategoryIcons doc={this.props.doc} />
@@ -223,8 +246,8 @@ export class PdfUI extends React.Component {
             </span>
           </span>
         </span>
-        <span className="usa-width-one-third cf-pdf-buttons-right" {...pdfToolbar} {...pdfToolbarRight}>
-          Zoom:
+        <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
+          <span className="cf-pdf-button-text">Zoom:</span>
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
@@ -270,9 +293,9 @@ export class PdfUI extends React.Component {
             <SearchIcon />
           </Button>
           {this.props.hidePdfSidebar &&
-            <span className="cf-pdf-open-menu">
+            <span {...pdfToolbarStyles.openSidebarMenu}>
               <Button
-                name="open menu"
+                name="open sidebar menu"
                 classNames={['cf-pdf-button']}
                 onClick={this.props.togglePdfSidebar}>
                 <strong>
