@@ -319,6 +319,9 @@ RSpec.feature "Queue" do
         enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
 
         field_values = enabled_fields.map do |row|
+          # changing options at the top of the form affects what options are enabled further down
+          next if row.matches_css? ".is-disabled"
+
           row.find(".Select-control").click
           row.find("div[id$='--option-1']").click
           row.find(".Select-value-label").text

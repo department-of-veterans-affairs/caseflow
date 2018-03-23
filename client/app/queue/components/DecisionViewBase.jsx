@@ -57,11 +57,13 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     goToStep = (url) => {
+      // todo: allow passing state (confirmation message, trigger reloading tasks)
       this.props.history.push(url);
       window.scrollTo(0, 0);
     };
 
     goToPrevStep = () => {
+      // todo: if no prevStep prop, return to path at last breadcrumb
       const prevStepHook = _.get(this.wrapped, 'goToPrevStep');
 
       if (!prevStepHook || prevStepHook()) {
