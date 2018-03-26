@@ -124,7 +124,7 @@ class AddEditIssueView extends React.Component {
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[program], 'issue');
-    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevels();
+    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
