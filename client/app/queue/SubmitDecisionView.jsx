@@ -105,8 +105,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   goToNextStep = () => {
     const {
-      vacolsId,
-      task: { attributes: { assigned_on } },
+      task: { attributes: { task_id } },
       appeal: { attributes: { issues } },
       decision
     } = this.props;
@@ -125,7 +124,7 @@ class SubmitDecisionView extends React.PureComponent {
 
     // task ID is vacols_id concatenated with the date assigned
     this.props.requestSave(
-      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`,
+      `/queue/tasks/${task_id}/complete`,
       params
     );
   }
