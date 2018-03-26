@@ -122,11 +122,7 @@ class SubmitDecisionView extends React.PureComponent {
       }
     };
 
-    // task ID is vacols_id concatenated with the date assigned
-    this.props.requestSave(
-      `/queue/tasks/${task_id}/complete`,
-      params
-    );
+    this.props.requestSave(`/queue/tasks/${task_id}/complete`, params);
   }
 
   getFooterButtons = () => [{
