@@ -95,7 +95,6 @@ gem "zero_downtime_migrations"
 group :production, :staging, :ssh_forwarding, :local do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  gem "ruby-oci8"
 end
 
 # Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)

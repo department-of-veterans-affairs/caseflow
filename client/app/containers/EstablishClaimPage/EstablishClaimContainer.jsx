@@ -6,6 +6,7 @@ import AppFrame from '../../components/AppFrame';
 import NavigationBar from '../../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+
 import EstablishClaimHeader from './EstablishClaimHeader';
 import EstablishClaim from './EstablishClaim';
 import EstablishClaimComplete from './EstablishClaimComplete';
@@ -45,6 +46,7 @@ export default class EstablishClaimContainer extends React.Component {
   }
 
   render() {
+
     let {
       page,
       ...rest
@@ -77,13 +79,12 @@ export default class EstablishClaimContainer extends React.Component {
         </div>}
 
         <AppFrame>
-          <EstablishClaimHeader />
+          <EstablishClaimHeader {...rest} />
           <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
             handleAlertClear={this.handleAlertClear}
           />
-
           <Footer
             appName="Dispatch"
             feedbackUrl={this.props.feedbackUrl}
