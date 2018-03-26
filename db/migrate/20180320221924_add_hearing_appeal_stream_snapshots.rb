@@ -6,7 +6,5 @@ class HearingAppealStreamSnapshots < ActiveRecord::Migration
 
       t.datetime :created_at, null: false
     end
-
-    add_index(:hearing_appeal_stream_snapshots, [:hearing_id, :appeal_id], unique: true, algorithm: :concurrently)
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180320221924) do
+ActiveRecord::Schema.define(version: 20180326153826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -320,6 +320,8 @@ ActiveRecord::Schema.define(version: 20180320221924) do
     t.integer  "appeal_id"
     t.datetime "created_at", null: false
   end
+
+  add_index "hearing_appeal_stream_snapshots", ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true, using: :btree
 
   create_table "hearing_views", force: :cascade do |t|
     t.integer  "hearing_id", null: false
