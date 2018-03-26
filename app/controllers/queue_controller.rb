@@ -3,6 +3,8 @@ class QueueController < ApplicationController
   before_action :verify_welcome_gate_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
 
+  ROLES = ["Judge", "Attorney"]
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -24,7 +26,10 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
+      return invalid_role_error unless ROLES.include?(params[:role])
+
+      tasks, appeals = WorkQueue.tasks_with_appeals(user, params[:role])
+
       render json: {
         tasks: json_tasks(tasks),
         appeals: json_appeals(appeals)
@@ -52,6 +57,12 @@ class QueueController < ApplicationController
 
   private
 
+  def user
+    @user ||= User.find(params[:user_id])
+  rescue ActiveRecord::RecordNotFound
+    render json: {}, status: 404
+  end
+
   def verify_welcome_gate_access
     # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
@@ -66,6 +77,15 @@ class QueueController < ApplicationController
       "errors": [
         "title": "Error Completing Attorney Case Review",
         "detail": "Errors occured when completing attorney case review"
+      ]
+    }, status: 400
+  end
+
+  def invalid_role_error
+    render json: {
+      "errors": [
+        "title": "Role is invalid or missing",
+        "detail": "Role is required and must be one of the following: #{ROLES}"
       ]
     }, status: 400
   end

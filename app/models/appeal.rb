@@ -44,7 +44,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
+  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :date_completed, :signed_date, :docket_date, :date_due, :date_added
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
