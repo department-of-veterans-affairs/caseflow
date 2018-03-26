@@ -10,6 +10,7 @@ const initialErrorState = {
 export const initialState = {
   selectingJudge: false,
   breadcrumbs: [],
+  footerButtons: [],
   highlightFormItems: false,
   errorState: initialErrorState,
   savePending: false,
@@ -48,6 +49,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       breadcrumbs: {
         $set: []
+      }
+    });
+  case ACTIONS.SET_FOOTER_BUTTONS:
+    return update(state, {
+      footerButtons: {
+        $set: action.payload.buttons
       }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:

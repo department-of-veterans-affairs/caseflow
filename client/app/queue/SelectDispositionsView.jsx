@@ -81,7 +81,6 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  // todo: after editing an issue, footer buttons don't (re)appear
   getFooterButtons = () => [{
     displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
   }, {

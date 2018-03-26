@@ -7,7 +7,8 @@ import { withRouter } from 'react-router-dom';
 import {
   pushBreadcrumb,
   popBreadcrumb,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  setFooterButtons
 } from '../uiReducer/uiActions';
 
 import Breadcrumbs from './BreadcrumbManager';
@@ -116,6 +117,8 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     componentDidUpdate = (prevProps) => {
+      this.props.setFooterButtons(this.getFooterButtons());
+
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
           this.goToStep(this.props.nextStep);
@@ -130,7 +133,7 @@ export default function decisionViewBase(ComponentToWrap) {
       <AppSegment filledBackground>
         <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
       </AppSegment>
-      <DecisionViewFooter buttons={this.getFooterButtons()} />
+      <DecisionViewFooter />
     </React.Fragment>;
   }
 
@@ -140,7 +143,8 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
-    highlightInvalidFormItems
+    highlightInvalidFormItems,
+    setFooterButtons
   }, dispatch);
 
   return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));

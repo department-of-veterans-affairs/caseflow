@@ -45,6 +45,13 @@ export const resetBreadcrumbs = () => ({
   type: ACTIONS.RESET_BREADCRUMBS
 });
 
+export const setFooterButtons = (buttons) => ({
+  type: ACTIONS.SET_FOOTER_BUTTONS,
+  payload: {
+    buttons
+  }
+});
+
 export const saveSuccess = () => ({
   type: ACTIONS.SAVE_SUCCESS
 });
