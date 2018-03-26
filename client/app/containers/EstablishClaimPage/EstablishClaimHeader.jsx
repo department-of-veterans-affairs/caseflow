@@ -8,11 +8,14 @@ class EstablishClaimHeader extends React.Component {
   render() {
 
     const headerContainer = css({
-      marginTop: '15px'
+      marginTop: '16px'
     });
     const headerdivider = css({
       clear: 'left',
-      paddingTop: '10px'
+      paddingTop: '30px'
+    });
+    const clipboardButton = css({
+      marginTop: '4px'
     });
 
     let hasAppeal = this.props.task;
@@ -26,7 +29,7 @@ class EstablishClaimHeader extends React.Component {
           Veteran ID &nbsp;
 
         <CopyToClipboard text={hasAppeal.appeal.vbms_id}>
-          <button
+          <button {...clipboardButton}
             name="Copy Veteran ID"
             className={['cf-copy-to-clipboard cf-apppeal-id']}>
             {hasAppeal.appeal.vbms_id}
