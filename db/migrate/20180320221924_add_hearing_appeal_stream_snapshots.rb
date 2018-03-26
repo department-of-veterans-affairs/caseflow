@@ -1,4 +1,4 @@
-class HearingAppealStreamSnapshots < ActiveRecord::Migration
+class AddHearingAppealStreamSnapshots < ActiveRecord::Migration
   def change
     create_table :hearing_appeal_stream_snapshots, id: false do |t|
       t.integer  :hearing_id
