@@ -26,9 +26,7 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
-      return invalid_role_error unless ROLES.include?(params[:role])
-
-      tasks, appeals = WorkQueue.tasks_with_appeals(user, params[:role])
+      tasks, appeals = WorkQueue.tasks_with_appeals(user, role)
 
       render json: {
         tasks: json_tasks(tasks),
@@ -57,6 +55,11 @@ class QueueController < ApplicationController
 
   private
 
+  # Default to attorney for now
+  def role
+    @role ||= ROLES.include?(params[:role]) ? params[:role] : "Attorney"
+  end
+
   def user
     @user ||= User.find(params[:user_id])
   rescue ActiveRecord::RecordNotFound
@@ -77,15 +80,6 @@ class QueueController < ApplicationController
       "errors": [
         "title": "Error Completing Attorney Case Review",
         "detail": "Errors occured when completing attorney case review"
-      ]
-    }, status: 400
-  end
-
-  def invalid_role_error
-    render json: {
-      "errors": [
-        "title": "Role is invalid or missing",
-        "detail": "Role is required and must be one of the following: #{ROLES}"
       ]
     }, status: 400
   end
