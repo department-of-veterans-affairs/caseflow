@@ -15,8 +15,11 @@ class Hearing < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :user # the judge
   has_many :hearing_views
-  has_and_belongs_to_many :appeal_stream_snapshots, class_name: "Appeal",
-                                                    join_table: "hearing_appeal_stream_snapshots"
+  has_many :appeal_stream_snapshots
+
+  # this is used to cache appeal stream for hearings 
+  # when fetched intially.
+  has_many :appeals, through: :appeal_stream_snapshots
 
   def venue
     self.class.venues[venue_key]
@@ -56,8 +59,8 @@ class Hearing < ActiveRecord::Base
   end
 
   def active_appeal_streams
-    return appeal_stream_snapshots if appeal_stream_snapshots.any?
-    appeal_stream_snapshots << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
+    return appeals if appeal.any?
+    appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
   def update(hearing_hash)
