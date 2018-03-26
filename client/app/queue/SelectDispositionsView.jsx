@@ -71,7 +71,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     this.props.startEditingAppealIssue(vacolsId, issueId);
     this.props.updateEditingAppealIssue(attributes);
-    this.props.saveEditedAppealIssue(vacolsId, issueId);
+    this.props.saveEditedAppealIssue(vacolsId);
   }
 
   validateForm = () => {

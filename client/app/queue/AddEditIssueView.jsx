@@ -101,7 +101,7 @@ class AddEditIssueView extends React.Component {
   };
 
   goToNextStep = () => {
-    this.props.saveEditedAppealIssue(this.props.vacolsId, this.props.issueId);
+    this.props.saveEditedAppealIssue(this.props.vacolsId);
 
     return true;
   };
@@ -216,7 +216,7 @@ AddEditIssueView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
-  issueId: PropTypes.string.isRequired,
+  issueId: PropTypes.string,
   appeal: PropTypes.object,
   issue: PropTypes.object
 };

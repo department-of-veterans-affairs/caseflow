@@ -87,10 +87,9 @@ export const updateEditingAppealIssue = (attributes) => ({
   }
 });
 
-export const saveEditedAppealIssue = (appealId, issueId) => ({
+export const saveEditedAppealIssue = (appealId) => ({
   type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
   payload: {
-    appealId,
-    issueId
+    appealId
   }
 });

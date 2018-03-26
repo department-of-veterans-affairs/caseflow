@@ -142,11 +142,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
-    const { appealId, issueId } = action.payload;
+    const { appealId } = action.payload;
     const { pendingChanges: { editingIssue, appeals } } = state;
 
-    const issues = appeals[appealId].attributes.issues.
-      map((issue) => issue.vacols_sequence_id === Number(issueId) ? editingIssue : issue);
+    const issues = appeals[appealId].attributes.issues.map((issue) =>
+      issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
+        editingIssue : issue);
 
     // todo: if (idx === -1) { push } (#4477)
     return update(state, {
