@@ -105,7 +105,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   goToNextStep = () => {
     const {
-      task: { attributes: { task_id } },
+      task: { attributes: { task_id: taskId } },
       appeal: { attributes: { issues } },
       decision
     } = this.props;
@@ -122,7 +122,7 @@ class SubmitDecisionView extends React.PureComponent {
       }
     };
 
-    this.props.requestSave(`/queue/tasks/${task_id}/complete`, params);
+    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params);
   }
 
   getFooterButtons = () => [{
