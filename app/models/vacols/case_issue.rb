@@ -12,6 +12,21 @@ class VACOLS::CaseIssue < VACOLS::Record
     slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
   end
 
+  # If the user marks an issue with the 5 - Vacated disposition and checks
+  # 'Automatically create vacated issue for readjudication', when the user submits
+  # the draft decision, that issue should be duplicated on the appeal
+  def attributes_for_readjudication
+    {
+      program: issprog,
+      issue: isscode,
+      level_1: isslev1,
+      level_2: isslev2,
+      level_3: isslev3,
+      vacols_id: isskey,
+      note: issdesc
+    }
+  end
+
   # rubocop:disable MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,
