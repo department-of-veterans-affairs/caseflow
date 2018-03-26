@@ -47,17 +47,23 @@ class SelectDispositionsView extends React.PureComponent {
   });
 
   componentDidMount = () => {
-    const { appeal: { attributes: { issues } } } = this.props;
-
-    // Wipe any previously-set dispositions in the pending
-    // appeal's issues for validation purposes.
-    _.each(issues, (issue) =>
-      this.updateIssue(
-        issue.vacols_sequence_id,
-        { disposition: null }
-      ));
+    const {
+      appeal: { attributes: { issues } },
+      history: { location: { state } }
+    } = this.props;
 
     this.props.setDecisionOptions({ work_product: 'Decision' });
+
+    if (_.get(state, 'prev') === 'detail') {
+      // If starting a new checkout flow (coming from detail view),
+      // wipe any previously-set dispositions in the pending appeal's
+      // issues, for validation purposes.
+      _.each(issues, (issue) =>
+        this.updateIssue(
+          issue.vacols_sequence_id,
+          { disposition: null }
+        ));
+    }
   };
 
   updateIssue = (issueId, attributes) => {
@@ -75,6 +81,7 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
+  // todo: after editing an issue, footer buttons don't (re)appear
   getFooterButtons = () => [{
     displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
   }, {

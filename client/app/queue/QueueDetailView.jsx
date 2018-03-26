@@ -54,7 +54,7 @@ class QueueDetailView extends React.PureComponent {
     const dest = new URL(route, `${window.location.href}/`).
       pathname.replace('/queue', '');
 
-    this.props.history.push(dest);
+    this.props.history.push(dest, { prev: 'detail' });
   }
 
   changeRoute = (props) => {
