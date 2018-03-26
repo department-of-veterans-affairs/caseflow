@@ -14,11 +14,10 @@ class EstablishClaimHeader extends React.Component {
       clear: 'left',
       paddingTop: '10px'
     });
-
     let hasAppeal = this.props.task.appeal;
 
     return <section {...headerContainer}>
-      { hasAppeal && <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+    { hasAppeal && <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
         {hasAppeal.veteran_name} &nbsp;
       </div>
 
@@ -35,8 +34,10 @@ class EstablishClaimHeader extends React.Component {
         </CopyToClipboard>
 
       </div>
-      <div className="cf-help-divider" {...headerdivider}></div>
-      </React.Fragment> }
+
+      <div className="cf-help-divider" {...headerdivider}></div> 
+      </React.Fragment>
+    }
 
     </section>;
   }
