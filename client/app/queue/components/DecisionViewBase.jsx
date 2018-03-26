@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 
 import {
   pushBreadcrumb,
+  popBreadcrumb,
   highlightInvalidFormItems
 } from '../uiReducer/uiActions';
 
@@ -19,13 +20,22 @@ const getDisplayName = (WrappedComponent) => {
 
 export default function decisionViewBase(ComponentToWrap) {
   class WrappedComponent extends React.Component {
-    passthroughProps = () => _.omit(this.props, 'pushBreadcrumb');
     getWrappedComponentRef = (ref) => this.wrapped = ref;
 
     componentDidMount = () => {
       this.props.highlightInvalidFormItems(false);
 
-      if (this.wrapped.getBreadcrumb) {
+      if (!this.wrapped.getBreadcrumb) {
+        return;
+      }
+
+      const { state } = this.props.history.location;
+      // Here, state.crumb is the wrapped component's prevStep prop
+      // (defined in this.goToPrevStep). Step pages can have one of
+      // { breadcrumb, breadcrumb + prevStep, neither }
+      const appendBreadcrumb = _.get(state, 'crumb', true);
+
+      if (appendBreadcrumb) {
         const breadcrumb = this.wrapped.getBreadcrumb();
 
         if (breadcrumb && _.last(this.props.breadcrumbs).path !== breadcrumb.path) {
@@ -44,11 +54,11 @@ export default function decisionViewBase(ComponentToWrap) {
       const [backButton, nextButton] = getButtons();
 
       _.defaults(backButton, {
-        classNames: ['cf-btn-link'],
+        classNames: ['cf-btn-link', 'cf-prev-step'],
         callback: this.goToPrevStep
       });
       _.defaults(nextButton, {
-        classNames: ['cf-right-side'],
+        classNames: ['cf-right-side', 'cf-next-step'],
         callback: this.goToNextStep,
         disabled: this.props.savePending
       });
@@ -56,18 +66,27 @@ export default function decisionViewBase(ComponentToWrap) {
       return [backButton, nextButton];
     };
 
-    goToStep = (url) => {
-      // todo: allow passing state (confirmation message, trigger reloading tasks)
-      this.props.history.push(url);
+    goToStep = (url, state) => {
+      // todo: confirmation message, trigger reloading tasks
+      this.props.history.push(url, state);
       window.scrollTo(0, 0);
     };
 
     goToPrevStep = () => {
-      // todo: if no prevStep prop, return to path at last breadcrumb
+      const { breadcrumbs, prevStep } = this.props;
       const prevStepHook = _.get(this.wrapped, 'goToPrevStep');
 
       if (!prevStepHook || prevStepHook()) {
-        return this.goToStep(this.props.prevStep);
+        // If the wrapped component has no prevStep prop, return to the
+        // path of the previous page (the penultimate breadcrumb)
+        const prevStepCrumb = breadcrumbs[breadcrumbs.length - 2];
+        const prevStepUrl = prevStep || prevStepCrumb.path;
+
+        if (!prevStep) {
+          this.props.popBreadcrumb();
+        }
+
+        return this.goToStep(prevStepUrl, { crumb: prevStep });
       }
     };
 
@@ -109,7 +128,7 @@ export default function decisionViewBase(ComponentToWrap) {
     render = () => <React.Fragment>
       <Breadcrumbs />
       <AppSegment filledBackground>
-        <ComponentToWrap ref={this.getWrappedComponentRef} {...this.passthroughProps()} />
+        <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
       </AppSegment>
       <DecisionViewFooter buttons={this.getFooterButtons()} />
     </React.Fragment>;
@@ -120,6 +139,7 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'savePending', 'saveSuccessful');
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
+    popBreadcrumb,
     highlightInvalidFormItems
   }, dispatch);
 

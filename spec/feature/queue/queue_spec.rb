@@ -396,4 +396,33 @@ RSpec.feature "Queue" do
       end
     end
   end
+
+  context "pop breadcrumb" do
+    scenario "goes back from submit decision view" do
+      appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+      visit "/queue"
+
+      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      safe_click(".Select-control")
+      safe_click("div[id$='--option-0']")
+
+      issue_rows = page.find_all("tr[id^='table-row-']")
+      expect(issue_rows.length).to eq(appeal.issues.length)
+
+      issue_rows.each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-1']").click
+      end
+
+      safe_click("#finish-dispositions")
+
+      expect(page).to have_content("Submit Draft Decision for Review")
+      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions > Submit")
+
+      safe_click ".cf-prev-step"
+
+      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions")
+      expect(page).not_to have_content("Select Dispositions > Submit")
+    end
+  end
 end

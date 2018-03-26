@@ -66,7 +66,6 @@ class QueueApp extends React.PureComponent {
     return <SubmitDecisionView
       vacolsId={vacolsId}
       vbmsId={appeal.vbms_id}
-      prevStep={`/tasks/${vacolsId}`}
       nextStep="/" />;
   };
 

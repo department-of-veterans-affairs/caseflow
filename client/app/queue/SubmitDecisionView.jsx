@@ -257,7 +257,6 @@ class SubmitDecisionView extends React.PureComponent {
 SubmitDecisionView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   vbmsId: PropTypes.string.isRequired,
-  prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
