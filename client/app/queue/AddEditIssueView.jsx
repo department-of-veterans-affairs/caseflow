@@ -62,7 +62,7 @@ class AddEditIssueView extends React.Component {
 
   getIssueValue = (value) => _.get(this.props.issue, value, '');
 
-  getIssueLevels = () => {
+  getIssueLevelOptions = () => {
     const {
       issue: {
         program,
@@ -88,7 +88,7 @@ class AddEditIssueView extends React.Component {
     const { issue: { codes } } = this.props;
 
     const fieldsToCheck = _.clone(codes);
-    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevels();
+    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     _.each([issueLevels1, issueLevels2, issueLevels3], (level, idx) => {
       // if available options for level, confirm value is set in codes

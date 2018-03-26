@@ -24,7 +24,7 @@ export default class IssueListItem extends React.PureComponent {
   </td>;
 
   // eslint-disable-next-line max-statements
-  getIssueLevels = () => {
+  getIssueLevelValues = () => {
     const {
       issue: {
         program,
@@ -74,7 +74,7 @@ export default class IssueListItem extends React.PureComponent {
     return _.get(vacolsIssue, 'description');
   };
 
-  formatLevels = () => this.getIssueLevels().map((code, idx) =>
+  formatLevels = () => this.getIssueLevelValues().map((code, idx) =>
     <div key={idx} {...issueMarginTop}>
       <span key={code} {...issueLevelStyling}>
         {_.get(code, 'description', code)}
