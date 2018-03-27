@@ -19,37 +19,32 @@ class EstablishClaimHeader extends React.Component {
       marginTop: '4px'
     });
 
-    let hasAppeal = this.props.appeal;
+    const appeal = this.props.appeal;
 
     return <section {...headerContainer}>
-      { hasAppeal && <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
-        {hasAppeal.veteran_name} &nbsp;
+      <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+        {appeal.veteran_name} &nbsp;
       </div>
-
       <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
           Veteran ID &nbsp;
-
-        <CopyToClipboard text={hasAppeal.vbms_id}>
+        <CopyToClipboard text={appeal.vbms_id}>
           <button {...clipboardButton}
             name="Copy Veteran ID"
             className={['cf-copy-to-clipboard cf-apppeal-id']}>
-            {hasAppeal.vbms_id}
+            {appeal.vbms_id}
             <ClipboardIcon />
           </button>
         </CopyToClipboard>
-
       </div>
 
       <div className="cf-help-divider" {...headerdivider}></div>
       </React.Fragment>
-      }
     </section>;
   }
 }
 
 EstablishClaimHeader.propTypes = {
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object
 };
 
 export default EstablishClaimHeader;
-
