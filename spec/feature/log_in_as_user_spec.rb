@@ -16,7 +16,7 @@ RSpec.feature "Log in as User" do
     expect(page).not_to have_content("Log in as user")
   end
 
-  scenario "Global Admin is able to log in as user" do
+  fscenario "Global Admin is able to log in as user" do
     Functions.grant!("Global Admin", users: ["DSUSER"])
 
     visit "test/users"
@@ -25,7 +25,7 @@ RSpec.feature "Log in as User" do
     safe_click("#button-Log-in-as-user")
     expect(page).to have_content("ANNE MERICA (DSUSER)")
     expect(page).not_to have_content("Log in as user")
-    click_on "ANNE MERICA (DSUSER)"
+    click_on "ANNE MERICA"
     click_on "Sign out"
     expect(page).not_to have_content("ANNE MERICA")
   end
