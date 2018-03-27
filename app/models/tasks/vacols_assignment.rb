@@ -25,7 +25,9 @@ class VacolsAssignment
       added_by_css_id: case_assignment.added_by_css_id.presence || "",
       docket_date: case_assignment.docket_date,
       appeal_id: case_assignment.vacols_id,
-      user_id: user_id
+      user_id: user_id,
+      task_id: case_assignment.assigned_to_attorney_date ?
+               case_assignment.vacols_id + "-" + case_assignment.assigned_to_attorney_date.strftime("%Y-%m-%d") : nil
     )
   end
 end

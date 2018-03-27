@@ -3,7 +3,7 @@ class QueueController < ApplicationController
   before_action :verify_welcome_gate_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
 
-  ROLES = ["Judge", "Attorney"]
+  ROLES = %w[Judge Attorney].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -62,8 +62,6 @@ class QueueController < ApplicationController
 
   def user
     @user ||= User.find(params[:user_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: {}, status: 404
   end
 
   def verify_welcome_gate_access
