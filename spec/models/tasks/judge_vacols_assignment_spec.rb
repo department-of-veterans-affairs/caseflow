@@ -9,9 +9,10 @@ describe JudgeVacolsAssignment do
       let(:case_assignment) do
         OpenStruct.new(vacols_id: "1111",
                        date_due: 1.day.ago,
+                       assigned_to_attorney_date: 5.days.ago,
                        reassigned_to_judge_date: reassigned_to_judge_date,
                        docket_date: nil,
-                       date_added: 6.months.ago)
+                       assigned_to_judge_date: 6.months.ago)
       end
 
       context "when a case has been reaasigned back to judge" do
@@ -23,7 +24,7 @@ describe JudgeVacolsAssignment do
           expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 5.days.ago
           expect(subject.task_type).to eq "Review"
-          expect(subject.task_id).to eq "1111-2014-07-30"
+          expect(subject.task_id).to eq "1111-2015-01-25"
         end
       end
 
@@ -36,7 +37,7 @@ describe JudgeVacolsAssignment do
           expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 6.months.ago
           expect(subject.task_type).to eq "Assign"
-          expect(subject.task_id).to eq "1111-2014-07-30"
+          expect(subject.task_id).to eq "1111-2015-01-25"
         end
       end
     end
