@@ -7,6 +7,7 @@ import NavigationBar from '../../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 
+import EstablishClaimHeader from './EstablishClaimHeader';
 import EstablishClaim from './EstablishClaim';
 import EstablishClaimComplete from './EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimCanceled';
@@ -60,7 +61,7 @@ export default class EstablishClaimContainer extends React.Component {
       <React.Fragment>
         <NavigationBar
           dropdownUrls={this.props.dropdownUrls}
-          appName="Establish Claim"
+          appName="Dispatch"
           userDisplayName={this.props.userDisplayName}
           defaultUrl="/dispatch/establish-claim/"
           logoProps={{
@@ -76,13 +77,14 @@ export default class EstablishClaimContainer extends React.Component {
           />
         </div>}
         <AppFrame>
+          {this.props.task && <EstablishClaimHeader appeal={this.props.task.appeal} />}
           <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
             handleAlertClear={this.handleAlertClear}
           />
           <Footer
-            appName="Establish Claim"
+            appName="Dispatch"
             feedbackUrl={this.props.feedbackUrl}
             buildDate={this.props.buildDate} />
         </AppFrame>
