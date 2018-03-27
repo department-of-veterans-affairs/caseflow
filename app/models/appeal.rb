@@ -48,7 +48,7 @@ class Appeal < ActiveRecord::Base
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
-  attr_accessor :assigned_to_attorney_date, :assigned_to_location_date, :assigned_to_judge_date, :added_by_first_name,
+  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
                 :added_by_middle_name, :added_by_last_name, :added_by_css_id
 
   cache_attribute :aod do
