@@ -87,7 +87,7 @@ jobs:
           path: ~/project/tmp/capybara
 
       - store_artifacts:
-          name: Store capybara screenshots
+          name: Store testfile ordering
           path: ~/project/tmp/testfiles
 
       # Karma JavaScript tests are a deploy step because currently they are not
