@@ -168,13 +168,6 @@ class AddEditIssueView extends React.Component {
         })}
         errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
         value={type} />
-      <SearchableDropdown
-        name="Add Stay:"
-        styling={dropdownMarginTop}
-        placeholder="No current stays"
-        readOnly
-        onChange={({ value }) => this.updateIssue({ stay: value })}
-        value={this.getIssueValue('stay')} />
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
       <SearchableDropdown
         name="Level 1:"
