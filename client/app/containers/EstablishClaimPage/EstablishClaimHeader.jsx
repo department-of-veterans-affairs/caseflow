@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { css } from 'glamor';
@@ -18,21 +19,21 @@ class EstablishClaimHeader extends React.Component {
       marginTop: '4px'
     });
 
-    let hasAppeal = this.props.task;
+    let hasAppeal = this.props.appeal;
 
     return <section {...headerContainer}>
       { hasAppeal && <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
-        {hasAppeal.appeal.veteran_name} &nbsp;
+        {hasAppeal.veteran_name} &nbsp;
       </div>
 
       <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
           Veteran ID &nbsp;
 
-        <CopyToClipboard text={hasAppeal.appeal.vbms_id}>
+        <CopyToClipboard text={hasAppeal.vbms_id}>
           <button {...clipboardButton}
             name="Copy Veteran ID"
             className={['cf-copy-to-clipboard cf-apppeal-id']}>
-            {hasAppeal.appeal.vbms_id}
+            {hasAppeal.vbms_id}
             <ClipboardIcon />
           </button>
         </CopyToClipboard>
@@ -45,6 +46,10 @@ class EstablishClaimHeader extends React.Component {
     </section>;
   }
 }
+
+EstablishClaimHeader.propTypes = {
+  appeal: PropTypes.object.isRequired
+};
 
 export default EstablishClaimHeader;
 

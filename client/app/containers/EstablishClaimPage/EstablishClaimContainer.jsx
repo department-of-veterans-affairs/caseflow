@@ -79,7 +79,7 @@ export default class EstablishClaimContainer extends React.Component {
         </div>}
 
         <AppFrame>
-          <EstablishClaimHeader {...rest} />
+          <EstablishClaimHeader appeal={this.props.task.appeal}/>
           <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
@@ -98,3 +98,5 @@ export default class EstablishClaimContainer extends React.Component {
 EstablishClaimContainer.propTypes = {
   page: PropTypes.string.isRequired
 };
+
+
