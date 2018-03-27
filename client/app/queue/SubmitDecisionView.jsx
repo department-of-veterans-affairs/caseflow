@@ -113,10 +113,8 @@ class SubmitDecisionView extends React.PureComponent {
       data: {
         queue: {
           type: decision.type,
-          issues: _.map(issues, (issue) => ({
-            issue: issue.type,
-            ..._.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')
-          })),
+          issues: _.map(issues, (issue) =>
+            _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons', 'type')),
           ...decision.opts
         }
       }
