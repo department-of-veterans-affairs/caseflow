@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import { toggleCancelModal } from '../actions/common';
+import { REQUEST_STATE } from '../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,6 +12,7 @@ class CancelButton extends React.PureComponent {
       legacyStyling={false}
       linkStyling
       willNeverBeLoading
+      disabled={this.props.electionLoading || this.props.refilingLoading}
       onClick={this.props.toggleCancelModal}
     >
       Cancel intake
@@ -18,7 +20,10 @@ class CancelButton extends React.PureComponent {
 }
 
 const ConnectedCancelButton = connect(
-  null,
+  ({ rampElection, rampRefiling }) => ({
+    electionLoading: rampElection.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS,
+    refilingLoading: rampRefiling.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS
+  }),
   (dispatch) => bindActionCreators({
     toggleCancelModal
   }, dispatch)
