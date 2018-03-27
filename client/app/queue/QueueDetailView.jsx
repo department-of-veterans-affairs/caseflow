@@ -28,7 +28,7 @@ import {
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
-const dropdownMenuStyling = css({ minHeight: 0 });
+const dropdownStyling = css({ minHeight: 0 });
 
 const draftDecisionOptions = [{
   label: 'Decision Ready for Review',
@@ -115,7 +115,7 @@ class QueueDetailView extends React.PureComponent {
         options={draftDecisionOptions}
         onChange={this.changeRoute}
         hideLabel
-        dropdownMenuStyling={dropdownMenuStyling} />}
+        dropdownStyling={dropdownStyling} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />

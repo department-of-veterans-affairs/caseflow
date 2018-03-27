@@ -19,9 +19,7 @@ export const initialState = {
   /**
    * `pendingChanges` is an object of appeals/tasks that have been modified since
    * loading from the server. When a user starts editing an appeal/task, we copy
-   * it from `loadedQueue[obj.type]`. TBD: To commit the edits, we copy from
-   * `pendingChanges` back into `loadedQueue`. To discard changes, we delete
-   * from `pendingChanges`.
+   * it from `loadedQueue[obj.type]`.
    */
   pendingChanges: {
     appeals: {},

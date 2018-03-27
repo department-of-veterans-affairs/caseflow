@@ -97,6 +97,11 @@ class AddEditIssueView extends React.Component {
       }
     });
 
+    // todo
+    // return this.getIssueLevelOptions().every((level, idx) => {
+    //   return _.isEmpty(level) || (codes[idx + 2] in level) || codes[idx + 2]
+    // });
+
     return _.every(fieldsToCheck);
   };
 
@@ -146,59 +151,64 @@ class AddEditIssueView extends React.Component {
         onClick={_.noop}>
         Delete Issue
       </Button>
-      <SearchableDropdown
-        required
-        name="Program:"
-        styling={dropdownMarginTop}
-        placeholder="Select program"
-        options={this.renderIssueAttrs(programs)}
-        onChange={({ value }) => this.updateIssue({ program: value })}
-        errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
-        value={program} />
-      <SearchableDropdown
-        required
-        name="Issue:"
-        styling={dropdownMarginTop}
-        placeholder="Select issue"
-        options={this.renderIssueAttrs(issues)}
-        onChange={({ value }) => this.updateIssue({
-          type: value,
-          // unset issue levels for validation
-          codes: _.take(codes, 2)
-        })}
-        errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
-        value={type} />
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          required
+          name="Program:"
+          placeholder="Select program"
+          options={this.renderIssueAttrs(programs)}
+          onChange={({ value }) => this.updateIssue({ program: value })}
+          errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
+          value={program} />
+      </div>
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          required
+          name="Issue:"
+          placeholder="Select issue"
+          options={this.renderIssueAttrs(issues)}
+          onChange={({ value }) => this.updateIssue({
+            type: value,
+            // unset issue levels for validation
+            codes: _.take(codes, 2)
+          })}
+          errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
+          value={type} />
+      </div>
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
-      <SearchableDropdown
-        name="Level 1:"
-        styling={dropdownMarginTop}
-        placeholder="Select level 1"
-        options={this.renderIssueAttrs(issueLevels1)}
-        onChange={({ value }) => this.updateIssueCode(2, value)}
-        readOnly={_.isEmpty(issueLevels1)}
-        errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[2]')} />
-      <SearchableDropdown
-        name="Level 2:"
-        styling={dropdownMarginTop}
-        placeholder="Select level 2"
-        options={this.renderIssueAttrs(issueLevels2)}
-        onChange={({ value }) => this.updateIssueCode(3, value)}
-        readOnly={_.isEmpty(issueLevels2)}
-        errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[3]')} />
-      <SearchableDropdown
-        name="Level 3:"
-        styling={dropdownMarginTop}
-        placeholder="Select level 3"
-        options={this.renderIssueAttrs(issueLevels3)}
-        onChange={({ value }) => this.updateIssueCode(4, value)}
-        readOnly={_.isEmpty(issueLevels3)}
-        errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-        value={this.getIssueValue('codes[4]')} />
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          name="Level 1:"
+          placeholder="Select level 1"
+          options={this.renderIssueAttrs(issueLevels1)}
+          onChange={({ value }) => this.updateIssueCode(2, value)}
+          readOnly={_.isEmpty(issueLevels1)}
+          errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
+          value={this._.get(this.props.issue, 'codes[2]', '')} />
+      </div>
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          name="Level 2:"
+          placeholder="Select level 2"
+          options={this.renderIssueAttrs(issueLevels2)}
+          onChange={({ value }) => this.updateIssueCode(3, value)}
+          readOnly={_.isEmpty(issueLevels2)}
+          errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
+          value={this._.get(this.props.issue, 'codes[3]', '')} />
+      </div>
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          name="Level 3:"
+          placeholder="Select level 3"
+          options={this.renderIssueAttrs(issueLevels3)}
+          onChange={({ value }) => this.updateIssueCode(4, value)}
+          readOnly={_.isEmpty(issueLevels3)}
+          errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
+          value={this._.get(this.props.issue, 'codes[4]', '')} />
+      </div>
       <TextField
         name="Notes:"
-        value={this.getIssueValue('note')}
+        value={this._.get(this.props.issue, 'note', '')}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };
