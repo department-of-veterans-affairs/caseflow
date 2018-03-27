@@ -102,7 +102,7 @@ jobs:
       - deploy:
           name: Danger
           command: |
-            '[ ! -z $DANGER_GITHUB_API_TOKEN ] && bundle exec danger || echo "Skipping Danger for External Contributor"'
+            bundle exec danger
 
       - deploy:
           name: Lint
