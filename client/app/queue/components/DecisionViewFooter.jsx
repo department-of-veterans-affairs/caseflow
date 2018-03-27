@@ -4,7 +4,7 @@ import Button from '../../components/Button';
 import { fullWidth } from '../constants';
 import _ from 'lodash';
 
-class DecisionViewFooterManager extends React.Component {
+class DecisionViewFooter extends React.Component {
   render = () => <div {...fullWidth}>
     {this.props.footerButtons.map((button, idx) => <Button
       id={button.id}
@@ -20,4 +20,4 @@ class DecisionViewFooterManager extends React.Component {
 
 const mapStateToProps = (state) => _.pick(state.ui, 'footerButtons');
 
-export default connect(mapStateToProps)(DecisionViewFooterManager);
+export default connect(mapStateToProps)(DecisionViewFooter);

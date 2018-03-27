@@ -60,8 +60,6 @@ class AddEditIssueView extends React.Component {
     this.updateIssue({ codes });
   };
 
-  getIssueValue = (value) => _.get(this.props.issue, value, '');
-
   getIssueLevelOptions = () => {
     const {
       issue: {
@@ -72,8 +70,8 @@ class AddEditIssueView extends React.Component {
     } = this.props;
     const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
     const issueLevel1 = _.get(vacolsIssues, `${type}.levels`, {});
-    const issueLevel2 = _.get(issueLevel1, `${_.get(codes, 2)}.levels`, {});
-    const issueLevel3 = _.get(issueLevel2, `${_.get(codes, 3)}.levels`, {});
+    const issueLevel2 = _.get(issueLevel1, `${_.get(codes, 0)}.levels`, {});
+    const issueLevel3 = _.get(issueLevel2, `${_.get(codes, 1)}.levels`, {});
 
     return [issueLevel1, issueLevel2, issueLevel3];
   }
@@ -92,14 +90,14 @@ class AddEditIssueView extends React.Component {
 
     _.each([issueLevels1, issueLevels2, issueLevels3], (level, idx) => {
       // if available options for level, confirm value is set in codes
-      if (!_.isEmpty(level) && !(codes[idx + 2] in level)) {
-        fieldsToCheck.push(codes[idx + 2]);
+      if (!_.isEmpty(level) && !(codes[idx] in level)) {
+        fieldsToCheck.push(codes[idx]);
       }
     });
 
     // todo
     // return this.getIssueLevelOptions().every((level, idx) => {
-    //   return _.isEmpty(level) || (codes[idx + 2] in level) || codes[idx + 2]
+    //   return _.isEmpty(level) || (codes[idx] in level) || codes[idx]
     // });
 
     return _.every(fieldsToCheck);
@@ -135,9 +133,9 @@ class AddEditIssueView extends React.Component {
     const errorHighlightConditions = {
       program: highlight && !program,
       type: highlight && !type,
-      level1: highlight && !codes[2] && !_.isEmpty(issueLevels1),
-      level2: highlight && !codes[3] && !_.isEmpty(issueLevels2),
-      level3: highlight && !codes[4] && !_.isEmpty(issueLevels3)
+      level1: highlight && !codes[0] && !_.isEmpty(issueLevels1),
+      level2: highlight && !codes[1] && !_.isEmpty(issueLevels2),
+      level3: highlight && !codes[2] && !_.isEmpty(issueLevels3)
     };
 
     return <React.Fragment>
@@ -170,7 +168,7 @@ class AddEditIssueView extends React.Component {
           onChange={({ value }) => this.updateIssue({
             type: value,
             // unset issue levels for validation
-            codes: _.take(codes, 2)
+            codes: []
           })}
           errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
           value={type} />
@@ -181,34 +179,34 @@ class AddEditIssueView extends React.Component {
           name="Level 1:"
           placeholder="Select level 1"
           options={this.renderIssueAttrs(issueLevels1)}
-          onChange={({ value }) => this.updateIssueCode(2, value)}
+          onChange={({ value }) => this.updateIssueCode(0, value)}
           readOnly={_.isEmpty(issueLevels1)}
           errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
-          value={this._.get(this.props.issue, 'codes[2]', '')} />
+          value={_.get(this.props.issue, 'codes[0]', '')} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 2:"
           placeholder="Select level 2"
           options={this.renderIssueAttrs(issueLevels2)}
-          onChange={({ value }) => this.updateIssueCode(3, value)}
+          onChange={({ value }) => this.updateIssueCode(1, value)}
           readOnly={_.isEmpty(issueLevels2)}
           errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
-          value={this._.get(this.props.issue, 'codes[3]', '')} />
+          value={_.get(this.props.issue, 'codes[1]', '')} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 3:"
           placeholder="Select level 3"
           options={this.renderIssueAttrs(issueLevels3)}
-          onChange={({ value }) => this.updateIssueCode(4, value)}
+          onChange={({ value }) => this.updateIssueCode(2, value)}
           readOnly={_.isEmpty(issueLevels3)}
           errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-          value={this._.get(this.props.issue, 'codes[4]', '')} />
+          value={_.get(this.props.issue, 'codes[2]', '')} />
       </div>
       <TextField
         name="Notes:"
-        value={this._.get(this.props.issue, 'note', '')}
+        value={_.get(this.props.issue, 'note', '')}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };

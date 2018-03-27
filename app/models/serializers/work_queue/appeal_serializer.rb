@@ -11,7 +11,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         note: issue.note,
         id: issue.id,
         labels: issue.labels,
-        codes: issue.codes,
+        codes: issue.codes.slice(2..-1),
         description: issue.description
       }
     end

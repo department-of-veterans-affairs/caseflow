@@ -32,7 +32,6 @@ export default class IssueListItem extends React.PureComponent {
         levels,
         description,
         codes: [
-          , ,
           isslev1,
           isslev2,
           isslev3
@@ -60,6 +59,8 @@ export default class IssueListItem extends React.PureComponent {
       } else {
         issueLevels.push(_.last(description));
       }
+    } else {
+      issueLevels.push(_.last(description));
     }
 
     return issueLevels;
