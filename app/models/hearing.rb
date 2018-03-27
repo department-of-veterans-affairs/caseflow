@@ -59,7 +59,7 @@ class Hearing < ActiveRecord::Base
   end
 
   def active_appeal_streams
-    return appeals if appeal.any?
+    return appeals if appeals.any?
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
