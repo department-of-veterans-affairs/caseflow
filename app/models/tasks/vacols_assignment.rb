@@ -14,6 +14,10 @@ class VacolsAssignment
   end
 
   def self.from_vacols(case_assignment, user_id)
+    task_id = if case_assignment.assigned_to_attorney_date
+      case_assignment.vacols_id + "-" + case_assignment.assigned_to_attorney_date.strftime("%Y-%m-%d")
+    end
+
     new(
       due_on: case_assignment.date_due,
       docket_name: "legacy",
@@ -26,8 +30,7 @@ class VacolsAssignment
       docket_date: case_assignment.docket_date,
       appeal_id: case_assignment.vacols_id,
       user_id: user_id,
-      task_id: case_assignment.assigned_to_attorney_date ?
-               case_assignment.vacols_id + "-" + case_assignment.assigned_to_attorney_date.strftime("%Y-%m-%d") : nil
+      task_id: task_id
     )
   end
 end
