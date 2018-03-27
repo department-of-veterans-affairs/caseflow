@@ -468,7 +468,7 @@ class AppealRepository
     result = MetricsService.record("VACOLS: latest_docket_month",
                                    name: "latest_docket_month",
                                    service: :vacols) do
-      VACOLS::CaseDocket.docket_date_of_nth_appeal_in_case_storage(3500)
+      VACOLS::CaseDocket.docket_date_of_nth_appeal_in_case_storage(7000)
     end
 
     result.beginning_of_month
