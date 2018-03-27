@@ -64,6 +64,7 @@ jobs:
             mkdir -p ~/test-results/mocha
             pushd client
             testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
+            echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
             node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}
 
       - run:
@@ -71,6 +72,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
+            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
       - store_test_results:
@@ -83,6 +85,10 @@ jobs:
       - store_artifacts:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
+
+      - store_artifacts:
+          name: Store capybara screenshots
+          path: ~/project/tmp/testfiles
 
       # Karma JavaScript tests are a deploy step because currently they are not
       # able to be run in parallel.
