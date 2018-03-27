@@ -5,7 +5,7 @@ RSpec.feature "Intake Stats Dashboard" do
     Timecop.freeze(Time.utc(2015, 1, 7, 17, 55, 0, rand(1000)))
   end
 
-  scenario "Switching tab intervals", :focus => true do
+  scenario "Switching tab intervals" do
     User.authenticate!(roles: ["Admin Intake"])
 
     RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)

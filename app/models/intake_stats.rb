@@ -76,15 +76,18 @@ class IntakeStats < Caseflow::Stats
     end,
 
     hlr_elections_returned_by_notice_date: lambda do |range|
-      RampElection.completed.where(notice_date: offset_range(range)).where(option_selected: "higher_level_review").count
+      RampElection.completed.where(notice_date: offset_range(range))
+        .where(option_selected: "higher_level_review").count
     end,
 
     hlric_elections_returned_by_notice_date: lambda do |range|
-      RampElection.completed.where(notice_date: offset_range(range)).where(option_selected: "higher_level_review_with_hearing").count
+      RampElection.completed.where(notice_date: offset_range(range))
+        .where(option_selected: "higher_level_review_with_hearing").count
     end,
 
     sc_elections_returned_by_notice_date: lambda do |range|
-      RampElection.completed.where(notice_date: offset_range(range)).where(option_selected: "supplemental_claim").count
+      RampElection.completed.where(notice_date: offset_range(range))
+        .where(option_selected: "supplemental_claim").count
     end,
 
     # Number of opt-in elections received by month and FYTD
@@ -93,15 +96,18 @@ class IntakeStats < Caseflow::Stats
     end,
 
     hlr_elections_successfully_received: lambda do |range|
-      RampElection.completed.where(receipt_date: offset_range(range)).where(option_selected: "higher_level_review").count
+      RampElection.completed.where(receipt_date: offset_range(range))
+        .where(option_selected: "higher_level_review").count
     end,
 
     hlric_elections_successfully_received: lambda do |range|
-      RampElection.completed.where(receipt_date: offset_range(range)).where(option_selected: "higher_level_review_with_hearing").count
+      RampElection.completed.where(receipt_date: offset_range(range))
+        .where(option_selected: "higher_level_review_with_hearing").count
     end,
 
     sc_elections_successfully_received: lambda do |range|
-      RampElection.completed.where(receipt_date: offset_range(range)).where(option_selected: "supplemental_claim").count
+      RampElection.completed.where(receipt_date: offset_range(range))
+        .where(option_selected: "supplemental_claim").count
     end,
 
     # Average days to respond to RAMP election notice
