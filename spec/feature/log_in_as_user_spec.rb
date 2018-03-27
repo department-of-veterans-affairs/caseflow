@@ -16,7 +16,7 @@ RSpec.feature "Log in as User" do
     expect(page).not_to have_content("Log in as user")
   end
 
-  fscenario "Global Admin is able to log in as user" do
+  scenario "Global Admin is able to log in as user" do
     Functions.grant!("Global Admin", users: ["DSUSER"])
 
     visit "test/users"
