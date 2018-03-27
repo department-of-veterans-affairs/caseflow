@@ -87,6 +87,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.SELECT_DOCKETS_PAGE_TAB_INDEX:
+    return update(state, {
+      docketsTabIndex: { $set: action.payload.tabIndex }
+    });
+
   case Constants.FETCHING_WORKSHEET: {
     return update(state, {
       fetchingWorksheet: { $set: true }

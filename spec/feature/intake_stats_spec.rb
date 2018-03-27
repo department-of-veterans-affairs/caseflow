@@ -54,6 +54,37 @@ RSpec.feature "Intake Stats Dashboard" do
       user: current_user
     )
 
+    [:supplemental_claim, :higher_level_review, :higher_level_review_with_hearing, :appeal].each do |type|
+      completed_ramp_election = RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 2.years.ago,
+        receipt_date: 1.year.ago,
+        option_selected: :supplemental_claim,
+        end_product_reference_id: "123"
+      )
+
+      RampRefiling.create!(
+        ramp_election: completed_ramp_election,
+        veteran_file_number: "64205555",
+        receipt_date: 45.minutes.ago,
+        option_selected: type,
+        end_product_reference_id: ((type == :appeal) ? nil : "123"),
+        appeal_docket: type == :appeal && :direct_review,
+        established_at: Time.zone.now
+      )
+    end
+
+    # Add an "in progress" refiling to make sure it doesn't show up
+    RampRefiling.create!(
+      ramp_election: RampElection.last,
+      veteran_file_number: "64205555",
+      receipt_date: 45.minutes.ago,
+      option_selected: :appeal,
+      end_product_reference_id: nil,
+      appeal_docket: :direct_review,
+      established_at: nil
+    )
+
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
@@ -73,6 +104,13 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-processed")).to have_content("Ineligible - Ineligible Appeals 0")
     expect(find("#ramp-elections-processed")).to have_content("Ineligible - No Appeals 1")
     expect(find("#ramp-elections-processed")).to have_content("Ineligible - Duplicate 0")
+
+    expect(find("#ramp-refilings-received")).to have_content("RAMP Refilings Received for January (so far)")
+    expect(find("#ramp-refilings-received")).to have_content("Total 4")
+    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews 1")
+    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews with Hearing 1")
+    expect(find("#ramp-refilings-received")).to have_content("Supplemental Claims 1")
+    expect(find("#ramp-refilings-received")).to have_content("Appeals 1")
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
 

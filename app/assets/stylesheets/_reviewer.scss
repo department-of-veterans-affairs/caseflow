@@ -21,18 +21,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
-.cf-nav-full-screen {
-  padding: 10px 30px;
-
-  .usa-grid-full {
-    max-width: none;
-  }
-
-  .cf-nav-dropdown {
-    right: 30px;
-  }
-}
-
 .claim-detail-container {
 
   .claim-detail-type-info {
@@ -70,6 +58,7 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
 
   &.hidden-sidebar {
     right: 0;
+    width: 100%;
   }
 }
 
@@ -118,7 +107,6 @@ svg[aria-hidden=true],
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
-  width: 380px;
   top: 0;
   bottom: 0;
   right: 0;
@@ -129,6 +117,7 @@ svg[aria-hidden=true],
 
   &.hidden-sidebar {
     width: 0;
+    min-width: 0;
   }
 
   .usa-accordion-content {
@@ -182,6 +171,8 @@ svg[aria-hidden=true],
   color: $color-white;
   font-size: 15px;
   max-width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .cf-pdf-header {
@@ -195,31 +186,10 @@ svg[aria-hidden=true],
     display: flex;
     justify-content: center;
   }
-
-  .cf-pdf-buttons {
-    &-left {
-      min-height: 1px;
-      text-align: left;
-    }
-
-    &-right {
-      text-align: right;
-    }
-
-    &-center {
-      text-align: center;
-    }
-  }
 }
 
 .cf-pdf-footer {
-  position: absolute;
-  opacity: 1;
-  bottom: 0;
   padding: 0 20px;
-
-  display: flex;
-  align-items: center;
 
   button {
     display: flex;
@@ -240,7 +210,7 @@ svg[aria-hidden=true],
   // additional margin to make it 40.
   $left-outer-margin: 12px;
   $right-outer-margin: 20px;
-  $footer-button-width: 100px;
+  $footer-button-width: max-content;
 
   .cf-pdf-footer-buttons-right {
     width: $footer-button-width;
@@ -554,11 +524,6 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.cf-pdf-open-menu {
-  flex: 0 0 auto;
-  margin: 0 17px;
 }
 
 .cf-pdf-doc-type-button-container {

@@ -8,11 +8,16 @@ jobs:
       - image: circleci/ruby:2.2-browsers
         environment:
           - RAILS_ENV: test
+          - NODE_ENV: test
+          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
           - BUNDLE_PATH: vendor/bundle
+          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
+          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+          - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
-      # it via environment variables.
+      # configure it via environment variables.
       - image: circleci/postgres:10.2
         environment:
           - POSTGRES_USER: root
@@ -53,9 +58,16 @@ jobs:
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+      - run:
+          name: Mocha
+          command: |
+            mkdir -p ~/test-results/mocha
+            pushd client
+            testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
+            node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}
 
       - run:
-          name: Tests
+          name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
@@ -63,3 +75,41 @@ jobs:
 
       - store_test_results:
           path: ~/test-results
+
+      - store_artifacts:
+          name: Store code coverage
+          path: ~/coverage
+
+      - store_artifacts:
+          name: Store capybara screenshots
+          path: ~/project/tmp/capybara
+
+      # Karma JavaScript tests are a deploy step because currently they are not
+      # able to be run in parallel.
+      - deploy:
+          name: Karma
+          command: |
+            mkdir -p ~/karma-test-results/karma
+            pushd client
+            node_modules/.bin/karma start --reporters junit
+
+      # Karma gets its own test results directory because otherwise
+      # we would upload the test results directory twice, doubling
+      # the perceived test count.
+      - store_test_results:
+          path: ~/karma-test-results
+
+      - deploy:
+          name: Lint
+          command: |
+            bundle exec rake lint
+
+      - deploy:
+          name: Security
+          command: |
+            bundle exec rake security_caseflow
+
+      - deploy:
+          name: Verify code coverage
+          command: |
+            bundle exec rake ci:circleci_verify_code_coverage

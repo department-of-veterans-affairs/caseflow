@@ -327,13 +327,14 @@ class Fakes::AppealRepository
 
   # Intake demo file number guide:
   #
-  # 05555555 - 95555555 are valid file numbers for RampElections
+  # 15555555 - 95555555 are valid file numbers for RampElections
   # 85555555 will not have contentions for ramp refiling
   # 11555555 has an appeal ineligible for ramp
   # 12555555 has no active appeals
   # 13555555 has no ramp election
   # 14555555 has no compensation issues
   # 16555555 throws a sensitivity error
+  # 19555555 throws a sex error
   # rubocop:disable Metrics/MethodLength
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
@@ -405,6 +406,13 @@ class Fakes::AppealRepository
     Generators::Appeal.build(
       vbms_id: "16555555C",
       inaccessible: true
+    )
+
+    veteran = Generators::Veteran.build(file_number: "19555555", sex: nil, ssn: nil)
+    Generators::Appeal.build(
+      vbms_id: "19555555C",
+      veteran: veteran,
+      issues: (1..3).map { Generators::Issue.build }
     )
   end
   # rubocop:enable Metrics/MethodLength

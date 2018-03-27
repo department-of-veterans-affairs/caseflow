@@ -21,7 +21,7 @@ import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotate
 import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
-import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
+import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -506,7 +506,7 @@ const mapStateToProps = (state, props) => {
   return {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchText: searchText(state, props),
+    searchText: getSearchTerm(state, props),
     ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],

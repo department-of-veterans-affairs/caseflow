@@ -33,7 +33,7 @@ describe AppealEvent do
     subject { appeal_event.issue_disposition = disposition }
 
     context "when disposition is a field grant" do
-      let(:disposition) { "Advance Allowed in Field" }
+      let(:disposition) { :advance_allowed_in_field }
 
       it "sets type" do
         subject
