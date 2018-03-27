@@ -260,7 +260,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
-        safe_click("button.cf-right-side")
+        safe_click(".cf-next-step")
 
         expect(page).to have_content("This field is required")
         expect(page.find_all(".usa-input-error-message").length).to eq(3)
@@ -328,7 +328,7 @@ RSpec.feature "Queue" do
         end
         fill_in "Notes:", with: "this is the note"
 
-        safe_click(".cf-right-side")
+        safe_click(".cf-next-step")
 
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
@@ -357,7 +357,7 @@ RSpec.feature "Queue" do
         safe_click("div[id$='--option-1']")
         expect(page).to have_content("Andrew Mackenzie")
 
-        safe_click("button.cf-right-side")
+        safe_click(".cf-next-step")
         sleep 1
         expect(page.current_path).to eq("/queue/")
       end
@@ -390,7 +390,7 @@ RSpec.feature "Queue" do
         safe_click "div[id$='--option-1']"
         expect(page).to have_content("Andrew Mackenzie")
 
-        safe_click "button.cf-right-side"
+        safe_click ".cf-next-step"
         sleep 1
         expect(page.current_path).to eq("/queue/")
       end
