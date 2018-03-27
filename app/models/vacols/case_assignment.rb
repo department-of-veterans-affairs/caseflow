@@ -55,7 +55,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
-             "brieff.bfdloout as assigned_to_judge_date",
+             "brieff.bfdloout as assigned_to_location_date",
              "decass.deassign as assigned_to_attorney_date",
              "decass.dereceive as reassigned_to_judge_date",
              "decass.decomp as date_completed",

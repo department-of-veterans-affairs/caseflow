@@ -12,7 +12,7 @@ describe JudgeVacolsAssignment do
                        assigned_to_attorney_date: 5.days.ago,
                        reassigned_to_judge_date: reassigned_to_judge_date,
                        docket_date: nil,
-                       assigned_to_judge_date: 6.months.ago)
+                       assigned_to_location_date: 6.months.ago)
       end
 
       context "when a case has been reaasigned back to judge" do

@@ -16,7 +16,7 @@ class Fakes::QueueRepository
         docket_date: record.docket_date,
         assigned_to_attorney_date: record.assigned_to_attorney_date,
         reassigned_to_judge_date: record.reassigned_to_judge_date,
-        assigned_to_judge_date: record.assigned_to_judge_date,
+        assigned_to_location_date: record.assigned_to_location_date,
         date_due: record.date_due,
         docket_number: record.docket_number,
         added_by_first_name: record.added_by_first_name,
