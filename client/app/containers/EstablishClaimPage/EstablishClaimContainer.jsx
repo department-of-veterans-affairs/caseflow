@@ -46,7 +46,6 @@ export default class EstablishClaimContainer extends React.Component {
   }
 
   render() {
-
     let {
       page,
       ...rest
@@ -77,9 +76,9 @@ export default class EstablishClaimContainer extends React.Component {
             handleClear={this.handleAlertClear}
           />
         </div>}
-
         <AppFrame>
-          <EstablishClaimHeader appeal={this.props.task.appeal}/>
+          <EstablishClaimHeader appeal={this.props.task.appeal
+          } />
           <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
@@ -98,5 +97,3 @@ export default class EstablishClaimContainer extends React.Component {
 EstablishClaimContainer.propTypes = {
   page: PropTypes.string.isRequired
 };
-
-
