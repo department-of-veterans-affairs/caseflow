@@ -120,7 +120,7 @@ class IntakeStats < Caseflow::Stats
     end,
 
     average_election_control_time: lambda do |range|
-      elections = RampElection.completed.where(receipt_date: offset_range(range)).where.not(established_at: nil)
+      elections = RampElection.established.where(receipt_date: offset_range(range))
       average(elections.map(&:control_time))
     end,
 
