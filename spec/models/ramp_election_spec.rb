@@ -153,6 +153,22 @@ describe RampElection do
     end
   end
 
+  context "#active?" do
+    subject { ramp_election.active? }
+
+    context "when there is an end product reference" do
+      let(:end_product_reference_id) { 1 }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when there is not an end product reference" do
+      let(:end_product_reference_id) { nil }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#established_end_product" do
     subject { ramp_election.established_end_product }
 
