@@ -65,6 +65,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.deadusr as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadusr as added_by",
+             "decass.deadtim as created_at",
              "folder.tinum as docket_number")
         .joins(<<-SQL)
           LEFT JOIN decass
