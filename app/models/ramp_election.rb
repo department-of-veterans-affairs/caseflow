@@ -10,6 +10,10 @@ class RampElection < RampReview
     where.not(end_product_reference_id: nil)
   end
 
+  def self.established
+    where.not(established_at: nil)
+  end
+
   def completed?
     !!end_product_reference_id
   end
@@ -22,6 +26,10 @@ class RampElection < RampReview
 
   def response_time
     notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
+  end
+
+  def control_time
+    receipt_date && established_at && (established_at.beginning_of_day - receipt_date.in_time_zone)
   end
 
   def established_end_product

@@ -119,6 +119,11 @@ class IntakeStats < Caseflow::Stats
       average(response_times)
     end,
 
+    average_election_control_time: lambda do |range|
+      elections = RampElection.established.where(receipt_date: offset_range(range))
+      average(elections.map(&:control_time))
+    end,
+
     total_completed: lambda do |range|
       intake_series_statuses(range).count
     end,
