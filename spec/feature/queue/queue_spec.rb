@@ -129,7 +129,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select(&:added_by_first_name).first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         added_by_name = FullName.new(
           appeal.added_by_first_name,
@@ -145,7 +145,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select { |a| a.added_by_first_name.nil? }.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
@@ -159,7 +159,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Hearing preference: #{hearing_preference}")
@@ -183,7 +183,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         expect(page).not_to have_content("Hearing preference")
 
@@ -199,7 +199,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Veteran Details")
@@ -215,7 +215,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Appellant Details")
@@ -233,7 +233,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
@@ -250,7 +250,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
@@ -260,7 +260,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
-        safe_click(".cf-next-step")
+        click_on "Submit"
 
         expect(page).to have_content("This field is required")
         expect(page.find_all(".usa-input-error-message").length).to eq(3)
@@ -270,7 +270,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-0']")
 
@@ -285,7 +285,7 @@ RSpec.feature "Queue" do
           row.find("div[id$='--option-1']").click
         end
 
-        safe_click("#finish-dispositions")
+        click_on "Finish dispositions"
 
         table_rows[1..-1].each do |row|
           dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
@@ -298,7 +298,7 @@ RSpec.feature "Queue" do
           row.find("div[id$='--option-1']").click
         end
 
-        safe_click("#finish-dispositions")
+        click_on "Finish dispositions"
 
         expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
       end
@@ -307,7 +307,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-0']")
 
@@ -328,7 +328,7 @@ RSpec.feature "Queue" do
         end
         fill_in "Notes:", with: "this is the note"
 
-        safe_click(".cf-next-step")
+        click_on "Save"
 
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
@@ -341,7 +341,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
@@ -357,7 +357,7 @@ RSpec.feature "Queue" do
         safe_click("div[id$='--option-1']")
         expect(page).to have_content("Andrew Mackenzie")
 
-        safe_click(".cf-next-step")
+        click_on "Submit"
         sleep 1
         expect(page.current_path).to eq("/queue/")
       end
@@ -366,7 +366,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-0']")
 
@@ -378,7 +378,7 @@ RSpec.feature "Queue" do
           row.find("div[id$='--option-1']").click
         end
 
-        safe_click("#finish-dispositions")
+        click_on "Finish dispositions"
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
@@ -390,7 +390,7 @@ RSpec.feature "Queue" do
         safe_click "div[id$='--option-1']"
         expect(page).to have_content("Andrew Mackenzie")
 
-        safe_click ".cf-next-step"
+        click_on "Submit"
         sleep 1
         expect(page.current_path).to eq("/queue/")
       end
@@ -402,7 +402,7 @@ RSpec.feature "Queue" do
       appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
       visit "/queue"
 
-      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
       safe_click(".Select-control")
       safe_click("div[id$='--option-0']")
 
@@ -414,12 +414,12 @@ RSpec.feature "Queue" do
         row.find("div[id$='--option-1']").click
       end
 
-      safe_click("#finish-dispositions")
+      click_on "Finish dispositions"
 
       expect(page).to have_content("Submit Draft Decision for Review")
       expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions > Submit")
 
-      safe_click ".cf-prev-step"
+      click_on "< Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
       expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions")
       expect(page).not_to have_content("Select Dispositions > Submit")
