@@ -7,6 +7,7 @@ import NavigationBar from '../../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 
+import EstablishClaimHeader from './EstablishClaimHeader';
 import EstablishClaim from './EstablishClaim';
 import EstablishClaimComplete from './EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimCanceled';
@@ -76,6 +77,7 @@ export default class EstablishClaimContainer extends React.Component {
           />
         </div>}
         <AppFrame>
+          {this.props.task && <EstablishClaimHeader appeal={this.props.task.appeal} />}
           <PageComponent
             {...rest}
             handleAlert={this.handleAlert}
