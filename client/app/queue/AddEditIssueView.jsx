@@ -51,11 +51,13 @@ class AddEditIssueView extends React.Component {
   };
 
   updateIssueCode = (codeIdx, code) => {
-    const codes = _.clone(this.props.issue.codes);
+    let {
+      issue: { codes }
+    } = this.props;
 
     // remove more-specific issue levels on change
     // i.e. on change Issue, remove all Levels
-    codes.splice(codeIdx, codes.length - codeIdx, code);
+    codes = [...codes.slice(codes.length - codeIdx), code];
 
     this.updateIssue({ codes });
   };
