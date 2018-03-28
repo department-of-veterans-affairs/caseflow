@@ -4,9 +4,14 @@ RSpec.feature "Login" do
   let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
   before do
+    @old_session = Fakes::AuthenticationService.user_session
     Fakes::AuthenticationService.user_session = {
       "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405", "email" => "test@example.com"
     }
+  end
+
+  after do
+    Fakes::AuthenticationService.user_session = @old_session
   end
 
   after(:all) do
