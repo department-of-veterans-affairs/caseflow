@@ -361,11 +361,12 @@ ActiveRecord::Schema.define(version: 20180326153826) do
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
   create_table "ramp_elections", force: :cascade do |t|
-    t.string "veteran_file_number",      null: false
-    t.date   "notice_date"
-    t.date   "receipt_date"
-    t.string "option_selected"
-    t.string "end_product_reference_id"
+    t.string   "veteran_file_number",      null: false
+    t.date     "notice_date"
+    t.date     "receipt_date"
+    t.string   "option_selected"
+    t.string   "end_product_reference_id"
+    t.datetime "established_at"
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
