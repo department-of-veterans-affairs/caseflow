@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Style Guide" do
+  # :nocov:
   # The default Capybara driver would timeout on CircleCI pretty heavily.
   # The headless driver gets us the same result, but much faster
   # and more reliably, so we use it for this spec.
@@ -14,4 +15,5 @@ RSpec.feature "Style Guide" do
     visit "/styleguide"
     expect(page).to have_content("Caseflow Commons")
   end
+  # :nocov:
 end
