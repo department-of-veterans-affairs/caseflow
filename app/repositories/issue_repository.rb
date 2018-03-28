@@ -17,7 +17,12 @@ class IssueRepository
     MetricsService.record("VACOLS: update_vacols_issue! for vacols ID #{vacols_id} and sequence: #{vacols_sequence_id}",
                           service: :vacols,
                           name: "IssueRepository.update_vacols_issue!") do
-      validate_issue_presence!(vacols_id, vacols_sequence_id)
+      record = validate_issue_presence!(vacols_id, vacols_sequence_id)
+
+      perform_actions_if_disposition_changes(
+        record,
+        issue_attrs.merge(vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
+      )
 
       issue_attrs = IssueMapper.rename_and_validate_vacols_attrs(
         action: :update,
@@ -45,6 +50,7 @@ class IssueRepository
       msg = "Cannot find issue with vacols ID: #{vacols_id} and sequence ID: #{vacols_sequence_id} in VACOLS"
       fail Caseflow::Error::IssueRepositoryError, msg
     end
+    record
   end
 
   def self.find_issue_reference(program:, issue:, level_1:, level_2:, level_3:)
@@ -53,5 +59,28 @@ class IssueRepository
       .where("? is null or LEV2_CODE = '##' or LEV2_CODE = ?", level_2, level_2)
       .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
   end
+
+  def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+    VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+  end
   # :nocov:
+
+  def self.perform_actions_if_disposition_changes(record, issue_attrs)
+    case issue_attrs[:disposition]
+    when "Remanded"
+      if record.issdc != "3"
+        remand_reasons = RemandReasonMapper.convert_to_vacols_format(
+          issue_attrs[:vacols_user_id],
+          issue_attrs[:remand_reasons]
+        )
+        create_remand_reasons!(issue_attrs[:vacols_id], issue_attrs[:vacols_sequence_id], remand_reasons)
+      end
+    when "Vacated"
+      if record.issdc != "5" && issue_attrs[:readjudication]
+        create_vacols_issue!(issue_attrs: record.attributes_for_readjudication.merge(
+          vacols_user_id: issue_attrs[:vacols_user_id]
+        ))
+      end
+    end
+  end
 end

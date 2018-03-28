@@ -38,9 +38,11 @@ class AttorneyCaseReview < ActiveRecord::Base
         vacols_id: vacols_id,
         vacols_sequence_id: issue_attrs[:vacols_sequence_id],
         issue_attrs: {
+          vacols_user_id: attorney.vacols_uniq_id,
           disposition: issue_attrs[:disposition],
           disposition_date: VacolsHelper.local_date_with_utc_timezone,
-          vacols_user_id: attorney.vacols_uniq_id
+          readjudication: issue_attrs[:readjudication],
+          remand_reasons: issue_attrs[:remand_reasons]
         }
       )
     end
