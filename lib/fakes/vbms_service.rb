@@ -19,6 +19,8 @@ class VBMSCaseflowLogger
 end
 
 class Fakes::VBMSService
+  HOLD_REQUEST_TIMEOUT_SECONDS = 2
+
   class << self
     attr_accessor :document_records
     attr_accessor :end_product_claim_id
@@ -39,6 +41,14 @@ class Fakes::VBMSService
       row_hash = row.to_h
       @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
     end
+  end
+
+  def self.hold_request!
+    @hold_request = true
+  end
+
+  def self.resume_request!
+    @hold_request = false
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -99,6 +109,11 @@ class Fakes::VBMSService
   end
 
   def self.establish_claim!(claim_hash:, veteran_hash:)
+    (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
+      break unless @hold_request
+      sleep 0.01
+    end
+
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")

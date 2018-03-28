@@ -391,9 +391,15 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("You must confirm you've completed the steps")
         expect(page).to_not have_content("Intake completed")
-
+        expect(page).to have_button("Cancel intake", disabled: false)
         click_label("confirm-finish")
+
+        Fakes::VBMSService.hold_request!
         safe_click "button#button-submit-review"
+
+        expect(page).to have_button("Cancel intake", disabled: true)
+
+        Fakes::VBMSService.resume_request!
 
         expect(page).to have_content("Intake completed")
         expect(page).to have_content(
@@ -719,7 +725,12 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "Left knee rating increase").click
         find("label", text: "The veteran's form lists at least one ineligible contention").click
 
+        Fakes::VBMSService.hold_request!
+        expect(page).to have_button("Cancel intake", disabled: false)
         safe_click "#finish-intake"
+        expect(page).to have_button("Cancel intake", disabled: true)
+
+        Fakes::VBMSService.resume_request!
 
         expect(page).to have_content("Intake completed")
 
