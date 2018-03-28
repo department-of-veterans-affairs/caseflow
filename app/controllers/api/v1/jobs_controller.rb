@@ -9,7 +9,8 @@ class Api::V1::JobsController < Api::ApplicationController
     "take_docket_snapshot" => TakeDocketSnapshotJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
-    "out_of_service_reminder" => OutOfServiceReminderJob
+    "out_of_service_reminder" => OutOfServiceReminderJob,
+    "calculate_dispatch_stats_job" => CalculateDispatchStatsJob
   }.freeze
 
   def create
