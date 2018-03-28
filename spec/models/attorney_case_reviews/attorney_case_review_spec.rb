@@ -40,7 +40,7 @@ describe AttorneyCaseReview do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
-          date_assigned: "2013-12-06".to_date,
+          created_in_vacols_date: "2013-12-06".to_date,
           judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "OMO - IME",
@@ -81,7 +81,7 @@ describe AttorneyCaseReview do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
-          date_assigned: "2013-12-06".to_date,
+          created_in_vacols_date: "2013-12-06".to_date,
           judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "Decision",
