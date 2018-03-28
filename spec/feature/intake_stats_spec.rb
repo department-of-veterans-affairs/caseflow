@@ -100,7 +100,6 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
-
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
