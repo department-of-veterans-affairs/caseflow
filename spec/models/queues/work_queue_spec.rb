@@ -10,6 +10,7 @@ describe WorkQueue do
           vacols_id: "2222",
           assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
           assigned_to_location_date: "2013-05-15 00:00:00 UTC".to_datetime,
+          created_at: "2013-05-15 00:00:00 UTC".to_datetime,
           date_due: "2018-02-13 00:00:00 UTC".to_datetime,
           docket_date: "2014-03-25 00:00:00 UTC".to_datetime
         ),
@@ -17,6 +18,7 @@ describe WorkQueue do
           vacols_id: "3333",
           assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
           assigned_to_location_date: "2013-05-15 00:00:00 UTC".to_datetime,
+          created_at: "2013-05-15 00:00:00 UTC".to_datetime,
           date_due: "2018-02-13 00:00:00 UTC".to_datetime,
           docket_date: "2014-03-25 00:00:00 UTC".to_datetime
         )
