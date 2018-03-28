@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180327211711) do
+ActiveRecord::Schema.define(version: 20180328182747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,6 +180,12 @@ ActiveRecord::Schema.define(version: 20180327211711) do
     t.integer  "appeal_id"
     t.string   "query"
     t.datetime "created_at"
+  end
+
+  create_table "closed_appeals", force: :cascade do |t|
+    t.string  "vacols_id",        null: false
+    t.integer "ramp_election_id"
+    t.date    "nod_date"
   end
 
   create_table "docket_snapshots", force: :cascade do |t|
@@ -483,4 +489,5 @@ ActiveRecord::Schema.define(version: 20180327211711) do
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
+  add_foreign_key "closed_appeals", "ramp_elections"
 end
