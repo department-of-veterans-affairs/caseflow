@@ -12,6 +12,36 @@ describe DispatchStats do
   let(:hourly_stats) { Rails.cache.read("DispatchStats-2016-2-17-15") }
   let(:prev_weekly_stats) { Rails.cache.read("DispatchStats-2016-w06") }
 
+  context ".throttled_calculate_all!" do
+    subject { DispatchStats.throttled_calculate_all! }
+    context "when not previously calculated" do
+      it "calculates stats" do
+        expect(DispatchStats).to receive(:calculate_all!)
+        subject
+        expect(Rails.cache.read("DispatchStats-last-calculated-timestamp")).to eq(Time.now.to_i)
+      end
+    end
+
+    context "when last calculated more than 61 minutes ago" do
+      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 61.minutes.ago.to_i) }
+
+      it "calculates stats" do
+        expect(DispatchStats).to receive(:calculate_all!)
+        subject
+        expect(Rails.cache.read("DispatchStats-last-calculated-timestamp")).to eq(Time.now.to_i)
+      end
+    end
+
+    context "when last calculated less than 60 minutes ago" do
+      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 59.minutes.ago.to_i) }
+
+      it "doesn't recalculate stats" do
+        expect(DispatchStats).to_not receive(:calculate_all!)
+        subject
+      end
+    end
+  end
+
   context ".calculate_all!" do
     it "calculates and saves all completed dispatch_stats" do
       Generators::EstablishClaim.create(completed_at: 40.days.ago)
