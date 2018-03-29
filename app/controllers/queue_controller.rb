@@ -74,7 +74,7 @@ class QueueController < ApplicationController
     render json: {
       "errors": [
         "title": "Role is Invalid",
-        "detail": "User should have one of the following roles: #{ROLES.join(, )}"
+        "detail": "User should have one of the following roles: #{ROLES.join(', ')}"
       ]
     }, status: 400
   end
