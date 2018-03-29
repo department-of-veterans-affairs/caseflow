@@ -103,7 +103,11 @@ class Hearing < ActiveRecord::Base
   end
 
   cache_attribute :cached_number_of_documents do
-    number_of_documents
+    begin
+      number_of_documents
+    rescue StandardError
+      nil
+    end
   end
 
   delegate \

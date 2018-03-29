@@ -141,7 +141,11 @@ class Appeal < ActiveRecord::Base
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
-    number_of_documents_after_certification
+    begin
+      number_of_documents_after_certification
+    rescue StandardError
+      nil
+    end
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
