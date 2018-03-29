@@ -55,8 +55,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
-             "decass.deassign as date_assigned",
-             "decass.dereceive as date_received",
+             "brieff.bfdloout as assigned_to_location_date",
+             "decass.deassign as assigned_to_attorney_date",
+             "decass.dereceive as reassigned_to_judge_date",
              "decass.decomp as date_completed",
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
@@ -64,6 +65,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.deadusr as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadusr as added_by",
+             "decass.deadtim as created_at",
              "folder.tinum as docket_number")
         .joins(<<-SQL)
           LEFT JOIN decass
