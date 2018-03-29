@@ -1,5 +1,5 @@
 class DispatchStats < Caseflow::Stats
-  # since this is a heavy calculation, only run this at most once a day
+  # since this is a heavy calculation, only run this at most once an hour
   THROTTLE_RECALCULATION_PERIOD = 1.hour
 
   class << self
