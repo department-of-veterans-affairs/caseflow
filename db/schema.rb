@@ -315,6 +315,14 @@ ActiveRecord::Schema.define(version: 20180327211711) do
     t.datetime "updated_at"
   end
 
+  create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
+    t.integer  "hearing_id"
+    t.integer  "appeal_id"
+    t.datetime "created_at", null: false
+  end
+
+  add_index "hearing_appeal_stream_snapshots", ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true, using: :btree
+
   create_table "hearing_views", force: :cascade do |t|
     t.integer  "hearing_id", null: false
     t.integer  "user_id",    null: false
