@@ -21,7 +21,7 @@ class AttorneyCaseReview < ActiveRecord::Base
 
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,
-      date_assigned: date_assigned,
+      created_in_vacols_date: created_in_vacols_date,
       judge_vacols_user_id: reviewing_judge.vacols_uniq_id,
       decass_attrs: {
         work_product: work_product,
@@ -38,9 +38,11 @@ class AttorneyCaseReview < ActiveRecord::Base
         vacols_id: vacols_id,
         vacols_sequence_id: issue_attrs[:vacols_sequence_id],
         issue_attrs: {
+          vacols_user_id: attorney.vacols_uniq_id,
           disposition: issue_attrs[:disposition],
           disposition_date: VacolsHelper.local_date_with_utc_timezone,
-          vacols_user_id: attorney.vacols_uniq_id
+          readjudication: issue_attrs[:readjudication],
+          remand_reasons: issue_attrs[:remand_reasons]
         }
       )
     end
@@ -52,7 +54,7 @@ class AttorneyCaseReview < ActiveRecord::Base
     task_id.split("-", 2).first
   end
 
-  def date_assigned
+  def created_in_vacols_date
     task_id.split("-", 2).second.to_date
   end
 

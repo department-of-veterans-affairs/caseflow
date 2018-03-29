@@ -40,6 +40,8 @@ class RampElectionIntake < Intake
         ramp_election.create_end_product!
       end
     end
+
+    detail.update!(established_at: Time.zone.now)
   end
 
   def cancel!

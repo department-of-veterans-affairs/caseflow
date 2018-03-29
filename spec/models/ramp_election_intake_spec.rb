@@ -104,6 +104,7 @@ describe RampElectionIntake do
       subject
 
       expect(intake.reload).to be_success
+      expect(intake.detail.established_at).to_not be_nil
     end
 
     context "if VACOLS closure fails" do

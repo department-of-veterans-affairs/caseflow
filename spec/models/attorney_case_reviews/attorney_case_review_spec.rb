@@ -40,7 +40,7 @@ describe AttorneyCaseReview do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
-          date_assigned: "2013-12-06".to_date,
+          created_in_vacols_date: "2013-12-06".to_date,
           judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "OMO - IME",
@@ -81,7 +81,7 @@ describe AttorneyCaseReview do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
-          date_assigned: "2013-12-06".to_date,
+          created_in_vacols_date: "2013-12-06".to_date,
           judge_vacols_user_id: judge.vacols_uniq_id,
           decass_attrs: {
             work_product: "Decision",
@@ -95,9 +95,11 @@ describe AttorneyCaseReview do
           vacols_id: "123456",
           vacols_sequence_id: 1,
           issue_attrs: {
-            disposition: "Allowed",
+            vacols_user_id: attorney.vacols_uniq_id,
+            disposition: "Vacated",
             disposition_date: VacolsHelper.local_date_with_utc_timezone,
-            vacols_user_id: attorney.vacols_uniq_id
+            readjudication: true,
+            remand_reasons: nil
           }
         ).once
 
@@ -105,9 +107,11 @@ describe AttorneyCaseReview do
           vacols_id: "123456",
           vacols_sequence_id: 2,
           issue_attrs: {
+            vacols_user_id: attorney.vacols_uniq_id,
             disposition: "Remanded",
             disposition_date: VacolsHelper.local_date_with_utc_timezone,
-            vacols_user_id: attorney.vacols_uniq_id
+            readjudication: nil,
+            remand_reasons: [{ code: "AB", after_certification: true }]
           }
         ).once
       end
@@ -126,7 +130,11 @@ describe AttorneyCaseReview do
         }
       end
       let(:issues) do
-        [{ disposition: "Allowed", vacols_sequence_id: 1 }, { disposition: "Remanded", vacols_sequence_id: 2 }]
+        [
+          { disposition: "Vacated", vacols_sequence_id: 1, readjudication: true },
+          { disposition: "Remanded", vacols_sequence_id: 2,
+            remand_reasons: [{ code: "AB", after_certification: true }] }
+        ]
       end
 
       it "should create DraftDecision record" do
