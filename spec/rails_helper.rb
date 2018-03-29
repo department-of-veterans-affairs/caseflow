@@ -104,6 +104,8 @@ Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffyb
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 
+ActiveRecord::Migration.maintain_test_schema!
+
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods

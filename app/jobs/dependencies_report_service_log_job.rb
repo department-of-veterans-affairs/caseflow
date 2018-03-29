@@ -1,4 +1,4 @@
-class DependenciesReportServiceLogJob < ApplicationJob
+class DependenciesReportServiceLogJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform

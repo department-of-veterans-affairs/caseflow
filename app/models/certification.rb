@@ -4,7 +4,7 @@
 # appeal. It also acts as a record of appeals that are certified
 # using Caseflow.
 #
-class Certification < ApplicationRecord
+class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
   def async_start!

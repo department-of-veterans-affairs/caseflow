@@ -1,4 +1,4 @@
-class CaseflowJob < ApplicationJob
+class CaseflowJob < ActiveJob::Base
   def slack_url
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end

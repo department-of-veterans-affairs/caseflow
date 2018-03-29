@@ -1,4 +1,4 @@
-class RampReview < ApplicationRecord
+class RampReview < ActiveRecord::Base
   class EstablishedEndProductNotFound < StandardError; end
   class InvalidEndProductError < StandardError; end
 

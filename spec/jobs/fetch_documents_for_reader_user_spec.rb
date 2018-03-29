@@ -94,9 +94,6 @@ describe FetchDocumentsForReaderUserJob do
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
 
       # Expect all tests to call Slack service at the end
-      # expect with nil because of https://github.com/rails/rails/pull/28582
-      # TODO: find more elegant solution
-      expect(Rails.logger).to receive(log_type).with(nil).at_least(:once)
       expect(Rails.logger).to receive(log_type).with(expected_log_msg).once
     end
 

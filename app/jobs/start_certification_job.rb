@@ -1,4 +1,4 @@
-class StartCertificationJob < ApplicationJob
+class StartCertificationJob < ActiveJob::Base
   queue_as :high_priority
   attr_accessor :certification
 

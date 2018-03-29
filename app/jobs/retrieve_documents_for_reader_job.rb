@@ -1,6 +1,6 @@
 # This job will retrieve cases from VACOLS via the AppealRepository
 # and all documents for these cases in VBMS and store them
-class RetrieveDocumentsForReaderJob < ApplicationJob
+class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :low_priority
 
   DEFAULT_USERS_LIMIT = 3

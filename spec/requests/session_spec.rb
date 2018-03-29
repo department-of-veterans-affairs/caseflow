@@ -27,14 +27,14 @@ RSpec.describe "Session", type: :request do
 
   context "when regional office is set" do
     it "user should be authenticated" do
-      patch "/sessions/update", params: { regional_office: "RO05" }
+      patch "/sessions/update", regional_office: "RO05"
       expect(status).to eq 200
       get "/certifications/new/#{appeal.vacols_id}"
       expect(status).to_not eq 302
     end
 
     it "user should be able to log out" do
-      patch "/sessions/update", params: { regional_office: "RO05" }
+      patch "/sessions/update", regional_office: "RO05"
       expect(status).to eq 200
       get "/certifications/new/#{appeal.vacols_id}"
       expect(status).to_not eq 302

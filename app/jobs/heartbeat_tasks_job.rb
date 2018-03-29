@@ -1,6 +1,6 @@
 # This is a noop debug job used for development and testing of
 # background jobs
-class HeartbeatTasksJob < ApplicationJob
+class HeartbeatTasksJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform

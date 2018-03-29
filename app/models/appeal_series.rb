@@ -1,4 +1,4 @@
-class AppealSeries < ApplicationRecord
+class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
