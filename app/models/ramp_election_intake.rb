@@ -40,9 +40,13 @@ class RampElectionIntake < Intake
         ramp_election.create_end_product!
       end
     end
+
+    detail.update!(established_at: Time.zone.now)
   end
 
   def cancel!
+    return if complete?
+
     transaction do
       detail.update_attributes!(receipt_date: nil, option_selected: nil)
       complete_with_status!(:canceled)
