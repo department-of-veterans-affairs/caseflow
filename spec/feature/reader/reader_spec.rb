@@ -1419,7 +1419,7 @@ RSpec.feature "Reader" do
 
     scenario "Navigating Search Results scrolls page" do
       open_search_bar
-      expect(scrolled_amount('ReactVirtualized__Grid')).to be(0)
+      expect(scrolled_amount("ReactVirtualized__Grid")).to be(0)
 
       fill_in "search-ahead", with: "just"
 
