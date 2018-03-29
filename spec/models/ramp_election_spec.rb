@@ -209,7 +209,7 @@ describe RampElection do
     end
   end
 
-  fcontext "#sync_ep_status!" do
+  context "#sync_ep_status!" do
     subject { ramp_election.sync_ep_status! }
 
     let(:end_product_reference_id) { "9" }
