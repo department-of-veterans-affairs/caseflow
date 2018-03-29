@@ -30,18 +30,10 @@ export default function decisionViewBase(ComponentToWrap) {
         return;
       }
 
-      const { state } = this.props.history.location;
-      // Here, state.crumb is the wrapped component's prevStep prop
-      // (defined in this.goToPrevStep). Step pages can have one of
-      // { breadcrumb, breadcrumb + prevStep, neither }
-      const appendBreadcrumb = _.get(state, 'crumb', true);
+      const breadcrumb = this.wrapped.getBreadcrumb();
 
-      if (appendBreadcrumb) {
-        const breadcrumb = this.wrapped.getBreadcrumb();
-
-        if (breadcrumb && _.last(this.props.breadcrumbs).path !== breadcrumb.path) {
-          this.props.pushBreadcrumb(breadcrumb);
-        }
+      if (breadcrumb && _.last(this.props.breadcrumbs).path !== breadcrumb.path) {
+        this.props.pushBreadcrumb(breadcrumb);
       }
     };
 
@@ -67,9 +59,9 @@ export default function decisionViewBase(ComponentToWrap) {
       return [backButton, nextButton];
     };
 
-    goToStep = (url, state) => {
+    goToStep = (url) => {
       // todo: confirmation message, trigger reloading tasks
-      this.props.history.push(url, state);
+      this.props.history.push(url);
       window.scrollTo(0, 0);
     };
 
@@ -87,7 +79,7 @@ export default function decisionViewBase(ComponentToWrap) {
           this.props.popBreadcrumb();
         }
 
-        return this.goToStep(prevStepUrl, { crumb: prevStep });
+        return this.goToStep(prevStepUrl);
       }
     };
 
