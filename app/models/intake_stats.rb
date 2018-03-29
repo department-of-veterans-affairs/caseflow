@@ -75,9 +75,35 @@ class IntakeStats < Caseflow::Stats
       RampElection.completed.where(notice_date: offset_range(range)).count
     end,
 
+    higher_level_review_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed.where(notice_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed
+        .where(notice_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed.where(notice_date: offset_range(range), option_selected: "supplemental_claim").count
+    end,
+
     # Number of opt-in elections received by month and FYTD
     elections_successfully_received: lambda do |range|
       RampElection.completed.where(receipt_date: offset_range(range)).count
+    end,
+
+    higher_level_review_elections_successfully_received: lambda do |range|
+      RampElection.completed.where(receipt_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_successfully_received: lambda do |range|
+      RampElection.completed
+        .where(receipt_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_successfully_received: lambda do |range|
+      RampElection.completed.where(receipt_date: offset_range(range), option_selected: "supplemental_claim").count
     end,
 
     # Average days to respond to RAMP election notice
@@ -85,6 +111,17 @@ class IntakeStats < Caseflow::Stats
       elections = RampElection.completed.where(receipt_date: offset_range(range)).where.not(notice_date: nil)
       response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
       average(response_times)
+    end,
+
+    average_election_response_time_by_notice_date: lambda do |range|
+      elections = RampElection.completed.where(notice_date: offset_range(range))
+      response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      average(response_times)
+    end,
+
+    average_election_control_time: lambda do |range|
+      elections = RampElection.established.where(receipt_date: offset_range(range))
+      average(elections.map(&:control_time))
     end,
 
     total_completed: lambda do |range|

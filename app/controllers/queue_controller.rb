@@ -3,6 +3,8 @@ class QueueController < ApplicationController
   before_action :verify_welcome_gate_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
 
+  ROLES = %w[Judge Attorney].freeze
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -24,7 +26,8 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
+      tasks, appeals = WorkQueue.tasks_with_appeals(user, role)
+
       render json: {
         tasks: json_tasks(tasks),
         appeals: json_appeals(appeals)
@@ -51,6 +54,15 @@ class QueueController < ApplicationController
   end
 
   private
+
+  # Default to attorney for now
+  def role
+    @role ||= ROLES.include?(params[:role]) ? params[:role] : "Attorney"
+  end
+
+  def user
+    @user ||= User.find(params[:user_id])
+  end
 
   def verify_welcome_gate_access
     # :nocov:
