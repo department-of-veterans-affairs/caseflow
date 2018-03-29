@@ -37,6 +37,10 @@ class Intake < ApplicationRecord
     intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
   end
 
+  def complete?
+    !!completed_at
+  end
+
   def start!
     preload_intake_data!
 
