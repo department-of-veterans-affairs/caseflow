@@ -32,10 +32,10 @@ const dropdownStyling = css({ minHeight: 0 });
 
 const draftDecisionOptions = [{
   label: 'Decision Ready for Review',
-  value: 'decision'
+  value: DECISION_TYPES.DRAFT_DECISION
 }, {
   label: 'OMO Ready for Review',
-  value: 'omo'
+  value: DECISION_TYPES.OMO_REQUEST
 }];
 
 class QueueDetailView extends React.PureComponent {
@@ -53,21 +53,25 @@ class QueueDetailView extends React.PureComponent {
   changeRoute = (props) => {
     const {
       vacolsId,
-      history
+      history,
+      appeal: { attributes: { issues } }
     } = this.props;
-    let route = 'dispositions';
-    let decisionType = DECISION_TYPES.DRAFT_DECISION;
-
-    if (props.value === 'omo') {
-      route = 'submit';
-      decisionType = DECISION_TYPES.OMO_REQUEST;
-    }
+    const decisionType = props.value;
+    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
     this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.cancelEditingAppeal(vacolsId);
     }
-    this.props.startEditingAppeal(vacolsId);
+    const startEditing = _.partial(this.props.startEditingAppeal, vacolsId);
+
+    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
+      startEditing({
+        issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
+      });
+    } else {
+      startEditing();
+    }
     this.props.setCaseReviewActionType(decisionType);
     history.push(`${history.location.pathname}/${route}`, { prev: 'detail' });
   }

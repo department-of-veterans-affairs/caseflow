@@ -54,12 +54,26 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const startEditingAppeal = (appealId) => ({
-  type: ACTIONS.START_EDITING_APPEAL,
+export const editAppeal = (appealId, attributes) => ({
+  type: ACTIONS.EDIT_APPEAL,
   payload: {
-    appealId
+    appealId,
+    attributes
   }
 });
+
+export const startEditingAppeal = (appealId, attributes) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.START_EDITING_APPEAL,
+    payload: {
+      appealId
+    }
+  });
+
+  if (attributes) {
+    dispatch(editAppeal(appealId, attributes));
+  }
+};
 
 export const cancelEditingAppeal = (appealId) => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL,

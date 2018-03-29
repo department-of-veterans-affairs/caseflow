@@ -46,25 +46,7 @@ class SelectDispositionsView extends React.PureComponent {
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
 
-  componentDidMount = () => {
-    const {
-      appeal: { attributes: { issues } },
-      history: { location: { state } }
-    } = this.props;
-
-    this.props.setDecisionOptions({ work_product: 'Decision' });
-
-    if (_.get(state, 'prev') === 'detail') {
-      // If starting a new checkout flow (coming from detail view),
-      // wipe any previously-set dispositions in the pending appeal's
-      // issues, for validation purposes.
-      _.each(issues, (issue) =>
-        this.updateIssue(
-          issue.vacols_sequence_id,
-          { disposition: null }
-        ));
-    }
-  };
+  componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
   updateIssue = (issueId, attributes) => {
     const { vacolsId } = this.props;

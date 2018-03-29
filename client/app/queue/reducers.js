@@ -103,6 +103,16 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.EDIT_APPEAL:
+    return update(state, {
+      pendingChanges: {
+        appeals: {
+          [action.payload.appealId]: {
+            $merge: action.payload.attributes
+          }
+        }
+      }
+    });
   case ACTIONS.CANCEL_EDITING_APPEAL:
     return update(state, {
       pendingChanges: {
