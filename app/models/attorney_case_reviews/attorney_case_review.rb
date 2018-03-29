@@ -21,7 +21,7 @@ class AttorneyCaseReview < ApplicationRecord
 
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,
-      date_assigned: date_assigned,
+      created_in_vacols_date: created_in_vacols_date,
       judge_vacols_user_id: reviewing_judge.vacols_uniq_id,
       decass_attrs: {
         work_product: work_product,
@@ -54,7 +54,7 @@ class AttorneyCaseReview < ApplicationRecord
     task_id.split("-", 2).first
   end
 
-  def date_assigned
+  def created_in_vacols_date
     task_id.split("-", 2).second.to_date
   end
 

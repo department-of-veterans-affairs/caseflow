@@ -50,6 +50,10 @@ module CaseflowCertification
     config.efolder_key = ENV["EFOLDER_API_KEY"]
     config.active_job.queue_adapter = :shoryuken
 
+    # config for which SQS endpoint we should use. Override this for local testing
+    config.sqs_create_queues = false
+    config.sqs_endpoint = nil
+
     # sqs details
     config.active_job.queue_name_prefix = "caseflow_" + ENV['DEPLOY_ENV']
 
