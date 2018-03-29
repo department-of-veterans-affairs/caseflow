@@ -8,6 +8,6 @@ class SyncIntakeJob < ActiveJob::Base
     RampElection.active.map(&:recreate_issues_from_contentions!)
 
     # Then sync the EP statuses
-    RampElection.active.map(&:sync_ep_status!)
+    RampElection.established.map(&:sync_ep_status!)
   end
 end
