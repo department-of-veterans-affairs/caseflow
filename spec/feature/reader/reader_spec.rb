@@ -9,11 +9,28 @@ def scroll_position(id: nil, class_name: nil)
   EOS
 end
 
-def scroll_to(id: nil, class_name: nil, value: 0)
+def scroll_to(id: nil, class_name: nil, value: 0, index: 0)
   page.driver.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')['#{index}'];
       elem.scrollTop=#{value};
+    }();
+  EOS
+end
+
+def scrolled_amount(class_name)
+  page.evaluate_script <<-EOS
+    function() {
+      var list = document.getElementsByClassName('#{class_name}');
+      
+      for (elem of list) {
+        if (elem.scrollTop > 0) {
+          console.log("visible", elem.scrollTop);
+          return elem.scrollTop;
+        }
+      }
+
+      return 0;
     }();
   EOS
 end
@@ -868,7 +885,7 @@ RSpec.feature "Reader" do
 
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
-        element_class = "ReactVirtualized__Grid"
+        element_class = "cf-pdf-container"
         original_scroll = scroll_position(class_name: element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
@@ -894,7 +911,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_css(".page")
         expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000)
+        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000, index: 1)
         expect(find_field("page-progress-indicator-input").value).to_not eq "1"
       end
 
@@ -1402,28 +1419,25 @@ RSpec.feature "Reader" do
     end
 
     scenario "Navigating Search Results scrolls page" do
-      def scroll_top
-        page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
-      end
 
       open_search_bar
-      expect(scroll_top).to be(0)
+      expect(scrolled_amount('ReactVirtualized__Grid')).to be(0)
 
       fill_in "search-ahead", with: "just"
 
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
-      first_match_scroll_top = scroll_top
+      first_match_scroll_top = scrolled_amount('ReactVirtualized__Grid')
 
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click
-      expect(scroll_top).to be > first_match_scroll_top
+      expect(scrolled_amount('ReactVirtualized__Grid')).to be > first_match_scroll_top
 
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scroll_top).to eq(first_match_scroll_top)
+      expect(scrolled_amount('ReactVirtualized__Grid')).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do
