@@ -22,7 +22,7 @@ def scrolled_amount(class_name)
   page.evaluate_script <<-EOS
     function() {
       var list = document.getElementsByClassName('#{class_name}');
-      
+
       for (elem of list) {
         if (elem.scrollTop > 0) {
           return elem.scrollTop;
@@ -1418,7 +1418,6 @@ RSpec.feature "Reader" do
     end
 
     scenario "Navigating Search Results scrolls page" do
-
       open_search_bar
       expect(scrolled_amount('ReactVirtualized__Grid')).to be(0)
 
@@ -1426,17 +1425,17 @@ RSpec.feature "Reader" do
 
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
-      first_match_scroll_top = scrolled_amount('ReactVirtualized__Grid')
+      first_match_scroll_top = scrolled_amount("ReactVirtualized__Grid")
 
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click
-      expect(scrolled_amount('ReactVirtualized__Grid')).to be > first_match_scroll_top
+      expect(scrolled_amount("ReactVirtualized__Grid")).to be > first_match_scroll_top
 
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scrolled_amount('ReactVirtualized__Grid')).to eq(first_match_scroll_top)
+      expect(scrolled_amount("ReactVirtualized__Grid")).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do
