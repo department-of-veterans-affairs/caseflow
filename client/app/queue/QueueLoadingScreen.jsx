@@ -19,7 +19,7 @@ class QueueLoadingScreen extends React.PureComponent {
       const resp = JSON.parse(response.text);
       const judges = _.keyBy(resp.judges, 'id');
 
-      this.props.onReceiveJudges(_.omit(judges, 'undefined'));
+      this.props.onReceiveJudges(judges);
     });
   }
 
