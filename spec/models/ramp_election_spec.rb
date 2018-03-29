@@ -156,6 +156,8 @@ describe RampElection do
   end
 
   context "#active?" do
+    subject { ramp_election.active? }
+
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
       Generators::EndProduct.build(
@@ -166,7 +168,6 @@ describe RampElection do
           }
       )
     end
-    subject { ramp_election.active? }
 
     context "when the EP is cleared" do
       let(:status_type_code) { "CLR" }
@@ -209,6 +210,8 @@ describe RampElection do
   end
 
   fcontext "#sync_ep_status!" do
+    subject { ramp_election.sync_ep_status! }
+
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
       Generators::EndProduct.build(
@@ -219,10 +222,10 @@ describe RampElection do
           }
       )
     end
-    subject { ramp_election.sync_ep_status! }
-
+    
     context "cached end product status is active" do
       let(:end_product_status) { "PEND" }
+
       it "updates values properly and returns true" do
         expect(subject).to be_truthy
         ramp_election.reload
@@ -233,6 +236,7 @@ describe RampElection do
 
     context "cached end product status not active" do
       let(:end_product_status) { "CAN" }
+
       it "does not update any values and returns true" do
         expect(subject).to be_truthy
         expect(ramp_election).to_not be_persisted

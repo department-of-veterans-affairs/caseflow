@@ -1,15 +1,16 @@
 class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
-    "heartbeat" => HeartbeatTasksJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
+    "dependencies_check" => DependenciesCheckJob,
+    "dependencies_report_service_log" => DependenciesReportServiceLogJob,
+    "heartbeat" => HeartbeatTasksJob,
+    "out_of_service_reminder" => OutOfServiceReminderJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
+    "sync_intake" => SyncIntake,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
-    "dependencies_check" => DependenciesCheckJob,
-    "dependencies_report_service_log" => DependenciesReportServiceLogJob,
-    "out_of_service_reminder" => OutOfServiceReminderJob
   }.freeze
 
   def create
