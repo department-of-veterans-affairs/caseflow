@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -26,18 +25,16 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "relevant_date"
+    t.index ["document_id"], name: "index_annotations_on_document_id", using: :btree
+    t.index ["user_id"], name: "index_annotations_on_user_id", using: :btree
   end
-
-  add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
-  add_index "annotations", ["user_id"], name: "index_annotations_on_user_id", using: :btree
 
   create_table "api_keys", force: :cascade do |t|
     t.string "consumer_name", null: false
     t.string "key_digest",    null: false
+    t.index ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
+    t.index ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
   end
-
-  add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
-  add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
   create_table "api_views", force: :cascade do |t|
     t.datetime "created_at"
@@ -56,9 +53,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.datetime "last_viewed_at"
+    t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true, using: :btree
   end
-
-  add_index "appeal_views", ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true, using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
@@ -91,10 +87,9 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string  "dispatched_to_station"
     t.integer "appeal_series_id"
     t.boolean "issues_pulled"
+    t.index ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
+    t.index ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
   end
-
-  add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
-  add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
 
   create_table "attorney_case_reviews", force: :cascade do |t|
     t.string   "document_id"
@@ -114,9 +109,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string  "cancellation_reason"
     t.string  "other_reason"
     t.string  "email"
+    t.index ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true, using: :btree
   end
-
-  add_index "certification_cancellations", ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true, using: :btree
 
   create_table "certifications", force: :cascade do |t|
     t.string   "vacols_id"
@@ -160,9 +154,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.boolean  "v2"
     t.boolean  "loading_data"
     t.boolean  "loading_data_failed"
+    t.index ["user_id"], name: "index_certifications_on_user_id", using: :btree
   end
-
-  add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
 
   create_table "claim_establishments", force: :cascade do |t|
     t.integer  "task_id"
@@ -194,17 +187,15 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.date    "month"
     t.integer "ahead_count"
     t.integer "ahead_and_ready_count"
+    t.index ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true, using: :btree
   end
-
-  add_index "docket_tracers", ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true, using: :btree
 
   create_table "document_views", force: :cascade do |t|
     t.integer  "document_id",     null: false
     t.integer  "user_id",         null: false
     t.datetime "first_viewed_at"
+    t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
   end
-
-  add_index "document_views", ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string  "vbms_document_id",             null: false
@@ -217,18 +208,16 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string  "description"
     t.string  "series_id"
     t.integer "previous_document_version_id"
+    t.index ["file_number"], name: "index_documents_on_file_number", using: :btree
+    t.index ["series_id"], name: "index_documents_on_series_id", using: :btree
+    t.index ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
   end
-
-  add_index "documents", ["file_number"], name: "index_documents_on_file_number", using: :btree
-  add_index "documents", ["series_id"], name: "index_documents_on_series_id", using: :btree
-  add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
   create_table "documents_tags", force: :cascade do |t|
     t.integer "document_id", null: false
     t.integer "tag_id",      null: false
+    t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true, using: :btree
   end
-
-  add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true, using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
@@ -303,9 +292,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.date     "ssoc_date_1"
     t.date     "ssoc_date_2"
     t.date     "ssoc_date_3"
+    t.index ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
   end
-
-  add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
   create_table "global_admin_logins", force: :cascade do |t|
     t.string   "admin_css_id"
@@ -328,9 +316,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.integer  "user_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true, using: :btree
   end
-
-  add_index "hearing_views", ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true, using: :btree
 
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
@@ -354,24 +341,22 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string   "completion_status"
     t.string   "error_code"
     t.string   "type"
+    t.index ["type"], name: "index_intakes_on_type", using: :btree
+    t.index ["user_id"], name: "index_intakes_on_user_id", using: :btree
+    t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
   end
 
-  add_index "intakes", ["type"], name: "index_intakes_on_type", using: :btree
-  add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
-  add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
-
   create_table "ramp_elections", force: :cascade do |t|
-    t.string   "veteran_file_number",               null: false
-    t.date     "notice_date"
-    t.date     "receipt_date"
-    t.string   "option_selected"
-    t.string   "end_product_reference_id"
+    t.string "veteran_file_number",      null: false
+    t.date   "notice_date"
+    t.date   "receipt_date"
+    t.string "option_selected"
+    t.string "end_product_reference_id"
     t.datetime "established_at"
     t.string   "end_product_status"
     t.datetime "end_product_status_last_synced_at"
+    t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
   end
-
-  add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
   create_table "ramp_issues", force: :cascade do |t|
     t.integer "review_id",               null: false
@@ -379,38 +364,34 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string  "contention_reference_id"
     t.string  "description",             null: false
     t.integer "source_issue_id"
+    t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id", using: :btree
   end
-
-  add_index "ramp_issues", ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id", using: :btree
 
   create_table "ramp_refilings", force: :cascade do |t|
-    t.string   "veteran_file_number",      null: false
-    t.integer  "ramp_election_id"
-    t.string   "option_selected"
-    t.date     "receipt_date"
-    t.string   "end_product_reference_id"
-    t.boolean  "has_ineligible_issue"
-    t.string   "appeal_docket"
+    t.string  "veteran_file_number",      null: false
+    t.integer "ramp_election_id"
+    t.string  "option_selected"
+    t.date    "receipt_date"
+    t.string  "end_product_reference_id"
+    t.boolean "has_ineligible_issue"
+    t.string  "appeal_docket"
     t.datetime "established_at"
+    t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
   end
-
-  add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
 
   create_table "reader_users", force: :cascade do |t|
     t.integer  "user_id",              null: false
     t.datetime "documents_fetched_at"
+    t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at", using: :btree
+    t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
   end
-
-  add_index "reader_users", ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at", using: :btree
-  add_index "reader_users", ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["text"], name: "index_tags_on_text", unique: true, using: :btree
   end
-
-  add_index "tags", ["text"], name: "index_tags_on_text", unique: true, using: :btree
 
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",             null: false
@@ -435,9 +416,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.integer  "user_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true, using: :btree
   end
-
-  add_index "team_quotas", ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true, using: :btree
 
   create_table "user_quotas", force: :cascade do |t|
     t.integer  "team_quota_id",     null: false
@@ -445,9 +425,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.integer  "locked_task_count"
+    t.index ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
   end
-
-  add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string "station_id",               null: false
@@ -456,9 +435,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string "email"
     t.string "roles",                                 array: true
     t.string "selected_regional_office"
+    t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
   end
-
-  add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
 
   create_table "versions", force: :cascade do |t|
     t.string   "item_type",  null: false
@@ -467,9 +445,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
   end
-
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   create_table "worksheet_issues", force: :cascade do |t|
     t.integer  "appeal_id"
@@ -485,9 +462,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.datetime "deleted_at"
     t.string   "notes"
     t.string   "disposition"
+    t.index ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
   end
-
-  add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"

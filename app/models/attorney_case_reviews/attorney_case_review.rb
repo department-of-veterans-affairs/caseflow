@@ -1,4 +1,4 @@
-class AttorneyCaseReview < ActiveRecord::Base
+class AttorneyCaseReview < ApplicationRecord
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
