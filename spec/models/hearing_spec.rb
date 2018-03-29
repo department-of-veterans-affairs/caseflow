@@ -93,6 +93,13 @@ describe Hearing do
     it "returns active appeals with no decision date and with form9 date" do
       expect(subject.size).to eq 3
     end
+
+    it "returns snapshot appeals from postgres database even if changes happened in vacols" do
+      expect(subject.size).to eq 3
+      Fakes::AppealRepository.records.delete(appeal2.vacols_id)
+      Fakes::AppealRepository.records.delete(appeal1.vacols_id)
+      expect(subject.size).to eq 3
+    end
   end
 
   context "#to_hash_for_worksheet" do

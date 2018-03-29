@@ -34,12 +34,12 @@ class QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge!(vacols_id:, date_assigned:, judge_vacols_user_id:, decass_attrs:)
+  def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
     MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
                           service: :vacols,
                           name: "reassign_case_to_judge") do
       # update DECASS table
-      update_decass_record(vacols_id, date_assigned, decass_attrs)
+      update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
 
       # update location with the judge's slogid
       VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
@@ -47,15 +47,15 @@ class QueueRepository
     end
   end
 
-  def self.update_decass_record(vacols_id, date_assigned, decass_attrs)
-    check_decass_presence!(vacols_id, date_assigned)
+  def self.update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
+    check_decass_presence!(vacols_id, created_in_vacols_date)
     decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
-    VACOLS::Decass.where(defolder: vacols_id, deassign: date_assigned).update_all(decass_attrs)
+    VACOLS::Decass.where(defolder: vacols_id, deadtim: created_in_vacols_date).update_all(decass_attrs)
   end
 
-  def self.check_decass_presence!(vacols_id, date_assigned)
-    unless VACOLS::Decass.find_by(defolder: vacols_id, deassign: date_assigned)
-      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date assigned: #{date_assigned}"
+  def self.check_decass_presence!(vacols_id, created_in_vacols_date)
+    unless VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
       fail Caseflow::Error::QueueRepositoryError, msg
     end
   end
@@ -77,6 +77,8 @@ class QueueRepository
 
   def self.filter_duplicate_tasks(records)
     # Keep the latest assignment if there are duplicate records
-    records.group_by(&:vacols_id).each_with_object([]) { |(_k, v), result| result << v.sort_by(&:date_assigned).last }
+    records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
+      result << v.sort_by(&:created_at).last
+    end
   end
 end

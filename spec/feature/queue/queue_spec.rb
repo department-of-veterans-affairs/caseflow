@@ -136,7 +136,7 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
-        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
 
         expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
@@ -146,7 +146,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
