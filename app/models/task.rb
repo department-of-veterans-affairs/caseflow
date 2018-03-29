@@ -1,4 +1,4 @@
-class Task < ApplicationRecord
+class Task < ActiveRecord::Base
   include RetryHelper
   include AASM
 
@@ -86,7 +86,7 @@ class Task < ApplicationRecord
     end
 
     def todays_quota
-      TeamQuota.find_or_create_by!(date: Time.zone.today, task_type: to_s)
+      TeamQuota.find_or_create_by!(date: Time.zone.today, task_type: self)
     end
 
     private

@@ -1,4 +1,4 @@
-class PrepareEstablishClaimTasksJob < ApplicationJob
+class PrepareEstablishClaimTasksJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform

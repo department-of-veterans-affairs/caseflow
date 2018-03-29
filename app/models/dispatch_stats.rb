@@ -38,7 +38,7 @@ class DispatchStats < Caseflow::Stats
     end,
 
     establish_claim_active_users: lambda do |range|
-      EstablishClaim.where(completed_at: range).pluck(:user_id).uniq.count
+      EstablishClaim.where(completed_at: range).pluck(:user).uniq.count
     end,
 
     establish_claim_started: lambda do |range|

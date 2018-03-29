@@ -1,4 +1,4 @@
-class CalculateIntakeStatsJob < ApplicationJob
+class CalculateIntakeStatsJob < ActiveJob::Base
   queue_as :low_priority
 
   # :nocov:
