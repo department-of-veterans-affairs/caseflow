@@ -17,7 +17,7 @@ class Hearing < ActiveRecord::Base
   has_many :hearing_views
   has_many :appeal_stream_snapshots
 
-  # this is used to cache appeal stream for hearings 
+  # this is used to cache appeal stream for hearings
   # when fetched intially.
   has_many :appeals, through: :appeal_stream_snapshots
 
