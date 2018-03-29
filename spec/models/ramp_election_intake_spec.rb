@@ -56,10 +56,11 @@ describe RampElectionIntake do
       let(:completed_at) { 2.seconds.ago }
 
       it "returns and does nothing" do
-        expect(intake.reload).to_not be_canceled
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
         expect(detail.reload).to have_attributes(
           option_selected: "supplemental_claim",
-          notice_date: 5.days.ago
+          receipt_date: 3.days.ago.to_date
         )
       end
     end
