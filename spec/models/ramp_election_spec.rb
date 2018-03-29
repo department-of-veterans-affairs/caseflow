@@ -161,11 +161,11 @@ describe RampElection do
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
       Generators::EndProduct.build(
-          veteran_file_number: ramp_election.veteran_file_number,
-          bgs_attrs: {
-            benefit_claim_id: end_product_reference_id,
-            status_type_code: status_type_code
-          }
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: status_type_code
+        }
       )
     end
 
@@ -215,14 +215,14 @@ describe RampElection do
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
       Generators::EndProduct.build(
-          veteran_file_number: ramp_election.veteran_file_number,
-          bgs_attrs: {
-            benefit_claim_id: end_product_reference_id,
-            status_type_code: "WAZZAP"
-          }
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: "WAZZAP"
+        }
       )
     end
-    
+
     context "cached end product status is active" do
       let(:end_product_status) { "PEND" }
 

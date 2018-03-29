@@ -10,7 +10,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "sync_intake" => SyncIntake,
-    "take_docket_snapshot" => TakeDocketSnapshotJob,
+    "take_docket_snapshot" => TakeDocketSnapshotJob
   }.freeze
 
   def create
