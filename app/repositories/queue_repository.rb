@@ -78,7 +78,7 @@ class QueueRepository
   def self.filter_duplicate_tasks(records)
     # Keep the latest assignment if there are duplicate records
     records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
-      result << v.sort_by(&:assigned_to_attorney_date).last
+      result << v.sort_by(&:created_at).last
     end
   end
 end
