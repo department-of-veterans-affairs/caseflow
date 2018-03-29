@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180327211711) do
+ActiveRecord::Schema.define(version: 20180328220242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -361,12 +361,14 @@ ActiveRecord::Schema.define(version: 20180327211711) do
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
   create_table "ramp_elections", force: :cascade do |t|
-    t.string   "veteran_file_number",      null: false
+    t.string   "veteran_file_number",               null: false
     t.date     "notice_date"
     t.date     "receipt_date"
     t.string   "option_selected"
     t.string   "end_product_reference_id"
     t.datetime "established_at"
+    t.string   "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
