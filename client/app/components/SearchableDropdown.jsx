@@ -14,7 +14,7 @@ class SearchableDropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value || null
+      value: _.isUndefined(props.value) ? null : props.value
     };
   }
 
