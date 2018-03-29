@@ -9,7 +9,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
-    "sync_intake" => SyncIntake,
+    "sync_intake" => SyncIntakeJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob
   }.freeze
 

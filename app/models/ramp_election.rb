@@ -15,7 +15,7 @@ class RampElection < RampReview
   end
 
   def self.active
-    where.not(end_product_status: EndProduct.INACTIVE_STATUSES)
+    where.not(end_product_status: EndProduct::INACTIVE_STATUSES)
   end
 
   def completed?
