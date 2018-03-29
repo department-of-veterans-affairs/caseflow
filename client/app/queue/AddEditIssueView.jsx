@@ -71,9 +71,9 @@ class AddEditIssueView extends React.Component {
       }
     } = this.props;
     const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
-    const issueLevel1 = _.get(vacolsIssues, `${type}.levels`, {});
-    const issueLevel2 = _.get(issueLevel1, `${_.get(codes, 0)}.levels`, {});
-    const issueLevel3 = _.get(issueLevel2, `${_.get(codes, 1)}.levels`, {});
+    const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
+    const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
+    const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
 
     return [issueLevel1, issueLevel2, issueLevel3];
   }
