@@ -1,4 +1,4 @@
-class UserQuota < ActiveRecord::Base
+class UserQuota < ApplicationRecord
   belongs_to :user
   belongs_to :team_quota
 
