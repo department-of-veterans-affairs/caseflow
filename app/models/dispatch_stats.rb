@@ -1,6 +1,6 @@
 class DispatchStats < Caseflow::Stats
-  # since this is a heavy calculation, only run this at most once an hour
-  THROTTLE_RECALCULATION_PERIOD = 1.hour
+  # since this is a heavy calculation, only run this at most once every 23 hours
+  THROTTLE_RECALCULATION_PERIOD = 23.hours
 
   class << self
     def throttled_calculate_all!

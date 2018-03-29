@@ -1,7 +1,7 @@
 class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
-    "calculate_dispatch_stats_job" => CalculateDispatchStatsJob,
+    "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
