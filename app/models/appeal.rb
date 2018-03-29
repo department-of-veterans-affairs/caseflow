@@ -143,7 +143,7 @@ class Appeal < ActiveRecord::Base
   cache_attribute :cached_number_of_documents_after_certification do
     begin
       number_of_documents_after_certification
-    rescue StandardError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
       nil
     end
   end
