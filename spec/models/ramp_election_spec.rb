@@ -10,6 +10,7 @@ describe RampElection do
   let(:option_selected) { nil }
   let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
+  let(:end_product_status) { nil }
 
   let(:ramp_election) do
     RampElection.new(
@@ -18,7 +19,8 @@ describe RampElection do
       option_selected: option_selected,
       receipt_date: receipt_date,
       end_product_reference_id: end_product_reference_id,
-      established_at: established_at
+      established_at: established_at,
+      end_product_status: end_product_status
     )
   end
 
@@ -154,18 +156,28 @@ describe RampElection do
   end
 
   context "#active?" do
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+          veteran_file_number: ramp_election.veteran_file_number,
+          bgs_attrs: {
+            benefit_claim_id: end_product_reference_id,
+            status_type_code: status_type_code
+          }
+      )
+    end
     subject { ramp_election.active? }
 
-    context "when there is an end product reference" do
-      let(:end_product_reference_id) { 1 }
-
-      it { is_expected.to eq(true) }
-    end
-
-    context "when there is not an end product reference" do
-      let(:end_product_reference_id) { nil }
+    context "when the EP is cleared" do
+      let(:status_type_code) { "CLR" }
 
       it { is_expected.to eq(false) }
+    end
+
+    context "when the EP is pending" do
+      let(:status_type_code) { "PEND" }
+
+      it { is_expected.to eq(true) }
     end
   end
 
@@ -193,6 +205,40 @@ describe RampElection do
       let(:end_product_reference_id) { matching_ep.claim_id }
 
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
+    end
+  end
+
+  fcontext "#sync_ep_status!" do
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+          veteran_file_number: ramp_election.veteran_file_number,
+          bgs_attrs: {
+            benefit_claim_id: end_product_reference_id,
+            status_type_code: "WAZZAP"
+          }
+      )
+    end
+    subject { ramp_election.sync_ep_status! }
+
+    context "cached end product status is active" do
+      let(:end_product_status) { "PEND" }
+      it "updates values properly and returns true" do
+        expect(subject).to be_truthy
+        ramp_election.reload
+        expect(ramp_election.end_product_status).to eql("WAZZAP")
+        expect(ramp_election.end_product_status_last_synced_at).to eql(Time.zone.now)
+      end
+    end
+
+    context "cached end product status not active" do
+      let(:end_product_status) { "CAN" }
+      it "does not update any values and returns true" do
+        expect(subject).to be_truthy
+        expect(ramp_election).to_not be_persisted
+        expect(ramp_election.end_product_status).to eql("CAN")
+        expect(ramp_election.end_product_status_last_synced_at).to be_nil
+      end
     end
   end
 

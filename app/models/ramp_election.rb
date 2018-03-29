@@ -23,8 +23,7 @@ class RampElection < RampReview
   end
 
   def active?
-    sync_ep_status!
-    EndProduct::INACTIVE_STATUSES.include?(end_product_status)
+    sync_ep_status! && cached_status_active?
   end
 
   # RAMP letters request that Veterans respond within 60 days; elections will
@@ -66,7 +65,7 @@ class RampElection < RampReview
   def sync_ep_status!
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
-    return if EndProduct::INACTIVE_STATUSES.include?(end_product_status)
+    return true unless cached_status_active?
 
     update!(
       end_product_status: established_end_product.status_type_code,
@@ -75,6 +74,10 @@ class RampElection < RampReview
   end
 
   private
+
+  def cached_status_active?
+    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
+  end
 
   def fetch_established_end_product
     return nil unless end_product_reference_id
