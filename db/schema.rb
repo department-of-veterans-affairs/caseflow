@@ -315,6 +315,14 @@ ActiveRecord::Schema.define(version: 20180328182747) do
     t.datetime "updated_at"
   end
 
+  create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
+    t.integer  "hearing_id"
+    t.integer  "appeal_id"
+    t.datetime "created_at", null: false
+  end
+
+  add_index "hearing_appeal_stream_snapshots", ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true, using: :btree
+
   create_table "hearing_views", force: :cascade do |t|
     t.integer  "hearing_id", null: false
     t.integer  "user_id",    null: false
@@ -359,12 +367,14 @@ ActiveRecord::Schema.define(version: 20180328182747) do
   end
 
   create_table "ramp_elections", force: :cascade do |t|
-    t.string   "veteran_file_number",      null: false
+    t.string   "veteran_file_number",               null: false
     t.date     "notice_date"
     t.date     "receipt_date"
     t.string   "option_selected"
     t.string   "end_product_reference_id"
     t.datetime "established_at"
+    t.string   "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree

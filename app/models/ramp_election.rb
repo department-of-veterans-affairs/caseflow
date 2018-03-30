@@ -15,8 +15,16 @@ class RampElection < RampReview
     where.not(established_at: nil)
   end
 
+  def self.active
+    where.not(end_product_status: EndProduct::INACTIVE_STATUSES)
+  end
+
   def completed?
     !!end_product_reference_id
+  end
+
+  def active?
+    sync_ep_status! && cached_status_active?
   end
 
   # RAMP letters request that Veterans respond within 60 days; elections will
@@ -55,7 +63,22 @@ class RampElection < RampReview
     end
   end
 
+  def sync_ep_status!
+    # There is no need to sync end_product_status if the status
+    # is already inactive since an EP can never leave that state
+    return true unless cached_status_active?
+
+    update!(
+      end_product_status: established_end_product.status_type_code,
+      end_product_status_last_synced_at: Time.zone.now
+    )
+  end
+
   private
+
+  def cached_status_active?
+    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
+  end
 
   def fetch_established_end_product
     return nil unless end_product_reference_id

@@ -106,6 +106,13 @@ export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
     prepped,
     date,
     setEdited
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.DOCKET_HEARING_PREPPED,
+      label: prepped
+    }
   }
 });
 
@@ -115,6 +122,13 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
     hearingIndex,
     disposition,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.DISPOSITION_SELECTED,
+      label: disposition
+    }
   }
 });
 
@@ -133,6 +147,13 @@ export const setAod = (hearingIndex, aod, date) => ({
     hearingIndex,
     aod,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.AOD_SELECTED,
+      label: aod
+    }
   }
 });
 
@@ -142,6 +163,13 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     hearingIndex,
     transcriptRequested,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.TRANSCRIPT_REQUESTED,
+      label: transcriptRequested ? 'checked' : 'unchecked'
+    }
   }
 });
 

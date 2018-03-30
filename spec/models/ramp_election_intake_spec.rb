@@ -10,12 +10,14 @@ describe RampElectionIntake do
   let(:appeal_vacols_record) { :ready_to_certify }
   let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
   let(:issues) { [compensation_issue] }
+  let(:completed_at) { nil }
 
   let(:intake) do
     RampElectionIntake.new(
       user: user,
       detail: detail,
-      veteran_file_number: veteran_file_number
+      veteran_file_number: veteran_file_number,
+      completed_at: completed_at
     )
   end
 
@@ -48,6 +50,19 @@ describe RampElectionIntake do
         option_selected: nil,
         receipt_date: nil
       )
+    end
+
+    context "when already complete" do
+      let(:completed_at) { 2.seconds.ago }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(detail.reload).to have_attributes(
+          option_selected: "supplemental_claim",
+          receipt_date: 3.days.ago.to_date
+        )
+      end
     end
   end
 
