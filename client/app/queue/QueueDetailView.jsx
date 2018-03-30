@@ -73,7 +73,7 @@ class QueueDetailView extends React.PureComponent {
       startEditing();
     }
     this.props.setCaseReviewActionType(decisionType);
-    history.push(`${history.location.pathname}/${route}`, { prev: 'detail' });
+    history.push(`${history.location.pathname}/${route}`);
   }
 
   render = () => {

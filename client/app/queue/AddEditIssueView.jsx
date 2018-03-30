@@ -57,7 +57,8 @@ class AddEditIssueView extends React.Component {
 
     // remove more-specific issue levels on change
     // i.e. on change Issue, remove all Levels
-    codes = [...codes.slice(codes.length - codeIdx), code];
+    codes[codeIdx] = code;
+    codes = _.take(codes, codeIdx + 1);
 
     this.updateIssue({ codes });
   };
@@ -88,7 +89,7 @@ class AddEditIssueView extends React.Component {
     const { issue: { codes } } = this.props;
 
     return this.getIssueLevelOptions().every((level, idx) =>
-      _.isEmpty(level) || (codes[idx] in level) || codes[idx]
+      _.isEmpty(level) || (codes[idx] in level)
     );
   };
 
@@ -144,7 +145,10 @@ class AddEditIssueView extends React.Component {
           name="Program:"
           placeholder="Select program"
           options={this.renderIssueAttrs(programs)}
-          onChange={({ value }) => this.updateIssue({ program: value })}
+          onChange={({ value }) => this.updateIssue({
+            program: value,
+            type: null
+          })}
           errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
           value={program} />
       </div>
@@ -214,7 +218,7 @@ AddEditIssueView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
-  issue: state.queue.pendingChanges.editingIssue
+  issue: state.queue.editingIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

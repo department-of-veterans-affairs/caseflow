@@ -15,20 +15,19 @@ export const initialState = {
     tasks: {},
     loadedUserId: null
   },
+  editingIssue: {},
 
   /**
-   * `pendingChanges` is an object of appeals/tasks that have been modified since
+   * `pendingChanges` is an object of appeals that have been modified since
    * loading from the server. When a user starts editing an appeal/task, we copy
    * it from `loadedQueue[obj.type]`.
    */
   pendingChanges: {
     appeals: {},
-    tasks: {},
     taskDecision: {
       type: '',
       opts: {}
-    },
-    editingIssue: {}
+    }
   }
 };
 
@@ -126,32 +125,29 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const issues = state.pendingChanges.appeals[appealId].attributes.issues;
 
     return update(state, {
-      pendingChanges: {
-        editingIssue: {
-          $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
-        }
+      editingIssue: {
+        $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
       }
     });
   }
   case ACTIONS.CANCEL_EDITING_APPEAL_ISSUE:
     return update(state, {
-      pendingChanges: {
-        editingIssue: {
-          $set: {}
-        }
+      editingIssue: {
+        $set: {}
       }
     });
   case ACTIONS.UPDATE_EDITING_APPEAL_ISSUE:
     return update(state, {
-      pendingChanges: {
-        editingIssue: {
-          $merge: action.payload.attributes
-        }
+      editingIssue: {
+        $merge: action.payload.attributes
       }
     });
   case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
     const { appealId } = action.payload;
-    const { pendingChanges: { editingIssue, appeals } } = state;
+    const {
+      editingIssue,
+      pendingChanges: { appeals }
+    } = state;
 
     const issues = appeals[appealId].attributes.issues.map((issue) =>
       issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
@@ -168,10 +164,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
               }
             }
           }
-        },
-        editingIssue: {
-          $set: {}
         }
+      },
+      editingIssue: {
+        $set: {}
       }
     });
   }
