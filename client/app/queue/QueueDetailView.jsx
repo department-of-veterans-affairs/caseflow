@@ -63,14 +63,13 @@ class QueueDetailView extends React.PureComponent {
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.cancelEditingAppeal(vacolsId);
     }
-    const startEditing = _.partial(this.props.startEditingAppeal, vacolsId);
 
     if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      startEditing({
+      this.props.startEditingAppeal(vacolsId, {
         issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
       });
     } else {
-      startEditing();
+      this.props.startEditingAppeal(vacolsId);
     }
     this.props.setCaseReviewActionType(decisionType);
     history.push(`${history.location.pathname}/${route}`);
