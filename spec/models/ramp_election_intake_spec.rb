@@ -80,7 +80,8 @@ describe RampElectionIntake do
 
     let!(:appeals_to_close) do
       (1..2).map do
-        Generators::Appeal.create(vbms_id: "64205555C", vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago })
+        Generators::Appeal
+          .create(vbms_id: "64205555C", vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago })
       end
     end
 
@@ -114,7 +115,7 @@ describe RampElectionIntake do
       )
 
       subject
-      
+
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
     end
