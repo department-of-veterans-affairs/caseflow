@@ -5,6 +5,7 @@ RSpec.feature "Queue" do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_welcome_gate)
     FeatureToggle.enable!(:queue_phase_two)
+    allow(UserRepository).to receive(:vacols_role).and_return("Attorney")
   end
 
   after do
