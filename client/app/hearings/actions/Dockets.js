@@ -3,6 +3,21 @@ import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
+import { DOCKETS_TAB_INDEX_MAPPING } from '../Dockets';
+
+export const selectDocketsPageTabIndex = (tabIndex) => ({
+  type: Constants.SELECT_DOCKETS_PAGE_TAB_INDEX,
+  payload: {
+    tabIndex
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.OPEN_HEARINGS_TAB,
+      label: DOCKETS_TAB_INDEX_MAPPING[tabIndex]
+    }
+  }
+});
 
 export const populateUpcomingHearings = (upcomingHearings) => ({
   type: Constants.POPULATE_UPCOMING_HEARINGS,
@@ -84,18 +99,19 @@ export const setNotes = (hearingIndex, notes, date) => ({
   }
 });
 
-export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE,
-  submitToGA = true) => ({
-
+export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
   type: Constants.SET_HEARING_PREPPED,
-  payload,
-  ...submitToGA && {
-    meta: {
-      analytics: {
-        category: gaCategory,
-        action: ACTIONS.DOCKET_HEARING_PREPPED,
-        label: payload.prepped ? 'checked' : 'unchecked'
-      }
+  payload: {
+    hearingId,
+    prepped,
+    date,
+    setEdited
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.DOCKET_HEARING_PREPPED,
+      label: prepped
     }
   }
 });

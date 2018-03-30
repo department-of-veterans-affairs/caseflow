@@ -44,7 +44,7 @@ namespace :ci do
     end
   end
 
-  desc "Verify code coverge (via simplecov) on travis, skips if testing is incomplete"
+  desc "Verify code coverage (via simplecov) on travis, skips if testing is incomplete"
   task :travis_verify_code_coverage do
     puts "\nVerifying code coverage"
     require "simplecov"
@@ -79,6 +79,49 @@ namespace :ci do
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green
+    end
+  end
+
+  desc "Verify code coverage on CircleCI "
+  task :circleci_verify_code_coverage do
+    require "simplecov"
+
+    api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts?circle-token=#{ENV['CIRCLE_TOKEN']}" # rubocop:disable Metrics/LineLength
+    coverage_dir = "/tmp/coverage"
+    SimpleCov.coverage_dir(coverage_dir)
+    # Set the merge_timeout very large so that we don't exclude results
+    # just because the runs took a long time.
+    SimpleCov.merge_timeout(3600 * 24 * 30)
+    artifacts = JSON.parse(open(api_url).read)
+    artifact_urls = artifacts.map { |a| a["url"] }
+    resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
+    resultsets = resultset_urls.map do |u|
+      c = open(u + "?circle-token=#{ENV['CIRCLE_TOKEN']}").read
+      JSON.parse(c)
+    end
+    # SimpleCov doesn't really support merging results after the fact.
+    # This construct manually re-creates the SimpleCov merge process
+    # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
+    # which will print misleading results.
+    results = resultsets.map do |resultset|
+      SimpleCov::Result.from_hash(resultset)
+    end
+    result = SimpleCov::ResultMerger.merge_results(*results)
+    SimpleCov::ResultMerger.store_result(result)
+    if result.covered_percentages.empty?
+      puts Rainbow("No valid coverage results were found").red
+      exit!(1)
+    end
+    # This prints code coverage statistics as a side effect, which we want
+    # in the build log.
+    result.format!
+    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
+                  This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+      exit!(1)
+    else
+      puts Rainbow("Code coverage threshold met\n").green
+      exit!(0)
     end
   end
 end

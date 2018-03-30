@@ -3,6 +3,8 @@ class QueueController < ApplicationController
   before_action :verify_welcome_gate_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
 
+  ROLES = %w[Judge Attorney].freeze
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -24,7 +26,10 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
+      return invalid_role_error unless ROLES.include?(user.vacols_role)
+
+      tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+
       render json: {
         tasks: json_tasks(tasks),
         appeals: json_appeals(appeals)
@@ -52,6 +57,10 @@ class QueueController < ApplicationController
 
   private
 
+  def user
+    @user ||= User.find(params[:user_id])
+  end
+
   def verify_welcome_gate_access
     # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
@@ -59,6 +68,15 @@ class QueueController < ApplicationController
     return true if params[:code] && code && params[:code] == code
     redirect_to "/unauthorized"
     # :nocov:
+  end
+
+  def invalid_role_error
+    render json: {
+      "errors": [
+        "title": "Role is Invalid",
+        "detail": "User should have one of the following roles: #{ROLES.join(', ')}"
+      ]
+    }, status: 400
   end
 
   def attorney_case_review_error
@@ -77,7 +95,8 @@ class QueueController < ApplicationController
                                    :work_product,
                                    :overtime,
                                    :note,
-                                   issues: [:disposition, :vacols_sequence_id, remand_reasons: []])
+                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                            remand_reasons: [:code, :after_certification]])
   end
 
   def json_appeals(appeals)

@@ -10,11 +10,12 @@ describe IssueMapper do
         issue: "18",
         level_2: "03",
         level_3: nil,
-        note: "another one"
+        note: "another one",
+        vacols_user_id: "TEST1"
       }
     end
 
-    subject { IssueMapper.rename_and_validate_vacols_attrs(slogid: "TEST1", action: action, issue_attrs: issue_attrs) }
+    subject { IssueMapper.rename_and_validate_vacols_attrs(action: action, issue_attrs: issue_attrs) }
 
     context "when action is create" do
       let(:action) { :create }
@@ -41,7 +42,7 @@ describe IssueMapper do
       context "when codes are not valid" do
         it "raises IssueRepository::IssueError" do
           allow(IssueRepository).to receive(:find_issue_reference).and_return([])
-          expect { subject }.to raise_error(IssueRepository::IssueError)
+          expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
         end
       end
     end
@@ -69,7 +70,7 @@ describe IssueMapper do
       end
 
       context "when codes are not passed" do
-        let(:issue_attrs) { { note: "another one" } }
+        let(:issue_attrs) { { note: "another one", vacols_user_id: "TEST1" } }
 
         let(:expected_result) do
           {
@@ -85,9 +86,9 @@ describe IssueMapper do
       end
 
       context "when codes are not valid" do
-        it "raises IssueRepository::IssueError" do
+        it "raises Caseflow::Error::IssueRepositoryError" do
           allow(IssueRepository).to receive(:find_issue_reference).and_return([])
-          expect { subject }.to raise_error(IssueRepository::IssueError)
+          expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
         end
       end
 
@@ -95,9 +96,7 @@ describe IssueMapper do
         let(:action) { :update }
         let(:issue_attrs) { {} }
 
-        it "returns empty hash" do
-          expect(subject).to eq({})
-        end
+        it { is_expected.to eq({}) }
       end
 
       context "when disposition is passed" do
@@ -105,7 +104,11 @@ describe IssueMapper do
 
         context "when valid disposition" do
           let(:issue_attrs) do
-            { disposition: "Withdrawn", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+            {
+              disposition: "Withdrawn",
+              disposition_date: VacolsHelper.local_date_with_utc_timezone,
+              vacols_user_id: "TEST1"
+            }
           end
           let(:expected_result) do
             {
@@ -115,18 +118,20 @@ describe IssueMapper do
               issmdtime: VacolsHelper.local_time_with_utc_timezone
             }
           end
-          it "transforms the hash" do
-            expect(subject).to eq expected_result
-          end
+          it { is_expected.to eq expected_result }
         end
 
         context "when not valid disposition" do
           let(:issue_attrs) do
-            { disposition: "Advance Allowed in Field", disposition_date: VacolsHelper.local_date_with_utc_timezone }
+            {
+              disposition: "Advance Allowed in Field",
+              disposition_date: VacolsHelper.local_date_with_utc_timezone,
+              vacols_user_id: "TEST1"
+            }
           end
 
-          it "raises IssueRepository::IssueError" do
-            expect { subject }.to raise_error(IssueRepository::IssueError)
+          it "raises Caseflow::Error::IssueRepositoryError" do
+            expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
           end
         end
       end

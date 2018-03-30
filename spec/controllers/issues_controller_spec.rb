@@ -55,19 +55,18 @@ RSpec.describe IssuesController, type: :controller do
 
       let(:result_params) do
         {
-          css_id: "DSUSER",
-          issue_attrs: params.merge(vacols_id: appeal.vacols_id).stringify_keys
+          issue_attrs: params.merge(vacols_id: appeal.vacols_id, vacols_user_id: "DSUSER").stringify_keys
         }
       end
 
       it "should return bad request" do
         allow(Fakes::IssueRepository).to receive(:create_vacols_issue!)
-          .with(result_params).and_raise(IssueRepository::IssueError.new("Invalid codes"))
+          .with(result_params).and_raise(Caseflow::Error::IssueRepositoryError.new("Invalid codes"))
 
         post :create, appeal_id: appeal.id, issues: params
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "IssueRepository::IssueError"
+        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
         expect(error["detail"]).to eq "Invalid codes"
       end
     end
@@ -87,10 +86,9 @@ RSpec.describe IssuesController, type: :controller do
 
       let(:result_params) do
         {
-          css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
           vacols_sequence_id: "1",
-          issue_attrs: params.stringify_keys
+          issue_attrs: params.merge(vacols_user_id: "DSUSER").stringify_keys
         }
       end
 
@@ -122,21 +120,20 @@ RSpec.describe IssuesController, type: :controller do
 
       let(:result_params) do
         {
-          css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
           vacols_sequence_id: "1",
-          issue_attrs: params.stringify_keys
+          issue_attrs: params.merge(vacols_user_id: "DSUSER").stringify_keys
         }
       end
 
       it "should not be successful" do
         allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
-          .with(result_params).and_raise(IssueRepository::IssueError.new("Invalid codes"))
+          .with(result_params).and_raise(Caseflow::Error::IssueRepositoryError.new("Invalid codes"))
 
         post :update, appeal_id: appeal.id, vacols_sequence_id: 1, issues: params
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "IssueRepository::IssueError"
+        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
         expect(error["detail"]).to eq "Invalid codes"
       end
     end
@@ -146,7 +143,6 @@ RSpec.describe IssuesController, type: :controller do
     context "when deleted successfully" do
       let(:result_params) do
         {
-          css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
           vacols_sequence_id: "1"
         }
@@ -169,18 +165,17 @@ RSpec.describe IssuesController, type: :controller do
     context "when there is an error" do
       let(:result_params) do
         {
-          css_id: "DSUSER",
           vacols_id: appeal.vacols_id,
           vacols_sequence_id: "1"
         }
       end
       it "should not be successful" do
         allow(Fakes::IssueRepository).to receive(:delete_vacols_issue!)
-          .with(result_params).and_raise(IssueRepository::IssueError.new("Cannot find issue"))
+          .with(result_params).and_raise(Caseflow::Error::IssueRepositoryError.new("Cannot find issue"))
         post :destroy, appeal_id: appeal.id, vacols_sequence_id: 1
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "IssueRepository::IssueError"
+        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
         expect(error["detail"]).to eq "Cannot find issue"
       end
     end

@@ -20,6 +20,13 @@ class IntakeStats < Caseflow::Stats
       @intake_series_statuses[range] ||= intake_series(range).map { |intakes| intake_series_status(intakes) }
     end
 
+    def total_refilings_for_option(range, type)
+      RampRefiling.established.where(
+        receipt_date: offset_range(range),
+        option_selected: type
+      ).count
+    end
+
     private
 
     # Used to prevent dates on the line from registering for two time periods
@@ -68,9 +75,35 @@ class IntakeStats < Caseflow::Stats
       RampElection.completed.where(notice_date: offset_range(range)).count
     end,
 
+    higher_level_review_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed.where(notice_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed
+        .where(notice_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_returned_by_notice_date: lambda do |range|
+      RampElection.completed.where(notice_date: offset_range(range), option_selected: "supplemental_claim").count
+    end,
+
     # Number of opt-in elections received by month and FYTD
     elections_successfully_received: lambda do |range|
       RampElection.completed.where(receipt_date: offset_range(range)).count
+    end,
+
+    higher_level_review_elections_successfully_received: lambda do |range|
+      RampElection.completed.where(receipt_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_successfully_received: lambda do |range|
+      RampElection.completed
+        .where(receipt_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_successfully_received: lambda do |range|
+      RampElection.completed.where(receipt_date: offset_range(range), option_selected: "supplemental_claim").count
     end,
 
     # Average days to respond to RAMP election notice
@@ -78,6 +111,17 @@ class IntakeStats < Caseflow::Stats
       elections = RampElection.completed.where(receipt_date: offset_range(range)).where.not(notice_date: nil)
       response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
       average(response_times)
+    end,
+
+    average_election_response_time_by_notice_date: lambda do |range|
+      elections = RampElection.completed.where(notice_date: offset_range(range))
+      response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      average(response_times)
+    end,
+
+    average_election_control_time: lambda do |range|
+      elections = RampElection.established.where(receipt_date: offset_range(range))
+      average(elections.map(&:control_time))
     end,
 
     total_completed: lambda do |range|
@@ -102,6 +146,26 @@ class IntakeStats < Caseflow::Stats
 
     total_ramp_election_already_complete: lambda do |range|
       intake_series_statuses(range).select { |status| status == "ramp_election_already_complete" }.count
+    end,
+
+    total_refilings: lambda do |range|
+      RampRefiling.established.where(receipt_date: offset_range(range)).count
+    end,
+
+    total_higher_level_review_refilings: lambda do |range|
+      total_refilings_for_option(range, :higher_level_review)
+    end,
+
+    total_higher_level_review_with_hearing_refilings: lambda do |range|
+      total_refilings_for_option(range, :higher_level_review_with_hearing)
+    end,
+
+    total_supplemental_claim_refilings: lambda do |range|
+      total_refilings_for_option(range, :supplemental_claim)
+    end,
+
+    total_appeal_refilings: lambda do |range|
+      total_refilings_for_option(range, :appeal)
     end
   }.freeze
 end

@@ -93,8 +93,8 @@ class AppealEvent
 
   EVENT_TYPE_FOR_ISSUE_DISPOSITIONS = {
     field_grant: [
-      "Benefits Granted by AOJ",
-      "Advance Allowed in Field"
+      :advance_allowed_in_field,
+      :benefits_granted_by_aoj
     ]
   }.freeze
 

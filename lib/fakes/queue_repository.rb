@@ -14,8 +14,9 @@ class Fakes::QueueRepository
         vacols_id: record.vacols_id,
         vbms_id: record.vbms_id,
         docket_date: record.docket_date,
-        date_assigned: record.date_assigned,
-        date_received: record.date_received,
+        assigned_to_attorney_date: record.assigned_to_attorney_date,
+        reassigned_to_judge_date: record.reassigned_to_judge_date,
+        assigned_to_location_date: record.assigned_to_location_date,
         date_due: record.date_due,
         docket_number: record.docket_number,
         added_by_first_name: record.added_by_first_name,
@@ -45,7 +46,7 @@ class Fakes::QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge(_decass_hash)
+  def self.reassign_case_to_judge!(_decass_hash)
     true
   end
 end

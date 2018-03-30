@@ -165,7 +165,6 @@ class ExternalApi::VBMSService
       @vbms_client.send_request(request)
     end
   rescue VBMS::ClientError => e
-    Raven.capture_exception(e)
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
 
     raise e

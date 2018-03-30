@@ -98,6 +98,22 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Veteran ID not found")
     end
 
+    scenario "Search for a veteran but search throws an unhandled exception" do
+      expect_any_instance_of(IntakesController).to receive(:create).and_raise("random error")
+      visit "/intake"
+
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Opt-In Election Form").click
+      end
+      safe_click ".cf-submit.usa-button"
+
+      fill_in "Search small", with: "5678"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("Something went wrong")
+    end
+
     context "Veteran has too high of a sensitivity level for user" do
       let(:inaccessible) { true }
 
@@ -114,6 +130,28 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("You don't have permission to view this veteran's information")
+      end
+    end
+
+    context "Veteran has missing information" do
+      let(:veteran) do
+        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil)
+      end
+
+      scenario "Search for a veteran with a validation error" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex.")
       end
     end
 
@@ -353,9 +391,15 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("You must confirm you've completed the steps")
         expect(page).to_not have_content("Intake completed")
-
+        expect(page).to have_button("Cancel intake", disabled: false)
         click_label("confirm-finish")
+
+        Fakes::VBMSService.hold_request!
         safe_click "button#button-submit-review"
+
+        expect(page).to have_button("Cancel intake", disabled: true)
+
+        Fakes::VBMSService.resume_request!
 
         expect(page).to have_content("Intake completed")
         expect(page).to have_content(
@@ -681,7 +725,12 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "Left knee rating increase").click
         find("label", text: "The veteran's form lists at least one ineligible contention").click
 
+        Fakes::VBMSService.hold_request!
+        expect(page).to have_button("Cancel intake", disabled: false)
         safe_click "#finish-intake"
+        expect(page).to have_button("Cancel intake", disabled: true)
+
+        Fakes::VBMSService.resume_request!
 
         expect(page).to have_content("Intake completed")
 
