@@ -11,5 +11,12 @@ export const ACTIONS = {
   TOGGLE_PRELIMINARY_IMPRESSION: 'toggle-preliminary-impression',
   OPEN_HEARINGS_TAB: 'open-hearings-tab',
   OPEN_PAST_HEARING_DOCKET: 'open-past-hearing-docket',
-  OPEN_CURRENT_HEARING_DOCKET: 'open-current-hearing-docket'
+  OPEN_CURRENT_HEARING_DOCKET: 'open-current-hearing-docket',
+
+  // daily docket
+  GO_BACK_TO_HEARING_DAYS: 'go-back-to-hearing-days',
+  DOCKET_HEARING_PREPPED: 'hearing-prepped',
+  DISPOSITION_SELECTED: 'disposition-selected',
+  AOD_SELECTED: 'aod-selected',
+  TRANSCRIPT_REQUESTED: 'transcript-requested'
 };
