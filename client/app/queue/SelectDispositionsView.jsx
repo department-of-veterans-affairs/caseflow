@@ -12,26 +12,30 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Table from '../components/Table';
 
 import {
-  updateAppealIssue,
-  setDecisionOptions
+  updateEditingAppealIssue,
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 } from './QueueActions';
 import { highlightInvalidFormItems } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+const tableStyling = css({
+  '& tr': {
+    borderBottom: 'none'
+  }
+});
 const tbodyStyling = css({
-  '& > tr': {
-    borderBottom: 'none',
-    '> td': {
-      verticalAlign: 'top',
-      paddingTop: '2rem',
-      '&:first-of-type': {
-        width: '40%'
-      },
-      '&:last-of-type': {
-        width: '35%'
-      }
+  '& > tr > td': {
+    verticalAlign: 'top',
+    paddingTop: '2rem',
+    '&:first-of-type': {
+      width: '40%'
+    },
+    '&:last-of-type': {
+      width: '35%'
     }
   }
 });
@@ -42,23 +46,15 @@ class SelectDispositionsView extends React.PureComponent {
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
 
-  componentDidMount = () => {
-    const {
-      vacolsId,
-      appeal: { attributes: { issues } }
-    } = this.props;
+  componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
-    // Wipe any previously-set dispositions in the pending
-    // appeal's issues for validation purposes.
-    _.each(issues, (issue) =>
-      this.props.updateAppealIssue(
-        vacolsId,
-        issue.id,
-        { disposition: null }
-      ));
+  updateIssue = (issueId, attributes) => {
+    const { vacolsId } = this.props;
 
-    this.props.setDecisionOptions({ work_product: 'Decision' });
-  };
+    this.props.startEditingAppealIssue(vacolsId, issueId);
+    this.props.updateEditingAppealIssue(attributes);
+    this.props.saveEditedAppealIssue(vacolsId);
+  }
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
@@ -68,7 +64,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`
+    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
   }, {
     displayText: 'Finish dispositions',
     id: 'finish-dispositions'
@@ -80,10 +76,13 @@ class SelectDispositionsView extends React.PureComponent {
     valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
   }, {
     header: 'Actions',
-    valueFunction: () => <Link>Edit Issue</Link>
+    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+      Edit Issue
+    </Link>
   }, {
     header: 'Dispositions',
     valueFunction: (issue) => <SelectIssueDispositionDropdown
+      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
       issue={issue}
       vacolsId={this.props.vacolsId} />
   }];
@@ -100,6 +99,7 @@ class SelectDispositionsView extends React.PureComponent {
       columns={this.getColumns}
       rowObjects={this.props.appeal.attributes.issues}
       getKeyForRow={this.getKeyForRow}
+      styling={tableStyling}
       bodyStyling={tbodyStyling}
     />
     <div {...marginLeft(1.5)}>
@@ -120,9 +120,11 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue,
+  updateEditingAppealIssue,
   highlightInvalidFormItems,
-  setDecisionOptions
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
