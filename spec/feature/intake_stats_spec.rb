@@ -36,6 +36,18 @@ RSpec.feature "Intake Stats Dashboard" do
       established_at: Time.zone.now
     )
 
+    RampClosedAppeal.create!(
+      ramp_election_id: 5,
+      vacols_id: "12345",
+      nod_date: 365.days.ago
+    )
+
+    RampClosedAppeal.create!(
+      ramp_election_id: 5,
+      vacols_id: "54321",
+      nod_date: 363.days.ago
+    )
+
     # RAMP election with no notice date
     RampElection.create!(
       veteran_file_number: "77776663",
@@ -100,6 +112,7 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
+
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
