@@ -112,7 +112,6 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
-
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
@@ -128,6 +127,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 1")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
     expect(find("#ramp-elections-received")).to have_content("Average Control Time 2.00 days")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
