@@ -47,6 +47,11 @@ class RampElectionIntake < Intake
           nod_date: appeal.nod_date
         )
       end
+
+      detail.update!(
+        established_at: Time.zone.now,
+        established_by_user_id: user.id
+      ) unless detail.established_at
     end
   end
 
