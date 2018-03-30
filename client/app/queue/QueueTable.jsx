@@ -109,10 +109,10 @@ class QueueTable extends React.PureComponent {
         const resp = JSON.parse(response.text);
         const docCount = resp.data.attributes.documents.length;
 
-        this.props.setAppealDocCount({
-          ..._.pick(task, 'vacolsId'),
+        this.props.setAppealDocCount(
+          task.vacolsId,
           docCount
-        });
+        );
       }, () => this.props.loadAppealDocCountFail(task.vacolsId));
   };
 
