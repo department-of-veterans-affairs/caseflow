@@ -336,6 +336,7 @@ class Fakes::AppealRepository
   # 16555555 throws a sensitivity error
   # 19555555 throws a sex error
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Lint/AbcSize
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
 
@@ -344,7 +345,6 @@ class Fakes::AppealRepository
       claim_id = "FAKEEP123#{i}"
 
       Generators::Veteran.build(file_number: file_number)
-
       Generators::Appeal.build(
         vbms_id: "#{file_number}C",
         issues: (1..2).map { Generators::Issue.build },
@@ -417,6 +417,7 @@ class Fakes::AppealRepository
     )
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Lint/AbcSize
 
   def self.aod(_vacols_id)
     true

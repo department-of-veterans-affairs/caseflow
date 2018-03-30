@@ -39,7 +39,7 @@ class RampElectionIntake < Intake
       ) do
         ramp_election.create_end_product!
       end
-      
+
       eligible_appeals.each do |appeal|
         RampClosedAppeal.new(
           vacols_id: appeal.vacols_id,
