@@ -119,6 +119,12 @@ class IntakeStats < Caseflow::Stats
       average(response_times)
     end,
 
+    average_election_nod_to_established_time: lambda do |range|
+      closed_appeals = RampClosedAppeal.joins(:ramp_election).where(ramp_elections: { receipt_date: offset_range(range) })
+      nod_times = closed_appeals.map { |c| c.established_at.beginning_of_day - c.nod_date.to_time }
+      average(nod_times)
+    end,
+
     average_election_control_time: lambda do |range|
       elections = RampElection.established.where(receipt_date: offset_range(range))
       average(elections.map(&:control_time))
