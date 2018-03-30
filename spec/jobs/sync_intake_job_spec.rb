@@ -10,8 +10,6 @@ describe SyncIntakeJob do
 
       expect(ramp_election).to have_received(:recreate_issues_from_contentions!)
       expect(ramp_election).to have_received(:sync_ep_status!)
-      # expect(active_ramp_election).to have_received(:recreate_issues_from_contentions!)
-      # expect(active_ramp_election).to have_received(:sync_ep_status!)
     end
   end
 end
