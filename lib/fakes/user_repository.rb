@@ -4,7 +4,7 @@ class Fakes::UserRepository
   end
 
   def self.vacols_role(_css_id)
-    %w[Attorney Judge].sample
+    "Attorney"
   end
 
   def self.vacols_uniq_id(css_id)
