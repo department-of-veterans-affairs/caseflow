@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
+
 import { CATEGORIES, ACTIONS } from './analytics';
 import { selectDocketsPageTabIndex } from './actions/Dockets';
 
@@ -38,13 +39,6 @@ const tabBodyStyling = css({
 });
 
 export class Dockets extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      viewingPastTab: false
-    };
-  }
 
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
