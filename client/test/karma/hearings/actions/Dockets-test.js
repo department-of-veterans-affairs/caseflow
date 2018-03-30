@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import * as Actions from '../../../../app/hearings/actions/Dockets';
 import * as Constants from '../../../../app/hearings/constants/constants';
-import { CATEGORIES, debounceMs } from '../../../../app/hearings/analytics';
+import { CATEGORIES, ACTIONS, debounceMs } from '../../../../app/hearings/analytics';
 
 describe('.setNotes', () => {
   it('sets notes', () => {
@@ -39,6 +39,13 @@ describe('.setDisposition', () => {
         hearingIndex,
         disposition,
         date
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.DAILY_DOCKET_PAGE,
+          action: ACTIONS.DISPOSITION_SELECTED,
+          label: disposition
+        }
       }
     };
 
@@ -75,6 +82,13 @@ describe('.setAod', () => {
         hearingIndex,
         aod,
         date
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.DAILY_DOCKET_PAGE,
+          action: ACTIONS.AOD_SELECTED,
+          label: aod
+        }
       }
     };
 
@@ -93,6 +107,13 @@ describe('.setTranscriptRequested', () => {
         hearingIndex,
         transcriptRequested,
         date
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.DAILY_DOCKET_PAGE,
+          action: ACTIONS.TRANSCRIPT_REQUESTED,
+          label: transcriptRequested ? 'checked' : 'unchecked'
+        }
       }
     };
 
