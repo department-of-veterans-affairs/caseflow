@@ -37,6 +37,10 @@ export const pushBreadcrumb = (...crumbs) => ({
   }
 });
 
+export const popBreadcrumb = () => ({
+  type: ACTIONS.POP_BREADCRUMB
+});
+
 export const resetBreadcrumbs = () => ({
   type: ACTIONS.RESET_BREADCRUMBS
 });
@@ -52,7 +56,7 @@ export const saveFailure = (resp) => (dispatch) => {
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 };
 
-export const requestSave = (params, url) => (dispatch) => {
+export const requestSave = (url, params) => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 

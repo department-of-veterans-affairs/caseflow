@@ -336,7 +336,7 @@ class Fakes::AppealRepository
   # 16555555 throws a sensitivity error
   # 19555555 throws a sex error
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Lint/AbcSize
+  # rubocop:disable Metrics/AbcSize
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
 
@@ -417,7 +417,7 @@ class Fakes::AppealRepository
     )
   end
   # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Lint/AbcSize
+  # rubocop:enable Metrics/AbcSize
 
   def self.aod(_vacols_id)
     true
