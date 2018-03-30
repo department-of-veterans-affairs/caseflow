@@ -347,7 +347,8 @@ class Fakes::AppealRepository
 
       Generators::Appeal.build(
         vbms_id: "#{file_number}C",
-        issues: (1..2).map { Generators::Issue.build }
+        issues: (1..2).map { Generators::Issue.build },
+        vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago }
       )
 
       Generators::EndProduct.build(

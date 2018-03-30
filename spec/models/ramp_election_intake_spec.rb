@@ -65,12 +65,24 @@ describe RampElectionIntake do
 
     let!(:appeals_to_close) do
       (1..2).map do
-        Generators::Appeal.create(vbms_id: "64205555C", vacols_record: :ready_to_certify)
+        Generators::Appeal.create(vbms_id: "64205555C", vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago })
       end
     end
 
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+      expect(RampClosedAppeal).to receive(:new).with(
+        vacols_id: appeals_to_close.first.vacols_id,
+        ramp_election_id: detail.id,
+        nod_date: appeals_to_close.first.nod_date
+      ).and_call_original
+
+      expect(RampClosedAppeal).to receive(:new).with(
+        vacols_id: appeals_to_close.last.vacols_id,
+        ramp_election_id: detail.id,
+        nod_date: appeals_to_close.last.nod_date
+      ).and_call_original
 
       expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
         appeal: appeals_to_close.first,
@@ -87,7 +99,7 @@ describe RampElectionIntake do
       )
 
       subject
-
+      
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
     end

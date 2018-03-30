@@ -1,6 +1,7 @@
 class RampElection < RampReview
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
   has_many :ramp_refilings
+  has_many :ramp_closed_appeals
 
   RESPOND_BY_TIME = 60.days.freeze
 

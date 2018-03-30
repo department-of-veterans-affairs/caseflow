@@ -39,9 +39,16 @@ class RampElectionIntake < Intake
       ) do
         ramp_election.create_end_product!
       end
+      
+      eligible_appeals.each do |appeal|
+        RampClosedAppeal.new(
+          vacols_id: appeal.vacols_id,
+          ramp_election_id: ramp_election.id,
+          nod_date: appeal.nod_date
+        ).save!
+      end
+      detail.update!(established_at: Time.zone.now)
     end
-
-    detail.update!(established_at: Time.zone.now)
   end
 
   def cancel!
