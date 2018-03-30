@@ -11,7 +11,6 @@ import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { CATEGORIES, ACTIONS } from './analytics';
-
 import { selectDocketsPageTabIndex } from './actions/Dockets';
 
 const UPCOMING_TAB_INDEX = 0;
