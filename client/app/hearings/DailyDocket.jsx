@@ -13,7 +13,7 @@ export class DailyDocket extends React.Component {
   }
 
   render() {
-    const docket = _.orderBy(this.props.dockets,
+    const docket = _.orderBy(this.props.docket,
       ['date', 'veteran_mi_formatted'], ['asc', 'asc']);
 
     return <div>
