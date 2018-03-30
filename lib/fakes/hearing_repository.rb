@@ -110,7 +110,6 @@ class Fakes::HearingRepository
 
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
-
     38.times.each do |i|
       name_attrs = {}
 
