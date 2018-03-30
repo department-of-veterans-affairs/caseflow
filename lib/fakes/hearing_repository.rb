@@ -87,11 +87,13 @@ class Fakes::HearingRepository
   end
 
   def self.create_appeal_stream(hearing, i)
-    Generators::Appeal.build(
-      vbms_id: hearing.vbms_id,
-      vacols_id: 950_330_575 + (i * 1276),
-      vacols_record: { template: :remand_decided }
-    )
+    3.times.each do |k|
+      Generators::Appeal.build(
+        vbms_id: hearing.vbms_id,
+        vacols_id: 950_330_575 + ((i + k) * 1276),
+        vacols_record: { template: :remand_decided }
+      )
+    end
   end
 
   def self.generate_past_hearings(number_of_hearings, user)
