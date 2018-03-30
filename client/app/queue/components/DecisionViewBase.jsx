@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import {
   pushBreadcrumb,
   popBreadcrumb,
-  highlightInvalidFormItems,
+  highlightInvalidFormItems
 } from '../uiReducer/uiActions';
 
 import Breadcrumbs from './BreadcrumbManager';
@@ -23,7 +23,7 @@ export default function decisionViewBase(ComponentToWrap) {
     constructor(props) {
       super(props);
 
-      this.state = { wrapped: {} }
+      this.state = { wrapped: {} };
     }
 
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref })
@@ -140,7 +140,7 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
-    highlightInvalidFormItems,
+    highlightInvalidFormItems
   }, dispatch);
 
   return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));
