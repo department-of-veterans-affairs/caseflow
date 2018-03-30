@@ -70,7 +70,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   preppedOnChange = (value) => this.savePrepped(this.props.worksheet.id, value);
 
-  onClickReviewClaimsFolder = () => 
+  onClickReviewClaimsFolder = () =>
     window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_REVIEW_CLAIMS_FOLDER);
 
   render() {

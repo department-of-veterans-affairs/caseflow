@@ -99,19 +99,16 @@ export const setNotes = (hearingIndex, notes, date) => ({
   }
 });
 
-export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
+export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE, submitToGA = true) => ({
   type: Constants.SET_HEARING_PREPPED,
-  payload: {
-    hearingId,
-    prepped,
-    date,
-    setEdited
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.DOCKET_HEARING_PREPPED,
-      label: prepped
+  payload,
+  ...submitToGA && {
+    meta: {
+      analytics: {
+        category: gaCategory,
+        action: ACTIONS.DOCKET_HEARING_PREPPED,
+        label: payload.prepped ? 'checked' : 'unchecked'
+      }
     }
   }
 });
