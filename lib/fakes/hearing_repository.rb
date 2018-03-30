@@ -1,5 +1,8 @@
 require "prime"
 class Fakes::HearingRepository
+  extend Generators::Base
+  
+
   class << self
     attr_accessor :hearing_records
     attr_accessor :master_records
@@ -107,8 +110,26 @@ class Fakes::HearingRepository
 
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
+
     38.times.each do |i|
-      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user))
+      name_attrs = {}
+
+      if i % 5 == 0
+        first_name = generate_first_name
+        last_name = generate_last_name
+        middle_initial = "A"
+
+        name_attrs = {
+          veteran_first_name: first_name,
+          veteran_middle_initial: middle_initial,
+          veteran_last_name: last_name,
+          appellant_first_name: first_name,
+          appellant_middle_initial: middle_initial,
+          appellant_last_name: last_name,
+        }
+      end
+
+      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user).merge(name_attrs))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
 
