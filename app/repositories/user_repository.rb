@@ -28,10 +28,12 @@ class UserRepository
 
     private
 
+    # :nocov:
     def staff_record_by_css_id(css_id)
       staff = VACOLS::Staff.find_by(sdomainid: css_id)
       fail Caseflow::Error::UserRepositoryError, "Cannot find user with #{css_id} in VACOLS" unless staff
       staff
     end
+    # :nocov:
   end
 end
