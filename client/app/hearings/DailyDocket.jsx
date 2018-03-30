@@ -4,8 +4,12 @@ import DocketHearingRow from './components/DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { CATEGORIES, ACTIONS } from './analytics';
 
 export class DailyDocket extends React.Component {
+  onclickBackToHearingDays = () => {
+    window.analyticsEvent(CATEGORIES.DAILY_DOCKET_PAGE, ACTIONS.GO_BACK_TO_HEARING_DAYS);
+  }
 
   render() {
     const docket = this.props.docket;
@@ -45,7 +49,7 @@ export class DailyDocket extends React.Component {
       </AppSegment>
       <div className="cf-alt--actions">
         <div className="cf-push-left">
-          <Link to="/hearings/dockets">&lt; Back to Your Hearing Days</Link>
+          <Link to="/hearings/dockets" onClick={this.onclickBackToHearingDays} >&lt; Back to Your Hearing Days</Link>
         </div>
       </div>
     </div>;
