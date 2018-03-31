@@ -49,7 +49,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
         Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
 
         # signal to efolder X to fetch and save all documents
-        appeal.saved_documents
+        DocumentService.new(appeal, use_efolder: true).documents.find_or_create!
         @counts[:appeals_successful] += 1
       rescue Caseflow::Error::EfolderAccessForbidden
         Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"

@@ -113,14 +113,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= fetch_documents!(save: false)
-  end
-
-  # This method fetches documents and saves their metadata
-  # in the database
-  attr_writer :saved_documents
-  def saved_documents
-    @saved_documents ||= fetch_documents!(save: true)
+    @documents ||= fetched_documents
   end
 
   def number_of_documents
@@ -356,57 +349,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def fetch_documents!(save:)
-    save ? find_or_create_documents! : fetched_documents
-  end
-
-  def find_or_create_documents_v2!
-    AddSeriesIdToDocumentsJob.perform_now(self)
-
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          create_new_document!(document, ids)
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
-  def find_or_create_documents!
-    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
-                                                                  user: RequestStore.store[:current_user])
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          document.save!
-          document
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
   # These three methods are used to decide whether the appeal is processed
   # as a partial grant, remand, or full grant when dispatching it.
   def partial_grant_on_dispatch?
@@ -550,16 +492,6 @@ class Appeal < ActiveRecord::Base
       hash["regional_office"] = regional_office_hash
       hash["hearings"] = hearings
     end
-  end
-
-  def manifest_vbms_fetched_at
-    fetch_documents_from_service!
-    @manifest_vbms_fetched_at
-  end
-
-  def manifest_vva_fetched_at
-    fetch_documents_from_service!
-    @manifest_vva_fetched_at
   end
 
   private
