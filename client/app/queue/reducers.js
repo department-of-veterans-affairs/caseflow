@@ -171,6 +171,27 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.DELETE_APPEAL_ISSUE:{
+    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
+    const newIssues = _.reject(issues, (issue) => issue.id === action.payload.issueId);
+
+    return update(state, {
+      pendingChanges: {
+        appeals: {
+          [action.payload.appealId]: {
+            attributes: {
+              issues: {
+                $set: newIssues
+              }
+            }
+          }
+        },
+        editingIssue: {
+          $set: {}
+        }
+      }
+    });
+  }
   default:
     return state;
   }

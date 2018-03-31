@@ -10,7 +10,8 @@ import {
   updateEditingAppealIssue,
   startEditingAppealIssue,
   cancelEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  deleteAppealIssue
 } from './QueueActions';
 import { highlightInvalidFormItems } from './uiReducer/uiActions';
 
@@ -18,6 +19,7 @@ import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 
 import {
   fullWidth,
@@ -30,6 +32,12 @@ const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { modal: false };
+  }
+
   componentDidMount = () => {
     const {
       issueId,
@@ -99,6 +107,16 @@ class AddEditIssueView extends React.Component {
     return true;
   };
 
+  showDeleteModal = () => this.setState({ modal: true });
+  hideDeleteModal =() => this.setState({ modal: false });
+
+  deleteIssue = () => {
+    this.hideDeleteModal();
+    this.props.deleteAppealIssue(this.props.vacolsId, this.props.issueId);
+    debugger;
+    // this.props.history.push(this.props.nextStep);
+  }
+
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
@@ -129,6 +147,22 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
+      {this.state.modal && <div className="cf-modal-scroll">
+        <Modal
+          title="Delete Issue?"
+          buttons={[{
+            classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Cancel',
+            onClick: this.hideDeleteModal
+          }, {
+            classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Delete',
+            onClick: this.deleteIssue
+          }]}
+          closeHandler={this.hideDeleteModal}>
+          Delete this issue?
+        </Modal>
+      </div>}
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         {StringUtil.titleCase(action)} Issue
       </h1>
@@ -136,7 +170,7 @@ class AddEditIssueView extends React.Component {
         willNeverBeLoading
         styling={noLeftPadding}
         classNames={['cf-btn-link']}
-        onClick={_.noop}>
+        onClick={this.showDeleteModal}>
         Delete Issue
       </Button>
       <div {...dropdownMarginTop}>
@@ -226,7 +260,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  deleteAppealIssue
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
