@@ -51,7 +51,7 @@ class Fakes::QueueRepository
     true
   end
 
-  def self.assign_case_to_attorney!(args)
+  def self.assign_case_to_attorney!(_args)
     true
   end
 end

@@ -76,7 +76,8 @@ RSpec.describe QueueController, type: :controller do
         allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
           judge: current_user,
           attorney: attorney,
-          vacols_id: appeal.vacols_id).and_return(true)
+          vacols_id: appeal.vacols_id
+        ).and_return(true)
 
         post :create, queue: params
         expect(response.status).to eq 201
@@ -102,7 +103,7 @@ RSpec.describe QueueController, type: :controller do
       context "when appeal is not found" do
         let(:params) do
           {
-            "appeal_id": 4646464,
+            "appeal_id": 4_646_464,
             "attorney_id": attorney.id,
             "appeal_type": "Legacy"
           }
@@ -119,7 +120,7 @@ RSpec.describe QueueController, type: :controller do
         let(:params) do
           {
             "appeal_id": appeal.id,
-            "attorney_id": 7777777777,
+            "attorney_id": 7_777_777_777,
             "appeal_type": "Legacy"
           }
         end

@@ -96,7 +96,7 @@ class QueueController < ApplicationController
     render json: {
       "errors": [
         "title": "Appeal Type is Invalid",
-        "detail": "Appeal type should be one of the following: #{APPEAL_TYPES.join(", ")}"
+        "detail": "Appeal type should be one of the following: #{APPEAL_TYPES.join(', ')}"
       ]
     }, status: 400
   end
@@ -123,11 +123,10 @@ class QueueController < ApplicationController
 
   def create_params
     params.require("queue")
-          .permit(:appeal_id, :appeal_type)
-          .merge(assigned_to: User.find(params[:queue][:attorney_id]))
-          .merge(assigned_by: current_user)
+      .permit(:appeal_id, :appeal_type)
+      .merge(assigned_to: User.find(params[:queue][:attorney_id]))
+      .merge(assigned_by: current_user)
   end
-
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(

@@ -59,7 +59,7 @@ class QueueRepository
   end
 
   def self.decass_complexity_rating(vacols_id)
-    record = VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
+    VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
       .find_by(bfkey: vacols_id)
       .try(:complexity_rating)
   end
