@@ -7,13 +7,17 @@ const initialErrorState = {
   message: null
 };
 
+const initialSaveState = {
+  savePending: false,
+  saveSuccessful: null
+};
+
 export const initialState = {
   selectingJudge: false,
   breadcrumbs: [],
   highlightFormItems: false,
   errorState: initialErrorState,
-  savePending: false,
-  saveSuccessful: null
+  saveState: initialSaveState
 };
 
 const setErrorMessageState = (state, isVisible, errorMsg = null) => update(state, {
@@ -58,18 +62,28 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.REQUEST_SAVE:
     return update(state, {
-      savePending: { $set: true },
-      saveSuccessful: { $set: null }
+      saveState: {
+        savePending: { $set: true },
+        saveSuccessful: { $set: null }
+      }
     });
   case ACTIONS.SAVE_SUCCESS:
     return update(state, {
-      savePending: { $set: false },
-      saveSuccessful: { $set: true }
+      saveState: {
+        savePending: { $set: false },
+        saveSuccessful: { $set: true }
+      }
     });
   case ACTIONS.SAVE_FAILURE:
     return update(state, {
-      savePending: { $set: false },
-      saveSuccessful: { $set: false }
+      saveState: {
+        savePending: { $set: false },
+        saveSuccessful: { $set: false }
+      }
+    });
+  case ACTIONS.RESET_SAVE_STATE:
+    return update(state, {
+      saveState: { $set: initialSaveState }
     });
   case ACTIONS.RESET_ERROR_MESSAGES:
     return update(state, {

@@ -65,3 +65,7 @@ export const requestSave = (url, params) => (dispatch) => {
     (resp) => dispatch(saveFailure(resp))
   );
 };
+
+export const resetSaveState = () => ({
+  type: ACTIONS.RESET_SAVE_STATE
+});

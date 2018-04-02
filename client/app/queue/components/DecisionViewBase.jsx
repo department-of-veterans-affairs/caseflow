@@ -9,6 +9,7 @@ import {
   popBreadcrumb,
   highlightInvalidFormItems
 } from '../uiReducer/uiActions';
+import { wipeLoadedQueue } from '../QueueActions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
@@ -118,6 +119,8 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
+          // clear loaded data to trigger reload
+          this.props.wipeLoadedQueue();
           this.goToStep(this.props.nextStep);
         } else {
           this.props.highlightInvalidFormItems(true);
@@ -136,11 +139,15 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'savePending', 'saveSuccessful');
+  const mapStateToProps = (state) => ({
+    ..._.pick(state.ui, 'breadcrumbs'),
+    ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful')
+  });
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
-    highlightInvalidFormItems
+    highlightInvalidFormItems,
+    wipeLoadedQueue
   }, dispatch);
 
   return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));

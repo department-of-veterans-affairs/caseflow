@@ -10,6 +10,10 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   }
 });
 
+export const wipeLoadedQueue = () => ({
+  type: ACTIONS.WIPE_LOADED_QUEUE
+});
+
 export const onReceiveJudges = (judges) => ({
   type: ACTIONS.RECEIVE_JUDGE_DETAILS,
   payload: {

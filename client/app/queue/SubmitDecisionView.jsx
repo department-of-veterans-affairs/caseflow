@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { getDecisionTypeDisplay } from './utils';
 
 import {
   setDecisionOptions,
@@ -48,38 +48,31 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
-    const { task: { attributes: task } } = this.props;
+    const {
+      appeal: { attributes: appeal },
+      task: { attributes: task }
+    } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
+    const decisionOpts = { veteran_name: appeal.veteran_full_name };
 
     if (judge) {
-      this.props.setDecisionOptions({
+      _.extend(decisionOpts, {
         judge: {
           label: task.added_by_name,
           value: judge.id
         }
       });
     }
+
+    // store the vet name so we can access it after submitting
+    // the decision and reloading appeals at /queue
+    this.props.setDecisionOptions(decisionOpts);
   };
 
   getBreadcrumb = () => ({
-    breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
+    breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
     path: `/tasks/${this.props.vacolsId}/submit`
   });
-
-  getDecisionTypeDisplay = () => {
-    const {
-      type: decisionType
-    } = this.props.decision;
-
-    switch (decisionType) {
-    case DECISION_TYPES.OMO_REQUEST:
-      return 'OMO';
-    case DECISION_TYPES.DRAFT_DECISION:
-      return 'Draft Decision';
-    default:
-      return StringUtil.titleCase(decisionType);
-    }
-  };
 
   goToPrevStep = () => {
     this.props.resetDecisionOptions();
@@ -190,20 +183,22 @@ class SubmitDecisionView extends React.PureComponent {
       value: 'OMO - IME'
     }];
     const {
-      type: decisionType,
-      opts: decisionOpts
-    } = this.props.decision;
-    const {
       highlightFormItems,
-      error
+      error,
+      decision,
+      decision: {
+        type: decisionType,
+        opts: decisionOpts
+      }
     } = this.props;
+    const decisionTypeDisplay = getDecisionTypeDisplay(decision);
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Submit {this.getDecisionTypeDisplay()} for Review
+        Submit {decisionTypeDisplay} for Review
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
+        Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
       {error.visible && <Alert title={error.message.title} type="error">
         {error.message.detail}
