@@ -39,10 +39,21 @@ class RampElectionIntake < Intake
       ) do
         ramp_election.create_end_product!
       end
+
+      eligible_appeals.each do |appeal|
+        RampClosedAppeal.new(
+          vacols_id: appeal.vacols_id,
+          ramp_election_id: ramp_election.id,
+          nod_date: appeal.nod_date
+        ).save!
+      end
+      detail.update!(established_at: Time.zone.now)
     end
   end
 
   def cancel!
+    return if complete?
+
     transaction do
       detail.update_attributes!(receipt_date: nil, option_selected: nil)
       complete_with_status!(:canceled)

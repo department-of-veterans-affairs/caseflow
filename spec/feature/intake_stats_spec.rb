@@ -29,10 +29,23 @@ RSpec.feature "Intake Stats Dashboard" do
 
     RampElection.create!(
       veteran_file_number: "77776666",
-      notice_date: 4.days.ago,
-      receipt_date: 1.day.ago,
+      notice_date: 5.days.ago,
+      receipt_date: 2.days.ago,
       option_selected: :higher_level_review_with_hearing,
-      end_product_reference_id: "123"
+      end_product_reference_id: "123",
+      established_at: Time.zone.now
+    )
+
+    RampClosedAppeal.create!(
+      ramp_election_id: 5,
+      vacols_id: "12345",
+      nod_date: 365.days.ago
+    )
+
+    RampClosedAppeal.create!(
+      ramp_election_id: 5,
+      vacols_id: "54321",
+      nod_date: 363.days.ago
     )
 
     # RAMP election with no notice date
@@ -99,7 +112,6 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
     visit "/intake/stats"
-
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
@@ -115,6 +127,8 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 1")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Control Time 2.00 days")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
     expect(find("#ramp-elections-processed")).to have_content("Total 2")
