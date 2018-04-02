@@ -92,12 +92,10 @@ class RampElection < RampReview
   end
 
   def validate_receipt_date
-    return unless notice_date && receipt_date
-
-    if notice_date > receipt_date
+    return unless receipt_date
+    validate_receipt_date_not_in_future
+    if notice_date && notice_date > receipt_date
       errors.add(:receipt_date, "before_notice_date")
-    else
-      validate_receipt_date_not_in_future
     end
   end
 end
