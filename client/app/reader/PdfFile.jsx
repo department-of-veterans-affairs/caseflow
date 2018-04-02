@@ -447,7 +447,7 @@ export class PdfFile extends React.PureComponent {
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
             this.props.pdfDocument.pdfInfo.numPages);
 
-          let visibility = this.props.isVisible ? "visible" : "hidden";
+          let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
           return <Grid
             ref={this.getGrid}
