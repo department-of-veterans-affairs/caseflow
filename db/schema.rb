@@ -360,6 +360,12 @@ ActiveRecord::Schema.define(version: 20180328220242) do
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
+  create_table "ramp_closed_appeals", force: :cascade do |t|
+    t.string  "vacols_id",        null: false
+    t.integer "ramp_election_id"
+    t.date    "nod_date"
+  end
+
   create_table "ramp_elections", force: :cascade do |t|
     t.string   "veteran_file_number",               null: false
     t.date     "notice_date"
@@ -493,4 +499,5 @@ ActiveRecord::Schema.define(version: 20180328220242) do
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
+  add_foreign_key "ramp_closed_appeals", "ramp_elections"
 end
