@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText } from '../constants';
-import StringUtil from '../../util/StringUtil';
+import { boldText, ISSUE_INFO } from '../constants';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -24,39 +23,90 @@ export default class IssueListItem extends React.PureComponent {
     {this.props.idx}.
   </td>;
 
-  formatLevels = (issue) => issue.levels.map((level, idx) =>
-    <div key={idx} {...issueMarginTop}>
-      <span key={level} {...issueLevelStyling}>
-        {idx === 1 ? _.last(issue.description) : level}
-      </span>
-    </div>);
+  // eslint-disable-next-line max-statements
+  getIssueLevelValues = () => {
+    const {
+      issue: {
+        program,
+        type,
+        levels,
+        description,
+        codes: [
+          isslev1,
+          isslev2,
+          isslev3
+        ]
+      }
+    } = this.props;
+    const issueLevels = [];
+    const vacolsIssue = ISSUE_INFO[program].issue[type];
 
-  formatProgram = (issue) => {
-    const programWords = StringUtil.titleCase(issue.program).split(' ');
-    const acronyms = ['vba', 'bva', 'vre', 'nca'];
+    if (!vacolsIssue) {
+      return levels;
+    }
 
-    return programWords.map((word) =>
-      acronyms.includes(word.toLowerCase()) ? word.toUpperCase() : word
-    ).join(' ');
+    const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
+    const issueLevel2 = _.get(issueLevel1, ['levels', isslev2]);
+    const issueLevel3 = _.get(issueLevel2, ['levels', isslev3]);
+
+    if (issueLevel1) {
+      issueLevels.push(issueLevel1.description);
+
+      if (issueLevel2) {
+        issueLevels.push(issueLevel2.description);
+
+        issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
+      } else {
+        issueLevels.push(_.last(description));
+      }
+    } else {
+      issueLevels.push(_.last(description));
+    }
+
+    return issueLevels;
   };
+
+  getIssueType = () => {
+    const {
+      issue: { program, type }
+    } = this.props;
+    const vacolsIssue = ISSUE_INFO[program].issue[type];
+
+    return _.get(vacolsIssue, 'description');
+  };
+
+  formatLevels = () => this.getIssueLevelValues().map((code, idx) =>
+    <div key={idx} {...issueMarginTop}>
+      <span key={code} {...issueLevelStyling}>
+        {_.get(code, 'description', code)}
+      </span>
+    </div>
+  );
 
   render = () => {
     const {
-      issue,
+      issue: {
+        type,
+        levels,
+        note,
+        program
+      },
       issuesOnly
     } = this.props;
     let issueContent = <span />;
 
     if (issuesOnly) {
       issueContent = <React.Fragment>
-        {issue.type} {issue.levels.join(', ')}
+        {type} {levels.join(', ')}
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
-        <span {...boldText}>Program:</span> {this.formatProgram(issue)}
-        <div {...issueMarginTop}><span {...boldText}>Issue:</span> {issue.type} {this.formatLevels(issue)}</div>
+        <span {...boldText}>Program:</span> {ISSUE_INFO[program].description}
+        <div {...issueMarginTop}>
+          <span {...boldText}>Issue:</span> {this.getIssueType()} {this.formatLevels()}
+        </div>
         <div {...noteMarginTop}>
-          <span {...boldText}>Note:</span> {issue.note}
+          <span {...boldText}>Note:</span> {note}
         </div>
       </React.Fragment>;
     }
