@@ -113,18 +113,7 @@ class Fakes::HearingRepository
       name_attrs = {}
 
       if i % 5 == 0
-        first_name = generate_first_name
-        last_name = generate_last_name
-        middle_initial = "A"
-
-        name_attrs = {
-          veteran_first_name: first_name,
-          veteran_middle_initial: middle_initial,
-          veteran_last_name: last_name,
-          appellant_first_name: first_name,
-          appellant_middle_initial: middle_initial,
-          appellant_last_name: last_name
-        }
+        name_attrs = generate_random_name_attrs
       end
 
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user).merge(name_attrs))
@@ -151,6 +140,23 @@ class Fakes::HearingRepository
       vacols_id: 950_330_575 + (i * 1465),
       notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
       regional_office_key: %w[RO11 RO10 RO42 RO43 RO28 RO44][i % 6]
+    }
+  end
+
+  private
+
+  def self.generate_random_name_attrs
+    first_name = generate_first_name
+    last_name = generate_last_name
+    middle_initial = "A"
+
+    {
+      veteran_first_name: first_name,
+      veteran_middle_initial: middle_initial,
+      veteran_last_name: last_name,
+      appellant_first_name: first_name,
+      appellant_middle_initial: middle_initial,
+      appellant_last_name: last_name
     }
   end
 end
