@@ -1,7 +1,6 @@
 require "prime"
 class Fakes::HearingRepository
   extend Generators::Base
-  
 
   class << self
     attr_accessor :hearing_records
@@ -124,7 +123,7 @@ class Fakes::HearingRepository
           veteran_last_name: last_name,
           appellant_first_name: first_name,
           appellant_middle_initial: middle_initial,
-          appellant_last_name: last_name,
+          appellant_last_name: last_name
         }
       end
 
