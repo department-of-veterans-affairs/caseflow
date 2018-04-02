@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328220242) do
+ActiveRecord::Schema.define(version: 20180402204041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -481,7 +481,7 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.integer  "appeal_id"
     t.string   "vacols_sequence_id"
     t.boolean  "reopen",             default: false
-    t.boolean  "vha",                default: false
+    t.boolean  "omo",                default: false
     t.boolean  "allow",              default: false
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false

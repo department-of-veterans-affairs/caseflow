@@ -14,7 +14,7 @@ class Hearings::AppealsController < HearingsController
   def appeal_params
     params.require(:appeal)
       .permit(worksheet_issues_attributes: [:id, :allow, :deny, :remand, :dismiss,
-                                            :reopen, :vha, :description, :notes, :from_vacols,
+                                            :reopen, :omo, :description, :notes, :from_vacols,
                                             :disposition, :vacols_sequence_id, :_destroy])
   end
 end
