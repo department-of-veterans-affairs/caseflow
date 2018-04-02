@@ -1,4 +1,4 @@
-class CaseAssignment
+class TaskAssignment
   class << self
     attr_writer :repository
 
