@@ -16,9 +16,10 @@ class QueueLoadingScreen extends React.PureComponent {
     }
 
     return ApiUtil.get('/queue/judges').then((response) => {
-      const judges = JSON.parse(response.text).judges;
+      const resp = JSON.parse(response.text);
+      const judges = _.keyBy(resp.judges, 'id');
 
-      this.props.onReceiveJudges(_.keyBy(judges, 'id'));
+      this.props.onReceiveJudges(judges);
     });
   }
 
@@ -29,6 +30,7 @@ class QueueLoadingScreen extends React.PureComponent {
       tasks,
       appeals
     } = this.props;
+    // todo: after a user submits a decision, they're routed back to /, but we don't reload their tasks
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
 
     if (userQueueLoaded) {
