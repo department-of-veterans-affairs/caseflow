@@ -7,20 +7,8 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  def self.completed
-    where.not(end_product_reference_id: nil)
-  end
-
-  def self.established
-    where.not(established_at: nil)
-  end
-
   def self.active
     where.not(end_product_status: EndProduct::INACTIVE_STATUSES)
-  end
-
-  def completed?
-    !!end_product_reference_id
   end
 
   def active?
