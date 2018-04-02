@@ -14,12 +14,12 @@ class SearchableDropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value || null
+      value: props.value
     };
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: _.isUndefined(nextProps.value) ? null : nextProps.value });
+    this.setState({ value: nextProps.value });
   };
 
   onChange = (value) => {
