@@ -70,7 +70,7 @@ class QueueListView extends React.PureComponent {
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 className="cf-push-left" {...fullWidth}>Your Queue</h1>
+        <h1 {...fullWidth}>Your Queue</h1>
         {this.state.displayConfirmationMessage && this.getSaveConfirmationBanner()}
         <QueueTable />
       </div>;
