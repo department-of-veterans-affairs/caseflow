@@ -24,5 +24,5 @@ export const ACTIONS = {
   OPEN_PAST_ISSUES_TAB: 'open-past-issues-tab',
   CLICK_ON_SAVE_TO_PDF: 'click-on-save-to-pdf',
   SELECT_VETERAN_FROM_DROPDOWN: 'select-veteran-from-dropdown',
-  CLICK_ON_REVIEW_CLAIMS_FOLDER: 'click-on-review-claims-folder',
+  CLICK_ON_REVIEW_CLAIMS_FOLDER: 'click-on-review-claims-folder'
 };
