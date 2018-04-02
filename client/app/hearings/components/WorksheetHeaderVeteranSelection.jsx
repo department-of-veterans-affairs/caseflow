@@ -12,6 +12,7 @@ import { populateDailyDocket, getDailyDocket,
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import _ from 'lodash';
+import { CATEGORIES, ACTIONS } from '../analytics';
 import moment from 'moment';
 
 const headerSelectionStyling = css({
@@ -42,6 +43,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   }
 
   onDropdownChange = (value) => {
+    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.SELECT_VETERAN_FROM_DROPDOWN);
     if (value) {
       this.props.save();
       this.props.history.push(`/hearings/${value.value}/worksheet`);
@@ -67,6 +69,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   savePrepped = (hearingId, value) => this.props.setPrepped(hearingId, value, this.date);
 
   preppedOnChange = (value) => this.savePrepped(this.props.worksheet.id, value);
+
+  onClickReviewClaimsFolder = () =>
+    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_REVIEW_CLAIMS_FOLDER);
 
   render() {
 
@@ -103,6 +108,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="review-claims-folder"
+          onClick={this.onClickReviewClaimsFolder}
           href={`${getReaderLink(worksheet.appeal_vacols_id)}?category=case_summary`}
           button="primary"
           target="_blank">
