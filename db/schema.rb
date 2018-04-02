@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328220242) do
+ActiveRecord::Schema.define(version: 20180402224309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -343,6 +343,14 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string  "comments_for_attorney"
     t.boolean "prepped"
   end
+
+  create_table "intake_cancellations", force: :cascade do |t|
+    t.integer "intake_id"
+    t.string  "cancellation_reason"
+    t.string  "other_reason"
+  end
+
+  add_index "intake_cancellations", ["intake_id"], name: "index_intake_cancellations_on_intake_id", using: :btree
 
   create_table "intakes", force: :cascade do |t|
     t.integer  "detail_id"
