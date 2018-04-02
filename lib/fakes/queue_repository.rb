@@ -50,4 +50,8 @@ class Fakes::QueueRepository
   def self.reassign_case_to_judge!(_decass_hash)
     true
   end
+
+  def self.assign_case_to_attorney!(args)
+    true
+  end
 end

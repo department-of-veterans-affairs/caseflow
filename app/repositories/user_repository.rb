@@ -26,6 +26,14 @@ class UserRepository
       true
     end
 
+    def vacols_attorney_id(css_id)
+      staff_record_by_css_id(css_id).sattyid
+    end
+
+    def vacols_group_id(css_id)
+      staff_record_by_css_id(css_id).stitle
+    end
+
     private
 
     # :nocov:

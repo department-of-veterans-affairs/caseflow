@@ -1,9 +1,17 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
-  before_action :verify_queue_access, except: :complete
+  before_action :verify_queue_access
   before_action :verify_queue_phase_two, only: :complete
+  before_action :verify_queue_phase_three, only: :create
+
+  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
+    Rails.logger.error "QueueController failed: #{e.message}"
+    Raven.capture_exception(e)
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
 
   ROLES = %w[Judge Attorney].freeze
+  APPEAL_TYPES = %w[Legacy Ama].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -20,6 +28,15 @@ class QueueController < ApplicationController
     response = { attorney_case_review: record }
     response[:issues] = record.appeal.issues if record.type == "DraftDecision"
     render json: response
+  end
+
+  def create
+    return invalid_appeal_type unless APPEAL_TYPES.include?(create_params[:appeal_type])
+
+    return invalid_role_error if current_user.vacols_role != "Judge"
+
+    CaseAssignment.assign!(create_params)
+    render json: {}, status: :created
   end
 
   def tasks
@@ -57,11 +74,29 @@ class QueueController < ApplicationController
     @user ||= User.find(params[:user_id])
   end
 
+  def verify_queue_phase_three
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_three)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
   def invalid_role_error
     render json: {
       "errors": [
         "title": "Role is Invalid",
-        "detail": "User should have one of the following roles: #{ROLES.join(', ')}"
+        "detail": "User is not allowed to perform this action"
+      ]
+    }, status: 400
+  end
+
+  def invalid_appeal_type
+    render json: {
+      "errors": [
+        "title": "Appeal Type is Invalid",
+        "detail": "Appeal type should be one of the following: #{APPEAL_TYPES.join(", ")}"
       ]
     }, status: 400
   end
@@ -85,6 +120,14 @@ class QueueController < ApplicationController
                                    issues: [:disposition, :vacols_sequence_id, :readjudication,
                                             remand_reasons: [:code, :after_certification]])
   end
+
+  def create_params
+    params.require("queue")
+          .permit(:appeal_id, :appeal_type)
+          .merge(assigned_to: User.find(params[:queue][:attorney_id]))
+          .merge(assigned_by: current_user)
+  end
+
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(

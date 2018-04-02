@@ -10,8 +10,6 @@ class AttorneyCaseReview < ApplicationRecord
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
-  EXCEPTIONS = [Caseflow::Error::VacolsRepositoryError, ActiveRecord::RecordInvalid].freeze
-
   def appeal
     @appeal ||= Appeal.find_or_create_by(vacols_id: vacols_id)
   end
@@ -64,18 +62,9 @@ class AttorneyCaseReview < ApplicationRecord
 
     def complete!(params)
       transaction do
-        begin
-          # Save to the Caseflow DB first to ensure required fields are present
-          record = create!(params)
-          record.reassign_case_to_judge_in_vacols!
-          record.update_issue_dispositions! if record.type == "DraftDecision"
-        # :nocov:
-        rescue *EXCEPTIONS => e
-          Raven.capture_exception(e)
-          Rails.logger.warn(e)
-          raise ActiveRecord::Rollback
-        end
-        # :nocov:
+        record = create!(params)
+        record.reassign_case_to_judge_in_vacols!
+        record.update_issue_dispositions! if record.type == "DraftDecision"
         record
       end
     end
