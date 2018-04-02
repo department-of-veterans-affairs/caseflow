@@ -1,6 +1,4 @@
 class Intake < ActiveRecord::Base
-  has_one :intake_cancellation, dependent: :destroy
-  
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
