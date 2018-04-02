@@ -1,9 +1,9 @@
 require "rails_helper"
 
-def scroll_position(id: nil, class_name: nil, index: 0)
+def scroll_position(id: nil, class_name: nil)
   page.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')['#{index}'];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
       return elem.scrollTop;
     }();
   EOS
@@ -18,14 +18,14 @@ def scroll_to(id: nil, class_name: nil, value: 0, index: 0)
   EOS
 end
 
-def scrolled_amount(class_name)
+def scrolled_amount(child_class_name)
   page.evaluate_script <<-EOS
     function() {
-      var list = document.getElementsByClassName('#{class_name}');
+      var list = document.getElementsByClassName('#{child_class_name}');
 
       for (elem of list) {
-        if (elem.scrollTop > 0) {
-          return elem.scrollTop;
+        if (elem.style.visibility == "visible") {
+          return elem.parentElement.scrollTop;
         }
       }
 
@@ -536,7 +536,8 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       expect(page).to have_content("Caseflow Reader")
 
-      add_comment("comment text")
+      add_comment(text: "comment text")
+
       expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
@@ -884,12 +885,12 @@ RSpec.feature "Reader" do
 
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
-        element_class = "ReactVirtualized__Grid"
-        original_scroll = scroll_position(class_name: element_class, index: 1)
+        element_class = "ReactVirtualized__Grid__innerScrollContainer"
+        original_scroll = scrolled_amount(element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
         find("#comment4").click
-        after_click_scroll = scroll_position(class_name: element_class, index: 1)
+        after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
 
@@ -1419,23 +1420,24 @@ RSpec.feature "Reader" do
 
     scenario "Navigating Search Results scrolls page" do
       open_search_bar
-      expect(scrolled_amount("ReactVirtualized__Grid")).to be(0)
+      elem_name = "ReactVirtualized__Grid__innerScrollContainer"
+      expect(scrolled_amount(elem_name)).to be(0)
 
       fill_in "search-ahead", with: "just"
 
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
-      first_match_scroll_top = scrolled_amount("ReactVirtualized__Grid")
+      first_match_scroll_top = scrolled_amount(elem_name)
 
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click
-      expect(scrolled_amount("ReactVirtualized__Grid")).to be > first_match_scroll_top
+      expect(scrolled_amount(elem_name)).to be > first_match_scroll_top
 
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scrolled_amount("ReactVirtualized__Grid")).to eq(first_match_scroll_top)
+      expect(scrolled_amount(elem_name)).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do

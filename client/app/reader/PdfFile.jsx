@@ -447,9 +447,12 @@ export class PdfFile extends React.PureComponent {
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
             this.props.pdfDocument.pdfInfo.numPages);
 
+          let visibility = this.props.isVisible ? "visible" : "hidden";
+
           return <Grid
             ref={this.getGrid}
             containerStyle={{
+              visibility: `${visibility}`,
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}
