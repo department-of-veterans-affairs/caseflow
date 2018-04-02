@@ -15,17 +15,15 @@ export const initialState = {
     tasks: {},
     loadedUserId: null
   },
+  editingIssue: {},
 
   /**
-   * `pendingChanges` is an object of appeals/tasks that have been modified since
+   * `pendingChanges` is an object of appeals that have been modified since
    * loading from the server. When a user starts editing an appeal/task, we copy
-   * it from `loadedQueue[obj.type]`. TBD: To commit the edits, we copy from
-   * `pendingChanges` back into `loadedQueue`. To discard changes, we delete
-   * from `pendingChanges`.
+   * it from `loadedQueue[obj.type]`.
    */
   pendingChanges: {
     appeals: {},
-    tasks: {},
     taskDecision: {
       type: '',
       opts: {}
@@ -60,7 +58,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       loadedQueue: {
         appeals: {
-          [action.payload.vacolsId]: {
+          [action.payload.appealId]: {
             attributes: {
               docCount: {
                 $set: action.payload.docCount
@@ -98,8 +96,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       pendingChanges: {
         appeals: {
-          [action.payload.vacolsId]: {
-            $set: state.loadedQueue.appeals[action.payload.vacolsId]
+          [action.payload.appealId]: {
+            $set: state.loadedQueue.appeals[action.payload.appealId]
+          }
+        }
+      }
+    });
+  case ACTIONS.EDIT_APPEAL:
+    return update(state, {
+      pendingChanges: {
+        appeals: {
+          [action.payload.appealId]: {
+            $merge: action.payload.attributes
           }
         }
       }
@@ -108,27 +116,58 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       pendingChanges: {
         appeals: {
-          $unset: action.payload.vacolsId
+          $unset: action.payload.appealId
         }
       }
     });
-  case ACTIONS.UPDATE_APPEAL_ISSUE: {
-    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
-    const issueIdx = _.findIndex(issues, (issue) => issue.id === action.payload.issueId);
+  case ACTIONS.START_EDITING_APPEAL_ISSUE: {
+    const { appealId, issueId } = action.payload;
+    const issues = state.pendingChanges.appeals[appealId].attributes.issues;
 
+    return update(state, {
+      editingIssue: {
+        $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
+      }
+    });
+  }
+  case ACTIONS.CANCEL_EDITING_APPEAL_ISSUE:
+    return update(state, {
+      editingIssue: {
+        $set: {}
+      }
+    });
+  case ACTIONS.UPDATE_EDITING_APPEAL_ISSUE:
+    return update(state, {
+      editingIssue: {
+        $merge: action.payload.attributes
+      }
+    });
+  case ACTIONS.SAVE_EDITED_APPEAL_ISSUE: {
+    const { appealId } = action.payload;
+    const {
+      editingIssue,
+      pendingChanges: { appeals }
+    } = state;
+
+    const issues = appeals[appealId].attributes.issues.map((issue) =>
+      issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
+        editingIssue : issue);
+
+    // todo: if (idx === -1) { push } (#4477)
     return update(state, {
       pendingChanges: {
         appeals: {
-          [action.payload.appealId]: {
+          [appealId]: {
             attributes: {
               issues: {
-                [issueIdx]: {
-                  $merge: action.payload.attributes
-                }
+                $set: issues
               }
             }
           }
         }
+      },
+      editingIssue: {
+        $set: {}
       }
     });
   }
