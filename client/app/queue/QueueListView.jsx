@@ -37,7 +37,7 @@ class QueueListView extends React.PureComponent {
     }
   };
 
-  getSaveConfirmationMessage = () => {
+  getSaveConfirmationBanner = () => {
     const {
       taskDecision,
       taskDecision: {
@@ -53,9 +53,12 @@ class QueueListView extends React.PureComponent {
       judge: judges[judgeId].full_name,
       veteran: vetName
     };
+    const msg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}.`;
 
-    return `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}.`;
-  };
+    return <Alert type="success" title={msg}>
+      If you made a mistake please email your judge to resolve the issue.
+    </Alert>;
+  }
 
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
@@ -67,12 +70,8 @@ class QueueListView extends React.PureComponent {
       </StatusMessage>;
     } else {
       tableContent = <div>
-        {this.state.displayConfirmationMessage &&
-        <Alert type="success" title={this.getSaveConfirmationMessage()}>
-          If you made a mistake please email your judge to resolve the issue.
-        </Alert>
-        }
         <h1 className="cf-push-left" {...fullWidth}>Your Queue</h1>
+        {this.state.displayConfirmationMessage && this.getSaveConfirmationBanner()}
         <QueueTable />
       </div>;
     }
