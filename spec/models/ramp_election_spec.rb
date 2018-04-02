@@ -308,6 +308,16 @@ describe RampElection do
         end
       end
 
+      context "when it is after today and there is no notice_date" do
+        let(:receipt_date) { 1.day.from_now }
+        let(:notice_date) { nil }
+
+        it "adds an error to receipt_date" do
+          is_expected.to be false
+          expect(ramp_election.errors[:receipt_date]).to include("in_future")
+        end
+      end
+
       context "when it is before notice_date" do
         let(:receipt_date) { 2.days.ago }
 
