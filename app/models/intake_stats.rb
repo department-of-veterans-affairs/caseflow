@@ -177,8 +177,9 @@ class IntakeStats < Caseflow::Stats
 
     total_issues_elected_into_ramp: lambda do |range|
       RampElection
-        .active.where(receipt_date: offset_range(range))
-        .includes(:issues).joins(:issues)
+        .established
+        .where(receipt_date: offset_range(range))
+        .joins(:issues)
         .map do |ramp_election|
           ramp_election.issues.size
         end

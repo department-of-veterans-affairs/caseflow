@@ -11,7 +11,7 @@ RSpec.feature "Intake Stats Dashboard" do
     RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
     RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)
 
-    re = RampElection.create!(
+    ramp_election = RampElection.create!(
       veteran_file_number: "77776663",
       notice_date: 7.days.ago,
       receipt_date: 45.minutes.ago,
@@ -21,9 +21,9 @@ RSpec.feature "Intake Stats Dashboard" do
       end_product_status: "VERY_ACTIVE"
     )
     # Create an election with multiple issues
-    re.issues.create!(description: "an issue")
-    re.issues.create!(description: "another issue")
-    re.issues.create!(description: "yet another issue")
+    ramp_election.issues.create!(description: "an issue")
+    ramp_election.issues.create!(description: "another issue")
+    ramp_election.issues.create!(description: "yet another issue")
 
     RampElection.create!(
       veteran_file_number: "77776663",
