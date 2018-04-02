@@ -28,14 +28,14 @@ import {
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
-const dropdownMenuStyling = css({ minHeight: 0 });
+const dropdownStyling = css({ minHeight: 0 });
 
 const draftDecisionOptions = [{
   label: 'Decision Ready for Review',
-  value: 'decision'
+  value: DECISION_TYPES.DRAFT_DECISION
 }, {
   label: 'OMO Ready for Review',
-  value: 'omo'
+  value: DECISION_TYPES.OMO_REQUEST
 }];
 
 class QueueDetailView extends React.PureComponent {
@@ -53,21 +53,24 @@ class QueueDetailView extends React.PureComponent {
   changeRoute = (props) => {
     const {
       vacolsId,
-      history
+      history,
+      appeal: { attributes: { issues } }
     } = this.props;
-    let route = 'dispositions';
-    let decisionType = DECISION_TYPES.DRAFT_DECISION;
-
-    if (props.value === 'omo') {
-      route = 'submit';
-      decisionType = DECISION_TYPES.OMO_REQUEST;
-    }
+    const decisionType = props.value;
+    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
     this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.cancelEditingAppeal(vacolsId);
     }
-    this.props.startEditingAppeal(vacolsId);
+
+    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
+      this.props.startEditingAppeal(vacolsId, {
+        issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
+      });
+    } else {
+      this.props.startEditingAppeal(vacolsId);
+    }
     this.props.setCaseReviewActionType(decisionType);
     history.push(`${history.location.pathname}/${route}`);
   }
@@ -110,8 +113,7 @@ class QueueDetailView extends React.PureComponent {
         options={draftDecisionOptions}
         onChange={this.changeRoute}
         hideLabel
-        dropdownStyling={dropdownMenuStyling}
-        searchable={false} />}
+        dropdownStyling={dropdownStyling} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />

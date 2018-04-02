@@ -543,10 +543,6 @@ $color-hearings-saving: $color-gray;
   }
 
   .cf-hearings-worksheet-issues {
-    thead {
-      display: table-row-group;
-    }
-
     td {
       padding: 0 .5em;
       padding-bottom: 0;
@@ -563,7 +559,6 @@ $color-hearings-saving: $color-gray;
 
     tr {
       border-bottom: 1px solid $color-gray-lighter;
-      page-break-inside: avoid;
    }
 
     .cf-form-textarea {
@@ -725,11 +720,6 @@ $color-hearings-saving: $color-gray;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-
-        p {
-          margin-top: 0;
-          margin-bottom: 1.2rem;
-       }
 
         .cf-hearings-worksheet-data:last-child {
           margin-bottom: inherit;
