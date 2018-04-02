@@ -84,7 +84,7 @@ RSpec.feature "Intake Stats Dashboard" do
         notice_date: 2.years.ago,
         receipt_date: 1.year.ago,
         option_selected: :supplemental_claim,
-        established_at: 1.year.ago + 2.days,
+        established_at: 1.year.ago + 2.days
       )
 
       RampRefiling.create!(
