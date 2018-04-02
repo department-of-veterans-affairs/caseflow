@@ -110,18 +110,17 @@ class Fakes::HearingRepository
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
-      name_attrs = {}
-
-      if i % 5 == 0
-        name_attrs = generate_random_name_attrs
-      end
-
+      name_attrs = (i % 5 == 0) ? generate_same_veteran_appellant_name_attrs : {}
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user).merge(name_attrs))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
 
     generate_past_hearings(10, user)
-    4.times.each do |i|
+    generate_master_record_hearings(4, user)
+  end
+
+  def self.generate_master_record_hearings(number_of_records, user)
+    number_of_records.times.each do |i|
       Generators::Hearings::MasterRecord.build(
         user_id: user.id,
         date: Time.now.in_time_zone("EST").beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
@@ -143,9 +142,7 @@ class Fakes::HearingRepository
     }
   end
 
-  private
-
-  def self.generate_random_name_attrs
+  def self.generate_same_veteran_appellant_name_attrs
     first_name = generate_first_name
     last_name = generate_last_name
     middle_initial = "A"
