@@ -1,5 +1,6 @@
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
+import _ from 'lodash';
 
 const initialErrorState = {
   visible: false,
@@ -35,6 +36,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       breadcrumbs: {
         $push: action.payload.crumbs
+      }
+    });
+  case ACTIONS.POP_BREADCRUMB:
+    return update(state, {
+      breadcrumbs: {
+        $set: _.dropRight(state.breadcrumbs, 1)
       }
     });
   case ACTIONS.RESET_BREADCRUMBS:
