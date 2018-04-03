@@ -1,4 +1,4 @@
-require "rails_helper"
+require "/Users/oscarramirez/caseflow/spec/rails_helper"
 
 def scroll_position(id: nil, class_name: nil)
   page.evaluate_script <<-EOS
@@ -90,9 +90,9 @@ end
 
 RSpec.feature "Reader" do
   before do
-    Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
+    FeatureToggle.enable!(:fakes_off)
     Time.zone = "America/New_York"
   end
 
@@ -102,8 +102,13 @@ RSpec.feature "Reader" do
 
   let!(:issues) { [Generators::Issue.build] }
 
+  let(:case_inst) do
+    Generators::Vacols::Case.create()
+  end
+
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
+    #Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
+    Appeal.new(vacols_id: case_inst.bfkey)
   end
 
   let!(:current_user) do
@@ -155,12 +160,17 @@ RSpec.feature "Reader" do
       ]
     end
 
+    before do
+      Fakes::VBMSService.document_records = {case_inst.bfcorlid => documents}
+    end
+
     feature "Document header filtering message" do
       background do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
-      scenario "filtering categories" do
+      scenario "filtering categories", focus: true do
+        binding.pry
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
         find(".checkbox-wrapper-medical").click
