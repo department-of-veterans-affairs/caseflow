@@ -48,8 +48,8 @@ Rails.application.configure do
   config.sqs_endpoint = "http://localhost:4576"
 
   # since we mock aws using localstack, provide dummy creds to the aws gem
-  ENV["AWS_ACCESS_KEY_ID"] ||= "key"
-  ENV["AWS_SECRET_ACCESS_KEY"] ||= "secretkey"
+  ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
+  ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
