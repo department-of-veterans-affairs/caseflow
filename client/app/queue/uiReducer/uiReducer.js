@@ -2,7 +2,7 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
 
-const initialErrorState = {
+const initialMessageState = {
   visible: false,
   message: null
 };
@@ -16,19 +16,29 @@ export const initialState = {
   selectingJudge: false,
   breadcrumbs: [],
   highlightFormItems: false,
-  errorState: initialErrorState,
+  messages: {
+    success: initialMessageState,
+    error: initialMessageState
+  },
   saveState: initialSaveState
 };
 
-const setErrorMessageState = (state, isVisible, errorMsg = null) => update(state, {
-  errorState: {
-    visible: { $set: isVisible },
-    message: { $set: isVisible ? errorMsg : null }
+const setMessageState = (state, isVisible, message, msgType) => update(state, {
+  messages: {
+    [msgType]: {
+      visible: { $set: isVisible },
+      message: { $set: message }
+    }
   }
 });
 
+const setErrorMessageState = (state, isVisible, message) => setMessageState(state, isVisible, message, 'error');
 const hideErrorMessage = (state) => setErrorMessageState(state, false);
 const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
+
+const setSuccessMessageState = (state, isVisible, message) => setMessageState(state, isVisible, message, 'success');
+const hideSuccessMessage = (state) => setSuccessMessageState(state, false);
+const showSuccessMessage = (state, message) => setSuccessMessageState(state, true, message);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -87,12 +97,24 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.RESET_ERROR_MESSAGES:
     return update(state, {
-      errorState: { $set: initialErrorState }
+      messages: {
+        error: { $set: initialMessageState }
+      }
+    });
+  case ACTIONS.RESET_SUCCESS_MESSAGES:
+    return update(state, {
+      messages: {
+        success: { $set: initialMessageState }
+      }
     });
   case ACTIONS.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state);
   case ACTIONS.SHOW_ERROR_MESSAGE:
     return showErrorMessage(state, action.payload.errorMessage);
+  case ACTIONS.SHOW_SUCCESS_MESSAGE:
+    return showSuccessMessage(state, action.payload.message);
+  case ACTIONS.HIDE_SUCCESS_MESSAGE:
+    return hideSuccessMessage(state);
   default:
     return state;
   }

@@ -48,25 +48,17 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
-    const {
-      appeal: { attributes: appeal },
-      task: { attributes: task }
-    } = this.props;
+    const { task: { attributes: task } } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
-    const decisionOpts = { veteran_name: appeal.veteran_full_name };
 
     if (judge) {
-      _.extend(decisionOpts, {
+      this.props.setDecisionOptions({
         judge: {
           label: task.added_by_name,
           value: judge.id
         }
       });
     }
-
-    // store the vet name so we can access it after submitting
-    // the decision and reloading appeals at /queue
-    this.props.setDecisionOptions(decisionOpts);
   };
 
   getBreadcrumb = () => ({
@@ -99,8 +91,14 @@ class SubmitDecisionView extends React.PureComponent {
   goToNextStep = () => {
     const {
       task: { attributes: { task_id: taskId } },
-      appeal: { attributes: { issues } },
-      decision
+      appeal: {
+        attributes: {
+          issues,
+          veteran_full_name
+        }
+      },
+      decision,
+      judges
     } = this.props;
     const params = {
       data: {
@@ -113,8 +111,15 @@ class SubmitDecisionView extends React.PureComponent {
       }
     };
 
-    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params);
-  }
+    const fields = {
+      type: getDecisionTypeDisplay(decision),
+      veteran: veteran_full_name,
+      judge: judges[decision.opts.reviewing_judge_id].full_name
+    };
+    const successMsg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}`;
+
+    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg);
+  };
 
   getFooterButtons = () => [{
     displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
@@ -253,7 +258,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
-  error: state.ui.errorState,
+  error: state.ui.messages.error,
   ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
