@@ -132,11 +132,22 @@ class SubmitDecisionView extends React.PureComponent {
       });
   };
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
-  }, {
-    displayText: 'Submit'
-  }];
+  getFooterButtons = () => {
+    const {
+      appeal: {
+        attributes: {
+          veteran_full_name: vetName,
+          vbms_id: vbmsId
+        }
+      }
+    } = this.props;
+
+    return [{
+      displayText: `< Go back to ${vetName} (${vbmsId})`
+    }, {
+      displayText: 'Submit'
+    }];
+  };
 
   getJudgeSelectComponent = () => {
     const {
@@ -260,7 +271,6 @@ class SubmitDecisionView extends React.PureComponent {
 
 SubmitDecisionView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
