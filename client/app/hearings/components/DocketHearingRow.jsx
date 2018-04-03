@@ -42,17 +42,17 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOption = (hearingDate, days) => ({
+const holdOption = (days, hearingDate) => ({
   value: days,
   label: `${days} days - ${moment(hearingDate).add(days, 'days').
     format('MM/DD')}`
 });
 
 const holdOptions = (hearingDate) => [
-  holdOption(hearingDate, 0),
-  holdOption(hearingDate, 30),
-  holdOption(hearingDate, 60),
-  holdOption(hearingDate, 90)];
+  holdOption(0, hearingDate),
+  holdOption(30, hearingDate),
+  holdOption(60, hearingDate),
+  holdOption(90, hearingDate)];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },
