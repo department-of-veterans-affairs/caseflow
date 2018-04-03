@@ -16,7 +16,7 @@ RSpec.feature "Intake Stats Dashboard" do
       notice_date: 7.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :supplemental_claim,
-      established_at: Time.zone.now
+      established_at: Time.zone.now,
       end_product_reference_id: "132",
       end_product_status: "VERY_ACTIVE"
     )
@@ -30,7 +30,7 @@ RSpec.feature "Intake Stats Dashboard" do
       notice_date: 5.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :higher_level_review,
-      established_at: Time.zone.now
+      established_at: Time.zone.now,
       end_product_reference_id: "132",
       end_product_status: "HELLA_ACTIVE"
     ).issues.create!(description: "this is the only issue here")

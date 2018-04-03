@@ -179,12 +179,11 @@ class IntakeStats < Caseflow::Stats
       RampElection
         .established
         .where(receipt_date: offset_range(range))
-        .joins(:issues)
         .includes(:issues)
         .map do |ramp_election|
           ramp_election.issues.size
         end
-        .reduce(:+) || 0
+        .reduce(0, :+)
     end
   }.freeze
 end
