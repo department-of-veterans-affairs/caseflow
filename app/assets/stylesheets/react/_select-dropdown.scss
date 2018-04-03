@@ -102,7 +102,7 @@
 }
 
 .is-focused .Select-placeholder {
-  color: #737373;
+  color: $color-gray;
 }
 
 .Select-placeholder,
@@ -302,7 +302,7 @@
 .Select-option {
   box-sizing: border-box;
   background-color: white;
-  color: #666666;
+  color: $color-gray;
   cursor: pointer;
   display: block;
   padding: 8px 10px;
@@ -317,18 +317,18 @@
 .Select-option.is-focused {
   background-color: #ebf5ff;
   /* Fallback color for IE 8 */
-  background-color: #5B616B;
+  background-color: $color-gray;
   color: white;
 }
 
 .Select-option.is-disabled {
-  color: #cccccc;
+  color: $color-gray;
   cursor: default;
 }
 
 .Select-noresults {
   box-sizing: border-box;
-  color: #666666;
+  color: $color-gray;
   cursor: default;
   display: block;
   padding: 8px 10px;
