@@ -66,6 +66,13 @@ export const editAppeal = (appealId, attributes) => ({
   }
 });
 
+export const deleteAppeal = (appealId) => ({
+  type: ACTIONS.DELETE_APPEAL,
+  payload: {
+    appealId
+  }
+});
+
 export const startEditingAppeal = (appealId, attributes) => (dispatch) => {
   dispatch({
     type: ACTIONS.START_EDITING_APPEAL,

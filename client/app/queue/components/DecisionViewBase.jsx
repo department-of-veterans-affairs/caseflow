@@ -119,8 +119,6 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          // clear loaded data to trigger reload
-          this.props.wipeLoadedQueue();
           this.goToStep(this.props.nextStep);
         } else {
           this.props.highlightInvalidFormItems(true);
