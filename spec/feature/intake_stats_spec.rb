@@ -16,7 +16,7 @@ RSpec.feature "Intake Stats Dashboard" do
       notice_date: 7.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :supplemental_claim,
-      end_product_reference_id: "132"
+      established_at: Time.zone.now
     )
 
     RampElection.create!(
@@ -24,7 +24,7 @@ RSpec.feature "Intake Stats Dashboard" do
       notice_date: 5.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :higher_level_review,
-      end_product_reference_id: "132"
+      established_at: Time.zone.now
     )
 
     RampElection.create!(
@@ -32,7 +32,6 @@ RSpec.feature "Intake Stats Dashboard" do
       notice_date: 5.days.ago,
       receipt_date: 2.days.ago,
       option_selected: :higher_level_review_with_hearing,
-      end_product_reference_id: "123",
       established_at: Time.zone.now
     )
 
@@ -53,7 +52,7 @@ RSpec.feature "Intake Stats Dashboard" do
       veteran_file_number: "77776663",
       receipt_date: 45.minutes.ago,
       option_selected: :higher_level_review,
-      end_product_reference_id: "132"
+      established_at: Time.zone.now
     )
 
     RampElectionIntake.create!(
@@ -85,7 +84,7 @@ RSpec.feature "Intake Stats Dashboard" do
         notice_date: 2.years.ago,
         receipt_date: 1.year.ago,
         option_selected: :supplemental_claim,
-        end_product_reference_id: "123"
+        established_at: 1.year.ago + 2.days
       )
 
       RampRefiling.create!(
@@ -128,7 +127,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
     expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
-    expect(find("#ramp-elections-received")).to have_content("Average Control Time 2.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Control Time 12.00 hours")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
     expect(find("#ramp-elections-processed")).to have_content("Total 2")
