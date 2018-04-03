@@ -40,12 +40,7 @@ class RampRefilingIntake < Intake
     detail.create_end_product_and_contentions! if detail.needs_end_product?
 
     complete_with_status!(:success)
-    unless detail.established_at
-      detail.update!(
-        established_at: Time.zone.now,
-        established_by_user_id: user.id
-      )
-    end
+    mark_detail_as_established
   end
 
   def review_errors

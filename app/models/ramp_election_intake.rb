@@ -79,15 +79,6 @@ class RampElectionIntake < Intake
 
   private
 
-  def mark_detail_as_established
-    unless detail.established_at
-      detail.update!(
-        established_at: Time.zone.now,
-        established_by_user_id: user.id
-      )
-    end
-  end
-
   def complete_eligible_appeals
     eligible_appeals.each do |appeal|
       RampClosedAppeal.create!(
