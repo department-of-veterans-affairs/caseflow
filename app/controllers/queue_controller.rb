@@ -37,6 +37,11 @@ class QueueController < ApplicationController
     end
   end
 
+  def appeals
+    veteran_id = request.headers["HTTP_VETERAN_ID"]
+    render json: { appeals: veteran_id ? json_appeals(Appeal.all.where(vbms_id: veteran_id)) : [] }
+  end
+
   def judges
     render json: { judges: Judge.list_all }
   end

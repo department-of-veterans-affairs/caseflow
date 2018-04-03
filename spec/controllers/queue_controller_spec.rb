@@ -1,30 +1,49 @@
 RSpec.describe QueueController, type: :controller do
   before do
     Fakes::Initializer.load!
+
+    FeatureToggle.enable!(:queue_welcome_gate)
+    User.authenticate!(roles: ["System Admin"])
+  end
+
+  after do
+    FeatureToggle.disable!(:queue_welcome_gate)
   end
 
   describe "GET queue/judges" do
     it "should be successful" do
-      FeatureToggle.enable!(:queue_welcome_gate)
-      User.authenticate!(roles: ["System Admin"])
       get :judges
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["judges"].size).to eq 3
-      FeatureToggle.disable!(:queue_welcome_gate)
+    end
+  end
+
+  describe "GET queue/appeals" do
+    let(:appeal) { Generators::Appeal.create }
+    let(:veteran_id) { appeal.vbms_id }
+
+    context "when request header does not contain Veteran ID" do
+      it "response should contain an empty array of appeals" do
+        get :appeals
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["appeals"].size).to eq 0
+      end
+    end
+
+    context "when request header contains Veteran ID" do
+      it "array in response contains one appeal" do
+        request.headers["HTTP_VETERAN_ID"] = veteran_id
+        get :appeals
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["appeals"].size).to eq 1
+      end
     end
   end
 
   describe "GET queue/:user_id" do
-    before do
-      FeatureToggle.enable!(:queue_welcome_gate)
-      User.authenticate!(roles: ["System Admin"])
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_welcome_gate)
-    end
-
     let(:user) { User.create(css_id: "TEST1", station_id: 101) }
 
     it "when user is an attorney, it should process the request succesfully" do
@@ -70,7 +89,6 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should be successful" do
-        User.authenticate!(roles: ["System Admin"])
         post :complete, task_id: "1234567-2016-11-05", queue: params
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
@@ -120,7 +138,6 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        User.authenticate!(roles: ["System Admin"])
         post :complete, task_id: "1234567-2016-11-05", queue: params
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
