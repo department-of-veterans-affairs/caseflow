@@ -41,13 +41,12 @@ class RampElectionIntake < Intake
       end
 
       eligible_appeals.each do |appeal|
-        RampClosedAppeal.new(
+        RampClosedAppeal.create!(
           vacols_id: appeal.vacols_id,
           ramp_election_id: ramp_election.id,
           nod_date: appeal.nod_date
-        ).save!
+        )
       end
-      detail.update!(established_at: Time.zone.now)
     end
   end
 
@@ -105,7 +104,7 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if matching_ramp_election.completed?
+    if matching_ramp_election.established?
       self.error_code = :ramp_election_already_complete
       @error_data = { receipt_date: matching_ramp_election.receipt_date }
 

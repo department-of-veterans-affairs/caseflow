@@ -6,8 +6,11 @@ import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import { onAddIssue } from '../actions/Issue';
 import { filterIssuesOnAppeal, currentIssues, priorIssues } from '../util/IssuesUtil';
+import { CATEGORIES, ACTIONS } from '../analytics';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
+
+const PAST_ISSUES_TAB_INDEX = 1;
 
 class HearingWorksheetStream extends Component {
 
@@ -25,9 +28,7 @@ class HearingWorksheetStream extends Component {
     return maxValue;
   };
 
-  getVacolsSequenceId = () => {
-    return (this.getMaxVacolsSequenceId() + 1).toString();
-  };
+  getVacolsSequenceId = () => (this.getMaxVacolsSequenceId() + 1).toString();
 
   getIssues = (prior) => {
     let issueCount = 0;
@@ -76,13 +77,15 @@ class HearingWorksheetStream extends Component {
     </div>;
   };
 
-  getCurrentIssuesCount = () => {
-    return _.size(currentIssues(this.props.worksheetIssues));
-  };
+  getCurrentIssuesCount = () => _.size(currentIssues(this.props.worksheetIssues));
 
-  getPriorIssuesCount = () => {
-    return _.size(priorIssues(this.props.worksheetIssues));
-  };
+  getPriorIssuesCount = () => _.size(priorIssues(this.props.worksheetIssues));
+
+  issuesTabSelected = (tabIndex) => {
+    if (tabIndex === PAST_ISSUES_TAB_INDEX) {
+      window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.OPEN_PAST_ISSUES_TAB);
+    }
+  }
 
   render() {
     const tabs = [{
@@ -98,6 +101,7 @@ class HearingWorksheetStream extends Component {
       <TabWindow
         name="issues-tabwindow"
         tabs={tabs}
+        onChange={this.issuesTabSelected}
       />
     </div>;
   }
