@@ -94,7 +94,7 @@ export const submitCancel = (intakeId) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.delete(`/intake/${intakeId}`, {}, ENDPOINT_NAMES.CANCEL_INTAKE).
+  return ApiUtil.patch(`/intake/${intakeId}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
