@@ -86,7 +86,7 @@ export class Dockets extends React.Component {
         date: this.linkToDailyDocket(docket),
         start_time: getDateTime(docket.date),
         type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
+        regional_office: docket.regional_office_names ? docket.regional_office_names.join(' / ') : '',
         slots: docket.slots,
         scheduled: this.getScheduledCount(docket)
       };
