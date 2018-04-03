@@ -139,17 +139,17 @@ describe RampElection do
     end
   end
 
-  context "#completed?" do
-    subject { ramp_election.completed? }
+  context "#established?" do
+    subject { ramp_election.established? }
 
-    context "when there is an end product reference" do
-      let(:end_product_reference_id) { 1 }
+    context "when there is an established at date" do
+      let(:established_at) { Time.zone.now }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when there is not an end product reference" do
-      let(:end_product_reference_id) { nil }
+    context "when there is not an established at date" do
+      let(:established_at) { nil }
 
       it { is_expected.to eq(false) }
     end
