@@ -40,18 +40,8 @@ class RampElectionIntake < Intake
         ramp_election.create_end_product!
       end
 
-      eligible_appeals.each do |appeal|
-        RampClosedAppeal.create!(
-          vacols_id: appeal.vacols_id,
-          ramp_election_id: ramp_election.id,
-          nod_date: appeal.nod_date
-        )
-      end
-
-      detail.update!(
-        established_at: Time.zone.now,
-        established_by_user_id: user.id
-      ) unless detail.established_at
+      complete_eligible_appeals
+      mark_detail_as_established
     end
   end
 
@@ -88,6 +78,25 @@ class RampElectionIntake < Intake
   end
 
   private
+
+  def mark_detail_as_established
+    unless detail.established_at
+      detail.update!(
+        established_at: Time.zone.now,
+        established_by_user_id: user.id
+      )
+    end
+  end
+
+  def complete_eligible_appeals
+    eligible_appeals.each do |appeal|
+      RampClosedAppeal.create!(
+        vacols_id: appeal.vacols_id,
+        ramp_election_id: ramp_election.id,
+        nod_date: appeal.nod_date
+      )
+    end
+  end
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
