@@ -12,12 +12,16 @@ import {
   cancelEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import { highlightInvalidFormItems } from './uiReducer/uiActions';
+import {
+  highlightInvalidFormItems,
+  requestUpdate
+} from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
 
 import {
   fullWidth,
@@ -26,6 +30,7 @@ import {
 } from './constants';
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
+const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
@@ -77,7 +82,7 @@ class AddEditIssueView extends React.Component {
     const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
 
     return [issueLevel1, issueLevel2, issueLevel3];
-  }
+  };
 
   goToPrevStep = () => {
     this.props.cancelEditingAppealIssue();
@@ -93,10 +98,33 @@ class AddEditIssueView extends React.Component {
     );
   };
 
-  goToNextStep = () => {
-    this.props.saveEditedAppealIssue(this.props.vacolsId);
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.savePending && !this.props.savePending && this.props.saveSuccessful) {
+      // todo: after updating an issue, the server returns all issues for appeals. use those?
+      // after updating the server, update in redux to avoid reloading all data
+      this.props.saveEditedAppealIssue(this.props.vacolsId);
+    }
+  }
 
-    return true;
+  goToNextStep = () => {
+    const {
+      issue,
+      appeal
+    } = this.props;
+    const params = {
+      issues: {
+        ..._.pick(issue, 'note', 'program'),
+        issue: issue.type,
+        level_1: _.get(issue.codes, 0),
+        level_2: _.get(issue.codes, 1),
+        level_3: _.get(issue.codes, 2)
+      }
+    };
+
+    this.props.requestUpdate(
+      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
+      { data: params }
+    );
   };
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
@@ -112,7 +140,8 @@ class AddEditIssueView extends React.Component {
         codes
       },
       action,
-      highlight
+      highlight,
+      error
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -129,9 +158,12 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+      <h1 {...css(fullWidth, smallBottomMargin)}>
         {StringUtil.titleCase(action)} Issue
       </h1>
+      {error.visible && <Alert type="error" title={error.message.title} styling={smallTopMargin}>
+        {error.message.detail}
+      </Alert>}
       <Button
         willNeverBeLoading
         styling={noLeftPadding}
@@ -218,7 +250,10 @@ AddEditIssueView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
-  issue: state.queue.editingIssue
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  issue: state.queue.editingIssue,
+  error: state.ui.errorState,
+  ..._.pick(state.ui, 'savePending', 'saveSuccessful')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -226,7 +261,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  requestUpdate
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

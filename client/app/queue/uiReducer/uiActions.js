@@ -56,12 +56,14 @@ export const saveFailure = (resp) => (dispatch) => {
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 };
 
-export const requestSave = (url, params) => (dispatch) => {
+export const requestSave = (url, params, verb = 'post') => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
-  return ApiUtil.post(url, params).then(
+  return ApiUtil[verb](url, params).then(
     () => dispatch(saveSuccess()),
     (resp) => dispatch(saveFailure(resp))
   );
 };
+
+export const requestUpdate = (url, params) => requestSave(url, params, 'put');
