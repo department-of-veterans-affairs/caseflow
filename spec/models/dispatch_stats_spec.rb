@@ -22,8 +22,8 @@ describe DispatchStats do
       end
     end
 
-    context "when last calculated more than 61 minutes ago" do
-      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 61.minutes.ago.to_i) }
+    context "when last calculated more than 23 hours ago" do
+      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 24.hours.ago.to_i) }
 
       it "calculates stats" do
         expect(DispatchStats).to receive(:calculate_all!)
@@ -32,8 +32,8 @@ describe DispatchStats do
       end
     end
 
-    context "when last calculated less than 60 minutes ago" do
-      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 59.minutes.ago.to_i) }
+    context "when last calculated less than 23 hours ago" do
+      before { Rails.cache.write("DispatchStats-last-calculated-timestamp", 22.hours.ago.to_i) }
 
       it "doesn't recalculate stats" do
         expect(DispatchStats).to_not receive(:calculate_all!)
