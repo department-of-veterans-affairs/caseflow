@@ -94,8 +94,6 @@ export const submitCancel = (data) => (dispatch) => {
     meta: { analytics }
   });
 
-  console.log(data)
-  debugger
   return ApiUtil.delete(`/intake/${data.id}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
     then(
       () => dispatch({

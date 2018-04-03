@@ -51,11 +51,12 @@ class RampElectionIntake < Intake
     end
   end
 
-  def cancel!
+  def cancel!(_request_params)
     return if complete?
 
     transaction do
       detail.update_attributes!(receipt_date: nil, option_selected: nil)
+      add_cancel_reason!(_request_params.permit(:cancel_reason, :cancel_other))
       complete_with_status!(:canceled)
     end
   end

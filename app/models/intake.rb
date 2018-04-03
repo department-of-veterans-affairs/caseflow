@@ -67,7 +67,7 @@ class Intake < ActiveRecord::Base
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def cancel!
+  def cancel!(_review_params)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
@@ -90,6 +90,12 @@ class Intake < ActiveRecord::Base
     update_attributes!(
       completed_at: Time.zone.now,
       completion_status: status
+    )
+  end
+
+  def add_cancel_reason!(cancel_data)
+    update_attributes!(
+      cancel_data
     )
   end
 
