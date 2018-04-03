@@ -359,9 +359,12 @@ RSpec.feature "Queue" do
 
         click_on "Submit"
         sleep 1
-        # rubocop:disable Metrics/LineLength
-        expect(page).to have_content("OMO for #{appeal.veteran_full_name} has been marked completed and sent to Andrew Mackenzie.")
-        # rubocop:enable Metrics/LineLength
+        expect(page).to(
+          have_content(
+            "OMO for #{appeal.veteran_full_name} has been
+            marked completed and sent to Andrew Mackenzie."
+          )
+        )
         expect(page.current_path).to eq("/queue/")
       end
 
@@ -395,9 +398,12 @@ RSpec.feature "Queue" do
 
         click_on "Submit"
         sleep 1
-        # rubocop:disable Metrics/LineLength
-        expect(page).to have_content("Draft Decision for #{appeal.veteran_full_name} has been marked completed and sent to Andrew Mackenzie.")
-        # rubocop:enable Metrics/LineLength
+        expect(page).to(
+          have_content(
+            "Draft Decision for #{appeal.veteran_full_name} has been
+            marked completed and sent to Andrew Mackenzie."
+          )
+        )
         expect(page.current_path).to eq("/queue/")
       end
     end
