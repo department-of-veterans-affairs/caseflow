@@ -85,7 +85,7 @@ class CancelIntakeModal extends BaseForm {
 
     intakeCancellation = {
       ...intakeCancellation,
-      intakeId: this.props.intakeId
+      id: this.props.intakeId
     };
 
     return ApiUtil.convertToSnakeCase(intakeCancellation);
@@ -97,8 +97,7 @@ class CancelIntakeModal extends BaseForm {
     }
 
     let data = this.prepareData();
-
-    this.props.submitCancel({ data })
+    this.props.submitCancel(data)
   }
 
   // submitForm = () => {
@@ -162,7 +161,7 @@ class CancelIntakeModal extends BaseForm {
               <TextareaField
                 name="Tell us more about your situation."
                 required
-                maxlength=150
+                maxlength={150}
                 onChange={this.onOtherReasonChange}
                 errorMessage={this.state.
                   intakeCancellationForm.cancelOther.errorMessage}
@@ -174,10 +173,18 @@ class CancelIntakeModal extends BaseForm {
   }
 }
 
+// const mapStateToProps = ({ rampElection, rampRefiling }) => ({
+//   electionLoading: rampElection.requestStatus.completeIntake,
+//   refilingLoading: rampRefiling.requestStatus.completeIntake
+// });
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  submitCancel
+}, dispatch);
+
 const ConnectedCancelIntakeModal = connect(
-  (dispatch) => bindActionCreators({
-    submitCancel
-  }, dispatch)
+  null,
+  mapDispatchToProps
 )(CancelIntakeModal);
 
 export default ConnectedCancelIntakeModal;

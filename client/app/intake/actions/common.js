@@ -88,13 +88,15 @@ export const toggleCancelModal = () => ({
   }
 });
 
-export const submitCancel = (intakeId) => (dispatch) => {
+export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,
     meta: { analytics }
   });
 
-  return ApiUtil.patch(`/intake/${intakeId}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
+  console.log(data)
+  debugger
+  return ApiUtil.delete(`/intake/${data.id}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
