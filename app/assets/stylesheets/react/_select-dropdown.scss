@@ -83,7 +83,7 @@
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   background: #fff;
-  border-color: #b3b3b3 #ccc #d9d9d9;
+  border-color: #b3b3b3 $color-gray-lighter #d9d9d9;
 }
 
 .is-open > .Select-control .Select-arrow {
@@ -196,7 +196,7 @@
   height: 16px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 2px solid $color-gray-lighter;
   border-right-color: #333;
   display: inline-block;
   position: relative;
@@ -278,7 +278,7 @@
 
 .Select-menu-outer {
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid $color-gray-lighter;
   border-top-color:  white;
   border-bottom-color: #e6e6e6;
   box-sizing: border-box;
