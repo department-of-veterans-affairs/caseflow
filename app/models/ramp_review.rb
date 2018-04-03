@@ -27,6 +27,14 @@ class RampReview < ActiveRecord::Base
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  def self.established
+    where.not(established_at: nil)
+  end
+
+  def established?
+    !!established_at
+  end
+
   # Allows us to enable certain validations only when saving the review
   def start_review!
     @saving_review = true
@@ -40,7 +48,10 @@ class RampReview < ActiveRecord::Base
     fail InvalidEndProductError unless end_product.valid?
 
     establish_claim_in_vbms(end_product).tap do |result|
-      update!(end_product_reference_id: result.claim_id)
+      update!(
+        end_product_reference_id: result.claim_id,
+        established_at: Time.zone.now
+      )
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
