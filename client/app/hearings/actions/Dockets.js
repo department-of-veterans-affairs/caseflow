@@ -99,13 +99,17 @@ export const setNotes = (hearingIndex, notes, date) => ({
   }
 });
 
-export const setHearingPrepped = (hearingId, prepped, date, setEdited) => ({
+export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE, submitToGA = true) => ({
   type: Constants.SET_HEARING_PREPPED,
-  payload: {
-    hearingId,
-    prepped,
-    date,
-    setEdited
+  payload,
+  ...submitToGA && {
+    meta: {
+      analytics: {
+        category: gaCategory,
+        action: ACTIONS.DOCKET_HEARING_PREPPED,
+        label: payload.prepped ? 'checked' : 'unchecked'
+      }
+    }
   }
 });
 
@@ -115,6 +119,13 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
     hearingIndex,
     disposition,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.DISPOSITION_SELECTED,
+      label: disposition
+    }
   }
 });
 
@@ -133,6 +144,13 @@ export const setAod = (hearingIndex, aod, date) => ({
     hearingIndex,
     aod,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.AOD_SELECTED,
+      label: aod
+    }
   }
 });
 
@@ -142,6 +160,13 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     hearingIndex,
     transcriptRequested,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.TRANSCRIPT_REQUESTED,
+      label: transcriptRequested ? 'checked' : 'unchecked'
+    }
   }
 });
 
@@ -266,19 +291,25 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
 };
 
 export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+  const payload = {
+    hearingId,
+    prepped,
+    date: moment(date).format('YYYY-MM-DD'),
+    setEdited: false
+  };
 
-  dispatch(setHearingPrepped(hearingId, prepped,
-    moment(date).format('YYYY-MM-DD'), false));
+  dispatch(setHearingPrepped(payload,
+    CATEGORIES.HEARING_WORKSHEET_PAGE));
 
   ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
-    then((response) => {
-      dispatch(setHearingPrepped(hearingId, response.body.prepped,
-        moment(date).format('YYYY-MM-DD'), false));
+    then(() => {
+      // request was successful
     },
     () => {
-      // we need better error handling here
-      // eslint-disable-next-line no-console
-      console.log('Prepped save failed');
+      payload.prepped = !prepped;
+
+      // request failed, resetting value
+      dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
     });
 };
 

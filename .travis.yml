@@ -42,9 +42,6 @@ before_install:
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
 
-before_script:
-  - bundle exec danger
-
 jobs:
   include:
     - stage: test and lint
