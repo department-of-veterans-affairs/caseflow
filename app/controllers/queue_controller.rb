@@ -38,8 +38,16 @@ class QueueController < ApplicationController
   end
 
   def appeals
-    veteran_id = request.headers["HTTP_VETERAN_ID"]
-    render json: { appeals: veteran_id ? json_appeals(Appeal.all.where(vbms_id: veteran_id)) : [] }
+    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
+                          name: "QueueController.appeals") do
+      appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
+      hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: appeal.issues) }
+        .reject { |appeal_hash| appeal_hash["issues"].empty? }
+
+      render json: {
+        appeals: hashed_appeals
+      }
+    end
   end
 
   def judges
@@ -61,6 +69,10 @@ class QueueController < ApplicationController
   end
 
   private
+
+  def veteran_id
+    request.headers["HTTP_VETERAN_ID"]
+  end
 
   def user
     @user ||= User.find(params[:user_id])
