@@ -15,6 +15,37 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
+  describe "GET queue/:user_id" do
+    before do
+      FeatureToggle.enable!(:queue_welcome_gate)
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    after do
+      FeatureToggle.disable!(:queue_welcome_gate)
+    end
+
+    let(:user) { User.create(css_id: "TEST1", station_id: 101) }
+
+    it "when user is an attorney, it should process the request succesfully" do
+      allow(UserRepository).to receive(:vacols_role).and_return("Attorney")
+      get :tasks, user_id: user.id
+      expect(response.status).to eq 200
+    end
+
+    it "when user is an judge, it should process the request succesfully" do
+      allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+      get :tasks, user_id: user.id
+      expect(response.status).to eq 200
+    end
+
+    it "when user is neither, it should not process the request succesfully" do
+      allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Cat")
+      get :tasks, user_id: user.id
+      expect(response.status).to eq 400
+    end
+  end
+
   describe "POST queue/tasks/:task_id/complete" do
     let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
 

@@ -13,8 +13,6 @@ import {
 } from './QueueActions';
 import {
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
   requestSave
 } from './uiReducer/uiActions';
 
@@ -107,8 +105,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   goToNextStep = () => {
     const {
-      vacolsId,
-      task: { attributes: { assigned_on } },
+      task: { attributes: { task_id: taskId } },
       appeal: { attributes: { issues } },
       decision
     } = this.props;
@@ -116,20 +113,19 @@ class SubmitDecisionView extends React.PureComponent {
       data: {
         queue: {
           type: decision.type,
-          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')),
+          issues: _.map(issues, (issue) => _.pick(issue,
+            ['disposition', 'vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']
+          )),
           ...decision.opts
         }
       }
     };
 
-    this.props.requestSave(
-      params,
-      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`
-    );
+    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params);
   }
 
   getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`
+    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
   }, {
     displayText: 'Submit'
   }];
@@ -255,12 +251,11 @@ class SubmitDecisionView extends React.PureComponent {
 SubmitDecisionView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   vbmsId: PropTypes.string.isRequired,
-  prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
@@ -272,8 +267,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   resetDecisionOptions,
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
   requestSave
 }, dispatch);
 

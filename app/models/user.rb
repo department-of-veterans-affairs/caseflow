@@ -38,6 +38,10 @@ class User < ApplicationRecord
     @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
   end
 
+  def vacols_role
+    @vacols_role ||= self.class.user_repository.vacols_role(css_id)
+  end
+
   def access_to_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end

@@ -30,7 +30,7 @@ class AppealSeries < ApplicationRecord
   end
 
   def api_sort_key
-    earliest_nod = appeals.map(&:nod_date).min
+    earliest_nod = appeals.map(&:nod_date).compact.min
     earliest_nod ? earliest_nod.in_time_zone.to_f : Float::INFINITY
   end
 
