@@ -37,6 +37,20 @@ class QueueController < ApplicationController
     end
   end
 
+  def appeals
+    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
+                          name: "QueueController.appeals") do
+      appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
+      hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: appeal.issues) }
+        .reject { |appeal_hash| appeal_hash["issues"].empty? }
+
+      render json: {
+        appeals: hashed_appeals,
+        shouldUseQueueSearch: FeatureToggle.enabled?(:use_queue_search, user: current_user)
+      }
+    end
+  end
+
   def judges
     render json: { judges: Judge.list_all }
   end
@@ -56,6 +70,10 @@ class QueueController < ApplicationController
   end
 
   private
+
+  def veteran_id
+    request.headers["HTTP_VETERAN_ID"]
+  end
 
   def user
     @user ||= User.find(params[:user_id])

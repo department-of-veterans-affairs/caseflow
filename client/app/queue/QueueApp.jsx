@@ -14,6 +14,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
 import QueueDetailView from './QueueDetailView';
+import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -49,7 +50,7 @@ class QueueApp extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
       styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    <QueueListView {...this.props} />
+    <SearchEnabledView><QueueListView {...this.props} /></SearchEnabledView>
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>

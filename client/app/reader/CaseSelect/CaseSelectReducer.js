@@ -13,6 +13,7 @@ export const initialState = {
   caseSelectCriteria: {
     searchQuery: ''
   },
+  shouldUseQueueSearch: false,
   assignments: [],
   assignmentsLoaded: false
 };
@@ -41,6 +42,10 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
           $set: action.payload.searchQuery
         }
       }
+    });
+  case Constants.SET_SHOULD_USE_QUEUE_SEARCH:
+    return update(state, {
+      shouldUseQueueSearch: { $set: action.payload.bool }
     });
   case Constants.CASE_SELECT_APPEAL:
     return update(state, {
