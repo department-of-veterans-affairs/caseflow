@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328220242) do
+ActiveRecord::Schema.define(version: 20180402231703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -354,6 +354,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string   "completion_status"
     t.string   "error_code"
     t.string   "type"
+    t.string   "cancel_reason"
+    t.string   "cancel_other"
   end
 
   add_index "intakes", ["type"], name: "index_intakes_on_type", using: :btree
