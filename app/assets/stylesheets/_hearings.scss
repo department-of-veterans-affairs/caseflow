@@ -76,7 +76,10 @@
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
-  padding: $cf-30px;
+  padding-bottom: $cf-30px;
+  padding-top: 50px;
+  padding-left: 40px;
+  padding-right: 40px;
 
   .cf-hearings-title-and-judge {
     h1 {
@@ -505,6 +508,7 @@
 
 .cf_hearing_body {
   font-size: 11px;
+  padding: $cf-30px;
 }
 
 .hearings-add-issue {
