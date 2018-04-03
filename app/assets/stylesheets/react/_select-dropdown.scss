@@ -88,7 +88,7 @@
 
 .is-open > .Select-control .Select-arrow {
   top: -2px;
-  border-color: transparent transparent #999;
+  border-color: transparent transparent $color-gray-light;
   border-width: 0 5px 5px;
 }
 
@@ -207,7 +207,7 @@
   -webkit-animation: Select-animation-fadeIn 200ms;
   -o-animation: Select-animation-fadeIn 200ms;
   animation: Select-animation-fadeIn 200ms;
-  color: #999;
+  color: $color-gray-light;
   cursor: pointer;
   display: table-cell;
   position: relative;

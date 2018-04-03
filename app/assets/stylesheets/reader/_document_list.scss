@@ -1,8 +1,6 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
 
-$tag-backgrond-color: #d6d7d9;
-
 .section--document-list {
   .loading-text {
     font-style: italic;
@@ -172,7 +170,7 @@ $tag-backgrond-color: #d6d7d9;
 
     .document-list-issue-tag {
       display: inline-block;
-      background: $tag-backgrond-color;
+      background: $color-gray-lighter;
       border-radius: 3px;
       padding: 4px 7px;
       text-align: center;
