@@ -117,7 +117,7 @@ class SubmitDecisionView extends React.PureComponent {
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-    const successMsg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}`;
+    const successMsg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}.`;
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg);
   };
