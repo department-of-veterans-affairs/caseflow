@@ -118,7 +118,7 @@
 
     // TODO: see if this can become a part of the general style
     .Select-menu-outer {
-      border: 1px solid $color-gray-medium;
+      border: 1px solid $color-gray-dark;
       border-top: none;
       min-height: auto;
       box-shadow: 0 2px 4px 0 $color-dropdown-shadow;
@@ -280,18 +280,18 @@
 
   [type="text"],
   textarea {
-    border: 1px solid $color-gray-medium;
+    border: 1px solid $color-gray-dark;
   }
 
   //TODO: Candidate for caseflow-commons
   .cf-copy-to-clipboard {
-    border: 1px solid $color-gray-medium;
+    border: 1px solid $color-gray-dark;
     box-shadow: inset 0 0 0 1px $color-gray-lightest;
     color: $color-gray;
 
     &:hover {
-      background: $color-gray-medium;
-      border: 1px solid $color-gray-medium;
+      background: $color-gray-dark;
+      border: 1px solid $color-gray-dark;
       box-shadow: none;
       color: $color-white;
 

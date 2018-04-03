@@ -26,7 +26,7 @@
 }
 
 .Select.is-disabled > .Select-control {
-  background-color: #f9f9f9;
+  background-color: $caseflow-background;
 }
 
 .Select.is-disabled > .Select-control:hover {
@@ -51,8 +51,8 @@
 
 .Select-control {
   background-color: #fff;
-  color: #5B616B;
-  border: 1px solid #5b616b;
+  color: $color-gray;
+  border: 1px solid $color-gray;
   color: #333;
   cursor: default;
   display: table;
@@ -83,7 +83,7 @@
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   background: #fff;
-  border-color: #b3b3b3 $color-gray-lighter #d9d9d9;
+  border-color: $color-gray-light $color-gray-lighter $color-gray-lighter;
 }
 
 .is-open > .Select-control .Select-arrow {

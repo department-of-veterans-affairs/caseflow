@@ -4,8 +4,8 @@
 * This css has been modified to match the accordion for caseflow.
 */
 
-$text-color: #666;
-$borderStyle: 1px solid #d9d9d9;
+$text-color: $color-gray;
+$borderStyle: 1px solid $color-gray-lighter;
 
 @mixin common(){
   width: 0;
@@ -27,8 +27,8 @@ $borderStyle: 1px solid #d9d9d9;
 
 #arrow {
   @include common();
-  @include right(3px, 4px, #666);
-  @include bottom(3px, 4px, #666);
+  @include right(3px, 4px, $color-gray);
+  @include bottom(3px, 4px, $color-gray);
 }
 
 .rc-collapse {
@@ -47,8 +47,8 @@ $borderStyle: 1px solid #d9d9d9;
 
   & > &-item-disabled > .rc-collapse-header {
     cursor: not-allowed;
-    color: #999;
-    background-color: #f3f3f3;
+    color: $color-gray-light;
+    background-color: $color-gray-lightest;
   }
 
   &-content {
@@ -70,7 +70,7 @@ $borderStyle: 1px solid #d9d9d9;
 
       .arrow {
         #arrow > {
-          @include bottom(3px, 4px, #666);
+          @include bottom(3px, 4px, $color-gray);
         }
       }
     }
