@@ -71,7 +71,7 @@ class CancelIntakeModal extends BaseForm {
   }
 
   validateForm = () => {
-    if (this.state.cancelReasonValue === 'Other') {
+    if (this.state.cancelReasonValue === 'other') {
       return this.validateFormAndSetErrors(this.state.intakeCancellationForm);
     }
 
@@ -99,23 +99,6 @@ class CancelIntakeModal extends BaseForm {
     let data = this.prepareData();
     this.props.submitCancel(data)
   }
-
-  // submitForm = () => {
-  //
-  //   if (!this.validateForm()) {
-  //     return;
-  //   }
-  //
-  //   let data = this.prepareData();
-  //
-  //   return ApiUtil.post('/intake_cancellations', { data }).
-  //     then(() => {
-  //       this.setState({
-  //         updateCancelSuccess: true
-  //       });
-  //     });
-  //
-  // }
 
   render() {
 
@@ -150,7 +133,7 @@ class CancelIntakeModal extends BaseForm {
         closeHandler={closeHandler}
         title={title}>
         <RadioField
-          name="Please select the reason you are canceling this intake."
+          name="Please select the reason you are cancelling this intake"
           options={cancelReasonOptions}
           value={this.state.cancelReasonValue}
           required
@@ -159,7 +142,7 @@ class CancelIntakeModal extends BaseForm {
             intakeCancellationForm.cancelReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
               <TextareaField
-                name="Tell us more about your situation."
+                name="Tell us more about your situation"
                 required
                 maxlength={150}
                 onChange={this.onOtherReasonChange}
@@ -172,11 +155,6 @@ class CancelIntakeModal extends BaseForm {
     </div>;
   }
 }
-
-// const mapStateToProps = ({ rampElection, rampRefiling }) => ({
-//   electionLoading: rampElection.requestStatus.completeIntake,
-//   refilingLoading: rampRefiling.requestStatus.completeIntake
-// });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   submitCancel

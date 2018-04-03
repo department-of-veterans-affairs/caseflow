@@ -40,7 +40,7 @@ class IntakeFrame extends React.PureComponent {
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         { this.props.cancelModalVisible && <CancelIntakeModal
-            title="Cancel Intake?"
+            title="Cancel Intake"
             intakeId={this.props.intakeId}
             closeHandler={this.props.toggleCancelModal} />
         }
@@ -62,7 +62,7 @@ class IntakeFrame extends React.PureComponent {
                   type="error"
                   title="Error"
                   message={
-                    'There was an error while canceling the current intake.' +
+                    'There was an error while cancelling the current intake.' +
                     ' Please try again later.'
                   }
                   lowerMargin
