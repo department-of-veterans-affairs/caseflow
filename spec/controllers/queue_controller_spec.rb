@@ -29,19 +29,19 @@ RSpec.describe QueueController, type: :controller do
 
     it "when user is an attorney, it should process the request succesfully" do
       allow(UserRepository).to receive(:vacols_role).and_return("Attorney")
-      get :tasks, user_id: user.id
+      get :tasks, params: { user_id: user.id }
       expect(response.status).to eq 200
     end
 
     it "when user is an judge, it should process the request succesfully" do
       allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-      get :tasks, user_id: user.id
+      get :tasks, params: { user_id: user.id }
       expect(response.status).to eq 200
     end
 
     it "when user is neither, it should not process the request succesfully" do
       allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Cat")
-      get :tasks, user_id: user.id
+      get :tasks, params: { user_id: user.id }
       expect(response.status).to eq 400
     end
   end
