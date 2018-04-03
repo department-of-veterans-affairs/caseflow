@@ -42,15 +42,17 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [
-  { value: 0,
-    label: '0 days' },
-  { value: 30,
-    label: '30 days' },
-  { value: 60,
-    label: '60 days' },
-  { value: 90,
-    label: '90 days' }];
+const holdOption = (hearingDate, days) => ({
+  value: days,
+  label: `${days} days - ${moment(hearingDate).add(days, 'days').
+    format('MM/DD')}`
+});
+
+const holdOptions = (hearingDate) => [
+  holdOption(hearingDate, 0),
+  holdOption(hearingDate, 30),
+  holdOption(hearingDate, 60),
+  holdOption(hearingDate, 90)];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },
@@ -166,7 +168,7 @@ export class DocketHearingRow extends React.PureComponent {
           <SearchableDropdown
             label="Hold Open"
             name={`${hearing.id}-hold_open`}
-            options={holdOptions}
+            options={holdOptions(this.props.hearingDate)}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
             searchable={false}
