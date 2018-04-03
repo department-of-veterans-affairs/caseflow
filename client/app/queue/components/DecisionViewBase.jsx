@@ -9,7 +9,6 @@ import {
   popBreadcrumb,
   highlightInvalidFormItems
 } from '../uiReducer/uiActions';
-import { wipeLoadedQueue } from '../QueueActions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
@@ -144,8 +143,7 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
-    highlightInvalidFormItems,
-    wipeLoadedQueue
+    highlightInvalidFormItems
   }, dispatch);
 
   return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));
