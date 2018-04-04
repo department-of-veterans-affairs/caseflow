@@ -7,7 +7,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       params = { worksheet_issues_attributes: [
         {
           remand: true,
-          vha: false,
+          omo: false,
           description: "Wheel",
           notes: "Donkey Cow",
           from_vacols: false,
@@ -19,7 +19,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       response_body = JSON.parse(response.body)["appeal"]
       expect(response_body["worksheet_issues"].size).to eq 1
       expect(response_body["worksheet_issues"][0]["remand"]).to eq true
-      expect(response_body["worksheet_issues"][0]["vha"]).to eq false
+      expect(response_body["worksheet_issues"][0]["omo"]).to eq false
       expect(response_body["worksheet_issues"][0]["description"]).to eq "Wheel"
       expect(response_body["worksheet_issues"][0]["notes"]).to eq "Donkey Cow"
       expect(response_body["worksheet_issues"][0]["from_vacols"]).to eq false

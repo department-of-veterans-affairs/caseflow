@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328220242) do
+ActiveRecord::Schema.define(version: 20180402231703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -341,6 +341,8 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.string   "completion_status"
     t.string   "error_code"
     t.string   "type"
+    t.string   "cancel_reason"
+    t.string   "cancel_other"
     t.index ["type"], name: "index_intakes_on_type", using: :btree
     t.index ["user_id"], name: "index_intakes_on_user_id", using: :btree
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
@@ -458,7 +460,7 @@ ActiveRecord::Schema.define(version: 20180328220242) do
     t.integer  "appeal_id"
     t.string   "vacols_sequence_id"
     t.boolean  "reopen",             default: false
-    t.boolean  "vha",                default: false
+    t.boolean  "omo",                default: false
     t.boolean  "allow",              default: false
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false
