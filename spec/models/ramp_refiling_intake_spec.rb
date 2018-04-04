@@ -24,7 +24,8 @@ describe RampRefilingIntake do
       end_product_reference_id: Generators::EndProduct.build(
         veteran_file_number: veteran_file_number,
         bgs_attrs: { status_type_code: "CLR" }
-      ).claim_id
+      ).claim_id,
+      established_at: Time.zone.now
     )
   end
 
@@ -89,7 +90,8 @@ describe RampRefilingIntake do
         RampElection.create!(
           veteran_file_number: "64205555",
           notice_date: 3.days.ago,
-          end_product_reference_id: end_product.claim_id
+          end_product_reference_id: end_product.claim_id,
+          established_at: Time.zone.now
         )
       end
 
