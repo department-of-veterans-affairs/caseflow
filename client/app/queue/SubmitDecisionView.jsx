@@ -223,8 +223,8 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error.message && <Alert title={error.message.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
-        {error.message.detail}
+      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+        {error.detail}
       </Alert>}
       <hr />
       {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField

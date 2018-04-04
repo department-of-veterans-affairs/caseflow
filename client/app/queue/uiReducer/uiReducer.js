@@ -2,7 +2,6 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
 
-const initialMessageState = { message: null };
 const initialSaveState = {
   savePending: false,
   saveSuccessful: null
@@ -13,8 +12,8 @@ export const initialState = {
   breadcrumbs: [],
   highlightFormItems: false,
   messages: {
-    success: initialMessageState,
-    error: initialMessageState
+    success: null,
+    error: null
   },
   saveState: initialSaveState
 };
@@ -22,7 +21,7 @@ export const initialState = {
 const setMessageState = (state, message, msgType) => update(state, {
   messages: {
     [msgType]: {
-      message: { $set: message }
+      $set: message
     }
   }
 });
@@ -93,13 +92,13 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.RESET_ERROR_MESSAGES:
     return update(state, {
       messages: {
-        error: { $set: initialMessageState }
+        error: { $set: null }
       }
     });
   case ACTIONS.RESET_SUCCESS_MESSAGES:
     return update(state, {
       messages: {
-        success: { $set: initialMessageState }
+        success: { $set: null }
       }
     });
   case ACTIONS.HIDE_ERROR_MESSAGE:

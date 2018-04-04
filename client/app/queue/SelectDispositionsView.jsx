@@ -106,9 +106,7 @@ class SelectDispositionsView extends React.PureComponent {
   }];
 
   render = () => {
-    const {
-      saveResult: { message: saveResult }
-    } = this.props;
+    const { saveResult } = this.props;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
