@@ -249,7 +249,7 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
-  error: state.ui.errorState,
+  error: state.ui.messages.error,
   ..._.pick(state.ui, 'savePending', 'saveSuccessful')
 });
 
