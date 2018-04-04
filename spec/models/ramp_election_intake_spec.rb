@@ -52,7 +52,7 @@ describe RampElectionIntake do
       )
       expect(detail.reload).to have_attributes(
         option_selected: nil,
-        receipt_date: nil,
+        receipt_date: nil
       )
     end
 

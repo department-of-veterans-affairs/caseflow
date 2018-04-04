@@ -10,7 +10,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import IntakeProgressBar from './components/IntakeProgressBar';
 import CancelIntakeModal from './components/CancelIntakeModal';
 import Alert from '../components/Alert';
-import Button from '../components/Button';
 import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
@@ -35,14 +34,12 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.veteran.fileNumber ?
       `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
-    let cancelButton, confirmButton;
-
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         { this.props.cancelModalVisible && <CancelIntakeModal
-            title="Cancel Intake"
-            intakeId={this.props.intakeId}
-            closeHandler={this.props.toggleCancelModal} />
+          title="Cancel Intake"
+          intakeId={this.props.intakeId}
+          closeHandler={this.props.toggleCancelModal} />
         }
         <NavigationBar
           appName={appName}

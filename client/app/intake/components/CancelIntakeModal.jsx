@@ -5,7 +5,6 @@ import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
-import TextField from '../../components/TextField';
 import { submitCancel } from '../actions/common';
 import { CANCELLATION_REASONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
@@ -97,15 +96,15 @@ class CancelIntakeModal extends BaseForm {
     }
 
     let data = this.prepareData();
-    this.props.submitCancel(data)
+
+    this.props.submitCancel(data);
   }
 
   render() {
 
     let {
       title,
-      closeHandler,
-      submitCancel
+      closeHandler
     } = this.props;
 
     const cancelReasonOptions = _.map(CANCELLATION_REASONS, (reason) => ({
