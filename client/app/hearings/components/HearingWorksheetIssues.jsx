@@ -25,7 +25,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'counter'
       },
       {
-        header: `Appeal Stream ${appealKey + 1}`,
+        header: `Appeal Stream ${appealKey + 1} Issues`,
         align: 'left',
         valueName: 'description'
       },

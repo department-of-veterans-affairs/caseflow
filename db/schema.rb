@@ -354,6 +354,8 @@ ActiveRecord::Schema.define(version: 20180402204041) do
     t.string   "completion_status"
     t.string   "error_code"
     t.string   "type"
+    t.string   "cancel_reason"
+    t.string   "cancel_other"
   end
 
   add_index "intakes", ["type"], name: "index_intakes_on_type", using: :btree
