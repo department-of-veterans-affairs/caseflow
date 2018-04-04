@@ -170,7 +170,6 @@ RSpec.feature "Reader" do
       end
 
       scenario "filtering categories", focus: true do
-        binding.pry
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
         find(".checkbox-wrapper-medical").click
