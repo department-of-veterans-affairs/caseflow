@@ -138,7 +138,6 @@ group :development, :test, :local do
 
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "tzinfo", "1.2.1"
 end
 
 group :development do
