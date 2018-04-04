@@ -75,12 +75,7 @@ export class Dockets extends React.Component {
   }
 
   getRegionalOffice = (docket) => {
-    if(docket.type === 'central_office') {
-      return;
-    }
-    else {
-      return docket.regional_office_name;
-    }
+    return (docket.type === 'central_office' ? null : docket.regional_office_name);
   }
 
   getRowObjects = (hearings, reverseSort = false) => {
