@@ -41,7 +41,7 @@ describe RampElection do
       RampElection.create!(
         veteran_file_number: "3",
         notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
+        receipt_date: 1.day.ago
       )
       expect(RampElection.active.count).to eq(2)
     end
