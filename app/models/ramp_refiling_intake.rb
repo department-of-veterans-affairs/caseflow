@@ -13,9 +13,10 @@ class RampRefilingIntake < Intake
     ramp_election && ramp_election.recreate_issues_from_contentions!
   end
 
-  def cancel!
+  def cancel!(cancel_reason, cancel_other)
     transaction do
       detail.destroy!
+      add_cancel_reason!(cancel_reason, cancel_other)
       complete_with_status!(:canceled)
     end
   end
