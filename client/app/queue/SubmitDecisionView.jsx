@@ -227,7 +227,7 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error.visible && <Alert title={error.message.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+      {error.message && <Alert title={error.message.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
         {error.message.detail}
       </Alert>}
       <hr />

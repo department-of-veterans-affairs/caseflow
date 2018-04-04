@@ -2,11 +2,7 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
 
-const initialMessageState = {
-  visible: false,
-  message: null
-};
-
+const initialMessageState = { message: null };
 const initialSaveState = {
   savePending: false,
   saveSuccessful: null
@@ -23,22 +19,21 @@ export const initialState = {
   saveState: initialSaveState
 };
 
-const setMessageState = (state, isVisible, message, msgType) => update(state, {
+const setMessageState = (state, message, msgType) => update(state, {
   messages: {
     [msgType]: {
-      visible: { $set: isVisible },
       message: { $set: message }
     }
   }
 });
 
-const setErrorMessageState = (state, isVisible, message) => setMessageState(state, isVisible, message, 'error');
-const hideErrorMessage = (state) => setErrorMessageState(state, false);
-const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
+const setErrorMessageState = (state, message) => setMessageState(state, message, 'error');
+const hideErrorMessage = (state) => setErrorMessageState(state, null);
+const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(state, errorMsg);
 
-const setSuccessMessageState = (state, isVisible, message) => setMessageState(state, isVisible, message, 'success');
-const hideSuccessMessage = (state) => setSuccessMessageState(state, false);
-const showSuccessMessage = (state, message) => setSuccessMessageState(state, true, message);
+const setSuccessMessageState = (state, message) => setMessageState(state, message, 'success');
+const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
+const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
