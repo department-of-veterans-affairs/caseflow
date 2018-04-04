@@ -98,14 +98,6 @@ class AddEditIssueView extends React.Component {
     );
   };
 
-  componentDidUpdate = (prevProps) => {
-    if (prevProps.savePending && !this.props.savePending && this.props.saveSuccessful) {
-      // todo: after updating an issue, the server returns all issues for appeals. use those?
-      // after updating the server, update in redux to avoid reloading all data
-      this.props.saveEditedAppealIssue(this.props.vacolsId);
-    }
-  }
-
   goToNextStep = () => {
     const {
       issue,
@@ -124,7 +116,12 @@ class AddEditIssueView extends React.Component {
     this.props.requestUpdate(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
       { data: params }
-    );
+    ).then(() => {
+      if (this.props.saveSuccessful) {
+        // after updating the server, update in redux to avoid reloading all data
+        this.props.saveEditedAppealIssue(this.props.vacolsId);
+      }
+    });
   };
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
