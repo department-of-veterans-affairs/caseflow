@@ -18,7 +18,10 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import { highlightInvalidFormItems } from './uiReducer/uiActions';
+import {
+  highlightInvalidFormItems,
+  hideSuccessMessage
+} from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -47,6 +50,8 @@ class SelectDispositionsView extends React.PureComponent {
     breadcrumb: 'Select Dispositions',
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
+
+  componentWillUnmount = () => this.props.hideSuccessMessage();
 
   componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
@@ -144,7 +149,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  hideSuccessMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
