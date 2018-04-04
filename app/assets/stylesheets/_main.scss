@@ -53,15 +53,15 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
-  color: $color-gray-medium !important;
+  color: $color-gray-dark !important;
 }
 
 .cf-dropdown {
   a {
-    color: $color-gray-medium;
+    color: $color-gray-dark;
 
     &:hover {
-      color: $color-gray-medium;
+      color: $color-gray-dark;
     }
   }
 
