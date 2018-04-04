@@ -130,7 +130,7 @@ class CancelIntakeModal extends BaseForm {
         ]}
         visible
         closeHandler={closeHandler}
-        title={title}>
+        title="Cancel Intake?">
         <RadioField
           name="Please select the reason you are canceling this intake."
           options={cancelReasonOptions}

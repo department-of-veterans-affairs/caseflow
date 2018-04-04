@@ -37,7 +37,6 @@ class IntakeFrame extends React.PureComponent {
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         { this.props.cancelModalVisible && <CancelIntakeModal
-          title="Cancel Intake?"
           intakeId={this.props.intakeId}
           closeHandler={this.props.toggleCancelModal} />
         }
