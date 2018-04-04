@@ -244,8 +244,7 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
-  error: state.ui.messages.error,
-  ..._.pick(state.ui, 'savePending', 'saveSuccessful')
+  error: state.ui.messages.error
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

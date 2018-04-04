@@ -276,7 +276,7 @@ const mapStateToProps = (state, ownProps) => ({
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
   error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge', 'saveState.saveSuccessful')
+  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
