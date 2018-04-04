@@ -2,11 +2,7 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
 
-const initialErrorState = {
-  visible: false,
-  message: null
-};
-
+const initialErrorState = { message: null };
 export const initialState = {
   selectingJudge: false,
   breadcrumbs: [],
@@ -16,15 +12,14 @@ export const initialState = {
   saveSuccessful: null
 };
 
-const setErrorMessageState = (state, isVisible, errorMsg = null) => update(state, {
+const setErrorMessageState = (state, errorMsg = null) => update(state, {
   errorState: {
-    visible: { $set: isVisible },
-    message: { $set: isVisible ? errorMsg : null }
+    message: { $set: errorMsg }
   }
 });
 
-const hideErrorMessage = (state) => setErrorMessageState(state, false);
-const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
+const hideErrorMessage = (state) => setErrorMessageState(state);
+const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(state, errorMsg);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {

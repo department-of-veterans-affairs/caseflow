@@ -158,7 +158,7 @@ class AddEditIssueView extends React.Component {
       <h1 {...css(fullWidth, smallBottomMargin)}>
         {StringUtil.titleCase(action)} Issue
       </h1>
-      {error.visible && <Alert type="error" title={error.message.title} styling={smallTopMargin}>
+      {error.message && <Alert type="error" title={error.message.title} styling={smallTopMargin}>
         {error.message.detail}
       </Alert>}
       <Button
