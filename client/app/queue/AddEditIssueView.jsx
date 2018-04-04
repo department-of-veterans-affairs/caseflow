@@ -115,7 +115,8 @@ class AddEditIssueView extends React.Component {
 
     this.props.requestUpdate(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
-      { data: params }
+      { data: params },
+      'Issue updated successfully.'
     ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
