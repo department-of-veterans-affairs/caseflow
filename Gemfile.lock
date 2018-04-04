@@ -442,7 +442,7 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.8)
     timecop (0.9.1)
-    tzinfo (1.2.5)
+    tzinfo (1.2.1)
       thread_safe (~> 0.1)
     uglifier (4.1.3)
       execjs (>= 0.3.0, < 3)
@@ -536,6 +536,7 @@ DEPENDENCIES
   sqlite3
   therubyracer
   timecop
+  tzinfo (= 1.2.1)
   tzinfo-data
   uglifier (>= 1.3.0)
   uswds-rails!
