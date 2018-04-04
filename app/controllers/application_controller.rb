@@ -87,7 +87,7 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def verify_welcome_gate_access
+  def verify_queue_access
     # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
     code = Rails.cache.read(:queue_access_code)

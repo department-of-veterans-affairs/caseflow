@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :verify_welcome_gate_access, only: :index
+  before_action :verify_queue_access, only: :index
 
   def index
     case params[:role]

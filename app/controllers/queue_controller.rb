@@ -1,6 +1,6 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
-  before_action :verify_welcome_gate_access, except: :complete
+  before_action :verify_queue_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
 
   ROLES = %w[Judge Attorney].freeze
