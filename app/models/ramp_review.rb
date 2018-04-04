@@ -50,7 +50,8 @@ class RampReview < ActiveRecord::Base
     establish_claim_in_vbms(end_product).tap do |result|
       update!(
         end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
+        established_at: Time.zone.now,
+        established_by_user_id: current_user.id
       )
     end
   rescue VBMS::HTTPError => error

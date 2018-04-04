@@ -2,7 +2,8 @@ describe SyncIntakeJob do
   context ".perform" do
     it "calls recreate_issues_from_contentions and sync_ep_status" do
       ramp_election = instance_double(RampElection)
-      expect(RampElection).to receive(:active).and_return([ramp_election]).twice
+      expect(RampElection).to receive(:active).and_return([ramp_election])
+      expect(RampElection).to receive(:established).and_return([ramp_election])
       allow(ramp_election).to receive(:recreate_issues_from_contentions!).and_return(true)
       allow(ramp_election).to receive(:sync_ep_status!).and_return(true)
 

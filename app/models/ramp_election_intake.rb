@@ -36,17 +36,11 @@ class RampElectionIntake < Intake
         user: user,
         closed_on: Time.zone.today,
         disposition: "RAMP Opt-in"
-      ) do
-        ramp_election.create_end_product!
-      end
+      )
 
-      eligible_appeals.each do |appeal|
-        RampClosedAppeal.create!(
-          vacols_id: appeal.vacols_id,
-          ramp_election_id: ramp_election.id,
-          nod_date: appeal.nod_date
-        )
-      end
+      ramp_election.create_end_product!
+      complete_eligible_appeals
+      mark_detail_as_established
     end
   end
 
@@ -83,6 +77,16 @@ class RampElectionIntake < Intake
   end
 
   private
+
+  def complete_eligible_appeals
+    eligible_appeals.each do |appeal|
+      RampClosedAppeal.create!(
+        vacols_id: appeal.vacols_id,
+        ramp_election_id: ramp_election.id,
+        nod_date: appeal.nod_date
+      )
+    end
+  end
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
