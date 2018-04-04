@@ -233,6 +233,7 @@ $color-hearings-saving: $color-gray;
       background-color: $color-gray-lightest;
 
       .cf-form-dropdown {
+        min-width: 170px;
         text-align: left;
         display: inline-block;
         width: 33%;
