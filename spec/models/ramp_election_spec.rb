@@ -139,17 +139,17 @@ describe RampElection do
     end
   end
 
-  context "#completed?" do
-    subject { ramp_election.completed? }
+  context "#established?" do
+    subject { ramp_election.established? }
 
-    context "when there is an end product reference" do
-      let(:end_product_reference_id) { 1 }
+    context "when there is an established at date" do
+      let(:established_at) { Time.zone.now }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when there is not an end product reference" do
-      let(:end_product_reference_id) { nil }
+    context "when there is not an established at date" do
+      let(:established_at) { nil }
 
       it { is_expected.to eq(false) }
     end
@@ -301,6 +301,16 @@ describe RampElection do
 
       context "when it is after today" do
         let(:receipt_date) { 1.day.from_now }
+
+        it "adds an error to receipt_date" do
+          is_expected.to be false
+          expect(ramp_election.errors[:receipt_date]).to include("in_future")
+        end
+      end
+
+      context "when it is after today and there is no notice_date" do
+        let(:receipt_date) { 1.day.from_now }
+        let(:notice_date) { nil }
 
         it "adds an error to receipt_date" do
           is_expected.to be false

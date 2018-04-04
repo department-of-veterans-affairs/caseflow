@@ -1,5 +1,7 @@
 require "prime"
 class Fakes::HearingRepository
+  extend Generators::Base
+
   class << self
     attr_accessor :hearing_records
     attr_accessor :master_records
@@ -108,12 +110,17 @@ class Fakes::HearingRepository
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     38.times.each do |i|
-      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user))
+      name_attrs = (i % 5 == 0) ? generate_same_veteran_appellant_name_attrs : {}
+      hearing = Generators::Hearing.create(random_attrs(i).merge(user: user).merge(name_attrs))
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
 
     generate_past_hearings(10, user)
-    4.times.each do |i|
+    generate_master_record_hearings(4, user)
+  end
+
+  def self.generate_master_record_hearings(number_of_records, user)
+    number_of_records.times.each do |i|
       Generators::Hearings::MasterRecord.build(
         user_id: user.id,
         date: Time.now.in_time_zone("EST").beginning_of_day + (i + 60).days + 8.hours + 30.minutes,
@@ -132,6 +139,21 @@ class Fakes::HearingRepository
       vacols_id: 950_330_575 + (i * 1465),
       notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
       regional_office_key: %w[RO11 RO10 RO42 RO43 RO28 RO44][i % 6]
+    }
+  end
+
+  def self.generate_same_veteran_appellant_name_attrs
+    first_name = generate_first_name
+    last_name = generate_last_name
+    middle_initial = "A"
+
+    {
+      veteran_first_name: first_name,
+      veteran_middle_initial: middle_initial,
+      veteran_last_name: last_name,
+      appellant_first_name: first_name,
+      appellant_middle_initial: middle_initial,
+      appellant_last_name: last_name
     }
   end
 end

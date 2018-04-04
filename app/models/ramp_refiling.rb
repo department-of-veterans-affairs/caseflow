@@ -14,10 +14,6 @@ class RampRefiling < RampReview
     hearing: "hearing"
   }
 
-  def self.established
-    where.not(established_at: nil)
-  end
-
   def create_issues!(source_issue_ids:)
     issues.destroy_all unless issues.empty?
 
