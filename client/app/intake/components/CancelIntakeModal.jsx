@@ -119,11 +119,11 @@ class CancelIntakeModal extends BaseForm {
     return <div>
       <Modal
         buttons={[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: '\u226A Go back',
+          { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+            name: 'Close',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary'],
+          { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
             name: 'Cancel intake',
             onClick: this.handleSubmitCancel
           }
@@ -132,7 +132,7 @@ class CancelIntakeModal extends BaseForm {
         closeHandler={closeHandler}
         title={title}>
         <RadioField
-          name="Please select the reason you are cancelling this intake"
+          name="Please select the reason you are canceling this intake."
           options={cancelReasonOptions}
           value={this.state.cancelReasonValue}
           required
@@ -141,7 +141,7 @@ class CancelIntakeModal extends BaseForm {
             intakeCancellationForm.cancelReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
               <TextareaField
-                name="Tell us more about your situation"
+                name="Tell us more about your situation."
                 required
                 maxlength={150}
                 onChange={this.onOtherReasonChange}
