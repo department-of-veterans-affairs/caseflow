@@ -27,7 +27,8 @@ class AttorneyCaseReview < ApplicationRecord
         work_product: work_product,
         document_id: document_id,
         overtime: overtime,
-        note: note
+        note: note,
+        modifying_user: attorney.vacols_uniq_id
       }
     )
   end

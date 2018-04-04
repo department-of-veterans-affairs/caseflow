@@ -136,7 +136,10 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => _.pick(state.ui, 'breadcrumbs', 'savePending', 'saveSuccessful');
+  const mapStateToProps = (state) => ({
+    ..._.pick(state.ui, 'breadcrumbs'),
+    ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful')
+  });
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
