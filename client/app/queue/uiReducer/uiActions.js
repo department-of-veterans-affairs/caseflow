@@ -63,6 +63,8 @@ export const resetBreadcrumbs = () => ({
 export const saveSuccess = (message) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
+
+  return Promise.resolve();
 };
 
 export const saveFailure = (resp) => (dispatch) => {
@@ -71,6 +73,8 @@ export const saveFailure = (resp) => (dispatch) => {
 
   dispatch(showErrorMessage(errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
+
+  return Promise.reject(errors[0]);
 };
 
 export const requestSave = (url, params, successMessage, verb = 'post') => (dispatch) => {

@@ -116,12 +116,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestUpdate(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
       { data: params }
-    ).then(() => {
-      if (this.props.saveSuccessful) {
-        // after updating the server, update in redux to avoid reloading all data
-        this.props.saveEditedAppealIssue(this.props.vacolsId);
-      }
-    });
+    ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({

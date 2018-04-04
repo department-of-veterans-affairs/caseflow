@@ -125,12 +125,7 @@ class SubmitDecisionView extends React.PureComponent {
     been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
-      then(() => {
-        if (this.props.saveSuccessful) {
-          // preempt successful server response to avoid reloading all data
-          this.props.deleteAppeal(vacolsId);
-        }
-      });
+      then(() => this.props.deleteAppeal(vacolsId));
   };
 
   getFooterButtons = () => {
