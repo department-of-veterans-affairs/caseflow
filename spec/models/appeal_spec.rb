@@ -1749,7 +1749,7 @@ describe Appeal do
       let(:appeals_hash) do
         { worksheet_issues_attributes: [{
           remand: true,
-          vha: true,
+          omo: true,
           description: "Cabbage\nPickle",
           notes: "Donkey\nCow",
           from_vacols: true,
@@ -1767,7 +1767,7 @@ describe Appeal do
         expect(issue.allow).to eq false
         expect(issue.deny).to eq false
         expect(issue.dismiss).to eq false
-        expect(issue.vha).to eq true
+        expect(issue.omo).to eq true
         expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Donkey\nCow"
 
