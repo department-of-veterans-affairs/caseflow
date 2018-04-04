@@ -79,7 +79,7 @@ export class HearingWorksheet extends React.PureComponent {
   openPdf = (worksheet, worksheetIssues) => () => {
     window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_SAVE_TO_PDF);
     Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
-      window.open(`${window.location.pathname}/print`, '_blank');
+      window.open(`${window.location.pathname}/print`, '_blank', 'noopener noreferrer');
     });
   };
 
