@@ -63,12 +63,23 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
-  }, {
-    displayText: 'Finish dispositions',
-    id: 'finish-dispositions'
-  }];
+  getFooterButtons = () => {
+    const {
+      appeal: {
+        attributes: {
+          veteran_full_name: vetName,
+          vbms_id: vbmsId
+        }
+      }
+    } = this.props;
+
+    return [{
+      displayText: `< Go back to ${vetName} (${vbmsId})`
+    }, {
+      displayText: 'Finish dispositions',
+      id: 'finish-dispositions'
+    }];
+  };
 
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
@@ -110,7 +121,6 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };

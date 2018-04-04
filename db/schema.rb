@@ -483,7 +483,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.integer  "appeal_id"
     t.string   "vacols_sequence_id"
     t.boolean  "reopen",             default: false
-    t.boolean  "vha",                default: false
+    t.boolean  "omo",                default: false
     t.boolean  "allow",              default: false
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false

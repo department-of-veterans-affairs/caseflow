@@ -24,6 +24,29 @@ describe RampElection do
     )
   end
 
+  context "#active scope" do
+    it "includes any RampElection where end_product_status is nil or not inactive" do
+      RampElection.create!(
+        veteran_file_number: "1",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago,
+        end_product_status: "ACTIVE"
+      )
+      RampElection.create!(
+        veteran_file_number: "2",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago,
+        end_product_status: EndProduct::INACTIVE_STATUSES.first
+      )
+      RampElection.create!(
+        veteran_file_number: "3",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago
+      )
+      expect(RampElection.active.count).to eq(2)
+    end
+  end
+
   context "#create_end_product!" do
     subject { ramp_election.create_end_product! }
     # Stub the id of the end product being created
@@ -139,17 +162,17 @@ describe RampElection do
     end
   end
 
-  context "#completed?" do
-    subject { ramp_election.completed? }
+  context "#established?" do
+    subject { ramp_election.established? }
 
-    context "when there is an end product reference" do
-      let(:end_product_reference_id) { 1 }
+    context "when there is an established at date" do
+      let(:established_at) { Time.zone.now }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when there is not an end product reference" do
-      let(:end_product_reference_id) { nil }
+    context "when there is not an established at date" do
+      let(:established_at) { nil }
 
       it { is_expected.to eq(false) }
     end

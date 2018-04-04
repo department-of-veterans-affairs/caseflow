@@ -253,12 +253,14 @@ describe RampElectionIntake do
   context "#validate_start" do
     subject { intake.validate_start }
     let(:end_product_reference_id) { nil }
+    let(:established_at) { nil }
     let!(:ramp_appeal) { appeal }
     let!(:ramp_election) do
       RampElection.create!(
         veteran_file_number: "64205555",
         notice_date: 6.days.ago,
-        end_product_reference_id: end_product_reference_id
+        end_product_reference_id: end_product_reference_id,
+        established_at: established_at
       )
     end
 
@@ -266,6 +268,8 @@ describe RampElectionIntake do
 
     context "the ramp election is complete" do
       let(:end_product_reference_id) { 1 }
+      let(:established_at) { Time.zone.now }
+
       it "adds ramp_election_already_complete and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("ramp_election_already_complete")
