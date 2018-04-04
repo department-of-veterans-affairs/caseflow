@@ -1,6 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
-import { redText } from './constants';
+import StringUtil from '../util/StringUtil';
+import {
+  redText,
+  DECISION_TYPES
+} from './constants';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -54,4 +58,19 @@ export const renderAppealType = (appeal) => {
     {aod && <span><span {...redText}>AOD</span>, </span>}
     {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
   </React.Fragment>;
+};
+
+export const getDecisionTypeDisplay = (decision = {}) => {
+  const {
+    type: decisionType
+  } = decision;
+
+  switch (decisionType) {
+  case DECISION_TYPES.OMO_REQUEST:
+    return 'OMO';
+  case DECISION_TYPES.DRAFT_DECISION:
+    return 'Draft Decision';
+  default:
+    return StringUtil.titleCase(decisionType);
+  }
 };

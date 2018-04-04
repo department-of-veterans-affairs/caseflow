@@ -252,7 +252,7 @@ RSpec.feature "Start Certification" do
 
     scenario "Appeal is already certified" do
       visit "certifications/new/#{appeal_already_certified.vacols_id}"
-      expect(page).to have_content "Appeal has already been Certified"
+      expect(page).to have_content "Appeal has already been certified"
     end
 
     scenario "There is a dependency outage" do
