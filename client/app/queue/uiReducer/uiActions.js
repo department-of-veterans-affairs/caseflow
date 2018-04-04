@@ -66,7 +66,8 @@ export const saveSuccess = (message) => (dispatch) => {
 };
 
 export const saveFailure = (resp) => (dispatch) => {
-  const errors = JSON.parse(resp.response.text).errors;
+  const { response } = resp;
+  const errors = response.text ? JSON.parse(response.text).errors : [response.statusText];
 
   dispatch(showErrorMessage(errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
@@ -83,7 +84,7 @@ export const requestSave = (url, params, successMessage, verb = 'post') => (disp
   );
 };
 
-export const requestUpdate = (url, params) => requestSave(url, params, 'put');
+export const requestUpdate = (url, params, successMessage) => requestSave(url, params, successMessage, 'put');
 
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
