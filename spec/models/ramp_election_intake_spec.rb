@@ -69,6 +69,14 @@ describe RampElectionIntake do
   context "#complete!" do
     subject { intake.complete!({}) }
 
+    before do
+      User.authenticate!
+    end
+
+    after do
+      User.unauthenticate!
+    end
+    
     let(:detail) do
       RampElection.create!(
         veteran_file_number: "64205555",
@@ -114,10 +122,16 @@ describe RampElectionIntake do
         disposition_code: "P"
       )
 
+      puts("Hello")
+      puts(intake.detail.established_at)
+
       subject
 
+      puts("Hello")
+      puts(intake.detail.established_at)
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
+      expect(intake.detail.established_by_user_id).to eq(current_user.id)
     end
 
     context "if VACOLS closure fails" do

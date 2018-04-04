@@ -36,10 +36,9 @@ class RampElectionIntake < Intake
         user: user,
         closed_on: Time.zone.today,
         disposition: "RAMP Opt-in"
-      ) do
-        ramp_election.create_end_product!
-      end
+      )
 
+      ramp_election.create_end_product!
       complete_eligible_appeals
       mark_detail_as_established
     end
