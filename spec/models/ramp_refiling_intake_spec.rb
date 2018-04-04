@@ -227,7 +227,7 @@ describe RampRefilingIntake do
       expect(intake.reload).to be_canceled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
       expect(intake).to have_attributes(
-        cancel_reason: "system_errors"
+        cancel_reason: "system_error"
       )
     end
   end
