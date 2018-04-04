@@ -1,4 +1,4 @@
-require "/Users/oscarramirez/caseflow/spec/rails_helper"
+require "rails_helper"
 
 def scroll_position(id: nil, class_name: nil)
   page.evaluate_script <<-EOS

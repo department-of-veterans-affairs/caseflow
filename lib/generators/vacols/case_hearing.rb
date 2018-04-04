@@ -8,7 +8,7 @@ class Generators::Vacols::CaseHearing
        hearing_disp: "H",
        board_member: 909,
        notes1: "Eum iure dicta quis maiores nihil architecto sit vero.",
-       team: "SBODE",
+       team: "SB",
        room: 3,
        rep_state: "WI",
        mduser: "CTROMP",

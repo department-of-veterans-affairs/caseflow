@@ -3,7 +3,7 @@ class Generators::Vacols::Decass
     def decass_attrs
       {defolder: 877483,
        deatty: 1286,
-       deteam: "SBODE",
+       deteam: "SB",
        depdiff: 2,
        defdiff: 3,
        deassign: "2017-10-27 00:00:00 UTC",

@@ -68,7 +68,6 @@ class Generators::Vacols::Folder
 
     def create(attrs = {})
       folder_attrs.merge(attrs)
-
       VACOLS::Folder.create(folder_attrs)
     end
   end

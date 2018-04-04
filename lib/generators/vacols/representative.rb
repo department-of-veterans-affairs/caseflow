@@ -14,7 +14,7 @@ class Generators::Vacols::Representative
        repcity: "New Otha",
        repst: "OH",
        repzip: 90467,
-       repphone: "1-277-060-6791 x14708",
+       repphone: "277-060-6791 x14708",
        repnotes: nil,
        repmoduser: nil,
        repmodtime: nil,

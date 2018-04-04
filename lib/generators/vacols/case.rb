@@ -89,19 +89,35 @@ class Generators::Vacols::Case
     end
 
     def create(attrs = {})
-      case_attrs.merge(attrs["case_attrs"])
-
-      VACOLS::Case.create(case_attrs)
 
       # Commit dependencies
-      VACOLS::Folder.create(attrs["folder_attrs"])
-      VACOLS::Representative.create(attrs["representative_attrs"])
-      VACOLS::Correspondent.create(attrs["correspondent_attrs"])
-      VACOLS::CaseIssue.create(attrs["case_issue_attrs"])
-      VACOLS::Note.create(attrs["note_attrs"])
-      VACOLS::CaseHearing.create(attrs["case_hearing_attrs"])
-      VACOLS::Decass.create(attrs["decass_attrs"])
-      VACOLS::Staff.create(attrs["staff_attrs"])
+      folder_attrs = attrs["folder_attrs"].nil? ? {} : attrs["folder_attrs"]
+      Generators::Vacols::Folder.create(folder_attrs)
+
+      representative_attrs = attrs["representative_attrs"].nil? ? {} : attrs["representative_attrs"]
+      Generators::Vacols::Representative.create(representative_attrs)
+
+      correspondent_attrs = attrs["correspondent_attrs"].nil? ? {} : attrs["correspondent_attrs"]
+      Generators::Vacols::Correspondent.create(correspondent_attrs)
+
+      case_issue_attrs = attrs["case_issue_attrs"].nil? ? {} : attrs["case_issue_attrs"]
+      Generators::Vacols::CaseIssue.create(case_issue_attrs)
+
+      note_attrs = attrs["note_attrs"].nil? ? {} : attrs["note_attrs"]
+      Generators::Vacols::Note.create(note_attrs)
+
+      case_hearing_attrs = attrs["case_hearing_attrs"].nil? ? {} : attrs["case_hearing_attrs"]
+      Generators::Vacols::CaseHearing.create(case_hearing_attrs)
+
+      decass_attrs = attrs["decass_attrs"].nil? ? {} : attrs["decass_attrs"]
+      Generators::Vacols::Decass.create(decass_attrs)
+
+      staff_attrs = attrs["staff_attrs"].nil? ? {} : attrs["staff_attrs"]
+      Generators::Vacols::Staff.create(staff_attrs)
+
+      custom_case_attrs = attrs["case_attrs"].nil? ? {} : attrs["case_attrs"]
+      case_attrs.merge(custom_case_attrs)
+      VACOLS::Case.create(case_attrs)
     end
   end
 end
