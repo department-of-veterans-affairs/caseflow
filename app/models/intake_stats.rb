@@ -173,6 +173,17 @@ class IntakeStats < Caseflow::Stats
 
     total_appeal_refilings: lambda do |range|
       total_refilings_for_option(range, :appeal)
+    end,
+
+    total_issues_elected_into_ramp: lambda do |range|
+      RampElection
+        .established
+        .where(receipt_date: offset_range(range))
+        .includes(:issues)
+        .map do |ramp_election|
+          ramp_election.issues.size
+        end
+        .reduce(0, :+)
     end
   }.freeze
 end
