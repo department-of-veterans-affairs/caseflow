@@ -330,6 +330,8 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
+        expect(page).to have_content("Issue updated successfully.")
+
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
