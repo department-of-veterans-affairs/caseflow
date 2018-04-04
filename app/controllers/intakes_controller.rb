@@ -34,7 +34,7 @@ class IntakesController < ApplicationController
   end
 
   def destroy
-    current_intake.cancel!(params)
+    current_intake.cancel!(params[:cancel_reason], params[:cancel_other])
     render json: {}
   end
 

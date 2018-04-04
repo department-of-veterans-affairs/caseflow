@@ -93,9 +93,10 @@ class Intake < ActiveRecord::Base
     )
   end
 
-  def add_cancel_reason!(cancel_data)
+  def add_cancel_reason!(cancel_reason, cancel_other)
     update_attributes!(
-      cancel_data
+      cancel_reason: cancel_reason,
+      cancel_other: cancel_other
     )
   end
 
