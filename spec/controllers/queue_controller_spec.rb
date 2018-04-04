@@ -19,30 +19,6 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
-  describe "GET queue/appeals" do
-    let(:appeal) { Generators::Appeal.create }
-    let(:veteran_id) { appeal.vbms_id }
-
-    context "when request header does not contain Veteran ID" do
-      it "response should contain an empty array of appeals" do
-        get :appeals
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["appeals"].size).to eq 0
-      end
-    end
-
-    context "when request header contains Veteran ID" do
-      it "array in response contains one appeal" do
-        request.headers["HTTP_VETERAN_ID"] = veteran_id
-        get :appeals
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["appeals"].size).to eq 1
-      end
-    end
-  end
-
   describe "GET queue/:user_id" do
     let(:user) { User.create(css_id: "TEST1", station_id: 101) }
 

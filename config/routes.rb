@@ -105,7 +105,7 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
-
+  get 'appeals' => 'appeals#list'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
@@ -119,7 +119,6 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/appeals', to: 'queue#appeals'
     get '/tasks/:vacols_id', to: 'queue#index'
     get '/tasks/:vacols_id/*all', to: redirect('/queue/tasks/%{vacols_id}')
     get '/judges', to: 'queue#judges'
