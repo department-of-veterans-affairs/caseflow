@@ -16,11 +16,9 @@ RSpec.describe AppealsController, type: :controller do
     let(:veteran_id) { appeal.vbms_id }
 
     context "when request header does not contain Veteran ID" do
-      it "response should contain an empty array of appeals" do
+      it "response should error" do
         get :list
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["appeals"].size).to eq 0
+        expect(response.status).to eq 400
       end
     end
 
