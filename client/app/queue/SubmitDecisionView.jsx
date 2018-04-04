@@ -117,11 +117,11 @@ class SubmitDecisionView extends React.PureComponent {
     };
 
     const fields = {
-      type: getDecisionTypeDisplay(decision),
+      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-    const successMsg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}.`;
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's been sent to ${fields.judge} for review.`
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
       then(() => {
