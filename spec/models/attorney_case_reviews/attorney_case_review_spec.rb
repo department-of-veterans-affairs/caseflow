@@ -46,6 +46,7 @@ describe AttorneyCaseReview do
             work_product: "OMO - IME",
             document_id: "123456789.1234",
             overtime: true,
+            modifying_user: "CFS456",
             note: "something"
           }
         ).and_return(true)
@@ -87,7 +88,8 @@ describe AttorneyCaseReview do
             work_product: "Decision",
             document_id: "123456789.1234",
             overtime: true,
-            note: "something"
+            note: "something",
+            modifying_user: "CFS456"
           }
         ).and_return(true)
 
