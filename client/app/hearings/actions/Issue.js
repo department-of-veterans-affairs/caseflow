@@ -102,17 +102,17 @@ export const onToggleDismiss = (dismiss, issueId) => ({
   }
 });
 
-export const onToggleVHA = (vha, issueId) => ({
-  type: Constants.SET_VHA,
+export const onToggleOMO = (omo, issueId) => ({
+  type: Constants.SET_OMO,
   payload: {
-    vha,
+    omo,
     issueId
   },
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
       action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'vha'
+      label: 'omo'
     }
   }
 });

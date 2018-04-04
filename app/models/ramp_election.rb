@@ -7,20 +7,12 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  def self.completed
-    where.not(end_product_reference_id: nil)
-  end
-
-  def self.established
-    where.not(established_at: nil)
-  end
-
   def self.active
-    where.not(end_product_status: EndProduct::INACTIVE_STATUSES)
-  end
-
-  def completed?
-    !!end_product_reference_id
+    # We only know the set of inactive EP statuses
+    # We also only know the EP status after fetching it from BGS
+    # Therefore, our definition of active is when the EP is either
+    #   not known or not known to be inactive
+    where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
   end
 
   def active?

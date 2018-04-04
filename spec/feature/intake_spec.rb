@@ -249,7 +249,7 @@ RSpec.feature "RAMP Intake" do
           veteran_file_number: "12341234",
           notice_date: 7.days.ago,
           receipt_date: 5.days.ago,
-          end_product_reference_id: "786767"
+          established_at: 2.days.ago
         )
 
         # Validate you're redirected back to the form select page if you haven't started yet
@@ -512,6 +512,7 @@ RSpec.feature "RAMP Intake" do
         RampElection.create!(
           veteran_file_number: "12341234",
           notice_date: 3.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "PEND" }
@@ -544,6 +545,7 @@ RSpec.feature "RAMP Intake" do
           notice_date: 5.days.ago,
           option_selected: "higher_level_review_with_hearing",
           receipt_date: 4.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "CLR" }
@@ -594,6 +596,7 @@ RSpec.feature "RAMP Intake" do
           veteran_file_number: "12341234",
           notice_date: 5.days.ago,
           receipt_date: 4.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "CLR" }
@@ -697,6 +700,7 @@ RSpec.feature "RAMP Intake" do
           notice_date: 5.days.ago,
           option_selected: "higher_level_review_with_hearing",
           receipt_date: 4.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "CLR" }
@@ -785,6 +789,7 @@ RSpec.feature "RAMP Intake" do
           notice_date: 5.days.ago,
           option_selected: "higher_level_review_with_hearing",
           receipt_date: 4.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "CLR" }
@@ -837,6 +842,7 @@ RSpec.feature "RAMP Intake" do
           veteran_file_number: "12341234",
           notice_date: 5.days.ago,
           receipt_date: 4.days.ago,
+          established_at: 2.days.ago,
           end_product_reference_id: Generators::EndProduct.build(
             veteran_file_number: "12341234",
             bgs_attrs: { status_type_code: "CLR" }

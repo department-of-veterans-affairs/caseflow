@@ -26,7 +26,7 @@
 }
 
 .Select.is-disabled > .Select-control {
-  background-color: #f9f9f9;
+  background-color: $color-gray-lighter;
 }
 
 .Select.is-disabled > .Select-control:hover {
@@ -51,8 +51,8 @@
 
 .Select-control {
   background-color: #fff;
-  color: #5B616B;
-  border: 1px solid #5b616b;
+  color: $color-gray;
+  border: 1px solid $color-gray;
   color: #333;
   cursor: default;
   display: table;
@@ -83,12 +83,12 @@
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   background: #fff;
-  border-color: #b3b3b3 #ccc #d9d9d9;
+  border-color: $color-gray-light $color-gray-lighter $color-gray-lighter;
 }
 
 .is-open > .Select-control .Select-arrow {
   top: -2px;
-  border-color: transparent transparent #999;
+  border-color: transparent transparent $color-gray-light;
   border-width: 0 5px 5px;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .is-focused .Select-placeholder {
-  color: #737373;
+  color: $color-gray;
 }
 
 .Select-placeholder,
@@ -196,7 +196,7 @@
   height: 16px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 2px solid $color-gray-lighter;
   border-right-color: #333;
   display: inline-block;
   position: relative;
@@ -207,7 +207,7 @@
   -webkit-animation: Select-animation-fadeIn 200ms;
   -o-animation: Select-animation-fadeIn 200ms;
   animation: Select-animation-fadeIn 200ms;
-  color: #999;
+  color: $color-gray-light;
   cursor: pointer;
   display: table-cell;
   position: relative;
@@ -278,7 +278,7 @@
 
 .Select-menu-outer {
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid $color-gray-lighter;
   border-top-color:  white;
   border-bottom-color: #e6e6e6;
   box-sizing: border-box;
@@ -302,7 +302,7 @@
 .Select-option {
   box-sizing: border-box;
   background-color: white;
-  color: #666666;
+  color: $color-gray;
   cursor: pointer;
   display: block;
   padding: 8px 10px;
@@ -317,18 +317,18 @@
 .Select-option.is-focused {
   background-color: #ebf5ff;
   /* Fallback color for IE 8 */
-  background-color: #5B616B;
+  background-color: $color-gray;
   color: white;
 }
 
 .Select-option.is-disabled {
-  color: #cccccc;
+  color: $color-gray-lighter;
   cursor: default;
 }
 
 .Select-noresults {
   box-sizing: border-box;
-  color: #666666;
+  color: $color-gray;
   cursor: default;
   display: block;
   padding: 8px 10px;

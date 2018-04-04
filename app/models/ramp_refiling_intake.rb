@@ -41,7 +41,7 @@ class RampRefilingIntake < Intake
     detail.create_end_product_and_contentions! if detail.needs_end_product?
 
     complete_with_status!(:success)
-    detail.update!(established_at: Time.zone.now)
+    detail.update!(established_at: Time.zone.now) unless detail.established_at
   end
 
   def review_errors
@@ -95,7 +95,7 @@ class RampRefilingIntake < Intake
   end
 
   def fetch_ramp_election
-    ramp_elections = RampElection.completed.where(veteran_file_number: veteran_file_number).all
+    ramp_elections = RampElection.established.where(veteran_file_number: veteran_file_number).all
 
     # There should only be one RAMP election sent to each veteran
     # if there was more than one, raise an error so we know about it

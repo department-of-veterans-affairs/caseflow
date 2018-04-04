@@ -4,7 +4,6 @@
 // variables here should eventually find their way into commons
 @import 'variables';
 
-$color-hearings-saving: $color-gray;
 
 .worksheet-header {
   .question-label {
@@ -48,7 +47,7 @@ $color-hearings-saving: $color-gray;
 
 .saving {
   font-style: italic;
-  color: $color-hearings-saving;
+  color: $color-gray;
   text-align: right;
   display: block;
   margin-bottom: 10px;
@@ -77,7 +76,10 @@ $color-hearings-saving: $color-gray;
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
-  padding: $cf-30px;
+  padding-bottom: $cf-30px;
+  padding-top: 50px;
+  padding-left: 40px;
+  padding-right: 40px;
 
   .cf-hearings-title-and-judge {
     h1 {
@@ -119,7 +121,7 @@ $color-hearings-saving: $color-gray;
 
     // TODO: see if this can become a part of the general style
     .Select-menu-outer {
-      border: 1px solid $color-gray-medium;
+      border: 1px solid $color-gray-dark;
       border-top: none;
       min-height: auto;
       box-shadow: 0 2px 4px 0 $color-dropdown-shadow;
@@ -230,6 +232,7 @@ $color-hearings-saving: $color-gray;
       background-color: $color-gray-lightest;
 
       .cf-form-dropdown {
+        min-width: 170px;
         text-align: left;
         display: inline-block;
         width: 33%;
@@ -281,18 +284,18 @@ $color-hearings-saving: $color-gray;
 
   [type="text"],
   textarea {
-    border: 1px solid $color-gray-medium;
+    border: 1px solid $color-gray-dark;
   }
 
   //TODO: Candidate for caseflow-commons
   .cf-copy-to-clipboard {
-    border: 1px solid $color-gray-medium;
+    border: 1px solid $color-gray-dark;
     box-shadow: inset 0 0 0 1px $color-gray-lightest;
     color: $color-gray;
 
     &:hover {
-      background: $color-gray-medium;
-      border: 1px solid $color-gray-medium;
+      background: $color-gray-dark;
+      border: 1px solid $color-gray-dark;
       box-shadow: none;
       color: $color-white;
 
@@ -506,6 +509,7 @@ $color-hearings-saving: $color-gray;
 
 .cf_hearing_body {
   font-size: 11px;
+  padding: $cf-30px;
 }
 
 .hearings-add-issue {
@@ -712,7 +716,7 @@ $color-hearings-saving: $color-gray;
 
     .cf-form-textarea {
       textarea {
-        min-height: 28px;
+        height: 28px !important;
    }
  }
 
