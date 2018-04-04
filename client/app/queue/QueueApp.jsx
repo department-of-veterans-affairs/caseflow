@@ -59,23 +59,15 @@ class QueueApp extends React.PureComponent {
       featureToggles={this.props.featureToggles} />
   </QueueLoadingScreen>;
 
-  routedSubmitDecision = (props) => {
-    const { vacolsId } = props.match.params;
-    const appeal = this.props.appeals[vacolsId].attributes;
-
-    return <SubmitDecisionView
-      vacolsId={vacolsId}
-      vbmsId={appeal.vbms_id}
-      nextStep="/" />;
-  };
+  routedSubmitDecision = (props) => <SubmitDecisionView
+    vacolsId={props.match.params.vacolsId}
+    nextStep="/" />;
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
-    const appeal = this.props.appeals[vacolsId].attributes;
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      vbmsId={appeal.vbms_id}
       prevStep={`/tasks/${vacolsId}`}
       nextStep={`/tasks/${vacolsId}/submit`} />;
   };

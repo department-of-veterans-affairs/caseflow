@@ -3,18 +3,6 @@ RSpec.describe QueueController, type: :controller do
     Fakes::Initializer.load!
   end
 
-  describe "GET queue/judges" do
-    it "should be successful" do
-      FeatureToggle.enable!(:queue_welcome_gate)
-      User.authenticate!(roles: ["System Admin"])
-      get :judges
-      expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)
-      expect(response_body["judges"].size).to eq 3
-      FeatureToggle.disable!(:queue_welcome_gate)
-    end
-  end
-
   describe "GET queue/:user_id" do
     before do
       FeatureToggle.enable!(:queue_welcome_gate)

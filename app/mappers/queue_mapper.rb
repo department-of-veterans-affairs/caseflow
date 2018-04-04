@@ -2,7 +2,8 @@ module QueueMapper
   COLUMN_NAMES = {
     work_product: :deprod,
     note: :deatcom,
-    document_id: :dedocid
+    document_id: :dedocid,
+    modifying_user: :demdusr
   }.freeze
 
   WORK_PRODUCTS = {
@@ -30,7 +31,10 @@ module QueueMapper
       result
     end
     VacolsHelper.validate_presence(update_attrs, [:deprod, :dedocid])
-    update_attrs.merge(dereceive: VacolsHelper.local_date_with_utc_timezone)
+    update_attrs.merge(
+      dereceive: VacolsHelper.local_date_with_utc_timezone,
+      demdtim: VacolsHelper.local_date_with_utc_timezone
+    )
   end
 
   def self.work_product_to_vacols_code(work_product, overtime)
