@@ -12,6 +12,8 @@ describe SyncIntakeJob do
       )
 
       SyncIntakeJob.perform_now
+
+      expect(RequestStore.store[:current_user].id).to eq(1)
     end
   end
 end
