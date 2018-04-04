@@ -140,6 +140,8 @@ Rails.application.routes.draw do
   get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
 
+  get 'intake/manager', to: 'intake_manager#show'
+
   match '/intake/:any' => 'intakes#index', via: [:get]
 
   get "styleguide", to: "styleguide#show"
