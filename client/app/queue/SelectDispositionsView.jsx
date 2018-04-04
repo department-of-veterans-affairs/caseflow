@@ -46,6 +46,19 @@ class SelectDispositionsView extends React.PureComponent {
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
 
+  getNextStepUrl = () => {
+    const {
+      vacolsId,
+      nextStep,
+      appeal: {
+        attributes: { issues }
+      }
+    } = this.props;
+
+    return _.map(issues, 'disposition').includes('Remanded') ?
+      `/tasks/${vacolsId}/remands` : nextStep;
+  }
+
   componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
   updateIssue = (issueId, attributes) => {
@@ -68,15 +81,19 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: {
         attributes: {
           veteran_full_name: vetName,
-          vbms_id: vbmsId
+          vbms_id: vbmsId,
+          issues
         }
       }
     } = this.props;
 
+    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
+      'Select remand reasons' : 'Finish dispositions';
+
     return [{
       displayText: `< Go back to ${vetName} (${vbmsId})`
     }, {
-      displayText: 'Finish dispositions',
+      displayText: nextStepText,
       id: 'finish-dispositions'
     }];
   };

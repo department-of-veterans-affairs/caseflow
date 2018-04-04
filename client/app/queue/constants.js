@@ -573,3 +573,131 @@ export const ISSUE_INFO = {
     }
   }
 };
+
+export const REMAND_REASONS = {
+  dutyToNotify: [{
+    id: 'AA',
+    label: 'No notice sent'
+  }, {
+    id: 'AB',
+    label: 'Incorrect notice sent'
+  }, {
+    id: 'AC',
+    label: 'Legally inadequate notice'
+  }],
+  dutyToAssistRecordsRequest: [{
+    id: 'BA',
+    label: 'Service treatment records'
+  }, {
+    id: 'BB',
+    label: 'Service personnel records'
+  }, {
+    id: 'BC',
+    label: 'JSRRC'
+  }, {
+    id: 'BD',
+    label: 'VA medical records'
+  }, {
+    id: 'BE',
+    label: 'Social security records'
+  }, {
+    id: 'BF',
+    label: 'Private medical records'
+  }, {
+    id: 'BG',
+    label: 'Other federal records'
+  }, {
+    id: 'BH',
+    label: 'Other private records'
+  }, {
+    id: 'BI',
+    label: 'Certification from appellant'
+  }],
+  dutyToAssistAdditionalRecordsReq: [{
+    id: 'CA',
+    label: 'Service medical records'
+  }, {
+    id: 'CB',
+    label: 'Service personnel records'
+  }, {
+    id: 'CC',
+    label: 'JSRRC'
+  }, {
+    id: 'CD',
+    label: 'VA medical records'
+  }, {
+    id: 'CE',
+    label: 'Social Security records'
+  }, {
+    id: 'CF',
+    label: 'Private medical records'
+  }, {
+    id: 'CG',
+    label: 'Other federal records'
+  }, {
+    id: 'CH',
+    label: 'Other private records'
+  }],
+  medicalExam: [{
+    id: 'DA',
+    label: 'Current findings'
+  }, {
+    id: 'DB',
+    label: 'Incomplete/inadequate findings'
+  }, {
+    id: 'DC',
+    label: 'Consider new criteria'
+  }, {
+    id: 'DD',
+    label: 'Clarify diagnosis'
+  }, {
+    id: 'DE',
+    label: 'No VA exam conducted'
+  }, {
+    id: 'DF',
+    label: 'Medical Opinion required (no exam)'
+  }, {
+    id: 'DG',
+    label: 'Medical Opinion require w/exam'
+  }, {
+    id: 'DH',
+    label: 'Inadequate medical opinion'
+  }, {
+    id: 'DI',
+    label: 'Nexus opinion'
+  }],
+  dueProcess: [{
+    id: 'EA',
+    label: 'BVA travel board and video hearing'
+  }, {
+    id: 'EB',
+    label: 'AOJ hearing'
+  }, {
+    id: 'EC',
+    label: 'Adjudicate intertwined issue(s)'
+  }, {
+    id: 'ED',
+    label: 'Issuance of SOC/Manlincon'
+  }, {
+    id: 'EE',
+    label: 'Issuance of SSOC'
+  }, {
+    id: 'EF',
+    label: 'Apply law/regulation/court precedent'
+  }, {
+    id: 'EG',
+    label: 'Consider merits of reopened claim'
+  }, {
+    id: 'EH',
+    label: 'Apply contested claims procedures'
+  }, {
+    id: 'EI',
+    label: 'Noncompliance/Stegall'
+  }, {
+    id: 'EJ',
+    label: 'Additional information from appellant'
+  }, {
+    id: 'EK',
+    label: 'Other due process deficiency'
+  }]
+};

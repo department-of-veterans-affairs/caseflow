@@ -88,6 +88,8 @@ export default function decisionViewBase(ComponentToWrap) {
       }
     };
 
+    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
+
     goToNextStep = () => {
       // This handles moving to the next step in the flow. The wrapped
       // component's validateForm is used to trigger highlighting form
@@ -102,14 +104,14 @@ export default function decisionViewBase(ComponentToWrap) {
       }
 
       if (!nextStepHook) {
-        return this.goToStep(this.props.nextStep);
+        return this.goToStep(this.getNextStepUrl());
       }
 
       const hookResult = nextStepHook();
 
       // nextStepHook may return a Promise, in which case do nothing here.
       if (hookResult === true) {
-        return this.goToStep(this.props.nextStep);
+        return this.goToStep(this.getNextStepUrl());
       }
     };
 
@@ -118,7 +120,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          this.goToStep(this.props.nextStep);
+          this.goToStep(this.getNextStepUrl());
         } else {
           this.props.highlightInvalidFormItems(true);
         }

@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import { boldText, ISSUE_INFO } from '../constants';
+import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -66,15 +67,6 @@ export default class IssueListItem extends React.PureComponent {
     return issueLevels;
   };
 
-  getIssueType = () => {
-    const {
-      issue: { program, type }
-    } = this.props;
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
-
-    return _.get(vacolsIssue, 'description');
-  };
-
   formatLevels = () => this.getIssueLevelValues().map((code, idx) =>
     <div key={idx} {...issueMarginTop}>
       <span key={code} {...issueLevelStyling}>
@@ -85,11 +77,11 @@ export default class IssueListItem extends React.PureComponent {
 
   render = () => {
     const {
+      issue,
       issue: {
         type,
         levels,
-        note,
-        program
+        note
       },
       issuesOnly
     } = this.props;
@@ -101,9 +93,9 @@ export default class IssueListItem extends React.PureComponent {
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
-        <span {...boldText}>Program:</span> {ISSUE_INFO[program].description}
+        <span {...boldText}>Program:</span> {getIssueProgramDescription(issue)}
         <div {...issueMarginTop}>
-          <span {...boldText}>Issue:</span> {this.getIssueType()} {this.formatLevels()}
+          <span {...boldText}>Issue:</span> {getIssueTypeDescription(issue)} {this.formatLevels()}
         </div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}
