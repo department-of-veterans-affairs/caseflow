@@ -169,7 +169,7 @@ describe AttorneyCaseReview do
       end
 
       it "should not create AttorneyCaseReview record" do
-        expect{ subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
@@ -194,7 +194,7 @@ describe AttorneyCaseReview do
       end
 
       it "should not create OMORequest record" do
-        expect{ subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
@@ -223,7 +223,7 @@ describe AttorneyCaseReview do
       end
 
       it "should not create DraftDecision record" do
-        expect{ subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
+        expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
         expect(AttorneyCaseReview.count).to eq 0
       end
     end

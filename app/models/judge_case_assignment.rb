@@ -1,8 +1,8 @@
-class TaskAssignment
+class JudgeCaseAssignment
   class << self
     attr_writer :repository
 
-    def assign!(params)
+    def assign_to_attorney!(params)
       case params[:appeal_type]
       when "Legacy"
         repository.assign_case_to_attorney!(

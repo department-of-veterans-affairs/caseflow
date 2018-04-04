@@ -35,7 +35,7 @@ class QueueController < ApplicationController
 
     return invalid_role_error if current_user.vacols_role != "Judge"
 
-    TaskAssignment.assign!(create_params)
+    JudgeCaseAssignment.assign_to_attorney!(create_params)
     render json: {}, status: :created
   end
 

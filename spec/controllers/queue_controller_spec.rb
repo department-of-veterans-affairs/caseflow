@@ -1,7 +1,6 @@
 RSpec.describe QueueController, type: :controller do
   before do
     Fakes::Initializer.load!
-
     FeatureToggle.enable!(:queue_welcome_gate)
     User.authenticate!(roles: ["System Admin"])
   end
