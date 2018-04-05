@@ -77,6 +77,7 @@ class RampRefiling < RampReview
     if election_receipt_date > receipt_date
       errors.add(:receipt_date, "before_ramp_receipt_date")
     else
+      validate_receipt_date_not_before_ramp
       validate_receipt_date_not_in_future
     end
   end

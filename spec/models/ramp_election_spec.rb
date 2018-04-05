@@ -1,6 +1,6 @@
 describe RampElection do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -341,12 +341,12 @@ describe RampElection do
         end
       end
 
-      context "when it is before notice_date" do
-        let(:receipt_date) { 2.days.ago }
+      context "when it is before RAMP begin date" do
+        let(:receipt_date) { 2.years.ago }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
-          expect(ramp_election.errors[:receipt_date]).to include("before_notice_date")
+          expect(ramp_election.errors[:receipt_date]).to include("before_ramp")
         end
       end
 
