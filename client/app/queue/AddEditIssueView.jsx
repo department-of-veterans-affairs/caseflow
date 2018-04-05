@@ -101,7 +101,8 @@ class AddEditIssueView extends React.Component {
   goToNextStep = () => {
     const {
       issue,
-      appeal
+      appeal,
+      appeal: { attributes: { issues } }
     } = this.props;
     const params = {
       issues: {
@@ -116,7 +117,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestUpdate(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
       { data: params },
-      'Issue updated successfully.'
+      `You have updated issue ${issues.indexOf(issue) + 1}.`
     ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
