@@ -1,5 +1,5 @@
 class AppealsController < ApplicationController
-  def list
+  def index
     return veteran_id_not_found_error unless veteran_id
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",

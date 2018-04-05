@@ -83,7 +83,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [] do
+  resources :appeals, only: [:index] do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -105,7 +105,6 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
-  get 'appeals' => 'appeals#list'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
