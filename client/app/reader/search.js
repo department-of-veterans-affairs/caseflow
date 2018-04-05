@@ -44,6 +44,9 @@ const tagContainsString = (searchQuery, doc) =>
     return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery));
   }, false);
 
+const descriptionContainsString = (searchQuery, doc) =>
+  doc.description && doc.description.toLowerCase().includes(searchQuery);
+
 export const searchString = (searchQuery, state) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
 
@@ -55,6 +58,7 @@ export const searchString = (searchQuery, state) => (doc) => {
       commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
-      tagContainsString(searchWord, doc));
+      tagContainsString(searchWord, doc) ||
+      descriptionContainsString(searchWord, doc));
   });
 };
