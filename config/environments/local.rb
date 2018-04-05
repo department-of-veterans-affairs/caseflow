@@ -60,7 +60,6 @@ Rails.application.configure do
   ENV["METRICS_PASSWORD"] ||= "caseflow"
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
-  ENV["SSO_URL"] ||= "/test/users"
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
