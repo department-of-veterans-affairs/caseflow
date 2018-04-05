@@ -8,8 +8,7 @@ class SyncIntakeJob < ActiveJob::Base
       # Set user to user who established to avoid sensitivity errors
       # TODO: not all RampElections will have an Intake
       # so we may need to figure out a default user
-      intake = ramp_election.successful_intake
-      RequestStore.store[:current_user] = intake.user if intake
+      RequestStore.store[:current_user] = ramp_election.successful_intake.user if ramp_election.successful_intake
 
       ramp_election.recreate_issues_from_contentions!
       ramp_election.sync_ep_status!

@@ -373,32 +373,32 @@ describe RampElection do
   fcontext "#successful_intake" do
     subject { ramp_election.successful_intake }
 
-    let!(:last_successful_intake) {
+    let!(:last_successful_intake) do
       RampElectionIntake.create!(
         user_id: "123",
         completion_status: "success",
         completed_at: 2.days.ago,
         detail: ramp_election
       )
-    }
+    end
 
-    let!(:penultimate_successful_intake) {
+    let!(:penultimate_successful_intake) do
       RampElectionIntake.create!(
         user_id: "123",
         completion_status: "success",
         completed_at: 3.days.ago,
         detail: ramp_election
       )
-    }
+    end
 
-    let!(:unsuccessful_intake) {
+    let!(:unsuccessful_intake) do
       RampElectionIntake.create!(
         user_id: "123",
         completion_status: "error",
         completed_at: 1.day.ago,
         detail: ramp_election
       )
-    }
+    end
 
     it "returns the last successful intake" do
       expect(ramp_election.successful_intake).to eq(last_successful_intake)
