@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -14,6 +16,9 @@ import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteran
 import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
+import CFRichTextEditor from '../components/CFRichTextEditor';
+
+import RichTextEditor from 'react-rte';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -33,6 +38,7 @@ import {
 import { saveIssues } from './actions/Issue';
 
 class WorksheetFormEntry extends React.PureComponent {
+
   render() {
     const textAreaProps = {
       minRows: 3,
@@ -58,6 +64,20 @@ class WorksheetFormEntry extends React.PureComponent {
   }
 }
 export class HearingWorksheet extends React.PureComponent {
+  
+  static propTypes = {
+    onChange: PropTypes.func
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: RichTextEditor.createEmptyValue()
+    };
+  }
+
+
 
   componentDidMount() {
     document.title = this.getWorksheetTitle();
@@ -85,7 +105,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
-  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
+  onEvidenceChange = (value) => this.props.onEvidenceChange(value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
@@ -126,6 +146,10 @@ export class HearingWorksheet extends React.PureComponent {
           onChange={this.onContentionsChange}
           id="worksheet-contentions"
           print={this.props.print}
+        /> 
+        <CFRichTextEditor
+          value={worksheet.evidence}
+          onChange={this.onEvidenceChange}
         />
         <WorksheetFormEntry
           name="Evidence"
