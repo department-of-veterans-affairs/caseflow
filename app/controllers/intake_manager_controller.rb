@@ -7,6 +7,10 @@ class IntakeManagerController < ApplicationController
 
   end
 
+  def logo_name
+    "Intake"
+  end
+
   def verify_access
     verify_authorized_roles("Admin Intake")
   end
