@@ -93,6 +93,13 @@ class Intake < ApplicationRecord
     )
   end
 
+  def add_cancel_reason!(reason:, other: nil)
+    update_attributes!(
+      cancel_reason: reason,
+      cancel_other: other
+    )
+  end
+
   def validate_start
     if !file_number_valid?
       self.error_code = :invalid_file_number

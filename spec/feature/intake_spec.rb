@@ -184,20 +184,28 @@ RSpec.feature "RAMP Intake" do
       intake.start!
 
       visit "/intake"
-
       safe_click "#cancel-intake"
       expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
-      safe_click "#close-modal"
+      safe_click ".close-modal"
       expect(page).to_not have_css(".cf-modal-title")
+      safe_click "#cancel-intake"
 
-      safe_click ".cf-submit.usa-button"
-      safe_click ".cf-modal-body .cf-submit"
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
+      within_fieldset("Please select the reason you are canceling this intake.") do
+        find("label", text: "Other").click
+      end
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to_not have_css(".cf-modal-title")
 
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake.cancel_reason).to eq("other")
+      expect(intake.cancel_other).to eq("blue!")
       expect(intake).to be_canceled
     end
 
