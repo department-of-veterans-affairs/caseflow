@@ -58,6 +58,13 @@ jobs:
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+
+      - run:
+          name: Database setup
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:schema:load
+
       - run:
           name: Mocha
           command: |
