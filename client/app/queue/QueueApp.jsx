@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import CaseSelectSearch from '../reader/CaseSelectSearch';
+import CaseListSearch from './CaseListSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -40,7 +40,7 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <CaseSelectSearch
+    <CaseListSearch
       navigateToPath={(path) => {
         const redirectUrl = encodeURIComponent(window.location.pathname);
 

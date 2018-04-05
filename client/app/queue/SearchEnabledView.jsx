@@ -14,7 +14,7 @@ class SearchEnabledView extends React.PureComponent {
   // Do we want to have the previous search to stick around?
   render() {
     // TODO: Pass the list of receivedAppeals to QueueList
-    if (this.props.caseSelect.shouldUseQueueSearch && this.props.caseSelect.receivedAppeals.length > 0) {
+    if (this.props.caseList.shouldUseAppealSearch && this.props.caseList.receivedAppeals.length > 0) {
       return <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>Cases found for ...</h1>
@@ -27,6 +27,6 @@ class SearchEnabledView extends React.PureComponent {
   };
 }
 
-const mapStateToProps = (state) => ({ caseSelect: state.caseSelect });
+const mapStateToProps = (state) => ({ caseList: state.caseList });
 
 export default connect(mapStateToProps)(SearchEnabledView);

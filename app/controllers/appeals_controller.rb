@@ -4,7 +4,10 @@ class AppealsController < ApplicationController
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
                           name: "QueueController.appeals") do
-      render json: { appeals: json_appeals(Appeal.fetch_appeals_by_file_number(veteran_id)) }
+      render json: {
+        shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
+        appeals: json_appeals(Appeal.fetch_appeals_by_file_number(veteran_id))
+      }
     end
   end
 
