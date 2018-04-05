@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
+import CaseListTable from './CaseListTable';
 import { fullWidth } from './constants';
-import QueueTable from './QueueTable';
 
 // TODO: Add breadcrumbs.
 class SearchEnabledView extends React.PureComponent {
@@ -18,7 +18,7 @@ class SearchEnabledView extends React.PureComponent {
       return <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>Cases found for ...</h1>
-          <QueueTable />
+          <CaseListTable appeals={this.props.caseList.receivedAppeals} />
         </div>
       </AppSegment>;
     }

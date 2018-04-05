@@ -20,17 +20,6 @@ import RadioField from '../components/RadioField';
 import SearchBar from '../components/SearchBar';
 
 class CaseSelectSearch extends React.PureComponent {
-  componentDidUpdate = () => {
-    if (this.props.caseList.shouldUseAppealSearch) {
-      // TODO: Do we always want to clear the search text?
-      this.props.clearCaseListSearch();
-    }
-    // TODO: Get rid of this block once we have fully migrated to appeals search.
-    else {
-      this.handleNonQueueSearchUpdate()
-    }
-  };
-
   handleModalClose = () => {
     // clearing the state of the modal in redux
     this.props.clearCaseListSearch();
@@ -45,6 +34,13 @@ class CaseSelectSearch extends React.PureComponent {
   //
   // TODO: Remove everything below here once everybody is using the new appeal search.
   // 
+
+  // TODO: Do we want to take any actions for the new appeals search on component update?
+  componentDidUpdate = () => {
+    if (!this.props.caseList.shouldUseAppealSearch) {
+      this.handleNonQueueSearchUpdate()
+    }
+  };
 
   handleNonQueueSearchUpdate = () => {
     if (!this.props.alwaysShowCaseSelectionModal) {
@@ -116,7 +112,7 @@ class CaseSelectSearch extends React.PureComponent {
         loading={caseList.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { Boolean(_.size(caseList.receivedAppeals) > modalShowThreshold) && <Modal
+      { !this.props.caseList.shouldUseAppealSearch && Boolean(_.size(caseList.receivedAppeals) > modalShowThreshold) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',

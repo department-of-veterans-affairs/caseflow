@@ -56,6 +56,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :aod
   attribute :docket_number
   attribute :number_of_documents_url
+  attribute :status
+  attribute :decision_date
 
   attribute :power_of_attorney do
     # TODO: change this to use our more sophisticated poa data fetching mechanism

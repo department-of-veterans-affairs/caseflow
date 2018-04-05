@@ -4,8 +4,13 @@ class AppealsController < ApplicationController
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
                           name: "QueueController.appeals") do
+
+      # TODO: fix the way this structure looks, currently it returns as:
+      # { appeals: { data: [{},{},{}] } } # Get rid of the data element and return the array as the appeals element.
+      # Look at other serializers.
       render json: {
-        shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
+        # shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
+        shouldUseAppealSearch: true,
         appeals: json_appeals(Appeal.fetch_appeals_by_file_number(veteran_id))
       }
     end

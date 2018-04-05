@@ -52,6 +52,11 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("s2.sdomainid = #{id}")
     end
 
+    # TODO: Do we need to add a method to look up the case by vacols_id to get the assigned attorney?
+    # Ask folks if we are already looking up case assignments by appeal.
+    # Looks like we might already do this in case_hearing.
+    # Can we piggyback off of exists_for_appeals() ?
+
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",

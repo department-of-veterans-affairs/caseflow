@@ -39,6 +39,7 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class QueueApp extends React.PureComponent {
+  // TODO: CaseListSearch should probably move inside SearchEnabledView.
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <CaseListSearch
       navigateToPath={(path) => {
