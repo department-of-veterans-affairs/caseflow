@@ -280,7 +280,7 @@
   background-color: $color-white;
   border: 1px solid $color-gray-lighter;
   border-top-color:  $color-white;
-  border-bottom-color: #e6e6e6;
+  border-bottom-color: $color-gray-lighter;
   box-sizing: border-box;
   max-height: 200px;
   min-height: 180px;
@@ -315,9 +315,7 @@
 }
 
 .Select-option.is-focused {
-  background-color: #ebf5ff;
-  /* Fallback color for IE 8 */
-  background-color: $color-gray;
+  background-color: $color-primary-alt-lightest;
   color: $color-white;
 }
 
