@@ -1,4 +1,4 @@
-class CreateCertifications < ActiveRecord::Migration
+class CreateCertifications < ActiveRecord::Migration[5.1]
   def change
     create_table :certifications do |t|
       t.string   :vacols_id

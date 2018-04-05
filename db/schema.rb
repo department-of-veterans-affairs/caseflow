@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "annotations", force: :cascade do |t|
+  create_table "annotations", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
     t.string "comment", null: false
     t.integer "page"
@@ -29,25 +29,25 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["user_id"], name: "index_annotations_on_user_id"
   end
 
-  create_table "api_keys", force: :cascade do |t|
+  create_table "api_keys", id: :serial, force: :cascade do |t|
     t.string "consumer_name", null: false
     t.string "key_digest", null: false
     t.index ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true
     t.index ["key_digest"], name: "index_api_keys_on_key_digest", unique: true
   end
 
-  create_table "api_views", force: :cascade do |t|
+  create_table "api_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.string "vbms_id"
     t.integer "api_key_id"
   end
 
-  create_table "appeal_series", force: :cascade do |t|
+  create_table "appeal_series", id: :serial, force: :cascade do |t|
     t.boolean "incomplete", default: false
     t.integer "merged_appeal_count"
   end
 
-  create_table "appeal_views", force: :cascade do |t|
+  create_table "appeal_views", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "appeal_id", null: false
     t.datetime "created_at", null: false
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
   end
 
-  create_table "appeals", force: :cascade do |t|
+  create_table "appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.string "vbms_id"
     t.boolean "rice_compliance", default: false
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true
   end
 
-  create_table "attorney_case_reviews", force: :cascade do |t|
+  create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
     t.string "document_id"
     t.integer "reviewing_judge_id"
     t.integer "attorney_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.string "task_id"
   end
 
-  create_table "certification_cancellations", force: :cascade do |t|
+  create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "cancellation_reason"
     t.string "other_reason"
@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true
   end
 
-  create_table "certifications", force: :cascade do |t|
+  create_table "certifications", id: :serial, force: :cascade do |t|
     t.string "vacols_id"
     t.boolean "already_certified"
     t.boolean "vacols_data_missing"
@@ -157,7 +157,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["user_id"], name: "index_certifications_on_user_id"
   end
 
-  create_table "claim_establishments", force: :cascade do |t|
+  create_table "claim_establishments", id: :serial, force: :cascade do |t|
     t.integer "task_id"
     t.integer "decision_type"
     t.datetime "outcoding_date"
@@ -168,21 +168,21 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.string "ep_code"
   end
 
-  create_table "claims_folder_searches", force: :cascade do |t|
+  create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
     t.string "query"
     t.datetime "created_at"
   end
 
-  create_table "docket_snapshots", force: :cascade do |t|
+  create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.integer "docket_count"
     t.date "latest_docket_month"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "docket_tracers", force: :cascade do |t|
+  create_table "docket_tracers", id: :serial, force: :cascade do |t|
     t.integer "docket_snapshot_id"
     t.date "month"
     t.integer "ahead_count"
@@ -190,14 +190,14 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true
   end
 
-  create_table "document_views", force: :cascade do |t|
+  create_table "document_views", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
     t.integer "user_id", null: false
     t.datetime "first_viewed_at"
     t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true
   end
 
-  create_table "documents", force: :cascade do |t|
+  create_table "documents", id: :serial, force: :cascade do |t|
     t.string "vbms_document_id", null: false
     t.boolean "category_procedural"
     t.boolean "category_medical"
@@ -213,13 +213,13 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true
   end
 
-  create_table "documents_tags", force: :cascade do |t|
+  create_table "documents_tags", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
     t.integer "tag_id", null: false
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
   end
 
-  create_table "form8s", force: :cascade do |t|
+  create_table "form8s", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "vacols_id"
     t.string "appellant_name"
@@ -295,7 +295,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["certification_id"], name: "index_form8s_on_certification_id"
   end
 
-  create_table "global_admin_logins", force: :cascade do |t|
+  create_table "global_admin_logins", id: :serial, force: :cascade do |t|
     t.string "admin_css_id"
     t.string "target_css_id"
     t.string "target_station_id"
@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true
   end
 
-  create_table "hearing_views", force: :cascade do |t|
+  create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.integer "hearing_id", null: false
     t.integer "user_id", null: false
     t.datetime "created_at"
@@ -318,7 +318,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
   end
 
-  create_table "hearings", force: :cascade do |t|
+  create_table "hearings", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
     t.string "vacols_id", null: false
@@ -330,7 +330,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.boolean "prepped"
   end
 
-  create_table "intakes", force: :cascade do |t|
+  create_table "intakes", id: :serial, force: :cascade do |t|
     t.integer "detail_id"
     t.string "detail_type"
     t.integer "user_id", null: false
@@ -349,11 +349,12 @@ ActiveRecord::Schema.define(version: 20180402231703) do
 
   create_table "ramp_closed_appeals", force: :cascade do |t|
     t.string "vacols_id", null: false
-    t.integer "ramp_election_id"
+    t.bigint "ramp_election_id"
     t.date "nod_date"
+    t.index ["ramp_election_id"], name: "index_ramp_closed_appeals_on_ramp_election_id"
   end
 
-  create_table "ramp_elections", force: :cascade do |t|
+  create_table "ramp_elections", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "notice_date"
     t.date "receipt_date"
@@ -365,7 +366,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
-  create_table "ramp_issues", force: :cascade do |t|
+  create_table "ramp_issues", id: :serial, force: :cascade do |t|
     t.integer "review_id", null: false
     t.string "review_type", null: false
     t.string "contention_reference_id"
@@ -374,7 +375,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
   end
 
-  create_table "ramp_refilings", force: :cascade do |t|
+  create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.integer "ramp_election_id"
     t.string "option_selected"
@@ -386,21 +387,21 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "reader_users", force: :cascade do |t|
+  create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
     t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
-  create_table "tags", force: :cascade do |t|
+  create_table "tags", id: :serial, force: :cascade do |t|
     t.string "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "tasks", force: :cascade do |t|
+  create_table "tasks", id: :serial, force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "type", null: false
     t.integer "user_id"
@@ -417,7 +418,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.datetime "prepared_at"
   end
 
-  create_table "team_quotas", force: :cascade do |t|
+  create_table "team_quotas", id: :serial, force: :cascade do |t|
     t.date "date", null: false
     t.string "task_type", null: false
     t.integer "user_count"
@@ -426,7 +427,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
   end
 
-  create_table "user_quotas", force: :cascade do |t|
+  create_table "user_quotas", id: :serial, force: :cascade do |t|
     t.integer "team_quota_id", null: false
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -435,7 +436,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :serial, force: :cascade do |t|
     t.string "station_id", null: false
     t.string "css_id", null: false
     t.string "full_name"
@@ -445,7 +446,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
   end
 
-  create_table "versions", force: :cascade do |t|
+  create_table "versions", id: :serial, force: :cascade do |t|
     t.string "item_type", null: false
     t.integer "item_id", null: false
     t.string "event", null: false
@@ -455,7 +456,7 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  create_table "worksheet_issues", force: :cascade do |t|
+  create_table "worksheet_issues", id: :serial, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "vacols_sequence_id"
     t.boolean "reopen", default: false

@@ -1,4 +1,4 @@
-class CreateHearings < ActiveRecord::Migration
+class CreateHearings < ActiveRecord::Migration[5.1]
   def change
     create_table :hearings do |t|
       # maps to the judge conducting the hearing
