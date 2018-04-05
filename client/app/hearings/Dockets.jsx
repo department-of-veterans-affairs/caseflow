@@ -75,9 +75,8 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
-  getRegionalOffice = (docket) => {
-    return (docket.type === 'central_office' ? null : docket.regional_office_name);
-  }
+  getCombinedRONames = (docket) => docket.regional_office_names ? docket.regional_office_names.join(' / ') : '';
+  getRegionalOffice = (docket) => docket.type === 'central_office' ? '' : this.getCombinedRONames(docket);
 
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
