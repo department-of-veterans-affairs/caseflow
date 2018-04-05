@@ -21,9 +21,6 @@ import Alert from '../components/Alert';
 class CaseSelectSearch extends React.PureComponent {
 
   componentDidUpdate = () => {
-    // TODO: I think we might still want to reset error states in this case.
-    if (this.props.caseSelect.shouldUseQueueSearch) return;
-
     if (!this.props.alwaysShowCaseSelectionModal) {
       // if only one appeal is received for the veteran id
       // select that appeal's case.

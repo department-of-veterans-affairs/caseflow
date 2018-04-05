@@ -16,11 +16,6 @@ export const setCaseSelectSearch = (searchQuery) => ({
   }
 });
 
-export const setShouldUseQueueSearch = (bool) => ({
-  type: Constants.SET_SHOULD_USE_QUEUE_SEARCH,
-  payload: { bool }
-});
-
 export const caseSelectAppeal = (appeal) => ({
   type: Constants.CASE_SELECT_APPEAL,
   payload: { appeal }
@@ -62,14 +57,12 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
 export const fetchAppealUsingVeteranId = (veteranId) =>
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/appeals', {
+    ApiUtil.get('/reader/appeal/veteran-id?json', {
       headers: { 'veteran-id': veteranId }
     },
     ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
-        const shouldUseQueueSearch = returnedObject.hasOwnProperty("shouldUseQueueSearch") && returnedObject.shouldUseQueueSearch;
-        dispatch(setShouldUseQueueSearch(shouldUseQueueSearch));
 
         if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
