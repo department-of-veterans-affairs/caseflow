@@ -62,7 +62,7 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
 export const fetchAppealUsingVeteranId = (veteranId) =>
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/queue/appeals', {
+    ApiUtil.get('/appeals', {
       headers: { 'veteran-id': veteranId }
     },
     ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
