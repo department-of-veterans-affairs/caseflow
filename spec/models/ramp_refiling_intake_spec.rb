@@ -214,7 +214,7 @@ describe RampRefilingIntake do
   end
 
   context "#cancel!" do
-    subject { intake.cancel! }
+    subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
       RampRefiling.create!(
@@ -228,6 +228,10 @@ describe RampRefilingIntake do
 
       expect(intake.reload).to be_canceled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect(intake).to have_attributes(
+        cancel_reason: "system_error",
+        cancel_other: nil
+      )
     end
   end
 
