@@ -50,7 +50,7 @@ class RampElectionIntake < Intake
     end
   end
 
-  def cancel!(reason, other)
+  def cancel!(reason:, other: nil)
     return if complete?
 
     transaction do
@@ -58,7 +58,7 @@ class RampElectionIntake < Intake
         receipt_date: nil,
         option_selected: nil
       )
-      add_cancel_reason!(reason, other)
+      add_cancel_reason!(reason: reason, other: other)
       complete_with_status!(:canceled)
     end
   end
