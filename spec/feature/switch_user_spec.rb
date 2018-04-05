@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.feature "Test Users for Demo" do
   before do
     # Switch user only works in demo
-    ENV["DEPLOY_ENV"] = "demo"
+    ENV["DEPLOY_ENV"] = "development"
     BGSService.end_product_records = { default: BGSService.all_grants }
 
     User.create(station_id: "283", css_id: User::FUNCTIONS.sample)
@@ -25,7 +25,8 @@ RSpec.feature "Test Users for Demo" do
   # Dispatch-speific seeding
   scenario "We can switch between test EP data in demo mode" do
     visit "test/users"
-    safe_click("#main-tab-1")
+    safe_click("#main-tab-2")
+    save_and_open_page
     safe_click("#button-Seed-all-grants")
     expect(BGSService.end_product_records[:default]).to include(hash_including(end_product_type_code: "070"))
     expect(BGSService.end_product_records[:default]).to include(hash_including(end_product_type_code: "071"))
