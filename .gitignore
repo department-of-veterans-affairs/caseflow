@@ -8,6 +8,7 @@
 /.bundle
 
 client/.eslintcache
+client/yarn-error.log
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
