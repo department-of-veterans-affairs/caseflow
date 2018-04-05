@@ -2,7 +2,7 @@ require "digest"
 require "securerandom"
 require "base64"
 
-class ApiKey < ActiveRecord::Base
+class ApiKey < ApplicationRecord
   before_create :generate_key_string
   has_many :api_views
 
