@@ -357,21 +357,21 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_VHA, () => {
+  context(Constants.SET_OMO, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_VHA,
-        payload: { vha: true,
+        type: Constants.SET_OMO,
+        payload: { omo: true,
           issueId: 6
         }
       });
     });
 
-    it('sets worksheet issue vha', () => {
+    it('sets worksheet issue omo', () => {
       expect(state.worksheetIssues).to.deep.equal({
-        6: { vha: true,
+        6: { omo: true,
           edited: true }
       }
       );

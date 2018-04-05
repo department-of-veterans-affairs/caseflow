@@ -24,7 +24,8 @@ export const DOCKETS_TAB_INDEX_MAPPING = {
 
 const tableBorder = css({
   border: '1px solid #dadbdc',
-  marginTop: '0px'
+  marginTop: '0px',
+  borderTop: '0px'
 });
 
 const tableBodyStyling = css({
@@ -74,6 +75,9 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
+  getCombinedRONames = (docket) => docket.regional_office_names ? docket.regional_office_names.join(' / ') : '';
+  getRegionalOffice = (docket) => docket.type === 'central_office' ? '' : this.getCombinedRONames(docket);
+
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
 
@@ -86,7 +90,7 @@ export class Dockets extends React.Component {
         date: this.linkToDailyDocket(docket),
         start_time: getDateTime(docket.date),
         type: this.getType(docket.type),
-        regional_office: docket.regional_office_names ? docket.regional_office_names.join(' / ') : '',
+        regional_office: this.getRegionalOffice(docket),
         slots: docket.slots,
         scheduled: this.getScheduledCount(docket)
       };
@@ -149,7 +153,7 @@ export class Dockets extends React.Component {
           className="hearings"
           columns={columns}
           rowObjects={upcomingRowObjects}
-          summary="Your Upcoming Hearing Days?"
+          summary="Your Upcoming Hearing Days"
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}
@@ -161,7 +165,7 @@ export class Dockets extends React.Component {
           className="hearings"
           columns={columns}
           rowObjects={pastRowObjects}
-          summary="Your Past Hearing Days?"
+          summary="Your Past Hearing Days"
           getKeyForRow={this.getKeyForRow}
           styling={tableBorder}
           bodyStyling={tableBodyStyling}

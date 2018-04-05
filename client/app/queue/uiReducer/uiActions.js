@@ -16,6 +16,21 @@ export const hideErrorMessage = () => ({
   type: ACTIONS.HIDE_ERROR_MESSAGE
 });
 
+export const resetSuccessMessages = () => ({
+  type: ACTIONS.RESET_SUCCESS_MESSAGES
+});
+
+export const showSuccessMessage = (message) => ({
+  type: ACTIONS.SHOW_SUCCESS_MESSAGE,
+  payload: {
+    message
+  }
+});
+
+export const hideSuccessMessage = () => ({
+  type: ACTIONS.HIDE_SUCCESS_MESSAGE
+});
+
 export const highlightInvalidFormItems = (highlight) => ({
   type: ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS,
   payload: {
@@ -45,9 +60,10 @@ export const resetBreadcrumbs = () => ({
   type: ACTIONS.RESET_BREADCRUMBS
 });
 
-export const saveSuccess = () => ({
-  type: ACTIONS.SAVE_SUCCESS
-});
+export const saveSuccess = (message) => (dispatch) => {
+  dispatch(showSuccessMessage(message));
+  dispatch({ type: ACTIONS.SAVE_SUCCESS });
+};
 
 export const saveFailure = (resp) => (dispatch) => {
   const errors = JSON.parse(resp.response.text).errors;
@@ -56,12 +72,17 @@ export const saveFailure = (resp) => (dispatch) => {
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 };
 
-export const requestSave = (url, params) => (dispatch) => {
+export const requestSave = (url, params, successMessage) => (dispatch) => {
   dispatch(hideErrorMessage());
+  dispatch(hideSuccessMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
   return ApiUtil.post(url, params).then(
-    () => dispatch(saveSuccess()),
+    () => dispatch(saveSuccess(successMessage)),
     (resp) => dispatch(saveFailure(resp))
   );
 };
+
+export const resetSaveState = () => ({
+  type: ACTIONS.RESET_SAVE_STATE
+});
