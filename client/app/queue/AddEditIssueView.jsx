@@ -31,10 +31,7 @@ const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
   componentDidMount = () => {
-    const {
-      issueId,
-      vacolsId
-    } = this.props;
+    const { issueId, vacolsId } = this.props;
 
     this.props.startEditingAppealIssue(vacolsId, issueId);
   };
@@ -51,9 +48,7 @@ class AddEditIssueView extends React.Component {
   };
 
   updateIssueCode = (codeIdx, code) => {
-    let {
-      issue: { codes }
-    } = this.props;
+    let { issue: { codes } } = this.props;
 
     // remove more-specific issue levels on change
     // i.e. on change Issue, remove all Levels

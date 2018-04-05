@@ -21,7 +21,6 @@ import {
   REMAND_REASONS
 } from '../constants';
 
-const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const flexContainer = css({
   display: 'flex',
@@ -30,6 +29,7 @@ const flexContainer = css({
 const flexColumn = css({
   flexDirection: 'row',
   flexWrap: 'wrap',
+  // todo: confirm these are being applied correctly
   '@media(max-width: 768px)': { width: '100%' },
   '@media(min-width: 769px)': { width: '50%' }
 });
@@ -65,8 +65,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   updateIssue = (attributes) => {
     const { appealId, issueId } = this.props;
 
-    this.props.startEditingAppealIssue(appealId, issueId);
-    this.props.updateEditingAppealIssue(attributes);
+    this.props.startEditingAppealIssue(appealId, issueId, attributes);
     this.props.saveEditedAppealIssue(appealId);
   };
 
@@ -81,7 +80,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <div>Program: {getIssueProgramDescription(issue)}</div>
       <div>Issue: {getIssueTypeDescription(issue)}</div>
       <div>Code: {_.last(issue.description)}</div>
-      <div>Certified: {new Date().toISOString().split('T')[0]}</div>
+      <div>Certified: {(issue.date_assigned || new Date().toISOString()).split('T')[0]}</div>
 
       <div {...flexContainer}>
         <div {...flexColumn}>

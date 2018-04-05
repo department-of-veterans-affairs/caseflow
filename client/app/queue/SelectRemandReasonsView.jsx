@@ -1,5 +1,4 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -9,11 +8,7 @@ import decisionViewBase from './components/DecisionViewBase';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
-import {
-  fullWidth,
-  REMAND_REASONS
-} from './constants';
-
+import { fullWidth } from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -38,31 +33,25 @@ class SelectRemandReasonsView extends React.Component {
 
   getKeyForRow = (rowNumber) => rowNumber;
 
-  // updateIssue = () => {
-  //   const selectedReasons = _.filter(this.state, (key, val) => val ? key : false);
-  //
-  //   this.props.updateEditingAppealIssue(selectedReasons);
-  // }
-
   validateForm = () => true;
 
   renderIssueOptions = () => {
     const { issues, appealId } = this.props;
-    const renderedOptions = _.map(_.range(this.state.issuesRendered), (n) => {
-      const { vacols_sequence_id } = issues[n];
+    const renderedOptions = _.map(_.range(this.state.issuesRendered), (idx) => {
+      const { vacols_sequence_id: issueId } = issues[idx];
 
       return <IssueRemandReasonsOptions
         appealId={appealId}
-        issueId={vacols_sequence_id}
-        key={`remand-reasons-options-${vacols_sequence_id}`}
-        idx={n} />;
+        issueId={issueId}
+        key={`remand-reasons-options-${issueId}`}
+        idx={idx} />;
     });
 
     if (issues.length > 1 && renderedOptions.length < issues.length) {
       renderedOptions.push(
         <Link
           key="show-more"
-          onClick={() => this.setState({ issuesRendered: this.state.issuesRendered + 1 })}>
+          onClick={() => this.setState({ issuesRendered: Math.min(this.state.issuesRendered + 2, issues.length) })}>
           Show more
         </Link>
       );
