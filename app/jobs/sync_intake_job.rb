@@ -11,7 +11,7 @@ class SyncIntakeJob < ActiveJob::Base
             .order(:completed_at)
             .last
 
-        RequestStore.store[:current_user] = intake.user if intake
+        RequestStore.store[:current_user] = User.find(intake.user_id) if intake
 
         ramp_election.recreate_issues_from_contentions!
         ramp_election.sync_ep_status!
