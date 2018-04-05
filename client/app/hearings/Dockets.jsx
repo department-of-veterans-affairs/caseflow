@@ -75,6 +75,10 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
+  getRegionalOffice = (docket) => {
+    return (docket.type === 'central_office' ? null : docket.regional_office_name);
+  }
+
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
 
@@ -87,7 +91,7 @@ export class Dockets extends React.Component {
         date: this.linkToDailyDocket(docket),
         start_time: getDateTime(docket.date),
         type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
+        regional_office: this.getRegionalOffice(docket),
         slots: docket.slots,
         scheduled: this.getScheduledCount(docket)
       };
