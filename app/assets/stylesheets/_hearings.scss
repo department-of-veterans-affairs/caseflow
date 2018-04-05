@@ -4,7 +4,6 @@
 // variables here should eventually find their way into commons
 @import 'variables';
 
-
 .worksheet-header {
   .question-label {
     margin-bottom: 4px;
@@ -406,7 +405,6 @@
 
 .cf-hearings-worksheet-issues {
   margin: 0;
-  white-space: pre-line;
 
   .cf-form-textarea {
     min-height: 48px;
@@ -636,7 +634,6 @@
  }
 
   .cf-hearings-worksheet-data {
-    white-space: pre-line;
     margin-bottom: 0;
 
     p {
