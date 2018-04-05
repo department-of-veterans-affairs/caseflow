@@ -4,6 +4,12 @@ class Test::UsersController < ApplicationController
 
   APPS = [
     {
+      name: "Queue",
+      links: {
+        your_queue: "/queue"
+      }
+    },
+    {
       name: "Certification",
       links: {
         new: "/certifications/new/123C",
@@ -93,7 +99,7 @@ class Test::UsersController < ApplicationController
   end
 
   def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo) 
   end
 
   def require_global_admin
