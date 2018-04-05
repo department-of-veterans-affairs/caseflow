@@ -66,6 +66,13 @@ class RampElection < RampReview
     )
   end
 
+  def successful_intake
+    @successful_intake ||= RampElectionIntake
+      .where(detail_id: ramp_election.id, completion_status: "success")
+      .order(:completed_at)
+      .last
+  end
+
   private
 
   def cached_status_active?
