@@ -30,6 +30,7 @@ class UserRepository
       true
     end
 
+    # :nocov:
     def vacols_attorney_id(css_id)
       staff_record_by_css_id(css_id).sattyid
     end
@@ -40,7 +41,6 @@ class UserRepository
 
     private
 
-    # :nocov:
     def staff_record_by_css_id(css_id)
       staff_records[css_id] ||= VACOLS::Staff.find_by(sdomainid: css_id)
       staff = staff_records[css_id]
