@@ -5,7 +5,7 @@ RSpec.feature "RAMP Intake" do
     FeatureToggle.enable!(:intake)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 8, 8))
+    Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
