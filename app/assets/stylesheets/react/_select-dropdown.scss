@@ -50,17 +50,10 @@
 }
 
 .Select-control {
-<<<<<<< HEAD
   background-color: $color-white;
   color: $color-gray;
   border: 1px solid $color-gray;
   color: $color-gray-dark;
-=======
-  background-color: #fff;
-  color: $color-gray;
-  border: 1px solid $color-gray;
-  color: #333;
->>>>>>> e512558adf3fee2f1316f2b66fd2e80ef8d619b0
   cursor: default;
   display: table;
   border-spacing: 0;
@@ -204,11 +197,7 @@
   box-sizing: border-box;
   border-radius: 50%;
   border: 2px solid $color-gray-lighter;
-<<<<<<< HEAD
   border-right-color: $color-gray-dark;
-=======
-  border-right-color: #333;
->>>>>>> e512558adf3fee2f1316f2b66fd2e80ef8d619b0
   display: inline-block;
   position: relative;
   vertical-align: middle;
@@ -288,15 +277,9 @@
 }
 
 .Select-menu-outer {
-<<<<<<< HEAD
   background-color: $color-white;
   border: 1px solid $color-gray-lighter;
   border-top-color:  $color-white;
-=======
-  background-color: white;
-  border: 1px solid $color-gray-lighter;
-  border-top-color:  white;
->>>>>>> e512558adf3fee2f1316f2b66fd2e80ef8d619b0
   border-bottom-color: #e6e6e6;
   box-sizing: border-box;
   max-height: 200px;
@@ -318,11 +301,7 @@
 
 .Select-option {
   box-sizing: border-box;
-<<<<<<< HEAD
   background-color: $color-white;
-=======
-  background-color: white;
->>>>>>> e512558adf3fee2f1316f2b66fd2e80ef8d619b0
   color: $color-gray;
   cursor: pointer;
   display: block;
@@ -339,11 +318,7 @@
   background-color: #ebf5ff;
   /* Fallback color for IE 8 */
   background-color: $color-gray;
-<<<<<<< HEAD
   color: $color-white;
-=======
-  color: white;
->>>>>>> e512558adf3fee2f1316f2b66fd2e80ef8d619b0
 }
 
 .Select-option.is-disabled {
