@@ -19,6 +19,9 @@ describe SyncIntakeJob do
       SyncIntakeJob.perform_now
 
       expect(RequestStore.store[:current_user].id).to eq(1)
+
+      # TODO: this does not test that recreate_issues_from_contentions
+      # and sync_ep_status are called
     end
   end
 end
