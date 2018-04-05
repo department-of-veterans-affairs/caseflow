@@ -31,7 +31,7 @@ describe RampElectionIntake do
   end
 
   context "#cancel!" do
-    subject { intake.cancel!("other", "Spelling canceled and cancellation is fun") }
+    subject { intake.cancel!(reason: "other", other: "Spelling canceled and cancellation is fun") }
 
     let(:detail) do
       RampElection.create!(

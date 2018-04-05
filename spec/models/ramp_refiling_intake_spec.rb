@@ -214,7 +214,7 @@ describe RampRefilingIntake do
   end
 
   context "#cancel!" do
-    subject { intake.cancel!("system_error", nil) }
+    subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
       RampRefiling.create!(
