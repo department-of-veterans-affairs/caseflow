@@ -1,4 +1,4 @@
-class AddCertificationV2Fields < ActiveRecord::Migration
+class AddCertificationV2Fields < ActiveRecord::Migration[5.1]
   def change
     # POA info fetched from BGS
     add_column :certifications, :bgs_representative_type, :string

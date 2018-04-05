@@ -9,6 +9,7 @@ if ENV["RAILS_ENV"] == "test"
     add_filter "config/initializers"
     add_filter "config/environments/test.rb"
     add_filter "lib/tasks"
+    add_filter "app/controllers/errors_controller.rb"
   end
   SimpleCov.coverage_dir ENV["COVERAGE_DIR"] || nil
   SimpleCov.command_name ENV["TEST_SUBCATEGORY"] || "all"

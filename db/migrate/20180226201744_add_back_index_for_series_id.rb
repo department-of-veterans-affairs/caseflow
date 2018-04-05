@@ -1,4 +1,4 @@
-class AddBackIndexForSeriesId < ActiveRecord::Migration
+class AddBackIndexForSeriesId < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change

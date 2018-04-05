@@ -6,7 +6,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "4.2.7.1"
+gem "rails", "5.1.6"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
@@ -74,9 +74,6 @@ gem "pg", platforms: :ruby
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
 gem "redis-rails", "~> 5.0.2"
-
-# remove when upgrading to rails 5
-gem "where-or"
 
 gem "prometheus-client", "~> 0.7.1"
 
@@ -147,7 +144,7 @@ group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
-  gem "web-console", "~> 2.0", platforms: :ruby
+  gem "web-console", "~> 3.0", platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
