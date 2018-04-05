@@ -11,6 +11,8 @@ class SyncIntakeJob < ActiveJob::Base
             .order(:completed_at)
             .last
 
+        # TODO: not all RampElections will have an Intake
+        # so we may need to figure out a default user
         RequestStore.store[:current_user] = User.find(intake.user_id) if intake
 
         ramp_election.recreate_issues_from_contentions!
@@ -18,6 +20,8 @@ class SyncIntakeJob < ActiveJob::Base
 
         # Sleep for 1 second to avoid tripping BGS alerts
         sleep 1
+
+        # TODO: need a rescue here for sensitivity errors
     end
   end
 end
