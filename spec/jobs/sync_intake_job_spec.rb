@@ -10,8 +10,8 @@ describe SyncIntakeJob do
         veteran_file_number: "1"
       )
 
-      intake = RampElectionIntake.create!(
-        user_id: user.id, 
+      RampElectionIntake.create!(
+        user_id: user.id,
         detail_id: ramp_election.id,
         completion_status: "success"
       )
