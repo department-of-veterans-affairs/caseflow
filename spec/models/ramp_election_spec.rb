@@ -370,7 +370,7 @@ describe RampElection do
     end
   end
 
-  fcontext "#successful_intake" do
+  context "#successful_intake" do
     subject { ramp_election.successful_intake }
 
     let!(:last_successful_intake) do
