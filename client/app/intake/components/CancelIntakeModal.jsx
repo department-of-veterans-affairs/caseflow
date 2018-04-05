@@ -103,7 +103,6 @@ class CancelIntakeModal extends BaseForm {
   render() {
 
     let {
-      title,
       closeHandler
     } = this.props;
 
