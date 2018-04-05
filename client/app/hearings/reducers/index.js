@@ -204,8 +204,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_DISMISS:
     return newHearingIssueState(state, action, { dismiss: { $set: action.payload.dismiss } });
 
-  case Constants.SET_VHA:
-    return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
+  case Constants.SET_OMO:
+    return newHearingIssueState(state, action, { omo: { $set: action.payload.omo } });
 
   case Constants.TOGGLE_ISSUE_DELETE_MODAL:
     return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });

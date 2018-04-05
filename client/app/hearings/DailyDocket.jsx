@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CATEGORIES, ACTIONS } from './analytics';
+import _ from 'lodash';
 
 export class DailyDocket extends React.Component {
   onclickBackToHearingDays = () => {
@@ -12,7 +13,8 @@ export class DailyDocket extends React.Component {
   }
 
   render() {
-    const docket = this.props.docket;
+    const docket = _.orderBy(this.props.docket,
+      ['date', 'veteran_mi_formatted'], ['asc', 'asc']);
 
     return <div>
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
