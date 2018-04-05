@@ -67,8 +67,7 @@ class RampElection < RampReview
   end
 
   def successful_intake
-    @successful_intake ||= RampElectionIntake
-      .where(detail_id: ramp_election.id, completion_status: "success")
+    @successful_intake ||= intakes.where(completion_status: "success")
       .order(:completed_at)
       .last
   end

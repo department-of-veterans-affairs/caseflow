@@ -12,7 +12,7 @@ describe SyncIntakeJob do
 
       RampElectionIntake.create!(
         user_id: user.id,
-        detail_id: ramp_election.id,
+        detail: ramp_election,
         completion_status: "success"
       )
 
