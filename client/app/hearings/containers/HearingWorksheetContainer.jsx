@@ -45,19 +45,13 @@ export class HearingWorksheetContainer extends React.Component {
   // afterPrint = () => window.close();
 
   afterPrint = () => {
-    console.log('hi');
-    if (window.querystring.get('src') !== 'reader') {
+    if(this.props.getHearingWorksheetLink) {
       window.close();
     }
   }
-  //
-  // afterPrint = () => {
-  //   if(!getHearingWorksheetLink()) {
-  //     window.close();
-  //   }
-  // }
 
   render() {
+
     if (this.props.worksheetServerError) {
       return <StatusMessage
         title="Unable to load the worksheet">
@@ -85,7 +79,8 @@ export class HearingWorksheetContainer extends React.Component {
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
   worksheetServerError: state.worksheetServerError,
-  fetchingWorksheet: state.fetchingWorksheet
+  fetchingWorksheet: state.fetchingWorksheet,
+  getHearingWorksheetLink: state.getHearingWorksheetLink
 });
 
 const mapDispatchToProps = (dispatch) => ({
