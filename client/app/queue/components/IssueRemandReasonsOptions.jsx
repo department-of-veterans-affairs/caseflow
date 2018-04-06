@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import CheckboxGroup from '../../components/CheckboxGroup';
+import RadioField from '../../components/RadioField';
 
 import {
   getIssueProgramDescription,
@@ -13,7 +14,6 @@ import {
 } from '../utils';
 import {
   startEditingAppealIssue,
-  updateEditingAppealIssue,
   saveEditedAppealIssue
 } from '../QueueActions';
 import {
@@ -21,7 +21,9 @@ import {
   REMAND_REASONS
 } from '../constants';
 
+const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
+const mediumBottomMargin = css({ marginBottom: '2rem' });
 const flexContainer = css({
   display: 'flex',
   maxWidth: '75rem'
@@ -35,31 +37,19 @@ const flexColumn = css({
 });
 
 class IssueRemandReasonsOptions extends React.PureComponent {
-  toggleRemandReason = (reasonId) => {
-    const updatedReasons = _.get(this.props.issue, 'remand_reasons', []);
-    const reasonIdx = _.map(updatedReasons, 'code').indexOf(reasonId);
+  constructor(props) {
+    super(props);
 
-    if (reasonIdx > -1) {
-      updatedReasons.splice(reasonIdx, 1);
-    } else {
-      updatedReasons.push({
-        code: reasonId,
-        after_certification: false
-      });
-    }
+    const options = _.concat(..._.values(REMAND_REASONS));
+    const pairs = _.zip(
+      _.map(options, 'id'),
+      _.map(options, () => ({
+        checked: false,
+        after_certification: 'false'
+      }))
+    );
 
-    this.updateIssue({ remand_reasons: updatedReasons });
-  }
-
-  getIssueRemandOptionsByGroup = (groupName) => {
-    const remandReasons = _.map(_.get(this.props.issue, 'remand_reasons', []), 'code');
-    const group = REMAND_REASONS[groupName];
-    const optionIds = _.map(group, 'id');
-
-    return _.fromPairs(_.zip(
-      optionIds,
-      _.map(optionIds, (reasonId) => remandReasons.includes(reasonId))
-    ));
+    this.state = _.fromPairs(pairs);
   }
 
   updateIssue = (attributes) => {
@@ -68,6 +58,71 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.startEditingAppealIssue(appealId, issueId, attributes);
     this.props.saveEditedAppealIssue(appealId);
   };
+
+  // issues have no remand reasons before this point
+  componentDidMount = () => this.updateIssue({ remand_reasons: [] });
+
+  componentWillUnmount = () => {
+    // on unmount, update issue attrs from state
+    // "remand_reasons": [
+    //   {"code": "AB", "after_certification": true},
+    //   {"code": "AC", "after_certification": false}
+    // ]
+    const remandReasons = _(this.state).
+      map((val, key) => {
+        if (val.checked) {
+          return {
+            code: key,
+            ..._.pick(val, 'after_certification')
+          }
+        }
+      }).
+      compact().
+      value();
+
+    this.updateIssue({ remand_reasons: remandReasons });
+  }
+
+  toggleRemandReason = (event) => this.setState({
+    [event.target.id]: {
+      checked: event.target.checked,
+      after_certification: 'false'
+    }
+  });
+
+  getCheckbox = (option, onChange, values) => <div className="checkbox" key={option.id}>
+    <input
+      name={option.id}
+      onChange={onChange}
+      type="checkbox"
+      id={option.id}
+      checked={values[option.id].checked}
+    />
+    <label htmlFor={option.id}>
+      {option.label}
+    </label>
+    {values[option.id].checked && <RadioField
+      id={option.id}
+      key={`${option.id}-after-certification`}
+      styling={css(smallLeftMargin, mediumBottomMargin)}
+      name={`${option.id}-after-cert-radio-btns`}
+      hideLabel
+      options={[{
+        displayText: 'Before certification',
+        value: 'false'
+      }, {
+        displayText: 'After certification',
+        value: 'true'
+      }]}
+      value={this.state[option.id].after_certification}
+      onChange={(afterCertification) => this.setState({
+        [option.id]: {
+          checked: true,
+          after_certification: afterCertification
+        }
+      })}
+    />}
+  </div>;
 
   render = () => {
     const {
@@ -88,14 +143,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             label={<h3>Medical examination and opinion</h3>}
             name="med-exam"
             options={REMAND_REASONS.medicalExam}
-            onChange={(event) => this.toggleRemandReason(event.target.id)}
-            values={this.getIssueRemandOptionsByGroup('medicalExam')} />
+            onChange={this.toggleRemandReason}
+            getCheckbox={this.getCheckbox}
+            values={this.state} />
           <CheckboxGroup
             label={<h3>Duty to assist records request</h3>}
             name="duty-to-assist"
             options={REMAND_REASONS.dutyToAssistRecordsRequest}
-            onChange={(event) => this.toggleRemandReason(event.target.id)}
-            values={this.getIssueRemandOptionsByGroup('dutyToAssistRecordsRequest')} />
+            onChange={this.toggleRemandReason}
+            getCheckbox={this.getCheckbox}
+            values={this.state} />
         </div>
         {/* todo: better CheckboxGroup y alignment */}
         <div {...flexColumn}>
@@ -103,14 +160,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             label={<h3>Duty to notify</h3>}
             name="duty-to-notify"
             options={REMAND_REASONS.dutyToNotify}
-            onChange={(event) => this.toggleRemandReason(event.target.id)}
-            values={this.getIssueRemandOptionsByGroup('dutyToNotify')} />
+            onChange={this.toggleRemandReason}
+            getCheckbox={this.getCheckbox}
+            values={this.state} />
           <CheckboxGroup
             label={<h3>Due process</h3>}
             name="due-process"
             options={REMAND_REASONS.dueProcess}
-            onChange={(event) => this.toggleRemandReason(event.target.id)}
-            values={this.getIssueRemandOptionsByGroup('dueProcess')} />
+            onChange={this.toggleRemandReason}
+            getCheckbox={this.getCheckbox}
+            values={this.state} />
         </div>
       </div>
     </div>;
@@ -134,7 +193,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   startEditingAppealIssue,
-  updateEditingAppealIssue,
   saveEditedAppealIssue
 }, dispatch);
 
