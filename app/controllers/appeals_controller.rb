@@ -9,8 +9,7 @@ class AppealsController < ApplicationController
       # { appeals: { data: [{},{},{}] } } # Get rid of the data element and return the array as the appeals element.
       # Look at other serializers.
       render json: {
-        # shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
-        shouldUseAppealSearch: true,
+        shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
         appeals: json_appeals(Appeal.fetch_appeals_by_file_number(veteran_id))
       }
     end

@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import CaseListSearch from './CaseListSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -23,35 +22,14 @@ import { DECISION_TYPES } from './constants';
 import Breadcrumbs from './components/BreadcrumbManager';
 
 const appStyling = css({ paddingTop: '3rem' });
-const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
-  '.section-search': {
-    '& .usa-alert-info, & .usa-alert-error': {
-      marginBottom: '1.5rem',
-      marginTop: 0
-    },
-    '& .cf-search-input-with-close': {
-      marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
-    },
-    '& .cf-submit': {
-      width: '10.5rem'
-    }
-  }
-});
 
 class QueueApp extends React.PureComponent {
   // TODO: CaseListSearch should probably move inside SearchEnabledView.
+  // TODO: We should move feedbackUrl to global state.
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <CaseListSearch
-      navigateToPath={(path) => {
-        const redirectUrl = encodeURIComponent(window.location.pathname);
-
-        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
-      }}
-      alwaysShowCaseSelectionModal
-      feedbackUrl={this.props.feedbackUrl}
-      searchSize="big"
-      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    <SearchEnabledView><QueueListView {...this.props} /></SearchEnabledView>
+    <SearchEnabledView feedbackUrl={this.props.feedbackUrl}>
+      <QueueListView {...this.props} />
+    </SearchEnabledView>
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -142,7 +120,7 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
+  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
   reviewActionType: state.queue.pendingChanges.taskDecision.type
 });
