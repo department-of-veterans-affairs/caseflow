@@ -13,6 +13,11 @@
   padding-left: 1em;
 }
 
+.cf-manage-intakes-header {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
 .cf-table-selections {
   border: 1px solid $color-gray-lighter;
   max-width: 500px;

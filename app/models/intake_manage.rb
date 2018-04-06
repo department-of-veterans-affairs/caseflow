@@ -1,3 +1,0 @@
-class RampElectionIntake < Intake
-
-end

@@ -88,5 +88,4 @@ class IntakesController < ApplicationController
   def current_intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
   end
-
 end

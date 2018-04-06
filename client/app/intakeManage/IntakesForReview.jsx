@@ -42,25 +42,27 @@ const columns = [
 export default class IntakesForReview extends Component {
   render = () => {
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
-      <div>
-        <h1>Claims for manager review</h1>
-        <p>
-        This list shows claims that did not result in an End Product (EP)
-        because the user canceled midway through processing, or did not finish
-        establishing the claim after receiving an alert message. After an EP is
-        successfully established, you can <a href="" className="cf-action-refresh">refresh</a> the
-        page to update this list.
-        </p>
+      <div className='cf-manage-intakes-header'>
+        <div>
+          <h1>Claims for manager review</h1>
+          <p>
+          This list shows claims that did not result in an End Product (EP)
+          because the user canceled midway through processing, or did not finish
+          establishing the claim after receiving an alert message. After an EP is
+          successfully established, you can <a href="" className="cf-action-refresh">refresh</a> the
+          page to update this list.
+          </p>
+        </div>
+        <div>
+          <Link to="/stats">
+            <Button linkStyling>View stats</Button>
+          </Link>
+          <Link to="/intake">
+            <Button legacyStyling={false} classNames={['usa-button-secondary']}>Begin intake</Button>
+          </Link>
+        </div>
       </div>
 
-      <div classNames={['cf-push-right']}>
-        <Link to="/stats">
-          <Button linkStyling>View stats</Button>
-        </Link>
-        <Link to="/intake">
-          <Button legacyStyling={false} classNames={['usa-button-secondary', 'cf-push-right']}>Begin intake</Button>
-        </Link>
-      </div>
 
       <Table
         columns={columns}
