@@ -61,7 +61,7 @@ class IntakesController < ApplicationController
     render json: {}
   end
 
-  def manager_review_claims
+  def manager_review
     render json: Intake.manager_review
   end
 

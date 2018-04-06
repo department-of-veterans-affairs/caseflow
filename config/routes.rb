@@ -112,7 +112,7 @@ Rails.application.routes.draw do
   scope path: '/intake' do
     get "/", to: 'intakes#index'
     get "/manage", to: 'intakes#manage'
-    get "/manage/intakes_for_review", to: 'intakes#manager_review_claims'
+    get "/manage/intakes_for_review", to: 'intakes#manager_review'
     resources :intakes, path: "/", only: [:index, :create, :destroy] do
       patch 'review', on: :member
       patch 'complete', on: :member
