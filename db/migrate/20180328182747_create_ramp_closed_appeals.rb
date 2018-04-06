@@ -1,4 +1,4 @@
-class CreateRampClosedAppeals < ActiveRecord::Migration
+class CreateRampClosedAppeals < ActiveRecord::Migration[5.1]
   def change
     create_table :ramp_closed_appeals do |t|
       t.string      :vacols_id, null: false

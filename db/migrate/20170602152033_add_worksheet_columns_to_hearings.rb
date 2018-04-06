@@ -1,4 +1,4 @@
-class AddWorksheetColumnsToHearings < ActiveRecord::Migration
+class AddWorksheetColumnsToHearings < ActiveRecord::Migration[5.1]
   def change
     add_column :hearings, :worksheet_witness, :string
     add_column :hearings, :worksheet_contentions, :string
