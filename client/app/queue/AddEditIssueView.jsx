@@ -117,7 +117,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestUpdate(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
       { data: params },
-      `You have updated issue ${issues.indexOf(issue) + 1}.`
+      `You have updated issue ${Math.max(issues.indexOf(issue) + 1, 1)}.`
     ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
