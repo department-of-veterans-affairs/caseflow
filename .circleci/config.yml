@@ -83,6 +83,11 @@ jobs:
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
       - store_test_results:
+          name: Store test results as summary
+          path: ~/test-results
+
+      - store_artifacts:
+          name: Store test results as artifact
           path: ~/test-results
 
       - store_artifacts:
