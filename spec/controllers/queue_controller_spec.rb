@@ -54,7 +54,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        post :create, queue: params
+        post :create, params: { queue: params }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
@@ -78,7 +78,7 @@ RSpec.describe QueueController, type: :controller do
           vacols_id: appeal.vacols_id
         ).and_return(true)
 
-        post :create, queue: params
+        post :create, params: { queue: params }
         expect(response.status).to eq 201
       end
 
@@ -92,7 +92,7 @@ RSpec.describe QueueController, type: :controller do
         end
 
         it "should not be successful" do
-          post :create, queue: params
+          post :create, params: { queue: params }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
           expect(response_body["errors"].first["title"]).to eq "Appeal Type is Invalid"
@@ -110,7 +110,7 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          post :create, queue: params
+          post :create, params: { queue: params }
           expect(response.status).to eq 404
         end
       end
@@ -126,7 +126,7 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          post :create, queue: params
+          post :create, params: { queue: params }
           expect(response.status).to eq 404
         end
       end
