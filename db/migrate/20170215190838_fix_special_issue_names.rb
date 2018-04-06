@@ -1,4 +1,4 @@
-class FixSpecialIssueNames < ActiveRecord::Migration
+class FixSpecialIssueNames < ActiveRecord::Migration[5.1]
   def change
     rename_column :appeals, :private_attorney, :private_attorney_or_agent
     rename_column :appeals, :pensions, :pension_united_states

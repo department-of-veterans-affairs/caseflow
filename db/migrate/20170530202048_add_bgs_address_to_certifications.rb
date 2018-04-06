@@ -1,4 +1,4 @@
-class AddBgsAddressToCertifications < ActiveRecord::Migration
+class AddBgsAddressToCertifications < ActiveRecord::Migration[5.1]
   def change
     add_column :certifications, :bgs_rep_address_line_1, :string
     add_column :certifications, :bgs_rep_address_line_2, :string

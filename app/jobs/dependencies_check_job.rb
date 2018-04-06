@@ -1,4 +1,4 @@
-class DependenciesCheckJob < ActiveJob::Base
+class DependenciesCheckJob < ApplicationJob
   queue_as :low_priority
 
   def perform

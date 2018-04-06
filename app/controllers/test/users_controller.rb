@@ -89,7 +89,7 @@ class Test::UsersController < ApplicationController
   def set_end_products
     BGSService.end_product_records[:default] = new_default_end_products
 
-    render nothing: true, status: 200
+    head :ok
   end
 
   def require_demo

@@ -54,7 +54,7 @@ class IssuesController < ApplicationController
               :issue,
               :level_1,
               :level_2,
-              :level_3)
+              :level_3).to_h
       .merge!(vacols_user_id: current_user.vacols_uniq_id)
   end
 

@@ -1,4 +1,4 @@
-class CreateAttorneyCaseReviews < ActiveRecord::Migration
+class CreateAttorneyCaseReviews < ActiveRecord::Migration[5.1]
   def change
     create_table :attorney_case_reviews do |t|
       t.string  "document_id"
