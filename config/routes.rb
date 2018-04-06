@@ -109,12 +109,17 @@ Rails.application.routes.draw do
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
 
-
-  resources :intakes, path: "intake", only: [:index, :create, :destroy] do
-    patch 'review', on: :member
-    patch 'complete', on: :member
-    patch 'error', on: :member
+  scope path: '/intake' do
+    get "/", to: 'intakes#index'
+    get "/manage", to: 'intakes#manage'
+    resources :intakes, path: "/", only: [:index, :create, :destroy] do
+      patch 'review', on: :member
+      patch 'complete', on: :member
+      patch 'error', on: :member
+    end
   end
+
+  # get 'intake/manage', to: 'intake#manage'
 
   resources :users, only: [:index]
 
@@ -138,8 +143,6 @@ Rails.application.routes.draw do
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
-
-  get 'intake/manager', to: 'intake_manager#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
 
