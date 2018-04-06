@@ -25,7 +25,7 @@ import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from './establishClaimAdmin';
 import Queue from './queue/index';
-import ManageIntake from './manageIntake';
+import ManageIntake from './intakeManage';
 
 const COMPONENTS = {
   BaseContainer,
@@ -76,7 +76,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './hearings/index',
       './establishClaimAdmin/index',
       './queue/index',
-      './manageIntake/index'
+      './intakeManage/index'
     ], () => renderApp(component));
   }
 };

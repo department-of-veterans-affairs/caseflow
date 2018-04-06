@@ -151,6 +151,10 @@ class Intake < ActiveRecord::Base
     FORM_TYPES.key(self.class.name)
   end
 
+  def self.manager_review
+    Intake.where.not(completion_status: 'success').includes(:user)
+  end
+
   private
 
   def file_number_valid?

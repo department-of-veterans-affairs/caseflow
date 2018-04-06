@@ -6,48 +6,40 @@ import Table from '../components/Table';
 
 const summary = 'Claims for manager review';
 
-const rowObjects = [
-  {
-    veteran: 'John Smith',
-    date_processed: '3/30/2018',
-    form: 'Ramp Election',
-    employee: 'Jane Smith',
-    explanation: 'Air ors'
-  },
-  {
-    veteran: 'Jada Smith',
-    date_processed: '3/30/2081',
-    form: 'Ramp Refiling',
-    employee: 'Julia Smith',
-    explanation: 'Can selled'
+const cancelExplanation = (intake) => {
+  if (intake.completion_status === 'error') {
+    return `Error: ${intake.error_code}`
+  } else if (intake.completion_status === 'canceled'){
+    const cancel_other = intake.cancel_other ? `- "${intake.cancel_other}"` : ''
+    return `Canceled: ${intake.cancel_reason} ${cancel_other}`
   }
-];
+}
 
 const columns = [
   {
     header: 'Veteran',
-    valueName: 'veteran'
+    valueName: 'veteran_file_number'
   },
   {
     header: 'Date Processed',
     align: 'center',
-    valueFunction: (claim) => formatDate(claim.date_processed)
+    valueFunction: (intake) => formatDate(intake.completed_at)
   },
   {
     header: 'Form',
-    valueName: 'form'
+    valueFunction: (intake) => intake.type === 'RampElectionIntake' ? 'RAMP Opt-In Election Form' : '21-4138 RAMP Selection Form'
   },
   {
     header: 'Employee',
-    valueName: 'employee'
+    valueName: 'user_id'
   },
   {
     header: 'Explanation',
-    valueName: 'explanation'
+    valueFunction: (intake) => cancelExplanation(intake)
   }
 ];
 
-export default class ClaimsForReview extends Component {
+export default class IntakesForReview extends Component {
   render = () => {
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div>
@@ -72,7 +64,7 @@ export default class ClaimsForReview extends Component {
 
       <Table
         columns={columns}
-        rowObjects={this.props.claims} // change to this.props.claims when data is working
+        rowObjects={this.props.intakes}
         summary={summary}
         slowReRendersAreOk />
     </div>;

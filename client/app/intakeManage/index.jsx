@@ -3,7 +3,7 @@ import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit
 
 import { BrowserRouter, Route } from 'react-router-dom';
 
-import ClaimsForReviewContainer from './ClaimsForReviewContainer';
+import IntakesForReviewContainer from './IntakesForReviewContainer';
 import { manageIntakeReducers, mapDataToInitialState } from './reducers';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -34,7 +34,7 @@ const ManageIntake = ({
             <div className="cf-wide-app">
               <div className="usa-grid">
                 <Route exact path="/"
-                  component={() => <ClaimsForReviewContainer />}
+                  component={() => <IntakesForReviewContainer />}
                 />
 
               </div>

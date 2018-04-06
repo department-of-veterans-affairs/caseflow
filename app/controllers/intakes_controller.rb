@@ -62,20 +62,7 @@ class IntakesController < ApplicationController
   end
 
   def manager_review_claims
-    render json: [{
-      veteran: 'John Smith',
-      date_processed: '3/30/2018',
-      form: 'Ramp Election',
-      employee: 'Jane Smith',
-      explanation: 'Air ors'
-    },
-    {
-      veteran: 'Jada Smith',
-      date_processed: '3/30/2081',
-      form: 'Ramp Refiling',
-      employee: 'Julia Smith',
-      explanation: 'Can selled'
-    }]
+    render json: Intake.manager_review
   end
 
   private
