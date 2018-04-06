@@ -11,7 +11,11 @@ import {
 } from './CaseList/CaseListActions';
 
 // TODO: Get rid of the reader/CaseSelect actions when everybody is using appeals search.
-import { caseSelectAppeal, caseSelectModalSelectVacolsId } from '../reader/CaseSelect/CaseSelectActions';
+import {
+  caseSelectAppeal,
+  caseSelectModalSelectVacolsId,
+  clearCaseSelectSearch
+} from '../reader/CaseSelect/CaseSelectActions';
 import IssueList from '../reader/IssueList';
 
 import Alert from '../components/Alert';
@@ -19,7 +23,14 @@ import Modal from '../components/Modal';
 import RadioField from '../components/RadioField';
 import SearchBar from '../components/SearchBar';
 
-class CaseSelectSearch extends React.PureComponent {
+const buildCollapsedAppealFrom = (oldAppeal) => {
+  let appeal = _.cloneDeep(oldAppeal);
+  const attrs = appeal.attributes;
+  delete appeal.attributes;
+  return Object.assign(appeal, attrs);
+};
+
+class CaseListSearch extends React.PureComponent {
   handleModalClose = () => {
     // clearing the state of the modal in redux
     this.props.clearCaseListSearch();
@@ -34,8 +45,6 @@ class CaseSelectSearch extends React.PureComponent {
   //
   // TODO: Remove everything below here once everybody is using the new appeal search.
   // 
-
-  // TODO: Do we want to take any actions for the new appeals search on component update?
   componentDidUpdate = () => {
     if (!this.props.caseList.shouldUseAppealSearch) {
       this.handleNonQueueSearchUpdate()
@@ -47,7 +56,7 @@ class CaseSelectSearch extends React.PureComponent {
       // if only one appeal is received for the veteran id
       // select that appeal's case.
       if (_.size(this.props.caseList.receivedAppeals) === 1) {
-        this.props.caseSelectAppeal(this.props.caseList.receivedAppeals[0]);
+        this.props.caseSelectAppeal(buildCollapsedAppealFrom(this.props.caseList.receivedAppeals[0]));
       }
     }
 
@@ -57,12 +66,14 @@ class CaseSelectSearch extends React.PureComponent {
     if (this.props.caseSelect.selectedAppeal.vacols_id) {
       this.props.navigateToPath(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseListSearch();
+      this.props.clearCaseSelectSearch();
     }
   }
 
   handleSelectAppeal = () => {
     // get the appeal selected from the modal
-    const appeal = _.find(this.props.caseList.receivedAppeals,
+    const allAppeals = this.props.caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a))
+    const appeal = _.find(allAppeals,
       { vacols_id: this.props.caseSelect.selectedAppealVacolsId });
 
     // set the selected appeal
@@ -128,7 +139,7 @@ class CaseSelectSearch extends React.PureComponent {
         title = "Select claims folder">
         <RadioField
           name="claims-folder-select"
-          options={createAppealOptions(caseList.receivedAppeals)}
+          options={createAppealOptions(caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a)))}
           value={caseSelect.selectedAppealVacolsId}
           onChange={this.handleChangeAppealSelection}
           hideLabel
@@ -146,14 +157,14 @@ class CaseSelectSearch extends React.PureComponent {
   }
 }
 
-CaseSelectSearch.propTypes = {
+CaseListSearch.propTypes = {
   searchSize: PropTypes.string,
   styling: PropTypes.object,
   navigateToPath: PropTypes.func.isRequired,
   alwaysShowCaseSelectionModal: PropTypes.bool
 };
 
-CaseSelectSearch.defaultProps = {
+CaseListSearch.defaultProps = {
   searchSize: 'small',
   alwaysShowCaseSelectionModal: false
 };
@@ -162,6 +173,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   caseSelectAppeal,
   caseSelectModalSelectVacolsId,
   clearCaseListSearch,
+  clearCaseSelectSearch,
   fetchAppealsUsingVeteranId,
   setCaseListSearch,
 }, dispatch);
@@ -174,4 +186,4 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CaseSelectSearch);
+)(CaseListSearch);

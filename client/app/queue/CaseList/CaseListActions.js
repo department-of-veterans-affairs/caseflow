@@ -45,21 +45,10 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
         const shouldUseAppealSearch = returnedObject.hasOwnProperty("shouldUseAppealSearch") && returnedObject.shouldUseAppealSearch;
         dispatch(setShouldUseQueueSearch(shouldUseAppealSearch));
 
-        // TODO: AppealsController.index returns the data with a few extraneous elements. Remove this fix when we change
-        // the data structure we return to collapse the data and attribute elements.
-        // { appeals: {
-        //   data: [
-        //     { attributes: {...}, ... },
-        //     { attributes: {...}, ... },
-        //     { attributes: {...}, ... }
-        //     ]
-        //   }
-        // }
-        const appeals = returnedObject.appeals.data.map(a => {
-          const attrs = a.attributes;
-          delete a.attributes;
-          return Object.assign(a, attrs);
-        });
+        // TODO: AppealsController.index returns the appeals with the extraneous data element. Remove this
+        // when we change the data structure we return to collapse the data element.
+        // { appeals: { data: [ {...}, {...}, {...} ] } }
+        const appeals = returnedObject.appeals.data;
         if (_.size(appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
         } else {

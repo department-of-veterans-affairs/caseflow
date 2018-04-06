@@ -11,23 +11,23 @@ export default class CaseListTable extends React.PureComponent {
   getColumns = () => [
     {
       header: 'Docket Number',
-      valueFunction: (appeal) => appeal.docket_number
+      valueFunction: (appeal) => appeal.attributes.docket_number
     },
     {
       header: 'Appellant Name',
-      valueFunction: (appeal) => appeal.appellant_full_name || appeal.veteran_full_name
+      valueFunction: (appeal) => appeal.attributes.appellant_full_name || appeal.attributes.veteran_full_name
     },
     {
       header: 'Status',
-      valueFunction: (appeal) => appeal.status
+      valueFunction: (appeal) => appeal.attributes.status
     },
     {
       header: 'Type(s)',
-      valueFunction: (appeal) => 'TYPE GOES HERE' // renderAppealType(appeal) // TODO: I don't think this will work until we put "attributes" back
+      valueFunction: (appeal) => renderAppealType(appeal)
     },
     {
       header: 'Decision Date',
-      valueFunction: (appeal) => appeal.decision_date ? <DateString date={appeal.decision_date} /> : ''
+      valueFunction: (appeal) => appeal.attributes.decision_date ? <DateString date={appeal.attributes.decision_date} /> : ''
     },
     {
       header: 'Assigned To',
