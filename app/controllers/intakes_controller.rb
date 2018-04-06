@@ -61,6 +61,23 @@ class IntakesController < ApplicationController
     render json: {}
   end
 
+  def manager_review_claims
+    render json: [{
+      veteran: 'John Smith',
+      date_processed: '3/30/2018',
+      form: 'Ramp Election',
+      employee: 'Jane Smith',
+      explanation: 'Air ors'
+    },
+    {
+      veteran: 'Jada Smith',
+      date_processed: '3/30/2081',
+      form: 'Ramp Refiling',
+      employee: 'Julia Smith',
+      explanation: 'Can selled'
+    }]
+  end
+
   private
 
   def no_cache
@@ -84,4 +101,5 @@ class IntakesController < ApplicationController
   def current_intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
   end
+
 end

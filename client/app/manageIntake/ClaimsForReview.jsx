@@ -72,7 +72,7 @@ export default class ClaimsForReview extends Component {
 
       <Table
         columns={columns}
-        rowObjects={rowObjects} // change to this.props.claims when data is working
+        rowObjects={this.props.claims} // change to this.props.claims when data is working
         summary={summary}
         slowReRendersAreOk />
     </div>;

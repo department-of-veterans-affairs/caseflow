@@ -11,9 +11,8 @@ export const populateStuckTasks = ({ tasks }) => ({
 export const fetchStuckTasks = () => (dispatch) => {
   dispatch({ type: Constants.SET_LOADING_STATE,
     payload: { value: true } });
-  ApiUtil.get('/tasks?state=unassigned&type=EstablishClaim').
+  ApiUtil.get('/manage/claims').
     then((response) => {
       dispatch(populateStuckTasks(response.body));
     });
 };
-

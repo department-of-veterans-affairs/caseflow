@@ -11,9 +11,9 @@ export const populateClaimsForReview = ({ claims }) => ({
 export const fetchClaimsForReview = () => (dispatch) => {
   dispatch({ type: Constants.SET_LOADING_STATE,
     payload: { value: true } });
-  // ApiUtil.get('/intake?param1=manager_review'). // TODO
-  //   then((response) => {
-  //     dispatch(populateClaimsForReview(response.body));
-  //   });
-  dispatch(populateClaimsForReview({ veteran: 'Sally' }));
+  ApiUtil.get('/intake/manage/claims'). // TODO
+    then((response) => {
+      dispatch(populateClaimsForReview(response.body));
+    });
+  // dispatch(populateClaimsForReview({ veteran: 'Sally' }));
 };

@@ -31,7 +31,7 @@ export class ClaimsForReviewContainer extends Component {
 const mapStateToProps = (state) => {
   return {
     loading: state.loading,
-    tasks: state.claimsForReview
+    claims: state.claimsForReview
   };
 };
 
