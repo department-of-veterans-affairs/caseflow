@@ -34,6 +34,27 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE
 });
 
+export const increaseVeteranDocumentCountBy = (count) => ({
+  type: Constants.INCREASE_VETERAN_DOCUMENT_COUNT_BY,
+  payload: { count }
+});
+
+export const fetchDocumentCountForVeteran = (appeals) => (dispatch) => {
+  appeals.forEach( (appeal) => {
+    const requestOptions = {
+      withCredentials: true,
+      timeout: true,
+      headers: { 'FILE-NUMBER': appeal.attributes.vbms_id }
+    };
+
+    ApiUtil.get(appeal.attributes.number_of_documents_url, requestOptions).
+      then((response) => {
+        const resp = JSON.parse(response.text);
+        dispatch(increaseVeteranDocumentCountBy(resp.data.attributes.documents.length));
+      });
+  });
+}
+
 export const fetchAppealsUsingVeteranId = (veteranId) =>
   (dispatch) => {
     ApiUtil.get('/appeals', {
@@ -53,6 +74,7 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(appeals));
+          dispatch(fetchDocumentCountForVeteran(appeals));
         }
       }, () => {
         dispatch(fetchAppealUsingVeteranIdFailed());

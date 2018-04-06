@@ -5,6 +5,7 @@ export const initialState = {
   caseListCriteria: {
     searchQuery: ''
   },
+  documentCountForVeteran: 0,
   isRequestingAppealsUsingVeteranId: false,
   receivedAppeals: [],
   search: {
@@ -23,10 +24,17 @@ export const caseListReducer = (state = initialState, action = {}) => {
           $set: ''
         }
       },
+      documentCountForVeteran: { $set: 0 },
       receivedAppeals: { $set: {} },
       search: {
         showErrorMessage: { $set: false },
         noAppealsFoundSearchQueryValue: { $set: null }
+      }
+    });
+  case Constants.INCREASE_VETERAN_DOCUMENT_COUNT_BY:
+    return update(state, {
+      documentCountForVeteran: {
+        $set: action.payload.count + state.documentCountForVeteran
       }
     });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE:
