@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const getCheckbox = (option, onChange, values = {}) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
@@ -59,7 +59,7 @@ export default class CheckboxGroup extends React.Component {
 
 CheckboxGroup.defaultProps = {
   required: false,
-  getCheckbox: getCheckbox
+  getCheckbox: renderCheckbox
 };
 
 CheckboxGroup.propTypes = {

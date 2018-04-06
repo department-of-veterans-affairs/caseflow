@@ -70,12 +70,14 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     // ]
     const remandReasons = _(this.state).
       map((val, key) => {
-        if (val.checked) {
-          return {
-            code: key,
-            ..._.pick(val, 'after_certification')
-          }
+        if (!val.checked) {
+          return false;
         }
+
+        return {
+          code: key,
+          ..._.pick(val, 'after_certification')
+        };
       }).
       compact().
       value();
