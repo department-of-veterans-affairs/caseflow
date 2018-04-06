@@ -1,4 +1,4 @@
-class CreateDocumentViews < ActiveRecord::Migration
+class CreateDocumentViews < ActiveRecord::Migration[5.1]
   def change
     create_table :document_views do |t|
       t.belongs_to :document, null: false

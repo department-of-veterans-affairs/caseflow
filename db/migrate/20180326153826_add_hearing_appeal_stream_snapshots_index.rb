@@ -1,4 +1,4 @@
-class AddHearingAppealStreamSnapshotsIndex < ActiveRecord::Migration
+class AddHearingAppealStreamSnapshotsIndex < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change
