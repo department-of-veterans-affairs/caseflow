@@ -41,7 +41,7 @@ class QueueRepository
   end
 
   def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
-    # TODO: add depdiff and dedeadline
+    # TODO: add depdiff
     transaction do
       vacols_case = VACOLS::Case.find(vacols_id)
       vacols_case.update_vacols_location!(vacols_id)
@@ -50,7 +50,7 @@ class QueueRepository
       VACOLS::Decass.create!(
         defolder: vacols_id,
         deatty: attorney.vacols_attorney_id,
-        deteam: attorney.vacols_group_id,
+        deteam: attorney.vacols_group_id[0..2],
         deadusr: judge.vacols_uniq_id,
         deadtim: VacolsHelper.local_date_with_utc_timezone,
         deassign: VacolsHelper.local_date_with_utc_timezone,

@@ -2,7 +2,7 @@ class VACOLS::Decass < VACOLS::Record
   self.table_name = "vacols.decass"
   self.primary_key = "defolder"
 
-  validates :defolder, :deatty, :deteam, :deadusr, :deadtim, :deicr, presence: true, on: :create
+  validates :defolder, :deatty, :deteam, :deadusr, :deadtim, presence: true, on: :create
 
   class DecassError < StandardError; end
 
