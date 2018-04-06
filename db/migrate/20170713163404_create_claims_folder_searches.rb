@@ -1,4 +1,4 @@
-class CreateClaimsFolderSearches < ActiveRecord::Migration
+class CreateClaimsFolderSearches < ActiveRecord::Migration[5.1]
   def change
     create_table :claims_folder_searches do |t|
       t.belongs_to :user

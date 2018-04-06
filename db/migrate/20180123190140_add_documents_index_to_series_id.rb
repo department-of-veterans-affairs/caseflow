@@ -1,4 +1,4 @@
-class AddDocumentsIndexToSeriesId < ActiveRecord::Migration
+class AddDocumentsIndexToSeriesId < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change

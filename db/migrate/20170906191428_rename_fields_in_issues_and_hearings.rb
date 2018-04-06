@@ -1,4 +1,4 @@
-class RenameFieldsInIssuesAndHearings < ActiveRecord::Migration
+class RenameFieldsInIssuesAndHearings < ActiveRecord::Migration[5.1]
   def change
     rename_column :issues, :hearing_worksheet_reopen, :reopen
     rename_column :issues, :hearing_worksheet_vha, :vha

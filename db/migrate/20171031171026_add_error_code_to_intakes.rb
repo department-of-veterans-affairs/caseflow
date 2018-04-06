@@ -1,4 +1,4 @@
-class AddErrorCodeToIntakes < ActiveRecord::Migration
+class AddErrorCodeToIntakes < ActiveRecord::Migration[5.1]
   safety_assured
 
   def change
