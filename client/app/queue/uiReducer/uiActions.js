@@ -52,8 +52,11 @@ export const pushBreadcrumb = (...crumbs) => ({
   }
 });
 
-export const popBreadcrumb = () => ({
-  type: ACTIONS.POP_BREADCRUMB
+export const popBreadcrumb = (crumbsToDrop = 1) => ({
+  type: ACTIONS.POP_BREADCRUMB,
+  payload: {
+    crumbsToDrop
+  }
 });
 
 export const resetBreadcrumbs = () => ({
