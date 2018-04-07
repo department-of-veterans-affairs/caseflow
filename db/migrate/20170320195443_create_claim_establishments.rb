@@ -1,4 +1,4 @@
-class CreateClaimEstablishments < ActiveRecord::Migration
+class CreateClaimEstablishments < ActiveRecord::Migration[5.1]
   def change
     create_table :claim_establishments do |t|
       t.integer :task_id

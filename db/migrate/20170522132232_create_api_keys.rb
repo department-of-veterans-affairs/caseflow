@@ -1,4 +1,4 @@
-class CreateApiKeys < ActiveRecord::Migration
+class CreateApiKeys < ActiveRecord::Migration[5.1]
   # This is a new table, so the new indecies will be fine
   safety_assured
 

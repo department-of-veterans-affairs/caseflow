@@ -1,4 +1,4 @@
-class AddDocumentsIndexToFileNumber < ActiveRecord::Migration
+class AddDocumentsIndexToFileNumber < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change

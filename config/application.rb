@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
@@ -11,6 +11,9 @@ require "vbms"
 
 module CaseflowCertification
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    # config.load_defaults 5.1
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -26,12 +29,9 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
+    config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}')]
 
-    config.autoload_paths << Rails.root.join('lib')
-    config.autoload_paths << Rails.root.join('services')
-    config.autoload_paths += Dir[Rails.root.join('app', 'models', '{**}')]
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }

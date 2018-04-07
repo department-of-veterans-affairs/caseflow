@@ -1,6 +1,6 @@
 describe RampElection do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -341,12 +341,12 @@ describe RampElection do
         end
       end
 
-      context "when it is before notice_date" do
-        let(:receipt_date) { 2.days.ago }
+      context "when it is before RAMP begin date" do
+        let(:receipt_date) { 2.years.ago }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
-          expect(ramp_election.errors[:receipt_date]).to include("before_notice_date")
+          expect(ramp_election.errors[:receipt_date]).to include("before_ramp")
         end
       end
 
@@ -367,6 +367,41 @@ describe RampElection do
           end
         end
       end
+    end
+  end
+
+  context "#successful_intake" do
+    subject { ramp_election.successful_intake }
+
+    let!(:last_successful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "success",
+        completed_at: 2.days.ago,
+        detail: ramp_election
+      )
+    end
+
+    let!(:penultimate_successful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "success",
+        completed_at: 3.days.ago,
+        detail: ramp_election
+      )
+    end
+
+    let!(:unsuccessful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "error",
+        completed_at: 1.day.ago,
+        detail: ramp_election
+      )
+    end
+
+    it "returns the last successful intake" do
+      expect(ramp_election.successful_intake).to eq(last_successful_intake)
     end
   end
 end

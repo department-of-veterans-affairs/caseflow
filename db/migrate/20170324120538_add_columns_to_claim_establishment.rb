@@ -1,4 +1,4 @@
-class AddColumnsToClaimEstablishment < ActiveRecord::Migration
+class AddColumnsToClaimEstablishment < ActiveRecord::Migration[5.1]
   def change
     # Old claim establishments are storing decision_date differently.
     # Delete them to avoid confusing, and because there are only 1 day's worth

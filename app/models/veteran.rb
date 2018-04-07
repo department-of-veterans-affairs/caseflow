@@ -29,8 +29,8 @@ class Veteran
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
-  validates :zip_code, presence: true, if: "country_requires_zip?"
-  validates :state, presence: true, if: "country_requires_state?"
+  validates :zip_code, presence: true, if: :country_requires_zip?
+  validates :state, presence: true, if: :country_requires_state?
 
   # TODO: get middle initial from BGS
   def name

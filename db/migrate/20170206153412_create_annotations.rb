@@ -1,4 +1,4 @@
-class CreateAnnotations < ActiveRecord::Migration
+class CreateAnnotations < ActiveRecord::Migration[5.1]
   def change
     create_table :annotations do |t|
       t.belongs_to :document, null: false

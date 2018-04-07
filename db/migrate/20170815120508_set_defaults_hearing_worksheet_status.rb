@@ -1,4 +1,4 @@
-class SetDefaultsHearingWorksheetStatus < ActiveRecord::Migration
+class SetDefaultsHearingWorksheetStatus < ActiveRecord::Migration[5.1]
   def change
     change_column_default :issues, :allow, false
     change_column_default :issues, :deny, false

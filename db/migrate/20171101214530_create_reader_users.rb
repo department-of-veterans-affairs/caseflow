@@ -1,4 +1,4 @@
-class CreateReaderUsers < ActiveRecord::Migration
+class CreateReaderUsers < ActiveRecord::Migration[5.1]
   safety_assured # This is a new table. It'll be fine
 
   def change

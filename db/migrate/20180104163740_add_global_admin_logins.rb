@@ -1,4 +1,4 @@
-class AddGlobalAdminLogins < ActiveRecord::Migration
+class AddGlobalAdminLogins < ActiveRecord::Migration[5.1]
   def change
     create_table :global_admin_logins do |t|
       t.string :admin_css_id
