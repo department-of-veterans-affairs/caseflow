@@ -38,7 +38,6 @@ class CaseListView extends React.PureComponent {
           <h1 className="cf-push-left" {...fullWidth}>
             {appealsCount} {pluralize('case', appealsCount)} found for “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
           </h1>
-          <p>View { docCount && `${docCount} ` }documents in Caseflow Reader</p>
           <CaseListTable appeals={this.props.caseList.receivedAppeals} />
         </div>
       </AppSegment>
