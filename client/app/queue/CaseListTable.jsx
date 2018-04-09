@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
 import Table from '../components/Table';
 import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
@@ -11,7 +13,11 @@ export default class CaseListTable extends React.PureComponent {
   getColumns = () => [
     {
       header: 'Docket Number',
-      valueFunction: (appeal) => appeal.attributes.docket_number
+      valueFunction: (appeal) => <span>
+        <Link to={`/tasks/${appeal.attributes.vacols_id}`}>
+          {appeal.attributes.docket_number}
+        </Link>
+      </span>
     },
     {
       header: 'Appellant Name',
