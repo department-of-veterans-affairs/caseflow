@@ -6,12 +6,23 @@ import Table from '../components/Table';
 
 const summary = 'Claims for manager review';
 
-const cancelExplanation = (intake) => {
+const formatExplanation = (intake) => {
+  const explanationCopy = {
+    veteran_not_accessible: 'sensitivity',
+    veteran_not_valid: 'missing profile information',
+    no_eligible_appeals: 'no eligible appeals',
+    no_active_fully_compensation_appeals: 'no compensation issues',
+    duplicate_ep: 'Duplicate EP created outside Caseflow',
+    system_error: 'System error',
+    missing_signature: 'Missing signature',
+    veteran_clarification: 'Need clarification from Veteran'
+  }
+
   if (intake.completion_status === 'error') {
-    return `Error: ${intake.error_code}`
+    return `Error: ${explanationCopy[intake.error_code]}`
   } else if (intake.completion_status === 'canceled'){
-    const cancel_other = intake.cancel_other ? `- "${intake.cancel_other}"` : ''
-    return `Canceled: ${intake.cancel_reason} ${cancel_other}`
+    const cancel_explanation = intake.cancel_other ? intake.cancel_other : explanationCopy[intake.cancel_reason]
+    return `Canceled: ${cancel_explanation}`
   }
 }
 
