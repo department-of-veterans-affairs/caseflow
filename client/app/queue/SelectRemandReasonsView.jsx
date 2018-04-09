@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import decisionViewBase from './components/DecisionViewBase';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Button from '../components/Button';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
 import { fullWidth } from './constants';
@@ -49,11 +49,13 @@ class SelectRemandReasonsView extends React.Component {
 
     if (issues.length > 1 && renderedOptions.length < issues.length) {
       renderedOptions.push(
-        <Link
+        <Button
+          willNeverBeLoading
+          linkStyling
           key="show-more"
           onClick={() => this.setState({ issuesRendered: Math.min(this.state.issuesRendered + 2, issues.length) })}>
           Show more
-        </Link>
+        </Button>
       );
     }
 

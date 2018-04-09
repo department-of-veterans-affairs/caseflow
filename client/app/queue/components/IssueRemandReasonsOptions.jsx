@@ -23,7 +23,6 @@ import {
 
 const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
-const mediumBottomMargin = css({ marginBottom: '2rem' });
 const flexContainer = css({
   display: 'flex',
   maxWidth: '75rem'
@@ -31,9 +30,7 @@ const flexContainer = css({
 const flexColumn = css({
   flexDirection: 'row',
   flexWrap: 'wrap',
-  // todo: confirm these are being applied correctly
-  '@media(max-width: 768px)': { width: '100%' },
-  '@media(min-width: 769px)': { width: '50%' }
+  width: '50%'
 });
 
 class IssueRemandReasonsOptions extends React.PureComponent {
@@ -117,8 +114,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     </label>
     {values[option.id].checked && <RadioField
       id={option.id}
+      vertical
       key={`${option.id}-after-certification`}
-      styling={css(smallLeftMargin, mediumBottomMargin)}
+      styling={css(smallLeftMargin, smallBottomMargin)}
       name={`${option.id}-after-cert-radio-btns`}
       hideLabel
       options={[{
@@ -151,10 +149,11 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>Issue {idx + 1}</h2>
-      <div>Program: {getIssueProgramDescription(issue)}</div>
-      <div>Issue: {getIssueTypeDescription(issue)}</div>
-      <div>Code: {_.last(issue.description)}</div>
-      <div>Certified: {(issue.date_assigned || new Date().toISOString()).split('T')[0]}</div>
+      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
+      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
+      <div {...smallBottomMargin}>Code: {_.last(issue.description)}</div>
+      {/* todo: certified date */}
+      <div {...smallBottomMargin}>Certified: {(issue.date_assigned || new Date().toISOString()).split('T')[0]}</div>
 
       <div {...flexContainer}>
         <div {...flexColumn}>

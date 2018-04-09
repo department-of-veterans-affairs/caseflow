@@ -72,7 +72,6 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     goToStep = (url) => {
-      // todo: confirmation message, trigger reloading tasks
       this.props.history.push(url);
       window.scrollTo(0, 0);
     };
