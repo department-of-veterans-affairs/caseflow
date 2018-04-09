@@ -4,12 +4,12 @@ import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import IntakesForReviewContainer from './IntakesForReviewContainer';
-import { manageIntakeReducers, mapDataToInitialState } from './reducers';
+import { intakeManagerReducers, mapDataToInitialState } from './reducers';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
-const ManageIntake = ({
+const IntakeManager = ({
   userDisplayName,
   dropdownUrls,
   feedbackUrl,
@@ -18,17 +18,17 @@ const ManageIntake = ({
 
   const initialState = mapDataToInitialState();
 
-  return <ReduxBase initialState={initialState} reducer={manageIntakeReducers}>
+  return <ReduxBase initialState={initialState} reducer={intakeManagerReducers}>
     <div>
-      <BrowserRouter basename="/intake/manage">
+      <BrowserRouter basename="/intake/manager">
         <div>
           <NavigationBar
-            appName="Manage Intakes"
+            appName="Intake Manager"
             logoProps={{
               accentColor: LOGO_COLORS.INTAKE.ACCENT,
               overlapColor: LOGO_COLORS.INTAKE.OVERLAP
             }}
-            defaultUrl="/intake/manage"
+            defaultUrl="/intake/manager"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>
             <div className="cf-wide-app">
@@ -41,7 +41,7 @@ const ManageIntake = ({
             </div>
           </NavigationBar>
           <Footer
-            appName="Manage Intakes"
+            appName="Intake Manager"
             feedbackUrl={feedbackUrl}
             buildDate={buildDate} />
         </div>
@@ -50,4 +50,4 @@ const ManageIntake = ({
   </ReduxBase>;
 };
 
-export default ManageIntake;
+export default IntakeManager;

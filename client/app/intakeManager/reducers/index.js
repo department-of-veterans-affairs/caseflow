@@ -9,14 +9,14 @@ export const mapDataToInitialState = function() {
   };
 };
 
-export const manageIntakeReducers = (state = mapDataToInitialState(), action = {}) => {
+export const intakeManagerReducers = (state = mapDataToInitialState(), action = {}) => {
   switch (action.type) {
   case Constants.POPULATE_INTAKES_FOR_REVIEW:
     return update(state, {
       loading: { $set: false },
       intakesForReview: {
         $set: _(action.payload.intakes).
-          sortBy('prepared_at').
+          sortBy('completed_at').
           value()
       }
     });

@@ -11,7 +11,7 @@ export const populateIntakesForReview = ( intakes ) => ({
 export const fetchIntakesForReview = () => (dispatch) => {
   dispatch({ type: Constants.SET_LOADING_STATE,
     payload: { value: true } });
-  ApiUtil.get('/intake/manage/intakes_for_review').
+  ApiUtil.get('/intake/manager/intakes_for_review').
     then((response) => {
       dispatch(populateIntakesForReview(response.body));
     });
