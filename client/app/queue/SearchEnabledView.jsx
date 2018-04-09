@@ -22,9 +22,6 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class SearchEnabledView extends React.PureComponent {
-  // TODO: What is the search results error behaviour here?
-  // As written if a search errored, the child would return to being displayed and the error would show above the list.
-  // Do we want to have the previous search stick around?
   render() {
     const {
       appealCount,

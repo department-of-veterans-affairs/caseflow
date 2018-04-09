@@ -17,7 +17,6 @@ const backLinkStyling = css({
   marginTop: '-3rem'
 });
 
-// TODO: Add breadcrumbs.
 class CaseListView extends React.PureComponent {
   // TODO: What is the search results error behaviour here?
   // As written if a search errored, the child would return to being displayed and the error would show above the list.
@@ -37,7 +36,7 @@ class CaseListView extends React.PureComponent {
       <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>
-            {appealsCount} {pluralize('case', appealsCount)} found for "{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})"
+            {appealsCount} {pluralize('case', appealsCount)} found for “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
           </h1>
           <p>View { docCount && `${docCount} ` }documents in Caseflow Reader</p>
           <CaseListTable appeals={this.props.caseList.receivedAppeals} />
