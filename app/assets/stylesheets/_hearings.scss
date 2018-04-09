@@ -4,7 +4,6 @@
 // variables here should eventually find their way into commons
 @import 'variables';
 
-
 .worksheet-header {
   .question-label {
     margin-bottom: 4px;
@@ -76,10 +75,7 @@
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
-  padding-bottom: $cf-30px;
-  padding-top: 50px;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding: 40px;
 
   .cf-hearings-title-and-judge {
     h1 {
@@ -112,6 +108,9 @@
 
   .cf-hearings-docket {
     margin-top: 0;
+    margin-bottom: -40px;
+    margin-right: -40px;
+    margin-left: -40px;
 
     // TODO: see if this can become a part of the general style
     .Select-arrow-zone {
@@ -145,7 +144,7 @@
       &:first-child {
         font-weight: bold;
         padding-right: 0;
-        padding-left: 0;
+        padding-left: 20px;
         float: right;
       }
     }
@@ -232,7 +231,7 @@
       background-color: $color-gray-lightest;
 
       .cf-form-dropdown {
-        min-width: 170px;
+        min-width: 150px;
         text-align: left;
         display: inline-block;
         width: 33%;
@@ -328,6 +327,7 @@
 }
 
 .cf-hearings-worksheet-data {
+  white-space: pre-line;
   position: relative;
   margin-bottom: 1.765em;
 

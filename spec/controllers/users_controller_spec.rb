@@ -11,7 +11,7 @@ RSpec.describe UsersController, type: :controller do
   describe "GET /users?role=Judge" do
     context "when role is passed" do
       it "should be successful" do
-        get :index, role: "Judge"
+        get :index, params: { role: "Judge" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["judges"].size).to eq 3

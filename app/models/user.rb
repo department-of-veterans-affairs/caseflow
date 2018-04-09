@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :tasks
   has_many :document_views
   has_many :appeal_views
@@ -102,7 +102,7 @@ class User < ActiveRecord::Base
   end
 
   def current_task(task_type)
-    tasks.to_complete.find_by(type: task_type)
+    tasks.to_complete.find_by(type: task_type.to_s)
   end
 
   def to_hash

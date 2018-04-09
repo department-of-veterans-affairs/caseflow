@@ -10,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Table from '../components/Table';
+import Alert from '../components/Alert';
 
 import {
   updateEditingAppealIssue,
@@ -17,7 +18,10 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import { highlightInvalidFormItems } from './uiReducer/uiActions';
+import {
+  highlightInvalidFormItems,
+  hideSuccessMessage
+} from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -39,6 +43,7 @@ const tbodyStyling = css({
     }
   }
 });
+const smallTopMargin = css({ marginTop: '1rem' });
 
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
@@ -59,6 +64,7 @@ class SelectDispositionsView extends React.PureComponent {
       `/tasks/${vacolsId}/remands` : nextStep;
   }
 
+  componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
   updateIssue = (issueId, attributes) => {
@@ -66,7 +72,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     this.props.startEditingAppealIssue(vacolsId, issueId, attributes);
     this.props.saveEditedAppealIssue(vacolsId);
-  }
+  };
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
@@ -114,25 +120,30 @@ class SelectDispositionsView extends React.PureComponent {
       vacolsId={this.props.vacolsId} />
   }];
 
-  render = () => <React.Fragment>
-    <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-      Select Dispositions
-    </h1>
-    <p className="cf-lead-paragraph" {...marginBottom(2)}>
-      Review each issue and assign the appropriate dispositions.
-    </p>
-    <hr />
-    <Table
-      columns={this.getColumns}
-      rowObjects={this.props.appeal.attributes.issues}
-      getKeyForRow={this.getKeyForRow}
-      styling={tableStyling}
-      bodyStyling={tbodyStyling}
-    />
-    <div {...marginLeft(1.5)}>
-      <Link>Add Issue</Link>
-    </div>
-  </React.Fragment>;
+  render = () => {
+    const { saveResult } = this.props;
+
+    return <React.Fragment>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
+        Select Dispositions
+      </h1>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
+        Review each issue and assign the appropriate dispositions.
+      </p>
+      {saveResult && <Alert type="success" title={saveResult} styling={smallTopMargin} />}
+      <hr />
+      <Table
+        columns={this.getColumns}
+        rowObjects={this.props.appeal.attributes.issues}
+        getKeyForRow={this.getKeyForRow}
+        styling={tableStyling}
+        bodyStyling={tbodyStyling}
+      />
+      <div {...marginLeft(1.5)}>
+        <Link>Add Issue</Link>
+      </div>
+    </React.Fragment>;
+  };
 }
 
 SelectDispositionsView.propTypes = {
@@ -142,7 +153,8 @@ SelectDispositionsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId]
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  saveResult: state.ui.messages.success
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -150,7 +162,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  hideSuccessMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

@@ -36,9 +36,16 @@ export default function decisionViewBase(ComponentToWrap) {
       }
 
       const breadcrumb = this.state.wrapped.getBreadcrumb();
+      const renderedCrumbs = _.map(this.props.breadcrumbs, 'path');
+      const newCrumbIdx = renderedCrumbs.indexOf(breadcrumb.path);
 
-      if (breadcrumb && _.last(this.props.breadcrumbs).path !== breadcrumb.path) {
+      if (newCrumbIdx === -1) {
         this.props.pushBreadcrumb(breadcrumb);
+      } else if (newCrumbIdx < (renderedCrumbs.length - 1)) {
+        // if returning to an earlier page, remove later crumbs
+        const crumbsToPop = renderedCrumbs.length - (newCrumbIdx + 1);
+
+        this.props.popBreadcrumb(crumbsToPop);
       }
     };
 

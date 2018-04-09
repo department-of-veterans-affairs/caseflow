@@ -1,4 +1,4 @@
-class CreateApiViews < ActiveRecord::Migration
+class CreateApiViews < ActiveRecord::Migration[5.1]
   def change
     create_table :api_views do |t|
       t.datetime   :created_at

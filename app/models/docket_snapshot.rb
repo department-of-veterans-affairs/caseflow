@@ -1,4 +1,4 @@
-class DocketSnapshot < ActiveRecord::Base
+class DocketSnapshot < ApplicationRecord
   has_many :docket_tracers
   before_validation :set_docket_count, :set_latest_docket_month, on: :create
   after_create :create_tracers
