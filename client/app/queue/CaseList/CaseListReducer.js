@@ -5,7 +5,7 @@ export const initialState = {
   caseListCriteria: {
     searchQuery: ''
   },
-  documentCountForVeteran: 0,
+  displayCaseListResults: false,
   isRequestingAppealsUsingVeteranId: false,
   receivedAppeals: [],
   search: {
@@ -24,21 +24,16 @@ export const caseListReducer = (state = initialState, action = {}) => {
           $set: ''
         }
       },
-      documentCountForVeteran: { $set: 0 },
+      displayCaseListResults: { $set: false },
       receivedAppeals: { $set: {} },
       search: {
         showErrorMessage: { $set: false },
         noAppealsFoundSearchQueryValue: { $set: null }
       }
     });
-  case Constants.INCREASE_VETERAN_DOCUMENT_COUNT_BY:
-    return update(state, {
-      documentCountForVeteran: {
-        $set: action.payload.count + state.documentCountForVeteran
-      }
-    });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE:
     return update(state, {
+      displayCaseListResults: { $set: true },
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showErrorMessage: { $set: true },
@@ -47,6 +42,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
     });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS:
     return update(state, {
+      displayCaseListResults: { $set: true },
       isRequestingAppealsUsingVeteranId: { $set: false },
       receivedAppeals: {
         $set: action.payload.appeals
@@ -58,6 +54,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
     });
   case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
     return update(state, {
+      displayCaseListResults: { $set: true },
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showErrorMessage: { $set: false },

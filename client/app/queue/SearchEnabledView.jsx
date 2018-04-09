@@ -24,7 +24,7 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 class SearchEnabledView extends React.PureComponent {
   render() {
     const {
-      appealCount,
+      displayCaseListResults,
       feedbackUrl,
       isRequestingAppealsUsingVeteranId,
       shouldUseAppealSearch
@@ -41,7 +41,7 @@ class SearchEnabledView extends React.PureComponent {
         feedbackUrl={feedbackUrl}
         searchSize="big"
         styling={searchStyling(isRequestingAppealsUsingVeteranId)} />
-      { shouldUseAppealSearch && appealCount > 0 ? <CaseListView /> : this.props.children }
+      { shouldUseAppealSearch && displayCaseListResults ? <CaseListView /> : this.props.children }
     </React.Fragment>;
   }
 }
@@ -51,7 +51,7 @@ SearchEnabledView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  appealCount: state.caseList.receivedAppeals.length,
+  displayCaseListResults: state.caseList.displayCaseListResults,
   isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId,
   shouldUseAppealSearch: state.caseList.shouldUseAppealSearch
 });

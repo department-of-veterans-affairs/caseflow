@@ -74,7 +74,7 @@ class CaseListSearch extends React.PureComponent {
 
   handleSelectAppeal = () => {
     // get the appeal selected from the modal
-    const allAppeals = this.props.caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a));
+    const allAppeals = this.props.caseList.receivedAppeals.map((apl) => buildCollapsedAppealFrom(apl));
     const appeal = _.find(allAppeals,
       { vacols_id: this.props.caseSelect.selectedAppealVacolsId });
 
@@ -88,6 +88,19 @@ class CaseListSearch extends React.PureComponent {
   // TODO: Work on refactoring this after we get the old way up and running.
   render() {
     const { caseList, caseSelect } = this.props;
+
+    const readerSearchErrors = () => {
+      if (caseList.search.showErrorMessage) {
+        return <Alert title="Veteran ID not found" type="error">
+          Please enter a valid Veteran ID and try again.
+        </Alert>;
+      }
+      if (caseList.search.noAppealsFoundSearchQueryValue) {
+        return <Alert title="No appeals found" type="info">
+          {`Veteran ID ${caseList.search.noAppealsFoundSearchQueryValue} does not have any appeals.`}
+        </Alert>;
+      }
+    };
 
     const createAppealOptions = (appeals) =>
       appeals.map((appeal) => ({
@@ -104,17 +117,42 @@ class CaseListSearch extends React.PureComponent {
 
     const modalShowThreshold = this.props.alwaysShowCaseSelectionModal ? 0 : 1;
 
+    const readerSearchModal = () => {
+      if ((_.size(caseList.receivedAppeals) > modalShowThreshold)) {
+        return <Modal
+          buttons = {[
+            { classNames: ['cf-modal-link', 'cf-btn-link'],
+              name: 'Cancel',
+              onClick: this.handleModalClose
+            },
+            { classNames: ['usa-button', 'usa-button-primary'],
+              name: 'Okay',
+              onClick: this.handleSelectAppeal,
+              disabled: _.isEmpty(caseSelect.selectedAppealVacolsId)
+            }
+          ]}
+          closeHandler={this.handleModalClose}
+          title = "Select claims folder">
+          <RadioField
+            name="claims-folder-select"
+            options={createAppealOptions(caseList.receivedAppeals.map((apl) => buildCollapsedAppealFrom(apl)))}
+            value={caseSelect.selectedAppealVacolsId}
+            onChange={this.handleChangeAppealSelection}
+            hideLabel
+          />
+          <p>
+            Not seeing what you expected? <a
+              name="feedbackUrl"
+              href={this.props.feedbackUrl}>
+              Please send us feedback.
+            </a>
+          </p>
+        </Modal>;
+      }
+    };
+
     return <div className="section-search" {...this.props.styling}>
-      {caseList.search.showErrorMessage &&
-        <Alert title="Veteran ID not found" type="error">
-          Please enter a valid Veteran ID and try again.
-        </Alert>
-      }
-      {caseList.search.noAppealsFoundSearchQueryValue &&
-        <Alert title="No appeals found" type="info">
-          {`Veteran ID ${caseList.search.noAppealsFoundSearchQueryValue} does not have any appeals.`}
-        </Alert>
-      }
+      { !this.props.caseList.shouldUseAppealSearch && readerSearchErrors() }
       <SearchBar
         id="searchBar"
         size={this.props.searchSize}
@@ -125,36 +163,7 @@ class CaseListSearch extends React.PureComponent {
         loading={caseList.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { !this.props.caseList.shouldUseAppealSearch && Boolean(_.size(caseList.receivedAppeals) > modalShowThreshold) && <Modal
-        buttons = {[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: 'Cancel',
-            onClick: this.handleModalClose
-          },
-          { classNames: ['usa-button', 'usa-button-primary'],
-            name: 'Okay',
-            onClick: this.handleSelectAppeal,
-            disabled: _.isEmpty(caseSelect.selectedAppealVacolsId)
-          }
-        ]}
-        closeHandler={this.handleModalClose}
-        title = "Select claims folder">
-        <RadioField
-          name="claims-folder-select"
-          options={createAppealOptions(caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a)))}
-          value={caseSelect.selectedAppealVacolsId}
-          onChange={this.handleChangeAppealSelection}
-          hideLabel
-        />
-        <p>
-          Not seeing what you expected? <a
-            name="feedbackUrl"
-            href={this.props.feedbackUrl}>
-            Please send us feedback.
-          </a>
-        </p>
-      </Modal>
-      }
+      { !this.props.caseList.shouldUseAppealSearch && readerSearchModal() }
     </div>;
   }
 }

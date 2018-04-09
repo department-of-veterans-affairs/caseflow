@@ -27,18 +27,25 @@ class CaseListView extends React.PureComponent {
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
     const firstAppeal = this.props.caseList.receivedAppeals[0];
-    const docCount = this.props.caseList.documentCountForVeteran;
 
     return <React.Fragment>
       <div {...backLinkStyling}>
         <Link to="/" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
       </div>
       <AppSegment filledBackground>
-        <div>
-          <h1 className="cf-push-left" {...fullWidth}>
-            {appealsCount} {pluralize('case', appealsCount)} found for “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
-          </h1>
-          <CaseListTable appeals={this.props.caseList.receivedAppeals} />
+        <div> { this.props.caseList.receivedAppeals.length > 0 ?
+          <React.Fragment>
+            <h1 className="cf-push-left" {...fullWidth}>
+              {appealsCount} {pluralize('case', appealsCount)} found for&nbsp;
+              “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
+            </h1>
+            <CaseListTable appeals={this.props.caseList.receivedAppeals} />
+          </React.Fragment> :
+          <React.Fragment>
+            <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.searchQuery}”</h1>
+            <p>Please enter a valid 9-digit Veteran ID to search for all available cases.</p>
+          </React.Fragment>
+        }
         </div>
       </AppSegment>
     </React.Fragment>;
@@ -46,7 +53,8 @@ class CaseListView extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  caseList: state.caseList
+  caseList: state.caseList,
+  searchQuery: state.caseList.caseListCriteria.searchQuery
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCaseListSearch }, dispatch);

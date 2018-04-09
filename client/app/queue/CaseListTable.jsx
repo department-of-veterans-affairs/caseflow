@@ -49,7 +49,9 @@ export default class CaseListTable extends React.PureComponent {
     },
     {
       header: 'Decision Date',
-      valueFunction: (appeal) => appeal.attributes.decision_date ? <DateString date={appeal.attributes.decision_date} /> : ''
+      valueFunction: (appeal) => appeal.attributes.decision_date ?
+        <DateString date={appeal.attributes.decision_date} /> :
+        ''
     },
     {
       header: 'Assigned To',
