@@ -41,7 +41,7 @@ class QueueListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 {...fullWidth}>Your Queue</h1>
-        {messages.success.message && <Alert type="success" title={messages.success.message}>
+        {messages.success && <Alert type="success" title={messages.success}>
           If you made a mistake please email your judge to resolve the issue.
         </Alert>}
         <QueueTable />
