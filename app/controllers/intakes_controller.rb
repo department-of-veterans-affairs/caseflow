@@ -61,10 +61,6 @@ class IntakesController < ApplicationController
     render json: {}
   end
 
-  def manager_review
-    render json: Intake.manager_review
-  end
-
   private
 
   def no_cache

@@ -111,8 +111,8 @@ Rails.application.routes.draw do
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
-    get "/manager", to: 'intakes#manager'
-    get "/manager/intakes_for_review", to: 'intakes#manager_review'
+    get "/manager", to: 'intake_manager#index'
+    get "/manager/intakes_for_review", to: 'intake_manager#intakes_for_review'
   end
 
   resources :intakes, path: "/intake", only: [:index, :create, :destroy] do

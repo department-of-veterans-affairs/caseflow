@@ -1,8 +1,8 @@
-class IntakeStatsController < ApplicationController
+class IntakeManagerController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
-  
-  def manager_review
+
+  def intakes_for_review
     render json: Intake.manager_review
   end
 
