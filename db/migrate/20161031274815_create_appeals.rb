@@ -1,4 +1,4 @@
-class CreateAppeals < ActiveRecord::Migration
+class CreateAppeals < ActiveRecord::Migration[5.1]
   def change
     create_table :appeals do |t|
       t.string    :vacols_id, null: false

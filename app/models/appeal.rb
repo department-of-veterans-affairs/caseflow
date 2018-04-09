@@ -1,5 +1,5 @@
 # rubocop:disable Metrics/ClassLength
-class Appeal < ActiveRecord::Base
+class Appeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes

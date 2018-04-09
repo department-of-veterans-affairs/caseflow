@@ -1,4 +1,4 @@
-class CreateDocketSnapshots < ActiveRecord::Migration
+class CreateDocketSnapshots < ActiveRecord::Migration[5.1]
   def change
     create_table :docket_snapshots do |t|
       t.integer    :docket_count

@@ -1,4 +1,4 @@
-class CalculateDispatchStatsJob < ActiveJob::Base
+class CalculateDispatchStatsJob < ApplicationJob
   queue_as :low_priority
 
   # :nocov:

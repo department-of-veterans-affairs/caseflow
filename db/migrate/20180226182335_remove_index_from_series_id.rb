@@ -1,4 +1,4 @@
-class RemoveIndexFromSeriesId < ActiveRecord::Migration
+class RemoveIndexFromSeriesId < ActiveRecord::Migration[5.1]
   def change
     ActiveRecord::Base.connection.execute "SET statement_timeout = 1800000" # 30 minutes
 

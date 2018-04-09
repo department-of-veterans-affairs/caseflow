@@ -75,6 +75,9 @@ export class Dockets extends React.Component {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
+  getCombinedRONames = (docket) => docket.regional_office_names ? docket.regional_office_names.join(' / ') : '';
+  getRegionalOffice = (docket) => docket.type === 'central_office' ? '' : this.getCombinedRONames(docket);
+
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
 
@@ -87,7 +90,7 @@ export class Dockets extends React.Component {
         date: this.linkToDailyDocket(docket),
         start_time: getDateTime(docket.date),
         type: this.getType(docket.type),
-        regional_office: docket.regional_office_name,
+        regional_office: this.getRegionalOffice(docket),
         slots: docket.slots,
         scheduled: this.getScheduledCount(docket)
       };

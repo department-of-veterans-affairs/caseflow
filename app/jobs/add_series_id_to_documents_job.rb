@@ -1,4 +1,4 @@
-class AddSeriesIdToDocumentsJob < ActiveJob::Base
+class AddSeriesIdToDocumentsJob < ApplicationJob
   queue_as :low_priority
 
   def perform(appeal)
