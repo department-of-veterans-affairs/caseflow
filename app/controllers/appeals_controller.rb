@@ -5,8 +5,6 @@ class AppealsController < ApplicationController
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
                           name: "QueueController.appeals") do
 
-      # TODO: fix the way this structure looks, currently it returns as:
-      # { appeals: { data: [{},{},{}] } } # Get rid of the data element and return the array as the appeals element.
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
       rescue ActiveRecord::RecordNotFound => err
