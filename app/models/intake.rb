@@ -154,7 +154,8 @@ class Intake < ApplicationRecord
   end
 
   def self.manager_review
-    Intake.includes(:user)
+    Intake.select('intakes.*, users.full_name')
+      .joins('JOIN users ON intakes.user_id = users.id')
       .where.not(completion_status: 'success')
       .where(:error_code => [
         nil,
