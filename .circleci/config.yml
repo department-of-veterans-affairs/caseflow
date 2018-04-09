@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
+      - image: circleci/ruby:2.2-node-browsers
         environment:
           - RAILS_ENV: test
           - NODE_ENV: test
