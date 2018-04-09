@@ -69,6 +69,7 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
+      return if rails_env.local?
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
