@@ -59,8 +59,20 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.saveEditedAppealIssue(appealId);
   };
 
-  // issues have no remand reasons before this point
-  componentDidMount = () => this.updateIssue({ remand_reasons: [] });
+  componentDidMount = () => {
+    const { issue } = this.props;
+
+    if (!issue.remand_reasons) {
+      this.updateIssue({ remand_reasons: [] });
+    } else {
+      _.each(issue.remand_reasons, (reason) => this.setState({
+        [reason.code]: {
+          checked: true,
+          after_certification: reason.after_certification
+        }
+      }));
+    }
+  }
 
   componentWillUnmount = () => {
     // on unmount, update issue attrs from state
@@ -131,6 +143,11 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issue,
       idx
     } = this.props;
+    const checkboxGroupProps = {
+      onChange: this.toggleRemandReason,
+      getCheckbox: this.getCheckbox,
+      values: this.state
+    };
 
     return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>Issue {idx + 1}</h2>
@@ -145,16 +162,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             label={<h3>Medical examination and opinion</h3>}
             name="med-exam"
             options={REMAND_REASONS.medicalExam}
-            onChange={this.toggleRemandReason}
-            getCheckbox={this.getCheckbox}
-            values={this.state} />
+            {...checkboxGroupProps} />
           <CheckboxGroup
             label={<h3>Duty to assist records request</h3>}
             name="duty-to-assist"
             options={REMAND_REASONS.dutyToAssistRecordsRequest}
-            onChange={this.toggleRemandReason}
-            getCheckbox={this.getCheckbox}
-            values={this.state} />
+            {...checkboxGroupProps} />
         </div>
         {/* todo: better CheckboxGroup y alignment */}
         <div {...flexColumn}>
@@ -162,16 +175,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             label={<h3>Duty to notify</h3>}
             name="duty-to-notify"
             options={REMAND_REASONS.dutyToNotify}
-            onChange={this.toggleRemandReason}
-            getCheckbox={this.getCheckbox}
-            values={this.state} />
+            {...checkboxGroupProps} />
           <CheckboxGroup
             label={<h3>Due process</h3>}
             name="due-process"
             options={REMAND_REASONS.dueProcess}
-            onChange={this.toggleRemandReason}
-            getCheckbox={this.getCheckbox}
-            values={this.state} />
+            {...checkboxGroupProps} />
         </div>
       </div>
     </div>;
