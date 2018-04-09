@@ -15,5 +15,3 @@ RUN apt-get install yarn
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 RUN curl -sL https://deb.nodesource.com/setup_9.x
 RUN apt-get install nodejs
-
-RUN mkdir -p ~/project/tmp/testfiles
