@@ -32,9 +32,9 @@ class QueueListView extends React.PureComponent {
     if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
       this.props.showErrorMessage({
         title: 'Some cases need preliminary DAS assignments',
-        detail: 'Cases marked with exclamation points need to be assigned to you' +
-        'through DAS. Please contact your judge or senior counsel to create ' +
-        'preliminary DAS assignments.'
+        detail: `Cases marked with exclamation points need to be assigned 
+        to you through DAS. Please contact your judge or senior counsel to 
+        create preliminary DAS assignments.`
       });
     }
   };

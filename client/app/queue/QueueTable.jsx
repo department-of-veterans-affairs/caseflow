@@ -28,7 +28,7 @@ const disabledLinkStyle = css({
 });
 const exclamationPointStyle = css({
   backgroundColor: '#E60000',
-  color: 'white',
+  color: COMMON_COLORS.WHITE,
   borderRadius: '50%',
   marginLeft: '-2.5rem',
   marginRight: '0.5rem',
