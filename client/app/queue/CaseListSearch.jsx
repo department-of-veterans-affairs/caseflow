@@ -151,9 +151,12 @@ class CaseListSearch extends React.PureComponent {
       }
     };
 
-    return <div className="section-search" {...this.props.styling}>
-      { !this.props.caseList.shouldUseAppealSearch && readerSearchErrors() }
-      <SearchBar
+    const topSearchBar = () => {
+      if (caseList.displayCaseListResults && caseList.search.showErrorMessage) {
+        return;
+      }
+
+      return <SearchBar
         id="searchBar"
         size={this.props.searchSize}
         onChange={this.props.setCaseListSearch}
@@ -162,8 +165,13 @@ class CaseListSearch extends React.PureComponent {
         onSubmit={this.searchOnChange}
         loading={caseList.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
-      />
-      { !this.props.caseList.shouldUseAppealSearch && readerSearchModal() }
+      />;
+    };
+
+    return <div className="section-search" {...this.props.styling}>
+      { !caseList.shouldUseAppealSearch && readerSearchErrors() }
+      { topSearchBar() }
+      { !caseList.shouldUseAppealSearch && readerSearchModal() }
     </div>;
   }
 }

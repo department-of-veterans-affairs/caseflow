@@ -54,6 +54,7 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
 
         if (_.size(appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
+          dispatch(fetchAppealUsingVeteranIdFailed());
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(appeals));
         }
