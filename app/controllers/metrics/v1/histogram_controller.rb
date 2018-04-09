@@ -14,6 +14,6 @@ class Metrics::V1::HistogramController < ApplicationController
   end
 
   def histograms
-    params.require(:histograms)
+    params.require(:histograms).map { |param| param.permit(:group, :name, :value, :app_name, attrs: {}).to_h }
   end
 end
