@@ -66,25 +66,32 @@ export const resetBreadcrumbs = () => ({
 export const saveSuccess = (message) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
+
+  return Promise.resolve();
 };
 
 export const saveFailure = (resp) => (dispatch) => {
-  const errors = JSON.parse(resp.response.text).errors;
+  const { response } = resp;
+  const errors = response.text ? JSON.parse(response.text).errors : [response.statusText];
 
   dispatch(showErrorMessage(errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
+
+  return Promise.reject(errors[0]);
 };
 
-export const requestSave = (url, params, successMessage) => (dispatch) => {
+export const requestSave = (url, params, successMessage, verb = 'post') => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
-  return ApiUtil.post(url, params).then(
+  return ApiUtil[verb](url, params).then(
     () => dispatch(saveSuccess(successMessage)),
     (resp) => dispatch(saveFailure(resp))
   );
 };
+
+export const requestUpdate = (url, params, successMessage) => requestSave(url, params, successMessage, 'put');
 
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE

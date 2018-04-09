@@ -159,13 +159,20 @@ class SeedDB
 
   def seed
     clean_db
+    # Annotations and tags don't come from VACOLS, so our seeding should 
+    # create them in all envs
+    create_annotations
+    create_tags
+
+    return if Rails.env.local? 
+
+    # The fake data here is only necessary when we're not running
+    # a VACOLS copy locally.
     create_default_users
     create_appeals(50)
     create_users(3)
     create_tasks(50)
     create_ramp_elections(9)
-    create_annotations
-    create_tags
     create_hearings
     create_api_key
   end
