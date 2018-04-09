@@ -1,4 +1,4 @@
-class CreateHearingViews < ActiveRecord::Migration
+class CreateHearingViews < ActiveRecord::Migration[5.1]
   def change
     create_table :hearing_views do |t|
       t.belongs_to :hearing, null: false

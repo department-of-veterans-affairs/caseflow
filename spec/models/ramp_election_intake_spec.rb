@@ -1,6 +1,6 @@
 describe RampElectionIntake do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }

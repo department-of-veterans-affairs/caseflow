@@ -1,6 +1,5 @@
 class ErrorsController < ApplicationController
   skip_before_action :verify_authentication
-  skip_before_action :force_ssl
 
   def show
     status_code = params[:status_code]

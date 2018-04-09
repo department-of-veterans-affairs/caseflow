@@ -1,4 +1,4 @@
-class CreateUserQuotas < ActiveRecord::Migration
+class CreateUserQuotas < ActiveRecord::Migration[5.1]
   safety_assured # This is a new table. It'll be fine
 
   def change
