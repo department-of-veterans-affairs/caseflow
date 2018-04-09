@@ -47,17 +47,17 @@ class QueueTable extends React.PureComponent {
   getCaseDetailsLink = (task) => {
     let linkContent;
 
-    if (!task.attributes.task_id) {
+    if (task.attributes.task_id) {
+      linkContent = <Link to={`/tasks/${task.vacolsId}`}>
+        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
+      </Link>;
+    } else {
       linkContent = <React.Fragment>
         <span {...exclamationPointStyle}>&nbsp;&nbsp;!&nbsp;&nbsp;</span>
         <span {...disabledLinkStyle}>
           {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
         </span>
       </React.Fragment>;
-    } else {
-      linkContent = <Link to={`/tasks/${task.vacolsId}`}>
-        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
-      </Link>;
     }
 
     return <span>

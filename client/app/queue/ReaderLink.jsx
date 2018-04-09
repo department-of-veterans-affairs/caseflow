@@ -17,14 +17,10 @@ class ReaderLink extends React.PureComponent {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
 
-  render = () => {
+  getLinkText = () => {
     const {
-      docCount,
       message,
-      redirectUrl,
-      taskType,
-      task_id: taskId,
-      vacols_id: vacolsId
+      docCount
     } = this.props;
 
     let linkText = 'View in Reader';
@@ -35,9 +31,20 @@ class ReaderLink extends React.PureComponent {
       linkText = `View ${docCount.toLocaleString()} in Reader`;
     }
 
+    return linkText;
+  };
+
+  render = () => {
+    const {
+      redirectUrl,
+      taskType,
+      task_id: taskId,
+      vacols_id: vacolsId
+    } = this.props;
+
     if (!taskId) {
       return <span {...disabledLinkStyle}>
-        {linkText}
+        {this.getLinkText()}
       </span>;
     }
 
