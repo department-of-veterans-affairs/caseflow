@@ -46,17 +46,13 @@ class RampReview < ApplicationRecord
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end
 
-  def create_end_product!
-    fail InvalidEndProductError unless end_product.valid?
+  # If an EP with the exact same traits has already been created. Use that instead
+  # of creating a new EP. This prevents duplicate EP errors and allows this method
+  # to be idempotent
+  def create_or_connect_end_product!
+    return connect_end_product! if matching_end_product
 
-    establish_claim_in_vbms(end_product).tap do |result|
-      update!(
-        end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
-      )
-    end
-  rescue VBMS::HTTPError => error
-    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+    create_end_product!
   end
 
   def end_product_description
@@ -70,6 +66,14 @@ class RampReview < ApplicationRecord
 
   private
 
+  def veteran
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
+  end
+
+  def loaded_veteran
+    veteran.load_bgs_record!
+  end
+
   def end_product
     @end_product ||= EndProduct.new(
       claim_id: end_product_reference_id,
@@ -82,18 +86,39 @@ class RampReview < ApplicationRecord
     )
   end
 
-  def end_product_data_hash
-    END_PRODUCT_DATA_BY_OPTION[option_selected] || {}
+  # Find an end product that has the traits of the end product that should be created.
+  def matching_end_product
+    @matching_end_product = veteran.end_products.find { |ep| end_product.matches?(ep) }
   end
 
-  def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+  def create_end_product!
+    fail InvalidEndProductError unless end_product.valid?
+
+    establish_claim_in_vbms(end_product).tap do |result|
+      update!(
+        end_product_reference_id: result.claim_id,
+        established_at: Time.zone.now
+      )
+    end
+  rescue VBMS::HTTPError => error
+    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  end
+
+  def connect_end_product!
+    update!(
+      end_product_reference_id: matching_end_product.claim_id,
+      established_at: Time.zone.now
+    )
+  end
+
+  def end_product_data_hash
+    END_PRODUCT_DATA_BY_OPTION[option_selected] || {}
   end
 
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      veteran_hash: loaded_veteran.to_vbms_hash
     )
   end
 

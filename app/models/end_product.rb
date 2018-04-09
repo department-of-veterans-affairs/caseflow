@@ -67,6 +67,12 @@ class EndProduct
     STATUSES[status_type_code] || status_type_code
   end
 
+  def matches?(end_product)
+    claim_type_code == end_product.claim_type_code &&
+      modifier == end_product.modifier &&
+      claim_date == end_product.claim_date
+  end
+
   # Does this EP have a modifier that might conflict with a new dispatch EP?
   def dispatch_conflict?
     dispatch_modifier? && active?

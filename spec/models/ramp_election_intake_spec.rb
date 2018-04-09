@@ -93,6 +93,17 @@ describe RampElectionIntake do
       end
     end
 
+    let!(:not_matching_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: {
+          claim_type_code: "683SCRRRAMP",
+          claim_receive_date: 4.days.ago.to_formatted_s(:short_date),
+          end_product_type_code: "683"
+        }
+      ).claim_id
+    end
+
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 

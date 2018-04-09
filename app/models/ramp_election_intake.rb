@@ -28,17 +28,17 @@ class RampElectionIntake < Intake
   end
 
   def complete!(_request_params)
+    ramp_election.create_or_connect_end_product!
+
+    Appeal.close(
+      appeals: eligible_appeals,
+      user: user,
+      closed_on: Time.zone.today,
+      disposition: "RAMP Opt-in"
+    )
+
     transaction do
       complete_with_status!(:success)
-
-      Appeal.close(
-        appeals: eligible_appeals,
-        user: user,
-        closed_on: Time.zone.today,
-        disposition: "RAMP Opt-in"
-      ) do
-        ramp_election.create_end_product!
-      end
 
       eligible_appeals.each do |appeal|
         RampClosedAppeal.create!(
