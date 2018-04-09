@@ -24,8 +24,6 @@ import Breadcrumbs from './components/BreadcrumbManager';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  // TODO: CaseListSearch should probably move inside SearchEnabledView.
-  // TODO: We should move feedbackUrl to global state.
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView feedbackUrl={this.props.feedbackUrl}>
       <QueueListView {...this.props} />
