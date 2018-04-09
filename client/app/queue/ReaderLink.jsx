@@ -60,7 +60,7 @@ class ReaderLink extends React.PureComponent {
 
     return <Link href={href}
       onClick={this.readerLinkAnalytics}>
-      {linkText}
+      {this.getLinkText()}
     </Link>;
   };
 }
