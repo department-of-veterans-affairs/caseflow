@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 7, 17, 55, 0, rand(1000)))
+    Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
   end
 
   scenario "Switching tab intervals" do

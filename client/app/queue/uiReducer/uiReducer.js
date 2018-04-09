@@ -49,7 +49,7 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.POP_BREADCRUMB:
     return update(state, {
       breadcrumbs: {
-        $set: _.dropRight(state.breadcrumbs, 1)
+        $set: _.dropRight(state.breadcrumbs, action.payload.crumbsToDrop)
       }
     });
   case ACTIONS.RESET_BREADCRUMBS:

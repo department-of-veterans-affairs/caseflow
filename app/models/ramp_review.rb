@@ -2,6 +2,8 @@ class RampReview < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
   class InvalidEndProductError < StandardError; end
 
+  RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
+
   self.abstract_class = true
 
   attr_reader :saving_review
@@ -93,6 +95,10 @@ class RampReview < ApplicationRecord
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash
     )
+  end
+
+  def validate_receipt_date_not_before_ramp
+    errors.add(:receipt_date, "before_ramp") if receipt_date < RAMP_BEGIN_DATE
   end
 
   def validate_receipt_date_not_in_future
