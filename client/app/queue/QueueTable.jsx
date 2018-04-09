@@ -23,6 +23,17 @@ const subHeadStyle = css({
   fontSize: 'small',
   color: COMMON_COLORS.GREY_MEDIUM
 });
+const disabledLinkStyle = css({
+  color: COMMON_COLORS.GREY_MEDIUM
+});
+const exclamationPointStyle = css({
+  backgroundColor: '#E60000',
+  color: 'white',
+  borderRadius: '50%',
+  marginLeft: '-2.5rem',
+  marginRight: '0.5rem',
+  fontWeight: 'bold'
+});
 
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -33,18 +44,35 @@ class QueueTable extends React.PureComponent {
   };
   veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
+  getCaseDetailsLink = (task) => {
+    let linkContent;
+
+    if (!task.attributes.task_id) {
+      linkContent = <React.Fragment>
+        <span {...exclamationPointStyle}>&nbsp;&nbsp;!&nbsp;&nbsp;</span>
+        <span {...disabledLinkStyle}>
+          {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
+        </span>
+      </React.Fragment>;
+    } else {
+      linkContent = <Link to={`/tasks/${task.vacolsId}`}>
+        {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
+      </Link>;
+    }
+
+    return <span>
+      {linkContent}
+      {!this.veteranIsAppellant(task) && <React.Fragment>
+        <br />
+        <span {...subHeadStyle}>Veteran is not the appellant</span>
+      </React.Fragment>}
+    </span>;
+  };
+
   getQueueColumns = () => [
     {
       header: 'Case Details',
-      valueFunction: (task) => <span>
-        <Link to={`/tasks/${task.vacolsId}`}>
-          {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
-        </Link>
-        {!this.veteranIsAppellant(task) && <React.Fragment>
-          <br />
-          <span {...subHeadStyle}>Veteran is not the appellant</span>
-        </React.Fragment>}
-      </span>
+      valueFunction: this.getCaseDetailsLink
     },
     {
       header: 'Type(s)',
