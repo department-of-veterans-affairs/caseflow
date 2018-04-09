@@ -7,14 +7,12 @@ class AppealsController < ApplicationController
 
       # TODO: fix the way this structure looks, currently it returns as:
       # { appeals: { data: [{},{},{}] } } # Get rid of the data element and return the array as the appeals element.
-      # Look at other serializers.
-
-    begin
-      appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
-    rescue ActiveRecord::RecordNotFound => err
-      raise err unless feature_enabled?(:should_use_appeal_search)
-      appeals = []
-    end
+      begin
+        appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
+      rescue ActiveRecord::RecordNotFound => err
+        raise err unless feature_enabled?(:should_use_appeal_search)
+        appeals = []
+      end
 
       render json: {
         shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
