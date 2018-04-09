@@ -9,6 +9,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
+import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const PRINT_WINDOW_TIMEOUT_IN_MS = 150;
 
@@ -40,7 +41,12 @@ export class HearingWorksheetContainer extends React.Component {
     }
   }
 
-  afterPrint = () => window.close();
+  afterPrint = () => {
+    const params = getQueryParams(window.location.search);
+    if (params.src!=='reader') {
+      window.close();
+    }
+  }
 
   render() {
 
