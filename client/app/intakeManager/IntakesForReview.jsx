@@ -17,7 +17,7 @@ const cancelExplanation = (intake) => {
 
 const columns = [
   {
-    header: 'Veteran',
+    header: 'Veteran File Number',
     valueName: 'veteran_file_number'
   },
   {
@@ -31,7 +31,7 @@ const columns = [
   },
   {
     header: 'Employee',
-    valueName: 'user_id'
+    valueName: 'full_name'
   },
   {
     header: 'Explanation',

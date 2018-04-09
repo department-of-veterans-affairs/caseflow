@@ -4,6 +4,8 @@ class Intake < ApplicationRecord
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
+  delegate :full_name, to: :user
+
   enum completion_status: {
     success: "success",
     canceled: "canceled",
@@ -152,7 +154,15 @@ class Intake < ApplicationRecord
   end
 
   def self.manager_review
-    Intake.where.not(completion_status: 'success').includes(:user)
+    Intake.includes(:user)
+      .where.not(completion_status: 'success')
+      .where(:error_code => [
+        nil,
+        'veteran_not_accessible',
+        'veteran_not_valid',
+        'no_eligible_appeals',
+        'no_active_fully_compensation_appeals'
+      ])
   end
 
   private
