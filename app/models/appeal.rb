@@ -671,9 +671,7 @@ class Appeal < ApplicationRecord
     end
 
     def fetch_appeals_by_file_number(file_number)
-      # TODO: For some reason this conversion is causing the local dev environment to fail.
-      # repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
-      repository.appeals_by_vbms_id(file_number)
+      repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end
