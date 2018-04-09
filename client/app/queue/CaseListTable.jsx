@@ -7,6 +7,20 @@ import Table from '../components/Table';
 import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 
+const labelForLocation = (location_code) => {
+  if (!location_code) return '';
+
+  // TODO: Do we know the currently logged in user's location code?
+  // Maybe we can fire off a request to populate the global state
+  // with the current user's vacols location code (if it is not
+  // already set).
+  // if (location_code == this.props.user_location_code) {
+  //   return <span>Assigned to you</span>;
+  // }
+
+  return location_code;
+};
+
 export default class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
@@ -37,7 +51,7 @@ export default class CaseListTable extends React.PureComponent {
     },
     {
       header: 'Assigned To',
-      valueFunction: (appeal) => '1989'
+      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code)
     }
   ];
 
