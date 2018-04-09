@@ -53,6 +53,7 @@ class QueueRepository
         deteam: attorney.vacols_group_id[0..2],
         deadusr: judge.vacols_uniq_id,
         deadtim: VacolsHelper.local_date_with_utc_timezone,
+        dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
         deassign: VacolsHelper.local_date_with_utc_timezone,
         deicr: decass_complexity_rating(vacols_id)
       )
