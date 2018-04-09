@@ -66,6 +66,12 @@ class RampElection < RampReview
     )
   end
 
+  def successful_intake
+    @successful_intake ||= intakes.where(completion_status: "success")
+      .order(:completed_at)
+      .last
+  end
+
   private
 
   def cached_status_active?
@@ -85,9 +91,7 @@ class RampElection < RampReview
 
   def validate_receipt_date
     return unless receipt_date
+    validate_receipt_date_not_before_ramp
     validate_receipt_date_not_in_future
-    if notice_date && notice_date > receipt_date
-      errors.add(:receipt_date, "before_notice_date")
-    end
   end
 end
