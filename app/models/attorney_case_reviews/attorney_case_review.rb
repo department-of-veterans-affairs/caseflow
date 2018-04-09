@@ -17,18 +17,22 @@ class AttorneyCaseReview < ApplicationRecord
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
 
-    AttorneyCaseReview.repository.reassign_case_to_judge!(
-      vacols_id: vacols_id,
-      created_in_vacols_date: created_in_vacols_date,
-      judge_vacols_user_id: reviewing_judge.vacols_uniq_id,
-      decass_attrs: {
-        work_product: work_product,
-        document_id: document_id,
-        overtime: overtime,
-        note: note,
-        modifying_user: attorney.vacols_uniq_id
-      }
-    )
+    MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
+                          service: :vacols,
+                          name: type) do
+      AttorneyCaseReview.repository.reassign_case_to_judge!(
+        vacols_id: vacols_id,
+        created_in_vacols_date: created_in_vacols_date,
+        judge_vacols_user_id: reviewing_judge.vacols_uniq_id,
+        decass_attrs: {
+          work_product: work_product,
+          document_id: document_id,
+          overtime: overtime,
+          note: note,
+          modifying_user: attorney.vacols_uniq_id
+        }
+      )
+    end
   end
 
   def update_issue_dispositions!

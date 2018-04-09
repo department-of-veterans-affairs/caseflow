@@ -67,19 +67,16 @@ class QueueRepository
   end
 
   def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
-    MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
-                          service: :vacols,
-                          name: "reassign_case_to_judge") do
-      # update DECASS table
-      update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
+    # update DECASS table
+    update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
 
-      # update location with the judge's slogid
-      VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
-      true
-    end
+    # update location with the judge's slogid
+    VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
+    true
   end
 
   def self.update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
+    binding.pry
     check_decass_presence!(vacols_id, created_in_vacols_date)
     decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
     VACOLS::Decass.where(defolder: vacols_id, deadtim: created_in_vacols_date).update_all(decass_attrs)
