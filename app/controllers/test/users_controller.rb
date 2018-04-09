@@ -4,6 +4,12 @@ class Test::UsersController < ApplicationController
 
   APPS = [
     {
+      name: "Queue",
+      links: {
+        your_queue: "/queue"
+      }
+    },
+    {
       name: "Certification",
       links: {
         new: "/certifications/new/123C",
