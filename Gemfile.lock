@@ -15,20 +15,6 @@ GIT
       simplecov-html (~> 0.10.0)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 5e6830534124f578f43c619c8620c0560365aa55
-  ref: 5e6830534124f578f43c619c8620c0560365aa55
-  specs:
-    caseflow (0.3.4)
-      aws-sdk (~> 2.10)
-      bourbon (= 4.2.7)
-      d3-rails
-      jquery-rails
-      momentjs-rails
-      neat
-      rails (>= 4.2.7.1)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
   revision: e73f20e112db57d2f2ca20879dca0b5e9766c45c
   ref: e73f20e112db57d2f2ca20879dca0b5e9766c45c
@@ -59,6 +45,20 @@ GIT
     sniffybara (0.0.1)
       rainbow
       selenium-webdriver
+
+GIT
+  remote: https://github.com/nolawi/caseflow-commons.git
+  revision: 97662c4e71787c5e7cfd788df64ec273ce02c3c9
+  ref: 97662c4e71787c5e7cfd788df64ec273ce02c3c9
+  specs:
+    caseflow (0.3.4)
+      aws-sdk (~> 2.10)
+      bourbon (= 4.2.7)
+      d3-rails
+      jquery-rails
+      momentjs-rails
+      neat
+      rails (>= 4.2.7.1)
 
 GIT
   remote: https://github.com/senny/pdfjs_viewer-rails.git
@@ -247,7 +247,7 @@ GEM
     mini_portile2 (2.3.0)
     minitest (5.11.3)
     moment_timezone-rails (0.5.0)
-    momentjs-rails (2.17.1)
+    momentjs-rails (2.20.1)
       railties (>= 3.1)
     multi_json (1.12.2)
     multipart-post (2.0.0)
