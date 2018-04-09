@@ -382,11 +382,16 @@ RSpec.feature "Queue" do
 
         issue_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-#{issue_rows.index(row) % 7}']").click
         end
 
-        click_on "Finish dispositions"
+        click_on "Select remand reasons"
+        expect(page).to have_content("Select Remand Reasons")
 
+        remand_reasons = page.execute_script "return document.querySelectorAll('input[type=\"checkbox\"]')"
+        remand_reasons.sample(4).each(&:click)
+
+        click_on "Review Draft Decision"
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: "12345"
