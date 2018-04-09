@@ -295,7 +295,7 @@ RSpec.feature "Queue" do
         # select all dispositions
         table_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-2']").click
         end
 
         click_on "Finish dispositions"
@@ -429,7 +429,7 @@ RSpec.feature "Queue" do
 
       issue_rows.each do |row|
         row.find(".Select-control").click
-        row.find("div[id$='--option-1']").click
+        row.find("div[id$='--option-2']").click
       end
 
       click_on "Finish dispositions"
