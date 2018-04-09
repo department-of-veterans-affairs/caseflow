@@ -40,7 +40,7 @@ export const increaseVeteranDocumentCountBy = (count) => ({
 });
 
 export const fetchDocumentCountForVeteran = (appeals) => (dispatch) => {
-  appeals.forEach( (appeal) => {
+  appeals.forEach((appeal) => {
     const requestOptions = {
       withCredentials: true,
       timeout: true,
@@ -50,10 +50,11 @@ export const fetchDocumentCountForVeteran = (appeals) => (dispatch) => {
     ApiUtil.get(appeal.attributes.number_of_documents_url, requestOptions).
       then((response) => {
         const resp = JSON.parse(response.text);
+
         dispatch(increaseVeteranDocumentCountBy(resp.data.attributes.documents.length));
       });
   });
-}
+};
 
 export const fetchAppealsUsingVeteranId = (veteranId) =>
   (dispatch) => {
@@ -63,13 +64,16 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
       then((response) => {
         const returnedObject = JSON.parse(response.text);
 
-        const shouldUseAppealSearch = returnedObject.hasOwnProperty("shouldUseAppealSearch") && returnedObject.shouldUseAppealSearch;
+        const shouldUseAppealSearch = Object.prototype.hasOwnProperty.call(returnedObject, 'shouldUseAppealSearch') &&
+          returnedObject.shouldUseAppealSearch;
+
         dispatch(setShouldUseQueueSearch(shouldUseAppealSearch));
 
         // TODO: AppealsController.index returns the appeals with the extraneous data element. Remove this
         // when we change the data structure we return to collapse the data element.
         // { appeals: { data: [ {...}, {...}, {...} ] } }
         const appeals = returnedObject.appeals.data;
+
         if (_.size(appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
         } else {

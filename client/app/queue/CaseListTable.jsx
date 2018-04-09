@@ -7,8 +7,10 @@ import Table from '../components/Table';
 import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 
-const labelForLocation = (location_code) => {
-  if (!location_code) return '';
+const labelForLocation = (locationCode) => {
+  if (!locationCode) {
+    return '';
+  }
 
   // TODO: Do we know the currently logged in user's location code?
   // Maybe we can fire off a request to populate the global state
@@ -18,7 +20,7 @@ const labelForLocation = (location_code) => {
   //   return <span>Assigned to you</span>;
   // }
 
-  return location_code;
+  return locationCode;
 };
 
 export default class CaseListTable extends React.PureComponent {

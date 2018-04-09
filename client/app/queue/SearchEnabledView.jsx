@@ -34,15 +34,16 @@ class SearchEnabledView extends React.PureComponent {
       <CaseListSearch
         navigateToPath={(path) => {
           const redirectUrl = encodeURIComponent(window.location.pathname);
+
           location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
         }}
         alwaysShowCaseSelectionModal
         feedbackUrl={feedbackUrl}
         searchSize="big"
         styling={searchStyling(isRequestingAppealsUsingVeteranId)} />
-        { shouldUseAppealSearch && appealCount > 0 ? <CaseListView /> : this.props.children }
-      </React.Fragment>;
-  };
+      { shouldUseAppealSearch && appealCount > 0 ? <CaseListView /> : this.props.children }
+    </React.Fragment>;
+  }
 }
 
 SearchEnabledView.propTypes = {

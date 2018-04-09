@@ -24,9 +24,11 @@ import RadioField from '../components/RadioField';
 import SearchBar from '../components/SearchBar';
 
 const buildCollapsedAppealFrom = (oldAppeal) => {
-  let appeal = _.cloneDeep(oldAppeal);
+  const appeal = _.cloneDeep(oldAppeal);
   const attrs = appeal.attributes;
+
   delete appeal.attributes;
+
   return Object.assign(appeal, attrs);
 };
 
@@ -47,7 +49,7 @@ class CaseListSearch extends React.PureComponent {
   // 
   componentDidUpdate = () => {
     if (!this.props.caseList.shouldUseAppealSearch) {
-      this.handleNonQueueSearchUpdate()
+      this.handleNonQueueSearchUpdate();
     }
   };
 
@@ -72,7 +74,7 @@ class CaseListSearch extends React.PureComponent {
 
   handleSelectAppeal = () => {
     // get the appeal selected from the modal
-    const allAppeals = this.props.caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a))
+    const allAppeals = this.props.caseList.receivedAppeals.map((a) => buildCollapsedAppealFrom(a));
     const appeal = _.find(allAppeals,
       { vacols_id: this.props.caseSelect.selectedAppealVacolsId });
 
@@ -175,12 +177,12 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearCaseListSearch,
   clearCaseSelectSearch,
   fetchAppealsUsingVeteranId,
-  setCaseListSearch,
+  setCaseListSearch
 }, dispatch);
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,
-  caseSelect: state.caseSelect,
+  caseSelect: state.caseSelect
 });
 
 export default connect(

@@ -31,7 +31,7 @@ class CaseListView extends React.PureComponent {
 
     return <React.Fragment>
       <div {...backLinkStyling}>
-        <Link to='/' onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
+        <Link to="/" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
       </div>
       <AppSegment filledBackground>
         <div>
@@ -43,7 +43,7 @@ class CaseListView extends React.PureComponent {
         </div>
       </AppSegment>
     </React.Fragment>;
-  };
+  }
 }
 
 const mapStateToProps = (state) => ({
