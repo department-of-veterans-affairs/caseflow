@@ -4,8 +4,6 @@ class Intake < ApplicationRecord
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
-  delegate :full_name, to: :user
-
   enum completion_status: {
     success: "success",
     canceled: "canceled",

@@ -46,7 +46,7 @@ const columns = [
   },
   {
     header: 'Explanation',
-    valueFunction: (intake) => cancelExplanation(intake)
+    valueFunction: (intake) => formatExplanation(intake)
   }
 ];
 

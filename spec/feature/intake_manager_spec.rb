@@ -2,81 +2,76 @@ require "rails_helper"
 
 RSpec.feature "Intake Manager Page" do
   before do
-    FeatureToggle.enable!(:intake)
-
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 8, 8))
-
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
-  let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
-  end
+  context "As a user with Admin Intake role", :focus => true do
+    let!(:current_user) do
+      User.authenticate!(roles: ["Admin Intake"])
+    end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
-  end
+    scenario "Has access to intake manager page" do
+      visit "/intake/manager"
+      expect(page).to have_content("Claims for manager review")
+      expect(page).to have_content("Veteran File Number")
+      expect(page).to have_content("Date Processed")
+      expect(page).to have_content("Form")
+      expect(page).to have_content("Employee")
+      expect(page).to have_content("Explanation")
+    end
 
-  let(:inaccessible) { false }
+    scenario "Only included errors and cancellations appear" do
 
-  let!(:appeal) do
-    Generators::Appeal.build(
-      vbms_id: "12341234C",
-      issues: issues,
-      vacols_record: :ready_to_certify,
-      veteran: veteran,
-      inaccessible: inaccessible
-    )
-  end
+      # Errors that should appear
 
-  let!(:inactive_appeal) do
-    Generators::Appeal.build(
-      vbms_id: "77776666C",
-      vacols_record: :full_grant_decided
-    )
-  end
+      RampElectionIntake.create!(
+        veteran_file_number: "1111",
+        completed_at: 1.hours.ago,
+        completion_status: :error,
+        error_code: :no_eligible_appeals,
+        user: current_user
+      )
 
-  let!(:ineligible_appeal) do
-    Generators::Appeal.build(
-      vbms_id: "77778888C",
-      vacols_record: :activated,
-      issues: issues
-    )
-  end
+      RampElectionIntake.create!(
+        veteran_file_number: "1112",
+        completed_at: 2.hours.ago,
+        completion_status: :error,
+        error_code: :no_active_fully_compensation_appeals,
+        user: current_user
+      )
 
-  let(:ep_already_exists_error) do
-    VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
-      "A duplicate claim for this EP code already exists in CorpDB. Please " \
-      "use a different EP code modifier. GUID: 13fcd</faultstring>")
-  end
+      RampElectionIntake.create!(
+        veteran_file_number: "1113",
+        completed_at: 3.hours.ago,
+        completion_status: :error,
+        error_code: :veteran_not_valid,
+        user: current_user
+      )
 
-  let(:unknown_error) do
-    VBMS::HTTPError.new("500", "<faultstring>Unknown</faultstring>")
-  end
+      RampElectionIntake.create!(
+        veteran_file_number: "1114",
+        completed_at: 4.hours.ago,
+        completion_status: :error,
+        error_code: :veteran_not_accessible,
+        user: current_user
+      )
 
-  RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
-  RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)
+      visit "/intake/manager"
 
-  ramp_election = RampElection.create!(
-    veteran_file_number: "77776663",
-    notice_date: 7.days.ago,
-    receipt_date: 45.minutes.ago,
-    option_selected: :supplemental_claim,
-    established_at: Time.zone.now,
-    end_product_reference_id: "132",
-    end_product_status: "VERY_ACTIVE"
-  )
+      expect(find("#table-row-0")).to have_content("1111")
 
-  scenario "User visits manager page" do
-    User.authenticate!(roles: ["Admin Intake"])
-    visit "/intake/manager"
+      debugger
 
-    expect(page).to have_content("Claims for manager review")
-    expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
+      expect(find("#table-row-0")).to have_content("8/07/2017")
+      expect(find("#table-row-0")).to have_content(current_user.full_name)
+      expect(find("#table-row-0")).to have_content("21-4138 RAMP Selection Form")
+      expect(find("#table-row-0")).to have_content("Error: no eligible appeals")
+
+      expect(find("#table-row-1")).to have_content("Error: no compensation issues")
+      expect(find("#table-row-2")).to have_content("Error: missing profile information")
+      expect(find("#table-row-3")).to have_content("Error: sensitivity")
+    end
   end
 
   # To do

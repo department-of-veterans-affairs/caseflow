@@ -16,7 +16,7 @@ export const intakeManagerReducers = (state = mapDataToInitialState(), action = 
       loading: { $set: false },
       intakesForReview: {
         $set: _(action.payload.intakes).
-          sortBy('completed_at').
+          orderBy('completed_at', 'desc').
           value()
       }
     });
