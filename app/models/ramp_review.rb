@@ -55,6 +55,19 @@ class RampReview < ApplicationRecord
     create_end_product!
   end
 
+  def create_end_product!
+    fail InvalidEndProductError unless end_product.valid?
+
+    establish_claim_in_vbms(end_product).tap do |result|
+      update!(
+        end_product_reference_id: result.claim_id,
+        established_at: Time.zone.now
+      )
+    end
+  rescue VBMS::HTTPError => error
+    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  end
+
   def end_product_description
     end_product_reference_id && end_product.description_with_routing
   end
@@ -89,19 +102,6 @@ class RampReview < ApplicationRecord
   # Find an end product that has the traits of the end product that should be created.
   def matching_end_product
     @matching_end_product = veteran.end_products.find { |ep| end_product.matches?(ep) }
-  end
-
-  def create_end_product!
-    fail InvalidEndProductError unless end_product.valid?
-
-    establish_claim_in_vbms(end_product).tap do |result|
-      update!(
-        end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
-      )
-    end
-  rescue VBMS::HTTPError => error
-    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
   def connect_end_product!
