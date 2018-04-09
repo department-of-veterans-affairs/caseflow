@@ -33,6 +33,11 @@ class Judge
     end
   end
 
+  def attorneys
+    binding.pry
+    Constants::AttorneyJudgeTeams::TEAMS
+  end
+
   private
 
   def upcoming_hearings_grouped_by_date
