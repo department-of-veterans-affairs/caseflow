@@ -4,11 +4,11 @@ describe QueueRepository do
 
     let(:tasks) do
       [
-        OpenStruct.new(vacols_id: "123C", date_assigned: 3.days.ago),
-        OpenStruct.new(vacols_id: "123B", date_assigned: 5.days.ago),
-        OpenStruct.new(vacols_id: "123C", date_assigned: 2.days.ago),
-        OpenStruct.new(vacols_id: "123C", date_assigned: 9.days.ago),
-        OpenStruct.new(vacols_id: "123A", date_assigned: 9.days.ago)
+        OpenStruct.new(vacols_id: "123C", created_at: 3.days.ago),
+        OpenStruct.new(vacols_id: "123B", created_at: 5.days.ago),
+        OpenStruct.new(vacols_id: "123C", created_at: 2.days.ago),
+        OpenStruct.new(vacols_id: "123C", created_at: 9.days.ago),
+        OpenStruct.new(vacols_id: "123A", created_at: 9.days.ago)
       ]
     end
 

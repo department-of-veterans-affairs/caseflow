@@ -1,4 +1,29 @@
 class DispatchStats < Caseflow::Stats
+  # since this is a heavy calculation, only run this at most once an hour
+  THROTTLE_RECALCULATION_PERIOD = 1.hour
+
+  class << self
+    def throttled_calculate_all!
+      return if last_calculated_at && last_calculated_at > THROTTLE_RECALCULATION_PERIOD.ago
+
+      calculate_all!(clear_cache: true)
+      Rails.cache.write(cache_key, Time.zone.now.to_i)
+    end
+
+    private
+
+    def last_calculated_at
+      return @last_calculated_timestamp if @last_calculated_timestamp
+
+      timestamp = Rails.cache.read(cache_key)
+      timestamp && Time.zone.at(timestamp.to_i)
+    end
+
+    def cache_key
+      "#{name}-last-calculated-timestamp"
+    end
+  end
+
   CALCULATIONS = {
     establish_claim_identified: lambda do |range|
       EstablishClaim.where(created_at: range).count
@@ -13,7 +38,7 @@ class DispatchStats < Caseflow::Stats
     end,
 
     establish_claim_active_users: lambda do |range|
-      EstablishClaim.where(completed_at: range).pluck(:user).uniq.count
+      EstablishClaim.where(completed_at: range).pluck(:user_id).uniq.count
     end,
 
     establish_claim_started: lambda do |range|

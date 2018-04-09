@@ -1,20 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
+import Checkbox from '../../components/Checkbox';
 
 import {
   COLORS,
   ERROR_FIELD_REQUIRED
 } from '../constants';
-import StringUtil from '../../util/StringUtil';
-import { updateAppealIssue } from '../QueueActions';
-import Checkbox from '../../components/Checkbox';
 
-// todo: map to VACOLS attrs
+// todo: map to VACOLS attrs (VACOLS::Case::DISPOSITIONS)
 const issueDispositionOptions = [
   [1, 'Allowed'],
   [3, 'Remanded'],
@@ -43,32 +40,32 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
   render = () => {
     const {
       highlight,
-      issue,
-      vacolsId
+      issue
     } = this.props;
 
     return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
       <SearchableDropdown
-        placeholder="Select Dispositions"
+        placeholder="Select Disposition"
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
         options={issueDispositionOptions.map((opt) => ({
           label: `${opt[0]} - ${opt[1]}`,
-          value: StringUtil.convertToCamelCase(opt[1])
+          value: opt[1]
         }))}
-        onChange={({ value }) => this.props.updateAppealIssue(vacolsId, issue.id, {
+        onChange={({ value }) => this.props.updateIssue({
           disposition: value,
-          duplicate: false
+          readjudication: false
         })}
-        name={`dispositions_dropdown_${issue.id}`} />
-      {issue.disposition === 'vacated' && <Checkbox
-        name="duplicate-vacated-issue"
+        name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
+      {issue.disposition === 'Vacated' && <Checkbox
+        name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
           marginTop: '1rem'
         })}
-        onChange={(duplicate) => this.props.updateAppealIssue(vacolsId, issue.id, { duplicate })}
+        onChange={(readjudication) => this.props.updateIssue({ readjudication })}
+        value={issue.readjudication}
         label="Automatically create vacated issue for readjudication." />}
     </div>;
   };
@@ -77,15 +74,12 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
 SelectIssueDispositionDropdown.propTypes = {
   issue: PropTypes.object.isRequired,
   vacolsId: PropTypes.string.isRequired,
-  highlight: PropTypes.bool
+  highlight: PropTypes.bool,
+  updateIssue: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
   highlight: state.ui.highlightFormItems
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(SelectIssueDispositionDropdown);
+export default connect(mapStateToProps)(SelectIssueDispositionDropdown);

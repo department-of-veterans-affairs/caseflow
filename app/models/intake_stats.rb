@@ -72,19 +72,63 @@ class IntakeStats < Caseflow::Stats
     end,
 
     elections_returned_by_notice_date: lambda do |range|
-      RampElection.completed.where(notice_date: offset_range(range)).count
+      RampElection.established.where(notice_date: offset_range(range)).count
+    end,
+
+    higher_level_review_elections_returned_by_notice_date: lambda do |range|
+      RampElection.established.where(notice_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_returned_by_notice_date: lambda do |range|
+      RampElection.established
+        .where(notice_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_returned_by_notice_date: lambda do |range|
+      RampElection.established.where(notice_date: offset_range(range), option_selected: "supplemental_claim").count
     end,
 
     # Number of opt-in elections received by month and FYTD
     elections_successfully_received: lambda do |range|
-      RampElection.completed.where(receipt_date: offset_range(range)).count
+      RampElection.established.where(receipt_date: offset_range(range)).count
+    end,
+
+    higher_level_review_elections_successfully_received: lambda do |range|
+      RampElection.established.where(receipt_date: offset_range(range), option_selected: "higher_level_review").count
+    end,
+
+    higher_level_review_with_hearing_elections_successfully_received: lambda do |range|
+      RampElection.established
+        .where(receipt_date: offset_range(range), option_selected: "higher_level_review_with_hearing").count
+    end,
+
+    supplemental_claim_elections_successfully_received: lambda do |range|
+      RampElection.established.where(receipt_date: offset_range(range), option_selected: "supplemental_claim").count
     end,
 
     # Average days to respond to RAMP election notice
     average_election_response_time: lambda do |range|
-      elections = RampElection.completed.where(receipt_date: offset_range(range)).where.not(notice_date: nil)
+      elections = RampElection.established.where(receipt_date: offset_range(range)).where.not(notice_date: nil)
       response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
       average(response_times)
+    end,
+
+    average_election_response_time_by_notice_date: lambda do |range|
+      elections = RampElection.established.where(notice_date: offset_range(range))
+      response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      average(response_times)
+    end,
+
+    average_election_nod_to_established_time: lambda do |range|
+      closed_appeals = RampClosedAppeal.includes(:ramp_election)
+        .where(ramp_elections: { receipt_date: offset_range(range) })
+      nod_times = closed_appeals.map { |c| c.established_at.beginning_of_day.to_f - c.nod_date.in_time_zone.to_f }
+      average(nod_times)
+    end,
+
+    average_election_control_time: lambda do |range|
+      elections = RampElection.established.where(receipt_date: offset_range(range))
+      average(elections.map(&:control_time))
     end,
 
     total_completed: lambda do |range|
@@ -129,6 +173,17 @@ class IntakeStats < Caseflow::Stats
 
     total_appeal_refilings: lambda do |range|
       total_refilings_for_option(range, :appeal)
+    end,
+
+    total_issues_elected_into_ramp: lambda do |range|
+      RampElection
+        .established
+        .where(receipt_date: offset_range(range))
+        .includes(:issues)
+        .map do |ramp_election|
+          ramp_election.issues.size
+        end
+        .reduce(0, :+)
     end
   }.freeze
 end

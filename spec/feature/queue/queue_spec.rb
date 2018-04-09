@@ -129,14 +129,14 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select(&:added_by_first_name).first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         added_by_name = FullName.new(
           appeal.added_by_first_name,
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
-        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
 
         expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
@@ -145,8 +145,8 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.select { |a| a.added_by_first_name.nil? }.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
-        assigned_date = appeal.date_assigned.strftime("%m/%d/%y")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
@@ -159,7 +159,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Hearing preference: #{hearing_preference}")
@@ -171,7 +171,7 @@ RSpec.feature "Queue" do
           expect(page).to have_content("Hearing date: #{hearing.date.strftime('%-m/%-e/%y')}")
           expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
 
-          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet']")
+          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
           expect(worksheet_link.text).to eq("View Hearing Worksheet")
         end
       end
@@ -183,7 +183,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         expect(page).not_to have_content("Hearing preference")
 
@@ -199,7 +199,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Veteran Details")
@@ -215,7 +215,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Appellant Details")
@@ -233,7 +233,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
@@ -245,12 +245,12 @@ RSpec.feature "Queue" do
   end
 
   context "loads decision views" do
-    context "submits decision" do
-      scenario "loads submit omo decision page" do
+    context "prepares/fails to submit decision" do
+      scenario "fails to submit omo decision" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
@@ -258,14 +258,91 @@ RSpec.feature "Queue" do
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
         expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
 
-        expect(page).to have_content("Go back to draft decision #{appeal.vbms_id}")
+        expect(page).to have_content("Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
+
+        click_on "Submit"
+
+        expect(page).to have_content("This field is required")
+        expect(page.find_all(".usa-input-error-message").length).to eq(3)
       end
 
+      scenario "selects issue dispositions" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        table_rows = page.find_all("tr[id^='table-row-']")
+        expect(table_rows.length).to eq(appeal.issues.length)
+
+        # do not select all dispositions
+        table_rows[0..0].each do |row|
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+        end
+
+        click_on "Finish dispositions"
+
+        table_rows[1..-1].each do |row|
+          dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
+          expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
+        end
+
+        # select all dispositions
+        table_rows.each do |row|
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+        end
+
+        click_on "Finish dispositions"
+
+        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+      end
+
+      scenario "edits issue information" do
+        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        expect(page).to have_content("Edit Issue")
+
+        enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
+
+        field_values = enabled_fields.map do |row|
+          # changing options at the top of the form affects what options are enabled further down
+          next if row.matches_css? ".is-disabled"
+
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+          row.find(".Select-value-label").text
+        end
+        fill_in "Notes:", with: "this is the note"
+
+        click_on "Save"
+
+        expect(page).to have_content("You have updated issue 1.")
+        expect(page).to have_content("Program: #{field_values.first}")
+        expect(page).to have_content("Issue: #{field_values.second}")
+        expect(page).to have_content("Note: this is the note")
+      end
+    end
+
+    context "submits decision" do
       scenario "submits omo decision" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
@@ -281,47 +358,84 @@ RSpec.feature "Queue" do
         safe_click("div[id$='--option-1']")
         expect(page).to have_content("Andrew Mackenzie")
 
-        safe_click("button.cf-right-side")
+        click_on "Submit"
         sleep 1
+        expect(page).to(
+          have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s outside medical
+            opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
+          )
+        )
+        expect(page.current_path).to eq("/queue/")
+      end
+
+      scenario "submits draft decision" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        issue_rows = page.find_all("tr[id^='table-row-']")
+        expect(issue_rows.length).to eq(appeal.issues.length)
+
+        issue_rows.each do |row|
+          row.find(".Select-control").click
+          row.find("div[id$='--option-1']").click
+        end
+
+        click_on "Finish dispositions"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        fill_in "document_id", with: "12345"
+        fill_in "notes", with: "this is a decision note"
+
+        safe_click "#select-judge"
+        safe_click ".Select-control"
+        safe_click "div[id$='--option-1']"
+        expect(page).to have_content("Andrew Mackenzie")
+
+        click_on "Submit"
+        sleep 1
+        expect(page).to(
+          have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision.
+            It's been sent to Andrew Mackenzie for review."
+          )
+        )
         expect(page.current_path).to eq("/queue/")
       end
     end
+  end
 
-    scenario "selects issue dispositions" do
-      appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+  context "pop breadcrumb" do
+    scenario "goes back from submit decision view" do
+      appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
       visit "/queue"
 
-      safe_click("a[href='/queue/tasks/#{appeal.vacols_id}']")
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
       safe_click(".Select-control")
       safe_click("div[id$='--option-0']")
 
-      expect(page).to have_content("Select Dispositions")
+      issue_rows = page.find_all("tr[id^='table-row-']")
+      expect(issue_rows.length).to eq(appeal.issues.length)
 
-      table_rows = page.find_all("tr[id^='table-row-']")
-      expect(table_rows.length).to eq(appeal.issues.length)
-
-      # do not select all dispositions
-      table_rows[0..0].each do |row|
+      issue_rows.each do |row|
         row.find(".Select-control").click
         row.find("div[id$='--option-1']").click
       end
 
-      safe_click("#finish-dispositions")
+      click_on "Finish dispositions"
 
-      table_rows[1..-1].each do |row|
-        dropdown_border = row.find(".issue-disposition-dropdown").native.css_value("border-left")
-        expect(dropdown_border).to eq("4px solid rgb(205, 32, 38)")
-      end
+      expect(page).to have_content("Submit Draft Decision for Review")
+      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions > Submit")
 
-      # select all dispositions
-      table_rows.each do |row|
-        row.find(".Select-control").click
-        row.find("div[id$='--option-1']").click
-      end
+      click_on "< Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
-      safe_click("#finish-dispositions")
-
-      expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions")
+      expect(page).not_to have_content("Select Dispositions > Submit")
     end
   end
 end

@@ -1,7 +1,9 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
-  before_action :verify_welcome_gate_access, except: :complete
+  before_action :verify_queue_access, except: :complete
   before_action :verify_queue_phase_two, only: :complete
+
+  ROLES = %w[Judge Attorney].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -24,16 +26,15 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
 
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
+      return invalid_role_error unless ROLES.include?(user.vacols_role)
+
+      tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+
       render json: {
         tasks: json_tasks(tasks),
         appeals: json_appeals(appeals)
       }
     end
-  end
-
-  def judges
-    render json: { judges: Judge.list_all }
   end
 
   def dev_document_count
@@ -52,13 +53,17 @@ class QueueController < ApplicationController
 
   private
 
-  def verify_welcome_gate_access
-    # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
-    redirect_to "/unauthorized"
-    # :nocov:
+  def user
+    @user ||= User.find(params[:user_id])
+  end
+
+  def invalid_role_error
+    render json: {
+      "errors": [
+        "title": "Role is Invalid",
+        "detail": "User should have one of the following roles: #{ROLES.join(', ')}"
+      ]
+    }, status: 400
   end
 
   def attorney_case_review_error

@@ -13,9 +13,10 @@ class RampRefilingIntake < Intake
     ramp_election && ramp_election.recreate_issues_from_contentions!
   end
 
-  def cancel!
+  def cancel!(reason:, other: nil)
     transaction do
       detail.destroy!
+      add_cancel_reason!(reason: reason, other: other)
       complete_with_status!(:canceled)
     end
   end
@@ -40,7 +41,7 @@ class RampRefilingIntake < Intake
     detail.create_end_product_and_contentions! if detail.needs_end_product?
 
     complete_with_status!(:success)
-    detail.update!(established_at: Time.zone.now)
+    detail.update!(established_at: Time.zone.now) unless detail.established_at
   end
 
   def review_errors
@@ -63,7 +64,7 @@ class RampRefilingIntake < Intake
   def validate_detail_on_start
     if !ramp_election
       self.error_code = :no_complete_ramp_election
-    elsif ramp_election.established_end_product.active?
+    elsif ramp_election.active?
       self.error_code = :ramp_election_is_active
     elsif ramp_election.issues.empty?
       self.error_code = :ramp_election_no_issues
@@ -94,7 +95,7 @@ class RampRefilingIntake < Intake
   end
 
   def fetch_ramp_election
-    ramp_elections = RampElection.completed.where(veteran_file_number: veteran_file_number).all
+    ramp_elections = RampElection.established.where(veteran_file_number: veteran_file_number).all
 
     # There should only be one RAMP election sent to each veteran
     # if there was more than one, raise an error so we know about it

@@ -3,7 +3,7 @@ describe AppealRepository do
     @old_repo = Appeal.repository
     Appeal.repository = AppealRepository
 
-    allow_any_instance_of(VACOLS::Case::ActiveRecord_Relation).to receive(:find).and_return(nil)
+    allow_any_instance_of(ActiveRecord::Relation).to receive(:find).and_return(nil)
   end
   after { Appeal.repository = @old_repo }
 

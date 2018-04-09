@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { getDecisionTypeDisplay } from './utils';
 
 import {
   setDecisionOptions,
-  resetDecisionOptions
+  resetDecisionOptions,
+  deleteAppeal
 } from './QueueActions';
 import {
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
   requestSave
 } from './uiReducer/uiActions';
 
@@ -34,8 +33,10 @@ import {
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
+const mediumBottomMargin = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noBottomMargin = css({ marginBottom: 0 });
+const noTopMargin = css({ marginTop: 0 });
 
 const radioFieldStyling = css(noBottomMargin, {
   marginTop: '2rem',
@@ -64,24 +65,9 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   getBreadcrumb = () => ({
-    breadcrumb: `Submit ${this.getDecisionTypeDisplay()}`,
+    breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
     path: `/tasks/${this.props.vacolsId}/submit`
   });
-
-  getDecisionTypeDisplay = () => {
-    const {
-      type: decisionType
-    } = this.props.decision;
-
-    switch (decisionType) {
-    case DECISION_TYPES.OMO_REQUEST:
-      return 'OMO';
-    case DECISION_TYPES.DRAFT_DECISION:
-      return 'Draft Decision';
-    default:
-      return StringUtil.titleCase(decisionType);
-    }
-  };
 
   goToPrevStep = () => {
     this.props.resetDecisionOptions();
@@ -107,32 +93,57 @@ class SubmitDecisionView extends React.PureComponent {
 
   goToNextStep = () => {
     const {
-      vacolsId,
-      task: { attributes: { assigned_on } },
-      appeal: { attributes: { issues } },
-      decision
+      task: { attributes: { task_id: taskId } },
+      appeal: {
+        attributes: {
+          issues,
+          veteran_full_name,
+          vacols_id: vacolsId
+        }
+      },
+      decision,
+      judges
     } = this.props;
     const params = {
       data: {
         queue: {
           type: decision.type,
-          issues: _.map(issues, (issue) => _.pick(issue, 'disposition', 'vacols_sequence_id', 'remand_reasons')),
+          issues: _.map(issues, (issue) => _.pick(issue,
+            ['disposition', 'vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']
+          )),
           ...decision.opts
         }
       }
     };
 
-    this.props.requestSave(
-      params,
-      `/queue/tasks/${vacolsId}-${assigned_on.split('T')[0]}/complete`
-    );
-  }
+    const fields = {
+      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
+      veteran: veteran_full_name,
+      judge: judges[decision.opts.reviewing_judge_id].full_name
+    };
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's 
+    been sent to ${fields.judge} for review.`;
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`
-  }, {
-    displayText: 'Submit'
-  }];
+    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
+      then(() => this.props.deleteAppeal(vacolsId));
+  };
+
+  getFooterButtons = () => {
+    const {
+      appeal: {
+        attributes: {
+          veteran_full_name: vetName,
+          vbms_id: vbmsId
+        }
+      }
+    } = this.props;
+
+    return [{
+      displayText: `< Go back to ${vetName} (${vbmsId})`
+    }, {
+      displayText: 'Submit'
+    }];
+  };
 
   getJudgeSelectComponent = () => {
     const {
@@ -195,23 +206,25 @@ class SubmitDecisionView extends React.PureComponent {
       value: 'OMO - IME'
     }];
     const {
-      type: decisionType,
-      opts: decisionOpts
-    } = this.props.decision;
-    const {
       highlightFormItems,
-      error
+      error,
+      decision,
+      decision: {
+        type: decisionType,
+        opts: decisionOpts
+      }
     } = this.props;
+    const decisionTypeDisplay = getDecisionTypeDisplay(decision);
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Submit {this.getDecisionTypeDisplay()} for Review
+        Submit {decisionTypeDisplay} for Review
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Complete the details below to submit this {this.getDecisionTypeDisplay()} request for judge review.
+        Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error.visible && <Alert title={error.message.title} type="error">
-        {error.message.detail}
+      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+        {error.detail}
       </Alert>}
       <hr />
       {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
@@ -254,17 +267,15 @@ class SubmitDecisionView extends React.PureComponent {
 
 SubmitDecisionView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
-  prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
-  error: state.ui.errorState,
+  error: state.ui.messages.error,
   ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
@@ -272,9 +283,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   resetDecisionOptions,
   setSelectingJudge,
-  pushBreadcrumb,
-  highlightInvalidFormItems,
-  requestSave
+  requestSave,
+  deleteAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));

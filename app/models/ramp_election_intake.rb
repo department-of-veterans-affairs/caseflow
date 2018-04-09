@@ -39,12 +39,26 @@ class RampElectionIntake < Intake
       ) do
         ramp_election.create_end_product!
       end
+
+      eligible_appeals.each do |appeal|
+        RampClosedAppeal.create!(
+          vacols_id: appeal.vacols_id,
+          ramp_election_id: ramp_election.id,
+          nod_date: appeal.nod_date
+        )
+      end
     end
   end
 
-  def cancel!
+  def cancel!(reason:, other: nil)
+    return if complete?
+
     transaction do
-      detail.update_attributes!(receipt_date: nil, option_selected: nil)
+      detail.update_attributes!(
+        receipt_date: nil,
+        option_selected: nil
+      )
+      add_cancel_reason!(reason: reason, other: other)
       complete_with_status!(:canceled)
     end
   end
@@ -94,7 +108,7 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if matching_ramp_election.completed?
+    if matching_ramp_election.established?
       self.error_code = :ramp_election_already_complete
       @error_data = { receipt_date: matching_ramp_election.receipt_date }
 

@@ -1,4 +1,4 @@
-class Hearing < ActiveRecord::Base
+class Hearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include HearingConcern
@@ -15,6 +15,11 @@ class Hearing < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :user # the judge
   has_many :hearing_views
+  has_many :appeal_stream_snapshots
+
+  # this is used to cache appeal stream for hearings
+  # when fetched intially.
+  has_many :appeals, through: :appeal_stream_snapshots
 
   def venue
     self.class.venues[venue_key]
@@ -54,7 +59,8 @@ class Hearing < ActiveRecord::Base
   end
 
   def active_appeal_streams
-    self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
+    return appeals if appeals.any?
+    appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
   def update(hearing_hash)
@@ -97,7 +103,11 @@ class Hearing < ActiveRecord::Base
   end
 
   cache_attribute :cached_number_of_documents do
-    number_of_documents
+    begin
+      number_of_documents
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+      nil
+    end
   end
 
   delegate \

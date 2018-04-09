@@ -10,31 +10,40 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Table from '../components/Table';
+import Alert from '../components/Alert';
 
 import {
-  updateAppealIssue,
-  setDecisionOptions
+  updateEditingAppealIssue,
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue
 } from './QueueActions';
-import { highlightInvalidFormItems } from './uiReducer/uiActions';
+import {
+  highlightInvalidFormItems,
+  hideSuccessMessage
+} from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+const tableStyling = css({
+  '& tr': {
+    borderBottom: 'none'
+  }
+});
 const tbodyStyling = css({
-  '& > tr': {
-    borderBottom: 'none',
-    '> td': {
-      verticalAlign: 'top',
-      paddingTop: '2rem',
-      '&:first-of-type': {
-        width: '40%'
-      },
-      '&:last-of-type': {
-        width: '35%'
-      }
+  '& > tr > td': {
+    verticalAlign: 'top',
+    paddingTop: '2rem',
+    '&:first-of-type': {
+      width: '40%'
+    },
+    '&:last-of-type': {
+      width: '35%'
     }
   }
 });
+const smallTopMargin = css({ marginTop: '1rem' });
 
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
@@ -42,22 +51,16 @@ class SelectDispositionsView extends React.PureComponent {
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
 
-  componentDidMount = () => {
-    const {
-      vacolsId,
-      appeal: { attributes: { issues } }
-    } = this.props;
+  componentWillUnmount = () => this.props.hideSuccessMessage();
 
-    // Wipe any previously-set dispositions in the pending
-    // appeal's issues for validation purposes.
-    _.each(issues, (issue) =>
-      this.props.updateAppealIssue(
-        vacolsId,
-        issue.id,
-        { disposition: null }
-      ));
+  componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
-    this.props.setDecisionOptions({ work_product: 'Decision' });
+  updateIssue = (issueId, attributes) => {
+    const { vacolsId } = this.props;
+
+    this.props.startEditingAppealIssue(vacolsId, issueId);
+    this.props.updateEditingAppealIssue(attributes);
+    this.props.saveEditedAppealIssue(vacolsId);
   };
 
   validateForm = () => {
@@ -67,12 +70,23 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to draft decision ${this.props.vbmsId}`
-  }, {
-    displayText: 'Finish dispositions',
-    id: 'finish-dispositions'
-  }];
+  getFooterButtons = () => {
+    const {
+      appeal: {
+        attributes: {
+          veteran_full_name: vetName,
+          vbms_id: vbmsId
+        }
+      }
+    } = this.props;
+
+    return [{
+      displayText: `< Go back to ${vetName} (${vbmsId})`
+    }, {
+      displayText: 'Finish dispositions',
+      id: 'finish-dispositions'
+    }];
+  };
 
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
@@ -80,49 +94,61 @@ class SelectDispositionsView extends React.PureComponent {
     valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
   }, {
     header: 'Actions',
-    valueFunction: () => <Link>Edit Issue</Link>
+    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+      Edit Issue
+    </Link>
   }, {
     header: 'Dispositions',
     valueFunction: (issue) => <SelectIssueDispositionDropdown
+      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
       issue={issue}
       vacolsId={this.props.vacolsId} />
   }];
 
-  render = () => <React.Fragment>
-    <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-      Select Dispositions
-    </h1>
-    <p className="cf-lead-paragraph" {...marginBottom(2)}>
-      Review each issue and assign the appropriate dispositions.
-    </p>
-    <hr />
-    <Table
-      columns={this.getColumns}
-      rowObjects={this.props.appeal.attributes.issues}
-      getKeyForRow={this.getKeyForRow}
-      bodyStyling={tbodyStyling}
-    />
-    <div {...marginLeft(1.5)}>
-      <Link>Add Issue</Link>
-    </div>
-  </React.Fragment>;
+  render = () => {
+    const { saveResult } = this.props;
+
+    return <React.Fragment>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
+        Select Dispositions
+      </h1>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
+        Review each issue and assign the appropriate dispositions.
+      </p>
+      {saveResult && <Alert type="success" title={saveResult} styling={smallTopMargin} />}
+      <hr />
+      <Table
+        columns={this.getColumns}
+        rowObjects={this.props.appeal.attributes.issues}
+        getKeyForRow={this.getKeyForRow}
+        styling={tableStyling}
+        bodyStyling={tbodyStyling}
+      />
+      <div {...marginLeft(1.5)}>
+        <Link>Add Issue</Link>
+      </div>
+    </React.Fragment>;
+  };
 }
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId]
+  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  saveResult: state.ui.messages.success
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateAppealIssue,
+  updateEditingAppealIssue,
   highlightInvalidFormItems,
-  setDecisionOptions
+  setDecisionOptions,
+  startEditingAppealIssue,
+  saveEditedAppealIssue,
+  hideSuccessMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

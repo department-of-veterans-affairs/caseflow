@@ -1,6 +1,6 @@
 describe RampElection do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -9,6 +9,8 @@ describe RampElection do
   let(:receipt_date) { 1.day.ago }
   let(:option_selected) { nil }
   let(:end_product_reference_id) { nil }
+  let(:established_at) { nil }
+  let(:end_product_status) { nil }
 
   let(:ramp_election) do
     RampElection.new(
@@ -16,8 +18,33 @@ describe RampElection do
       notice_date: notice_date,
       option_selected: option_selected,
       receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id
+      end_product_reference_id: end_product_reference_id,
+      established_at: established_at,
+      end_product_status: end_product_status
     )
+  end
+
+  context "#active scope" do
+    it "includes any RampElection where end_product_status is nil or not inactive" do
+      RampElection.create!(
+        veteran_file_number: "1",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago,
+        end_product_status: "ACTIVE"
+      )
+      RampElection.create!(
+        veteran_file_number: "2",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago,
+        end_product_status: EndProduct::INACTIVE_STATUSES.first
+      )
+      RampElection.create!(
+        veteran_file_number: "3",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago
+      )
+      expect(RampElection.active.count).to eq(2)
+    end
   end
 
   context "#create_end_product!" do
@@ -135,19 +162,46 @@ describe RampElection do
     end
   end
 
-  context "#completed?" do
-    subject { ramp_election.completed? }
+  context "#established?" do
+    subject { ramp_election.established? }
 
-    context "when there is an end product reference" do
-      let(:end_product_reference_id) { 1 }
+    context "when there is an established at date" do
+      let(:established_at) { Time.zone.now }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when there is not an end product reference" do
-      let(:end_product_reference_id) { nil }
+    context "when there is not an established at date" do
+      let(:established_at) { nil }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#active?" do
+    subject { ramp_election.active? }
+
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: status_type_code
+        }
+      )
+    end
+
+    context "when the EP is cleared" do
+      let(:status_type_code) { "CLR" }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when the EP is pending" do
+      let(:status_type_code) { "PEND" }
+
+      it { is_expected.to eq(true) }
     end
   end
 
@@ -175,6 +229,68 @@ describe RampElection do
       let(:end_product_reference_id) { matching_ep.claim_id }
 
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
+    end
+  end
+
+  context "#sync_ep_status!" do
+    subject { ramp_election.sync_ep_status! }
+
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: "WAZZAP"
+        }
+      )
+    end
+
+    context "cached end product status is active" do
+      let(:end_product_status) { "PEND" }
+
+      it "updates values properly and returns true" do
+        expect(subject).to be_truthy
+        ramp_election.reload
+        expect(ramp_election.end_product_status).to eql("WAZZAP")
+        expect(ramp_election.end_product_status_last_synced_at).to eql(Time.zone.now)
+      end
+    end
+
+    context "cached end product status not active" do
+      let(:end_product_status) { "CAN" }
+
+      it "does not update any values and returns true" do
+        expect(subject).to be_truthy
+        expect(ramp_election).to_not be_persisted
+        expect(ramp_election.end_product_status).to eql("CAN")
+        expect(ramp_election.end_product_status_last_synced_at).to be_nil
+      end
+    end
+  end
+
+  context "#control_time" do
+    subject { ramp_election.control_time }
+
+    context "when established_at and receipt_date are set" do
+      let(:established_at) { 1.day.ago }
+      let(:receipt_date) { 2.days.ago }
+
+      it { is_expected.to eq 1.day }
+    end
+
+    context "when established_at is nil" do
+      let(:established_at) { nil }
+      let(:receipt_date) { 2.days.ago }
+
+      it { is_expected.to be nil }
+    end
+
+    context "when receipt date is nil" do
+      let(:established_at) { 1.day.ago }
+      let(:receipt_date) { nil }
+
+      it { is_expected.to be nil }
     end
   end
 
@@ -215,12 +331,22 @@ describe RampElection do
         end
       end
 
-      context "when it is before notice_date" do
-        let(:receipt_date) { 2.days.ago }
+      context "when it is after today and there is no notice_date" do
+        let(:receipt_date) { 1.day.from_now }
+        let(:notice_date) { nil }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
-          expect(ramp_election.errors[:receipt_date]).to include("before_notice_date")
+          expect(ramp_election.errors[:receipt_date]).to include("in_future")
+        end
+      end
+
+      context "when it is before RAMP begin date" do
+        let(:receipt_date) { 2.years.ago }
+
+        it "adds an error to receipt_date" do
+          is_expected.to be false
+          expect(ramp_election.errors[:receipt_date]).to include("before_ramp")
         end
       end
 
@@ -241,6 +367,41 @@ describe RampElection do
           end
         end
       end
+    end
+  end
+
+  context "#successful_intake" do
+    subject { ramp_election.successful_intake }
+
+    let!(:last_successful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "success",
+        completed_at: 2.days.ago,
+        detail: ramp_election
+      )
+    end
+
+    let!(:penultimate_successful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "success",
+        completed_at: 3.days.ago,
+        detail: ramp_election
+      )
+    end
+
+    let!(:unsuccessful_intake) do
+      RampElectionIntake.create!(
+        user_id: "123",
+        completion_status: "error",
+        completed_at: 1.day.ago,
+        detail: ramp_election
+      )
+    end
+
+    it "returns the last successful intake" do
+      expect(ramp_election.successful_intake).to eq(last_successful_intake)
     end
   end
 end

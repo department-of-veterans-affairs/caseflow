@@ -15,10 +15,11 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get('/queue/judges').then((response) => {
-      const judges = JSON.parse(response.text).judges;
+    return ApiUtil.get('/users?role=Judge').then((response) => {
+      const resp = JSON.parse(response.text);
+      const judges = _.keyBy(resp.judges, 'id');
 
-      this.props.onReceiveJudges(_.keyBy(judges, 'id'));
+      this.props.onReceiveJudges(judges);
     });
   }
 

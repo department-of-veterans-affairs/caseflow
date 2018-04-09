@@ -1,6 +1,6 @@
 describe RampRefilingIntake do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   let(:user) { Generators::User.build }
@@ -24,7 +24,8 @@ describe RampRefilingIntake do
       end_product_reference_id: Generators::EndProduct.build(
         veteran_file_number: veteran_file_number,
         bgs_attrs: { status_type_code: "CLR" }
-      ).claim_id
+      ).claim_id,
+      established_at: Time.zone.now
     )
   end
 
@@ -89,7 +90,8 @@ describe RampRefilingIntake do
         RampElection.create!(
           veteran_file_number: "64205555",
           notice_date: 3.days.ago,
-          end_product_reference_id: end_product.claim_id
+          end_product_reference_id: end_product.claim_id,
+          established_at: Time.zone.now
         )
       end
 
@@ -212,7 +214,7 @@ describe RampRefilingIntake do
   end
 
   context "#cancel!" do
-    subject { intake.cancel! }
+    subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
       RampRefiling.create!(
@@ -226,6 +228,10 @@ describe RampRefilingIntake do
 
       expect(intake.reload).to be_canceled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect(intake).to have_attributes(
+        cancel_reason: "system_error",
+        cancel_other: nil
+      )
     end
   end
 

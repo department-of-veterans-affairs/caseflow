@@ -1,4 +1,4 @@
-class AppealSeries < ActiveRecord::Base
+class AppealSeries < ApplicationRecord
   has_many :appeals, dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
@@ -30,7 +30,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def api_sort_key
-    earliest_nod = appeals.map(&:nod_date).min
+    earliest_nod = appeals.map(&:nod_date).compact.min
     earliest_nod ? earliest_nod.in_time_zone.to_f : Float::INFINITY
   end
 

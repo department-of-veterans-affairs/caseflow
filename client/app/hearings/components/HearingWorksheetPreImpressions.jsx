@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
   onToggleReopen, onToggleAllow, onToggleDeny,
-  onToggleRemand, onToggleDismiss, onToggleVHA
+  onToggleRemand, onToggleDismiss, onToggleOMO
 } from '../actions/Issue';
 
 class HearingWorksheetPreImpressions extends PureComponent {
@@ -20,8 +20,8 @@ class HearingWorksheetPreImpressions extends PureComponent {
     this.props.onToggleRemand(remand, this.props.issue.id);
   onToggleDismiss = (dismiss) =>
     this.props.onToggleDismiss(dismiss, this.props.issue.id);
-  onToggleVHA = (vha) =>
-    this.props.onToggleVHA(vha, this.props.issue.id);
+  onToggleOMO = (omo) =>
+    this.props.onToggleOMO(omo, this.props.issue.id);
 
   render() {
     let { issue, print } = this.props;
@@ -37,8 +37,8 @@ class HearingWorksheetPreImpressions extends PureComponent {
         onChange={this.onToggleRemand} value={issue.remand} disabled={print} />
       <Checkbox label="Dismiss" name={`${issue.id}-${issue.appeal_id}-chk_dismiss`}
         onChange={this.onToggleDismiss} value={issue.dismiss} disabled={print} />
-      <Checkbox label="VHA" name={`${issue.id}-${issue.appeal_id}-chk_vha`}
-        onChange={this.onToggleVHA} value={issue.vha} disabled={print} />
+      <Checkbox label="OMO" name={`${issue.id}-${issue.appeal_id}-chk_omo`}
+        onChange={this.onToggleOMO} value={issue.omo} disabled={print} />
     </div>;
   }
 }
@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onToggleDeny,
   onToggleRemand,
   onToggleDismiss,
-  onToggleVHA
+  onToggleOMO
 }, dispatch);
 
 const mapStateToProps = (state) => ({

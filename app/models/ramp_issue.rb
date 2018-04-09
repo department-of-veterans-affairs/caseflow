@@ -1,4 +1,4 @@
-class RampIssue < ActiveRecord::Base
+class RampIssue < ApplicationRecord
   belongs_to :review, polymorphic: true
   belongs_to :source_issue, class_name: "RampIssue"
 

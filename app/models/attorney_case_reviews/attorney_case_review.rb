@@ -1,4 +1,4 @@
-class AttorneyCaseReview < ActiveRecord::Base
+class AttorneyCaseReview < ApplicationRecord
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
@@ -21,13 +21,14 @@ class AttorneyCaseReview < ActiveRecord::Base
 
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,
-      date_assigned: date_assigned,
+      created_in_vacols_date: created_in_vacols_date,
       judge_vacols_user_id: reviewing_judge.vacols_uniq_id,
       decass_attrs: {
         work_product: work_product,
         document_id: document_id,
         overtime: overtime,
-        note: note
+        note: note,
+        modifying_user: attorney.vacols_uniq_id
       }
     )
   end
@@ -54,7 +55,7 @@ class AttorneyCaseReview < ActiveRecord::Base
     task_id.split("-", 2).first
   end
 
-  def date_assigned
+  def created_in_vacols_date
     task_id.split("-", 2).second.to_date
   end
 

@@ -1,6 +1,8 @@
-class RampReview < ActiveRecord::Base
+class RampReview < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
   class InvalidEndProductError < StandardError; end
+
+  RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
   self.abstract_class = true
 
@@ -27,6 +29,14 @@ class RampReview < ActiveRecord::Base
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  def self.established
+    where.not(established_at: nil)
+  end
+
+  def established?
+    !!established_at
+  end
+
   # Allows us to enable certain validations only when saving the review
   def start_review!
     @saving_review = true
@@ -40,7 +50,10 @@ class RampReview < ActiveRecord::Base
     fail InvalidEndProductError unless end_product.valid?
 
     establish_claim_in_vbms(end_product).tap do |result|
-      update!(end_product_reference_id: result.claim_id)
+      update!(
+        end_product_reference_id: result.claim_id,
+        established_at: Time.zone.now
+      )
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
@@ -82,6 +95,10 @@ class RampReview < ActiveRecord::Base
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash
     )
+  end
+
+  def validate_receipt_date_not_before_ramp
+    errors.add(:receipt_date, "before_ramp") if receipt_date < RAMP_BEGIN_DATE
   end
 
   def validate_receipt_date_not_in_future
