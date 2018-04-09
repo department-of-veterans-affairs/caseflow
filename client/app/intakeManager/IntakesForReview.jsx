@@ -54,10 +54,10 @@ export default class IntakesForReview extends Component {
           </p>
         </div>
         <div>
-          <Link to="/stats">
+          <Link to="stats">
             <Button linkStyling>View stats</Button>
           </Link>
-          <Link to="/intake">
+          <Link to="intake">
             <Button legacyStyling={false} classNames={['usa-button-secondary']}>Begin intake</Button>
           </Link>
         </div>

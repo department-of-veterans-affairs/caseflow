@@ -113,14 +113,13 @@ Rails.application.routes.draw do
     get "/", to: 'intakes#index'
     get "/manager", to: 'intakes#manager'
     get "/manager/intakes_for_review", to: 'intakes#manager_review'
-    resources :intakes, path: "/", only: [:index, :create, :destroy] do
-      patch 'review', on: :member
-      patch 'complete', on: :member
-      patch 'error', on: :member
-    end
   end
 
-  # get 'intake/manage', to: 'intake#manage'
+  resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
+    patch 'review', on: :member
+    patch 'complete', on: :member
+    patch 'error', on: :member
+  end
 
   resources :users, only: [:index]
 
