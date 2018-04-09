@@ -44,7 +44,7 @@ class QueueRepository
     # TODO: add depdiff
     transaction do
       vacols_case = VACOLS::Case.find(vacols_id)
-      vacols_case.update_vacols_location!(attorney.vacols_uniq_id))
+      vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
 
       VACOLS::Decass.create!(
