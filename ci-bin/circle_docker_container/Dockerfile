@@ -13,5 +13,5 @@ RUN apt-get install yarn
 
 # Get me a node
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
-RUN curl -sL https://deb.nodesource.com/setup_9.x
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash
 RUN apt-get install nodejs
