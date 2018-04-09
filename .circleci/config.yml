@@ -29,10 +29,6 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: Setup prereqs
-          command: ci-bin/setup-circleci-prereqs
-
       - restore_cache:
           name: Restore bundler cache
           key: vendor-bundle-{{ checksum "Gemfile.lock" }}
