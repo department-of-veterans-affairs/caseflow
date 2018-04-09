@@ -1,4 +1,4 @@
-class CreateJoinTableDocumentsTags < ActiveRecord::Migration
+class CreateJoinTableDocumentsTags < ActiveRecord::Migration[5.1]
   def change
     create_join_table :documents, :tags do |t|
       t.index :document_id

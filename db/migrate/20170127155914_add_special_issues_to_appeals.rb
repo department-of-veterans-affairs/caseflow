@@ -1,4 +1,4 @@
-class AddSpecialIssuesToAppeals < ActiveRecord::Migration
+class AddSpecialIssuesToAppeals < ActiveRecord::Migration[5.1]
   def change
     add_column :appeals, :rice_compliance, :boolean, default: false
     add_column :appeals, :private_attorney, :boolean, default: false

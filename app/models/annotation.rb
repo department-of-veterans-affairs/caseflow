@@ -1,4 +1,4 @@
-class Annotation < ActiveRecord::Base
+class Annotation < ApplicationRecord
   belongs_to :document
   belongs_to :user
   validates :comment, presence: true

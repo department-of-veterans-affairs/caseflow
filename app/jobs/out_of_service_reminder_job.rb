@@ -1,4 +1,4 @@
-class OutOfServiceReminderJob < ActiveJob::Base
+class OutOfServiceReminderJob < ApplicationJob
   queue_as :low_priority
 
   def perform
