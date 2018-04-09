@@ -28,7 +28,7 @@ const IntakeManager = ({
               accentColor: LOGO_COLORS.INTAKE.ACCENT,
               overlapColor: LOGO_COLORS.INTAKE.OVERLAP
             }}
-            defaultUrl="/intake/manager"
+            defaultUrl="/"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>
             <div className="cf-wide-app">
