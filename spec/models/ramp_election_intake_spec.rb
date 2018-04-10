@@ -93,17 +93,6 @@ describe RampElectionIntake do
       end
     end
 
-    let!(:not_matching_ep) do
-      Generators::EndProduct.build(
-        veteran_file_number: "64205555",
-        bgs_attrs: {
-          claim_type_code: "683SCRRRAMP",
-          claim_receive_date: 4.days.ago.to_formatted_s(:short_date),
-          end_product_type_code: "683"
-        }
-      ).claim_id
-    end
-
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
@@ -137,6 +126,27 @@ describe RampElectionIntake do
 
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
+    end
+
+
+    context "if ep already exists and is connected" do
+      let!(:matching_ep) do
+        Generators::EndProduct.build(
+          veteran_file_number: "64205555",
+          bgs_attrs: {
+            claim_type_code: "683SCRRRAMP",
+            claim_receive_date: intake.detail.receipt_date.to_formatted_s(:short_date),
+            end_product_type_code: "683"
+          }
+        )
+      end
+
+      it "connects that EP to the ramp election and does not establish a claim" do
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.error_code).to eq("connected_preexisting_ep")
+      end
     end
 
     context "if VACOLS closure fails" do

@@ -76,7 +76,7 @@ describe RampElection do
       it "creates end product and saves end_product_reference_id" do
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-        subject
+        expect(subject).to eq(:created)
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
@@ -113,7 +113,7 @@ describe RampElection do
         it "connects that EP to the ramp election and does not establish a claim" do
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
 
-          subject
+          expect(subject).to eq(:connected)
 
           expect(ramp_election.reload.established_at).to eq(Time.zone.now)
           expect(ramp_election.end_product_reference_id).to eq(matching_ep.claim_id)

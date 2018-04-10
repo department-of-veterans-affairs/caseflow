@@ -49,10 +49,12 @@ class RampReview < ApplicationRecord
   # If an EP with the exact same traits has already been created. Use that instead
   # of creating a new EP. This prevents duplicate EP errors and allows this method
   # to be idempotent
+  #
+  # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
     return connect_end_product! if matching_end_product
 
-    create_end_product!
+    create_end_product! && :created
   end
 
   def create_end_product!
@@ -104,7 +106,7 @@ class RampReview < ApplicationRecord
     update!(
       end_product_reference_id: matching_end_product.claim_id,
       established_at: Time.zone.now
-    )
+    ) && :connected
   end
 
   def end_product_data_hash
