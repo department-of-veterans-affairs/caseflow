@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.feature "Intake Manager Page" do
   before do
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 8, 8))
+    Timecop.freeze(Time.utc(2017, 12, 8))
   end
 
   context "As a user with Admin Intake role" do
@@ -26,7 +26,7 @@ RSpec.feature "Intake Manager Page" do
 
       RampElectionIntake.create!(
         veteran_file_number: "1110",
-        completed_at: 0.hours.ago,
+        completed_at: 10.minute.ago,
         completion_status: :error,
         error_code: :veteran_not_accessible,
         user: current_user
@@ -160,7 +160,7 @@ RSpec.feature "Intake Manager Page" do
       visit "/intake/manager"
 
       expect(find("#table-row-0")).to have_content("1110")
-      expect(find("#table-row-0")).to have_content("8/08/2017")
+      expect(find("#table-row-0")).to have_content("8/07/2017")
       expect(find("#table-row-0")).to have_content(current_user.full_name)
       expect(find("#table-row-0")).to have_content("RAMP Opt-In Election Form")
       expect(find("#table-row-0")).to have_content("Error: sensitivity")
