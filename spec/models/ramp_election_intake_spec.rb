@@ -128,7 +128,6 @@ describe RampElectionIntake do
       expect(intake.detail.established_at).to_not be_nil
     end
 
-
     context "if ep already exists and is connected" do
       let!(:matching_ep) do
         Generators::EndProduct.build(
