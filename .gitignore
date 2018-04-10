@@ -35,3 +35,6 @@ node_modules
 
 # Generated js bundles
 /app/assets/webpack/*
+
+# Oracle instant client
+ci-bin/circle_docker_container/instant*
