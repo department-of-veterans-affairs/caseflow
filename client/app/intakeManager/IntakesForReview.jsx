@@ -10,8 +10,6 @@ const formatExplanation = (intake) => {
   const explanationCopy = {
     veteran_not_accessible: 'sensitivity',
     veteran_not_valid: 'missing profile information',
-    no_eligible_appeals: 'no eligible appeals',
-    no_active_fully_compensation_appeals: 'no compensation issues',
     duplicate_ep: 'Duplicate EP created outside Caseflow',
     system_error: 'System error',
     missing_signature: 'Missing signature',
@@ -38,7 +36,7 @@ const columns = [
   },
   {
     header: 'Form',
-    valueFunction: (intake) => intake.type === 'RampElectionIntake' ? 'RAMP Opt-In Election Form' : '21-4138 RAMP Selection Form'
+    valueFunction: (intake) => intake.form_type == 'ramp_election' ? 'RAMP Opt-In Election Form' : '21-4138 RAMP Selection Form'
   },
   {
     header: 'Employee',

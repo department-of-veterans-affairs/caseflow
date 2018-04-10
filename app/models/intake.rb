@@ -152,7 +152,7 @@ class Intake < ApplicationRecord
   end
 
   def self.manager_review
-    Intake.select('intakes.*, users.full_name')
+    Intake.select('intakes.*, intakes.type as form_type, users.full_name')
       .joins('JOIN users ON intakes.user_id = users.id',
         "LEFT JOIN
           (SELECT veteran_file_number,
