@@ -152,24 +152,24 @@ class Intake < ApplicationRecord
   end
 
   def self.manager_review
-    Intake.select('intakes.*, intakes.type as form_type, users.full_name')
-      .joins('JOIN users ON intakes.user_id = users.id',
-        "LEFT JOIN
-          (SELECT veteran_file_number,
-          type,
-          MAX(completed_at) as succeeded_at
-          FROM intakes
-          WHERE completion_status = 'success'
-          GROUP BY veteran_file_number, type) latest_success
-          ON intakes.veteran_file_number = latest_success.veteran_file_number
-          AND intakes.type = latest_success.type
-        ")
-      .where.not(completion_status: 'success')
-      .where(:error_code => [
-        nil,
-        'veteran_not_accessible',
-        'veteran_not_valid'
-      ])
+    Intake.select("intakes.*, intakes.type as form_type, users.full_name")
+      .joins("JOIN users ON intakes.user_id = users.id",
+             "LEFT JOIN
+               (SELECT veteran_file_number,
+               type,
+               MAX(completed_at) as succeeded_at
+               FROM intakes
+               WHERE completion_status = 'success'
+               GROUP BY veteran_file_number, type) latest_success
+               ON intakes.veteran_file_number = latest_success.veteran_file_number
+               AND intakes.type = latest_success.type
+             ")
+      .where.not(completion_status: "success")
+      .where(error_code: [
+               nil,
+               "veteran_not_accessible",
+               "veteran_not_valid"
+             ])
       .where('(intakes.completed_at > latest_success.succeeded_at
         OR latest_success.succeeded_at is null)')
   end

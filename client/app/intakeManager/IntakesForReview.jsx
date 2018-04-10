@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Button from '../components/Button';
-import { Link } from 'react-router-dom';
 import { formatDate } from '../util/DateUtil';
 import Table from '../components/Table';
 
@@ -14,15 +13,16 @@ const formatExplanation = (intake) => {
     system_error: 'System error',
     missing_signature: 'Missing signature',
     veteran_clarification: 'Need clarification from Veteran'
-  }
+  };
 
   if (intake.completion_status === 'error') {
-    return `Error: ${explanationCopy[intake.error_code]}`
-  } else if (intake.completion_status === 'canceled'){
-    const cancel_explanation = intake.cancel_other ? intake.cancel_other : explanationCopy[intake.cancel_reason]
-    return `Canceled: ${cancel_explanation}`
+    return `Error: ${explanationCopy[intake.error_code]}`;
+  } else if (intake.completion_status === 'canceled') {
+    const cancelExplanation = intake.cancel_other ? intake.cancel_other : explanationCopy[intake.cancel_reason];
+
+    return `Canceled: ${cancelExplanation}`;
   }
-}
+};
 
 const columns = [
   {
@@ -36,7 +36,8 @@ const columns = [
   },
   {
     header: 'Form',
-    valueFunction: (intake) => intake.form_type == 'ramp_election' ? 'RAMP Opt-In Election Form' : '21-4138 RAMP Selection Form'
+    valueFunction: (intake) =>
+      intake.form_type === 'ramp_election' ? 'RAMP Opt-In Election Form' : '21-4138 RAMP Selection Form'
   },
   {
     header: 'Employee',
@@ -51,7 +52,7 @@ const columns = [
 export default class IntakesForReview extends Component {
   render = () => {
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
-      <div className='cf-manage-intakes-header'>
+      <div className="cf-manage-intakes-header">
         <div>
           <h1>Claims for manager review</h1>
           <p>
@@ -71,7 +72,6 @@ export default class IntakesForReview extends Component {
           </a>
         </div>
       </div>
-
 
       <Table
         columns={columns}

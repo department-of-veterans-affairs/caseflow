@@ -1,7 +1,7 @@
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 
-export const populateIntakesForReview = ( intakes ) => ({
+export const populateIntakesForReview = (intakes) => ({
   type: Constants.POPULATE_INTAKES_FOR_REVIEW,
   payload: {
     intakes

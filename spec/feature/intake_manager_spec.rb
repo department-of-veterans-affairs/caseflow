@@ -22,7 +22,6 @@ RSpec.feature "Intake Manager Page" do
     end
 
     scenario "Only included errors and cancellations appear" do
-
       # Errors that should appear
 
       RampElectionIntake.create!(
@@ -35,7 +34,7 @@ RSpec.feature "Intake Manager Page" do
 
       RampRefilingIntake.create!(
         veteran_file_number: "1111",
-        completed_at: 1.hours.ago,
+        completed_at: 1.hour.ago,
         completion_status: :error,
         error_code: :veteran_not_accessible,
         user: current_user
@@ -96,7 +95,7 @@ RSpec.feature "Intake Manager Page" do
         completed_at: 8.hours.ago,
         completion_status: :canceled,
         cancel_reason: :other,
-        cancel_other: 'I am canceled just because',
+        cancel_other: "I am canceled just because",
         user: current_user
       )
 
@@ -105,7 +104,7 @@ RSpec.feature "Intake Manager Page" do
         completed_at: 9.hours.ago,
         completion_status: :canceled,
         cancel_reason: :other,
-        cancel_other: 'I am a canceled refiling',
+        cancel_other: "I am a canceled refiling",
         user: current_user
       )
 
@@ -128,7 +127,7 @@ RSpec.feature "Intake Manager Page" do
         :no_eligible_appeals,
         :no_active_compensation_appeals,
         :no_active_fully_compensation_appeals,
-        :duplicate_intake_in_progress,
+        :duplicate_intake_in_progress
       ]
 
       refiling_excluded_errors = [
@@ -195,7 +194,7 @@ RSpec.feature "Intake Manager Page" do
 
       RampRefilingIntake.create!(
         veteran_file_number: "1111",
-        completed_at: 1.hours.ago,
+        completed_at: 1.hour.ago,
         completion_status: :error,
         error_code: :veteran_not_accessible,
         user: current_user
@@ -246,7 +245,7 @@ RSpec.feature "Intake Manager Page" do
 
       RampElectionIntake.create!(
         veteran_file_number: "1112",
-        completed_at: 1.hours.ago,
+        completed_at: 1.hour.ago,
         completion_status: :success,
         user: current_user
       )
@@ -266,7 +265,6 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-2")).to have_content("missing profile information")
       expect(page).not_to have_content("1112")
       expect(page).not_to have_selector("#table-row-3")
-
     end
   end
 
