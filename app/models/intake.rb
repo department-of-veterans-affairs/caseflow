@@ -152,6 +152,10 @@ class Intake < ApplicationRecord
   end
 
   def self.manager_review
+    # Get canceled and errored intakes (of specified errors only)
+    # Exclude intakes where there has been a success on the same veteran_file_number / intake type
+    # combination since the error or cancellation (meaning the issue has been resolved)
+    
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
       .joins("JOIN users ON intakes.user_id = users.id",
              "LEFT JOIN
