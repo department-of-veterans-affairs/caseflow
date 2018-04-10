@@ -41,7 +41,6 @@ class QueueRepository
   end
 
   def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
-    # TODO: add depdiff
     transaction do
       vacols_case = VACOLS::Case.find(vacols_id)
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
