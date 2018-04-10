@@ -6,6 +6,10 @@ export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
 });
 
+export const clearCaseListSearchResults = () => ({
+  type: Constants.CLEAR_CASE_LIST_SEARCH_RESULTS
+});
+
 export const setCaseListSearch = (searchQuery) => ({
   type: Constants.SET_CASE_LIST_SEARCH,
   payload: { searchQuery }
@@ -36,6 +40,7 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
 
 export const fetchAppealsUsingVeteranId = (veteranId) =>
   (dispatch) => {
+    dispatch(clearCaseListSearchResults());
     ApiUtil.get('/appeals', {
       headers: { 'veteran-id': veteranId }
     }).

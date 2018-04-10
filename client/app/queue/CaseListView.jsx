@@ -30,44 +30,50 @@ class CaseListView extends React.PureComponent {
     }
   }
 
+  pageBody = () => {
+    const appealsCount = this.props.caseList.receivedAppeals.length;
+
+    if (appealsCount > 0) {
+      // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
+      // the same for all appeals in the list.
+      const firstAppeal = this.props.caseList.receivedAppeals[0];
+
+      return <React.Fragment>
+        <h1 className="cf-push-left" {...fullWidth}>
+          {appealsCount} {pluralize('case', appealsCount)} found for&nbsp;
+          “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
+        </h1>
+        <CaseListTable appeals={this.props.caseList.receivedAppeals} />
+      </React.Fragment>;
+    }
+
+    return <React.Fragment>
+      <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.searchQuery}”</h1>
+      <p>Please enter a valid 9-digit Veteran ID to search for all available cases.</p>
+      <SearchBar
+        id="searchBarEmptyList"
+        size="big"
+        onChange={this.props.setCaseListSearch}
+        value={this.props.caseList.caseListCriteria.searchQuery}
+        onClearSearch={this.props.clearCaseListSearch}
+        onSubmit={this.searchOnChange}
+        loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
+        submitUsingEnterKey
+      />
+    </React.Fragment>;
+  }
+
   // TODO: What is the search results error behaviour here?
   // As written if a search errored, the child would return to being displayed and the error would show above the list.
   // Do we want to have the previous search stick around?
   render() {
-    const appealsCount = this.props.caseList.receivedAppeals.length;
-
-    // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
-    // the same for all appeals in the list.
-    const firstAppeal = this.props.caseList.receivedAppeals[0];
-
     return <React.Fragment>
       <div {...backLinkStyling}>
         <Link to="/" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
       </div>
       <AppSegment filledBackground>
-        <div> { this.props.caseList.receivedAppeals.length > 0 ?
-          <React.Fragment>
-            <h1 className="cf-push-left" {...fullWidth}>
-              {appealsCount} {pluralize('case', appealsCount)} found for&nbsp;
-              “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
-            </h1>
-            <CaseListTable appeals={this.props.caseList.receivedAppeals} />
-          </React.Fragment> :
-          <React.Fragment>
-            <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.searchQuery}”</h1>
-            <p>Please enter a valid 9-digit Veteran ID to search for all available cases.</p>
-            <SearchBar
-              id="searchBarEmptyList"
-              size="big"
-              onChange={this.props.setCaseListSearch}
-              value={this.props.caseList.caseListCriteria.searchQuery}
-              onClearSearch={this.props.clearCaseListSearch}
-              onSubmit={this.searchOnChange}
-              loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
-              submitUsingEnterKey
-            />
-          </React.Fragment>
-        }
+        <div>
+          { this.pageBody() }
         </div>
       </AppSegment>
     </React.Fragment>;

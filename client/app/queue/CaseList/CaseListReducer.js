@@ -31,6 +31,14 @@ export const caseListReducer = (state = initialState, action = {}) => {
         noAppealsFoundSearchQueryValue: { $set: null }
       }
     });
+  case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:
+    return update(state, {
+      receivedAppeals: { $set: {} },
+      search: {
+        showErrorMessage: { $set: false },
+        noAppealsFoundSearchQueryValue: { $set: null }
+      }
+    });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE:
     return update(state, {
       displayCaseListResults: { $set: true },
