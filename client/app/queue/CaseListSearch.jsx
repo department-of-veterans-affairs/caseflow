@@ -152,7 +152,8 @@ class CaseListSearch extends React.PureComponent {
     };
 
     const topSearchBar = () => {
-      if (caseList.displayCaseListResults && caseList.search.showErrorMessage) {
+      if (caseList.displayCaseListResults &&
+        (caseList.search.showErrorMessage || caseList.search.noAppealsFoundSearchQueryValue)) {
         return;
       }
 

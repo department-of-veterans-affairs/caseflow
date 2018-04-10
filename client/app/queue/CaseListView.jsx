@@ -48,7 +48,7 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.searchQuery}”</h1>
+      <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.noAppealsFoundSearchQueryValue}”</h1>
       <p>Please enter a valid 9-digit Veteran ID to search for all available cases.</p>
       <SearchBar
         id="searchBarEmptyList"
@@ -82,6 +82,7 @@ class CaseListView extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,
+  noAppealsFoundSearchQueryValue: state.caseList.search.noAppealsFoundSearchQueryValue,
   searchQuery: state.caseList.caseListCriteria.searchQuery
 });
 
