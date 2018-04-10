@@ -55,7 +55,8 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         }))}
         onChange={({ value }) => this.props.updateIssue({
           disposition: value,
-          readjudication: false
+          readjudication: false,
+          remand_reasons: []
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
       {issue.disposition === 'Vacated' && <Checkbox

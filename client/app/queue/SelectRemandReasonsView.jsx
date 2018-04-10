@@ -24,9 +24,8 @@ class SelectRemandReasonsView extends React.Component {
     path: `/tasks/${this.props.appealId}/remands`
   });
 
-  // todo: auto-prepend < to back button text
   getFooterButtons = () => [{
-    displayText: '< Go back to Select Dispositions'
+    displayText: 'Go back to Select Dispositions'
   }, {
     displayText: 'Review Draft Decision'
   }];

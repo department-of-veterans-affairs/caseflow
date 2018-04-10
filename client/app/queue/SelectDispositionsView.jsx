@@ -96,7 +96,7 @@ class SelectDispositionsView extends React.PureComponent {
       'Select remand reasons' : 'Finish dispositions';
 
     return [{
-      displayText: `< Go back to ${vetName} (${vbmsId})`
+      displayText: `Go back to ${vetName} (${vbmsId})`
     }, {
       displayText: nextStepText,
       id: 'finish-dispositions'

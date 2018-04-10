@@ -56,20 +56,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.saveEditedAppealIssue(appealId);
   };
 
-  componentDidMount = () => {
-    const { issue } = this.props;
-
-    if (!issue.remand_reasons) {
-      this.updateIssue({ remand_reasons: [] });
-    } else {
-      _.each(issue.remand_reasons, (reason) => this.setState({
-        [reason.code]: {
-          checked: true,
-          after_certification: reason.after_certification
-        }
-      }));
+  componentDidMount = () => _.each(this.props.issue.remand_reasons, (reason) => this.setState({
+    [reason.code]: {
+      checked: true,
+      after_certification: reason.after_certification
     }
-  }
+  }));
 
   componentWillUnmount = () => {
     // on unmount, update issue attrs from state
@@ -168,7 +160,6 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             options={REMAND_REASONS.dutyToAssistRecordsRequest}
             {...checkboxGroupProps} />
         </div>
-        {/* todo: better CheckboxGroup y alignment */}
         <div {...flexColumn}>
           <CheckboxGroup
             label={<h3>Duty to notify</h3>}
