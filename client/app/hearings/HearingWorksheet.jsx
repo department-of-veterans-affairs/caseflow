@@ -17,6 +17,8 @@ import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
 import CFRichTextEditor from '../components/CFRichTextEditor';
+import { Editor } from 'react-draft-wysiwyg';
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 import RichTextEditor from 'react-rte';
 
@@ -146,11 +148,13 @@ export class HearingWorksheet extends React.PureComponent {
           onChange={this.onContentionsChange}
           id="worksheet-contentions"
           print={this.props.print}
-        /> 
+        />
+
         <CFRichTextEditor
           value={worksheet.evidence}
           onChange={this.onEvidenceChange}
         />
+
         <WorksheetFormEntry
           name="Evidence"
           value={worksheet.evidence}
