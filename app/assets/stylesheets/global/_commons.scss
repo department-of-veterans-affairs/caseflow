@@ -4,6 +4,8 @@
 @import 'uswds/all';
 @import 'uswds_rails_overrides/all';
 @import 'fonts';
+// Add scss includes explicitly here.
+@import 'caseflow_main';
 
 $cf-background: #f9f9f9;
 $cf-link: #0872b9;
