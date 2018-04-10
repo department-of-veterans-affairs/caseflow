@@ -160,7 +160,7 @@ RSpec.feature "Intake Manager Page" do
       visit "/intake/manager"
 
       expect(find("#table-row-0")).to have_content("1110")
-      expect(find("#table-row-0")).to have_content("8/07/2017")
+      expect(find("#table-row-0")).to have_content("8/08/2017")
       expect(find("#table-row-0")).to have_content(current_user.full_name)
       expect(find("#table-row-0")).to have_content("RAMP Opt-In Election Form")
       expect(find("#table-row-0")).to have_content("Error: sensitivity")
