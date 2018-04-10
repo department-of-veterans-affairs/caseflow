@@ -6,7 +6,7 @@ RSpec.feature "Intake Manager Page" do
     Timecop.freeze(Time.utc(2017, 8, 8))
   end
 
-  context "As a user with Admin Intake role", :focus => true do
+  context "As a user with Admin Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Admin Intake"])
     end
