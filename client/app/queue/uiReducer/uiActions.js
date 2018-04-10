@@ -97,3 +97,11 @@ export const requestDelete = (url, params, successMessage) => requestSave(url, p
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
 });
+
+export const showModal = () => ({
+  type: ACTIONS.SHOW_MODAL
+});
+
+export const hideModal = () => ({
+  type: ACTIONS.HIDE_MODAL
+});

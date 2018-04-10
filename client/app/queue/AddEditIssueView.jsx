@@ -16,7 +16,9 @@ import {
 import {
   highlightInvalidFormItems,
   requestUpdate,
-  requestDelete
+  requestDelete,
+  showModal,
+  hideModal
 } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -38,12 +40,6 @@ const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { modal: false };
-  }
-
   componentDidMount = () => {
     const {
       issueId,
@@ -131,9 +127,6 @@ class AddEditIssueView extends React.Component {
     ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
-  showDeleteModal = () => this.setState({ modal: true });
-  hideDeleteModal =() => this.setState({ modal: false });
-
   deleteIssue = () => {
     const {
       issue,
@@ -144,7 +137,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
 
-    this.hideDeleteModal();
+    this.props.hideModal();
 
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
@@ -166,7 +159,8 @@ class AddEditIssueView extends React.Component {
       },
       action,
       highlight,
-      error
+      error,
+      modal
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -183,19 +177,19 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
-      {this.state.modal && <div className="cf-modal-scroll">
+      {modal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Close',
-            onClick: this.hideDeleteModal
+            onClick: this.props.hideModal
           }, {
             classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Delete issue',
             onClick: this.deleteIssue
           }]}
-          closeHandler={this.hideDeleteModal}>
+          closeHandler={this.props.hideModal}>
           You are about to permanently delete this issue. To delete please
           click the <strong>"Delete issue"</strong> button or click&nbsp;
           <strong>"Close"</strong> to return to the previous screen.
@@ -211,7 +205,7 @@ class AddEditIssueView extends React.Component {
         willNeverBeLoading
         linkStyling
         styling={noLeftPadding}
-        onClick={this.showDeleteModal}>
+        onClick={this.props.showModal}>
         Delete Issue
       </Button>
       <div {...dropdownMarginTop}>
@@ -295,7 +289,8 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  modal: state.ui.modal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -306,7 +301,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   deleteAppealIssue,
   requestUpdate,
-  requestDelete
+  requestDelete,
+  showModal,
+  hideModal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
