@@ -1,9 +1,16 @@
+@import 'bourbon';
+@import 'neat';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
+@import 'uswds_rails_overrides/all';
+@import 'fonts';
+
 .cf-stats {
   margin-top: 20px;
 }
 
 .cf-stats-section {
-  @include outer-container;
+ // @include outer-container;
   margin-bottom: 20px;
 }
 
