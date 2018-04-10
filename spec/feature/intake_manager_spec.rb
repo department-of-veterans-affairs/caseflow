@@ -26,51 +26,106 @@ RSpec.feature "Intake Manager Page" do
       # Errors that should appear
 
       RampElectionIntake.create!(
-        veteran_file_number: "1111",
-        completed_at: 1.hours.ago,
-        completion_status: :error,
-        error_code: :no_eligible_appeals,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1112",
-        completed_at: 2.hours.ago,
-        completion_status: :error,
-        error_code: :no_active_fully_compensation_appeals,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1113",
-        completed_at: 3.hours.ago,
+        veteran_file_number: "1110",
+        completed_at: 0.hours.ago,
         completion_status: :error,
         error_code: :veteran_not_valid,
         user: current_user
       )
 
       RampElectionIntake.create!(
-        veteran_file_number: "1114",
-        completed_at: 4.hours.ago,
+        veteran_file_number: "1111",
+        completed_at: 1.hours.ago,
         completion_status: :error,
         error_code: :veteran_not_accessible,
         user: current_user
       )
 
+      # Cancellations
+
+      RampElectionIntake.create!(
+        veteran_file_number: "1112",
+        completed_at: 2.hours.ago,
+        completion_status: :canceled,
+        cancel_reason: :duplicate_ep,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "1113",
+        completed_at: 3.hours.ago,
+        completion_status: :canceled,
+        cancel_reason: :system_error,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "1114",
+        completed_at: 4.hours.ago,
+        completion_status: :canceled,
+        cancel_reason: :missing_signature,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "1114",
+        completed_at: 4.hours.ago,
+        completion_status: :canceled,
+        cancel_reason: :veteran_clarification,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "1115",
+        completed_at: 5.hours.ago,
+        completion_status: :canceled,
+        cancel_reason: :other,
+        cancel_other: 'I am canceled just because',
+        user: current_user
+      )
+
+      # Errors that should not appear, just checking a couple
+
+      RampElectionIntake.create!(
+        veteran_file_number: "2110",
+        completed_at: 20.hours.ago,
+        completion_status: :error,
+        error_code: :veteran_not_found,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "2110",
+        completed_at: 20.hours.ago,
+        completion_status: :error,
+        error_code: :ramp_election_already_complete,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
+        veteran_file_number: "2110",
+        completed_at: 20.hours.ago,
+        completion_status: :error,
+        error_code: :no_eligible_appeals,
+        user: current_user
+      )
+
       visit "/intake/manager"
 
-      expect(find("#table-row-0")).to have_content("1111")
-
-      debugger
-
+      expect(find("#table-row-0")).to have_content("1110")
       expect(find("#table-row-0")).to have_content("8/07/2017")
       expect(find("#table-row-0")).to have_content(current_user.full_name)
       expect(find("#table-row-0")).to have_content("21-4138 RAMP Selection Form")
-      expect(find("#table-row-0")).to have_content("Error: no eligible appeals")
+      expect(find("#table-row-0")).to have_content("Error: missing profile information")
 
-      expect(find("#table-row-1")).to have_content("Error: no compensation issues")
-      expect(find("#table-row-2")).to have_content("Error: missing profile information")
-      expect(find("#table-row-3")).to have_content("Error: sensitivity")
+      expect(find("#table-row-1")).to have_content("Error: sensitivity")
+      expect(find("#table-row-2")).to have_content("Canceled: Duplicate EP created outside Caseflow")
+      expect(find("#table-row-3")).to have_content("Canceled: System error")
+      expect(find("#table-row-4")).to have_content("Canceled: Missing signature")
+      expect(find("#table-row-5")).to have_content("Canceled: Need clarification from Veteran")
+      expect(find("#table-row-6")).to have_content("Canceled: I am canceled just because")
+
+      expect(page).not_to have_selector("#table-row-7")
     end
   end
 
