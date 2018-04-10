@@ -48,8 +48,8 @@ GIT
 
 GIT
   remote: https://github.com/nolawi/caseflow-commons.git
-  revision: 97662c4e71787c5e7cfd788df64ec273ce02c3c9
-  ref: 97662c4e71787c5e7cfd788df64ec273ce02c3c9
+  revision: c9c0fc60ecd2cb598ee7fe41b1899d90081a5955
+  ref: c9c0fc60ecd2cb598ee7fe41b1899d90081a5955
   specs:
     caseflow (0.3.4)
       aws-sdk (~> 2.10)
