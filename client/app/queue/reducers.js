@@ -53,6 +53,13 @@ const workQueueReducer = (state = initialState, action = {}) => {
         $set: action.payload.judges
       }
     });
+  case ACTIONS.DELETE_APPEAL:
+    return update(state, {
+      loadedQueue: {
+        appeals: { $unset: action.payload.appealId },
+        tasks: { $unset: action.payload.appealId }
+      }
+    });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
   case ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE:
     return update(state, {

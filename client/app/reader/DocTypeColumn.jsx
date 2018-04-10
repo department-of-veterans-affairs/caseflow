@@ -30,7 +30,7 @@ class DocTypeColumn extends React.PureComponent {
         </Highlight>
       </ViewableItemLink>
       {doc.description && <p className="document-list-doc-description">
-        {doc.description}
+        <Highlight>{doc.description}</Highlight>
       </p>}
     </div>;
   }

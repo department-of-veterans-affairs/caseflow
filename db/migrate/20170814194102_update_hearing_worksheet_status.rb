@@ -1,4 +1,4 @@
-class UpdateHearingWorksheetStatus < ActiveRecord::Migration
+class UpdateHearingWorksheetStatus < ActiveRecord::Migration[5.1]
   def change
     remove_column :issues, :hearing_worksheet_status, :integer
     add_column :issues, :allow, :boolean

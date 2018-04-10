@@ -1,4 +1,4 @@
-class AddMetadataToDocuments < ActiveRecord::Migration
+class AddMetadataToDocuments < ActiveRecord::Migration[5.1]
   def change
     add_column :documents, :received_at, :date
     add_column :documents, :type, :string

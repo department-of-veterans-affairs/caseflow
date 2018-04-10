@@ -83,7 +83,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [] do
+  resources :appeals, only: [:index] do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -106,7 +106,6 @@ Rails.application.routes.draw do
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
 
-
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
 
@@ -117,14 +116,16 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :users, only: [:index]
+
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/tasks/:vacols_id', to: 'queue#index'
     get '/tasks/:vacols_id/*all', to: redirect('/queue/tasks/%{vacols_id}')
-    get '/judges', to: 'queue#judges'
     get '/docs_for_dev', to: 'queue#dev_document_count'
     get '/:user_id', to: 'queue#tasks'
     post '/tasks/:task_id/complete', to: 'queue#complete'
+    post '/tasks', to: 'queue#create'
   end
 
   get "health-check", to: "health_checks#show"

@@ -330,6 +330,7 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
+        expect(page).to have_content("You have updated issue 1.")
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
@@ -359,6 +360,12 @@ RSpec.feature "Queue" do
 
         click_on "Submit"
         sleep 1
+        expect(page).to(
+          have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s outside medical
+            opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
+          )
+        )
         expect(page.current_path).to eq("/queue/")
       end
 
@@ -392,6 +399,12 @@ RSpec.feature "Queue" do
 
         click_on "Submit"
         sleep 1
+        expect(page).to(
+          have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision.
+            It's been sent to Andrew Mackenzie for review."
+          )
+        )
         expect(page.current_path).to eq("/queue/")
       end
     end

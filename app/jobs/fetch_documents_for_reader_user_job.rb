@@ -1,6 +1,6 @@
 # This job will retrieve cases from VACOLS via the AppealRepository
 # and all documents for these cases in VBMS and store them
-class FetchDocumentsForReaderUserJob < ActiveJob::Base
+class FetchDocumentsForReaderUserJob < ApplicationJob
   queue_as :low_priority
 
   # if a user has experienced more than DOCUMENT_FAILURE_COUNT, we consider this job as failed

@@ -5,7 +5,7 @@ RSpec.feature "RAMP Intake" do
     FeatureToggle.enable!(:intake)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 8, 8))
+    Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -184,20 +184,28 @@ RSpec.feature "RAMP Intake" do
       intake.start!
 
       visit "/intake"
-
       safe_click "#cancel-intake"
       expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
-      safe_click "#close-modal"
+      safe_click ".close-modal"
       expect(page).to_not have_css(".cf-modal-title")
+      safe_click "#cancel-intake"
 
-      safe_click ".cf-submit.usa-button"
-      safe_click ".cf-modal-body .cf-submit"
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
+      within_fieldset("Please select the reason you are canceling this intake.") do
+        find("label", text: "Other").click
+      end
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to_not have_css(".cf-modal-title")
 
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake.cancel_reason).to eq("other")
+      expect(intake.cancel_other).to eq("blue!")
       expect(intake).to be_canceled
     end
 
@@ -260,7 +268,7 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("Search for Veteran by ID")
         expect(page).to have_content(
-          "A RAMP opt-in with the receipt date 08/02/2017 was already processed"
+          "A RAMP opt-in with the receipt date 12/02/2017 was already processed"
         )
 
         error_intake = Intake.last
@@ -295,7 +303,7 @@ RSpec.feature "RAMP Intake" do
       end
 
       scenario "Start intake and go back and edit option" do
-        RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+        RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
         intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
         intake.start!
 
@@ -309,13 +317,13 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("Please select an option.")
         expect(page).to have_content(
-          "Receipt date cannot be earlier than the election notice date of 08/07/2017"
+          "Receipt Date cannot be earlier than RAMP start date, 11/01/2017"
         )
 
         within_fieldset("Which review lane did the veteran select?") do
           find("label", text: "Higher Level Review", match: :prefer_exact).click
         end
-        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
         safe_click "#button-submit-review"
 
         expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -352,7 +360,7 @@ RSpec.feature "RAMP Intake" do
 
         election = RampElection.create!(
           veteran_file_number: "12341234",
-          notice_date: Date.new(2017, 8, 7)
+          notice_date: Date.new(2017, 11, 7)
         )
 
         intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
@@ -366,14 +374,14 @@ RSpec.feature "RAMP Intake" do
           find("label", text: "Higher Level Review with Informal Conference").click
         end
 
-        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
         safe_click "#button-submit-review"
 
         expect(page).to have_content("Finish processing Higher-Level Review election")
 
         election.reload
         expect(election.option_selected).to eq("higher_level_review_with_hearing")
-        expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
+        expect(election.receipt_date).to eq(Date.new(2017, 11, 7))
 
         # Validate the app redirects you to the appropriate location
         visit "/intake"
@@ -448,7 +456,7 @@ RSpec.feature "RAMP Intake" do
 
         RampElection.create!(
           veteran_file_number: "12341234",
-          notice_date: Date.new(2017, 8, 7)
+          notice_date: Date.new(2017, 11, 7)
         )
 
         intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
@@ -460,7 +468,7 @@ RSpec.feature "RAMP Intake" do
           find("label", text: "Higher Level Review with Informal Conference").click
         end
 
-        fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
+        fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
         safe_click "#button-submit-review"
 
         expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -562,7 +570,7 @@ RSpec.feature "RAMP Intake" do
 
         visit "/intake"
 
-        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        fill_in "What is the Receipt Date of this form?", with: "11/03/2017"
         within_fieldset("Which review lane did the Veteran select?") do
           find("label", text: "Higher Level Review", match: :prefer_exact).click
         end
@@ -626,7 +634,7 @@ RSpec.feature "RAMP Intake" do
         expect(ramp_election.issues.count).to eq(2)
 
         # Validate validation
-        fill_in "What is the Receipt Date of this form?", with: "08/02/2017"
+        fill_in "What is the Receipt Date of this form?", with: "11/02/2017"
 
         within_fieldset("Which review lane did the Veteran select?") do
           find("label", text: "Appeal to Board").click
@@ -635,10 +643,10 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
 
         expect(page).to have_content(
-          "Receipt date cannot be earlier than the original RAMP election receipt date of 08/03/2017"
+          "Receipt date cannot be earlier than the original RAMP election receipt date of 12/03/2017"
         )
 
-        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
         safe_click "#button-submit-review"
 
         expect(page).to have_content("Please select an option")
@@ -655,7 +663,7 @@ RSpec.feature "RAMP Intake" do
         expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
         expect(ramp_refiling.option_selected).to eq("appeal")
         expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
-        expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 8, 3))
+        expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 12, 3))
 
         safe_click "#finish-intake"
 
@@ -719,7 +727,7 @@ RSpec.feature "RAMP Intake" do
 
         visit "/intake"
 
-        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        fill_in "What is the Receipt Date of this form?", with: "12/07/2017"
         within_fieldset("Which review lane did the Veteran select?") do
           find("label", text: "Supplemental Claim", match: :prefer_exact).click
         end
@@ -806,7 +814,7 @@ RSpec.feature "RAMP Intake" do
 
         visit "/intake"
 
-        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
         within_fieldset("Which review lane did the Veteran select?") do
           find("label", text: "Supplemental Claim", match: :prefer_exact).click
         end
@@ -854,7 +862,7 @@ RSpec.feature "RAMP Intake" do
         safe_click ".cf-submit.usa-button"
         fill_in "Search small", with: "12341234"
         click_on "Search"
-        fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+        fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
         within_fieldset("Which review lane did the Veteran select?") do
           find("label", text: "Higher Level Review", match: :prefer_exact).click
         end

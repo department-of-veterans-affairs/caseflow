@@ -1,4 +1,4 @@
-class IndexDocketTracersOnDocketSnapshotIdAndMonth < ActiveRecord::Migration
+class IndexDocketTracersOnDocketSnapshotIdAndMonth < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change

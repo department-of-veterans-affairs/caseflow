@@ -1,3 +1,3 @@
-class ApiView < ActiveRecord::Base
+class ApiView < ApplicationRecord
   belongs_to :api_key
 end
