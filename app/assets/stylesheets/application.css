@@ -13,7 +13,9 @@
  *= require _rc_collapse.scss
  *= require _main.scss
  *= require global/_commons.scss
- * *= require global/_fonts.scss
+ *= require global/_fonts.scss
+ *= require _tabs.scss
+ *= require _stats.scss
  *= require _tasks.scss
  *= require _pdf_viewer.css
  *= require _reviewer.scss
