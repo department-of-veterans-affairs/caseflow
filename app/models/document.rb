@@ -51,8 +51,6 @@ class Document < ApplicationRecord
     "Hearing Transcript"
   ].freeze
 
-  CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF = 30.days.ago.freeze
-
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
