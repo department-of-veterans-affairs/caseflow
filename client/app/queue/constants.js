@@ -52,6 +52,40 @@ export const DECISION_TYPES = {
   DRAFT_DECISION: 'DraftDecision'
 };
 
+/* eslint-disable id-length */
+export const CASE_DISPOSITION_DESCRIPTION_BY_ID = {
+  1: 'Allowed',
+  3: 'Remanded',
+  4: 'Denied',
+  5: 'Vacated',
+  6: 'Dismissed, Other',
+  8: 'Dismissed, Death',
+  9: 'Withdrawn',
+  A: 'Advance Allowed in Field',
+  B: 'Benefits Granted by AOJ',
+  D: 'Designation of Record',
+  E: 'Advance Withdrawn Death of Veteran',
+  F: 'Advance Withdrawn by Appellant/Rep',
+  G: 'Advance Failure to Respond',
+  L: 'Manlincon Remand',
+  M: 'Merged Appeal',
+  P: 'RAMP Opt-in',
+  Q: 'Recon Motion Withdrawn',
+  R: 'Reconsideration by Letter',
+  S: 'Stay',
+  U: 'Motion to Vacate Denied',
+  V: 'Motion to Vacate Withdrawn',
+  W: 'Withdrawn from Remand',
+  X: 'Remand Failure to Respond'
+};
+/* eslint-enable id-length */
+
+export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
+  {}, ...Object.keys(CASE_DISPOSITION_DESCRIPTION_BY_ID).map(
+    (id) => ({ [CASE_DISPOSITION_DESCRIPTION_BY_ID[id].toLowerCase()]: id })
+  )
+);
+
 /*
 appeals-design-research/Projects/BVA Work Queue/Research/Documents/Appendix F - VACOLS Issue Coding.pdf
 https://git.io/vxBtN
