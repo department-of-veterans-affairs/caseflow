@@ -4,7 +4,7 @@ class SyncIntakeJob < ApplicationJob
   queue_as :low_priority
 
   def perform
-    RampElection.established.active.each do |ramp_election|
+    RampElection.active.each do |ramp_election|
       # Set user to user who established to avoid sensitivity errors
       # TODO: not all RampElections will have an Intake
       # so we may need to figure out a default user
