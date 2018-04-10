@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
+import { formatDateStr } from '../../util/DateUtil';
 
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
@@ -131,7 +132,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   render = () => {
     const {
       issue,
-      idx
+      idx,
+      appeal: { attributes: appeal }
     } = this.props;
     const checkboxGroupProps = {
       onChange: this.toggleRemandReason,
@@ -144,8 +146,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
       <div {...smallBottomMargin}>Code: {_.last(issue.description)}</div>
-      {/* todo: certified date */}
-      <div {...smallBottomMargin}>Certified: {(issue.date_assigned || new Date().toISOString()).split('T')[0]}</div>
+      <div {...smallBottomMargin}>Certified: {formatDateStr(appeal.certification_date)}</div>
 
       <div {...flexContainer}>
         <div {...flexColumn}>
@@ -188,6 +189,7 @@ const mapStateToProps = (state, ownProps) => {
   const issues = appeal.attributes.issues;
 
   return {
+    appeal,
     issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId)
   };
 };
