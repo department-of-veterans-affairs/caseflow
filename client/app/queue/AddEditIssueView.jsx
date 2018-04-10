@@ -209,8 +209,8 @@ class AddEditIssueView extends React.Component {
       </Alert>}
       <Button
         willNeverBeLoading
+        linkStyling
         styling={noLeftPadding}
-        classNames={['cf-btn-link']}
         onClick={this.showDeleteModal}>
         Delete Issue
       </Button>
