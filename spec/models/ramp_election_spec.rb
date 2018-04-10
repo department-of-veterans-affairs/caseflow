@@ -5,8 +5,8 @@ describe RampElection do
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
-  let(:notice_date) { 1.day.ago }
-  let(:receipt_date) { 1.day.ago }
+  let(:notice_date) { Time.zone.today - 2 }
+  let(:receipt_date) { Time.zone.today - 1 }
   let(:option_selected) { nil }
   let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
@@ -55,8 +55,9 @@ describe RampElection do
     end
   end
 
-  context "#create_end_product!" do
-    subject { ramp_election.create_end_product! }
+  context "#create_or_connect_end_product!" do
+    subject { ramp_election.create_or_connect_end_product! }
+
     # Stub the id of the end product being created
     before do
       Fakes::VBMSService.end_product_claim_id = "454545"
@@ -83,7 +84,7 @@ describe RampElection do
       it "creates end product and saves end_product_reference_id" do
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-        subject
+        expect(subject).to eq(:created)
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
@@ -103,6 +104,28 @@ describe RampElection do
         )
 
         expect(ramp_election.reload.end_product_reference_id).to eq("454545")
+      end
+
+      context "if matching RAMP ep already exists" do
+        let!(:matching_ep) do
+          Generators::EndProduct.build(
+            veteran_file_number: "64205555",
+            bgs_attrs: {
+              claim_type_code: "683SCRRRAMP",
+              claim_receive_date: receipt_date.to_formatted_s(:short_date),
+              end_product_type_code: "683"
+            }
+          )
+        end
+
+        it "connects that EP to the ramp election and does not establish a claim" do
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+
+          expect(subject).to eq(:connected)
+
+          expect(ramp_election.reload.established_at).to eq(Time.zone.now)
+          expect(ramp_election.end_product_reference_id).to eq(matching_ep.claim_id)
+        end
       end
 
       context "when VBMS throws an error" do
