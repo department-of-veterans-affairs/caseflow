@@ -68,47 +68,70 @@ RSpec.feature "Intake Manager Page" do
       )
 
       RampElectionIntake.create!(
-        veteran_file_number: "1114",
-        completed_at: 4.hours.ago,
+        veteran_file_number: "1115",
+        completed_at: 5.hours.ago,
         completion_status: :canceled,
         cancel_reason: :veteran_clarification,
         user: current_user
       )
 
       RampElectionIntake.create!(
-        veteran_file_number: "1115",
-        completed_at: 5.hours.ago,
+        veteran_file_number: "1116",
+        completed_at: 6.hours.ago,
         completion_status: :canceled,
         cancel_reason: :other,
         cancel_other: 'I am canceled just because',
         user: current_user
       )
 
-      # Errors that should not appear, just checking a couple
-
+      # Successes should not appear in the manager list
       RampElectionIntake.create!(
         veteran_file_number: "2110",
         completed_at: 20.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_found,
+        completion_status: :success,
         user: current_user
       )
 
-      RampElectionIntake.create!(
-        veteran_file_number: "2110",
-        completed_at: 20.hours.ago,
-        completion_status: :error,
-        error_code: :ramp_election_already_complete,
-        user: current_user
-      )
+      # Errors that should not appear in the manager list
 
-      RampElectionIntake.create!(
-        veteran_file_number: "2110",
-        completed_at: 20.hours.ago,
-        completion_status: :error,
-        error_code: :no_eligible_appeals,
-        user: current_user
-      )
+      election_excluded_errors = [
+        :invalid_file_number,
+        :veteran_not_found,
+        :did_not_receive_ramp_election,
+        :ramp_election_already_complete,
+        :no_active_appeals,
+        :no_eligible_appeals,
+        :no_active_compensation_appeals,
+        :no_active_fully_compensation_appeals,
+        :duplicate_intake_in_progress,
+      ]
+
+      refiling_excluded_errors = [
+        :no_complete_ramp_election,
+        :ramp_election_is_active,
+        :ramp_election_no_issues,
+        :ramp_refiling_already_processed
+      ]
+
+      election_excluded_errors.each do |election_excluded_error|
+        RampElectionIntake.create!(
+          veteran_file_number: "2110",
+          completed_at: 20.hours.ago,
+          completion_status: :error,
+          error_code: election_excluded_error,
+          user: current_user
+        )
+      end
+
+      refiling_excluded_errors.each do |refiling_excluded_error|
+        RampRefilingIntake.create!(
+          veteran_file_number: "2110",
+          completed_at: 20.hours.ago,
+          completion_status: :error,
+          error_code: refiling_excluded_error,
+          user: current_user
+        )
+      end
 
       visit "/intake/manager"
 
@@ -128,45 +151,6 @@ RSpec.feature "Intake Manager Page" do
       expect(page).not_to have_selector("#table-row-7")
     end
   end
-
-  # To do
-    # Create fake data for:
-    # Each cancellation reason
-    # Each included error and some excluded errors
-    # successful ramp elections and ramp refilings (that succeeded on the first time)
-    # successful ramp elections and refilings that previously were canceled
-    # successful ramp elections and refilings that previously had errors
-    #
-    # Errors
-    # Included
-    # veteran_not_accessible
-    # veteran_not_valid (missing information)
-    #
-    # Included Election only
-    # no_eligible_appeals
-    # no_active_fully_compensation_appeals
-    #
-    # Excluded
-    # invalid_file_number
-    # veteran_not_found
-    # did_not_receive_ramp_election
-    # ramp_election_already_complete
-    # no_active_appeals
-    # no_active_compensation_appeals
-    # no_complete_ramp_election
-    # ramp_election_is_active
-    # ramp_election_no_issues
-    # duplicate_intake_in_progress
-    # ramp_refiling_already_processed
-    # default
-    #
-    # Cancellation reasons
-    # duplicate_ep
-    # system_error
-    # missing_signature
-    # veteran_clarification
-    # other
-
 
   scenario "Unauthorized user access" do
     # Authenticated access without System Admin role
