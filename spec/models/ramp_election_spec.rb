@@ -33,6 +33,13 @@ describe RampElection do
         end_product_status: "ACTIVE"
       )
       RampElection.create!(
+        veteran_file_number: "11",
+        notice_date: 1.day.ago,
+        receipt_date: 1.day.ago,
+        established_at: Time.zone.now,
+        end_product_status: "ACTIVE"
+      )
+      RampElection.create!(
         veteran_file_number: "2",
         notice_date: 1.day.ago,
         receipt_date: 1.day.ago,
@@ -41,7 +48,8 @@ describe RampElection do
       RampElection.create!(
         veteran_file_number: "3",
         notice_date: 1.day.ago,
-        receipt_date: 1.day.ago
+        receipt_date: 1.day.ago,
+        established_at: Time.zone.now
       )
       expect(RampElection.active.count).to eq(2)
     end
