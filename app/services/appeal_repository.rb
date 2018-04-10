@@ -425,9 +425,9 @@ class AppealRepository
         bfmpro: bfmpro,
         bfddec: nil,
         bfdc: nil,
-        bfboard: folder_record.tistkey,
-        bfmemid: (folder_record.tistkey == "00") ? "00" : nil,
-        bfattid: (folder_record.tistkey == "00") ? "00" : nil
+        bfboard: "D1",
+        bfmemid: nil,
+        bfattid: nil
       )
 
       case_record.update_vacols_location!(previous_location)
