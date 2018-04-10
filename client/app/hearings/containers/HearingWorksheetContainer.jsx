@@ -43,7 +43,8 @@ export class HearingWorksheetContainer extends React.Component {
 
   afterPrint = () => {
     const params = getQueryParams(window.location.search);
-    if (params.src!=='reader') {
+
+    if (params.src !== 'reader') {
       window.close();
     }
   }

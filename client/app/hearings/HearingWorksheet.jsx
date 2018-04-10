@@ -31,8 +31,6 @@ import {
 } from './actions/Dockets';
 
 import { saveIssues } from './actions/Issue';
-import { getHearingWorksheetLink } from '../reader/utils';
-
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -72,11 +70,6 @@ export class HearingWorksheet extends React.PureComponent {
   }
 
   getWorksheetTitle = () => `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
-
-
-  sourceApplication = () => {
-    window.open(this.getHearingWorksheetLink());
-  }
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
