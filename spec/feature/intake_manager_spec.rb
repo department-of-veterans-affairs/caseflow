@@ -26,7 +26,7 @@ RSpec.feature "Intake Manager Page" do
 
       RampElectionIntake.create!(
         veteran_file_number: "1110",
-        completed_at: 10.minute.ago,
+        completed_at: 10.minutes.ago,
         completion_status: :error,
         error_code: :veteran_not_accessible,
         user: current_user
