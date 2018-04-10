@@ -19,11 +19,10 @@
  *= require _tasks.scss
  *= require _pdf_viewer.css
  *= require _reviewer.scss
- *= require dispatch/_establish-claims.scss
  *= require reader/_reader_styles_root.scss
  *= require _style_guide.scss
  *= require react/_react_styles_root.scss
- *= require _dispatch.scss
+ *= require dispatch/_dispatch.scss
  *= require _certification_v2.scss
  *= require _hearings.scss
  *= require _intake.scss
