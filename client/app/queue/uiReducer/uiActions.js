@@ -92,6 +92,7 @@ export const requestSave = (url, params, successMessage, verb = 'post') => (disp
 };
 
 export const requestUpdate = (url, params, successMessage) => requestSave(url, params, successMessage, 'put');
+export const requestDelete = (url, params, successMessage) => requestSave(url, params, successMessage, 'delete');
 
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE

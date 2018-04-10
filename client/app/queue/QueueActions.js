@@ -102,12 +102,12 @@ export const cancelEditingAppealIssue = () => ({
 });
 
 export const deleteAppealIssue = (appealId, issueId) => ({
-  type: ACTIONS.DELETE_APPEAL_ISSUE,
+  type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
   payload: {
     appealId,
     issueId
   }
-})
+});
 
 export const updateEditingAppealIssue = (attributes) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,

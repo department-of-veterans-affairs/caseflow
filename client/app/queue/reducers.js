@@ -178,17 +178,20 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
-  case ACTIONS.DELETE_APPEAL_ISSUE:{
-    const issues = state.pendingChanges.appeals[action.payload.appealId].attributes.issues;
-    const newIssues = _.reject(issues, (issue) => issue.id === action.payload.issueId);
+  case ACTIONS.DELETE_EDITING_APPEAL_ISSUE: {
+    const { appealId, issueId } = action.payload;
+    const { pendingChanges: { appeals } } = state;
+
+    const issues = _.reject(appeals[appealId].attributes.issues,
+      (issue) => issue.vacols_sequence_id === Number(issueId));
 
     return update(state, {
       pendingChanges: {
         appeals: {
-          [action.payload.appealId]: {
+          [appealId]: {
             attributes: {
               issues: {
-                $set: newIssues
+                $set: issues
               }
             }
           }

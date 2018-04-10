@@ -15,7 +15,8 @@ import {
 } from './QueueActions';
 import {
   highlightInvalidFormItems,
-  requestUpdate
+  requestUpdate,
+  requestDelete
 } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -134,10 +135,21 @@ class AddEditIssueView extends React.Component {
   hideDeleteModal =() => this.setState({ modal: false });
 
   deleteIssue = () => {
+    const {
+      issue,
+      appeal,
+      appeal: { attributes: { issues } },
+      vacolsId,
+      issueId
+    } = this.props;
+    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+
     this.hideDeleteModal();
-    this.props.deleteAppealIssue(this.props.vacolsId, this.props.issueId);
-    debugger;
-    // this.props.history.push(this.props.nextStep);
+
+    this.props.requestDelete(
+      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
+      `You have deleted issue ${issueIndex + 1}.`
+    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   }
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
@@ -175,16 +187,18 @@ class AddEditIssueView extends React.Component {
         <Modal
           title="Delete Issue?"
           buttons={[{
-            classNames: ['usa-button', 'usa-button-secondary'],
-            name: 'Cancel',
+            classNames: ['usa-button', 'cf-btn-link'],
+            name: 'Close',
             onClick: this.hideDeleteModal
           }, {
             classNames: ['usa-button', 'usa-button-secondary'],
-            name: 'Delete',
+            name: 'Delete issue',
             onClick: this.deleteIssue
           }]}
           closeHandler={this.hideDeleteModal}>
-          Delete this issue?
+          You are about to permanently delete this issue. To delete please
+          click the <strong>"Delete issue"</strong> button or click&nbsp;
+          <strong>"Close"</strong> to return to the previous screen.
         </Modal>
       </div>}
       <h1 {...css(fullWidth, smallBottomMargin)}>
@@ -291,7 +305,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   saveEditedAppealIssue,
   highlightInvalidFormItems,
   deleteAppealIssue,
-  requestUpdate
+  requestUpdate,
+  requestDelete
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
