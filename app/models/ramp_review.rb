@@ -83,10 +83,6 @@ class RampReview < ApplicationRecord
     @veteran ||= Veteran.new(file_number: veteran_file_number)
   end
 
-  def loaded_veteran
-    veteran.load_bgs_record!
-  end
-
   def end_product
     @end_product ||= EndProduct.new(
       claim_id: end_product_reference_id,
@@ -118,7 +114,7 @@ class RampReview < ApplicationRecord
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: loaded_veteran.to_vbms_hash
+      veteran_hash: veteran.load_bgs_record!.to_vbms_hash
     )
   end
 

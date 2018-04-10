@@ -5,8 +5,8 @@ describe RampElection do
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
-  let(:notice_date) { 1.day.ago }
-  let(:receipt_date) { 1.day.ago }
+  let(:notice_date) { Date.today - 2 }
+  let(:receipt_date) { Date.today - 1 }
   let(:option_selected) { nil }
   let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
