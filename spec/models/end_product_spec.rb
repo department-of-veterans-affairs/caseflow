@@ -86,7 +86,7 @@ describe EndProduct do
     let(:claim_type_code) { other_ep.claim_type_code }
 
     context "when claim dates don't match" do
-      let(:claim_date) { other_ep.claim_date + 1 }
+      let(:claim_date) { other_ep.claim_date + 1.day }
       it { is_expected.to be false }
     end
 
