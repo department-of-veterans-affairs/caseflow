@@ -17,7 +17,7 @@ class AttorneyCaseReview < ApplicationRecord
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
 
-    MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
+    MetricsService.record("VACOLS: reassign_case_to_judge_in_vacols! #{vacols_id}",
                           service: :vacols,
                           name: type) do
       AttorneyCaseReview.repository.reassign_case_to_judge!(

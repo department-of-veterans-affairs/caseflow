@@ -68,29 +68,29 @@ class QueueRepository
 
   def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
     # update DECASS table
-    decass_record = update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
-    binding.pry
+    decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+    unless decass_record
+      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
+      fail Caseflow::Error::QueueRepositoryError, msg
+    end
+
+    # In attorney checkout, we are automatically selecting the judge who assigned the attorney the case.
+    # But we also have a drop down for the attorney to select a different judge if they are checking it out to someone else
+    if decass_record.deadusr != judge_vacols_user_id
+      BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
+    end
+
+    update_decass_record(decass_record, decass_attrs)
 
     # update location with the judge's slogid
     VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
     true
   end
 
-  def self.update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
-    decass_record = check_decass_presence!(vacols_id, created_in_vacols_date)
-    binding.pry
+  def self.update_decass_record(decass_record, decass_attrs)
     decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
-    VACOLS::Decass.where(defolder: vacols_id, deadtim: created_in_vacols_date).update_all(decass_attrs)
-    decass_record.reload
-  end
-
-  def self.check_decass_presence!(vacols_id, created_in_vacols_date)
-    decass = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
-    unless decass
-      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
-      fail Caseflow::Error::QueueRepositoryError, msg
-    end
-    decass
+    VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
+                  .update_all(decass_attrs)
   end
 
   def self.tasks_query(css_id)
