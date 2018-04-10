@@ -97,7 +97,7 @@ class RampReview < ApplicationRecord
 
   # Find an end product that has the traits of the end product that should be created.
   def matching_end_product
-    @matching_end_product = veteran.end_products.find { |ep| end_product.matches?(ep) }
+    @matching_end_product ||= veteran.end_products.find { |ep| end_product.matches?(ep) }
   end
 
   def connect_end_product!

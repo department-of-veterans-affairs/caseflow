@@ -70,7 +70,7 @@ class EndProduct
   def matches?(end_product)
     claim_type_code == end_product.claim_type_code &&
       modifier == end_product.modifier &&
-      claim_date == end_product.claim_date
+      claim_date == end_product.claim_date.to_date
   end
 
   # Does this EP have a modifier that might conflict with a new dispatch EP?
