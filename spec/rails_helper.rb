@@ -170,7 +170,7 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  Fakes::AppealRepository.clean!
+  #Fakes::AppealRepository.clean!
   Fakes::HearingRepository.clean!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!

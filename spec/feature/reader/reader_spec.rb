@@ -162,7 +162,6 @@ RSpec.feature "Reader" do
 
     before do
       Fakes::VBMSService.document_records = {case_inst.bfcorlid => documents}
-      appeal.documents = documents
     end
 
     feature "Document header filtering message" do
@@ -242,7 +241,7 @@ RSpec.feature "Reader" do
         Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
         Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
 
-        Appeal.new(vacols_id: case_inst.bfkey, issues: []).documents = documents
+        Appeal.new(vacols_id: case_inst.bfkey, issues: [])
       end
 
       scenario "welcome gate issues column shows no issues message" do
@@ -293,23 +292,20 @@ RSpec.feature "Reader" do
         #   documents: documents
         # )
         Appeal.new(vacols_id: case_inst.bfkey,
-                   vbms_id: "123456789S",
-                   documents: documents)
+                   vbms_id: "123456789S").documents = documents
       end
 
       let(:appeal4) do
         # Generators::Appeal.build(vacols_record: vacols_record,
         #                          documents: documents, vbms_id: appeal3.vbms_id)
         Appeal.new(vacols_id: case_inst.bfkey,
-                   documents: documents,
-                   vbms_id: appeal3.vbms_id)
+                   vbms_id: appeal3.vbms_id).documents = documents
       end
 
       let(:appeal5) do
         #Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
         Appeal.new(vacols_id: case_inst.bfkey,
-                   vbms_id: "1234C",
-                   documents: documents)
+                   vbms_id: "1234C").documents = documents
       end
 
       let!(:hearing) do
@@ -440,7 +436,6 @@ RSpec.feature "Reader" do
       # is not overridden, but I cannot figure out how to middle click in the test.
       # Instead we just visit the page specified by the link.
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      binding.pry
       single_link = find_link(documents[0].type)[:href]
       visit single_link
 
