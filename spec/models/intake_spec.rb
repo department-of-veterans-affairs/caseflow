@@ -75,7 +75,7 @@ describe Intake do
     end
   end
 
-  context ".flagged_for_manager_review", :focus => true do
+  context ".flagged_for_manager_review" do
     subject { Intake.flagged_for_manager_review }
 
     let!(:completed_intake) do

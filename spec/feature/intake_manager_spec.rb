@@ -22,7 +22,6 @@ RSpec.feature "Intake Manager Page" do
     end
 
     scenario "Only included errors and cancellations appear" do
-      # Errors that should appear
 
       RampElectionIntake.create!(
         veteran_file_number: "1110",
@@ -41,52 +40,10 @@ RSpec.feature "Intake Manager Page" do
       )
 
       RampElectionIntake.create!(
-        veteran_file_number: "1112",
-        completed_at: 2.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_valid,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1113",
-        completed_at: 3.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_valid,
-        user: current_user
-      )
-
-      # Cancellations
-
-      RampElectionIntake.create!(
         veteran_file_number: "1114",
         completed_at: 4.hours.ago,
         completion_status: :canceled,
         cancel_reason: :duplicate_ep,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1115",
-        completed_at: 5.hours.ago,
-        completion_status: :canceled,
-        cancel_reason: :system_error,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1116",
-        completed_at: 6.hours.ago,
-        completion_status: :canceled,
-        cancel_reason: :missing_signature,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1117",
-        completed_at: 7.hours.ago,
-        completion_status: :canceled,
-        cancel_reason: :veteran_clarification,
         user: current_user
       )
 
@@ -98,47 +55,6 @@ RSpec.feature "Intake Manager Page" do
         cancel_other: "I am canceled just because",
         user: current_user
       )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1119",
-        completed_at: 9.hours.ago,
-        completion_status: :canceled,
-        cancel_reason: :other,
-        cancel_other: "I am a canceled refiling",
-        user: current_user
-      )
-
-      # Successes should not appear in the manager list
-      RampElectionIntake.create!(
-        veteran_file_number: "2110",
-        completed_at: 20.hours.ago,
-        completion_status: :success,
-        user: current_user
-      )
-
-      # Errors that should not appear in the manager list
-
-
-
-      election_excluded_errors.each do |election_excluded_error|
-        RampElectionIntake.create!(
-          veteran_file_number: "2110",
-          completed_at: 20.hours.ago,
-          completion_status: :error,
-          error_code: election_excluded_error,
-          user: current_user
-        )
-      end
-
-      refiling_excluded_errors.each do |refiling_excluded_error|
-        RampRefilingIntake.create!(
-          veteran_file_number: "2110",
-          completed_at: 20.hours.ago,
-          completion_status: :error,
-          error_code: refiling_excluded_error,
-          user: current_user
-        )
-      end
 
       visit "/intake/manager"
 
@@ -154,101 +70,12 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-1")).to have_content("21-4138 RAMP Selection Form")
       expect(find("#table-row-1")).to have_content("Error: sensitivity")
 
-      expect(find("#table-row-2")).to have_content("Error: missing profile information")
-      expect(find("#table-row-3")).to have_content("Error: missing profile information")
-      expect(find("#table-row-4")).to have_content("Canceled: Duplicate EP created outside Caseflow")
-      expect(find("#table-row-5")).to have_content("Canceled: System error")
-      expect(find("#table-row-6")).to have_content("Canceled: Missing signature")
-      expect(find("#table-row-7")).to have_content("Canceled: Need clarification from Veteran")
-      expect(find("#table-row-8")).to have_content("Canceled: I am canceled just because")
-      expect(find("#table-row-9")).to have_content("Canceled: I am a canceled refiling")
+      expect(find("#table-row-2")).to have_content("Canceled: duplicate EP created outside Caseflow")
+      expect(find("#table-row-3")).to have_content("Canceled: I am canceled just because")
 
-      expect(page).not_to have_selector("#table-row-10")
+      expect(page).not_to have_selector("#table-row-4")
     end
 
-    scenario "An error disappears if there's since been a success on that file number" do
-      RampElectionIntake.create!(
-        veteran_file_number: "1110",
-        completed_at: 0.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_accessible,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1111",
-        completed_at: 1.hour.ago,
-        completion_status: :error,
-        error_code: :veteran_not_accessible,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1112",
-        completed_at: 2.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_valid,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1113",
-        completed_at: 3.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_valid,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1113",
-        completed_at: 5.hours.ago,
-        completion_status: :error,
-        error_code: :veteran_not_accessible,
-        user: current_user
-      )
-
-      visit "/intake/manager"
-
-      expect(find("#table-row-3")).to have_content("missing profile information")
-      expect(find("#table-row-4")).to have_content("sensitivity")
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1110",
-        completed_at: 20.hours.ago,
-        completion_status: :success,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1111",
-        completed_at: 30.hours.ago,
-        completion_status: :success,
-        user: current_user
-      )
-
-      RampElectionIntake.create!(
-        veteran_file_number: "1112",
-        completed_at: 1.hour.ago,
-        completion_status: :success,
-        user: current_user
-      )
-
-      RampRefilingIntake.create!(
-        veteran_file_number: "1113",
-        completed_at: 4.hours.ago,
-        completion_status: :success,
-        user: current_user
-      )
-
-      visit "/intake/manager"
-
-      expect(find("#table-row-0")).to have_content("sensitivity")
-      expect(find("#table-row-1")).to have_content("sensitivity")
-      expect(find("#table-row-2")).to have_content("1113")
-      expect(find("#table-row-2")).to have_content("missing profile information")
-      expect(page).not_to have_content("1112")
-      expect(page).not_to have_selector("#table-row-3")
-    end
   end
 
   scenario "Unauthorized user access" do
