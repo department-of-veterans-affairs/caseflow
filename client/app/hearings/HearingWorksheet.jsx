@@ -155,13 +155,13 @@ export class HearingWorksheet extends React.PureComponent {
           onChange={this.onEvidenceChange}
         />
 
-        <WorksheetFormEntry
+        {/* <WorksheetFormEntry
           name="Evidence"
           value={worksheet.evidence}
           onChange={this.onEvidenceChange}
           id="worksheet-evidence"
           print={this.props.print}
-        />
+        /> */}
         <WorksheetFormEntry
           name="Comments and special instructions to attorneys"
           value={worksheet.comments_for_attorney}

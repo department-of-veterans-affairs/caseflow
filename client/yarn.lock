@@ -2064,7 +2064,7 @@ draft-js-import-html@>=0.4.0:
   dependencies:
     draft-js-import-element "^1.2.1"
 
-draft-js-import-markdown@>=0.3.0:
+draft-js-import-markdown@>=0.3.0, draft-js-import-markdown@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/draft-js-import-markdown/-/draft-js-import-markdown-1.2.1.tgz#ec18eb15008bab13d9878d65db50e181dd64a5ce"
   dependencies:
@@ -2082,6 +2082,10 @@ draft-js@>=0.10.0:
     fbjs "^0.8.15"
     immutable "~3.7.4"
     object-assign "^4.1.0"
+
+draftjs-to-html@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/draftjs-to-html/-/draftjs-to-html-0.8.3.tgz#0ca3c273e802ed3b3bbf12e3900ebb70fd95517f"
 
 draftjs-utils@^0.9.3:
   version "0.9.3"

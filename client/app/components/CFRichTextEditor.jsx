@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import RichTextEditor from 'react-rte';
 import { convertToRaw } from 'draft-js';
 import draftToMarkdown from 'draftjs-to-markdown';
+// import { markdownToDraft } from 'markdown-to-draftjs';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+
+import { stateFromMarkdown } from 'draft-js-import-markdown';
+
 import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, ContentState } from 'draft-js';
 
 export default class CFRichTextEditor extends React.PureComponent {
 
@@ -11,27 +18,43 @@ export default class CFRichTextEditor extends React.PureComponent {
     super(props);
     this.state = {
       value: RichTextEditor.createEmptyValue(),
-      editorState: undefined
+      editorState: EditorState.createEmpty()
     };
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    const { value } = nextProps;
+  // componentWillReceiveProps(nextProps) {
+  //   const { value } = nextProps;
 
-    console.log(value);
+  //   console.log(draftToMarkdown(value));
+  //   if (value) {
+  //     this.setState({ value });
+  //   }
+  // }
+
+  componentDidMount = () => {
+    const { value } = this.props;
+
+    console.log(htmlToDraft(value));
+
+    const contentBlock = htmlToDraft(value);
+
+    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    const editorState = EditorState.createWithContent(contentState);
+
     if (value) {
-      this.setState({ value });
+      this.setState({ editorState });
     }
-  }
+  };
 
   onChange = (value) => {
-    console.log(draftToMarkdown(this.state.editorState));
+    console.log(draftToMarkdown(convertToRaw(this.state.editorState.getCurrentContent())));
     this.setState({ value, editorState: value });
     if (this.props.onChange) {
       // Send the changes up to the parent component as an HTML string.
       // This is here to demonstrate using `.toString()` but in a real app it
       // would be better to avoid generating a string on each change.
-      this.props.onChange(value.toString('markdown'));
+      // this.props.onChange(value.toString('markdown'));
+      this.props.onChange(draftToHtml(convertToRaw(this.state.editorState.getCurrentContent())));
     }
   };
 
@@ -58,9 +81,9 @@ export default class CFRichTextEditor extends React.PureComponent {
         editorState={this.state.editorState}
       />
       <textarea
-          disabled
-          className="demo-content no-focus"
-          value={this.state.editorState && draftToMarkdown(this.state.editorState.getCurrentContent())}
+        disabled
+        className="demo-content no-focus"
+        value={this.state.editorState && draftToMarkdown(this.state.editorState.getCurrentContent())}
       />
     </div>;
   }
