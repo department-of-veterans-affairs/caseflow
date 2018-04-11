@@ -25,4 +25,4 @@ Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # Rails.application.config.assets.precompile += %w( server-bundle.js )
 
 # Add folder with webpack generated assets to assets.paths
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack", "fonts")
+Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack")

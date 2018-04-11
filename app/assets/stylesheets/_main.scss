@@ -1,7 +1,8 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
-@import 'fonts';
-
+@import 'global/fonts';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
 // variables here should eventually find their way into commons
 @import 'variables';
 
