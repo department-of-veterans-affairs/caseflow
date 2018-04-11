@@ -195,14 +195,13 @@ describe Intake do
         user: user,
         started_at: 3.minutes.ago,
         completed_at: 2.minutes.ago,
-        completion_status: :success,
+        completion_status: :success
       )
     end
 
     it "does not include veteran_file_number/intake type combo that succeeded later" do
       expect(subject).to_not include(canceled_intake_fixed_later)
     end
-
   end
 
   context "#complete_with_status!" do

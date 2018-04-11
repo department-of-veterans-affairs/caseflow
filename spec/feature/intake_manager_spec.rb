@@ -22,7 +22,6 @@ RSpec.feature "Intake Manager Page" do
     end
 
     scenario "Only included errors and cancellations appear" do
-
       RampElectionIntake.create!(
         veteran_file_number: "1110",
         completed_at: 10.minutes.ago,
@@ -75,7 +74,6 @@ RSpec.feature "Intake Manager Page" do
 
       expect(page).not_to have_selector("#table-row-4")
     end
-
   end
 
   scenario "Unauthorized user access" do
