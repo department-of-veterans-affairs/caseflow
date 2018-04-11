@@ -11,13 +11,16 @@ describe QueueMapper do
         { work_product: "OMO - IME",
           overtime: false,
           document_id: "123456789.1234",
-          note: "Require action4" }
+          note: "Require action4",
+          modifying_user: "TESTSLOGID" }
       end
       let(:expected_result) do
         { deprod: :IME,
           dedocid: "123456789.1234",
           deatcom: "Require action4",
-          dereceive: VacolsHelper.local_date_with_utc_timezone }
+          dereceive: VacolsHelper.local_date_with_utc_timezone,
+          demdtim: VacolsHelper.local_date_with_utc_timezone,
+          demdusr: "TESTSLOGID" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -27,13 +30,16 @@ describe QueueMapper do
         { work_product: "OMO - IME",
           overtime: true,
           note: nil,
-          document_id: "123456789.1234" }
+          document_id: "123456789.1234",
+          modifying_user: "TESTSLOGID" }
       end
       let(:expected_result) do
         { deprod: :OTI,
           deatcom: nil,
           dedocid: "123456789.1234",
-          dereceive: VacolsHelper.local_date_with_utc_timezone }
+          dereceive: VacolsHelper.local_date_with_utc_timezone,
+          demdtim: VacolsHelper.local_date_with_utc_timezone,
+          demdusr: "TESTSLOGID" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -42,12 +48,15 @@ describe QueueMapper do
       let(:info) do
         { work_product: "OMO - IME",
           overtime: false,
-          document_id: "123456789.1234" }
+          document_id: "123456789.1234",
+          modifying_user: "TESTSLOGID" }
       end
       let(:expected_result) do
         { deprod: :IME,
           dedocid: "123456789.1234",
-          dereceive: VacolsHelper.local_date_with_utc_timezone }
+          dereceive: VacolsHelper.local_date_with_utc_timezone,
+          demdtim: VacolsHelper.local_date_with_utc_timezone,
+          demdusr: "TESTSLOGID" }
       end
       it { is_expected.to eq expected_result }
     end

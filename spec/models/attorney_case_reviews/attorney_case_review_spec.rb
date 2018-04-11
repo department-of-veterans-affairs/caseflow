@@ -46,6 +46,7 @@ describe AttorneyCaseReview do
             work_product: "OMO - IME",
             document_id: "123456789.1234",
             overtime: true,
+            modifying_user: "CFS456",
             note: "something"
           }
         ).and_return(true)
@@ -87,7 +88,8 @@ describe AttorneyCaseReview do
             work_product: "Decision",
             document_id: "123456789.1234",
             overtime: true,
-            note: "something"
+            note: "something",
+            modifying_user: "CFS456"
           }
         ).and_return(true)
 
@@ -167,7 +169,7 @@ describe AttorneyCaseReview do
       end
 
       it "should not create AttorneyCaseReview record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
@@ -192,7 +194,8 @@ describe AttorneyCaseReview do
       end
 
       it "should not create OMORequest record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+        expect(AttorneyCaseReview.count).to eq 0
       end
     end
 
@@ -220,7 +223,8 @@ describe AttorneyCaseReview do
       end
 
       it "should not create DraftDecision record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
+        expect(AttorneyCaseReview.count).to eq 0
       end
     end
 

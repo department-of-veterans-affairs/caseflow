@@ -7,19 +7,19 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       params = { worksheet_issues_attributes: [
         {
           remand: true,
-          vha: false,
+          omo: false,
           description: "Wheel",
           notes: "Donkey Cow",
           from_vacols: false,
           vacols_sequence_id: 1
         }
       ] }
-      patch :update, appeal_id: appeal.id, appeal: params
+      patch :update, params: { appeal_id: appeal.id, appeal: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
       expect(response_body["worksheet_issues"].size).to eq 1
       expect(response_body["worksheet_issues"][0]["remand"]).to eq true
-      expect(response_body["worksheet_issues"][0]["vha"]).to eq false
+      expect(response_body["worksheet_issues"][0]["omo"]).to eq false
       expect(response_body["worksheet_issues"][0]["description"]).to eq "Wheel"
       expect(response_body["worksheet_issues"][0]["notes"]).to eq "Donkey Cow"
       expect(response_body["worksheet_issues"][0]["from_vacols"]).to eq false
@@ -30,7 +30,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       issue = Generators::WorksheetIssue.create(appeal: appeal)
       expect(WorksheetIssue.all.size).to eq 1
       params = { worksheet_issues_attributes: [{ _destroy: true, id: issue.id }] }
-      patch :update, appeal_id: appeal.id, appeal: params
+      patch :update, params: { appeal_id: appeal.id, appeal: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
       expect(WorksheetIssue.all.size).to eq 0
@@ -38,7 +38,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
     end
 
     it "should return not found" do
-      patch :update, appeal_id: "534553", appeal: {}
+      patch :update, params: { appeal_id: "534553", appeal: {} }
       expect(response.status).to eq 404
     end
   end

@@ -8,7 +8,11 @@ class RampElection < RampReview
   validate :validate_receipt_date
 
   def self.active
-    where.not(end_product_status: EndProduct::INACTIVE_STATUSES)
+    # We only know the set of inactive EP statuses
+    # We also only know the EP status after fetching it from BGS
+    # Therefore, our definition of active is when the EP is either
+    #   not known or not known to be inactive
+    established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
   end
 
   def active?
@@ -62,6 +66,12 @@ class RampElection < RampReview
     )
   end
 
+  def successful_intake
+    @successful_intake ||= intakes.where(completion_status: "success")
+      .order(:completed_at)
+      .last
+  end
+
   private
 
   def cached_status_active?
@@ -71,7 +81,7 @@ class RampElection < RampReview
   def fetch_established_end_product
     return nil unless end_product_reference_id
 
-    result = Veteran.new(file_number: veteran_file_number).end_products.find do |end_product|
+    result = veteran.end_products.find do |end_product|
       end_product.claim_id == end_product_reference_id
     end
 
@@ -81,9 +91,7 @@ class RampElection < RampReview
 
   def validate_receipt_date
     return unless receipt_date
+    validate_receipt_date_not_before_ramp
     validate_receipt_date_not_in_future
-    if notice_date && notice_date > receipt_date
-      errors.add(:receipt_date, "before_notice_date")
-    end
   end
 end

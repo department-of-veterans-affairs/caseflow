@@ -1,5 +1,11 @@
 class QueueRepository
   # :nocov:
+  def self.transaction
+    VACOLS::Case.transaction do
+      yield
+    end
+  end
+
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
                           service: :vacols,
@@ -32,6 +38,32 @@ class QueueRepository
 
     appeals.map(&:save)
     appeals
+  end
+
+  def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
+    # TODO: add depdiff
+    transaction do
+      vacols_case = VACOLS::Case.find(vacols_id)
+      vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
+      vacols_case.update(bfattid: attorney.vacols_attorney_id)
+
+      VACOLS::Decass.create!(
+        defolder: vacols_id,
+        deatty: attorney.vacols_attorney_id,
+        deteam: attorney.vacols_group_id[0..2],
+        deadusr: judge.vacols_uniq_id,
+        deadtim: VacolsHelper.local_date_with_utc_timezone,
+        dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
+        deassign: VacolsHelper.local_date_with_utc_timezone,
+        deicr: decass_complexity_rating(vacols_id)
+      )
+    end
+  end
+
+  def self.decass_complexity_rating(vacols_id)
+    VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
+      .find_by(bfkey: vacols_id)
+      .try(:complexity_rating)
   end
 
   def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)

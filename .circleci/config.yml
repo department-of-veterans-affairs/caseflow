@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: circleci/ruby:2.2-browsers
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
         environment:
           - RAILS_ENV: test
           - NODE_ENV: test
@@ -30,8 +30,8 @@ jobs:
       - checkout
 
       - run:
-          name: Setup prereqs
-          command: ci-bin/setup-circleci-prereqs
+          name: Setup testfiles directory
+          command: mkdir -p ~/project/tmp/testfiles
 
       - restore_cache:
           name: Restore bundler cache
@@ -43,7 +43,7 @@ jobs:
 
       - run:
           name: bundle install
-          command: bundle check || bundle install --deployment --without production staging ssh_forwarding local
+          command: bundle check || bundle install
 
       - save_cache:
           key: vendor-bundle-{{ checksum "Gemfile.lock" }}
@@ -58,6 +58,13 @@ jobs:
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+
+      - run:
+          name: Database setup
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:schema:load
+
       - run:
           name: Mocha
           command: |
@@ -76,6 +83,11 @@ jobs:
             bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
 
       - store_test_results:
+          name: Store test results as summary
+          path: ~/test-results
+
+      - store_artifacts:
+          name: Store test results as artifact
           path: ~/test-results
 
       - store_artifacts:

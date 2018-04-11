@@ -1,4 +1,4 @@
-class CreateRampElections < ActiveRecord::Migration
+class CreateRampElections < ActiveRecord::Migration[5.1]
   safety_assured # this is a new and unused table
 
   def change

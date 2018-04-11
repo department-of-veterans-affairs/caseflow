@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 7, 17, 55, 0, rand(1000)))
+    Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
   end
 
   scenario "Switching tab intervals" do
@@ -11,21 +11,29 @@ RSpec.feature "Intake Stats Dashboard" do
     RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
     RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)
 
-    RampElection.create!(
+    ramp_election = RampElection.create!(
       veteran_file_number: "77776663",
       notice_date: 7.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :supplemental_claim,
-      established_at: Time.zone.now
+      established_at: Time.zone.now,
+      end_product_reference_id: "132",
+      end_product_status: "VERY_ACTIVE"
     )
+    # Create an election with multiple issues
+    ramp_election.issues.create!(description: "an issue")
+    ramp_election.issues.create!(description: "another issue")
+    ramp_election.issues.create!(description: "yet another issue")
 
     RampElection.create!(
       veteran_file_number: "77776663",
       notice_date: 5.days.ago,
       receipt_date: 45.minutes.ago,
       option_selected: :higher_level_review,
-      established_at: Time.zone.now
-    )
+      established_at: Time.zone.now,
+      end_product_reference_id: "132",
+      end_product_status: "HELLA_ACTIVE"
+    ).issues.create!(description: "this is the only issue here")
 
     RampElection.create!(
       veteran_file_number: "77776666",
@@ -125,6 +133,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews 2")
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 1")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
+    expect(find("#ramp-elections-received")).to have_content("Total Issues 4")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
     expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
     expect(find("#ramp-elections-received")).to have_content("Average Control Time 12.00 hours")

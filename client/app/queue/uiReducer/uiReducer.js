@@ -2,29 +2,37 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
 
-const initialErrorState = {
-  visible: false,
-  message: null
+const initialSaveState = {
+  savePending: false,
+  saveSuccessful: null
 };
 
 export const initialState = {
   selectingJudge: false,
   breadcrumbs: [],
   highlightFormItems: false,
-  errorState: initialErrorState,
-  savePending: false,
-  saveSuccessful: null
+  messages: {
+    success: null,
+    error: null
+  },
+  saveState: initialSaveState
 };
 
-const setErrorMessageState = (state, isVisible, errorMsg = null) => update(state, {
-  errorState: {
-    visible: { $set: isVisible },
-    message: { $set: isVisible ? errorMsg : null }
+const setMessageState = (state, message, msgType) => update(state, {
+  messages: {
+    [msgType]: {
+      $set: message
+    }
   }
 });
 
-const hideErrorMessage = (state) => setErrorMessageState(state, false);
-const showErrorMessage = (state, errorMsg = null) => setErrorMessageState(state, true, errorMsg);
+const setErrorMessageState = (state, message) => setMessageState(state, message, 'error');
+const hideErrorMessage = (state) => setErrorMessageState(state, null);
+const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(state, errorMsg);
+
+const setSuccessMessageState = (state, message) => setMessageState(state, message, 'success');
+const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
+const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -41,7 +49,7 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.POP_BREADCRUMB:
     return update(state, {
       breadcrumbs: {
-        $set: _.dropRight(state.breadcrumbs, 1)
+        $set: _.dropRight(state.breadcrumbs, action.payload.crumbsToDrop)
       }
     });
   case ACTIONS.RESET_BREADCRUMBS:
@@ -58,27 +66,49 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.REQUEST_SAVE:
     return update(state, {
-      savePending: { $set: true },
-      saveSuccessful: { $set: null }
+      saveState: {
+        savePending: { $set: true },
+        saveSuccessful: { $set: null }
+      }
     });
   case ACTIONS.SAVE_SUCCESS:
     return update(state, {
-      savePending: { $set: false },
-      saveSuccessful: { $set: true }
+      saveState: {
+        savePending: { $set: false },
+        saveSuccessful: { $set: true }
+      }
     });
   case ACTIONS.SAVE_FAILURE:
     return update(state, {
-      savePending: { $set: false },
-      saveSuccessful: { $set: false }
+      saveState: {
+        savePending: { $set: false },
+        saveSuccessful: { $set: false }
+      }
+    });
+  case ACTIONS.RESET_SAVE_STATE:
+    return update(state, {
+      saveState: { $set: initialSaveState }
     });
   case ACTIONS.RESET_ERROR_MESSAGES:
     return update(state, {
-      errorState: { $set: initialErrorState }
+      messages: {
+        error: { $set: null }
+      }
+    });
+  case ACTIONS.RESET_SUCCESS_MESSAGES:
+    return update(state, {
+      messages: {
+        success: { $set: null }
+      }
     });
   case ACTIONS.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state);
   case ACTIONS.SHOW_ERROR_MESSAGE:
     return showErrorMessage(state, action.payload.errorMessage);
+  case ACTIONS.SHOW_SUCCESS_MESSAGE:
+    return showSuccessMessage(state, action.payload.message);
+  case ACTIONS.HIDE_SUCCESS_MESSAGE:
+    return hideSuccessMessage(state);
   default:
     return state;
   }

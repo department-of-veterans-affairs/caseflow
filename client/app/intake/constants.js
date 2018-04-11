@@ -89,3 +89,26 @@ export const FORM_TYPES = {
     name: '21-4138 RAMP Selection Form'
   }
 };
+
+export const CANCELLATION_REASONS = {
+  DUPLICATE_EP: {
+    key: 'duplicate_ep',
+    name: 'Duplicate EP created outside Caseflow'
+  },
+  SYSTEM_ERROR: {
+    key: 'system_error',
+    name: 'System error'
+  },
+  MISSING_SIGNATURE: {
+    key: 'missing_signature',
+    name: 'Missing signature'
+  },
+  VETERAN_CLARIFICATION: {
+    key: 'veteran_clarification',
+    name: 'Need clarification from Veteran'
+  },
+  OTHER: {
+    key: 'other',
+    name: 'Other'
+  }
+};

@@ -88,7 +88,11 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
-    this.props.setSearchIsLoading(!this.props.pdfText.length && this.searchTerm.length > 0);
+    const searchIsLoading = !this.props.pdfText.length && this.searchTerm.length > 0;
+
+    if (this.props.searchIsLoading !== searchIsLoading) {
+      this.props.setSearchIsLoading(searchIsLoading);
+    }
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)

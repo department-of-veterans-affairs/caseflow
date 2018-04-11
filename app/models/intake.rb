@@ -1,4 +1,4 @@
-class Intake < ActiveRecord::Base
+class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -90,6 +90,13 @@ class Intake < ActiveRecord::Base
     update_attributes!(
       completed_at: Time.zone.now,
       completion_status: status
+    )
+  end
+
+  def add_cancel_reason!(reason:, other: nil)
+    update_attributes!(
+      cancel_reason: reason,
+      cancel_other: other
     )
   end
 

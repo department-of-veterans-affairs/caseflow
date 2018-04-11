@@ -1,4 +1,4 @@
-class AddTagTextIndex < ActiveRecord::Migration
+class AddTagTextIndex < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change
