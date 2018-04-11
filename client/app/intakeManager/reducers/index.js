@@ -5,16 +5,16 @@ import _ from 'lodash';
 export const mapDataToInitialState = function() {
   return {
     loading: true,
-    intakesForReview: {}
+    flaggedForReview: {}
   };
 };
 
 export const intakeManagerReducers = (state = mapDataToInitialState(), action = {}) => {
   switch (action.type) {
-  case Constants.POPULATE_INTAKES_FOR_REVIEW:
+  case Constants.POPULATE_FLAGGED_FOR_REVIEW:
     return update(state, {
       loading: { $set: false },
-      intakesForReview: {
+      flaggedForReview: {
         $set: _(action.payload.intakes).
           orderBy('completed_at', 'desc').
           value()

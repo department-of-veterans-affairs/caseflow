@@ -151,17 +151,15 @@ class Intake < ApplicationRecord
     FORM_TYPES.key(self.class.name)
   end
 
-  def self.manager_review
-    # Get canceled and errored intakes (of specified errors only)
-    # Exclude intakes where there has been a success on the same veteran_file_number / intake type
-    # combination since the error or cancellation (meaning the issue has been resolved)
-    
+  def self.flagged_for_manager_review
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
       .joins("JOIN users ON intakes.user_id = users.id",
+        # If an intake with the same veteran_file_number and intake type
+        # has succeeded since the completed_at time, exclude it from results
              "LEFT JOIN
                (SELECT veteran_file_number,
-               type,
-               MAX(completed_at) as succeeded_at
+                 type,
+                 MAX(completed_at) as succeeded_at
                FROM intakes
                WHERE completion_status = 'success'
                GROUP BY veteran_file_number, type) latest_success

@@ -2,6 +2,8 @@ class RampReview < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
   class InvalidEndProductError < StandardError; end
 
+  belongs_to :user
+
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
   self.abstract_class = true

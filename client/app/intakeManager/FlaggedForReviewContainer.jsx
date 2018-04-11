@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { fetchIntakesForReview } from './actions';
+import { fetchFlaggedForReview } from './actions';
 import LoadingContainer from '../components/LoadingContainer';
-import IntakesForReview from './IntakesForReview';
+import FlaggedForReview from './FlaggedForReview';
 
-export class IntakesForReviewContainer extends Component {
+export class FlaggedForReviewContainer extends Component {
   componentDidMount() {
-    this.props.fetchIntakesForReview();
+    this.props.fetchFlaggedForReview();
   }
 
   render() {
@@ -24,22 +24,22 @@ export class IntakesForReviewContainer extends Component {
       </div>;
     }
 
-    return <IntakesForReview {...this.props} />;
+    return <FlaggedForReview {...this.props} />;
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     loading: state.loading,
-    intakes: state.intakesForReview
+    intakes: state.flaggedForReview
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchIntakesForReview
+  fetchFlaggedForReview
 }, dispatch);
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(IntakesForReviewContainer);
+)(FlaggedForReviewContainer);

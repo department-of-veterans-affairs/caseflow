@@ -1,18 +1,18 @@
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 
-export const populateIntakesForReview = (intakes) => ({
-  type: Constants.POPULATE_INTAKES_FOR_REVIEW,
+export const populateFlaggedForReview = (intakes) => ({
+  type: Constants.POPULATE_FLAGGED_FOR_REVIEW,
   payload: {
     intakes
   }
 });
 
-export const fetchIntakesForReview = () => (dispatch) => {
+export const fetchFlaggedForReview = () => (dispatch) => {
   dispatch({ type: Constants.SET_LOADING_STATE,
     payload: { value: true } });
-  ApiUtil.get('/intake/manager/intakes_for_review').
+  ApiUtil.get('/intake/manager/flagged_for_review').
     then((response) => {
-      dispatch(populateIntakesForReview(response.body));
+      dispatch(populateFlaggedForReview(response.body));
     });
 };
