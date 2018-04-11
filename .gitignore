@@ -8,7 +8,6 @@
 /.bundle
 
 client/.eslintcache
-client/yarn-error.log
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -22,6 +21,7 @@ client/yarn-error.log
 /coverage
 /reports/*
 !/reports/.keep
+yarn-error.log
 
 # Ignore vim swap files
 *.swp
