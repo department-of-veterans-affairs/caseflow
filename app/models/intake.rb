@@ -153,9 +153,9 @@ class Intake < ApplicationRecord
 
   def self.flagged_for_manager_review
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
-      .joins("JOIN users ON intakes.user_id = users.id",
-        # If an intake with the same veteran_file_number and intake type
-        # has succeeded since the completed_at time, exclude it from results
+      .joins(:user,
+             # If an intake with the same veteran_file_number and intake type
+             # has succeeded since the completed_at time, exclude it from results
              "LEFT JOIN
                (SELECT veteran_file_number,
                  type,
