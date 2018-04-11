@@ -347,9 +347,9 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
-  create_table "ramp_closed_appeals", force: :cascade do |t|
+  create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
-    t.bigint "ramp_election_id"
+    t.integer "ramp_election_id"
     t.date "nod_date"
     t.index ["ramp_election_id"], name: "index_ramp_closed_appeals_on_ramp_election_id"
   end

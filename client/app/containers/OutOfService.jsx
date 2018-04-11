@@ -20,7 +20,7 @@ const OutOfService = (props) => <BrowserRouter>
     <AppFrame>
       <StatusMessage title="Technical Difficulties">
        Caseflow is experiencing technical difficulties right now.<br />
-       You can track updates on our <a href=" https://dsva.statuspage.io" target="_blank">
+       You can track updates on our <a href=" https://caseflow.statuspage.io" target="_blank">
        Caseflow Status page </a>
       </StatusMessage>
     </AppFrame>

@@ -125,6 +125,7 @@ Rails.application.routes.draw do
     get '/docs_for_dev', to: 'queue#dev_document_count'
     get '/:user_id', to: 'queue#tasks'
     post '/tasks/:task_id/complete', to: 'queue#complete'
+    post '/tasks', to: 'queue#create'
   end
 
   get "health-check", to: "health_checks#show"
