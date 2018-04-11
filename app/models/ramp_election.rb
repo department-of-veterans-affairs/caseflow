@@ -24,9 +24,6 @@ class RampElection < RampReview
         Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
         Raven.capture_exception(e)
       end
-
-      # Sleep for 1 second to avoid tripping BGS alerts
-      sleep 1
     end
   end
 
