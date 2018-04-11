@@ -34,8 +34,7 @@ class Judge
   end
 
   def attorneys
-    binding.pry
-    Constants::AttorneyJudgeTeams::TEAMS
+    Constants::AttorneyJudgeTeams::TEAMS[css_id]
   end
 
   private
