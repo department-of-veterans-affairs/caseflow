@@ -14,7 +14,7 @@ class AppealsController < ApplicationController
 
       render json: {
         shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
-        appeals: json_appeals(appeals)
+        appeals: json_appeals(appeals)[:data]
       }
     end
   end

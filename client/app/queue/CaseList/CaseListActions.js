@@ -52,15 +52,10 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
 
         dispatch(setShouldUseQueueSearch(shouldUseAppealSearch));
 
-        // TODO: AppealsController.index returns the appeals with the extraneous data element. Remove this
-        // when we change the data structure we return to collapse the data element.
-        // { appeals: { data: [ {...}, {...}, {...} ] } }
-        const appeals = returnedObject.appeals.data;
-
-        if (_.size(appeals) === 0) {
+        if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
         } else {
-          dispatch(onReceiveAppealsUsingVeteranId(appeals));
+          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
       }, () => {
         dispatch(fetchAppealUsingVeteranIdFailed());
