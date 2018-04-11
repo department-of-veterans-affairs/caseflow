@@ -8,7 +8,7 @@ class BusinessMetrics
       app_name: app_name,
       attrs: {
         service: service,
-        endpoint: name
+        metric: name
       }
     )
   end
