@@ -1,4 +1,19 @@
 class AppealsController < ApplicationController
+  # TODO: Should this controller be rolled into one of the other 3 appeals controllers?
+  # If we roll this into one of the API AppealsControllers then we do not have to
+  # duplicate this exception handling here.
+  rescue_from StandardError do |error|
+    Raven.capture_exception(error)
+
+    render json: {
+      "errors": [
+        "status": "500",
+        "title": "Unknown error occured",
+        "detail": "#{error} (Sentry event id: #{Raven.last_event_id})"
+      ]
+    }, status: 500
+  end
+
   def index
     return veteran_id_not_found_error unless veteran_id
 
@@ -8,7 +23,7 @@ class AppealsController < ApplicationController
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
       rescue ActiveRecord::RecordNotFound => err
-        raise err unless feature_enabled?(:queue_case_search)
+        return appeals_not_found unless feature_enabled?(:queue_case_search)
         appeals = []
       end
 
@@ -38,5 +53,15 @@ class AppealsController < ApplicationController
       appeals,
       each_serializer: ::WorkQueue::AppealSerializer
     ).as_json
+  end
+
+  def appeals_not_found
+    render json: {
+      "errors": [
+        "status": "404",
+        "title": "Appeals not found",
+        "detail": "No appeals with that Veteran ID were found in our systems."
+      ]
+    }, status: 404
   end
 end

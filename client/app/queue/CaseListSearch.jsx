@@ -24,7 +24,7 @@ class CaseListSearch extends React.PureComponent {
     const topSearchBar = () => {
       // Hide the search bar when displaying search results.
       if (caseList.displayCaseListResults &&
-        (caseList.search.showErrorMessage || caseList.search.noAppealsFoundSearchQueryValue)) {
+        (caseList.search.showErrorMessage || caseList.search.queryResultingInError)) {
         return;
       }
 

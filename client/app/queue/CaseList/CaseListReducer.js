@@ -10,7 +10,7 @@ export const initialState = {
   receivedAppeals: [],
   search: {
     showErrorMessage: false,
-    noAppealsFoundSearchQueryValue: null
+    queryResultingInError: null
   }
 };
 
@@ -27,7 +27,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       receivedAppeals: { $set: {} },
       search: {
         showErrorMessage: { $set: false },
-        noAppealsFoundSearchQueryValue: { $set: null }
+        queryResultingInError: { $set: null }
       }
     });
   case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:
@@ -35,7 +35,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       receivedAppeals: { $set: {} },
       search: {
         showErrorMessage: { $set: false },
-        noAppealsFoundSearchQueryValue: { $set: null }
+        queryResultingInError: { $set: null }
       }
     });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE:
@@ -44,7 +44,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showErrorMessage: { $set: true },
-        noAppealsFoundSearchQueryValue: { $set: null }
+        queryResultingInError: { $set: action.payload.searchQuery }
       }
     });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS:
@@ -56,7 +56,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       },
       search: {
         showErrorMessage: { $set: false },
-        noAppealsFoundSearchQueryValue: { $set: null }
+        queryResultingInError: { $set: null }
       }
     });
   case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
@@ -65,7 +65,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: false },
       search: {
         showErrorMessage: { $set: false },
-        noAppealsFoundSearchQueryValue: {
+        queryResultingInError: {
           $set: action.payload.searchQuery
         }
       }

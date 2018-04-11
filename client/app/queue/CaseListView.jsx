@@ -47,9 +47,20 @@ class CaseListView extends React.PureComponent {
       </React.Fragment>;
     }
 
+    let errorText = {
+      header: `No cases found for “${this.props.queryResultingInError}”`,
+      body: "Please enter a valid 9-digit Veteran ID to search for all available cases."
+    };
+    if (this.props.showErrorMessage) {
+      errorText = {
+        header: `Server encountered an error searching for “${this.props.queryResultingInError}”`,
+        body: "Please retry your search and contact support if errors persist."
+      };
+    }
+
     return <React.Fragment>
-      <h1 className="cf-push-left" {...fullWidth}>No cases found for “{this.props.noAppealsFoundSearchQueryValue}”</h1>
-      <p>Please enter a valid 9-digit Veteran ID to search for all available cases.</p>
+      <h1 className="cf-push-left" {...fullWidth}>{errorText.header}</h1>
+      <p>{errorText.body}</p>
       <SearchBar
         id="searchBarEmptyList"
         size="big"
@@ -63,9 +74,6 @@ class CaseListView extends React.PureComponent {
     </React.Fragment>;
   }
 
-  // TODO: What is the search results error behaviour here?
-  // As written if a search errored, the child would return to being displayed and the error would show above the list.
-  // Do we want to have the previous search stick around?
   render() {
     return <React.Fragment>
       <div {...backLinkStyling}>
@@ -82,8 +90,9 @@ class CaseListView extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,
-  noAppealsFoundSearchQueryValue: state.caseList.search.noAppealsFoundSearchQueryValue,
-  searchQuery: state.caseList.caseListCriteria.searchQuery
+  queryResultingInError: state.caseList.search.queryResultingInError,
+  searchQuery: state.caseList.caseListCriteria.searchQuery,
+  showErrorMessage: state.caseList.search.showErrorMessage
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

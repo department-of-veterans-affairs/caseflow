@@ -29,8 +29,9 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   payload: { appeals }
 });
 
-export const fetchAppealUsingVeteranIdFailed = () => ({
-  type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE
+export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
+  type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE,
+  payload: { searchQuery }
 });
 
 export const fetchAppealsUsingVeteranId = (veteranId) =>
@@ -48,6 +49,6 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
       }, () => {
-        dispatch(fetchAppealUsingVeteranIdFailed());
+        dispatch(fetchAppealUsingVeteranIdFailed(veteranId));
       });
   };
