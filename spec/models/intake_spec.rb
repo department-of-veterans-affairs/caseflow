@@ -88,10 +88,6 @@ describe Intake do
       )
     end
 
-    it "does not return successful intakes" do
-      expect(subject).to_not include(completed_intake)
-    end
-
     let!(:canceled_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -102,10 +98,6 @@ describe Intake do
         completion_status: :canceled,
         cancel_reason: :duplicate_ep
       )
-    end
-
-    it "returns canceled intakes" do
-      expect(subject).to include(canceled_intake)
     end
 
     let!(:intake_not_accessible) do
@@ -132,13 +124,6 @@ describe Intake do
       )
     end
 
-    it "returns intakes with included errors" do
-      expect(subject).to include(
-        intake_not_accessible,
-        intake_not_valid
-      )
-    end
-
     let!(:intake_invalid_file_number) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -161,13 +146,6 @@ describe Intake do
       )
     end
 
-    it "does not return intakes with excluded errors" do
-      expect(subject).to_not include(
-        intake_invalid_file_number,
-        intake_refiling_already_processed
-      )
-    end
-
     let!(:completed_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -178,7 +156,7 @@ describe Intake do
       )
     end
 
-    let!(:canceled_intake_fixed_later) do
+    let!(:intake_fixed_later) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
         detail: detail,
@@ -199,8 +177,18 @@ describe Intake do
       )
     end
 
-    it "does not include veteran_file_number/intake type combo that succeeded later" do
-      expect(subject).to_not include(canceled_intake_fixed_later)
+    it "should return included intakes" do
+      expect(subject).to_not include(completed_intake)
+      expect(subject).to include(canceled_intake)
+      expect(subject).to include(
+        intake_not_accessible,
+        intake_not_valid
+      )
+      expect(subject).to_not include(
+        intake_invalid_file_number,
+        intake_refiling_already_processed
+      )
+      expect(subject).to_not include(intake_fixed_later)
     end
   end
 
