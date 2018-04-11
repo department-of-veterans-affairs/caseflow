@@ -40,7 +40,7 @@ class RampElectionIntake < Intake
       user: user,
       closed_on: Time.zone.today,
       disposition: "RAMP Opt-in",
-      ramp_election: ramp_election
+      election_receipt_date: ramp_election.receipt_date
     )
 
     transaction do

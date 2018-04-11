@@ -858,10 +858,11 @@ describe Appeal do
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:issues) { [] }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
+    let(:election_receipt_date) { 2.days.ago }
 
     context "when called with both appeal and appeals" do
       let(:vacols_record) { :ready_to_certify }
@@ -873,14 +874,17 @@ describe Appeal do
             appeals: [appeal, another_appeal],
             user: user,
             closed_on: 4.days.ago,
-            disposition: disposition
+            disposition: disposition,
+            election_receipt_date: election_receipt_date
           )
         end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
     context "when multiple appeals" do
-      it "closes each appeal" do
+      let(:appeal_with_nod_after_election_received) { Generators::Appeal.build(vacols_record: vacols_record, nod_date: 1.day.ago ) }
+
+      it "closes each appeal with nod_date before election received_date" do
         expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
           appeal: appeal,
           user: user,
@@ -893,19 +897,32 @@ describe Appeal do
           closed_on: 4.days.ago,
           disposition_code: "P"
         )
-
-        Appeal.close(
-          appeals: [appeal, another_appeal],
+        expect(Fakes::AppealRepository).to_not receive(:close_undecided_appeal!).with(
+          appeal: appeal_with_nod_after_election_received,
           user: user,
           closed_on: 4.days.ago,
-          disposition: disposition
+          disposition_code: "P"
+        )
+
+        Appeal.close(
+          appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition,
+          election_receipt_date: election_receipt_date
         )
       end
     end
 
     context "when just one appeal" do
       subject do
-        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+        Appeal.close(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition,
+          election_receipt_date: election_receipt_date
+        )
       end
 
       context "when disposition is not valid" do
