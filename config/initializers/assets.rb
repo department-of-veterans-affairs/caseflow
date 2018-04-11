@@ -10,7 +10,7 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # Rails.application.config.assets.paths << Emoji.images_path
 
 # Precompile additional assets.
-# application.js, application.css, and all non-JS/CSS in the app/assets 
+# application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
@@ -25,4 +25,4 @@ Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # Rails.application.config.assets.precompile += %w( server-bundle.js )
 
 # Add folder with webpack generated assets to assets.paths
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack")
+Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack", "fonts")
