@@ -25,7 +25,10 @@ const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <SearchEnabledView feedbackUrl={this.props.feedbackUrl}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}
+    >
       <QueueListView {...this.props} />
     </SearchEnabledView>
   </QueueLoadingScreen>;

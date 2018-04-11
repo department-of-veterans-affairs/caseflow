@@ -8,12 +8,11 @@ class AppealsController < ApplicationController
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
       rescue ActiveRecord::RecordNotFound => err
-        raise err unless feature_enabled?(:should_use_appeal_search)
+        raise err unless feature_enabled?(:queue_case_search)
         appeals = []
       end
 
       render json: {
-        shouldUseAppealSearch: feature_enabled?(:should_use_appeal_search),
         appeals: json_appeals(appeals)[:data]
       }
     end

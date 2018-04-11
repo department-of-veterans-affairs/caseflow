@@ -15,11 +15,6 @@ export const setCaseListSearch = (searchQuery) => ({
   payload: { searchQuery }
 });
 
-export const setShouldUseQueueSearch = (bool) => ({
-  type: Constants.SET_SHOULD_USE_QUEUE_SEARCH,
-  payload: { bool }
-});
-
 export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
 });
@@ -46,11 +41,6 @@ export const fetchAppealsUsingVeteranId = (veteranId) =>
     }).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
-
-        const shouldUseAppealSearch = Object.prototype.hasOwnProperty.call(returnedObject, 'shouldUseAppealSearch') &&
-          returnedObject.shouldUseAppealSearch;
-
-        dispatch(setShouldUseQueueSearch(shouldUseAppealSearch));
 
         if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));

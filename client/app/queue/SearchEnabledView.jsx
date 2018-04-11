@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import CaseListSearch from './CaseListSearch';
 import CaseListView from './CaseListView';
+import CaseSelectSearch from '../reader/CaseSelectSearch';
 
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
   '.section-search': {
@@ -27,33 +28,35 @@ class SearchEnabledView extends React.PureComponent {
       displayCaseListResults,
       feedbackUrl,
       isRequestingAppealsUsingVeteranId,
-      shouldUseAppealSearch
+      shouldUseQueueCaseSearch
     } = this.props;
 
     return <React.Fragment>
-      <CaseListSearch
-        navigateToPath={(path) => {
-          const redirectUrl = encodeURIComponent(window.location.pathname);
+      { shouldUseQueueCaseSearch ? <CaseListSearch styling={searchStyling(isRequestingAppealsUsingVeteranId)} /> :
+        <CaseSelectSearch
+          navigateToPath={(path) => {
+            const redirectUrl = encodeURIComponent(window.location.pathname);
 
-          location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
-        }}
-        alwaysShowCaseSelectionModal
-        feedbackUrl={feedbackUrl}
-        searchSize="big"
-        styling={searchStyling(isRequestingAppealsUsingVeteranId)} />
-      { shouldUseAppealSearch && displayCaseListResults ? <CaseListView /> : this.props.children }
+            location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
+          }}
+          alwaysShowCaseSelectionModal
+          feedbackUrl={feedbackUrl}
+          searchSize="big"
+          styling={searchStyling(isRequestingAppealsUsingVeteranId)} />
+      }
+      { shouldUseQueueCaseSearch && displayCaseListResults ? <CaseListView /> : this.props.children }
     </React.Fragment>;
   }
 }
 
 SearchEnabledView.propTypes = {
-  feedbackUrl: PropTypes.string.isRequired
+  feedbackUrl: PropTypes.string.isRequired,
+  shouldUseQueueCaseSearch: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state) => ({
   displayCaseListResults: state.caseList.displayCaseListResults,
-  isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId,
-  shouldUseAppealSearch: state.caseList.shouldUseAppealSearch
+  isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId
 });
 
 export default connect(mapStateToProps)(SearchEnabledView);

@@ -11,8 +11,7 @@ export const initialState = {
   search: {
     showErrorMessage: false,
     noAppealsFoundSearchQueryValue: null
-  },
-  shouldUseAppealSearch: false
+  }
 };
 
 export const caseListReducer = (state = initialState, action = {}) => {
@@ -82,10 +81,6 @@ export const caseListReducer = (state = initialState, action = {}) => {
           $set: action.payload.searchQuery
         }
       }
-    });
-  case Constants.SET_SHOULD_USE_QUEUE_SEARCH:
-    return update(state, {
-      shouldUseAppealSearch: { $set: action.payload.bool }
     });
   default:
     return state;
