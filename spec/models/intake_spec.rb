@@ -177,7 +177,7 @@ describe Intake do
       )
     end
 
-    it "should return included intakes" do
+    it "returns included intakes (canceled, actionable errors that have yet been resolved)" do
       expect(subject).to_not include(completed_intake)
       expect(subject).to include(canceled_intake)
       expect(subject).to include(
