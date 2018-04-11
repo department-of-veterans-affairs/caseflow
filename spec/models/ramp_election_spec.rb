@@ -24,7 +24,7 @@ describe RampElection do
     )
   end
 
-  context "#active scope" do
+  context ".active scope" do
     it "includes any RampElection where end_product_status is nil or not inactive" do
       RampElection.create!(
         veteran_file_number: "1",
@@ -52,6 +52,26 @@ describe RampElection do
         established_at: Time.zone.now
       )
       expect(RampElection.active.count).to eq(2)
+    end
+  end
+
+  context ".sync_all!" do
+    it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
+      ramp_election1 = RampElection.create!(
+        veteran_file_number: "1"
+      )
+      ramp_election2 = RampElection.create!(
+        veteran_file_number: "2"
+      )
+      expect(ramp_election1).to receive(:recreate_issues_from_contentions!)
+      expect(ramp_election1).to receive(:sync_ep_status!)
+      expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
+      expect(Rails.logger).to receive(:error)
+      expect(Raven).to receive(:capture_exception)
+      expect(RampElection).to receive(:sleep).with(1).twice
+      allow(RampElection).to receive(:active).and_return([ramp_election1, ramp_election2])
+
+      RampElection.sync_all!
     end
   end
 
