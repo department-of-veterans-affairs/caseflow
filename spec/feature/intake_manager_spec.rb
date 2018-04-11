@@ -118,24 +118,7 @@ RSpec.feature "Intake Manager Page" do
 
       # Errors that should not appear in the manager list
 
-      election_excluded_errors = [
-        :invalid_file_number,
-        :veteran_not_found,
-        :did_not_receive_ramp_election,
-        :ramp_election_already_complete,
-        :no_active_appeals,
-        :no_eligible_appeals,
-        :no_active_compensation_appeals,
-        :no_active_fully_compensation_appeals,
-        :duplicate_intake_in_progress
-      ]
 
-      refiling_excluded_errors = [
-        :no_complete_ramp_election,
-        :ramp_election_is_active,
-        :ramp_election_no_issues,
-        :ramp_refiling_already_processed
-      ]
 
       election_excluded_errors.each do |election_excluded_error|
         RampElectionIntake.create!(

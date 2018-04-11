@@ -75,6 +75,136 @@ describe Intake do
     end
   end
 
+  context ".flagged_for_manager_review", :focus => true do
+    subject { Intake.flagged_for_manager_review }
+
+    let!(:completed_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago
+      )
+    end
+
+    it "does not return successful intakes" do
+      expect(subject).to_not include(completed_intake)
+    end
+
+    let!(:canceled_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: :canceled,
+        cancel_reason: :duplicate_ep
+      )
+    end
+
+    it "returns canceled intakes" do
+      expect(subject).to include(canceled_intake)
+    end
+
+    let!(:intake_not_accessible) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: :error,
+        error_code: :veteran_not_accessible
+      )
+    end
+
+    let!(:intake_not_valid) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: :error,
+        error_code: :veteran_not_valid
+      )
+    end
+
+    it "returns intakes with included errors" do
+      expect(subject).to include(
+        intake_not_accessible,
+        intake_not_valid
+      )
+    end
+
+    let!(:intake_invalid_file_number) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        completed_at: 5.minutes.ago,
+        completion_status: :error,
+        error_code: :veteran_invalid_file_number
+      )
+    end
+
+    let!(:intake_refiling_already_processed) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        completed_at: 5.minutes.ago,
+        completion_status: :error,
+        error_code: :ramp_refiling_already_processed
+      )
+    end
+
+    it "does not return intakes with excluded errors" do
+      expect(subject).to_not include(
+        intake_invalid_file_number,
+        intake_refiling_already_processed
+      )
+    end
+
+    let!(:completed_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago
+      )
+    end
+
+    let!(:canceled_intake_fixed_later) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: :canceled,
+        cancel_reason: :duplicate_ep
+      )
+
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 3.minutes.ago,
+        completed_at: 2.minutes.ago,
+        completion_status: :success,
+      )
+    end
+
+    it "does not include veteran_file_number/intake type combo that succeeded later" do
+      expect(subject).to_not include(canceled_intake_fixed_later)
+    end
+
+  end
+
   context "#complete_with_status!" do
     it "saves intake with proper tagging" do
       intake.complete_with_status!(:canceled)
