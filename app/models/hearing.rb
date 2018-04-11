@@ -145,7 +145,6 @@ class Hearing < ApplicationRecord
         :appellant_mi_formatted,
         :veteran_fi_last_formatted,
         :vbms_id,
-        :issue_count,
         :current_issue_count,
         :prepped
       ],
@@ -180,17 +179,13 @@ class Hearing < ApplicationRecord
     active_appeal_streams.map(&:attributes_for_hearing)
   end
 
-  def issue_count
-    active_appeal_streams.map(&:worksheet_issues_count).reduce(0, :+)
-  end
-
   def current_issue_count
     active_appeal_streams.map(&:worksheet_issues).flatten
-    .reject {|issue| issue.deleted? ||
-      (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
-    }.count
+      .reject do |issue|
+        issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
+      end
+      .count
   end
-
 
   # If we do not yet have the military_service saved in Caseflow's DB, then
   # we want to fetch it from BGS, save it to the DB, then return it
