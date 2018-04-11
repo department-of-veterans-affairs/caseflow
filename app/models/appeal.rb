@@ -490,6 +490,7 @@ class Appeal < ApplicationRecord
     super
   end
 
+ delegate :count, to: :worksheet_issues, prefix: true
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
