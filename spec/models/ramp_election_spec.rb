@@ -55,7 +55,7 @@ describe RampElection do
     end
   end
 
-  fcontext ".sync_all!" do
+  context ".sync_all!" do
     it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
       ramp_election1 = RampElection.create!(
         veteran_file_number: "1"
