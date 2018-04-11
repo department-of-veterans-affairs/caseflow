@@ -882,7 +882,9 @@ describe Appeal do
     end
 
     context "when multiple appeals" do
-      let(:appeal_with_nod_after_election_received) { Generators::Appeal.build(vacols_record: vacols_record, nod_date: 1.day.ago ) }
+      let(:appeal_with_nod_after_election_received) do
+        Generators::Appeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+      end
 
       it "closes each appeal with nod_date before election received_date" do
         expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(

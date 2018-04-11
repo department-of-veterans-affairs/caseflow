@@ -692,14 +692,13 @@ class Appeal < ApplicationRecord
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
-          if close_appeal.nod_date < election_receipt_date
-            close_single(
-              appeal: close_appeal,
-              user: user,
-              closed_on: closed_on,
-              disposition: disposition
-            )
-          end
+          next unless close_appeal.nod_date < election_receipt_date
+          close_single(
+            appeal: close_appeal,
+            user: user,
+            closed_on: closed_on,
+            disposition: disposition
+          )
         end
 
         inside_transaction.call if block_given?
