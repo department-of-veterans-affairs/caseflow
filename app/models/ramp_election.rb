@@ -16,7 +16,7 @@ class RampElection < RampReview
   end
 
   def self.sync_all!
-    RampElection.active.each do |ramp_election| 
+    RampElection.active.each do |ramp_election|
       begin
         ramp_election.recreate_issues_from_contentions!
         ramp_election.sync_ep_status!
