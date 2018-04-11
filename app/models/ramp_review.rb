@@ -46,6 +46,17 @@ class RampReview < ApplicationRecord
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end
 
+  # If an EP with the exact same traits has already been created. Use that instead
+  # of creating a new EP. This prevents duplicate EP errors and allows this method
+  # to be idempotent
+  #
+  # Returns a symbol designating whether the end product was created or connected
+  def create_or_connect_end_product!
+    return connect_end_product! if matching_end_product
+
+    create_end_product! && :created
+  end
+
   def create_end_product!
     fail InvalidEndProductError unless end_product.valid?
 
@@ -70,6 +81,10 @@ class RampReview < ApplicationRecord
 
   private
 
+  def veteran
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
+  end
+
   def end_product
     @end_product ||= EndProduct.new(
       claim_id: end_product_reference_id,
@@ -82,18 +97,26 @@ class RampReview < ApplicationRecord
     )
   end
 
-  def end_product_data_hash
-    END_PRODUCT_DATA_BY_OPTION[option_selected] || {}
+  # Find an end product that has the traits of the end product that should be created.
+  def matching_end_product
+    @matching_end_product ||= veteran.end_products.find { |ep| end_product.matches?(ep) }
   end
 
-  def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+  def connect_end_product!
+    update!(
+      end_product_reference_id: matching_end_product.claim_id,
+      established_at: Time.zone.now
+    ) && :connected
+  end
+
+  def end_product_data_hash
+    END_PRODUCT_DATA_BY_OPTION[option_selected] || {}
   end
 
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      veteran_hash: veteran.load_bgs_record!.to_vbms_hash
     )
   end
 
