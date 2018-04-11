@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
-import { SHARED_CONSTANTS } from '../constants/BusinessConstants';
+import SHARED_CONSTANTS from '../constants/SharedConstants';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -52,7 +52,7 @@ export const DECISION_TYPES = {
   DRAFT_DECISION: 'DraftDecision'
 };
 
-export const CASE_DISPOSITION_DESCRIPTION_BY_ID = SHARED_CONSTANTS.CASE_DISPOSITION_DESCRIPTION_BY_ID;
+export const CASE_DISPOSITION_DESCRIPTION_BY_ID = SHARED_CONSTANTS.CASE.DISPOSITION_DESCRIPTION_BY_ID;
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
   {}, ...Object.keys(CASE_DISPOSITION_DESCRIPTION_BY_ID).map(
