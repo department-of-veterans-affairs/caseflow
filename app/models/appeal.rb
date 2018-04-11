@@ -687,17 +687,19 @@ class Appeal < ApplicationRecord
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, ramp_election:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
-          close_single(
-            appeal: close_appeal,
-            user: user,
-            closed_on: closed_on,
-            disposition: disposition
-          )
+          if close_appeal.nod_date < ramp_election.receipt_date
+            close_single(
+              appeal: close_appeal,
+              user: user,
+              closed_on: closed_on,
+              disposition: disposition
+            )
+          end
         end
 
         inside_transaction.call if block_given?
