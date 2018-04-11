@@ -2,8 +2,8 @@ describe SyncIntakeJob do
   context ".perform" do
     it "calls recreate_issues_from_contentions and sync_ep_status" do
       spy = 0
-      allow_any_instance_of(RampElection).to receive(:recreate_issues_from_contentions!) do spy += 1 end
-      allow_any_instance_of(RampElection).to receive(:sync_ep_status!) do spy += 1 end
+      allow_any_instance_of(RampElection).to receive(:recreate_issues_from_contentions!) { spy += 1 }
+      allow_any_instance_of(RampElection).to receive(:sync_ep_status!) { spy += 1 }
 
       user = User.create!(station_id: "123", css_id: "456")
 

@@ -6,7 +6,7 @@ class SyncIntakeJob < ApplicationJob
   def perform
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
-    
+
     RampElection.active.each do |ramp_election|
       begin
         ramp_election.recreate_issues_from_contentions!
