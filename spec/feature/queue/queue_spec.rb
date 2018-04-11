@@ -242,6 +242,15 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
     end
+
+    context "displays issue dispositions" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        expect(page).to have_content("Disposition: 1 - Allowed")
+      end
+    end
   end
 
   context "loads decision views" do

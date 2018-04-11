@@ -7,7 +7,8 @@ describe SyncIntakeJob do
       user = User.create!(station_id: "123", css_id: "456")
 
       ramp_election = RampElection.create!(
-        veteran_file_number: "1"
+        veteran_file_number: "1",
+        established_at: Time.zone.now
       )
 
       RampElectionIntake.create!(
