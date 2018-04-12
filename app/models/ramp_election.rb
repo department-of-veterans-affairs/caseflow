@@ -15,6 +15,21 @@ class RampElection < RampReview
     established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
   end
 
+  def self.sync_all!
+    RampElection.active.each do |ramp_election|
+      begin
+        ramp_election.recreate_issues_from_contentions!
+        ramp_election.sync_ep_status!
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
+        Raven.capture_exception(e)
+      end
+
+      # Sleep for 1 second to avoid tripping BGS alerts
+      sleep 1
+    end
+  end
+
   def active?
     sync_ep_status! && cached_status_active?
   end
