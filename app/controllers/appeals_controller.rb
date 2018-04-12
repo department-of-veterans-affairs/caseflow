@@ -22,8 +22,7 @@ class AppealsController < ApplicationController
 
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
-      rescue ActiveRecord::RecordNotFound => err
-        return appeals_not_found unless feature_enabled?(:queue_case_search)
+      rescue ActiveRecord::RecordNotFound
         appeals = []
       end
 
@@ -53,15 +52,5 @@ class AppealsController < ApplicationController
       appeals,
       each_serializer: ::WorkQueue::AppealSerializer
     ).as_json
-  end
-
-  def appeals_not_found
-    render json: {
-      "errors": [
-        "status": "404",
-        "title": "Appeals not found",
-        "detail": "No appeals with that Veteran ID were found in our systems."
-      ]
-    }, status: 404
   end
 end

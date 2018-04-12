@@ -1,17 +1,8 @@
 RSpec.describe AppealsController, type: :controller do
-  before do
-    Fakes::Initializer.load!
-
-    FeatureToggle.enable!(:queue_welcome_gate)
-    User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:queue_welcome_gate)
-  end
+  before { User.authenticate!(roles: ["System Admin"]) }
 
   describe "GET appeals" do
-    let(:ssn) { 100_000_000 + SecureRandom.random_number(899_999_999) }
+    let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { Generators::Appeal.create(vbms_id: "#{ssn}S") }
     let(:veteran_id) { appeal.vbms_id }
 
@@ -22,13 +13,31 @@ RSpec.describe AppealsController, type: :controller do
       end
     end
 
-    context "when request header contains Veteran ID" do
-      it "array in response contains one appeal" do
-        request.headers["HTTP_VETERAN_ID"] = veteran_id
+    context "when request header contains Veteran ID with associated appeals" do
+      before { request.headers["HTTP_VETERAN_ID"] = veteran_id }
+
+      it "returns valid response with one appeal" do
         get :index
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["appeals"].size).to eq 1
+      end
+
+      it "returns a 500 response when application raises StandardError" do
+        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        get :index
+        expect(response.status).to eq 500
+      end
+    end
+
+    context "when request header contains Veteran ID with no associated appeals" do
+      before { request.headers["HTTP_VETERAN_ID"] = "#{Generators::Random.unique_ssn}S" }
+
+      it "returns valid response with empty appeals array" do
+        get :index
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["appeals"].size).to eq 0
       end
     end
   end
