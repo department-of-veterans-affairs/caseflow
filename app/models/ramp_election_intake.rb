@@ -7,7 +7,10 @@ class RampElectionIntake < Intake
     no_eligible_appeals: "no_eligible_appeals",
     no_active_compensation_appeals: "no_active_compensation_appeals",
     no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
-    no_active_appeals: "no_active_appeals"
+    no_active_appeals: "no_active_appeals",
+    # This status will be set on successful intakes to signify that we had to
+    # connect an existing EP, which in theory, shouldn't happen, but does in practice.
+    connected_preexisting_ep: "connected_preexisting_ep"
   }.merge(Intake::ERROR_CODES)
 
   def ramp_election
@@ -28,17 +31,19 @@ class RampElectionIntake < Intake
   end
 
   def complete!(_request_params)
+    if ramp_election.create_or_connect_end_product! == :connected
+      update!(error_code: "connected_preexisting_ep")
+    end
+
+    Appeal.close(
+      appeals: eligible_appeals,
+      user: user,
+      closed_on: Time.zone.today,
+      disposition: "RAMP Opt-in"
+    )
+
     transaction do
       complete_with_status!(:success)
-
-      Appeal.close(
-        appeals: eligible_appeals,
-        user: user,
-        closed_on: Time.zone.today,
-        disposition: "RAMP Opt-in"
-      ) do
-        ramp_election.create_end_product!
-      end
 
       eligible_appeals.each do |appeal|
         RampClosedAppeal.create!(

@@ -34,21 +34,21 @@ jobs:
           command: mkdir -p ~/project/tmp/testfiles
 
       - restore_cache:
-          name: Restore bundler cache
-          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+          keys:
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
+            
+      - run: bundle install --path vendor/bundle
+      
+      - save_cache:
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: bundle install
-          command: bundle check || bundle install
-
-      - save_cache:
-          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
 
       - run:
           name: yarn install

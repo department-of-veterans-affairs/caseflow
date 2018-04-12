@@ -109,8 +109,13 @@ Rails.application.routes.draw do
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
 
+  scope path: '/intake' do
+    get "/", to: 'intakes#index'
+    get "/manager", to: 'intake_manager#index'
+    get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
+  end
 
-  resources :intakes, path: "intake", only: [:index, :create, :destroy] do
+  resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
     patch 'review', on: :member
     patch 'complete', on: :member
     patch 'error', on: :member
