@@ -51,6 +51,7 @@ class Intake < ApplicationRecord
                GROUP BY veteran_file_number, type) latest_success
                ON intakes.veteran_file_number = latest_success.veteran_file_number
                AND intakes.type = latest_success.type",
+             # To exclude ramp elections that were established outside of Caseflow
              "LEFT JOIN ramp_elections ON intakes.veteran_file_number = ramp_elections.veteran_file_number"
            )
       .where.not(completion_status: "success")
@@ -60,9 +61,8 @@ class Intake < ApplicationRecord
                "veteran_not_valid"
              ])
       .where(
-        '(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)',
-        # Exclude ramp elections established outside of intake process
-        'AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)'
+        "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
+        AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
       )
   end
 
