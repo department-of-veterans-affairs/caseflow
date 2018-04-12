@@ -1,5 +1,9 @@
 class UserRepository
   class << self
+    def staff_records
+      @staff_records ||= {}
+    end
+
     def vacols_uniq_id(css_id)
       staff_record_by_css_id(css_id).slogid
     end
@@ -26,11 +30,20 @@ class UserRepository
       true
     end
 
+    # :nocov:
+    def vacols_attorney_id(css_id)
+      staff_record_by_css_id(css_id).sattyid
+    end
+
+    def vacols_group_id(css_id)
+      staff_record_by_css_id(css_id).stitle
+    end
+
     private
 
-    # :nocov:
     def staff_record_by_css_id(css_id)
-      staff = VACOLS::Staff.find_by(sdomainid: css_id)
+      staff_records[css_id] ||= VACOLS::Staff.find_by(sdomainid: css_id)
+      staff = staff_records[css_id]
       fail Caseflow::Error::UserRepositoryError, "Cannot find user with #{css_id} in VACOLS" unless staff
       staff
     end

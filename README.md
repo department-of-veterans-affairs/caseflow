@@ -15,6 +15,7 @@ Install dependencies via Homebrew:
 Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
 - Run `mkdir ~/.nvm`
 - Add the following to your shell login script:
+
         export NVM_DIR="$HOME/.nvm"
         . "/usr/local/opt/nvm/nvm.sh"
 
