@@ -1,6 +1,6 @@
 describe RampElectionIntake do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -126,6 +126,26 @@ describe RampElectionIntake do
 
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
+    end
+
+    context "if ep already exists and is connected" do
+      let!(:matching_ep) do
+        Generators::EndProduct.build(
+          veteran_file_number: "64205555",
+          bgs_attrs: {
+            claim_type_code: "683SCRRRAMP",
+            claim_receive_date: intake.detail.receipt_date.to_formatted_s(:short_date),
+            end_product_type_code: "683"
+          }
+        )
+      end
+
+      it "connects that EP to the ramp election and does not establish a claim" do
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.error_code).to eq("connected_preexisting_ep")
+      end
     end
 
     context "if VACOLS closure fails" do

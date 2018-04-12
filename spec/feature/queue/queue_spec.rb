@@ -242,6 +242,15 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
     end
+
+    context "displays issue dispositions" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        expect(page).to have_content("Disposition: 1 - Allowed")
+      end
+    end
   end
 
   context "loads decision views" do
@@ -330,9 +339,39 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
+        expect(page).to have_content("You have updated issue 1.")
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
+      end
+
+      scenario "deletes issue" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        old_issues = appeal.issues
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        issue_rows = page.find_all("tr[id^='table-row-']")
+        expect(issue_rows.length).to eq(appeal.issues.length)
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        expect(page).to have_content("Edit Issue")
+
+        issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }
+
+        click_on "Delete Issue"
+        expect(page).to have_content "Delete Issue?"
+        click_on "Delete issue"
+
+        expect(page).to have_content("You have deleted issue #{issue_idx + 1}")
+
+        issue_rows = page.find_all("tr[id^='table-row-']")
+        expect(issue_rows.length).to eq(old_issues.length - 1)
       end
     end
 
@@ -361,8 +400,8 @@ RSpec.feature "Queue" do
         sleep 1
         expect(page).to(
           have_content(
-            "OMO for #{appeal.veteran_full_name} has been
-            marked completed and sent to Andrew Mackenzie."
+            "Thank you for drafting #{appeal.veteran_full_name}'s outside medical
+            opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
           )
         )
         expect(page.current_path).to eq("/queue/")
@@ -400,8 +439,8 @@ RSpec.feature "Queue" do
         sleep 1
         expect(page).to(
           have_content(
-            "Draft Decision for #{appeal.veteran_full_name} has been
-            marked completed and sent to Andrew Mackenzie."
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision.
+            It's been sent to Andrew Mackenzie for review."
           )
         )
         expect(page.current_path).to eq("/queue/")

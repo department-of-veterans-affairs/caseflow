@@ -12,7 +12,8 @@ import Alert from '../components/Alert';
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState
+  resetSaveState,
+  showErrorMessage
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
@@ -27,6 +28,15 @@ class QueueListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
+
+    if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
+      this.props.showErrorMessage({
+        title: 'Some cases need preliminary DAS assignments',
+        detail: `Cases marked with exclamation points need to be assigned 
+        to you through DAS. Please contact your judge or senior counsel to 
+        create preliminary DAS assignments.`
+      });
+    }
   };
 
   render = () => {
@@ -41,7 +51,10 @@ class QueueListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 {...fullWidth}>Your Queue</h1>
-        {messages.success.message && <Alert type="success" title={messages.success.message}>
+        {messages.error && <Alert type="error" title={messages.error.title}>
+          {messages.error.detail}
+        </Alert>}
+        {messages.success && <Alert type="success" title={messages.success}>
           If you made a mistake please email your judge to resolve the issue.
         </Alert>}
         <QueueTable />
@@ -71,7 +84,8 @@ const mapDispatchToProps = (dispatch) => ({
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
-    resetSaveState
+    resetSaveState,
+    showErrorMessage
   }, dispatch)
 });
 

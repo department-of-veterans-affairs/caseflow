@@ -117,19 +117,15 @@ class SubmitDecisionView extends React.PureComponent {
     };
 
     const fields = {
-      type: getDecisionTypeDisplay(decision),
+      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-    const successMsg = `${fields.type} for ${fields.veteran} has been marked completed and sent to ${fields.judge}.`;
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's 
+    been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
-      then(() => {
-        if (this.props.saveSuccessful) {
-          // preempt successful server response to avoid reloading all data
-          this.props.deleteAppeal(vacolsId);
-        }
-      });
+      then(() => this.props.deleteAppeal(vacolsId));
   };
 
   getFooterButtons = () => {
@@ -183,7 +179,7 @@ class SubmitDecisionView extends React.PureComponent {
         {selectedJudge && <span>{selectedJudge.full_name}</span>}
         <Button
           id="select-judge"
-          classNames={['cf-btn-link']}
+          linkStyling
           willNeverBeLoading
           styling={selectJudgeButtonStyling(selectedJudge)}
           onClick={() => this.props.setSelectingJudge(true)}>
@@ -227,8 +223,8 @@ class SubmitDecisionView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...subHeadStyling}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error.message && <Alert title={error.message.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
-        {error.message.detail}
+      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+        {error.detail}
       </Alert>}
       <hr />
       {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
@@ -280,7 +276,7 @@ const mapStateToProps = (state, ownProps) => ({
   decision: state.queue.pendingChanges.taskDecision,
   judges: state.queue.judges,
   error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge', 'saveState.saveSuccessful')
+  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
