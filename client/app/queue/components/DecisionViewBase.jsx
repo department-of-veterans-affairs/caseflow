@@ -68,9 +68,7 @@ export default function decisionViewBase(ComponentToWrap) {
         callback: this.goToPrevStep
       });
 
-      if (!backButton.displayText.startsWith('<')) {
-        backButton.displayText = `< ${backButton.displayText}`;
-      }
+      backButton.displayText = `< ${backButton.displayText}`;
 
       return [backButton, nextButton];
     };
