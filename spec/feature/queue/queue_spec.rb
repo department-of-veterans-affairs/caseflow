@@ -433,7 +433,7 @@ RSpec.feature "Queue" do
         click_on "Select remand reasons"
         expect(page).to have_content("Select Remand Reasons")
 
-        remand_reasons = page.execute_script "return document.querySelectorAll('input[type=\"checkbox\"]')"
+        remand_reasons = page.execute_script "return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')"
         remand_reasons.sample(4).each(&:click)
 
         click_on "Review Draft Decision"
