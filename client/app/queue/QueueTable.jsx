@@ -36,7 +36,7 @@ class QueueTable extends React.PureComponent {
 
   getCaseDetailsLink = (task) => <React.Fragment>
     {!task.attributes.task_id && <WarningSymbol />}
-    <Link href={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
+    <Link to={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
       {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
     </Link>
     {!this.veteranIsAppellant(task) && <React.Fragment>
