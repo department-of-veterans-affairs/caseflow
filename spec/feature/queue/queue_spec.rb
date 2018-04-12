@@ -445,8 +445,6 @@ RSpec.feature "Queue" do
         old_issues = appeal.issues
         visit "/queue"
 
-        visit "/queue"
-
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
         safe_click(".Select-control")
         safe_click("div[id$='--option-0']")

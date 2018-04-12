@@ -18,6 +18,7 @@ import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { WarningSymbol } from '../components/RenderFunctions';
 
 const subHeadStyle = css({
   fontSize: 'small',
@@ -33,18 +34,21 @@ class QueueTable extends React.PureComponent {
   };
   veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
+  getCaseDetailsLink = (task) => <React.Fragment>
+    {!task.attributes.task_id && <WarningSymbol />}
+    <Link to={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
+      {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
+    </Link>
+    {!this.veteranIsAppellant(task) && <React.Fragment>
+      <br />
+      <span {...subHeadStyle}>Veteran is not the appellant</span>
+    </React.Fragment>}
+  </React.Fragment>;
+
   getQueueColumns = () => [
     {
       header: 'Case Details',
-      valueFunction: (task) => <span>
-        <Link to={`/tasks/${task.vacolsId}`}>
-          {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
-        </Link>
-        {!this.veteranIsAppellant(task) && <React.Fragment>
-          <br />
-          <span {...subHeadStyle}>Veteran is not the appellant</span>
-        </React.Fragment>}
-      </span>
+      valueFunction: this.getCaseDetailsLink
     },
     {
       header: 'Type(s)',
