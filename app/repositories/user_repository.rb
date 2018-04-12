@@ -39,6 +39,14 @@ class UserRepository
       staff_record_by_css_id(css_id).stitle
     end
 
+    def css_id_by_full_name(full_name)
+      name = full_name.split(" ")
+      first_name, last_name = name.first, name.last
+      staff = VACOLS::Staff.find_by(snamef: first_name, snamel: last_name)
+      fail Caseflow::Error::UserRepositoryError, "Cannot find user with #{full_name} in VACOLS" unless staff
+      staff.sdomainid
+    end
+
     private
 
     def staff_record_by_css_id(css_id)

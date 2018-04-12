@@ -1,6 +1,6 @@
 module Constants::AttorneyJudgeTeams
   # rubocop:disable Metrics/LineLength
-  TEAMS = [
+  JUDGES = [
     { "Dorilyn Ames" => ["Tabatha Blake Carter", "Rochelle Brunot", "Jerry Fowler", "Ryan Frank", "Jason Lyons", "Bryan Riordan", "Anne Rocktashel", "Nadia Stevens"],
       "Angel Caracciolo" => ["Laura Crawford", "Gregory Deemer", "Rahil Gandhi", "Tracy Joseph", "Meghan Moore", "Jonathan Trickey", "Willie Victoria Walker", "Gina Wilkerson"],
       "Kristin Haddock" => ["Irvin Cannaday", "Susan Krunic", "Sonja Mishalanie", "Christopher O'Donnell", "Arooj Sami", "Anne Shawkey", "Mariah Sim", "Dawn Ware"],
