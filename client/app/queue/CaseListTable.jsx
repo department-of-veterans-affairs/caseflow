@@ -12,14 +12,6 @@ const labelForLocation = (locationCode) => {
     return '';
   }
 
-  // TODO: Do we know the currently logged in user's location code?
-  // Maybe we can fire off a request to populate the global state
-  // with the current user's vacols location code (if it is not
-  // already set).
-  // if (location_code == this.props.user_location_code) {
-  //   return <span>Assigned to you</span>;
-  // }
-
   return locationCode;
 };
 

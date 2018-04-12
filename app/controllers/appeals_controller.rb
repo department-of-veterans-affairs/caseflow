@@ -1,7 +1,4 @@
 class AppealsController < ApplicationController
-  # TODO: Should this controller be rolled into one of the other 3 appeals controllers?
-  # If we roll this into one of the API AppealsControllers then we do not have to
-  # duplicate this exception handling here.
   rescue_from StandardError do |error|
     Raven.capture_exception(error)
 
