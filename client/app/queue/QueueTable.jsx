@@ -18,18 +18,11 @@ import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { WarningSymbol } from '../components/RenderFunctions';
 
 const subHeadStyle = css({
   fontSize: 'small',
   color: COMMON_COLORS.GREY_MEDIUM
-});
-const exclamationPointStyle = css({
-  backgroundColor: '#E60000',
-  color: COMMON_COLORS.WHITE,
-  borderRadius: '50%',
-  marginLeft: '-2.5rem',
-  marginRight: '0.5rem',
-  fontWeight: 'bold'
 });
 
 class QueueTable extends React.PureComponent {
@@ -42,7 +35,7 @@ class QueueTable extends React.PureComponent {
   veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
   getCaseDetailsLink = (task) => <React.Fragment>
-    {!task.attributes.task_id && <span {...exclamationPointStyle}>&nbsp;&nbsp;!&nbsp;&nbsp;</span>}
+    {!task.attributes.task_id && <WarningSymbol />}
     <Link href={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
       {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
     </Link>
