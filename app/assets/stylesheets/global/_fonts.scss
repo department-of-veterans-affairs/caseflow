@@ -4,7 +4,7 @@
   font-weight: 400;
   src: local('Source Sans Pro'),
        local('SourceSansPro-Regular'),
-       url('fonts/source-sans-pro.woff2') format('woff2'),
+       asset-path('fonts/source-sans-pro.woff2') format('woff2'),
        url('fonts/source-sans-pro.woff') format('woff');
 }
 

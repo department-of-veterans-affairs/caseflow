@@ -16,7 +16,7 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: d89c7c5a4e7a90e803a7d9c4575d1705097f1062
+  revision: a1fc7f8590b65f6152059c5560fbef107fa45685
   branch: issue4932
   specs:
     caseflow (0.3.5)
