@@ -50,16 +50,20 @@ class Intake < ApplicationRecord
                WHERE completion_status = 'success'
                GROUP BY veteran_file_number, type) latest_success
                ON intakes.veteran_file_number = latest_success.veteran_file_number
-               AND intakes.type = latest_success.type
-             ")
+               AND intakes.type = latest_success.type",
+             "LEFT JOIN ramp_elections ON intakes.veteran_file_number = ramp_elections.veteran_file_number"
+           )
       .where.not(completion_status: "success")
       .where(error_code: [
                nil,
                "veteran_not_accessible",
                "veteran_not_valid"
              ])
-      .where('(intakes.completed_at > latest_success.succeeded_at
-        OR latest_success.succeeded_at is null)')
+      .where(
+        '(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)',
+        # Exclude ramp elections established outside of intake process
+        'AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)'
+      )
   end
 
   def complete?
