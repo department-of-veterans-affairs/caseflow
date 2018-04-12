@@ -14,7 +14,7 @@ class AppealRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent, :representative).find(appeal.vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent).joins(:representative).find(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
