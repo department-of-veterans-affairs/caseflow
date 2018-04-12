@@ -33,7 +33,7 @@ class SelectForm extends React.PureComponent {
         onChange={this.props.setFormType}
         value={this.props.formType}
       />
-      {this.props.featureToggles.intake_searchable_dropdown && <SearchableDropdown
+      {this.props.featureToggles.intakeAma && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"
         options={draftDecisionOptions}

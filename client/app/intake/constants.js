@@ -87,6 +87,18 @@ export const FORM_TYPES = {
   RAMP_REFILING: {
     key: 'ramp_refiling',
     name: '21-4138 RAMP Selection Form'
+  },
+  AMA_HIGHER_LEVEL_REVIEW: {
+    key: 'ama_higher_level_review',
+    name: '20-0988 Request for Higher-Level Review Form'
+  },
+  AMA_SUPPLEMENTAL_CLAIM: {
+    key: 'ama_supplemental_claim',
+    name: '21-526b Supplemental Claim Form'
+  },
+  AMA_NOTICE_OF_DISAGREEMENT: {
+    key: 'ama_notice_of_disagreement',
+    name: '10182 Notice of Disagreement Form'
   }
 };
 

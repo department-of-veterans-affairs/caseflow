@@ -7,7 +7,8 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      searchDropdown: FeatureToggle.enabled?(:intake_searchable_dropdown, user: current_user)
+      intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user),
+      intakeRamp: FeatureToggle.enabled?(:intakeRamp, user: current_user)
     }
   }) %>
 <% end %>
