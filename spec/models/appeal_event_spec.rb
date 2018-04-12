@@ -101,7 +101,7 @@ describe AppealEvent do
   end
 
   context "::EVENT_TYPE_FOR_DISPOSITIONS" do
-    let(:vacols_dispositions) { VACOLS::Case::DISPOSITIONS.values }
+    let(:vacols_dispositions) { Constants.CaseDispositionDescriptionById.values }
     let(:event_dispositions) { AppealEvent::EVENT_TYPE_FOR_DISPOSITIONS.values.flatten }
 
     it "accounts for all active VACOLS dispositions" do

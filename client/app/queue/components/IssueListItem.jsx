@@ -5,10 +5,10 @@ import _ from 'lodash';
 
 import {
   boldText,
-  CASE_DISPOSITION_DESCRIPTION_BY_ID,
   CASE_DISPOSITION_ID_BY_DESCRIPTION,
   ISSUE_INFO
 } from '../constants';
+import CASE_DISPOSITION_DESCRIPTION_BY_ID from '../../../../constants/CaseDispositionDescriptionById.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });

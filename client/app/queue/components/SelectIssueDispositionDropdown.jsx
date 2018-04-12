@@ -6,11 +6,8 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import {
-  CASE_DISPOSITION_DESCRIPTION_BY_ID,
-  COLORS,
-  ERROR_FIELD_REQUIRED
-} from '../constants';
+import { COLORS, ERROR_FIELD_REQUIRED } from '../constants';
+import CASE_DISPOSITION_DESCRIPTION_BY_ID from '../../../../constants/CaseDispositionDescriptionById.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
   if (highlight && !issueDisposition) {

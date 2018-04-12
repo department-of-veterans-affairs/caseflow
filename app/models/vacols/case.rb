@@ -26,8 +26,6 @@ class VACOLS::Case < VACOLS::Record
     "9" => "Clear and Unmistakable Error"
   }.freeze
 
-  DISPOSITIONS = Constants.Case["DISPOSITION_DESCRIPTION_BY_ID"]
-
   STATUS = {
     "ACT" => "Active", # Case currently at BVA
     "ADV" => "Advance", # NOD Filed. Case currently at RO
