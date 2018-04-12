@@ -117,7 +117,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
       pendingChanges: {
         appeals: {
           [action.payload.appealId]: {
-            $merge: action.payload.attributes
+            attributes: {
+              $merge: action.payload.attributes
+            }
           }
         }
       }
