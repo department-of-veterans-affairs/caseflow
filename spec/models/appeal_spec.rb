@@ -22,7 +22,8 @@ describe Appeal do
       manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
       location_code: location_code,
       status: status,
-      disposition: disposition
+      disposition: disposition,
+      rep_type: "C"
     )
   end
 
@@ -101,6 +102,11 @@ describe Appeal do
         expect(subject.last.type).to eq(type.last)
       end
     end
+  end
+
+  context "#contested_claim" do
+    subject { appeal.contested_claim }
+    it { is_expected.to eq(true) }
   end
 
   context "#nod" do

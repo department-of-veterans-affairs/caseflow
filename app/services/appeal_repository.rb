@@ -14,7 +14,7 @@ class AppealRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent, :representative).find(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
@@ -124,6 +124,7 @@ class AppealRepository
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
       representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+      rep_type: case_record.representative.try(:reptype),
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
