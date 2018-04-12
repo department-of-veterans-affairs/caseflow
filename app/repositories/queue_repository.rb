@@ -73,8 +73,9 @@ class QueueRepository
       fail Caseflow::Error::QueueRepositoryError, msg
     end
 
-    # In attorney checkout, we are automatically selecting the judge who assigned the attorney the case.
-    # But we also have a drop down for the attorney to select a different judge if they are checking it out to someone else
+    # In attorney checkout, we are automatically selecting the judge who
+    # assigned the attorney the case. But we also have a drop down for the
+    # attorney to select a different judge if they are checking it out to someone else
     if decass_record.deadusr != judge_vacols_user_id
       BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
     end
@@ -89,7 +90,7 @@ class QueueRepository
   def self.update_decass_record(decass_record, decass_attrs)
     decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
     VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
-                  .update_all(decass_attrs)
+      .update_all(decass_attrs)
   end
 
   def self.tasks_query(css_id)

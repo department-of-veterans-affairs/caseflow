@@ -28,7 +28,6 @@ class IssueRepository
         action: :update,
         issue_attrs: issue_attrs
       )
-
       VACOLS::CaseIssue.update_issue!(vacols_id, vacols_sequence_id, issue_attrs)
     end
   end
@@ -65,6 +64,7 @@ class IssueRepository
   end
   # :nocov:
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
     case issue_attrs[:disposition]
     when "Remanded"
@@ -81,6 +81,10 @@ class IssueRepository
           vacols_user_id: issue_attrs[:vacols_user_id]
         ))
       end
+    when nil
+      # We only want to track non-disposition edits
+      BusinessMetrics.record(service: :queue, name: "non_disposition_issue_edit")
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end

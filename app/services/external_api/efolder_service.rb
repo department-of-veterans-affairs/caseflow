@@ -108,7 +108,7 @@ class ExternalApi::EfolderService
     request.headers = headers
     MetricsService.record("eFolder GET request to #{url}",
                           service: :efolder,
-                          name: "/api/#{endpoint.split("/")[2]}/#{endpoint.split("/")[3]}") do
+                          name: "/api/#{endpoint.split('/')[2]}/#{endpoint.split('/')[3]}") do
       case method
       when :get
         HTTPI.get(request)
