@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 
+import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
 
@@ -87,24 +88,20 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.updateIssue({ remand_reasons: remandReasons });
   }
 
-  toggleRemandReason = (event) => this.setState({
+  toggleRemandReason = (checked, event) => this.setState({
     [event.target.id]: {
-      checked: event.target.checked,
+      checked,
       after_certification: 'false'
     }
   });
 
   getCheckbox = (option, onChange, values) => <div className="checkbox" key={option.id}>
-    <input
+    <Checkbox
       name={option.id}
       onChange={onChange}
-      type="checkbox"
-      id={option.id}
-      checked={values[option.id].checked}
-    />
-    <label htmlFor={option.id}>
-      {option.label}
-    </label>
+      value={values[option.id].checked}
+      label={option.label}
+      unpadded />
     {values[option.id].checked && <RadioField
       id={option.id}
       vertical
