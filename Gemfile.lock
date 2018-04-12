@@ -15,6 +15,20 @@ GIT
       simplecov-html (~> 0.10.0)
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/caseflow-commons
+  revision: f7d2de792dc0ca354e4f6b76eb6ea716c10a9635
+  branch: issue4932
+  specs:
+    caseflow (0.3.4)
+      aws-sdk (~> 2.10)
+      bourbon (= 4.2.7)
+      d3-rails
+      jquery-rails
+      momentjs-rails
+      neat
+      rails (>= 4.2.7.1)
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
   revision: 783200ca61b57fc75f818334838181993535229a
   ref: 783200ca61b57fc75f818334838181993535229a
@@ -45,20 +59,6 @@ GIT
     sniffybara (0.0.1)
       rainbow
       selenium-webdriver
-
-GIT
-  remote: https://github.com/nolawi/caseflow-commons.git
-  revision: c9c0fc60ecd2cb598ee7fe41b1899d90081a5955
-  ref: c9c0fc60ecd2cb598ee7fe41b1899d90081a5955
-  specs:
-    caseflow (0.3.4)
-      aws-sdk (~> 2.10)
-      bourbon (= 4.2.7)
-      d3-rails
-      jquery-rails
-      momentjs-rails
-      neat
-      rails (>= 4.2.7.1)
 
 GIT
   remote: https://github.com/senny/pdfjs_viewer-rails.git
