@@ -30,8 +30,6 @@ class SelectRemandReasonsView extends React.Component {
     displayText: 'Review Draft Decision'
   }];
 
-  getKeyForRow = (rowNumber) => rowNumber;
-
   validateForm = () => true;
 
   renderIssueOptions = () => {
