@@ -595,36 +595,6 @@ select {
   color: $color-gray;
 }
 
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-button {
-  background-image: url(asset-path('minus.svg'));
-
-  &[aria-expanded=false] {
-    background-image: url(asset-path('plus.svg'));
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered-outline {
-  .usa-accordion-button {
-    border: 1px solid $color-gray-light;
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered,
-.usa-accordion,
-.usa-accordion-bordered-outline {
-  margin-bottom: 20px;
-
-  .usa-accordion-button {
-    &,
-    i {
-      color: $color-gray-dark;
-    }
-  }
-}
-
 .cf-work-assignments {
   td {
     &:first-child {
