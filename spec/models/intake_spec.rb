@@ -75,7 +75,7 @@ describe Intake do
     end
   end
 
-  context ".flagged_for_manager_review", :focus => true do
+  context ".flagged_for_manager_review" do
     subject { Intake.flagged_for_manager_review }
 
     let!(:completed_intake) do
@@ -178,19 +178,19 @@ describe Intake do
     end
 
     let(:another_detail) do
-      RampElection.new(veteran_file_number: '54321', notice_date: Time.zone.now, established_at: Time.zone.now)
+      RampElection.new(veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
     end
 
     let!(:intake_with_manual_election) do
       Intake.create!(
-        veteran_file_number: '54321',
+        veteran_file_number: "54321",
         detail: another_detail,
         user: user,
         started_at: 10.minutes.ago,
         completed_at: 5.minutes.ago,
         completion_status: :canceled,
         cancel_reason: :other,
-        cancel_other: 'I get established manually'
+        cancel_other: "I get established manually"
       )
     end
 
