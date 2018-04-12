@@ -3,8 +3,13 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText, ISSUE_INFO } from '../constants';
 import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
+import {
+  boldText,
+  CASE_DISPOSITION_DESCRIPTION_BY_ID,
+  CASE_DISPOSITION_ID_BY_DESCRIPTION,
+  ISSUE_INFO
+} from '../constants';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -18,6 +23,15 @@ const leftAlignTd = css({
   paddingLeft: 0,
   paddingRight: 0
 });
+
+const dispositionLabelForDescription = (descr) => {
+  const dispositionId = CASE_DISPOSITION_ID_BY_DESCRIPTION[descr.toLowerCase()];
+
+  // Use the disposition description from constants in order to get the proper capitalization.
+  const dispositionDescr = CASE_DISPOSITION_DESCRIPTION_BY_ID[dispositionId];
+
+  return `${dispositionId} - ${dispositionDescr}`;
+};
 
 export default class IssueListItem extends React.PureComponent {
   formatIdx = () => <td {...leftAlignTd} width="10px">
@@ -79,6 +93,7 @@ export default class IssueListItem extends React.PureComponent {
     const {
       issue,
       issue: {
+        disposition,
         type,
         levels,
         note
@@ -108,6 +123,9 @@ export default class IssueListItem extends React.PureComponent {
       <td {...minimalLeftPadding}>
         {issueContent}
       </td>
+      {!issuesOnly && disposition && <td>
+        <span {...boldText}>Disposition:</span> {dispositionLabelForDescription(disposition)}
+      </td>}
     </React.Fragment>;
   };
 }

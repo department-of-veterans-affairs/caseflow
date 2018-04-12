@@ -10,17 +10,22 @@ import {
   updateEditingAppealIssue,
   startEditingAppealIssue,
   cancelEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  deleteAppealIssue
 } from './QueueActions';
 import {
   highlightInvalidFormItems,
-  requestUpdate
+  requestUpdate,
+  requestDelete,
+  showModal,
+  hideModal
 } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 
 import {
@@ -117,6 +122,24 @@ class AddEditIssueView extends React.Component {
     ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
   };
 
+  deleteIssue = () => {
+    const {
+      issue,
+      appeal,
+      appeal: { attributes: { issues } },
+      vacolsId,
+      issueId
+    } = this.props;
+    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+
+    this.props.hideModal();
+
+    this.props.requestDelete(
+      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
+      `You have deleted issue ${issueIndex + 1}.`
+    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
+  }
+
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
@@ -131,7 +154,8 @@ class AddEditIssueView extends React.Component {
       },
       action,
       highlight,
-      error
+      error,
+      modal
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -148,6 +172,24 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
+      {modal && <div className="cf-modal-scroll">
+        <Modal
+          title="Delete Issue?"
+          buttons={[{
+            classNames: ['usa-button', 'cf-btn-link'],
+            name: 'Close',
+            onClick: this.props.hideModal
+          }, {
+            classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Delete issue',
+            onClick: this.deleteIssue
+          }]}
+          closeHandler={this.props.hideModal}>
+          You are about to permanently delete this issue. To delete please
+          click the <strong>"Delete issue"</strong> button or click&nbsp;
+          <strong>"Close"</strong> to return to the previous screen.
+        </Modal>
+      </div>}
       <h1 {...css(fullWidth, smallBottomMargin)}>
         {StringUtil.titleCase(action)} Issue
       </h1>
@@ -156,9 +198,9 @@ class AddEditIssueView extends React.Component {
       </Alert>}
       <Button
         willNeverBeLoading
+        linkStyling
         styling={noLeftPadding}
-        classNames={['cf-btn-link']}
-        onClick={_.noop}>
+        onClick={this.props.showModal}>
         Delete Issue
       </Button>
       <div {...dropdownMarginTop}>
@@ -242,7 +284,8 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  modal: state.ui.modal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -251,7 +294,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
   highlightInvalidFormItems,
-  requestUpdate
+  deleteAppealIssue,
+  requestUpdate,
+  requestDelete,
+  showModal,
+  hideModal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

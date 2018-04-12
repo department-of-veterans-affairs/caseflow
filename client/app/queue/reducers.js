@@ -180,6 +180,30 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.DELETE_EDITING_APPEAL_ISSUE: {
+    const { appealId, issueId } = action.payload;
+    const { pendingChanges: { appeals } } = state;
+
+    const issues = _.reject(appeals[appealId].attributes.issues,
+      (issue) => issue.vacols_sequence_id === Number(issueId));
+
+    return update(state, {
+      pendingChanges: {
+        appeals: {
+          [appealId]: {
+            attributes: {
+              issues: {
+                $set: issues
+              }
+            }
+          }
+        },
+        editingIssue: {
+          $set: {}
+        }
+      }
+    });
+  }
   default:
     return state;
   }

@@ -110,6 +110,14 @@ export const startEditingAppealIssue = (appealId, issueId, attributes) => (dispa
   }
 };
 
+export const deleteAppealIssue = (appealId, issueId) => ({
+  type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
+  payload: {
+    appealId,
+    issueId
+  }
+});
+
 export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
 });
