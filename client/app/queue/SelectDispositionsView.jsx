@@ -106,7 +106,10 @@ class SelectDispositionsView extends React.PureComponent {
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} showDisposition={false} />
+    valueFunction: (issue, idx) => <IssueList
+      appeal={{ issues: [issue] }}
+      idxToDisplay={idx + 1}
+      showDisposition={false} />
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
