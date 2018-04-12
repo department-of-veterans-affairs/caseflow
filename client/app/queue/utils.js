@@ -3,7 +3,8 @@ import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  DECISION_TYPES
+  DECISION_TYPES,
+  ISSUE_INFO
 } from './constants';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
@@ -73,4 +74,14 @@ export const getDecisionTypeDisplay = (decision = {}) => {
   default:
     return StringUtil.titleCase(decisionType);
   }
+};
+
+export const getIssueProgramDescription = (issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueTypeDescription = (issue) => {
+  const {
+    program,
+    type
+  } = issue;
+
+  return _.get(ISSUE_INFO[program].issue, `${type}.description`);
 };

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 export default class Checkbox extends React.Component {
   onChange = (event) => {
-    this.props.onChange(event.target.checked);
+    this.props.onChange(event.target.checked, event);
   }
 
   render() {

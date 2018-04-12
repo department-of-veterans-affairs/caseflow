@@ -139,7 +139,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
 
     return [{
-      displayText: `< Go back to ${vetName} (${vbmsId})`
+      displayText: `Go back to ${vetName} (${vbmsId})`
     }, {
       displayText: 'Submit'
     }];
