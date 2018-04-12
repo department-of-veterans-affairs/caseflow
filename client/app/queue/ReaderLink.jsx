@@ -41,25 +41,24 @@ class ReaderLink extends React.PureComponent {
       task_id: taskId,
       vacols_id: vacolsId
     } = this.props;
+    const linkProps = {};
 
     if (!taskId) {
-      return <span {...disabledLinkStyle}>
-        {this.getLinkText()}
-      </span>;
+      linkProps.disabled = true;
+    } else {
+      const queryParams = {
+        queue_redirect_url: redirectUrl
+      };
+
+      if (taskType) {
+        queryParams.queue_task_type = taskType;
+      }
+      const qs = querystring.stringify(queryParams);
+
+      linkProps.href = `/reader/appeal/${vacolsId}/documents?${qs}`;
     }
 
-    const queryParams = {
-      queue_redirect_url: redirectUrl
-    };
-
-    if (taskType) {
-      queryParams.queue_task_type = taskType;
-    }
-    const qs = querystring.stringify(queryParams);
-    const href = `/reader/appeal/${vacolsId}/documents?${qs}`;
-
-    return <Link href={href}
-      onClick={this.readerLinkAnalytics}>
+    return <Link {...linkProps} onClick={this.readerLinkAnalytics}>
       {this.getLinkText()}
     </Link>;
   };
