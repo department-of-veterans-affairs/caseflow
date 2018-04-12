@@ -11,7 +11,6 @@ describe RampElectionIntake do
   let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
   let(:issues) { [compensation_issue] }
   let(:completed_at) { nil }
-  let(:nod_date) { 3.days.ago }
 
   let(:intake) do
     RampElectionIntake.new(
