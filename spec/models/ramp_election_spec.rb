@@ -68,7 +68,6 @@ describe RampElection do
       expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
       expect(Rails.logger).to receive(:error)
       expect(Raven).to receive(:capture_exception)
-      expect(RampElection).to receive(:sleep).with(1).twice
       allow(RampElection).to receive(:active).and_return([ramp_election1, ramp_election2])
 
       RampElection.sync_all!
