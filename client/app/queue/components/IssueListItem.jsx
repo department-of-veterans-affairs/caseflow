@@ -98,7 +98,8 @@ export default class IssueListItem extends React.PureComponent {
         levels,
         note
       },
-      issuesOnly
+      issuesOnly,
+      showDisposition
     } = this.props;
     let issueContent = <span />;
 
@@ -123,7 +124,7 @@ export default class IssueListItem extends React.PureComponent {
       <td {...minimalLeftPadding}>
         {issueContent}
       </td>
-      {!issuesOnly && disposition && <td>
+      {!issuesOnly && disposition && showDisposition && <td>
         <span {...boldText}>Disposition:</span> {dispositionLabelForDescription(disposition)}
       </td>}
     </React.Fragment>;
@@ -133,9 +134,11 @@ export default class IssueListItem extends React.PureComponent {
 IssueListItem.propTypes = {
   issue: PropTypes.object.isRequired,
   issuesOnly: PropTypes.bool,
-  idx: PropTypes.number.isRequired
+  idx: PropTypes.number.isRequired,
+  showDisposition: PropTypes.bool
 };
 
 IssueListItem.defaultProps = {
-  issuesOnly: false
+  issuesOnly: false,
+  showDisposition: true
 };
