@@ -78,7 +78,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/mocha
             pushd client
-            testfiles=$(circleci tests glob "testst/node/**/*.js" | circleci tests split --split-by timings)
+            testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
             echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
             node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}
 

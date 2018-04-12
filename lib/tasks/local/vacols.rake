@@ -7,6 +7,7 @@ namespace :local do
     task wait_for_connection: :environment do
       puts "Pinging FACOLS until it responds."
 
+      # rubocop:disable Lint/HandleExceptions
       300.times do
         begin
           if VACOLS::Case.count == 0
@@ -18,6 +19,7 @@ namespace :local do
 
         sleep 1
       end
+      # rubocop:enable Lint/HandleExceptions
     end
 
     desc "Starts and sets up a dockerized local VACOLS"
