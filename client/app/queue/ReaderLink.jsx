@@ -3,13 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import querystring from 'querystring';
-import { css } from 'glamor';
 
-import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
-const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
 
 class ReaderLink extends React.PureComponent {
 
@@ -43,9 +40,7 @@ class ReaderLink extends React.PureComponent {
     } = this.props;
     const linkProps = {};
 
-    if (!taskId) {
-      linkProps.disabled = true;
-    } else {
+    if (taskId) {
       const queryParams = {
         queue_redirect_url: redirectUrl
       };
@@ -56,6 +51,8 @@ class ReaderLink extends React.PureComponent {
       const qs = querystring.stringify(queryParams);
 
       linkProps.href = `/reader/appeal/${vacolsId}/documents?${qs}`;
+    } else {
+      linkProps.disabled = true;
     }
 
     return <Link {...linkProps} onClick={this.readerLinkAnalytics}>
