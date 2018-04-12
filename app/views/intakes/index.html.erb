@@ -7,7 +7,7 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      searchDropdown: FeatureToggle.enabled?(:intake_search_dropdown, user: current_user)
+      searchDropdown: FeatureToggle.enabled?(:intake_searchable_dropdown, user: current_user)
     }
   }) %>
 <% end %>

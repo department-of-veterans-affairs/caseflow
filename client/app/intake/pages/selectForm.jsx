@@ -1,5 +1,6 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -32,6 +33,13 @@ class SelectForm extends React.PureComponent {
         onChange={this.props.setFormType}
         value={this.props.formType}
       />
+      {this.props.featureToggles.intake_searchable_dropdown && <SearchableDropdown
+        name="Select an action"
+        placeholder="Select an action&hellip;"
+        options={draftDecisionOptions}
+        onChange={this.changeRoute}
+        hideLabel
+        dropdownStyling={dropdownStyling} />}
     </div>;
   }
 }
