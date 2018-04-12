@@ -2,7 +2,11 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { css } from 'glamor';
+import {
+  COLORS as COMMON_COLORS,
+  COLORS
+} from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 /* eslint-disable max-len */
@@ -128,6 +132,30 @@ export const missingSymbolHtml = function() {
       1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z" />
     </svg>
   );
+};
+
+export class WarningSymbol extends React.PureComponent {
+  render = () => <span {...css(this.props)} role="warning">
+    &nbsp;&nbsp;!&nbsp;&nbsp;
+  </span>;
+}
+
+WarningSymbol.propTypes = {
+  backgroundColor: PropTypes.string,
+  color: PropTypes.string,
+  borderRadius: PropTypes.string,
+  marginLeft: PropTypes.string,
+  marginRight: PropTypes.string,
+  fontWeight: PropTypes.string
+};
+
+WarningSymbol.defaultProps = {
+  backgroundColor: '#E60000',
+  color: COMMON_COLORS.WHITE,
+  borderRadius: '50%',
+  marginLeft: '-2.5rem',
+  marginRight: '0.5rem',
+  fontWeight: 'bold'
 };
 
 export const checkSymbolHtml = function() {
