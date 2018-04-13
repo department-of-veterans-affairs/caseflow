@@ -36,7 +36,7 @@ export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
 
 export const fetchAppealsUsingVeteranId = (veteranId) =>
   (dispatch) => {
-    dispatch(clearCaseListSearchResults());
+    dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/appeals', {
       headers: { 'veteran-id': veteranId }
     }).

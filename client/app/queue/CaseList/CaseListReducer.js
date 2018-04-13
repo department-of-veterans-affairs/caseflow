@@ -26,6 +26,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE:
     return update(state, {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
+      receivedAppeals: { $set: initialState.receivedAppeals },
       search: {
         errorType: { $set: SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR },
         queryResultingInError: { $set: action.payload.searchQuery }
@@ -40,6 +41,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
   case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
     return update(state, {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
+      receivedAppeals: { $set: initialState.receivedAppeals },
       search: {
         errorType: { $set: SEARCH_ERROR_FOR.NO_APPEALS },
         queryResultingInError: { $set: action.payload.searchQuery }
