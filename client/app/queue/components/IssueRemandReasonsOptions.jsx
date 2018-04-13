@@ -89,15 +89,15 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   }
 
   toggleRemandReason = (checked, event) => this.setState({
-    [event.target.id]: {
+    [event.target.id.split('-')[1]]: {
       checked,
       after_certification: 'false'
     }
   });
 
-  getCheckbox = (option, onChange, values) => <div className="checkbox" key={option.id}>
+  getCheckbox = (option, onChange, values) => <React.Fragment key={option.id}>
     <Checkbox
-      name={option.id}
+      name={`${this.props.issue.vacols_sequence_id}-${option.id}`}
       onChange={onChange}
       value={values[option.id].checked}
       label={option.label}
@@ -124,7 +124,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         }
       })}
     />}
-  </div>;
+  </React.Fragment>;
 
   render = () => {
     const {
