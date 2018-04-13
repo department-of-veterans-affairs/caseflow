@@ -4,8 +4,8 @@
   font-weight: 400;
   src: local('Source Sans Pro'),
        local('SourceSansPro-Regular'),
-       asset-path('fonts/source-sans-pro.woff2') format('woff2'),
-       url('fonts/source-sans-pro.woff') format('woff');
+       url(font-path('/source-sans-pro.woff2')) format('woff2'),
+       url(font-path('/source-sans-pro.woff')) format('woff');
 }
 
 @font-face {
@@ -13,7 +13,7 @@
   font-style: normal;
   font-weight: 700;
   src: local('SourceSansPro-Bold'),
-       url('fonts/source-sans-pro-bold.woff2') format('woff2'),
-       url('fonts/source-sans-pro-bold.woff') format('woff');
+       url(font-path('/fonts/source-sans-pro-bold.woff2')) format('woff2'),
+       url(font-path('/fonts/source-sans-pro-bold.woff')) format('woff');
 }
 
