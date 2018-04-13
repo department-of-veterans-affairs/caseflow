@@ -157,19 +157,24 @@ const workQueueReducer = (state = initialState, action = {}) => {
       editingIssue,
       pendingChanges: { appeals }
     } = state;
+    const issues = appeals[appealId].attributes.issues;
+    let updatedIssues = [];
 
-    const issues = appeals[appealId].attributes.issues.map((issue) =>
-      issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
-        editingIssue : issue);
+    if (_.map(issues, 'vacols_sequence_id').includes(Number(editingIssue.vacols_sequence_id))) {
+      updatedIssues = _.map(issues, (issue) =>
+        issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
+          editingIssue : issue);
+    } else {
+      updatedIssues = issues.concat(editingIssue);
+    }
 
-    // todo: if (idx === -1) { push } (#4477)
     return update(state, {
       pendingChanges: {
         appeals: {
           [appealId]: {
             attributes: {
               issues: {
-                $set: issues
+                $set: updatedIssues
               }
             }
           }

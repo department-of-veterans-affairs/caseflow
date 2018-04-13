@@ -11,14 +11,16 @@ import {
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  deleteAppealIssue
+  deleteAppealIssue,
+  editAppeal
 } from './QueueActions';
 import {
   highlightInvalidFormItems,
   requestUpdate,
   requestDelete,
   showModal,
-  hideModal
+  hideModal,
+  requestSave
 } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -43,7 +45,9 @@ class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, vacolsId } = this.props;
 
-    this.props.startEditingAppealIssue(vacolsId, issueId);
+    if (this.props.action === 'edit') {
+      this.props.startEditingAppealIssue(vacolsId, issueId);
+    }
   };
 
   getFooterButtons = () => [{
@@ -114,12 +118,24 @@ class AddEditIssueView extends React.Component {
       }
     };
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+    let url = `/appeals/${appeal.id}/issues`;
+    let requestMethod = 'requestSave';
+    let requestVerb = 'create';
 
-    this.props.requestUpdate(
-      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`,
-      { data: params },
-      `You have updated issue ${issueIndex + 1}.`
-    ).then(() => this.props.saveEditedAppealIssue(this.props.vacolsId));
+    if (this.props.action === 'edit') {
+      url += `/${issue.vacols_sequence_id}`;
+      requestMethod = 'requestUpdate';
+      requestVerb = 'update';
+    }
+
+    this.props[requestMethod](url, { data: params }, `You have ${requestVerb}d issue ${Math.min(issueIndex + 1, 1)}.`).
+      then((response) => {
+        const resp = JSON.parse(response.text);
+        const issues = _.map(resp.issues.data, 'attributes');
+        this.updateIssue(issues[0]);
+
+        this.props.saveEditedAppealIssue(this.props.vacolsId);
+      });
   };
 
   deleteIssue = () => {
@@ -137,7 +153,10 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You have deleted issue ${issueIndex + 1}.`
-    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
+    ).then(() => {
+      this.props.cancelEditingAppealIssue();
+      this.props.deleteAppealIssue(vacolsId, issueId);
+    });
   }
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
@@ -147,11 +166,7 @@ class AddEditIssueView extends React.Component {
 
   render = () => {
     const {
-      issue: {
-        program,
-        type,
-        codes
-      },
+      issue,
       action,
       highlight,
       error,
@@ -159,16 +174,16 @@ class AddEditIssueView extends React.Component {
     } = this.props;
 
     const programs = ISSUE_INFO;
-    const issues = _.get(programs[program], 'issue');
+    const issues = _.get(programs[issue.program], 'issue');
     const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
-      program: highlight && !program,
-      type: highlight && !type,
-      level1: highlight && !codes[0] && !_.isEmpty(issueLevels1),
-      level2: highlight && !codes[1] && !_.isEmpty(issueLevels2),
-      level3: highlight && !codes[2] && !_.isEmpty(issueLevels3)
+      program: highlight && !issue.program,
+      type: highlight && !issue.type,
+      level1: highlight && !issue.codes[0] && !_.isEmpty(issueLevels1),
+      level2: highlight && !issue.codes[1] && !_.isEmpty(issueLevels2),
+      level3: highlight && !issue.codes[2] && !_.isEmpty(issueLevels3)
     };
 
     return <React.Fragment>
@@ -214,7 +229,7 @@ class AddEditIssueView extends React.Component {
             type: null
           })}
           errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
-          value={program} />
+          value={issue.program} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
@@ -228,7 +243,7 @@ class AddEditIssueView extends React.Component {
             codes: []
           })}
           errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
-          value={type} />
+          value={issue.type} />
       </div>
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
       <div {...dropdownMarginTop}>
@@ -298,7 +313,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestUpdate,
   requestDelete,
   showModal,
-  hideModal
+  hideModal,
+  requestSave,
+  editAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

@@ -1,4 +1,5 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  # TODO: use WorkQueue::IssueSerializer
   attribute :issues do
     object.issues.map do |issue|
       {

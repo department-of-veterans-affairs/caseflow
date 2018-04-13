@@ -63,11 +63,11 @@ export const resetBreadcrumbs = () => ({
   type: ACTIONS.RESET_BREADCRUMBS
 });
 
-export const saveSuccess = (message) => (dispatch) => {
+export const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
-  return Promise.resolve();
+  return Promise.resolve(response);
 };
 
 export const saveFailure = (resp) => (dispatch) => {
@@ -86,7 +86,7 @@ export const requestSave = (url, params, successMessage, verb = 'post') => (disp
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
   return ApiUtil[verb](url, params).then(
-    () => dispatch(saveSuccess(successMessage)),
+    (response) => dispatch(saveSuccess(successMessage, response)),
     (resp) => dispatch(saveFailure(resp))
   );
 };
