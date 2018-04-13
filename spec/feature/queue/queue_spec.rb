@@ -352,6 +352,38 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Note: this is the note")
       end
 
+      scenario "adds issue" do
+        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click ".Select-control"
+        safe_click "div[id$='--option-0']"
+
+        expect(page).to have_content "Select Dispositions"
+
+        click_on "Add Issue"
+        expect(page).to have_content "Add Issue"
+
+        fields = page.find_all ".Select--single"
+
+        field_values = fields.map do |row|
+          next if row.matches_css? ".is-disabled"
+
+          row.find(".Select-control").click
+          row.find("div[id$='--option-0']").click
+          row.find(".Select-value-label").text
+        end
+        fill_in "Notes:", with: "added issue"
+
+        click_on "Save"
+
+        expect(page).to have_content "You have created issue 0."
+        expect(page).to have_content "Program: #{field_values.first}"
+        expect(page).to have_content "Issue: #{field_values.second}"
+        expect(page).to have_content "Note: added issue"
+      end
+
       scenario "deletes issue" do
         appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
         old_issues = appeal.issues
