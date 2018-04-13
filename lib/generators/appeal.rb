@@ -36,7 +36,7 @@ class Generators::Appeal
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198,
-        rep_type: "C"
+        contested_claim: true
       }
     end
     # rubocop:enable Metrics/MethodLength
