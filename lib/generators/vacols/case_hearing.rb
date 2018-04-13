@@ -1,7 +1,13 @@
 class Generators::Vacols::CaseHearing
+
   class << self
+
+    def generate_pkseq
+      SecureRandom.random_number(n=99999999)
+    end
+
     def case_hearing_attrs
-      {hearing_pkseq: 523478,
+      {hearing_pkseq: generate_pkseq,
        hearing_type: "C",
        folder_nr: 877483,
        hearing_date: "2017-08-08 13:00:00 UTC",
@@ -40,6 +46,7 @@ class Generators::Vacols::CaseHearing
 
     def create(attrs = {})
       attrs = case_hearing_attrs.merge(attrs)
+
       VACOLS::CaseHearing.create(attrs)
     end
   end
