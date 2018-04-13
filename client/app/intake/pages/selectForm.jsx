@@ -20,7 +20,8 @@ class SelectForm extends React.PureComponent {
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
-      displayText: form.name
+      displayText: form.name,
+      label: form.name
     }));
 
     const enableSearchableDropdown = radioOptions.length > 3;
@@ -31,9 +32,9 @@ class SelectForm extends React.PureComponent {
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>Please select the form you are processing from the Centralized Mail Portal.</p>
+      <p>To get started, choose the form you are processing for intake.</p>
 
-      <RadioField
+      {!enableSearchableDropdown && <RadioField
         name="form-select"
         label="Which form are you processing?"
         vertical
@@ -41,14 +42,15 @@ class SelectForm extends React.PureComponent {
         options={radioOptions}
         onChange={this.props.setFormType}
         value={this.props.formType}
-      />
+      />}
+
       {enableSearchableDropdown && <SearchableDropdown
-        name="Select an action"
-        placeholder="Select an action&hellip;"
-        options={draftDecisionOptions}
-        onChange={this.changeRoute}
-        hideLabel
-        dropdownStyling={dropdownStyling} />}
+        name="form-select"
+        label="Which form are you processing?"
+        placeholder="Enter or select form"
+        options={radioOptions}
+        onChange={this.props.setFormType}
+        value={this.props.formType} />}
     </div>;
   }
 }
