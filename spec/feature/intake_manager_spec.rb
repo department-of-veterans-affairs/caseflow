@@ -57,20 +57,20 @@ RSpec.feature "Intake Manager Page" do
 
       visit "/intake/manager"
 
-      expect(find("#table-row-0")).to have_content("1110")
-      expect(find("#table-row-0")).to have_content("12/07/2017")
-      expect(find("#table-row-0")).to have_content(current_user.full_name)
-      expect(find("#table-row-0")).to have_content("RAMP Opt-In Election Form")
-      expect(find("#table-row-0")).to have_content("Error: sensitivity")
+      expect(find("#table-row-3")).to have_content("1110")
+      expect(find("#table-row-3")).to have_content("12/07/2017")
+      expect(find("#table-row-3")).to have_content(current_user.full_name)
+      expect(find("#table-row-3")).to have_content("RAMP Opt-In Election Form")
+      expect(find("#table-row-3")).to have_content("Error: sensitivity")
 
-      expect(find("#table-row-1")).to have_content("1111")
-      expect(find("#table-row-1")).to have_content("12/07/2017")
-      expect(find("#table-row-1")).to have_content(current_user.full_name)
-      expect(find("#table-row-1")).to have_content("21-4138 RAMP Selection Form")
-      expect(find("#table-row-1")).to have_content("Error: sensitivity")
+      expect(find("#table-row-2")).to have_content("1111")
+      expect(find("#table-row-2")).to have_content("12/07/2017")
+      expect(find("#table-row-2")).to have_content(current_user.full_name)
+      expect(find("#table-row-2")).to have_content("21-4138 RAMP Selection Form")
+      expect(find("#table-row-2")).to have_content("Error: sensitivity")
 
-      expect(find("#table-row-2")).to have_content("Canceled: duplicate EP created outside Caseflow")
-      expect(find("#table-row-3")).to have_content("Canceled: I am canceled just because")
+      expect(find("#table-row-1")).to have_content("Canceled: duplicate EP created outside Caseflow")
+      expect(find("#table-row-0")).to have_content("Canceled: I am canceled just because")
 
       expect(page).not_to have_selector("#table-row-4")
     end
