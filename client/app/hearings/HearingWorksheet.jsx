@@ -52,35 +52,21 @@ class WorksheetFormEntry extends React.PureComponent {
           'name',
           'onChange',
           'id',
-          'minRows'
+          'label'
         ]
       )
     };
 
     return <div className="cf-hearings-worksheet-data">
-      <label htmlFor={this.props.id}>{this.props.name}</label>
       {this.props.print ?
         <p>{this.props.value}</p> :
-        <Textarea {...textAreaProps} />}
+        <React.Fragment>
+          <CFRichTextEditor {...textAreaProps} />
+        </React.Fragment>}
     </div>;
   }
 }
 export class HearingWorksheet extends React.PureComponent {
-  
-  static propTypes = {
-    onChange: PropTypes.func
-  };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      value: RichTextEditor.createEmptyValue()
-    };
-  }
-
-
-
   componentDidMount() {
     document.title = this.getWorksheetTitle();
   }
@@ -105,10 +91,10 @@ export class HearingWorksheet extends React.PureComponent {
     });
   };
 
-  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
+  onContentionsChange = (value) => this.props.onContentionsChange(value);
+  onMilitaryServiceChange = (value) => this.props.onMilitaryServiceChange(value);
   onEvidenceChange = (value) => this.props.onEvidenceChange(value);
-  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
+  onCommentsForAttorneyChange = (value) => this.props.onCommentsForAttorneyChange(value);
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
@@ -150,18 +136,13 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
 
-        <CFRichTextEditor
-          value={worksheet.evidence}
-          onChange={this.onEvidenceChange}
-        />
-
-        {/* <WorksheetFormEntry
+        <WorksheetFormEntry
           name="Evidence"
           value={worksheet.evidence}
           onChange={this.onEvidenceChange}
           id="worksheet-evidence"
           print={this.props.print}
-        /> */}
+        />
         <WorksheetFormEntry
           name="Comments and special instructions to attorneys"
           value={worksheet.comments_for_attorney}

@@ -1,41 +1,68 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import RichTextEditor from 'react-rte';
-import { convertToRaw } from 'draft-js';
-import draftToMarkdown from 'draftjs-to-markdown';
-// import { markdownToDraft } from 'markdown-to-draftjs';
+import { convertToRaw, EditorState, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-
-import { stateFromMarkdown } from 'draft-js-import-markdown';
-
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, ContentState } from 'draft-js';
+import classNamesFn from 'classnames';
+import { css } from 'glamor';
+
+const styles = css({
+  border: '1px solid #323a45',
+  // overflow: 'auto',
+  resize: 'vertical'
+});
+
+// Bold
+// Italic
+// Underline
+// font size
+// bullets
+// numbered list
+// font color: we could limit this to 3 - blue, black and red
+const toolbar = {
+  options: ['inline', 'fontSize', 'list', 'colorPicker'],
+  inline: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['bold', 'italic', 'underline']
+  },
+  fontSize: {
+    options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36, 48, 60, 72, 96],
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+  },
+  list: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['unordered', 'ordered'],
+    title: undefined,
+  },
+  colorPicker: {
+    className: undefined,
+    component: undefined,
+    popupClassName: undefined,
+    options: ['Text'],
+    colors: ['rgb(0,0,0)', 'rgb(0,0,255)', 'rgb(255,0,0)'],
+  }
+};
 
 export default class CFRichTextEditor extends React.PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
-      value: RichTextEditor.createEmptyValue(),
       editorState: EditorState.createEmpty()
     };
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { value } = nextProps;
-
-  //   console.log(draftToMarkdown(value));
-  //   if (value) {
-  //     this.setState({ value });
-  //   }
-  // }
-
   componentDidMount = () => {
     const { value } = this.props;
-
-    console.log(htmlToDraft(value));
-
     const contentBlock = htmlToDraft(value);
 
     const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
@@ -47,8 +74,11 @@ export default class CFRichTextEditor extends React.PureComponent {
   };
 
   onChange = (value) => {
-    console.log(draftToMarkdown(convertToRaw(this.state.editorState.getCurrentContent())));
-    this.setState({ value, editorState: value });
+    this.setState({
+      value,
+      editorState: value
+    });
+
     if (this.props.onChange) {
       // Send the changes up to the parent component as an HTML string.
       // This is here to demonstrate using `.toString()` but in a real app it
@@ -63,28 +93,24 @@ export default class CFRichTextEditor extends React.PureComponent {
       errorMessage,
       hideLabel,
       id,
-      maxlength,
       label,
       name,
-      required,
-      type,
-      value,
-      styling
+      required
     } = this.props;
     
     return <div>
-      {/* <RichTextEditor onChange={this.onChange} value={this.state.value} /> */}
-      <Editor
-        wrapperClassName="home-wrapper"
-        editorClassName="home-editor"
-        onEditorStateChange={this.onChange}
-        editorState={this.state.editorState}
-      />
-      <textarea
-        disabled
-        className="demo-content no-focus"
-        value={this.state.editorState && draftToMarkdown(this.state.editorState.getCurrentContent())}
-      />
+      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
+        {label || name} {required && <span className="cf-required">Required</span>}
+      </label>
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+      <div {...styles}>
+        <Editor
+          onEditorStateChange={this.onChange}
+          editorState={this.state.editorState}
+          editorClassName="other-editor"
+          toolbar={toolbar}
+        />
+      </div>
     </div>;
   }
 }
