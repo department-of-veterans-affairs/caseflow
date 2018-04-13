@@ -49,12 +49,13 @@ class CaseListView extends React.PureComponent {
 
     let errorText = {
       header: `No cases found for “${this.props.queryResultingInError}”`,
-      body: "Please enter a valid 9-digit Veteran ID to search for all available cases."
+      body: 'Please enter a valid 9-digit Veteran ID to search for all available cases.'
     };
+
     if (this.props.showErrorMessage) {
       errorText = {
         header: `Server encountered an error searching for “${this.props.queryResultingInError}”`,
-        body: "Please retry your search and contact support if errors persist."
+        body: 'Please retry your search and contact support if errors persist.'
       };
     }
 

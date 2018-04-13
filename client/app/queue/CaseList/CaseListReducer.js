@@ -17,19 +17,7 @@ export const initialState = {
 export const caseListReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.CLEAR_CASE_LIST_SEARCH:
-    return update(state, {
-      caseListCriteria: {
-        searchQuery: {
-          $set: ''
-        }
-      },
-      displayCaseListResults: { $set: false },
-      receivedAppeals: { $set: {} },
-      search: {
-        showErrorMessage: { $set: false },
-        queryResultingInError: { $set: null }
-      }
-    });
+    return initialState;
   case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:
     return update(state, {
       receivedAppeals: { $set: {} },
