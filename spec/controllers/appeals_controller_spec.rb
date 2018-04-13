@@ -22,12 +22,6 @@ RSpec.describe AppealsController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["appeals"].size).to eq 1
       end
-
-      it "returns a 500 response when application raises StandardError" do
-        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
-        get :index
-        expect(response.status).to eq 500
-      end
     end
 
     context "when request header contains Veteran ID with no associated appeals" do

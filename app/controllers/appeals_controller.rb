@@ -1,16 +1,4 @@
 class AppealsController < ApplicationController
-  rescue_from StandardError do |error|
-    Raven.capture_exception(error)
-
-    render json: {
-      "errors": [
-        "status": "500",
-        "title": "Unknown error occured",
-        "detail": "#{error} (Sentry event id: #{Raven.last_event_id})"
-      ]
-    }, status: 500
-  end
-
   def index
     return veteran_id_not_found_error unless veteran_id
 
