@@ -35,8 +35,17 @@ class QueueController < ApplicationController
 
     return invalid_role_error if current_user.vacols_role != "Judge"
 
-    JudgeCaseAssignment.assign_to_attorney!(create_params)
+    JudgeCaseAssignment.new(task_params).assign_to_attorney!
     render json: {}, status: :created
+  end
+
+  def update
+    return invalid_appeal_type unless APPEAL_TYPES.include?(create_params[:appeal_type])
+
+    return invalid_role_error if current_user.vacols_role != "Judge"
+
+    JudgeCaseAssignment.new(tasks_params.merge(task_id: params[:task_id])).reassign_to_attorney!
+    render json: {}, status: :updated
   end
 
   def tasks
@@ -124,11 +133,12 @@ class QueueController < ApplicationController
                                             remand_reasons: [:code, :after_certification]])
   end
 
-  def create_params
+  def tasks_params
     params.require("queue")
       .permit(:appeal_id, :appeal_type)
       .merge(assigned_to: User.find(params[:queue][:attorney_id]))
       .merge(assigned_by: current_user)
+      )
   end
 
   def json_appeals(appeals)
