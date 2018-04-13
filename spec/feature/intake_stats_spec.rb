@@ -185,8 +185,8 @@ RSpec.feature "Intake Stats Dashboard" do
     Timecop.freeze(Time.utc(2020, 11, 7, 17, 55, 0, rand(1000)))
     User.authenticate!(roles: ["Admin Intake"])
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
-    visit "/intake/stats/fiscal_yearly" 
-    expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for FY 2021 (so far)")   
+    visit "/intake/stats/fiscal_yearly"
+    expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for FY 2021 (so far)")
   end
 
   scenario "Unauthorized user access" do
