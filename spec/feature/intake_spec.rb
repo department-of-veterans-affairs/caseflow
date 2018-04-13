@@ -29,7 +29,8 @@ RSpec.feature "RAMP Intake" do
       issues: issues,
       vacols_record: :ready_to_certify,
       veteran: veteran,
-      inaccessible: inaccessible
+      inaccessible: inaccessible,
+      nod_date: 1.year.ago
     )
   end
 

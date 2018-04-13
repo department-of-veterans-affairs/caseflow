@@ -51,15 +51,26 @@ class SelectDispositionsView extends React.PureComponent {
     path: `/tasks/${this.props.vacolsId}/dispositions`
   });
 
-  componentWillUnmount = () => this.props.hideSuccessMessage();
+  getNextStepUrl = () => {
+    const {
+      vacolsId,
+      nextStep,
+      appeal: {
+        attributes: { issues }
+      }
+    } = this.props;
 
+    return _.map(issues, 'disposition').includes('Remanded') ?
+      `/tasks/${vacolsId}/remands` : nextStep;
+  }
+
+  componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
   updateIssue = (issueId, attributes) => {
     const { vacolsId } = this.props;
 
-    this.props.startEditingAppealIssue(vacolsId, issueId);
-    this.props.updateEditingAppealIssue(attributes);
+    this.props.startEditingAppealIssue(vacolsId, issueId, attributes);
     this.props.saveEditedAppealIssue(vacolsId);
   };
 
@@ -75,15 +86,19 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: {
         attributes: {
           veteran_full_name: vetName,
-          vbms_id: vbmsId
+          vbms_id: vbmsId,
+          issues
         }
       }
     } = this.props;
 
+    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
+      'Select remand reasons' : 'Finish dispositions';
+
     return [{
-      displayText: `< Go back to ${vetName} (${vbmsId})`
+      displayText: `Go back to ${vetName} (${vbmsId})`
     }, {
-      displayText: 'Finish dispositions',
+      displayText: nextStepText,
       id: 'finish-dispositions'
     }];
   };
@@ -91,7 +106,10 @@ class SelectDispositionsView extends React.PureComponent {
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
+    valueFunction: (issue, idx) => <IssueList
+      appeal={{ issues: [issue] }}
+      idxToDisplay={idx + 1}
+      showDisposition={false} />
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
