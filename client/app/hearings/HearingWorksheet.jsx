@@ -15,7 +15,7 @@ import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
 import CFRichTextEditor from '../components/CFRichTextEditor';
-import { DOMPurify } from 'dompurify';
+import DOMPurify from 'dompurify';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -87,10 +87,11 @@ class WorksheetFormEntry extends React.PureComponent {
 
     return <div className="cf-hearings-worksheet-data">
       {this.props.print ?
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} /> :
         <React.Fragment>
-          <CFRichTextEditor {...textAreaProps} />
-        </React.Fragment>}
+          <label htmlFor={this.props.id}>{this.props.name}</label>
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} />
+        </React.Fragment> : 
+        <CFRichTextEditor {...textAreaProps} />}
     </div>;
   }
 }

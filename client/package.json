@@ -34,6 +34,7 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-runtime": "^6.6.1",
     "classnames": "^2.2.5",
+    "dompurify": "^1.0.3",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.8.3",
     "enzyme-adapter-react-16": "^1.1.1",
