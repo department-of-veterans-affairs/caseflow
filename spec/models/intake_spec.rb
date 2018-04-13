@@ -177,6 +177,23 @@ describe Intake do
       )
     end
 
+    let(:another_detail) do
+      RampElection.new(veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
+    end
+
+    let!(:intake_with_manual_election) do
+      Intake.create!(
+        veteran_file_number: "54321",
+        detail: another_detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: :canceled,
+        cancel_reason: :other,
+        cancel_other: "I get established manually"
+      )
+    end
+
     it "returns included intakes (canceled, actionable errors that have yet been resolved)" do
       expect(subject).to_not include(completed_intake)
       expect(subject).to include(canceled_intake)
@@ -189,6 +206,7 @@ describe Intake do
         intake_refiling_already_processed
       )
       expect(subject).to_not include(intake_fixed_later)
+      expect(subject).to_not include(intake_with_manual_election)
     end
   end
 
