@@ -10,16 +10,19 @@ import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import AppFrame from '../components/AppFrame';
+import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
-import AppFrame from '../components/AppFrame';
+
 import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
+import SelectRemandReasonsView from './SelectRemandReasonsView';
+
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
-import Breadcrumbs from './components/BreadcrumbManager';
 
 const appStyling = css({ paddingTop: '3rem' });
 const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
@@ -77,6 +80,10 @@ class QueueApp extends React.PureComponent {
     prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
+    nextStep={`/tasks/${props.match.params.appealId}/submit`}
+    {...props.match.params} />;
+
   render = () => <BrowserRouter basename="/queue">
     <NavigationBar
       wideApp
@@ -115,6 +122,11 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
+          <PageRoute
+            exact
+            path="/tasks/:appealId/remands"
+            title="Draft Decision | Select Issue Remand Reasons"
+            render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
