@@ -34,6 +34,38 @@ import {
 
 import { saveIssues } from './actions/Issue';
 
+const toolbar = {
+  options: ['inline', 'fontSize', 'list', 'colorPicker', 'link'],
+  inline: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['bold', 'italic', 'underline']
+  },
+  fontSize: {
+    options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36, 48, 60, 72, 96],
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+  },
+  list: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['unordered', 'ordered'],
+    title: undefined,
+  },
+  colorPicker: {
+    className: undefined,
+    component: undefined,
+    popupClassName: undefined,
+    options: ['Text'],
+    colors: ['rgb(0,0,0)', 'rgb(0,0,255)', 'rgb(255,0,0)'],
+  }
+};
+
 class WorksheetFormEntry extends React.PureComponent {
 
   render() {
@@ -41,6 +73,7 @@ class WorksheetFormEntry extends React.PureComponent {
       minRows: 3,
       maxRows: 5000,
       value: this.props.value || '',
+      toolbar,
       ..._.pick(
         this.props,
         [
