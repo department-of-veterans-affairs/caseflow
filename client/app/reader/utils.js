@@ -132,8 +132,8 @@ export const getHearingWorksheetLink = (hearings) => {
       {hearings.map((hearing, key) => {
         return <div>
           <a target="_blank"
-           href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}
-           key={key}>Hearing Worksheet</a>
+            href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}
+            key={key}>Hearing Worksheet</a>
         </div>;
       })}
     </span>
