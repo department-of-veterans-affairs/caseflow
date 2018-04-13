@@ -31,6 +31,7 @@ export const initialState = {
   }
 };
 
+// eslint-disable-next-line max-statements
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
