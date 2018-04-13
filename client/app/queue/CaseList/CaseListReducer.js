@@ -16,6 +16,15 @@ export const initialState = {
 
 export const caseListReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case Constants.APPEALS_FETCH_FAILED_INVALID_VETERAN_ID:
+    return update(state, {
+      isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
+      receivedAppeals: { $set: initialState.receivedAppeals },
+      search: {
+        errorType: { $set: SEARCH_ERROR_FOR.INVALID_VETERAN_ID },
+        queryResultingInError: { $set: action.payload.searchQuery }
+      }
+    });
   case Constants.CLEAR_CASE_LIST_SEARCH:
     return initialState;
   case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:

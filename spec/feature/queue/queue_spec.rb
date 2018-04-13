@@ -104,19 +104,50 @@ RSpec.feature "Queue" do
 
   context "queue case search for appeals using veteran id" do
     let(:appeal) { appeals.first }
-    let(:fake_veteran_id) { "obviouslyfakeveteranid" }
+    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
+    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
     before { FeatureToggle.enable!(:queue_case_search) }
     after { FeatureToggle.disable!(:queue_case_search) }
+
+    context "when invalid Veteran ID input" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: invalid_veteran_id
+        click_on "Search"
+      end
+
+      it "page displays invalid Veteran ID message" do
+        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
 
     context "when no appeals found" do
       before do
         visit "/queue"
-        fill_in "searchBar", with: fake_veteran_id
+        fill_in "searchBar", with: veteran_id_with_no_appeals
         click_on "Search"
       end
 
       it "page displays no cases found message" do
-        expect(page).to have_content("No cases found for “#{fake_veteran_id}”")
+        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
       end
 
       it "search bar moves from top right to main page body" do
@@ -156,10 +187,10 @@ RSpec.feature "Queue" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: fake_veteran_id
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
         click_on "Search"
 
-        expect(page).to have_content("Server encountered an error searching for “#{fake_veteran_id}”")
+        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do

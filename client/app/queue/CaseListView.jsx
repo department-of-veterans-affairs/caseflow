@@ -38,12 +38,14 @@ class CaseListView extends React.PureComponent {
     }
 
     if (this.props.errorType) {
-      let errorMessage = null;
+      let errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
 
       switch (this.props.errorType) {
+      case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
+        body.heading = `Invalid Veteran ID “${this.props.queryResultingInError}”`;
+        break;
       case SEARCH_ERROR_FOR.NO_APPEALS:
         body.heading = `No cases found for “${this.props.queryResultingInError}”`;
-        errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
         break;
       case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
       default:
@@ -51,7 +53,10 @@ class CaseListView extends React.PureComponent {
         errorMessage = 'Please retry your search and contact support if errors persist.';
       }
 
-      body.component = <React.Fragment><p>{errorMessage}</p><CaseListSearch id="searchBarEmptyList" /></React.Fragment>;
+      body.component = <React.Fragment>
+        <p>{errorMessage}</p>
+        <CaseListSearch elementId="searchBarEmptyList" />
+      </React.Fragment>;
     }
 
     return <React.Fragment>

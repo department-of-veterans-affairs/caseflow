@@ -34,8 +34,19 @@ export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
   payload: { searchQuery }
 });
 
+export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
+  type: Constants.APPEALS_FETCH_FAILED_INVALID_VETERAN_ID,
+  payload: { searchQuery }
+});
+
 export const fetchAppealsUsingVeteranId = (veteranId) =>
   (dispatch) => {
+    if (!veteranId.match(/\d{9}/)) {
+      dispatch(fetchAppealUsingInvalidVeteranIdFailed(veteranId));
+
+      return;
+    }
+
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/appeals', {
       headers: { 'veteran-id': veteranId }
