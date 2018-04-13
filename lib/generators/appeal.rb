@@ -35,7 +35,8 @@ class Generators::Appeal
         form9_date: 11.days.ago,
         appellant_city: "Huntingdon",
         appellant_state: "TN",
-        docket_number: 4198
+        docket_number: 4198,
+        contested_claim: true
       }
     end
     # rubocop:enable Metrics/MethodLength

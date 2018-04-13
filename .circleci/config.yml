@@ -23,6 +23,9 @@ jobs:
           - POSTGRES_USER: root
             POSTGRES_DB: caseflow_certification_test
 
+      # This is our homespun VACOLS container. An oracle db with some special sauce.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
     parallelism: 5
@@ -64,6 +67,11 @@ jobs:
           command: |
             bundle exec rake db:create
             bundle exec rake db:schema:load
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            bundle exec rake local:vacols:wait_for_connection
 
       - run:
           name: Mocha
