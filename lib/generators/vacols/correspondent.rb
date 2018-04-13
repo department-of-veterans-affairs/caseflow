@@ -60,9 +60,9 @@ class Generators::Vacols::Correspondent
     end
 
     def create(attrs = {})
-      correspondent_attrs.merge(attrs)
+      attrs = correspondent_attrs.merge(attrs)
 
-      VACOLS::Correspondent.create(correspondent_attrs)
+      VACOLS::Correspondent.create(attrs)
       end
   end
 end

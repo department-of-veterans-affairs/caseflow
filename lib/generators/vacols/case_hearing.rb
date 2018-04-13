@@ -36,13 +36,11 @@ class Generators::Vacols::CaseHearing
        vdropoc: "Mr. Virginie Rempel 250.328.0605 x5488",
        canceldate: nil,
        addon: nil}
-      end
-
-
-      def create(attrs = {})
-        case_hearing_attrs.merge(attrs)
-        VACOLS::CaseHearing.create(case_hearing_attrs)
-      end
     end
 
+    def create(attrs = {})
+      attrs = case_hearing_attrs.merge(attrs)
+      VACOLS::CaseHearing.create(attrs)
+    end
+  end
 end

@@ -21,9 +21,9 @@ class Generators::Vacols::CaseIssue
     end
 
     def create(attrs = {})
-      case_issue_attrs.merge(attrs)
+      attrs = case_issue_attrs.merge(attrs)
 
-      VACOLS::CaseIssue.create(case_issue_attrs)
+      VACOLS::CaseIssue.create(attrs)
       end
   end
 end

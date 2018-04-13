@@ -48,13 +48,13 @@ class Generators::Vacols::Staff
        sattyid: nil,
        svlj: nil,
        sinvsec: nil,
-       sdomainid: nil}
+       sdomainid: "DSUSER"}
     end
 
     def create(attrs = {})
-      staff_attrs.merge(attrs)
+      attrs = staff_attrs.merge(attrs)
 
-      VACOLS::Staff.create(staff_attrs)
+      VACOLS::Staff.create(attrs)
       end
   end
 end

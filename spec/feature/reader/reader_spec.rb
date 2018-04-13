@@ -106,6 +106,7 @@ end
 
 RSpec.feature "Reader" do
   before do
+    Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:fakes_off)
@@ -118,13 +119,8 @@ RSpec.feature "Reader" do
 
   let!(:issues) { [Generators::Issue.build] }
 
-  let(:case_inst) do
-    Generators::Vacols::Case.create()
-  end
-
   let(:appeal) do
-    #Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
-    Appeal.new(vacols_id: case_inst.bfkey)
+    Generators::Appeal_v2.create(vacols_record: vacols_record, documents: documents, issues: issues)
   end
 
   let!(:current_user) do
@@ -174,10 +170,6 @@ RSpec.feature "Reader" do
           vbms_document_id: 3
         )
       ]
-    end
-
-    before do
-      Fakes::VBMSService.document_records = {case_inst.bfcorlid => documents}
     end
 
     feature "Document header filtering message" do
@@ -242,22 +234,14 @@ RSpec.feature "Reader" do
       let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
       let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
-      let(:appeal) do
-        #Generators::Appeal.build(
-        #  vacols_record: vacols_record,
-        #  documents: documents,
-        #  manifest_vbms_fetched_at: vbms_fetched_ts,
-        #  manifest_vva_fetched_at: vva_fetched_ts,
-        #  issues: []
-        #)
-
-        Fakes::VBMSService.document_records ||= {}
-        Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
-
-        Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
-        Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
-
-        Appeal.new(vacols_id: case_inst.bfkey, issues: [])
+      let!(:appeal) do
+        Generators::Appeal_v2.build(
+          vacols_record: vacols_record,
+          documents: documents,
+          manifest_vbms_fetched_at: vbms_fetched_ts,
+          manifest_vva_fetched_at: vva_fetched_ts,
+          issues: []
+        )
       end
 
       scenario "welcome gate issues column shows no issues message" do
@@ -296,32 +280,24 @@ RSpec.feature "Reader" do
     end
 
     context "Welcome gate page" do
-      let(:appeal2) do
-        #Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
-        Appeal.new(vacols_id: case_inst.bfkey).documents = documents
+      let!(:appeal2) do
+        Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents)
       end
 
-      let(:appeal3) do
-        # Generators::Appeal.build(
-        #   vbms_id: "123456789S",
-        #   vacols_record: vacols_record,
-        #   documents: documents
-        # )
-        Appeal.new(vacols_id: case_inst.bfkey,
-                   vbms_id: "123456789S").documents = documents
+      let!(:appeal3) do
+        Generators::Appeal_v2.build(
+          vbms_id: "123456789S",
+          vacols_record: vacols_record,
+          documents: documents
+        )
       end
 
-      let(:appeal4) do
-        # Generators::Appeal.build(vacols_record: vacols_record,
-        #                          documents: documents, vbms_id: appeal3.vbms_id)
-        Appeal.new(vacols_id: case_inst.bfkey,
-                   vbms_id: appeal3.vbms_id).documents = documents
+      let!(:appeal4) do
+        Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents, vbms_id: appeal3.vbms_id)
       end
 
-      let(:appeal5) do
-        #Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
-        Appeal.new(vacols_id: case_inst.bfkey,
-                   vbms_id: "1234C").documents = documents
+      let!(:appeal5) do
+        Generators::Appeal_v2.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
       end
 
       let!(:hearing) do
@@ -445,7 +421,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Open document in new tab", focus: true do
+    scenario "Open document in new tab" do
       # Open the URL that the first document button points to. We cannot simply
       # click on the link since we've overridden the mouseup event to not open
       # the link, but instead to move to the document view in the SPA. Middle clicking
@@ -1554,8 +1530,7 @@ RSpec.feature "Reader" do
       end
     end
     let(:appeal) do
-      #Generators::Appeal.create
-      Appeal.new()
+      Generators::Appeal_v2.create
     end
 
     before do

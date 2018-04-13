@@ -31,9 +31,9 @@ class Generators::Vacols::Note
     end
 
     def create(attrs = {})
-      note_attrs.merge(attrs)
+      attrs = note_attrs.merge(attrs)
 
-      VACOLS::Note.create(note_attrs)
+      VACOLS::Note.create(attrs)
     end
   end
 end

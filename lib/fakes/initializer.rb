@@ -6,15 +6,15 @@ class Fakes::Initializer
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       if (!rails_env || !rails_env.local?) && !FeatureToggle.enabled?(:fakes_off)
         User.appeal_repository = Fakes::AppealRepository
-        WorkQueue.repository = Fakes::QueueRepository
-        Hearing.repository = Fakes::HearingRepository
-        HearingDocket.repository = Fakes::HearingRepository
         Appeal.repository = Fakes::AppealRepository
         Issue.repository = Fakes::IssueRepository
-        Judge.repository = Fakes::JudgeRepository
-        User.user_repository = Fakes::UserRepository
-        AttorneyCaseReview.repository = Fakes::QueueRepository
       end
+      WorkQueue.repository = Fakes::QueueRepository
+      Hearing.repository = Fakes::HearingRepository
+      HearingDocket.repository = Fakes::HearingRepository
+      Judge.repository = Fakes::JudgeRepository
+      User.user_repository = Fakes::UserRepository
+      AttorneyCaseReview.repository = Fakes::QueueRepository
     end
 
     # This method is called only 1 time during application bootup

@@ -28,9 +28,9 @@ class Generators::Vacols::Representative
     end
 
     def create(attrs = {})
-      representative_attrs.merge(attrs)
+      attrs = representative_attrs.merge(attrs)
 
-      VACOLS::Representative.create(representative_attrs)
+      VACOLS::Representative.create(attrs)
     end
   end
 end
