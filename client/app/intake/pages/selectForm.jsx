@@ -11,10 +11,19 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORM_TYPES, (form) => ({
+    const enabledFormTypes = _.filter(FORM_TYPES, (form) => {
+      return (
+        (this.props.featureToggles.intakeRamp && form.category == 'ramp') ||
+        (this.props.featureToggles.intakeAma && form.category == 'ama')
+      )
+    });
+
+    const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
       displayText: form.name
     }));
+
+    const enableSearchableDropdown = radioOptions.length > 3;
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
@@ -33,7 +42,7 @@ class SelectForm extends React.PureComponent {
         onChange={this.props.setFormType}
         value={this.props.formType}
       />
-      {this.props.featureToggles.intakeAma && <SearchableDropdown
+      {enableSearchableDropdown && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"
         options={draftDecisionOptions}

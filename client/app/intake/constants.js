@@ -82,23 +82,28 @@ export const ENDPOINT_NAMES = {
 export const FORM_TYPES = {
   RAMP_ELECTION: {
     key: 'ramp_election',
-    name: 'RAMP Opt-In Election Form'
+    name: 'RAMP Opt-In Election Form',
+    category: 'ramp'
   },
   RAMP_REFILING: {
     key: 'ramp_refiling',
-    name: '21-4138 RAMP Selection Form'
+    name: '21-4138 RAMP Selection Form',
+    category: 'ramp'
   },
   AMA_HIGHER_LEVEL_REVIEW: {
     key: 'ama_higher_level_review',
-    name: '20-0988 Request for Higher-Level Review Form'
+    name: '20-0988 Request for Higher-Level Review Form',
+    category: 'ama'
   },
   AMA_SUPPLEMENTAL_CLAIM: {
     key: 'ama_supplemental_claim',
-    name: '21-526b Supplemental Claim Form'
+    name: '21-526b Supplemental Claim Form',
+    category: 'ama'
   },
   AMA_NOTICE_OF_DISAGREEMENT: {
     key: 'ama_notice_of_disagreement',
-    name: '10182 Notice of Disagreement Form'
+    name: '10182 Notice of Disagreement Form',
+    category: 'ama'
   }
 };
 
