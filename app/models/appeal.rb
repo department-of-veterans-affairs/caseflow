@@ -490,8 +490,6 @@ class Appeal < ApplicationRecord
     super
   end
 
-  delegate :count, to: :worksheet_issues, prefix: true
-
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
@@ -687,11 +685,12 @@ class Appeal < ApplicationRecord
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
+          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,
