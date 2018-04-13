@@ -1,10 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
@@ -17,10 +15,7 @@ import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
 import CFRichTextEditor from '../components/CFRichTextEditor';
-import { Editor } from 'react-draft-wysiwyg';
-// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-import RichTextEditor from 'react-rte';
+import { DOMPurify } from 'dompurify';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -59,7 +54,7 @@ class WorksheetFormEntry extends React.PureComponent {
 
     return <div className="cf-hearings-worksheet-data">
       {this.props.print ?
-        <p>{this.props.value}</p> :
+        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} /> :
         <React.Fragment>
           <CFRichTextEditor {...textAreaProps} />
         </React.Fragment>}

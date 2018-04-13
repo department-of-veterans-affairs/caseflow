@@ -21,7 +21,7 @@ const styles = css({
 // numbered list
 // font color: we could limit this to 3 - blue, black and red
 const toolbar = {
-  options: ['inline', 'fontSize', 'list', 'colorPicker'],
+  options: ['inline', 'fontSize', 'list', 'colorPicker', 'link'],
   inline: {
     inDropdown: false,
     className: undefined,
