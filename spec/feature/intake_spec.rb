@@ -876,7 +876,7 @@ RSpec.feature "RAMP Intake" do
       end
     end
 
-    context "AMA feature is enabled", focus: true do
+    context "AMA feature is enabled" do
       before do
         FeatureToggle.enable!(:intakeAma)
       end
