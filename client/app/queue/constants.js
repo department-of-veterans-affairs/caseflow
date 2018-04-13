@@ -52,6 +52,11 @@ export const DECISION_TYPES = {
   DRAFT_DECISION: 'DraftDecision'
 };
 
+export const SEARCH_ERROR_FOR = {
+  NO_APPEALS: 'NO_APPEALS',
+  UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
+};
+
 /* eslint-disable id-length */
 export const CASE_DISPOSITION_DESCRIPTION_BY_ID = {
   1: 'Allowed',

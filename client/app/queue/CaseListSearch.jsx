@@ -19,39 +19,26 @@ class CaseListSearch extends React.PureComponent {
   }
 
   render() {
-    const { caseList } = this.props;
-
-    const topSearchBar = () => {
-      // Hide the search bar when displaying an error on the search results page.
-      if (caseList.displayCaseListResults &&
-        (caseList.search.showErrorMessage || caseList.search.queryResultingInError)) {
-        return;
-      }
-
-      return <SearchBar
-        id="searchBar"
-        size={this.props.searchSize}
-        onChange={this.props.setCaseListSearch}
-        value={caseList.caseListCriteria.searchQuery}
-        onClearSearch={this.props.clearCaseListSearch}
-        onSubmit={this.onSubmitSearch}
-        loading={caseList.isRequestingAppealsUsingVeteranId}
-        submitUsingEnterKey
-      />;
-    };
-
-    return <div className="section-search" {...this.props.styling}>
-      { topSearchBar() }
-    </div>;
+    return <SearchBar
+      id={this.props.elementId}
+      size={this.props.searchSize}
+      onChange={this.props.setCaseListSearch}
+      value={this.props.caseList.caseListCriteria.searchQuery}
+      onClearSearch={this.props.clearCaseListSearch}
+      onSubmit={this.onSubmitSearch}
+      loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
+      submitUsingEnterKey
+    />;
   }
 }
 
 CaseListSearch.propTypes = {
-  searchSize: PropTypes.string,
-  styling: PropTypes.object
+  elementId: PropTypes.string,
+  searchSize: PropTypes.string
 };
 
 CaseListSearch.defaultProps = {
+  elementId: 'searchBar',
   searchSize: 'big'
 };
 

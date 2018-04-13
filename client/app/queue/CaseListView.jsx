@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import _ from 'lodash';
 import pluralize from 'pluralize';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,15 +7,11 @@ import { bindActionCreators } from 'redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
+import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
-import SearchBar from '../components/SearchBar';
-import { fullWidth } from './constants';
+import { fullWidth, SEARCH_ERROR_FOR } from './constants';
 
-import {
-  clearCaseListSearch,
-  fetchAppealsUsingVeteranId,
-  setCaseListSearch
-} from './CaseList/CaseListActions';
+import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 const backLinkStyling = css({
   float: 'left',
@@ -24,13 +19,12 @@ const backLinkStyling = css({
 });
 
 class CaseListView extends React.PureComponent {
-  searchOnChange = (text) => {
-    if (_.size(text)) {
-      this.props.fetchAppealsUsingVeteranId(text);
-    }
-  }
+  render() {
+    const body = {
+      heading: null,
+      component: null
+    };
 
-  pageBody = () => {
     const appealsCount = this.props.caseList.receivedAppeals.length;
 
     if (appealsCount > 0) {
@@ -38,51 +32,36 @@ class CaseListView extends React.PureComponent {
       // the same for all appeals in the list.
       const firstAppeal = this.props.caseList.receivedAppeals[0];
 
-      return <React.Fragment>
-        <h1 className="cf-push-left" {...fullWidth}>
-          {appealsCount} {pluralize('case', appealsCount)} found for&nbsp;
-          “{firstAppeal.attributes.veteran_full_name} ({firstAppeal.attributes.vbms_id})”
-        </h1>
-        <CaseListTable appeals={this.props.caseList.receivedAppeals} />
-      </React.Fragment>;
+      body.heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
+          “${firstAppeal.attributes.veteran_full_name} (${firstAppeal.attributes.vbms_id})”`;
+      body.component = <CaseListTable appeals={this.props.caseList.receivedAppeals} />;
     }
 
-    let errorText = {
-      header: `No cases found for “${this.props.queryResultingInError}”`,
-      body: 'Please enter a valid 9-digit Veteran ID to search for all available cases.'
-    };
+    if (this.props.errorType) {
+      let errorMessage = null;
 
-    if (this.props.showErrorMessage) {
-      errorText = {
-        header: `Server encountered an error searching for “${this.props.queryResultingInError}”`,
-        body: 'Please retry your search and contact support if errors persist.'
-      };
+      switch (this.props.errorType) {
+      case SEARCH_ERROR_FOR.NO_APPEALS:
+        body.heading = `No cases found for “${this.props.queryResultingInError}”`;
+        errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
+        break;
+      case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
+      default:
+        body.heading = `Server encountered an error searching for “${this.props.queryResultingInError}”`;
+        errorMessage = 'Please retry your search and contact support if errors persist.';
+      }
+
+      body.component = <React.Fragment><p>{errorMessage}</p><CaseListSearch id="searchBarEmptyList" /></React.Fragment>;
     }
 
-    return <React.Fragment>
-      <h1 className="cf-push-left" {...fullWidth}>{errorText.header}</h1>
-      <p>{errorText.body}</p>
-      <SearchBar
-        id="searchBarEmptyList"
-        size="big"
-        onChange={this.props.setCaseListSearch}
-        value={this.props.caseList.caseListCriteria.searchQuery}
-        onClearSearch={this.props.clearCaseListSearch}
-        onSubmit={this.searchOnChange}
-        loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
-        submitUsingEnterKey
-      />
-    </React.Fragment>;
-  }
-
-  render() {
     return <React.Fragment>
       <div {...backLinkStyling}>
         <Link to="/" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
       </div>
       <AppSegment filledBackground>
         <div>
-          { this.pageBody() }
+          <h1 className="cf-push-left" {...fullWidth}>{body.heading}</h1>
+          {body.component}
         </div>
       </AppSegment>
     </React.Fragment>;
@@ -91,15 +70,13 @@ class CaseListView extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,
+  errorType: state.caseList.search.errorType,
   queryResultingInError: state.caseList.search.queryResultingInError,
-  searchQuery: state.caseList.caseListCriteria.searchQuery,
-  showErrorMessage: state.caseList.search.showErrorMessage
+  searchQuery: state.caseList.caseListCriteria.searchQuery
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearCaseListSearch,
-  fetchAppealsUsingVeteranId,
-  setCaseListSearch
+  clearCaseListSearch
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);

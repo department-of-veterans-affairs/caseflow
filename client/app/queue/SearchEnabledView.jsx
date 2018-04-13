@@ -23,28 +23,40 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 });
 
 class SearchEnabledView extends React.PureComponent {
+  searchBar() {
+    if (this.props.shouldUseQueueCaseSearch) {
+      // Do not draw the search bar in the top left when the search caused an error.
+      if (this.props.errorType) {
+        return;
+      }
+
+      return <div className="section-search" {...searchStyling(this.props.isRequestingAppealsUsingVeteranId)}>
+        <CaseListSearch />
+      </div>;
+    }
+
+    return <CaseSelectSearch
+      navigateToPath={(path) => {
+        const redirectUrl = encodeURIComponent(window.location.pathname);
+
+        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
+      }}
+      alwaysShowCaseSelectionModal
+      feedbackUrl={this.props.feedbackUrl}
+      searchSize="big"
+      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />;
+  }
+
   render() {
     const {
-      displayCaseListResults,
-      feedbackUrl,
-      isRequestingAppealsUsingVeteranId,
+      appeals,
+      errorType,
       shouldUseQueueCaseSearch
     } = this.props;
 
     return <React.Fragment>
-      { shouldUseQueueCaseSearch ? <CaseListSearch styling={searchStyling(isRequestingAppealsUsingVeteranId)} /> :
-        <CaseSelectSearch
-          navigateToPath={(path) => {
-            const redirectUrl = encodeURIComponent(window.location.pathname);
-
-            location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
-          }}
-          alwaysShowCaseSelectionModal
-          feedbackUrl={feedbackUrl}
-          searchSize="big"
-          styling={searchStyling(isRequestingAppealsUsingVeteranId)} />
-      }
-      { shouldUseQueueCaseSearch && displayCaseListResults ? <CaseListView /> : this.props.children }
+      { this.searchBar() }
+      { shouldUseQueueCaseSearch && (appeals.length > 0 || errorType) ? <CaseListView /> : this.props.children }
     </React.Fragment>;
   }
 }
@@ -55,7 +67,8 @@ SearchEnabledView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  displayCaseListResults: state.caseList.displayCaseListResults,
+  appeals: state.caseList.receivedAppeals,
+  errorType: state.caseList.search.errorType,
   isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId
 });
 
