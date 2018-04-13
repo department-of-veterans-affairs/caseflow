@@ -27,6 +27,18 @@ describe IssueRepository do
       }
     end
 
+    context "when disposition is not changed" do
+      let(:initial_disposition) { nil }
+      let(:disposition) { nil }
+      let(:readjudication) { nil }
+
+      it "sends business metrics" do
+        expect(BusinessMetrics).to receive(:record)
+          .with(service: :queue, name: "non_disposition_issue_edit").once
+        subject
+      end
+    end
+
     context "when disposition is changed to remanded" do
       let(:initial_disposition) { nil }
       let(:disposition) { "Remanded" }
@@ -40,9 +52,10 @@ describe IssueRepository do
         }]
       end
 
-      it "creates a duplicate issue" do
+      it "creates remand reasons" do
         expect(IssueRepository).to receive(:create_remand_reasons!)
           .with("123456", "3", remand_reasons).once
+        expect(BusinessMetrics).to_not receive(:record)
         subject
       end
     end
@@ -52,7 +65,7 @@ describe IssueRepository do
       let(:disposition) { "Remanded" }
       let(:readjudication) { nil }
 
-      it "creates a duplicate issue" do
+      it "does not create remand reasons" do
         expect(IssueRepository).to_not receive(:create_remand_reasons!)
         subject
       end
