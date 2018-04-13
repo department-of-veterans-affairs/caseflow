@@ -23,7 +23,7 @@ class Appeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :representative
+  vacols_attr_accessor :representative, :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -302,6 +302,7 @@ class Appeal < ApplicationRecord
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
+      "contested_claim" => contested_claim,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
@@ -489,8 +490,6 @@ class Appeal < ApplicationRecord
     end
     super
   end
-
-  delegate :count, to: :worksheet_issues, prefix: true
 
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
@@ -687,11 +686,12 @@ class Appeal < ApplicationRecord
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
+          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,

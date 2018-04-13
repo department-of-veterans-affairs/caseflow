@@ -15,7 +15,8 @@ export const initialState = {
     success: null,
     error: null
   },
-  saveState: initialSaveState
+  saveState: initialSaveState,
+  modal: false
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -33,6 +34,15 @@ const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(sta
 const setSuccessMessageState = (state, message) => setMessageState(state, message, 'success');
 const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
 const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
+
+const setModalState = (state, visibility) => update(state, {
+  modal: {
+    $set: visibility
+  }
+});
+
+const showModal = (state) => setModalState(state, true);
+const hideModal = (state) => setModalState(state, false);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -109,6 +119,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return showSuccessMessage(state, action.payload.message);
   case ACTIONS.HIDE_SUCCESS_MESSAGE:
     return hideSuccessMessage(state);
+  case ACTIONS.SHOW_MODAL:
+    return showModal(state);
+  case ACTIONS.HIDE_MODAL:
+    return hideModal(state);
   default:
     return state;
   }
