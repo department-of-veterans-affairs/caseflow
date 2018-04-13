@@ -107,7 +107,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       vertical
       key={`${option.id}-after-certification`}
       styling={css(smallLeftMargin, smallBottomMargin)}
-      name={`${option.id}-after-cert-radio-btns`}
+      name={`${this.props.issue.vacols_sequence_id}-${option.id}`}
       hideLabel
       options={[{
         displayText: 'Before certification',
