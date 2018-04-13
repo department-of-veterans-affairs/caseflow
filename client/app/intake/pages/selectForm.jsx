@@ -13,9 +13,8 @@ class SelectForm extends React.PureComponent {
   render() {
     const enabledFormTypes = _.filter(FORM_TYPES, (form) => {
       return (
-        (this.props.featureToggles.intakeRamp && form.category == 'ramp') ||
-        (this.props.featureToggles.intakeAma && form.category == 'ama')
-      )
+        form.category === 'ramp' || (this.props.featureToggles.intakeAma && form.category === 'ama')
+      );
     });
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
@@ -24,6 +23,7 @@ class SelectForm extends React.PureComponent {
       label: form.name
     }));
 
+    // Switch from radio buttons to searchable dropdown if there are more than 3 forms
     const enableSearchableDropdown = radioOptions.length > 3;
 
     if (this.props.intakeId) {

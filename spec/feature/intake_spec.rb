@@ -875,6 +875,21 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
       end
     end
+
+    context "AMA feature is enabled", focus: true do
+      before do
+        FeatureToggle.enable!(:intakeAma)
+      end
+
+      after do
+        FeatureToggle.disable!(:intakeAma)
+      end
+
+      scenario "Searchable dropdown when more than three forms are available" do
+        visit "/intake"
+        expect(page).to have_css(".cf-form-dropdown")
+      end
+    end
   end
 
   context "As a user with unauthorized role" do
