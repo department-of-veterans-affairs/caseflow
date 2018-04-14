@@ -684,9 +684,9 @@ class Appeal < ApplicationRecord
       @repository ||= AppealRepository
     end
 
+    # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    # rubocop:disable Metrics/ParameterLists
     def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
@@ -704,6 +704,18 @@ class Appeal < ApplicationRecord
       end
     end
     # rubocop:enable Metrics/ParameterLists
+
+    def reopen(appeals:, user:, disposition:)
+      repository.transaction do
+        appeals.each do |reopen_appeal|
+          reopen_single(
+            appeal: reopen_appeal,
+            user: user,
+            disposition: disposition
+          )
+        end
+      end
+    end
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -780,6 +792,30 @@ class Appeal < ApplicationRecord
           user: user,
           closed_on: closed_on,
           disposition_code: disposition_code
+        )
+      end
+    end
+
+    def reopen_single(appeal:, user:, disposition:)
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      if appeal.remand?
+        # Currently we don't check that there is a closed post remand appeal here
+        # because it requires some additional probing into VACOLS.
+        # That check is in AppealsRepository.reopen_remand!
+
+        repository.reopen_remand!(
+          appeal: appeal,
+          user: user,
+          disposition_code: disposition_code
+        )
+      else
+        fail "Only closed appeals can be reopened" if appeal.active?
+
+        repository.reopen_undecided_appeal!(
+          appeal: appeal,
+          user: user
         )
       end
     end

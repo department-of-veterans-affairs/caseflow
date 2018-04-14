@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError; end
@@ -596,3 +597,4 @@ class AppealRepository
   end
   # :nocov:
 end
+# rubocop:enable Metrics/ClassLength

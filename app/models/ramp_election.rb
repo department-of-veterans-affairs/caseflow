@@ -72,6 +72,25 @@ class RampElection < RampReview
       .last
   end
 
+  def end_product_canceled?
+    sync_ep_status! && end_product_status == "CAN"
+  end
+
+  def rollback!
+    transaction do
+      update!(
+        established_at: nil,
+        receipt_date: nil,
+        option_selected: nil,
+        end_product_reference_id: nil,
+        end_product_status: nil,
+        end_product_status_last_synced_at: nil
+      )
+
+      ramp_closed_appeals.destroy_all
+    end
+  end
+
   private
 
   def cached_status_active?

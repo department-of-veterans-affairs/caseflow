@@ -963,6 +963,52 @@ describe Appeal do
     end
   end
 
+  context ".reopen" do
+    subject do
+      Appeal.reopen(
+        appeals: [appeal, another_appeal],
+        user: user,
+        disposition: disposition
+      )
+    end
+
+    let(:appeal) { Generators::Appeal.build(vacols_record: :ramp_closed) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
+    let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
+
+    it "reopens each appeal according to it's type" do
+      expect(Fakes::AppealRepository).to receive(:reopen_undecided_appeal!).with(
+        appeal: appeal,
+        user: user
+      )
+
+      expect(Fakes::AppealRepository).to receive(:reopen_remand!).with(
+        appeal: another_appeal,
+        user: user,
+        disposition_code: "P"
+      )
+
+      subject
+    end
+
+    context "disposition doesn't exist" do
+      let(:disposition) { "I'm not a disposition" }
+
+      it "should raise error" do
+        expect { subject }.to raise_error(/Disposition/)
+      end
+    end
+
+    context "one of the non-remand appeals is active" do
+      let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+
+      it "should raise error" do
+        expect { subject }.to raise_error("Only closed appeals can be reopened")
+      end
+    end
+  end
+
   context "#certify!" do
     let(:appeal) { Appeal.new(vacols_id: "765") }
     subject { appeal.certify! }
