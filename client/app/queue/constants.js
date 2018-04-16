@@ -55,7 +55,7 @@ export const DECISION_TYPES = {
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
   {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
-    (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase()]: id })
+    (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
   )
 );
 
@@ -580,4 +580,89 @@ export const ISSUE_INFO = {
       }
     }
   }
+};
+
+export const REMAND_REASONS = {
+  dutyToNotify: [{
+    id: 'AA',
+    label: 'No notice sent'
+  }, {
+    id: 'AB',
+    label: 'Incorrect notice sent'
+  }, {
+    id: 'AC',
+    label: 'Legally inadequate notice'
+  }],
+  dutyToAssistRecordsRequest: [{
+    id: 'BA',
+    label: 'Service treatment records'
+  }, {
+    id: 'BB',
+    label: 'Service personnel records'
+  }, {
+    id: 'BC',
+    label: 'JSRRC'
+  }, {
+    id: 'BD',
+    label: 'VA medical records'
+  }, {
+    id: 'BE',
+    label: 'Social security records'
+  }, {
+    id: 'BF',
+    label: 'Private medical records'
+  }, {
+    id: 'BG',
+    label: 'Other federal records'
+  }, {
+    id: 'BH',
+    label: 'Other private records'
+  }, {
+    id: 'BI',
+    label: 'Certification from appellant'
+  }],
+  medicalExam: [{
+    id: 'DA',
+    label: 'Current findings'
+  }, {
+    id: 'DB',
+    label: 'Incomplete/inadequate findings'
+  }, {
+    id: 'DI',
+    label: 'Nexus opinion'
+  }, {
+    id: 'DD',
+    label: 'Clarify diagnosis'
+  }, {
+    id: 'DE',
+    label: 'No VA exam conducted'
+  }],
+  dueProcess: [{
+    id: 'EA',
+    label: 'BVA travel board and video hearing'
+  }, {
+    id: 'EB',
+    label: 'AOJ hearing'
+  }, {
+    id: 'EC',
+    label: 'Adjudicate intertwined issue(s)'
+  }, {
+    id: 'ED',
+    label: 'Issuance of SOC/Manlincon'
+  }, {
+    id: 'EE',
+    label: 'Issuance of SSOC'
+  }, {
+    id: 'EG',
+    label: 'Consider merits of reopened claim'
+  }, {
+    id: 'EH',
+    label: 'Apply contested claims procedures'
+  }, {
+    id: 'EI',
+    label: 'Noncompliance/Stegall'
+  }, {
+    id: 'EK',
+    label: 'Other due process deficiency'
+  }]
 };
