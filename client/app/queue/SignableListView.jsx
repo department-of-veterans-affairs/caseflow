@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import QueueTable from './QueueTable';
+import ReviewableTable from './ReviewableTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
@@ -47,7 +47,7 @@ class SignableListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>
-        <QueueTable />
+        <ReviewableTable />
       </div>;
     }
 
