@@ -121,12 +121,17 @@ class Generators::Appeal
             { disposition: :denied }
           ]
         },
+        remand_completed: {
+          status: "Complete",
+          disposition: "Allowed"
+        },
         ramp_closed: {
           type: "Original",
           status: "Complete",
           disposition: "RAMP Opt-in",
           decision_date: 7.days.ago
         },
+
         veteran_is_appellant: {
           # A quirk in our model: These fields are
           # only set when the appellant is not the veteran.

@@ -106,6 +106,11 @@ class Appeal < ApplicationRecord
     remand_returned_to_bva: "96"
   }.freeze
 
+  BVA_DISPOSITIONS = [
+    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
+    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
+  ].freeze
+
   attr_writer :ssoc_dates
   def ssoc_dates
     @ssoc_dates ||= []
@@ -437,6 +442,10 @@ class Appeal < ApplicationRecord
 
   def remand?
     status == "Remand"
+  end
+
+  def decided_by_bva?
+    !active? && BVA_DISPOSITIONS.include?(disposition)
   end
 
   def merged?
@@ -800,7 +809,9 @@ class Appeal < ApplicationRecord
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
-      if appeal.remand?
+      # If the appeal was decided at the board, then it was a remand which means
+      # we need to clear the post-remand appeal
+      if appeal.decided_by_bva?
         # Currently we don't check that there is a closed post remand appeal here
         # because it requires some additional probing into VACOLS.
         # That check is in AppealsRepository.reopen_remand!

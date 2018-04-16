@@ -973,7 +973,7 @@ describe Appeal do
     end
 
     let(:appeal) { Generators::Appeal.build(vacols_record: :ramp_closed) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_completed) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
 
@@ -1267,6 +1267,34 @@ describe Appeal do
         end
 
         it { is_expected.to be true }
+      end
+    end
+  end
+
+  context "#decided_by_bva?" do
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, disposition: disposition)
+    end
+
+    subject { appeal.decided_by_bva? }
+
+    let(:disposition) { "Remanded" }
+
+    context "when status is not Complete" do
+      let(:status) { "Remand" }
+      it { is_expected.to be false }
+    end
+
+    context "when status is Complete" do
+      let(:status) { "Complete" }
+
+      context "when disposition is a BVA disposition" do
+        it { is_expected.to be true }
+      end
+
+      context "when disposition is not a BVA disposition" do
+        let(:disposition) { "Advance Allowed in Field" }
+        it { is_expected.to be false }
       end
     end
   end

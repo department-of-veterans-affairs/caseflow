@@ -4,7 +4,7 @@
 # Saving the rollback will perform all validations and actions required.
 # Example:
 #
-# RampElection.create!(ramp_election: ramp_election: user: user, reason: "A good reason")
+# RollbackRampElection.create!(ramp_election: ramp_election, user: user, reason: "A good reason")
 class RampElectionRollback < ApplicationRecord
   belongs_to :user
   belongs_to :ramp_election
