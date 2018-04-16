@@ -14,6 +14,7 @@ import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
+import SignableListView from './SignableListView';
 
 import QueueDetailView from './QueueDetailView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -52,7 +53,10 @@ class QueueApp extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl}
       searchSize="big"
       styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    <QueueListView {...this.props} />
+    {this.props.userRole === "Attorney"
+      ? <QueueListView {...this.props} />
+      : <SignableListView {...this.props} />
+    }
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
