@@ -1,5 +1,6 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -10,10 +11,17 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORM_TYPES, (form) => ({
+    const amaEnabled = this.props.featureToggles.intakeAma;
+    const enabledFormTypes = amaEnabled ? FORM_TYPES : _.filter(FORM_TYPES, { category: 'ramp' });
+
+    const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
-      displayText: form.name
+      displayText: form.name,
+      label: form.name
     }));
+
+    // Switch from radio buttons to searchable dropdown if there are more than 3 forms
+    const enableSearchableDropdown = radioOptions.length > 3;
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
@@ -21,9 +29,9 @@ class SelectForm extends React.PureComponent {
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>Please select the form you are processing from the Centralized Mail Portal.</p>
+      <p>To get started, choose the form you are processing for intake.</p>
 
-      <RadioField
+      {!enableSearchableDropdown && <RadioField
         name="form-select"
         label="Which form are you processing?"
         vertical
@@ -31,7 +39,15 @@ class SelectForm extends React.PureComponent {
         options={radioOptions}
         onChange={this.props.setFormType}
         value={this.props.formType}
-      />
+      />}
+
+      {enableSearchableDropdown && <SearchableDropdown
+        name="form-select"
+        label="Which form are you processing?"
+        placeholder="Enter or select form"
+        options={radioOptions}
+        onChange={this.props.setFormType}
+        value={this.props.formType} />}
     </div>;
   }
 }
