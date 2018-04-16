@@ -42,7 +42,7 @@ export default class IssueList extends React.PureComponent {
     }</React.Fragment>;
   };
 
-  render = () => <div {...tableContainerStyling(this.props.issuesOnly)}>
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.stretchToFullWidth)}>
     <table>
       <tbody>
         {this.getIssues()}
@@ -56,9 +56,11 @@ IssueList.propTypes = {
     issues: PropTypes.array
   }).isRequired,
   issuesOnly: PropTypes.bool,
-  idxToDisplay: PropTypes.number
+  idxToDisplay: PropTypes.number,
+  stretchToFullWidth: PropTypes.bool
 };
 
 IssueList.defaultProps = {
-  issuesOnly: false
+  issuesOnly: false,
+  stretchToFullWidth: false
 };
