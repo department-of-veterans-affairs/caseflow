@@ -1,7 +1,7 @@
 class Generators::Vacols::Representative
   class << self
     def representative_attrs
-      {repkey: 877483,
+      {repkey: "877483",
        repaddtime: "2017-10-13 06:51:24 UTC",
        reptype: nil,
        repso: nil,
@@ -13,7 +13,7 @@ class Generators::Vacols::Representative
        repaddr2: "Apt. 636",
        repcity: "New Otha",
        repst: "OH",
-       repzip: 90467,
+       repzip: "90467",
        repphone: "277-060-6791 x14708",
        repnotes: nil,
        repmoduser: nil,
