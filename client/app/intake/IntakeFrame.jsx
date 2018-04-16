@@ -69,7 +69,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.BEGIN}
                   title="Select Form | Caseflow Intake"
-                  component={SelectFormPage} />
+                  render={() => <SelectFormPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.SEARCH}

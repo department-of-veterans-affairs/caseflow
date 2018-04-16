@@ -6,5 +6,8 @@
     page: "Intake",
     feedbackUrl: feedback_url,
     buildDate: build_date,
+    featureToggles: {
+      intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user)
+    }
   }) %>
 <% end %>
