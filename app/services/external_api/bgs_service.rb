@@ -93,7 +93,7 @@ class ExternalApi::BGSService
   # higher than that of the current employee
   def can_access?(vbms_id)
     current_user = RequestStore[:current_user]
-    cache_key = "bgs_can_access_#{current_user.css_id}_#{vbms_id}"
+    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
     cached_result = Rails.cache.read(cache_key)
 
     if cached_result.nil?
