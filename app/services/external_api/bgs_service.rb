@@ -92,13 +92,22 @@ class ExternalApi::BGSService
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
-    DBService.release_db_connections
+    current_user = RequestStore[:current_user]
+    cache_key = "bgs_can_access_#{current_user.css_id}_#{vbms_id}"
+    cached_result = Rails.cache.read(cache_key)
 
-    MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
-                          service: :bgs,
-                          name: "can_access?") do
-      client.can_access?(vbms_id)
+    if cached_result.nil?
+      DBService.release_db_connections
+
+      MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+                            service: :bgs,
+                            name: "can_access?") do
+        cached_result = client.can_access?(vbms_id)
+        Rails.cache.write(cache_key, cached_result, expires_in: 24.hours)
+      end
     end
+
+    cached_result
   end
 
   private
