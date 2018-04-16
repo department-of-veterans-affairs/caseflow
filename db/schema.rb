@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180402231703) do
+ActiveRecord::Schema.define(version: 20180416184214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,7 +351,6 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
-    t.index ["ramp_election_id"], name: "index_ramp_closed_appeals_on_ramp_election_id"
   end
 
   create_table "ramp_elections", id: :serial, force: :cascade do |t|
@@ -392,6 +391,16 @@ ActiveRecord::Schema.define(version: 20180402231703) do
     t.datetime "documents_fetched_at"
     t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
+  end
+
+  create_table "supplemental_claims", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.datetime "established_at"
+    t.string "end_product_reference_id"
+    t.string "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
+    t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
