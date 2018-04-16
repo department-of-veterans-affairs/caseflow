@@ -1,21 +1,9 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
-  # TODO: use WorkQueue::IssueSerializer
   attribute :issues do
-    object.issues.map do |issue|
-      {
-        vacols_sequence_id: issue.vacols_sequence_id,
-        levels: issue.levels,
-        program: issue.codes[0],
-        type: issue.codes[1],
-        disposition: issue.disposition,
-        close_date: issue.close_date,
-        note: issue.note,
-        id: issue.id,
-        labels: issue.labels,
-        codes: issue.codes[2..-1],
-        description: issue.description
-      }
-    end
+    ActiveModelSerializers::SerializableResource.new(
+      object.issues,
+      each_serializer: ::WorkQueue::IssueSerializer
+    ).as_json[:data].map { |issue| issue[:attributes] }
   end
 
   attribute :hearings do
