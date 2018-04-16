@@ -1,5 +1,11 @@
 class QueueRepository
   # :nocov:
+  def self.transaction
+    VACOLS::Case.transaction do
+      yield
+    end
+  end
+
   def self.tasks_for_user(css_id)
     MetricsService.record("VACOLS: fetch user tasks",
                           service: :vacols,
@@ -34,30 +40,57 @@ class QueueRepository
     appeals
   end
 
-  def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
-    MetricsService.record("VACOLS: reassign_case_to_judge! #{vacols_id}",
-                          service: :vacols,
-                          name: "reassign_case_to_judge") do
-      # update DECASS table
-      update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
+  def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
+    transaction do
+      vacols_case = VACOLS::Case.find(vacols_id)
+      vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
+      vacols_case.update(bfattid: attorney.vacols_attorney_id)
 
-      # update location with the judge's slogid
-      VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
-      true
+      VACOLS::Decass.create!(
+        defolder: vacols_id,
+        deatty: attorney.vacols_attorney_id,
+        deteam: attorney.vacols_group_id[0..2],
+        deadusr: judge.vacols_uniq_id,
+        deadtim: VacolsHelper.local_date_with_utc_timezone,
+        dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
+        deassign: VacolsHelper.local_date_with_utc_timezone,
+        deicr: decass_complexity_rating(vacols_id)
+      )
     end
   end
 
-  def self.update_decass_record(vacols_id, created_in_vacols_date, decass_attrs)
-    check_decass_presence!(vacols_id, created_in_vacols_date)
-    decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
-    VACOLS::Decass.where(defolder: vacols_id, deadtim: created_in_vacols_date).update_all(decass_attrs)
+  def self.decass_complexity_rating(vacols_id)
+    VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
+      .find_by(bfkey: vacols_id)
+      .try(:complexity_rating)
   end
 
-  def self.check_decass_presence!(vacols_id, created_in_vacols_date)
-    unless VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+  def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
+    # update DECASS table
+    decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+    unless decass_record
       msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
       fail Caseflow::Error::QueueRepositoryError, msg
     end
+
+    # In attorney checkout, we are automatically selecting the judge who
+    # assigned the attorney the case. But we also have a drop down for the
+    # attorney to select a different judge if they are checking it out to someone else
+    if decass_record.deadusr != judge_vacols_user_id
+      BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
+    end
+
+    update_decass_record(decass_record, decass_attrs)
+
+    # update location with the judge's slogid
+    VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
+    true
+  end
+
+  def self.update_decass_record(decass_record, decass_attrs)
+    decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+    VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
+      .update_all(decass_attrs)
   end
 
   def self.tasks_query(css_id)

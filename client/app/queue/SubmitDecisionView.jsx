@@ -139,7 +139,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
 
     return [{
-      displayText: `< Go back to ${vetName} (${vbmsId})`
+      displayText: `Go back to ${vetName} (${vbmsId})`
     }, {
       displayText: 'Submit'
     }];
@@ -179,7 +179,7 @@ class SubmitDecisionView extends React.PureComponent {
         {selectedJudge && <span>{selectedJudge.full_name}</span>}
         <Button
           id="select-judge"
-          classNames={['cf-btn-link']}
+          linkStyling
           willNeverBeLoading
           styling={selectJudgeButtonStyling(selectedJudge)}
           onClick={() => this.props.setSelectingJudge(true)}>
