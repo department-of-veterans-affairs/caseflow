@@ -277,7 +277,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    context "Welcome gate page", focus: true do
+    context "Welcome gate page" do
       let!(:appeal2) do
         Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents)
       end
@@ -1514,7 +1514,7 @@ RSpec.feature "Reader" do
   context "Document is updated" do
     let(:series_id) { SecureRandom.uuid }
     let(:document_ids_in_series) { [SecureRandom.uuid, SecureRandom.uuid] }
-    let(:fetch_documents_responses) do
+    let!(:fetch_documents_responses) do
       document_ids_in_series.map do |document_id|
         {
           documents: [Generators::Document.build(vbms_document_id: document_id, series_id: series_id)],
@@ -1523,7 +1523,7 @@ RSpec.feature "Reader" do
         }
       end
     end
-    let(:appeal) do
+    let!(:appeal) do
       Generators::Appeal_v2.create
     end
 
