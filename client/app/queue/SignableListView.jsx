@@ -31,17 +31,16 @@ class SignableListView extends React.PureComponent {
   };
 
   render = () => {
-    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    const reviewableTasks = {};
     let reviewableCount = 0;
     for (const k in this.props.tasks) {
-      console.log(this.props.tasks[k]);
       if (this.props.tasks[k].attributes.task_type === "Review") {
         reviewableCount++;
       }
     }
     let tableContent;
 
-    if (noTasks) {
+    if (reviewableCount === 0) {
       tableContent = <StatusMessage title="Tasks not found">
         Congratulations! You don't have any decisions to sign.
       </StatusMessage>;
