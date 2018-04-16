@@ -45,7 +45,7 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
     // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
 
     if (!veteranId.match(/\d{7,9}/)) {
-      dispatch(fetchAppealUsingInvalidVeteranIdFailed(veteranId));
+      dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
 
       return;
     }
@@ -63,6 +63,6 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
       }, () => {
-        dispatch(fetchAppealUsingVeteranIdFailed(veteranId));
+        dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
       });
   };
