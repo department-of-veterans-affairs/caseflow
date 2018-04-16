@@ -34,7 +34,7 @@ class Generators::Vacols::CaseHearing
        taskno: "17-284",
        adduser: "JRAYNOR",
        addtime: "2017-07-11 00:00:00 UTC",
-       aod: "N",
+       aod: "Y",
        holddays: nil,
        vdkey: nil,
        repname: "Elta Keeling",

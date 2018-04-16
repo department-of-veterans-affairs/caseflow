@@ -172,6 +172,10 @@ class Generators::Appeal_v2
 
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
 
+      if (attrs[:issues] == [])
+        appeal.issues = []
+      end
+
       inaccessible = attrs.delete(:inaccessible)
       veteran = attrs.delete(:veteran)
 

@@ -4,7 +4,7 @@ class Generators::Vacols::Note
       {tasknum: "877483D4",
        tsktknm: 877483,
        tskstfas: "JRAYNOR",
-       tskactcd: "D",
+       tskactcd: "B",
        tskclass: "ACTIVE",
        tskrqact: "Illum voluptatem consectetur molestiae maiores commodi est est optio.",
        tskrspn: "Sapiente enim dolores id qui eveniet sequi.",
