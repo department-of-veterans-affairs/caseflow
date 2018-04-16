@@ -108,6 +108,8 @@ RSpec.feature "RAMP Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
+      expect(page).to have_content("Enter the Veteran's ID below to process this RAMP Opt-In Election Form.")
+
       fill_in "Search small", with: "5678"
       click_on "Search"
 
