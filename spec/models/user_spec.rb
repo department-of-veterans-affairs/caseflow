@@ -266,6 +266,17 @@ describe User do
     end
   end
 
+  context ".create_from_vacols" do
+    subject { Judge.create_from_vacols(css_id: "VACOFODR", station_id: "283", full_name: "Fred Odraine") }
+
+    it "should create a user record" do
+      expect(subject.class).to eq User
+      expect(subject.css_id).to eq "VACOFODR"
+      expect(subject.station_id).to eq "283"
+      expect(subject.full_name).to eq "Fred Odraine"
+    end
+  end
+
   context ".current_task" do
     class FakeTask < Task; end
     class AnotherFakeTask < Task; end

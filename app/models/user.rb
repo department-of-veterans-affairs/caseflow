@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :hearing_views
   has_many :annotations
 
+  BOARD_STATION_ID = "101".freeze
+
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
@@ -191,6 +193,15 @@ class User < ApplicationRecord
         u.roles = user["roles"]
         u.regional_office = session[:regional_office]
         u.save
+      end
+    end
+
+    def create_from_vacols(css_id:, station_id:, full_name:)
+      User.find_or_initialize_by(css_id: css_id, station_id: station_id).tap do |user|
+        # When we create a user from VACOLS, check to see if the user already exists
+        # CSS names are more accurate than VACOLS
+        user.full_name = full_name
+        user.save! if user.new_record?
       end
     end
 

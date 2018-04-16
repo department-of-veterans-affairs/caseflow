@@ -5,6 +5,8 @@ class UsersController < ApplicationController
     case params[:role]
     when "Judge"
       return render json: { judges: Judge.list_all }
+    when "Attorney"
+      return render json: { attorneys: Judge.new(current_user).attorneys }
     end
     render json: {}
   end

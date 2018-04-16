@@ -1,6 +1,4 @@
 class Judge
-  JUDGE_STATION_ID = "101".freeze
-
   attr_reader :user
   def initialize(user)
     @user = user
@@ -34,7 +32,9 @@ class Judge
   end
 
   def attorneys
-    Constants::AttorneyJudgeTeams::TEAMS[css_id]
+    (Constants::AttorneyJudgeTeams::JUDGES[user.css_id].try(:[], :attorneys) || []).map do |attorney|
+      User.create_from_vacols(css_id: attorney[:css_id], station_id: User::BOARD_STATION_ID, full_name: attorney[:name])
+    end
   end
 
   private
@@ -61,16 +61,6 @@ class Judge
     def list_all
       Rails.cache.fetch("#{Rails.env}_list_of_judges_from_vacols") do
         repository.find_all_judges
-      end
-    end
-
-    def create_from_vacols(staff_record)
-      User.find_or_initialize_by(css_id: staff_record.sdomainid, station_id: JUDGE_STATION_ID).tap do |user|
-        # Only update name in the DB if it is a new record,
-        # We don't want to modify names on the existing records
-        user.full_name = FullName.new(staff_record.snamef, staff_record.snamemi, staff_record.snamel)
-          .formatted(:readable_full)
-        user.save if user.new_record?
       end
     end
   end
