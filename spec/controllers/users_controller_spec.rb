@@ -40,6 +40,7 @@ RSpec.describe UsersController, type: :controller do
 
     context "when current user a judge" do
       it "should return a list of attorneys" do
+        User.unauthenticate!
         User.authenticate!(css_id: "BVALREIN", roles: ["System Admin"])
         get :index, params: { role: "Attorney" }
         expect(response.status).to eq 200
