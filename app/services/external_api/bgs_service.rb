@@ -94,20 +94,15 @@ class ExternalApi::BGSService
   def can_access?(vbms_id)
     current_user = RequestStore[:current_user]
     cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
-    cached_result = Rails.cache.read(cache_key)
-
-    if cached_result.nil?
+    Rails.cache.read(cache_key, expires_in: 24.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        cached_result = client.can_access?(vbms_id)
-        Rails.cache.write(cache_key, cached_result, expires_in: 24.hours)
+        client.can_access?(vbms_id)
       end
     end
-
-    cached_result
   end
 
   private
