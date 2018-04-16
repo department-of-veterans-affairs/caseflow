@@ -18,10 +18,7 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import {
-  highlightInvalidFormItems,
-  hideSuccessMessage
-} from './uiReducer/uiActions';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -166,7 +163,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,
-  highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue,

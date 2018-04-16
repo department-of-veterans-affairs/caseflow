@@ -51,6 +51,8 @@ class AddEditIssueView extends React.Component {
     }
   };
 
+  componentWillUnmount = () => this.props.cancelEditingAppealIssue();
+
   getFooterButtons = () => [{
     displayText: 'Go back to Select Dispositions'
   }, {
@@ -58,7 +60,9 @@ class AddEditIssueView extends React.Component {
   }];
 
   updateIssue = (attributes) => {
-    this.props.highlightInvalidFormItems(false);
+    if (this.props.highlight) {
+      this.props.highlightInvalidFormItems(false);
+    }
     this.props.updateEditingAppealIssue(attributes);
   };
 
@@ -81,12 +85,6 @@ class AddEditIssueView extends React.Component {
     const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
 
     return [issueLevel1, issueLevel2, issueLevel3];
-  };
-
-  goToPrevStep = () => {
-    this.props.cancelEditingAppealIssue();
-
-    return true;
   };
 
   validateForm = () => {
@@ -147,10 +145,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You have deleted issue ${issueIndex + 1}.`
-    ).then(() => {
-      this.props.cancelEditingAppealIssue();
-      this.props.deleteAppealIssue(vacolsId, issueId);
-    });
+    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   };
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
