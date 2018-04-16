@@ -45,7 +45,7 @@ const tbodyStyling = css({
 });
 const smallTopMargin = css({ marginTop: '1rem' });
 
-class SelectDispositionsView extends React.Component {
+class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
     path: `/tasks/${this.props.vacolsId}/dispositions`

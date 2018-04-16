@@ -120,15 +120,15 @@ class AddEditIssueView extends React.Component {
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
     let url = `/appeals/${appeal.id}/issues`;
     let requestMethod = 'requestSave';
-    let requestVerb = 'create';
+    let successMsg = 'You have created a new issue.';
 
     if (this.props.action === 'edit') {
       url += `/${issue.vacols_sequence_id}`;
       requestMethod = 'requestUpdate';
-      requestVerb = 'update';
+      successMsg = `You have updated issue ${issueIndex + 1}`
     }
 
-    this.props[requestMethod](url, { data: params }, `You have ${requestVerb}d issue ${Math.min(issueIndex + 1, 1)}.`).
+    this.props[requestMethod](url, { data: params }, successMsg).
       then((response) => {
         const resp = JSON.parse(response.text);
         const updatedIssues = _.map(resp.issues.data, 'attributes');
