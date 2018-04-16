@@ -1,6 +1,8 @@
 # Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
+#
+# rubocop:disable Metrics/ClassLength
 class Issue
   include ActiveModel::Model
   include ActiveModel::Serialization
@@ -845,6 +847,7 @@ class Issue
     "9999" => "dental or oral condition"
   }.freeze
 
+  # rubocop:disable Style/FormatStringToken
   ISSUE_DESCRIPTIONS = {
     "01" => "Burial benefits",
     "02" => {
@@ -1091,6 +1094,7 @@ class Issue
       "01" => "Fiduciary appointment"
     }
   }.freeze
+  # rubocop:enable Style/FormatStringToken
 
   PROGRAMS = {
     "01" => :vba_burial,
@@ -1258,6 +1262,10 @@ class Issue
     end
 
     def load_from_vacols(hash)
+      disposition = nil
+      if hash["issdc"]
+        disposition = Constants.CaseDispositionDescriptionById[hash["issdc"]].parameterize.underscore.to_sym
+      end
       new(
         id: hash["isskey"],
         vacols_sequence_id: hash["issseq"],
@@ -1265,9 +1273,9 @@ class Issue
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
         # disposition is a snake_case symbol, i.e. :remanded
-        disposition: hash["issdc"] ? (Constants.CaseDispositionDescriptionById[hash["issdc"]]).parameterize.underscore.to_sym : nil,
+        disposition: disposition,
         # readable disposition is a string, i.e. "Remanded"
-        readable_disposition: (Constants.CaseDispositionDescriptionById[hash["issdc"]]),
+        readable_disposition: Constants.CaseDispositionDescriptionById[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end
@@ -1314,3 +1322,4 @@ class Issue
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
