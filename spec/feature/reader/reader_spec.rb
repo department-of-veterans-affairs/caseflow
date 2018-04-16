@@ -117,7 +117,7 @@ RSpec.feature "Reader" do
 
   let(:documents) { [] }
 
-  let(:appeal) do
+  let!(:appeal) do
     Generators::Appeal_v2.create(vacols_record: vacols_record, documents: documents)
   end
 
@@ -277,7 +277,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    context "Welcome gate page", focus: true do
+    context "Welcome gate page" do
       let!(:appeal2) do
         Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents)
       end
@@ -296,6 +296,10 @@ RSpec.feature "Reader" do
 
       let!(:appeal5) do
         Generators::Appeal_v2.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
+      end
+
+      let!(:hearing) do
+        Generators::Hearing.create(appeal: appeal)
       end
 
       scenario "View Hearing Worksheet" do
