@@ -82,7 +82,7 @@ export const CASE_DISPOSITION_DESCRIPTION_BY_ID = {
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
   {}, ...Object.keys(CASE_DISPOSITION_DESCRIPTION_BY_ID).map(
-    (id) => ({ [CASE_DISPOSITION_DESCRIPTION_BY_ID[id].toLowerCase()]: id })
+    (id) => ({ [CASE_DISPOSITION_DESCRIPTION_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
   )
 );
 
