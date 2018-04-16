@@ -3,6 +3,25 @@ require "rainbow"
 
 namespace :local do
   namespace :vacols do
+    desc "A rake task to be used in CI to ensure the DB is ready"
+    task wait_for_connection: :environment do
+      puts "Pinging FACOLS until it responds."
+
+      # rubocop:disable Lint/HandleExceptions
+      300.times do
+        begin
+          if VACOLS::Case.count == 0
+            puts "FACOLS is ready."
+            break
+          end
+        rescue StandardError
+        end
+
+        sleep 1
+      end
+      # rubocop:enable Lint/HandleExceptions
+    end
+
     desc "Starts and sets up a dockerized local VACOLS"
     task setup: :environment do
       puts "Stopping vacols-db and removing existing volumes"
@@ -188,7 +207,7 @@ namespace :local do
       CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
-        rows.flatten.each do |row|
+        rows.to_a.flatten.each do |row|
           next if row.nil?
           sanitizer.sanitize(klass, row)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
