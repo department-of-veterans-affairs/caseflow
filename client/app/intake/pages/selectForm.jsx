@@ -11,11 +11,7 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const enabledFormTypes = _.filter(FORM_TYPES, (form) => {
-      return (
-        form.category === 'ramp' || (this.props.featureToggles.intakeAma && form.category === 'ama')
-      );
-    });
+    const enabledFormTypes = this.props.featureToggles.intakeAma ? FORM_TYPES : _.filter(FORM_TYPES, {category: 'ramp'});
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
