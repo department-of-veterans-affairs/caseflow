@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
-import CASE_DISPOSITION_DESCRIPTION_BY_ID from '../../../constants/CaseDispositionDescriptionById.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -54,8 +54,8 @@ export const DECISION_TYPES = {
 };
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
-  {}, ...Object.keys(CASE_DISPOSITION_DESCRIPTION_BY_ID).map(
-    (id) => ({ [CASE_DISPOSITION_DESCRIPTION_BY_ID[id].toLowerCase()]: id })
+  {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
+    (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase()]: id })
   )
 );
 

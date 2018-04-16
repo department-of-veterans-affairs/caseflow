@@ -1264,7 +1264,7 @@ class Issue
     def load_from_vacols(hash)
       disposition = nil
       if hash["issdc"]
-        disposition = Constants.CaseDispositionDescriptionById[hash["issdc"]].parameterize.underscore.to_sym
+        disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]].parameterize.underscore.to_sym
       end
       new(
         id: hash["isskey"],
@@ -1275,7 +1275,7 @@ class Issue
         # disposition is a snake_case symbol, i.e. :remanded
         disposition: disposition,
         # readable disposition is a string, i.e. "Remanded"
-        readable_disposition: Constants.CaseDispositionDescriptionById[hash["issdc"]],
+        readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end
