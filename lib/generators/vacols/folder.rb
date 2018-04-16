@@ -1,10 +1,10 @@
 class Generators::Vacols::Folder
   class << self
     def folder_attrs
-      {ticknum: 877483,
+      {ticknum: "877483",
        ticorkey: "CK168505",
        tistkey: "CRUSSEL",
-       tinum: 8927941,
+       tinum: "8927941",
        tifiloc: "A",
        tiaddrto: nil,
        titrnum: "626343664S",
@@ -27,7 +27,7 @@ class Generators::Vacols::Folder
        tispare2: nil,
        tispare3: nil,
        tiread1: nil,
-       tiread2: 5371173,
+       tiread2: "5371173",
        timt: nil,
        tisubj1: nil,
        tisubj: nil,

@@ -1,7 +1,7 @@
 class Generators::Vacols::Staff
   class << self
     def staff_attrs
-      {stafkey: 98,
+      {stafkey: "98",
        susrpw: nil,
        susrsec: nil,
        susrtyp: nil,
@@ -9,9 +9,9 @@ class Generators::Vacols::Staff
        snamef: nil,
        snamemi: nil,
        snamel: "98 Advance Pending Intake",
-       slogid: 98,
+       slogid: "98",
        stitle: nil,
-       sorg: 98,
+       sorg: "98",
        sdept: nil,
        saddrnum: nil,
        saddrst1: nil,

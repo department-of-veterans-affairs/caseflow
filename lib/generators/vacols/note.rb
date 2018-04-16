@@ -2,7 +2,7 @@ class Generators::Vacols::Note
   class << self
     def note_attrs
       {tasknum: "877483D4",
-       tsktknm: 877483,
+       tsktknm: "877483",
        tskstfas: "JRAYNOR",
        tskactcd: "B",
        tskclass: "ACTIVE",

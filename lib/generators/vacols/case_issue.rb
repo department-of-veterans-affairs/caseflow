@@ -1,7 +1,7 @@
 class Generators::Vacols::CaseIssue
   class << self
     def case_issue_attrs
-      {isskey: 877483,
+      {isskey: "877483",
        issseq: 8,
        issprog: "02",
        isscode: "12",
