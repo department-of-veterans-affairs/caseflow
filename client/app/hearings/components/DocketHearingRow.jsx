@@ -147,7 +147,7 @@ export class DocketHearingRow extends React.PureComponent {
             {hearing.vbms_id}
           </ViewableItemLink>
           <span {...issueCountStyling}>
-            {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
+            {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
           </span>
         </td>
         <td className="cf-hearings-docket-rep">

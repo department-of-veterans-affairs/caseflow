@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "5e6830534124f578f43c619c8620c0560365aa55"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "aedd9ddfee4018a26b8b9ad77b519eb61ad03382"
 
 gem "moment_timezone-rails"
 
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "783200ca61b57fc75f818334838181993535229a"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -89,7 +89,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging, :ssh_forwarding, :local do
+group :production, :staging, :ssh_forwarding, :local, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"

@@ -2,6 +2,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"
 
+  attribute :hearing_date, :datetime
+
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 

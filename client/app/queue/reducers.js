@@ -114,7 +114,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
       pendingChanges: {
         appeals: {
           [action.payload.appealId]: {
-            $merge: action.payload.attributes
+            attributes: {
+              $merge: action.payload.attributes
+            }
           }
         }
       }
@@ -175,6 +177,30 @@ const workQueueReducer = (state = initialState, action = {}) => {
       },
       editingIssue: {
         $set: {}
+      }
+    });
+  }
+  case ACTIONS.DELETE_EDITING_APPEAL_ISSUE: {
+    const { appealId, issueId } = action.payload;
+    const { pendingChanges: { appeals } } = state;
+
+    const issues = _.reject(appeals[appealId].attributes.issues,
+      (issue) => issue.vacols_sequence_id === Number(issueId));
+
+    return update(state, {
+      pendingChanges: {
+        appeals: {
+          [appealId]: {
+            attributes: {
+              issues: {
+                $set: issues
+              }
+            }
+          }
+        },
+        editingIssue: {
+          $set: {}
+        }
       }
     });
   }
