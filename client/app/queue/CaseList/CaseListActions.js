@@ -39,9 +39,12 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
   payload: { searchQuery }
 });
 
-export const fetchAppealsUsingVeteranId = (veteranId) =>
+export const fetchAppealsUsingVeteranId = (searchQuery) =>
   (dispatch) => {
-    if (!veteranId.match(/\d{9}/)) {
+    const veteranId = searchQuery.replace(/\D/g, '');
+    // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
+
+    if (!veteranId.match(/\d{7,9}/)) {
       dispatch(fetchAppealUsingInvalidVeteranIdFailed(veteranId));
 
       return;
