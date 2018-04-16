@@ -84,6 +84,10 @@ class Issue
     codes[2..-1].zip(labels[2..-1]).map { |code, label| "#{code} - #{label}" }
   end
 
+  def dic
+    program == :compensation && codes[1] == "08"
+  end
+
   def formatted_program_type_levels
     [
       [

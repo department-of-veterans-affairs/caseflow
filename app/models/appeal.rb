@@ -55,6 +55,10 @@ class Appeal < ApplicationRecord
     self.class.repository.aod(vacols_id)
   end
 
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
+  end
+
   cache_attribute :remand_return_date do
     # Note: Returns nil if the appeal is active, returns false if the appeal is
     # closed but does not have a remand return date (false is cached, nil is not).
@@ -303,6 +307,7 @@ class Appeal < ApplicationRecord
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
       "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
