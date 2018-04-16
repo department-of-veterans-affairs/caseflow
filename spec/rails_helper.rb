@@ -178,6 +178,40 @@ def current_user
   User.current_user
 end
 
+# Utility functions for reading CSV data
+def dateshift_field(items, date_shift, k)
+  items.map! do |item|
+    item[k] = item[k] + date_shift if item[k]
+    item
+  end
+end
+
+def truncate_string(items, sql_type, k)
+  max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
+  items.map! do |item|
+    item[k] = item[k][0..max_index] if item[k]
+    item
+  end
+end
+
+def read_csv(klass, date_shift)
+  items = []
+  klass.delete_all
+  CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
+    h = row.to_h
+    items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
+  end
+  klass.columns_hash.each do |k, v|
+    if v.type == :datetime
+      dateshift_field(items, date_shift, k)
+    elsif v.type == :string
+      truncate_string(items, v.sql_type, k)
+    end
+  end
+
+  klass.import(items)
+end
+
 # Setup fakes
 Appeal.repository = AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
@@ -196,6 +230,12 @@ RSpec.configure do |config|
   end
   config.before(:all) do
     User.unauthenticate!
+
+    # Load the VFTYPES and ISSREF tables
+    date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
+
+    read_csv(VACOLS::Vftypes, date_shift)
+    read_csv(VACOLS::Issref, date_shift)
   end
 
   config.after(:each) do
