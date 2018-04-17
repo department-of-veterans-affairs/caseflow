@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module Constants::AttorneyJudgeTeams
   JUDGES = { "BVADAMES" =>
   { judge_name: "Dorilyn Ames",
@@ -540,5 +541,5 @@ module Constants::AttorneyJudgeTeams
                     { name: "Carolyn Krasinski", css_id: "BVACLKRAS" },
                     { name: "Kimberly Mitchell", css_id: "BVAKMITCHELL" },
                     { name: "Neely Peden", css_id: "VACOPEDENN" }] } }.freeze
-  # rubocop:enable Metrics/LineLength
 end
+# rubocop:enable Metrics/ModuleLength

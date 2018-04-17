@@ -41,7 +41,8 @@ class UserRepository
 
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
-      first_name, last_name = name.first, name.last
+      first_name = name.first
+      last_name = name.last
       staff = VACOLS::Staff.where("snamef LIKE ? and snamel LIKE ?", "%#{first_name}%", "%#{last_name}%")
       if staff.size > 1
         staff = VACOLS::Staff.where(snamef: first_name, snamel: last_name)

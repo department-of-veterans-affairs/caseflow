@@ -4,7 +4,8 @@ namespace :queue do
   namespace :attorney_judge_team do
     desc "Generate attorney judge team list"
     task generate: [:environment] do
-      CHIEFS = ["Bob Scharnberger", "Anthony Scire", "Cherry Crawford", "Cynthia Bruce", "John Jones", "Keith Allen", "Theresa Catino"].freeze
+      CHIEFS = ["Bob Scharnberger", "Anthony Scire", "Cherry Crawford",
+                "Cynthia Bruce", "John Jones", "Keith Allen", "Theresa Catino"].freeze
       result = {}
       not_found = []
       CSV.foreach(Rails.root.join("lib", "tasks", "queue", "files", "attorneys_judges_chiefs.csv")) do |row|
