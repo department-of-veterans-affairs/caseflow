@@ -19,7 +19,7 @@ const formatExplanation = (intake) => {
     return `Error: ${explanationCopy[intake.error_code]}`;
   }
 
-  if (!intake.cancel_other) {
+  if (intake.completion_status === 'canceled' && !intake.cancel_reason) {
     return 'Canceled'
   }
 
