@@ -13,7 +13,6 @@ import {
   resetErrorMessages,
   resetSuccessMessages,
   resetSaveState,
-  showErrorMessage
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
@@ -64,7 +63,6 @@ SignableListView.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'messages')
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -73,7 +71,6 @@ const mapDispatchToProps = (dispatch) => ({
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
-    showErrorMessage
   }, dispatch)
 });
 
