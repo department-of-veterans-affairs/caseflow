@@ -10,9 +10,13 @@ import { FORM_TYPES, PAGE_PATHS } from '../constants';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
+  setFormTypeFromDropdown = (formObject) => {
+    this.props.setFormType(formObject.value);
+  }
+
   render() {
     const amaEnabled = this.props.featureToggles.intakeAma;
-    const enabledFormTypes = amaEnabled ? FORM_TYPES : _.filter(FORM_TYPES, { category: 'ramp' });
+    const enabledFormTypes = amaEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'ramp' });
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
@@ -46,7 +50,7 @@ class SelectForm extends React.PureComponent {
         label="Which form are you processing?"
         placeholder="Enter or select form"
         options={radioOptions}
-        onChange={this.props.setFormType}
+        onChange={this.setFormTypeFromDropdown}
         value={this.props.formType} />}
     </div>;
   }
