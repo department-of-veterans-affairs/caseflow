@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   setFormTypeFromDropdown = (formObject) => {
-    this.props.setFormType(formObject.value)
+    this.props.setFormType(formObject.value);
   }
 
   render() {
