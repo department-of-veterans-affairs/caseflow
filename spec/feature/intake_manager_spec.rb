@@ -23,6 +23,13 @@ RSpec.feature "Intake Manager Page" do
 
     scenario "Only included errors and cancellations appear" do
       RampElectionIntake.create!(
+        veteran_file_number: "1100",
+        completed_at: 5.minutes.ago,
+        completion_status: :canceled,
+        user: current_user
+      )
+
+      RampElectionIntake.create!(
         veteran_file_number: "1110",
         completed_at: 10.minutes.ago,
         completion_status: :error,
@@ -56,6 +63,9 @@ RSpec.feature "Intake Manager Page" do
       )
 
       visit "/intake/manager"
+
+      expect(find("#table-row-4")).to have_content("1100")
+      expect(find("#table-row-4")).to_not have_content(":")
 
       expect(find("#table-row-3")).to have_content("1110")
       expect(find("#table-row-3")).to have_content("12/07/2017")

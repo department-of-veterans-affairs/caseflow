@@ -19,13 +19,9 @@ const formatExplanation = (intake) => {
     return `Error: ${explanationCopy[intake.error_code]}`;
   }
 
-  if (intake.completion_status === 'canceled' && !intake.cancel_reason) {
-    return 'Canceled';
-  }
-
   const cancelExplanation = intake.cancel_other || explanationCopy[intake.cancel_reason];
 
-  return `Canceled: ${cancelExplanation}`;
+  return !cancelExplanation ? 'Canceled' : `Canceled: ${cancelExplanation}`;
 };
 
 const columns = [
