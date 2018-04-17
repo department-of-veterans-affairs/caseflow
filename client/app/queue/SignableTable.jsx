@@ -24,7 +24,7 @@ const subHeadStyle = css({
   color: COMMON_COLORS.GREY_MEDIUM
 });
 
-class ReviewableTable extends React.PureComponent {
+class SignableTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getAppealForTask = (task, attr) => {
@@ -65,26 +65,24 @@ class ReviewableTable extends React.PureComponent {
   ];
 
   render = () => {
-    const tasks = sortTasks(_.pick(this.props, 'tasks', 'appeals'));
-    const reviewableTasks = [];
-    for (const k in tasks) {
-      if (tasks[k].attributes.task_type === 'Review') {
-        reviewableTasks.push(tasks[k]);
-      }
-    }
+    const tasks = ;
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={reviewableTasks}
+      rowObjects={
+        sortTasks(
+          _.pick(this.props, 'tasks', 'appeals')
+        ).filter(t => t.attributes.task_type === 'Review')
+      }
       getKeyForRow={this.getKeyForRow}
     />;
   }
 }
 
-ReviewableTable.propTypes = {
+SignableTable.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
-export default connect(mapStateToProps)(ReviewableTable);
+export default connect(mapStateToProps)(SignableTable);
