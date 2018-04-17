@@ -9,9 +9,12 @@ namespace :queue do
       result = {}
       not_found = []
 
-      data = CSV.read(Rails.root.join("lib", "tasks", "queue", "files", "attorneys_judges_chiefs.csv"))
+      file_in = Rails.root.join("lib", "tasks", "queue", "files", "attorneys_judges_chiefs.csv")
+      file_out = Rails.root.join("lib", "tasks", "queue", "files", "attorneys_judges_chiefs_with_css_ids.csv")
 
-      CSV.open(Rails.root.join("lib", "tasks", "queue", "files", "attorneys_judges_chiefs_with_css_ids.csv"), "wb") do |csv|
+      data = CSV.read(file_in)
+
+      CSV.open(file_out, "wb") do |csv|
         csv << ["Chief Name", "Judge Name", "Judge CSS ID", "Attorney Name", "Attorney CSS ID"]
 
         data.each do |row|
@@ -35,7 +38,6 @@ namespace :queue do
         end
         puts result.inspect
       end
-
     end
   end
 end

@@ -32,8 +32,9 @@ class Judge
   end
 
   def attorneys
-    (Constants::AttorneyJudgeTeams::JUDGES[user.css_id].try(:[], :attorneys) || []).map do |attorney|
-      User.create_from_vacols(css_id: attorney[:css_id], station_id: User::BOARD_STATION_ID, full_name: attorney[:name])
+    return [] unless user
+    (Constants::AttorneyJudgeTeams::JUDGES[user.css_id].try(:[], :attorneys) || []).map do |css_id|
+      User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
     end
   end
 

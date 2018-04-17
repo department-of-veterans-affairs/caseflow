@@ -39,6 +39,11 @@ class UserRepository
       staff_record_by_css_id(css_id).stitle
     end
 
+    def vacols_full_name(css_id)
+      record = staff_record_by_css_id(css_id)
+      FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
+    end
+
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first
