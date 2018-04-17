@@ -267,7 +267,7 @@ describe User do
   end
 
   context ".create_from_vacols" do
-    subject { Judge.create_from_vacols(css_id: "VACOFODR", station_id: "283", full_name: "Fred Odraine") }
+    subject { User.create_from_vacols(css_id: "VACOFODR", station_id: "283", full_name: "Fred Odraine") }
 
     it "should create a user record" do
       expect(subject.class).to eq User
