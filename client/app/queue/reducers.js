@@ -5,8 +5,11 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
-import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
+
+// TODO: Remove this when we move entirely over to the appeals search.
+import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 export const initialState = {
   judges: {},
@@ -219,9 +222,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
 };
 
 const rootReducer = combineReducers({
-  ui: uiReducer,
+  caseList: caseListReducer,
+  caseSelect: caseSelectReducer,
   queue: workQueueReducer,
-  caseSelect: caseSelectReducer
+  ui: uiReducer
 });
 
 export default timeFunction(

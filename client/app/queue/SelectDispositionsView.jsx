@@ -106,7 +106,8 @@ class SelectDispositionsView extends React.PureComponent {
     valueFunction: (issue, idx) => <IssueList
       appeal={{ issues: [issue] }}
       idxToDisplay={idx + 1}
-      showDisposition={false} />
+      showDisposition={false}
+      stretchToFullWidth />
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>

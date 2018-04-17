@@ -57,7 +57,7 @@ RSpec.feature "Queue" do
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
-  context "search for appeals using veteran id" do
+  context "reader-style search for appeals using veteran id" do
     scenario "appeal not found" do
       visit "/queue"
       fill_in "searchBar", with: "obviouslyfakecaseid"
@@ -99,6 +99,132 @@ RSpec.feature "Queue" do
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_link("Back to Your Queue", href: "/queue")
+    end
+  end
+
+  context "queue case search for appeals using veteran id" do
+    let(:appeal) { appeals.first }
+    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
+    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+    before { FeatureToggle.enable!(:queue_case_search) }
+    after { FeatureToggle.disable!(:queue_case_search) }
+
+    context "when invalid Veteran ID input" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: invalid_veteran_id
+        click_on "Search"
+      end
+
+      it "page displays invalid Veteran ID message" do
+        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when no appeals found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: veteran_id_with_no_appeals
+        click_on "Search"
+      end
+
+      it "page displays no cases found message" do
+        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when backend encounters an error" do
+      before do
+        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "displays error message" do
+        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        click_on "Search"
+
+        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when one appeal found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "page displays table of results" do
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "search bar stays in top right" do
+        expect(page).to have_selector("#searchBar")
+        expect(page).to_not have_selector("#searchBarEmptyList")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+
+      it "clicking on docket number sends us to the case details page" do
+        click_on appeal.docket_number
+        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}")
+      end
     end
   end
 
