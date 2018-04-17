@@ -62,8 +62,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :certification_date
 
   attribute :power_of_attorney do
-    # TODO: change this to use our more sophisticated poa data fetching mechanism
-    object.representative
+    {
+      representative_type: object.power_of_attorney.vacols_representative_type,
+      representative_name: object.power_of_attorney.vacols_representative_name
+    }
   end
 
   attribute :regional_office do

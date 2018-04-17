@@ -66,12 +66,13 @@ export default class AppealDetail extends React.PureComponent {
   };
 
   getListElements = () => {
+    const poaAttr = this.getAppealAttr('power_of_attorney');
     const listElements = [{
       label: 'Type',
       value: renderAppealType(this.props.appeal)
     }, {
       label: 'Power of Attorney',
-      value: this.getAppealAttr('power_of_attorney')
+      value: `${poaAttr.representative_type} - ${poaAttr.representative_name}`
     }, {
       label: 'Regional Office',
       valueFunction: () => {

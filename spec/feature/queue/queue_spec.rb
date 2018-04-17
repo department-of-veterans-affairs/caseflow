@@ -318,8 +318,10 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing preference")
 
+        poa = appeal.power_of_attorney
+        expected_text = "Power of Attorney: #{poa.vacols_representative_type} - #{poa.vacols_representative_name}"
+        expect(page).to have_content(expected_text)
         expect(page).to have_content("Type: CAVC")
-        expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
     end
