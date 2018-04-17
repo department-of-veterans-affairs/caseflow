@@ -151,6 +151,7 @@ QueueApp.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
+  userRole: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };
