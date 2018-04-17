@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -17,6 +16,7 @@ import AttorneyListView from './AttorneyListView';
 import SignableListView from './SignableListView';
 
 import QueueDetailView from './QueueDetailView';
+import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -26,37 +26,17 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
 
 const appStyling = css({ paddingTop: '3rem' });
-const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
-  '.section-search': {
-    '& .usa-alert-info, & .usa-alert-error': {
-      marginBottom: '1.5rem',
-      marginTop: 0
-    },
-    '& .cf-search-input-with-close': {
-      marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
-    },
-    '& .cf-submit': {
-      width: '10.5rem'
-    }
-  }
-});
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <CaseSelectSearch
-      navigateToPath={(path) => {
-        const redirectUrl = encodeURIComponent(window.location.pathname);
-
-        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
-      }}
-      alwaysShowCaseSelectionModal
+    <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
-      searchSize="big"
-      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    {this.props.userRole === "Attorney"
-      ? <AttorneyListView {...this.props} />
-      : <SignableListView {...this.props} />
-    }
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {this.props.userRole === "Attorney"
+        ? <AttorneyListView {...this.props} />
+        : <SignableListView {...this.props} />
+      }
+    </SearchEnabledView>
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -157,7 +137,7 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
+  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
   reviewActionType: state.queue.pendingChanges.taskDecision.type
 });

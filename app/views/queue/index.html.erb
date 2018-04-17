@@ -7,7 +7,8 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user)
+      phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
+      queue_case_search: FeatureToggle.enabled?(:queue_case_search, user: current_user)
     }
   }) %>
 <% end %>
