@@ -353,6 +353,17 @@ ActiveRecord::Schema.define(version: 20180416184214) do
     t.date "nod_date"
   end
 
+  create_table "ramp_election_rollbacks", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "ramp_election_id"
+    t.string "reason"
+    t.string "reopened_vacols_ids", array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ramp_election_id"], name: "index_ramp_election_rollbacks_on_ramp_election_id"
+    t.index ["user_id"], name: "index_ramp_election_rollbacks_on_user_id"
+  end
+
   create_table "ramp_elections", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "notice_date"
