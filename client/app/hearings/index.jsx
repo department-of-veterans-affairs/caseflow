@@ -12,6 +12,9 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import detectie from 'detectie';
+import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
+
 
 const Hearings = ({ hearings }) => {
 
@@ -44,7 +47,14 @@ const Hearings = ({ hearings }) => {
                 <ScrollToTop />
                 <PageRoute exact path="/hearings/dockets"
                   title="Your Hearing Days"
-                  component={() => <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />} />
+                  component={() => detectie() ?
+                  <StatusMessage title="Internet Explorer is not supported">
+                  To access Hearing Prep, you must use Chrome as your browser.<br />
+                  If you need to install Chrome on your computer, please call the <br/>
+                  VA Enterprise Service Desk at
+                   <a className="hearing-status-message" href="tel:855-673-4357"> 855-673-4357</a>.
+                  </StatusMessage> : <DocketsContainer veteranLawJudge={hearings.veteran_law_judge}/>}
+                  />
 
                 <PageRoute exact path="/hearings/dockets/:date"
                   breadcrumb="Daily Docket"
@@ -65,6 +75,7 @@ const Hearings = ({ hearings }) => {
                       hearingId={props.match.params.hearingId} />
                   )}
                 />
+
 
               </AppFrame>
             </NavigationBar>

@@ -1924,6 +1924,10 @@ detect-node@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.3.tgz#a2033c09cc8e158d37748fbde7507832bd6ce127"
 
+detectie@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/detectie/-/detectie-1.0.0.tgz#66b2cae2236d4d29ef71161180957bf89fbe535d"
+
 di@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/di/-/di-0.0.1.tgz#806649326ceaa7caa3306d75d985ea2748ba913c"

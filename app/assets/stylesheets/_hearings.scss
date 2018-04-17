@@ -537,6 +537,10 @@
   }
 }
 
+.hearing-status-message {
+  text-decoration: underline;
+}
+
 @media print {
   body {-webkit-print-color-adjust: exact;}
   h1,
