@@ -155,7 +155,7 @@ To seed the VACOLS container with data you'll need to generate the data for the 
 ## Certification Test Scenarios
 
 | BFKEY/VACOLS_ID | Case | 
-| ----- | ---------------- | ---------- |
+| ----- | ---------------- | 
 | 2367429 | Ready to certify with all dates matching |
 | 2774535 | Ready to certify with fuzzy-matched dates |
 | 2771149 | Mismatched documents |
