@@ -57,7 +57,7 @@ RSpec.feature "Queue" do
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
-  context "search for appeals using veteran id" do
+  context "reader-style search for appeals using veteran id" do
     scenario "appeal not found" do
       visit "/queue"
       fill_in "searchBar", with: "obviouslyfakecaseid"
@@ -102,6 +102,132 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "queue case search for appeals using veteran id" do
+    let(:appeal) { appeals.first }
+    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
+    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+    before { FeatureToggle.enable!(:queue_case_search) }
+    after { FeatureToggle.disable!(:queue_case_search) }
+
+    context "when invalid Veteran ID input" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: invalid_veteran_id
+        click_on "Search"
+      end
+
+      it "page displays invalid Veteran ID message" do
+        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when no appeals found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: veteran_id_with_no_appeals
+        click_on "Search"
+      end
+
+      it "page displays no cases found message" do
+        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when backend encounters an error" do
+      before do
+        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "displays error message" do
+        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        click_on "Search"
+
+        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when one appeal found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "page displays table of results" do
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "search bar stays in top right" do
+        expect(page).to have_selector("#searchBar")
+        expect(page).to_not have_selector("#searchBarEmptyList")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+
+      it "clicking on docket number sends us to the case details page" do
+        click_on appeal.docket_number
+        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}")
+      end
+    end
+  end
+
   context "loads queue table view" do
     scenario "table renders row per task" do
       visit "/queue"
@@ -136,7 +262,10 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
+        # TODO: these false positives are fixed in rubocop 0.53.0 (#5496)
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
@@ -146,7 +275,9 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
@@ -206,7 +337,9 @@ RSpec.feature "Queue" do
         expect(page).to have_content("The veteran is the appellant.")
 
         expect(page).to have_content("She/Her")
+        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        # rubocop:enable Style/FormatStringToken
         expect(page).to have_content("The veteran is the appellant.")
       end
 
@@ -304,7 +437,7 @@ RSpec.feature "Queue" do
         # select all dispositions
         table_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-2']").click
         end
 
         click_on "Finish dispositions"
@@ -348,8 +481,6 @@ RSpec.feature "Queue" do
       scenario "deletes issue" do
         appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
         old_issues = appeal.issues
-        visit "/queue"
-
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -422,11 +553,16 @@ RSpec.feature "Queue" do
 
         issue_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-#{issue_rows.index(row) % 7}']").click
         end
 
-        click_on "Finish dispositions"
+        click_on "Select remand reasons"
+        expect(page).to have_content("Select Remand Reasons")
 
+        remand_reasons = page.execute_script "return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')"
+        remand_reasons.sample(4).each(&:click)
+
+        click_on "Review Draft Decision"
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: "12345"
@@ -464,7 +600,7 @@ RSpec.feature "Queue" do
 
       issue_rows.each do |row|
         row.find(".Select-control").click
-        row.find("div[id$='--option-1']").click
+        row.find("div[id$='--option-2']").click
       end
 
       click_on "Finish dispositions"

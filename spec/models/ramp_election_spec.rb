@@ -24,7 +24,7 @@ describe RampElection do
     )
   end
 
-  context "#active scope" do
+  context ".active scope" do
     it "includes any RampElection where end_product_status is nil or not inactive" do
       RampElection.create!(
         veteran_file_number: "1",
@@ -52,6 +52,25 @@ describe RampElection do
         established_at: Time.zone.now
       )
       expect(RampElection.active.count).to eq(2)
+    end
+  end
+
+  context ".sync_all!" do
+    it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
+      ramp_election1 = RampElection.create!(
+        veteran_file_number: "1"
+      )
+      ramp_election2 = RampElection.create!(
+        veteran_file_number: "2"
+      )
+      expect(ramp_election1).to receive(:recreate_issues_from_contentions!)
+      expect(ramp_election1).to receive(:sync_ep_status!)
+      expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
+      expect(Rails.logger).to receive(:error)
+      expect(Raven).to receive(:capture_exception)
+      allow(RampElection).to receive(:active).and_return([ramp_election1, ramp_election2])
+
+      RampElection.sync_all!
     end
   end
 
@@ -300,6 +319,33 @@ describe RampElection do
     end
   end
 
+  context "#end_product_canceled?" do
+    subject { ramp_election.end_product_canceled? }
+
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: ep_status
+        }
+      )
+    end
+
+    context "when end product is canceled" do
+      let(:ep_status) { "CAN" }
+
+      it { is_expected.to be true }
+    end
+
+    context "when end product is not canceled" do
+      let(:ep_status) { "PEND" }
+
+      it { is_expected.to be false }
+    end
+  end
+
   context "#control_time" do
     subject { ramp_election.control_time }
 
@@ -433,6 +479,47 @@ describe RampElection do
 
     it "returns the last successful intake" do
       expect(ramp_election.successful_intake).to eq(last_successful_intake)
+    end
+  end
+
+  context "#rollback!" do
+    subject { ramp_election.rollback! }
+
+    let!(:ramp_election) do
+      RampElection.create!(
+        veteran_file_number: "44444444",
+        notice_date: 31.days.ago,
+        option_selected: "higher_level_review",
+        receipt_date: 5.days.ago,
+        end_product_reference_id: "1234",
+        established_at: 3.days.ago,
+        end_product_status: "CAN",
+        end_product_status_last_synced_at: Time.zone.now
+      )
+    end
+
+    let!(:ramp_closed_appeals) do
+      %w[12345 23456].map do |vacols_id|
+        ramp_election.ramp_closed_appeals.create!(vacols_id: vacols_id)
+      end
+    end
+
+    it "clears out all fields associated with establishment and deletes closed appeals" do
+      subject
+
+      expect(ramp_election.reload).to have_attributes(
+        veteran_file_number: "44444444",
+        notice_date: 31.days.ago.to_date,
+        option_selected: nil,
+        receipt_date: nil,
+        end_product_reference_id: nil,
+        established_at: nil,
+        end_product_status: nil,
+        end_product_status_last_synced_at: nil
+      )
+
+      expect(ramp_closed_appeals.first).to_not be_persisted
+      expect(ramp_closed_appeals.last).to_not be_persisted
     end
   end
 end

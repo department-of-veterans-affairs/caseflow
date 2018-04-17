@@ -16,4 +16,3 @@ export const fetchStuckTasks = () => (dispatch) => {
       dispatch(populateStuckTasks(response.body));
     });
 };
-

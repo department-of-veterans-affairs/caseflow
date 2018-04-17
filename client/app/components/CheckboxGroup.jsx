@@ -1,6 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const renderCheckbox = (option, onChange, values = {}) => <div className="checkbox" key={option.id}>
+  <input
+    name={option.id}
+    onChange={onChange}
+    type="checkbox"
+    id={option.id}
+    checked={values[option.id]}
+    disabled={option.disabled ? 'disabled' : ''}
+  />
+  <label className="question-label" htmlFor={option.id}>
+    {option.label}
+  </label>
+</div>;
+
 export default class CheckboxGroup extends React.Component {
 
   // number of options that render horizontally by default
@@ -16,7 +30,8 @@ export default class CheckboxGroup extends React.Component {
       vertical,
       hideLabel,
       values,
-      errorMessage
+      errorMessage,
+      getCheckbox
     } = this.props;
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
@@ -36,32 +51,15 @@ export default class CheckboxGroup extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {label || name}
       </legend>
-
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-
-      {options.map((option) =>
-
-        <div className="checkbox" key={option.id}>
-          <input
-            name={option.id}
-            onChange={onChange}
-            type="checkbox"
-            id={option.id}
-            checked={values[option.id]}
-            disabled={option.disabled ? 'disabled' : ''}
-          />
-          <label className="question-label" htmlFor={option.id}>
-            {option.label}
-          </label>
-        </div>
-
-      )}
+      {options.map((option) => getCheckbox(option, onChange, values))}
     </fieldset>;
   }
 }
 
 CheckboxGroup.defaultProps = {
-  required: false
+  required: false,
+  getCheckbox: renderCheckbox
 };
 
 CheckboxGroup.propTypes = {
@@ -78,5 +76,6 @@ CheckboxGroup.propTypes = {
   required: PropTypes.bool,
   vertical: PropTypes.bool,
   values: PropTypes.object,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  getCheckbox: PropTypes.func
 };
