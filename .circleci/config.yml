@@ -69,6 +69,21 @@ jobs:
             bundle exec rake db:schema:load
 
       - run:
+          name: Danger
+          command: |
+            bundle exec danger
+
+      - run:
+          name: Lint
+          command: |
+            bundle exec rake lint
+
+      - run:
+          name: Security
+          command: |
+            bundle exec rake security_caseflow
+
+      - run:
           name: Wait for FACOLS to be ready
           command: |
             bundle exec rake local:vacols:wait_for_connection
@@ -124,21 +139,6 @@ jobs:
       # the perceived test count.
       - store_test_results:
           path: ~/karma-test-results
-
-      - deploy:
-          name: Danger
-          command: |
-            bundle exec danger
-
-      - deploy:
-          name: Lint
-          command: |
-            bundle exec rake lint
-
-      - deploy:
-          name: Security
-          command: |
-            bundle exec rake security_caseflow
 
       - deploy:
           name: Verify code coverage
