@@ -82,7 +82,7 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-1")).to have_content("Canceled: duplicate EP created outside Caseflow")
       expect(find("#table-row-0")).to have_content("Canceled: I am canceled just because")
 
-      expect(page).not_to have_selector("#table-row-4")
+      expect(page).not_to have_selector("#table-row-5")
     end
   end
 
