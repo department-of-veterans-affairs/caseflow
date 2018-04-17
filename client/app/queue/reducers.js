@@ -169,10 +169,8 @@ const workQueueReducer = (state = initialState, action = {}) => {
 
     if (pendingIssueIds.includes(editingIssueId)) {
       updatedIssues = _.map(issues, (issue) => issue.vacols_sequence_id === editingIssueId ? editingIssue : issue);
-      console.warn('editingIssue found in appeal issues, overwriting');
     } else {
       updatedIssues = issues.concat(editingIssue);
-      console.warn('editingIssue not found in appeal issues, concatenating');
     }
 
     return update(state, {

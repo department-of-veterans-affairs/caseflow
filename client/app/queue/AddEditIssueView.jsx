@@ -91,7 +91,7 @@ class AddEditIssueView extends React.Component {
     const { issue: { program, type, codes } } = this.props;
 
     return program && type && this.getIssueLevelOptions().every((level, idx) =>
-      _.isEmpty(level) || (_.get(codes, idx) in level)
+      _.isEmpty(level) || (codes[idx] in level)
     );
   };
 
@@ -113,12 +113,12 @@ class AddEditIssueView extends React.Component {
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
     let url = `/appeals/${appeal.id}/issues`;
     let requestMethod = 'requestSave';
-    let successMsg = 'You have created a new issue.';
+    let successMsg = 'You created a new issue.';
 
     if (this.props.action === 'edit') {
       url += `/${issue.vacols_sequence_id}`;
       requestMethod = 'requestUpdate';
-      successMsg = `You have updated issue ${issueIndex + 1}`;
+      successMsg = `You updated issue ${issueIndex + 1}`;
     }
 
     this.props[requestMethod](url, { data: params }, successMsg).
@@ -144,7 +144,7 @@ class AddEditIssueView extends React.Component {
 
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
-      `You have deleted issue ${issueIndex + 1}.`
+      `You deleted issue ${issueIndex + 1}.`
     ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   };
 
@@ -225,6 +225,7 @@ class AddEditIssueView extends React.Component {
           required
           name="Issue:"
           placeholder="Select issue"
+          readOnly={!issue.program}
           options={this.renderIssueAttrs(issues)}
           onChange={({ value }) => this.updateIssue({
             type: value,

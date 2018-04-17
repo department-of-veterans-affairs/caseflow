@@ -1,9 +1,11 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
-    ActiveModelSerializers::SerializableResource.new(
-      object.issues,
-      each_serializer: ::WorkQueue::IssueSerializer
-    ).as_json[:data].map { |issue| issue[:attributes] }
+    object.issues.map do |issue|
+      ActiveModelSerializers::SerializableResource.new(
+        issue,
+        serializer: ::WorkQueue::IssueSerializer
+      ).as_json[:data][:attributes]
+    end
   end
 
   attribute :hearings do

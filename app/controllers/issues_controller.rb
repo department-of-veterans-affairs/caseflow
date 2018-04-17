@@ -40,10 +40,12 @@ class IssuesController < ApplicationController
   private
 
   def json_issues(issues)
-    ActiveModelSerializers::SerializableResource.new(
-      issues,
-      each_serializer: ::WorkQueue::IssueSerializer
-    ).as_json[:data].map { |issue| issue[:attributes] }
+    issues.map do |issue|
+      ActiveModelSerializers::SerializableResource.new(
+        issue,
+        serializer: ::WorkQueue::IssueSerializer
+      ).as_json[:data][:attributes]
+    end
   end
 
   def validate_access_to_task

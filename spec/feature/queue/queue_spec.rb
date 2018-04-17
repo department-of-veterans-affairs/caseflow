@@ -472,7 +472,7 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
-        expect(page).to have_content("You have updated issue 1.")
+        expect(page).to have_content("You updated issue 1.")
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
@@ -504,7 +504,7 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
-        expect(page).to have_content "You have created a new issue."
+        expect(page).to have_content "You created a new issue."
         expect(page).to have_content "Program: #{field_values.first}"
         expect(page).to have_content "Issue: #{field_values.second}"
         expect(page).to have_content "Note: added issue"
@@ -533,7 +533,7 @@ RSpec.feature "Queue" do
         expect(page).to have_content "Delete Issue?"
         click_on "Delete issue"
 
-        expect(page).to have_content("You have deleted issue #{issue_idx + 1}")
+        expect(page).to have_content("You deleted issue #{issue_idx + 1}")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues.length - 1)
