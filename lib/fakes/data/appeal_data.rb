@@ -46,29 +46,28 @@ module Fakes::Data::AppealData
     end
   end
 
-
   def self.certification_ready_to_certify
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010,10,13)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011,1,14)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011,2,03)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016,6,27))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010, 10, 13)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 2, 3)),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 6, 27))
     ]
   end
 
   def self.certification_fuzzy_match_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015,9,30)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017,3,19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017,3,29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 9, 30)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 3, 19)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 3, 29))
     ]
   end
 
-   def self.certification_mismatched_documents
+  def self.certification_mismatched_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015,4,9)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011,1,14)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2016,7,24))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 4, 9)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2016, 7, 24))
     ]
   end
 
