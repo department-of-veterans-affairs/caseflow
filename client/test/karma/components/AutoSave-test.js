@@ -83,9 +83,11 @@ describe('AutoSave', () => {
         <AutoSave save={saveFunction} />
       );
       window.close();
-      setTimeout(() => {
+      let temporaryTimeout = setTimeout(() => {
         expect(saveFunction.calledOnce).to.equal(true);
       });
+
+      clearTimeout(temporaryTimeout);
     });
 
     it('before it unmounts', () => {

@@ -904,8 +904,8 @@ RSpec.feature "RAMP Intake" do
         safe_click ".cf-submit.usa-button"
 
         expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+
         fill_in "Search small", with: "12341234"
-        pry
         click_on "Search"
 
         expect(page).to have_current_path("/intake/review-request")

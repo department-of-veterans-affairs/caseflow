@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -58,37 +59,9 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-/* eslint-disable id-length */
-export const CASE_DISPOSITION_DESCRIPTION_BY_ID = {
-  1: 'Allowed',
-  3: 'Remanded',
-  4: 'Denied',
-  5: 'Vacated',
-  6: 'Dismissed, Other',
-  8: 'Dismissed, Death',
-  9: 'Withdrawn',
-  A: 'Advance Allowed in Field',
-  B: 'Benefits Granted by AOJ',
-  D: 'Designation of Record',
-  E: 'Advance Withdrawn Death of Veteran',
-  F: 'Advance Withdrawn by Appellant/Rep',
-  G: 'Advance Failure to Respond',
-  L: 'Manlincon Remand',
-  M: 'Merged Appeal',
-  P: 'RAMP Opt-in',
-  Q: 'Recon Motion Withdrawn',
-  R: 'Reconsideration by Letter',
-  S: 'Stay',
-  U: 'Motion to Vacate Denied',
-  V: 'Motion to Vacate Withdrawn',
-  W: 'Withdrawn from Remand',
-  X: 'Remand Failure to Respond'
-};
-/* eslint-enable id-length */
-
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
-  {}, ...Object.keys(CASE_DISPOSITION_DESCRIPTION_BY_ID).map(
-    (id) => ({ [CASE_DISPOSITION_DESCRIPTION_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
+  {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
+    (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
   )
 );
 
