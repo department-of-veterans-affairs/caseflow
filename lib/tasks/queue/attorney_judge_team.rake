@@ -26,7 +26,6 @@ namespace :queue do
         result[judge_css_id][:attorneys] << { name: row.third.strip,
                                               css_id: attorney_css_id }
       end
-      binding.pry
       puts result.inspect
     end
   end
