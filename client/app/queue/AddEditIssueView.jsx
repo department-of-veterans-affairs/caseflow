@@ -124,8 +124,15 @@ class AddEditIssueView extends React.Component {
     this.props[requestMethod](url, { data: params }, successMsg).
       then((response) => {
         const resp = JSON.parse(response.text);
+        let updatedIssue = {};
 
-        this.updateIssue(resp.issues[0]);
+        if (this.props.action === 'add') {
+          updatedIssue = _.differenceBy(resp.issues, issues, 'vacols_sequence_id')[0];
+        } else {
+          updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
+        }
+
+        this.updateIssue(updatedIssue);
         this.props.saveEditedAppealIssue(this.props.vacolsId);
       });
   };
