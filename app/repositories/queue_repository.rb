@@ -65,6 +65,12 @@ class QueueRepository
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
 
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      update_decass_record(decass_record, {
+
+        })
+
+
       # VACOLS::Decass.create!(
       #   defolder: vacols_id,
       #   deatty: attorney.vacols_attorney_id,
@@ -85,13 +91,7 @@ class QueueRepository
   end
 
   def self.reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
-    # update DECASS table
-    decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
-    unless decass_record
-      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
-      fail Caseflow::Error::QueueRepositoryError, msg
-    end
-
+    decass_record = find_decass_record(vacols_id, created_in_vacols_date)
     # In attorney checkout, we are automatically selecting the judge who
     # assigned the attorney the case. But we also have a drop down for the
     # attorney to select a different judge if they are checking it out to someone else
@@ -104,6 +104,15 @@ class QueueRepository
     # update location with the judge's slogid
     VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
     true
+  end
+
+  def self.find_decass_record(vacols_id, created_in_vacols_date)
+    decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+    unless decass_record
+      msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
+      fail Caseflow::Error::QueueRepositoryError, msg
+    end
+    decass_record
   end
 
   def self.update_decass_record(decass_record, decass_attrs)
