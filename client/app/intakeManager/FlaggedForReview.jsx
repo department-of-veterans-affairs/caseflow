@@ -20,7 +20,7 @@ const formatExplanation = (intake) => {
   }
 
   if (intake.completion_status === 'canceled' && !intake.cancel_reason) {
-    return 'Canceled'
+    return 'Canceled';
   }
 
   const cancelExplanation = intake.cancel_other || explanationCopy[intake.cancel_reason];
