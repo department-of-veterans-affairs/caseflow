@@ -321,9 +321,6 @@
     }
   }
 
-  table {
-    margin: .5em 0 0;
-  }
 }
 
 .cf-hearings-worksheet-data {
@@ -407,6 +404,13 @@
 .cf-hearings-worksheet-issues {
   margin: 0;
   white-space: pre-line;
+  margin: .5em 0 1.5em 0;
+  
+  tr:last-child {
+    .cf-form-textarea {
+      margin-bottom: 0px;
+    }
+  }
 
   .cf-form-textarea {
     min-height: 48px;
