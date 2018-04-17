@@ -21,7 +21,7 @@ const formatExplanation = (intake) => {
 
   const cancelExplanation = intake.cancel_other || explanationCopy[intake.cancel_reason];
 
-  return !cancelExplanation ? 'Canceled' : `Canceled: ${cancelExplanation}`;
+  return cancelExplanation ? `Canceled: ${cancelExplanation}` : 'Canceled';
 };
 
 const columns = [
