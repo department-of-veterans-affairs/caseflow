@@ -61,11 +61,13 @@ export default function decisionViewBase(ComponentToWrap) {
       _.defaults(nextButton, {
         classNames: ['cf-right-side', 'cf-next-step'],
         callback: this.goToNextStep,
-        disabled: this.props.savePending
+        loading: this.props.savePending,
+        name: 'next-button'
       });
       _.defaults(backButton, {
         classNames: ['cf-btn-link', 'cf-prev-step'],
-        callback: this.goToPrevStep
+        callback: this.goToPrevStep,
+        name: 'back-button'
       });
 
       backButton.displayText = `< ${backButton.displayText}`;
