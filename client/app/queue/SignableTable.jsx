@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 import moment from 'moment';
 
 import Table from '../components/Table';
@@ -11,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
+import CaseDetailsLink from './CaseDetailsLink';
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
@@ -18,12 +18,6 @@ import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { WarningSymbol } from '../components/RenderFunctions';
-
-const subHeadStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
-});
 
 class SignableTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -33,18 +27,7 @@ class SignableTable extends React.PureComponent {
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
-  veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
-
-  getCaseDetailsLink = (task) => <React.Fragment>
-    {!task.attributes.task_id && <WarningSymbol />}
-    <Link to={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
-      {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
-    </Link>
-    {!this.veteranIsAppellant(task) && <React.Fragment>
-      <br />
-      <span {...subHeadStyle}>Veteran is not the appellant</span>
-    </React.Fragment>}
-  </React.Fragment>;
+  getCaseDetailsLink = (task) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
 
   getQueueColumns = () => [
     {
