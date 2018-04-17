@@ -785,7 +785,7 @@ class Appeal < ApplicationRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -806,7 +806,7 @@ class Appeal < ApplicationRecord
     end
 
     def reopen_single(appeal:, user:, disposition:)
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       # If the appeal was decided at the board, then it was a remand which means
