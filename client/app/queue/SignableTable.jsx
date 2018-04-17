@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
+import moment from 'moment';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -61,11 +62,14 @@ class SignableTable extends React.PureComponent {
     {
       header: 'Issues',
       valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
+    },
+    {
+      header: 'Days Waiting',
+      valueFunction: (task) => moment().startOf('day').diff(moment(task.attributes.assigned_on), 'days')
     }
   ];
 
   render = () => {
-    const tasks = ;
     return <Table
       columns={this.getQueueColumns}
       rowObjects={
