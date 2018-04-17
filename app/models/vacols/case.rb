@@ -26,32 +26,6 @@ class VACOLS::Case < VACOLS::Record
     "9" => "Clear and Unmistakable Error"
   }.freeze
 
-  DISPOSITIONS = {
-    "1" => "Allowed",
-    "3" => "Remanded",
-    "4" => "Denied",
-    "5" => "Vacated",
-    "6" => "Dismissed, Other",
-    "8" => "Dismissed, Death",
-    "9" => "Withdrawn",
-    "A" => "Advance Allowed in Field",
-    "B" => "Benefits Granted by AOJ",
-    "D" => "Designation of Record",
-    "E" => "Advance Withdrawn Death of Veteran",
-    "F" => "Advance Withdrawn by Appellant/Rep",
-    "G" => "Advance Failure to Respond",
-    "L" => "Manlincon Remand",
-    "M" => "Merged Appeal",
-    "P" => "RAMP Opt-in",
-    "Q" => "Recon Motion Withdrawn",
-    "R" => "Reconsideration by Letter",
-    "S" => "Stay",
-    "U" => "Motion to Vacate Denied",
-    "V" => "Motion to Vacate Withdrawn",
-    "W" => "Withdrawn from Remand",
-    "X" => "Remand Failure to Respond"
-  }.freeze
-
   STATUS = {
     "ACT" => "Active", # Case currently at BVA
     "ADV" => "Advance", # NOD Filed. Case currently at RO
