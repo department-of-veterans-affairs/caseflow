@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../components/Checkbox';
 import FoundIcon from '../../components/FoundIcon';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,6 +12,7 @@ import { populateDailyDocket, getDailyDocket,
   setPrepped } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
 import { CATEGORIES, ACTIONS } from '../analytics';
 import moment from 'moment';
@@ -89,7 +91,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder=""
+            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.id}
