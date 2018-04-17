@@ -12,22 +12,18 @@ const subHeadStyle = css({
   color: COMMON_COLORS.GREY_MEDIUM
 });
 
-class CaseDetailsLink extends React.PureComponent {
-
-  render = () => {
-    console.log(this.props.task, this.props.appeal);
-    return <React.Fragment>
-      {!this.props.task.attributes.task_id && <WarningSymbol />}
-      <Link to={`/tasks/${this.props.task.vacolsId}`} disabled={!this.props.task.attributes.task_id}>
-        {this.props.appeal.attributes.veteran_full_name} ({this.props.appeal.attributes.vbms_id})
-      </Link>
-      {!_.isNull(this.props.appeal) && <React.Fragment>
-        <br />
-        <span {...subHeadStyle}>Veteran is not the appellant</span>
-      </React.Fragment>}
-    </React.Fragment>;
-  };
-}
+const CaseDetailsLink = (props) => {
+  return <React.Fragment>
+    {!props.task.attributes.task_id && <WarningSymbol />}
+    <Link to={`/tasks/${props.task.vacolsId}`} disabled={!props.task.attributes.task_id}>
+      {props.appeal.attributes.veteran_full_name} ({props.appeal.attributes.vbms_id})
+    </Link>
+    {!_.isNull(props.appeal) && <React.Fragment>
+      <br />
+      <span {...subHeadStyle}>Veteran is not the appellant</span>
+    </React.Fragment>}
+  </React.Fragment>;
+};
 
 CaseDetailsLink.propTypes = {
   task: PropTypes.object.isRequired,
