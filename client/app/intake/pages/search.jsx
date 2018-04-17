@@ -5,8 +5,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, FORM_TYPES } from '../constants';
 import { getIntakeStatus } from '../selectors';
+import _ from 'lodash';
 
 const rampIneligibleInstructions = <div>
   <p>
@@ -131,6 +132,8 @@ class Search extends React.PureComponent {
       formType
     } = this.props;
 
+    const selectedForm = _.find(FORM_TYPES, { key: formType });
+
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
@@ -150,8 +153,7 @@ class Search extends React.PureComponent {
 
       <h1>Search for Veteran by ID</h1>
       <p>
-        To continue processing this form,
-        enter the Veteran’s 8 or 9 digit ID number into the search bar below.
+        Enter the Veteran's ID below to process this {selectedForm.name}.
       </p>
 
       <SearchBar

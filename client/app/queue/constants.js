@@ -53,6 +53,12 @@ export const DECISION_TYPES = {
   DRAFT_DECISION: 'DraftDecision'
 };
 
+export const SEARCH_ERROR_FOR = {
+  INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
+  NO_APPEALS: 'NO_APPEALS',
+  UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
+};
+
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
   {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
     (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })

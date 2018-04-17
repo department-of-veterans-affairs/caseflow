@@ -247,6 +247,31 @@ class VACOLS::Case < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
+  def previous_location
+    conn = self.class.connection
+
+    case_id = conn.quote(bfkey)
+
+    result = MetricsService.record("VACOLS: previous_location #{bfkey}",
+                                   service: :vacols,
+                                   name: "previous_location") do
+      conn.select_all(<<-SQL)
+        SELECT LOCSTTO
+        FROM PRIORLOC
+        JOIN (
+          SELECT LOCKEY, LOCDOUT
+          FROM PRIORLOC
+          WHERE LOCKEY = #{case_id}
+            AND LOCDIN IS NULL
+        ) T
+          ON T.LOCKEY = PRIORLOC.LOCKEY
+          AND T.LOCDOUT = PRIORLOC.LOCDIN
+      SQL
+    end
+
+    result.first["locstto"]
+  end
+
   ##
   # This method takes an array of vacols ids and fetches their aod status.
   #
