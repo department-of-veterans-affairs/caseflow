@@ -19,6 +19,10 @@ const formatExplanation = (intake) => {
     return `Error: ${explanationCopy[intake.error_code]}`;
   }
 
+  if (!intake.cancel_other) {
+    return 'Canceled'
+  }
+
   const cancelExplanation = intake.cancel_other || explanationCopy[intake.cancel_reason];
 
   return `Canceled: ${cancelExplanation}`;
