@@ -10,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
+import CaseDetailsLink from './CaseDetailsLink';
 
 import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
@@ -32,18 +33,8 @@ class QueueTable extends React.PureComponent {
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
-  veteranIsAppellant = (task) => _.isNull(this.getAppealForTask(task, 'appellant_full_name'));
 
-  getCaseDetailsLink = (task) => <React.Fragment>
-    {!task.attributes.task_id && <WarningSymbol />}
-    <Link to={`/tasks/${task.vacolsId}`} disabled={!task.attributes.task_id}>
-      {this.getAppealForTask(task, 'veteran_full_name')} ({this.getAppealForTask(task, 'vbms_id')})
-    </Link>
-    {!this.veteranIsAppellant(task) && <React.Fragment>
-      <br />
-      <span {...subHeadStyle}>Veteran is not the appellant</span>
-    </React.Fragment>}
-  </React.Fragment>;
+  getCaseDetailsLink = (task) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
 
   getQueueColumns = () => [
     {
