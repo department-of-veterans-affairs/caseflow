@@ -39,7 +39,8 @@ class RampElectionIntake < Intake
       appeals: eligible_appeals,
       user: user,
       closed_on: Time.zone.today,
-      disposition: "RAMP Opt-in"
+      disposition: "RAMP Opt-in",
+      election_receipt_date: ramp_election.receipt_date
     )
 
     transaction do

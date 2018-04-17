@@ -15,6 +15,18 @@ class RampElection < RampReview
     established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
   end
 
+  def self.sync_all!
+    RampElection.active.each do |ramp_election|
+      begin
+        ramp_election.recreate_issues_from_contentions!
+        ramp_election.sync_ep_status!
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
+        Raven.capture_exception(e)
+      end
+    end
+  end
+
   def active?
     sync_ep_status! && cached_status_active?
   end
@@ -70,6 +82,25 @@ class RampElection < RampReview
     @successful_intake ||= intakes.where(completion_status: "success")
       .order(:completed_at)
       .last
+  end
+
+  def end_product_canceled?
+    sync_ep_status! && end_product_status == "CAN"
+  end
+
+  def rollback!
+    transaction do
+      update!(
+        established_at: nil,
+        receipt_date: nil,
+        option_selected: nil,
+        end_product_reference_id: nil,
+        end_product_status: nil,
+        end_product_status_last_synced_at: nil
+      )
+
+      ramp_closed_appeals.destroy_all
+    end
   end
 
   private

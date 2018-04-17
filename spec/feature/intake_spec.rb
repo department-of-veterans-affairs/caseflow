@@ -29,7 +29,8 @@ RSpec.feature "RAMP Intake" do
       issues: issues,
       vacols_record: :ready_to_certify,
       veteran: veteran,
-      inaccessible: inaccessible
+      inaccessible: inaccessible,
+      nod_date: 1.year.ago
     )
   end
 
@@ -87,7 +88,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake"
 
       within_fieldset("Which form are you processing?") do
-        find("label", text: "21-4138 RAMP Selection Form").click
+        find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
 
@@ -107,6 +108,8 @@ RSpec.feature "RAMP Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
+      expect(page).to have_content("Enter the Veteran's ID below to process this RAMP Opt-In Election Form.")
+
       fill_in "Search small", with: "5678"
       click_on "Search"
 
@@ -121,7 +124,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake"
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -142,7 +145,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake"
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -496,7 +499,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -527,7 +530,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -621,7 +624,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -857,7 +860,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake/search"
         scroll_element_in_to_view(".cf-submit.usa-button")
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
         fill_in "Search small", with: "12341234"
@@ -873,6 +876,26 @@ RSpec.feature "RAMP Intake" do
         safe_click "#finish-intake"
 
         expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
+      end
+    end
+
+    context "AMA feature is enabled" do
+      before do
+        FeatureToggle.enable!(:intakeAma)
+      end
+
+      after do
+        FeatureToggle.disable!(:intakeAma)
+      end
+
+      scenario "Searchable dropdown when more than three forms are available" do
+        visit "/intake"
+        expect(page).to have_css(".cf-form-dropdown")
+        safe_click ".Select"
+        expect(page).to have_content("RAMP Selection (VA Form 21-4138)")
+        expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+        expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+        expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
       end
     end
   end

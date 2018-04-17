@@ -1,5 +1,7 @@
+# rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
+  class AppealNotValidToReopen < StandardError; end
 
   # :nocov:
 
@@ -74,7 +76,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent)
+        .includes(:folder, :correspondent, :representative)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -124,6 +126,7 @@ class AppealRepository
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
       representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+      contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
@@ -244,7 +247,7 @@ class AppealRepository
       if vacols_note
         VACOLS::Note.create!(case_id: appeal.case_record.bfkey,
                              text: vacols_note,
-                             user_id: RequestStore.store[:current_user].regional_office.upcase,
+                             user_id: RequestStore.store[:current_user].regional_office,
                              assigned_to: appeal.case_record.bfregoff,
                              code: :other,
                              days_to_complete: 30,
@@ -396,6 +399,95 @@ class AppealRepository
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  def self.reopen_undecided_appeal!(appeal:, user:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
+    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
+    fail AppealNotValidToReopen unless case_record.bfboard == "00"
+
+    close_date = case_record.bfddec
+    close_disposition = case_record.bfdc
+    fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+
+    previous_location = case_record.previous_location
+    fail AppealNotValidToReopen unless previous_location
+    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_location
+
+    adv_status = previous_location == "77"
+    fail AppealNotValidToReopen unless adv_status ^ (close_disposition == "9")
+
+    bfmpro = adv_status ? "ADV" : "ACT"
+    tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(
+        bfmpro: bfmpro,
+        bfddec: nil,
+        bfdc: nil,
+        bfboard: "D1",
+        bfmemid: nil,
+        bfattid: nil
+      )
+
+      case_record.update_vacols_location!(previous_location)
+
+      folder_record.update_attributes!(
+        ticukey: "ACTIVE",
+        tikeywrd: tikeywrd,
+        tidcls: nil,
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+
+      # Reopen any issues that have the same close information as the appeal
+      case_record.case_issues
+        .where(issdc: close_disposition, issdcls: close_date)
+        .update_all(
+          issdc: nil,
+          issdcls: nil
+        )
+    end
+  end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  def self.reopen_remand!(appeal:, user:, disposition_code:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    fail AppealNotValidToReopen unless %w[P W].include? disposition_code
+    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
+    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
+
+    previous_location = case_record.previous_location
+    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_location
+    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_location)
+
+    follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
+    fail AppealNotValidToReopen unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(bfmpro: "REM")
+
+      case_record.update_vacols_location!(previous_location)
+
+      folder_record.update_attributes!(
+        ticukey: "REMAND",
+        tikeywrd: "REMAND",
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+
+      VACOLS::Case.where(bfkey: follow_up_appeal_key).delete_all
+      VACOLS::Folder.where(ticknum: follow_up_appeal_key).delete_all
+      VACOLS::CaseIssue.where(isskey: follow_up_appeal_key).delete_all
+    end
+  end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -506,3 +598,4 @@ class AppealRepository
   end
   # :nocov:
 end
+# rubocop:enable Metrics/ClassLength
