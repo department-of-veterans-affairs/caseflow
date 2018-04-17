@@ -13,7 +13,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
-import QueueListView from './QueueListView';
+import AttorneyListView from './AttorneyListView';
 import SignableListView from './SignableListView';
 
 import QueueDetailView from './QueueDetailView';
@@ -54,7 +54,7 @@ class QueueApp extends React.PureComponent {
       searchSize="big"
       styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
     {this.props.userRole === "Attorney"
-      ? <QueueListView {...this.props} />
+      ? <AttorneyListView {...this.props} />
       : <SignableListView {...this.props} />
     }
   </QueueLoadingScreen>;

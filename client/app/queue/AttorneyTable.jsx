@@ -26,7 +26,7 @@ const subHeadStyle = css({
   color: COMMON_COLORS.GREY_MEDIUM
 });
 
-class QueueTable extends React.PureComponent {
+class AttorneyTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.vacolsId];
@@ -118,7 +118,7 @@ class QueueTable extends React.PureComponent {
   />;
 }
 
-QueueTable.propTypes = {
+AttorneyTable.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -130,4 +130,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   loadAppealDocCountFail
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueTable);
+export default connect(mapStateToProps, mapDispatchToProps)(AttorneyTable);
