@@ -4,17 +4,15 @@ class Fakes::IssueRepository
   class << self
     def create_vacols_issue!(args)
       issue_attrs = args[:issue_attrs]
-      unless issue_attrs[:program] && issue_attrs[:issue] && issue_attrs[:level_1]
-        fail IssueRepository::IssueError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
-      end
 
       init_issue_records(issue_attrs[:vacols_id])
+      repo_issue = Fakes::AppealRepository.issue_records[issue_attrs[:vacols_id]]
 
       issue = Generators::Issue.build(
         disposition: nil,
         close_date: nil,
         codes: CODE_KEYS.collect { |k| issue_attrs[k] }.compact,
-        labels: :not_loaded,
+        labels: repo_issue.present? ? repo_issue.first.labels : :not_loaded,
         note: issue_attrs[:note],
         vacols_sequence_id: Fakes::AppealRepository.issue_records[issue_attrs[:vacols_id]].size + 1,
         id: issue_attrs[:vacols_id]

@@ -72,12 +72,20 @@ export const saveSuccess = (message, response) => (dispatch) => {
 
 export const saveFailure = (resp) => (dispatch) => {
   const { response } = resp;
-  const errors = response.text ? JSON.parse(response.text).errors : [response.statusText];
+  let responseObject = {
+    errors: [{
+      title: 'Error',
+      detail: 'There was an error processing your request.'
+    }]
+  };
+  try {
+    responseObject = JSON.parse(response.text);
+  } catch (ex) { /* pass */ }
 
-  dispatch(showErrorMessage(errors[0]));
+  dispatch(showErrorMessage(responseObject.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 
-  return Promise.reject(errors[0]);
+  return Promise.reject(responseObject.errors[0]);
 };
 
 export const requestSave = (url, params, successMessage, verb = 'post') => (dispatch) => {
