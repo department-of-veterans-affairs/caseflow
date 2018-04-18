@@ -23,6 +23,7 @@ class QueueListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
   }
 
   componentDidMount = () => {

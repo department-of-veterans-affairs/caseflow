@@ -160,7 +160,7 @@ class AppealRepository
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
       case_record: case_record,
-      disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
       location_code: case_record.bfcurloc,
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
