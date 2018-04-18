@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -18,7 +17,6 @@ import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
-import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;

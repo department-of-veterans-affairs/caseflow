@@ -14,6 +14,7 @@ class JudgeReviewTaskTable extends React.PureComponent {
 
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.vacolsId];
+
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
@@ -38,7 +39,10 @@ class JudgeReviewTaskTable extends React.PureComponent {
     },
     {
       header: 'Days Waiting',
-      valueFunction: (task) => moment().startOf('day').diff(moment(task.attributes.assigned_on), 'days')
+      valueFunction: (task) => (
+        moment().
+          startOf('day').
+          diff(moment(task.attributes.assigned_on), 'days'))
     }
   ];
 
@@ -48,7 +52,7 @@ class JudgeReviewTaskTable extends React.PureComponent {
       rowObjects={
         sortTasks(
           _.pick(this.props, 'tasks', 'appeals')
-        ).filter(t => t.attributes.task_type === 'Review')
+        ).filter((task) => task.attributes.task_type === 'Review')
       }
       getKeyForRow={this.getKeyForRow}
     />;
