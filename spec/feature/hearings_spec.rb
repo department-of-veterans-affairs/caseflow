@@ -289,16 +289,18 @@ RSpec.feature "Hearings" do
       end
     end
 
-    scenario "Can click from hearing worksheet to reader" do
-      visit "/hearings/1/worksheet"
-      link = find("#review-claims-folder")
-      link_href = link[:href]
-      expect(page).to have_content("Review claims folder")
-      click_on "Review claims folder"
-      new_window = windows.last
-      page.within_window new_window do
-        visit link_href
-        expect(page).to have_content("You've viewed 0 out of 4 documents")
+    ensure_stable do
+      scenario "Can click from hearing worksheet to reader" do
+        visit "/hearings/1/worksheet"
+        link = find("#review-claims-folder")
+        link_href = link[:href]
+        expect(page).to have_content("Review claims folder")
+        click_on "Review claims folder"
+        new_window = windows.last
+        page.within_window new_window do
+          visit link_href
+          expect(page).to have_content("You've viewed 0 out of 4 documents")
+        end
       end
     end
   end
