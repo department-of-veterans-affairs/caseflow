@@ -20,7 +20,8 @@ class Intake < ApplicationRecord
 
   FORM_TYPES = {
     ramp_election: "RampElectionIntake",
-    ramp_refiling: "RampRefilingIntake"
+    ramp_refiling: "RampRefilingIntake",
+    supplemental_claim: "SupplementalClaimIntake"
   }.freeze
 
   attr_reader :error_data
