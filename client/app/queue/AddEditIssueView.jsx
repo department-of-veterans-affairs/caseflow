@@ -118,7 +118,7 @@ class AddEditIssueView extends React.Component {
     if (this.props.action === 'edit') {
       url += `/${issue.vacols_sequence_id}`;
       requestMethod = 'requestUpdate';
-      successMsg = `You updated issue ${issueIndex + 1}`;
+      successMsg = `You updated issue ${issueIndex + 1}.`;
     }
 
     this.props[requestMethod](url, { data: params }, successMsg).
