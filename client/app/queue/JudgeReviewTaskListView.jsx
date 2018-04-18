@@ -7,12 +7,11 @@ import _ from 'lodash';
 import StatusMessage from '../components/StatusMessage';
 import JudgeReviewTaskTable from './JudgeReviewTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Alert from '../components/Alert';
 
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState,
+  resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
@@ -30,8 +29,8 @@ class JudgeReviewTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    const reviewableTasks = {};
     let reviewableCount = 0;
+
     for (const k in this.props.tasks) {
       if (this.props.tasks[k].attributes.task_type === "Review") {
         reviewableCount++;

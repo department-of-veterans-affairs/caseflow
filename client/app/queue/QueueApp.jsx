@@ -32,9 +32,9 @@ class QueueApp extends React.PureComponent {
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {this.props.userRole === "Attorney"
-        ? <AttorneyTaskListView {...this.props} />
-        : <JudgeReviewTaskListView {...this.props} />
+      {this.props.userRole === 'Attorney' ?
+        <AttorneyTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />
       }
     </SearchEnabledView>
   </QueueLoadingScreen>;

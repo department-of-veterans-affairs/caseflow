@@ -19,12 +19,6 @@ import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { WarningSymbol } from '../components/RenderFunctions';
-
-const subHeadStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
-});
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
