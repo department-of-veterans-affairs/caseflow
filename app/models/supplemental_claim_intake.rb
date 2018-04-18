@@ -1,15 +1,14 @@
 class SupplementalClaimIntake < Intake
-
   def find_or_build_initial_detail
-    nil #TODO
+    SupplementalClaim.new(veteran_file_number: veteran_file_number)
   end
 
   def review!(request_params)
-    nil #TODO
+    detail.start_review!
+    detail.update(request_params.permit(:receipt_date))
   end
 
-  def cancel!(reason:, other: nil)
-    nil #TODO
+  def review_errors
+    detail.errors.messages
   end
-
 end

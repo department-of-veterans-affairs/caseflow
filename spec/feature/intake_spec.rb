@@ -882,6 +882,7 @@ RSpec.feature "RAMP Intake" do
     context "AMA feature is enabled" do
       before do
         FeatureToggle.enable!(:intakeAma)
+        Timecop.freeze(Time.utc(2018, 5, 26))
       end
 
       after do
@@ -906,9 +907,26 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
 
         fill_in "Search small", with: "12341234"
+
         click_on "Search"
 
         expect(page).to have_current_path("/intake/review-request")
+
+        fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+        safe_click "#button-submit-review"
+        expect(page).to have_content(
+          "Receipt date cannot be in the future."
+        )
+
+        fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_current_path("/intake/finish")
+        expect(page).to have_content("Finish page")
+
+        supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+        expect(supplemental_claim).to_not be_nil
+        expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
       end
     end
   end

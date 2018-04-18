@@ -17,7 +17,7 @@ const getIntakeDetailStatus = (intakeDetail) => {
 const getIntakeStatusSelector = ({ rampElection, rampRefiling, supplementalClaim }) => ({
   rampElection: _.pick(rampElection, ['isStarted', 'isReviewed', 'isComplete']),
   rampRefiling: _.pick(rampRefiling, ['isStarted', 'isReviewed', 'isComplete']),
-  supplementalClaim: _.pick(supplementalClaim, ['isStarted', 'isReviewed', 'isComplete']),
+  supplementalClaim: _.pick(supplementalClaim, ['isStarted', 'isReviewed', 'isComplete'])
 });
 
 export const getIntakeStatus = createSelector(
