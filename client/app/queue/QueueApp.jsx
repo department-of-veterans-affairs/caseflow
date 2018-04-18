@@ -12,8 +12,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
-import AttorneyListView from './AttorneyListView';
-import SignableListView from './SignableListView';
+import AttorneyTaskListView from './AttorneyTaskListView';
+import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
@@ -33,8 +33,8 @@ class QueueApp extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
       {this.props.userRole === "Attorney"
-        ? <AttorneyListView {...this.props} />
-        : <SignableListView {...this.props} />
+        ? <AttorneyTaskListView {...this.props} />
+        : <JudgeReviewTaskListView {...this.props} />
       }
     </SearchEnabledView>
   </QueueLoadingScreen>;

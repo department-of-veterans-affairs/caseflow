@@ -19,7 +19,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES } from './constants';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
-class SignableTable extends React.PureComponent {
+class JudgeReviewTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getAppealForTask = (task, attr) => {
@@ -65,11 +65,11 @@ class SignableTable extends React.PureComponent {
   }
 }
 
-SignableTable.propTypes = {
+JudgeReviewTaskTable.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
-export default connect(mapStateToProps)(SignableTable);
+export default connect(mapStateToProps)(JudgeReviewTaskTable);
