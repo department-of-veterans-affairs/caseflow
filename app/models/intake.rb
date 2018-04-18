@@ -92,8 +92,21 @@ class Intake < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def cancel!
-    fail Caseflow::Error::MustImplementInSubclass
+  def cancel!(reason:, other: nil)
+    return if complete?
+    
+    transaction do
+      cancel_detail!
+      update_attributes!(
+        cancel_reason: reason,
+        cancel_other: other
+      )
+      complete_with_status!(:canceled)
+    end
+  end
+
+  def cancel_detail!
+    detail.destroy!
   end
 
   def save_error!(*)
@@ -115,13 +128,6 @@ class Intake < ApplicationRecord
     update_attributes!(
       completed_at: Time.zone.now,
       completion_status: status
-    )
-  end
-
-  def add_cancel_reason!(reason:, other: nil)
-    update_attributes!(
-      cancel_reason: reason,
-      cancel_other: other
     )
   end
 
