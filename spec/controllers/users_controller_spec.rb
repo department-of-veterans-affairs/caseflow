@@ -40,9 +40,8 @@ RSpec.describe UsersController, type: :controller do
 
     context "when current user a judge" do
       it "should return a list of attorneys" do
-        User.unauthenticate!
-        User.authenticate!(css_id: "BVALREIN", roles: ["System Admin"])
-        get :index, params: { role: "Attorney" }
+        User.create(css_id: "BVALREIN", station_id: User::BOARD_STATION_ID)
+        get :index, params: { role: "Attorney", judge_css_id: "BVALREIN" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorneys"].size).to eq 8

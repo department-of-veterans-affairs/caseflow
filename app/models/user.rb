@@ -70,6 +70,9 @@ class User < ApplicationRecord
     (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
   end
 
+  # If user has never logged in, we might not have their full name in Caseflow DB.
+  # So if we do not yet have the full name saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
   def full_name
     super || begin
       update(full_name: vacols_full_name) if persisted?
