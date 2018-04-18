@@ -52,6 +52,12 @@ class User < ApplicationRecord
     @vacols_group_id ||= self.class.user_repository.vacols_group_id(css_id)
   end
 
+  def vacols_full_name
+    @vacols_full_name ||= self.class.user_repository.vacols_full_name(css_id)
+  rescue Caseflow::Error::UserRepositoryError
+    nil
+  end
+
   def access_to_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end
@@ -66,7 +72,7 @@ class User < ApplicationRecord
 
   def full_name
     super || begin
-      update(full_name: self.class.user_repository.vacols_full_name(css_id)) if persisted?
+      update(full_name: vacols_full_name) if persisted?
       super
     end
   end
