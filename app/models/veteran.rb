@@ -80,7 +80,8 @@ class Veteran
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def participant_id # aliasing because short names suck
+  # aliasing because short names suck
+  def participant_id
     ptcpnt_id
   end
 
