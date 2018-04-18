@@ -10,7 +10,8 @@ class Veteran
     :file_number, :sex, :first_name, :last_name, :ssn,
     :address_line1, :address_line2, :address_line3, :city,
     :state, :country, :zip_code, :military_postal_type_code,
-    :military_post_office_type_code, :service, :date_of_birth
+    :military_post_office_type_code, :service, :date_of_birth,
+    :ptcpnt_id
   ].freeze
 
   CHARACTER_OF_SERVICE_CODES = {
@@ -77,6 +78,10 @@ class Veteran
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
+  end
+
+  def participant_id # aliasing because short names suck
+    ptcpnt_id
   end
 
   def found?
@@ -147,7 +152,9 @@ class Veteran
   end
 
   def vbms_attributes
-    BGS_ATTRIBUTES - [:military_postal_type_code, :military_post_office_type_code] + [:address_type]
+    BGS_ATTRIBUTES \
+      - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
+      + [:address_type]
   end
 
   def military_address?
