@@ -39,6 +39,22 @@ class UserRepository
       staff_record_by_css_id(css_id).stitle
     end
 
+    def vacols_full_name(css_id)
+      record = staff_record_by_css_id(css_id)
+      FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
+    end
+
+    def css_id_by_full_name(full_name)
+      name = full_name.split(" ")
+      first_name = name.first
+      last_name = name.last
+      staff = VACOLS::Staff.where("snamef LIKE ? and snamel LIKE ?", "%#{first_name}%", "%#{last_name}%")
+      if staff.size > 1
+        staff = VACOLS::Staff.where(snamef: first_name, snamel: last_name)
+      end
+      staff.first.try(:sdomainid)
+    end
+
     private
 
     def staff_record_by_css_id(css_id)

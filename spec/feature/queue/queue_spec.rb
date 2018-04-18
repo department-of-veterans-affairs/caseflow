@@ -95,7 +95,7 @@ RSpec.feature "Queue" do
       expect(appeal_options[0].find_all("li").count).to eq(appeal.issues.size)
 
       appeal_options[0].click
-      click_on "Okay"
+      click_on "Open Claims Folder"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_link("Back to Your Queue", href: "/queue")
