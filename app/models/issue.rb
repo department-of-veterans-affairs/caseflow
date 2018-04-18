@@ -209,6 +209,10 @@ class Issue
     end
 
     def load_from_vacols(hash)
+      disposition = nil
+      if hash["issdc"]
+        disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]].parameterize.underscore.to_sym
+      end
       new(
         id: hash["isskey"],
         vacols_sequence_id: hash["issseq"],
@@ -216,9 +220,9 @@ class Issue
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
         # disposition is a snake_case symbol, i.e. :remanded
-        disposition: hash["issdc"] ? (VACOLS::Case::DISPOSITIONS[hash["issdc"]]).parameterize.underscore.to_sym : nil,
+        disposition: disposition,
         # readable disposition is a string, i.e. "Remanded"
-        readable_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
+        readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end

@@ -88,7 +88,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake"
 
       within_fieldset("Which form are you processing?") do
-        find("label", text: "21-4138 RAMP Selection Form").click
+        find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
 
@@ -108,6 +108,8 @@ RSpec.feature "RAMP Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
+      expect(page).to have_content("Enter the Veteran's ID below to process this RAMP Opt-In Election Form.")
+
       fill_in "Search small", with: "5678"
       click_on "Search"
 
@@ -122,7 +124,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake"
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -143,7 +145,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake"
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -497,7 +499,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -528,7 +530,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -622,7 +624,7 @@ RSpec.feature "RAMP Intake" do
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
 
@@ -858,7 +860,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake/search"
         scroll_element_in_to_view(".cf-submit.usa-button")
         within_fieldset("Which form are you processing?") do
-          find("label", text: "21-4138 RAMP Selection Form").click
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
         end
         safe_click ".cf-submit.usa-button"
         fill_in "Search small", with: "12341234"
@@ -874,6 +876,57 @@ RSpec.feature "RAMP Intake" do
         safe_click "#finish-intake"
 
         expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
+      end
+    end
+
+    context "AMA feature is enabled" do
+      before do
+        FeatureToggle.enable!(:intakeAma)
+        Timecop.freeze(Time.utc(2018, 5, 26))
+      end
+
+      after do
+        FeatureToggle.disable!(:intakeAma)
+      end
+
+      scenario "Searchable dropdown when more than three forms are available" do
+        visit "/intake"
+        safe_click ".Select"
+        expect(page).to have_css(".cf-form-dropdown")
+        expect(page).to have_content("RAMP Selection (VA Form 21-4138)")
+        expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+        expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+        expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: "Supplemental Claim (VA Form 21-526b)"
+        find("#form-select").send_keys :enter
+
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+
+        fill_in "Search small", with: "12341234"
+
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review-request")
+
+        fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+        safe_click "#button-submit-review"
+        expect(page).to have_content(
+          "Receipt date cannot be in the future."
+        )
+
+        fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_current_path("/intake/finish")
+        expect(page).to have_content("Finish page")
+
+        supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+        expect(supplemental_claim).to_not be_nil
+        expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
       end
     end
   end
