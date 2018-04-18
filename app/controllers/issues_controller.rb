@@ -13,7 +13,7 @@ class IssuesController < ApplicationController
 
     Issue.create_in_vacols!(issue_attrs: create_params)
 
-    render json: { issues: json_issues(appeal.issues) }, status: :created
+    render json: { issues: json_issues }, status: :created
   end
 
   def update
@@ -24,7 +24,7 @@ class IssuesController < ApplicationController
       vacols_sequence_id: params[:vacols_sequence_id],
       issue_attrs: issue_params
     )
-    render json: { issues: json_issues(appeal.issues) }, status: :ok
+    render json: { issues: json_issues }, status: :ok
   end
 
   def destroy
@@ -34,13 +34,13 @@ class IssuesController < ApplicationController
       vacols_id: appeal.vacols_id,
       vacols_sequence_id: params[:vacols_sequence_id]
     )
-    render json: { issues: json_issues(appeal.issues) }, status: :ok
+    render json: { issues: json_issues }, status: :ok
   end
 
   private
 
-  def json_issues(issues)
-    issues.map do |issue|
+  def json_issues
+    appeal.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
         serializer: ::WorkQueue::IssueSerializer

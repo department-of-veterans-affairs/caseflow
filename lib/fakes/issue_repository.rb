@@ -6,13 +6,11 @@ class Fakes::IssueRepository
       issue_attrs = args[:issue_attrs]
 
       init_issue_records(issue_attrs[:vacols_id])
-      repo_issue = Fakes::AppealRepository.issue_records[issue_attrs[:vacols_id]]
 
       issue = Generators::Issue.build(
         disposition: nil,
         close_date: nil,
         codes: CODE_KEYS.collect { |k| issue_attrs[k] }.compact,
-        labels: repo_issue.present? ? repo_issue.first.labels : :not_loaded,
         note: issue_attrs[:note],
         vacols_sequence_id: Fakes::AppealRepository.issue_records[issue_attrs[:vacols_id]].size + 1,
         id: issue_attrs[:vacols_id]
