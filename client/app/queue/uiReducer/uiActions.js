@@ -78,6 +78,7 @@ export const saveFailure = (resp) => (dispatch) => {
       detail: 'There was an error processing your request.'
     }]
   };
+
   try {
     responseObject = JSON.parse(response.text);
   } catch (ex) { /* pass */ }
