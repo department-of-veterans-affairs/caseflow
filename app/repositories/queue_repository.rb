@@ -42,9 +42,7 @@ class QueueRepository
 
   def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
     transaction do
-      vacols_case = VACOLS::Case.find(vacols_id)
-      vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
-      vacols_case.update(bfattid: attorney.vacols_attorney_id)
+      update_location_to_attorney(vacols_id, attorney)
 
       VACOLS::Decass.create!(
         defolder: vacols_id,
@@ -61,27 +59,22 @@ class QueueRepository
 
   def self.reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
     transaction do
-      vacols_case = VACOLS::Case.find(vacols_id)
-      vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
-      vacols_case.update(bfattid: attorney.vacols_attorney_id)
+      update_location_to_attorney(vacols_id, attorney)
 
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
       update_decass_record(decass_record, {
-
-        })
-
-
-      # VACOLS::Decass.create!(
-      #   defolder: vacols_id,
-      #   deatty: attorney.vacols_attorney_id,
-      #   deteam: attorney.vacols_group_id[0..2],
-      #   deadusr: judge.vacols_uniq_id,
-      #   deadtim: VacolsHelper.local_date_with_utc_timezone,
-      #   dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
-      #   deassign: VacolsHelper.local_date_with_utc_timezone,
-      #   deicr: decass_complexity_rating(vacols_id)
-      # )
+        attorney_id: attorney.vacols_attorney_id,
+        group_name: attorney.vacols_group_id[0..2],
+        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+        modifying_user: judge.vacols_uniq_id
+      })
     end
+  end
+
+  def self.update_location_to_attorney(vacols_id, attorney)
+    vacols_case = VACOLS::Case.find(vacols_id)
+    vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
+    vacols_case.update(bfattid: attorney.vacols_attorney_id)
   end
 
   def self.decass_complexity_rating(vacols_id)
