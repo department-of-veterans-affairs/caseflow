@@ -29,13 +29,8 @@ class JudgeReviewTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    let reviewableCount = 0;
-
-    for (const k in this.props.tasks) {
-      if (this.props.tasks[k].attributes.task_type === "Review") {
-        reviewableCount++;
-      }
-    }
+    const reviewableCount = _.filter(
+      this.props.tasks, t => t.attributes.task_type === "Review").length;
     let tableContent;
 
     if (reviewableCount === 0) {
