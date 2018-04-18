@@ -90,18 +90,18 @@ export const FORM_TYPES = {
     name: 'RAMP Selection (VA Form 21-4138)',
     category: 'ramp'
   },
-  AMA_HIGHER_LEVEL_REVIEW: {
-    key: 'ama_higher_level_review',
+  HIGHER_LEVEL_REVIEW: {
+    key: 'higher_level_review',
     name: 'Request for Higher-Level Review (VA Form 20-0988)',
     category: 'ama'
   },
-  AMA_SUPPLEMENTAL_CLAIM: {
-    key: 'ama_supplemental_claim',
+  SUPPLEMENTAL_CLAIM: {
+    key: 'supplemental_claim',
     name: 'Supplemental Claim (VA Form 21-526b)',
     category: 'ama'
   },
-  AMA_NOTICE_OF_DISAGREEMENT: {
-    key: 'ama_notice_of_disagreement',
+  NOTICE_OF_DISAGREEMENT: {
+    key: 'notice_of_disagreement',
     name: 'Notice of Disagreement (VA Form 10182)',
     category: 'ama'
   }

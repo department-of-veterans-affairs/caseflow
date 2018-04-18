@@ -107,7 +107,7 @@ class CaseSelectSearch extends React.PureComponent {
             onClick: this.handleModalClose
           },
           { classNames: ['usa-button', 'usa-button-primary'],
-            name: 'Okay',
+            name: 'Open Claims Folder',
             onClick: this.handleSelectAppeal,
             disabled: _.isEmpty(caseSelect.selectedAppealVacolsId)
           }
