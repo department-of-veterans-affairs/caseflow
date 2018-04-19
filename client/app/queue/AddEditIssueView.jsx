@@ -76,7 +76,7 @@ class AddEditIssueView extends React.Component {
         codes
       }
     } = this.props;
-    const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
+    const vacolsIssues = _.get(ISSUE_INFO[program], 'levels', {});
     const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
     const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
     const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
@@ -159,7 +159,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
 
     const programs = ISSUE_INFO;
-    const issues = _.get(programs[program], 'issue');
+    const issues = _.get(programs[program], 'levels');
     const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)

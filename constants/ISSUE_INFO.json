@@ -1,7 +1,7 @@
 {
   "01": {
     "description": "VBA Burial benefits",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Entitlement",
         "levels": {
@@ -16,7 +16,7 @@
   },
   "02": {
     "description": "Compensation",
-    "issue": {
+    "levels": {
       "01": {
         "description": "1151 Eligibility",
         "levels": {
@@ -196,7 +196,7 @@
   },
   "03": {
     "description": "Education",
-    "issue": {
+    "levels": {
       "01": { "description": "Accrued" },
       "02": {
         "description": "Eligibility",
@@ -238,7 +238,7 @@
   },
   "04": {
     "description": "Insurance",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Waiver of premiums (1912-1914)",
         "levels": {
@@ -287,7 +287,7 @@
   },
   "05": {
     "description": "Loan Guaranty",
-    "issue": {
+    "levels": {
       "01": { "description": "Basic eligibility" },
       "02": { "description": "Validity of debt" },
       "03": { "description": "Waiver of indebtedness" },
@@ -298,7 +298,7 @@
   },
   "06": {
     "description": "Medical",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Eligibility for treatment",
         "levels": {
@@ -322,7 +322,7 @@
   },
   "07": {
     "description": "Pension",
-    "issue": {
+    "levels": {
       "01": { "description": "Accrued benefits" },
       "02": { "description": "Apportionment" },
       "03": { "description": "Countable income" },
@@ -362,7 +362,7 @@
   },
   "08": {
     "description": "VRE",
-    "issue": {
+    "levels": {
       "01": { "description": "Basic Eligibility" },
       "02": { "description": "Entitlement to Services" },
       "03": { "description": "Plan/Goal Selection" },
@@ -374,7 +374,7 @@
   },
   "09": {
     "description": "Other programs",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Attorney fees",
         "levels": {
@@ -414,7 +414,7 @@
   },
   "10": {
     "description": "BVA Original Jurisdiction",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Attorney fees/expenses",
         "levels": {
@@ -455,7 +455,7 @@
   },
   "11": {
     "description": "NCA Burial benefits",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Entitlement",
         "levels": {
@@ -481,7 +481,7 @@
   },
   "12": {
     "description": "Fiduciary",
-    "issue": {
+    "levels": {
       "01": {
         "description": "Fiduciary Appointment"
       }

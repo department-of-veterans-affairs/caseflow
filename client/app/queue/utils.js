@@ -83,5 +83,5 @@ export const getIssueTypeDescription = (issue) => {
     type
   } = issue;
 
-  return _.get(ISSUE_INFO[program].issue, `${type}.description`);
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };

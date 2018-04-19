@@ -54,7 +54,7 @@ export default class IssueListItem extends React.PureComponent {
       }
     } = this.props;
     const issueLevels = [];
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
+    const vacolsIssue = ISSUE_INFO[program].levels[type];
 
     if (!vacolsIssue) {
       return levels;
