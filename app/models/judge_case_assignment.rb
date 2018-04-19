@@ -26,6 +26,7 @@ class JudgeCaseAssignment
   end
 
   def reassign_to_attorney!
+    fail ActiveRecord::RecordInvalid unless task_id
     validate!
     case appeal_type
     when "Legacy"
