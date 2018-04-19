@@ -60,9 +60,7 @@ class AddEditIssueView extends React.Component {
   }];
 
   updateIssue = (attributes) => {
-    if (this.props.highlight) {
-      this.props.highlightInvalidFormItems(false);
-    }
+    this.props.highlightInvalidFormItems(false);
     this.props.updateEditingAppealIssue(attributes);
   };
 
@@ -102,39 +100,42 @@ class AddEditIssueView extends React.Component {
       appeal: { attributes: { issues } }
     } = this.props;
     const params = {
-      issues: {
-        ..._.pick(issue, 'note', 'program'),
-        issue: issue.type,
-        level_1: _.get(issue.codes, 0),
-        level_2: _.get(issue.codes, 1),
-        level_3: _.get(issue.codes, 2)
+      data: {
+        issues: {
+          ..._.pick(issue, 'note', 'program'),
+          issue: issue.type,
+          level_1: _.get(issue.codes, 0),
+          level_2: _.get(issue.codes, 1),
+          level_3: _.get(issue.codes, 2)
+        }
       }
     };
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
-    let url = `/appeals/${appeal.id}/issues`;
-    let requestMethod = 'requestSave';
-    let successMsg = 'You created a new issue.';
+    const url = `/appeals/${appeal.id}/issues`;
+    let requestPromise;
 
-    if (this.props.action === 'edit') {
-      url += `/${issue.vacols_sequence_id}`;
-      requestMethod = 'requestUpdate';
-      successMsg = `You updated issue ${issueIndex + 1}.`;
+    if (this.props.action === 'add') {
+      requestPromise = this.props.requestSave(url, params, 'You created a new issue.');
+    } else {
+      requestPromise = this.props.requestUpdate(
+        `${url}/${issue.vacols_sequence_id}`, params,
+        `You updated issue ${issueIndex + 1}.`
+      );
     }
 
-    this.props[requestMethod](url, { data: params }, successMsg).
-      then((response) => {
-        const resp = JSON.parse(response.text);
-        let updatedIssue = {};
+    requestPromise.then((response) => {
+      const resp = JSON.parse(response.text);
+      let updatedIssue = {};
 
-        if (this.props.action === 'add') {
-          updatedIssue = _.differenceBy(resp.issues, issues, 'vacols_sequence_id')[0];
-        } else {
-          updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
-        }
+      if (this.props.action === 'add') {
+        updatedIssue = _.differenceBy(resp.issues, issues, 'vacols_sequence_id')[0];
+      } else {
+        updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
+      }
 
-        this.updateIssue(updatedIssue);
-        this.props.saveEditedAppealIssue(this.props.vacolsId);
-      });
+      this.updateIssue(updatedIssue);
+      this.props.saveEditedAppealIssue(this.props.vacolsId);
+    });
   };
 
   deleteIssue = () => {

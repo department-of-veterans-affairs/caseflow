@@ -164,10 +164,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const issues = appeals[appealId].attributes.issues;
     let updatedIssues = [];
 
-    const pendingIssueIds = _.map(issues, 'vacols_sequence_id');
     const editingIssueId = Number(editingIssue.vacols_sequence_id);
+    const editingExistingIssue = _.map(issues, 'vacols_sequence_id').includes(editingIssueId);
 
-    if (pendingIssueIds.includes(editingIssueId)) {
+    if (editingExistingIssue) {
       updatedIssues = _.map(issues, (issue) => issue.vacols_sequence_id === editingIssueId ? editingIssue : issue);
     } else {
       updatedIssues = issues.concat(editingIssue);

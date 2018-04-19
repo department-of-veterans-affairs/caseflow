@@ -95,7 +95,7 @@ export const requestSave = (url, params, successMessage, verb = 'post') => (disp
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
   return ApiUtil[verb](url, params).then(
-    (response) => dispatch(saveSuccess(successMessage, response)),
+    (resp) => dispatch(saveSuccess(successMessage, resp)),
     (resp) => dispatch(saveFailure(resp))
   );
 };
