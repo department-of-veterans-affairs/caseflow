@@ -307,7 +307,7 @@ class Helpers::Sanitizers
     %w[hearing_pkseq hearing_type folder_nr hearing_date hearing_disp board_member
        team room mduser mdtime reqdate clsdate recmed consent conret
        contapes tranreq transent wbtapes wbbackup wbsent recprob taskno adduser addtime
-       aod holdays vdkey canceldate]
+       aod holddays vdkey canceldate]
   end
 
   ONLY_NUMBER_REGEX = /^\d*$/
