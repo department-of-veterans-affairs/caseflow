@@ -271,9 +271,9 @@ SubmitDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.pendingChanges.taskDecision,
+  decision: state.queue.stagedChanges.taskDecision,
   judges: state.queue.judges,
   error: state.ui.messages.error,
   ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
