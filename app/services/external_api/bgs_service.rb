@@ -105,6 +105,33 @@ class ExternalApi::BGSService
     end
   end
 
+  def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
+    DBService.release_db_connections
+
+
+    MetricsService.record("BGS: fetch ratings in range: \
+                           participant_id = #{participant_id}, \
+                           start_date = #{start_date} \
+                           end_date = #{end_date}",
+                          service: :bgs,
+                          name: "rating.find_by_participant_id_and_date_range") do
+      client.rating.find_by_participant_id_and_date_range(participant_id, start_date, end_date)
+    end
+  end
+
+  def fetch_rating_profile(participant_id:, profile_date:)
+    DBService.release_db_connections
+
+
+    MetricsService.record("BGS: fetch rating profile: \
+                           participant_id = #{participant_id}, \
+                           profile_date = #{profile_date}",
+                          service: :bgs,
+                          name: "rating_profile.find") do
+      client.rating_profile.find(participant_id: participant_id, profile_date: profile_date)
+    end
+  end
+
   private
 
   def init_client

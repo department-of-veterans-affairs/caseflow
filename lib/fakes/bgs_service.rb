@@ -10,6 +10,8 @@ class Fakes::BGSService
   cattr_accessor :power_of_attorney_records
   cattr_accessor :address_records
   cattr_accessor :ssn_not_found
+  cattr_accessor :rating_records
+  cattr_accessor :rating_issue_records
   attr_accessor :client
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
@@ -245,6 +247,38 @@ class Fakes::BGSService
 
   def fetch_file_number_by_ssn(ssn)
     ssn_not_found ? nil : ssn
+  end
+
+  def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
+    ratings = ((self.class.rating_records || {})[participant_id] || [])
+
+    ratings = ratings.select do |r|
+      # TODO: does BGS do inclusive comparison?
+      start_date =< r[:comp_id][:prfil_dt] && end_date >= r[:comp_id][:prfil_dt]
+    end
+
+    # TODO: filter by start and end date
+    # TODO: if there are no ratings, what does BGS do?
+
+    # BGS returns the data not as an array if there is only one rating
+    ratings = ratings.first if ratings.count == 1
+
+    { rating_profile_list: { rating_profile: ratings } }
+  end
+
+  def fetch_rating_profile(participant_id:, profile_date:)
+    self.class.rating_issue_records ||= {}
+    self.class.rating_issue_records[participant_id] ||= {}
+
+    # TODO: what does BGS do if the participant id doesn't exist?
+    # TODO: what does BGS do if the rating profile for the date doesn't exist?
+
+    rating_issues = self.class.rating_issue_records[participant_id][profile_date]
+
+    # BGS returns the data not as an array if there is only one issue
+    rating_issues = rating_issues.first if rating_issues.count == 1
+
+    { rating_issues: rating_issues }
   end
 
   private
