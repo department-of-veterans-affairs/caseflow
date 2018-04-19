@@ -254,7 +254,7 @@ class Fakes::BGSService
 
     ratings = ratings.select do |r|
       # TODO: does BGS do inclusive comparison?
-      start_date =< r[:comp_id][:prfil_dt] && end_date >= r[:comp_id][:prfil_dt]
+      start_date <= r[:comp_id][:prfil_dt] && end_date >= r[:comp_id][:prfil_dt]
     end
 
     # TODO: filter by start and end date
