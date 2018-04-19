@@ -259,7 +259,6 @@ class Fakes::BGSService
       start_date <= r[:comp_id][:prfil_dt] && end_date >= r[:comp_id][:prfil_dt]
     end
 
-    # TODO: filter by start and end date
     # TODO: if there are no ratings, what does BGS do?
 
     # BGS returns the data not as an array if there is only one rating
