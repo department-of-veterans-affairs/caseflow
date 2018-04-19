@@ -32,9 +32,9 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ISSUE_INFO,
   ERROR_FIELD_REQUIRED
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -77,7 +77,7 @@ class AddEditIssueView extends React.Component {
 
   getIssueLevelOptions = () => {
     const { issue: { program, type, codes } } = this.props;
-    const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
+    const vacolsIssues = _.get(ISSUE_INFO[program], 'levels', {});
     const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
     const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
     const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
@@ -171,7 +171,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
 
     const programs = ISSUE_INFO;
-    const issues = _.get(programs[issue.program], 'issue');
+    const issues = _.get(programs[issue.program], 'levels');
     const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)
