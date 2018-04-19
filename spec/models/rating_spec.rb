@@ -5,6 +5,28 @@ describe Rating do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  context "#issues" do
+    subject { rating.issues }
+    let!(:rating) do
+      Generators::Rating.build(
+        issues: [
+          { rba_issue_id: "Issue1", decision_text: "Decision1" },
+          { rba_issue_id: "Issue2", decision_text: "Decision2" }
+        ]
+      )
+    end
+
+    it "returns the issues" do
+      expect(subject.count).to eq(2)
+      expect(subject.first).to have_attributes(
+        rba_issue_id: "Issue1", decision_text: "Decision1"
+      )
+      expect(subject.second).to have_attributes(
+        rba_issue_id: "Issue2", decision_text: "Decision2"
+      )
+    end
+  end
+
   context ".from_bgs_hash" do
     subject { Rating.from_bgs_hash(bgs_record) }
 

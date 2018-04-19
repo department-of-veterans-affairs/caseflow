@@ -5,6 +5,23 @@ class Rating
 
   TIMELY_DAYS = 372.days
 
+  def issues
+    @issues ||= fetch_issues
+  end
+
+  private
+
+  def fetch_issues
+    response = BGSService.new.fetch_rating_profile(
+      participant_id: participant_id,
+      profile_date: profile_date
+    )
+
+    [response[:rating_issues]].flatten.map do |issue_data|
+      RatingIssue.from_bgs_hash(issue_data)
+    end
+  end
+
   class << self
     def fetch_timely(participant_id:)
       response = BGSService.new.fetch_ratings_in_range(
