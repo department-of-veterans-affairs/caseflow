@@ -65,7 +65,7 @@ class PowerOfAttorney
     )
 
     # If the POA should be stored in the REP table, update that too.
-    if repo.rep_name_found_in_rep_table?(vacols_code)
+    if VACOLS::Case.rep_name_found_in_rep_table?(vacols_code)
       repo.update_vacols_rep_table!(
         appeal: appeal,
         representative_name: representative_name,

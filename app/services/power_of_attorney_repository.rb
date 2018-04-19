@@ -23,7 +23,7 @@ class PowerOfAttorneyRepository
   end
 
   def self.set_vacols_values(poa:, case_record:)
-    rep_info = get_poa_from_vacols_poa(
+    rep_info = VACOLS::Case.get_poa_from_vacols_poa(
       vacols_code: case_record.bfso,
       representative_record: case_record.representative
     )

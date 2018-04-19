@@ -121,11 +121,18 @@ class AppealRepository
     folder_record = case_record.folder
     outcoder_record = folder_record.outcoder
 
+    rep_info = VACOLS::Case.get_poa_from_vacols_poa(
+      vacols_code: case_record.bfso,
+      representative_record: case_record.representative
+    )
+
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
       representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+      representative_type: rep_info[:representative_type],
+      representative_name: rep_info[:representative_name],
       contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
