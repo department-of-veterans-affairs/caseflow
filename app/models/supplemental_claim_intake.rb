@@ -5,7 +5,7 @@ class SupplementalClaimIntake < Intake
 
   def ui_hash
     super.merge(
-      ratings: veteran.timely_ratings.map(&:ui_hash)
+      ratings: veteran.cached_serialized_timely_ratings
     )
   end
 

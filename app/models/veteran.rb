@@ -33,6 +33,15 @@ class Veteran
   validates :zip_code, presence: true, if: :country_requires_zip?
   validates :state, presence: true, if: :country_requires_state?
 
+  cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
+    timely_ratings.map(&:ui_hash)
+  end
+
+  def id
+    # Aliasing file_number to id for use in cache_attribute key
+    file_number
+  end
+
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
