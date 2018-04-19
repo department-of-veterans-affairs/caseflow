@@ -9,10 +9,6 @@ class SupplementalClaimIntake < Intake
     )
   end
 
-  def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number)
-  end
-
   def review!(request_params)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date))
