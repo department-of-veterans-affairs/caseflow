@@ -274,7 +274,7 @@ class Fakes::BGSService
     # TODO: what does BGS do if the participant id doesn't exist?
     # TODO: what does BGS do if the rating profile for the date doesn't exist?
 
-    rating_issues = self.class.rating_issue_records[participant_id][profile_date]
+    rating_issues = self.class.rating_issue_records[participant_id][profile_date] || []
 
     # BGS returns the data not as an array if there is only one issue
     rating_issues = rating_issues.first if rating_issues.count == 1
