@@ -94,7 +94,7 @@ class Intake < ApplicationRecord
 
   def cancel!(reason:, other: nil)
     return if complete?
-    
+
     transaction do
       cancel_detail!
       update_attributes!(
