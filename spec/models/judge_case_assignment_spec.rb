@@ -4,7 +4,6 @@ describe JudgeCaseAssignment do
   let(:appeal) { Appeal.create(vacols_id: "123456") }
 
   context "#assign_to_attorney!" do
-
     let(:record) do
       JudgeCaseAssignment.new(
         appeal_id: appeal_id,

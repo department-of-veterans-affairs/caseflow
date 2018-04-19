@@ -62,12 +62,11 @@ class QueueRepository
       update_location_to_attorney(vacols_id, attorney)
 
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-      update_decass_record(decass_record, {
-        attorney_id: attorney.vacols_attorney_id,
-        group_name: attorney.vacols_group_id[0..2],
-        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
-        modifying_user: judge.vacols_uniq_id
-      })
+      update_decass_record(decass_record,
+                           attorney_id: attorney.vacols_attorney_id,
+                           group_name: attorney.vacols_group_id[0..2],
+                           assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+                           modifying_user: judge.vacols_uniq_id)
     end
   end
 

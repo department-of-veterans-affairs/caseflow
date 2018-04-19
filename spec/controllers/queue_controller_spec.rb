@@ -138,7 +138,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        patch :update, params: { queue: params, task_id: "3615398-2018-04-18"}
+        patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
@@ -146,7 +146,7 @@ RSpec.describe QueueController, type: :controller do
     end
 
     context "when current user is a judge" do
-       let(:params) do
+      let(:params) do
         {
           "attorney_id": attorney.id,
           "appeal_type": "Legacy"
@@ -162,7 +162,7 @@ RSpec.describe QueueController, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { queue: params, task_id: "3615398-2018-04-18"}
+        patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -176,7 +176,7 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          patch :update, params: { queue: params, task_id: "3615398-2018-04-18"}
+          patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
           expect(response.status).to eq 404
         end
       end

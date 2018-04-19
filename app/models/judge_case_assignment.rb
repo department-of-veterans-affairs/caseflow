@@ -14,8 +14,8 @@ class JudgeCaseAssignment
     when "Legacy"
       vacols_id = Appeal.find(appeal_id).vacols_id
       MetricsService.record("VACOLS: assign_case_to_attorney #{vacols_id}",
-                              service: :vacols,
-                              name: "assign_case_to_attorney") do
+                            service: :vacols,
+                            name: "assign_case_to_attorney") do
         self.class.repository.assign_case_to_attorney!(
           judge: assigned_by,
           attorney: assigned_to,
@@ -32,8 +32,8 @@ class JudgeCaseAssignment
     when "Legacy"
       vacols_id = task_id.split("-", 2).first
       MetricsService.record("VACOLS: reassign_case_to_attorney #{vacols_id}",
-                              service: :vacols,
-                              name: "reassign_case_to_attorney") do
+                            service: :vacols,
+                            name: "reassign_case_to_attorney") do
         self.class.repository.reassign_case_to_attorney!(
           judge: assigned_by,
           attorney: assigned_to,
