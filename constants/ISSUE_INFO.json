@@ -1,6 +1,6 @@
 {
   "01": {
-    "description": "VBA Burial",
+    "description": "VBA Burial benefits",
     "issue": {
       "01": {
         "description": "Entitlement",
@@ -373,7 +373,7 @@
     }
   },
   "09": {
-    "description": "Other",
+    "description": "Other programs",
     "issue": {
       "01": {
         "description": "Attorney fees",
@@ -413,7 +413,7 @@
     }
   },
   "10": {
-    "description": "BVA",
+    "description": "BVA Original Jurisdiction",
     "issue": {
       "01": {
         "description": "Attorney fees/expenses",
@@ -454,7 +454,7 @@
     }
   },
   "11": {
-    "description": "NCA Burial",
+    "description": "NCA Burial benefits",
     "issue": {
       "01": {
         "description": "Entitlement",
