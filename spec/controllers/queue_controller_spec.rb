@@ -134,7 +134,7 @@ RSpec.describe QueueController, type: :controller do
   end
 
   describe "POST queue/tasks/:task_id/complete" do
-    let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
+    let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
 
     before do
       FeatureToggle.enable!(:queue_phase_two)
