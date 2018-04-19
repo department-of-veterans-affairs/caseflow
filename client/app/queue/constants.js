@@ -68,6 +68,6 @@ export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
 
 export const REMAND_REASONS = Object.assign({},
   ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: Object.entries(REMAND_REASONS_BY_ID[reasonType]).map((label, reasonId) => ({ reasonId, label }))
+    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({ id: reasonId, label }))
   }))
 );
