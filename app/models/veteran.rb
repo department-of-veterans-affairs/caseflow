@@ -99,6 +99,11 @@ class Veteran
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
 
+  def timely_ratings
+    load_bgs_record!
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
+  end
+
   private
 
   def set_attrs_from_bgs_record

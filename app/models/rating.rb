@@ -9,6 +9,15 @@ class Rating
     @issues ||= fetch_issues
   end
 
+  def ui_hash
+    {
+      participant_id: participant_id,
+      profile_date: profile_date,
+      promulgation_date: promulgation_date,
+      issues: issues.map(&:ui_hash)
+    }
+  end
+
   private
 
   def fetch_issues
