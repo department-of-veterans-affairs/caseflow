@@ -3,9 +3,9 @@ import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  DECISION_TYPES,
-  ISSUE_INFO
+  DECISION_TYPES
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {

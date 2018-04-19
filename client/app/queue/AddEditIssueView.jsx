@@ -30,9 +30,9 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ISSUE_INFO,
   ERROR_FIELD_REQUIRED
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallTopMargin = css({ marginTop: '1rem' });

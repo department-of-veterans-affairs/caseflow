@@ -1,9 +1,7 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../../constants/REMAND_REASONS_BY_ID.json';
-// https://git.io/vxBtN
-export ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
