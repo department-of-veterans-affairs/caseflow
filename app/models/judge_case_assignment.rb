@@ -37,7 +37,7 @@ class JudgeCaseAssignment
           judge: assigned_by,
           attorney: assigned_to,
           vacols_id: vacols_id,
-          created_in_vacols_date: created_in_vacols_date
+          created_in_vacols_date: task_id.split("-", 2).second.to_date
         )
       end
     end
@@ -47,10 +47,6 @@ class JudgeCaseAssignment
 
   def validate!
     fail ActiveRecord::RecordInvalid unless valid?
-  end
-
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date
   end
 
   class << self

@@ -119,7 +119,7 @@ class QueueController < ApplicationController
 
   def task_params
     params.require("queue")
-      .permit(:appeal_id, :appeal_type)
+      .permit(:appeal_type, :appeal_id)
       .merge(assigned_to: User.find(params[:queue][:attorney_id]))
       .merge(assigned_by: current_user)
   end
