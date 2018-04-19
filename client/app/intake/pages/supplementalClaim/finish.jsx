@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
@@ -60,9 +61,53 @@ class Finish extends React.PureComponent {
 }
 
 class RatedIssues extends React.PureComponent {
-  render = () => <div>
-    Rated Issues
-  </div>;
+  render() {
+    const ratedIssuesData = [
+      {
+        rba_issue_id: '123',
+        decision_date: '01/28/2018',
+        decision_text: 'I am a rated issue'
+      },
+      {
+        rba_issue_id: '456',
+        decision_date: '01/28/2018',
+        decision_text: 'I am another rated issue'
+      },
+      {
+        rba_issue_id: '789',
+        decision_date: '02/28/2018',
+        decision_text: 'I am a rated issue on a different date'
+      }
+    ];
+
+    const ratedIssuesByDecisionDate = _.groupBy(ratedIssuesData, 'decision_date');
+
+    const ratedIssuesSections = _.map(ratedIssuesByDecisionDate, (dateWithIssues) => {
+      const ratedIssueCheckboxes = _.map(dateWithIssues, (issue) => {
+        return (
+          <Checkbox
+            label={issue.decision_text}
+            name='checkboxname'
+            value='checkboxvalue'
+            key={issue.rba_issue_id}
+          />
+        )
+      });
+
+      return (<div key={dateWithIssues[0].rba_issue_id}>
+        <p key={dateWithIssues[0].rba_issue_id}>
+          Decision date: { dateWithIssues[0].decision_date }
+        </p>
+
+        { ratedIssueCheckboxes }
+      </div>
+      );
+    })
+
+    return <div>
+      { ratedIssuesSections }
+    </div>;
+  }
 }
 
 class NonRatedIssues extends React.PureComponent {

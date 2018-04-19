@@ -93,6 +93,51 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
+  case ACTIONS.CONFIRM_FINISH_INTAKE:
+    return update(state, {
+      finishConfirmed: {
+        $set: action.payload.isConfirmed
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED:
+    return update(state, {
+      finishConfirmedError: {
+        $set: "You must confirm you've completed the steps"
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
+        }
+      }
+    });
   default:
     return state;
   }
