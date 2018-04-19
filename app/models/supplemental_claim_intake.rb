@@ -11,12 +11,4 @@ class SupplementalClaimIntake < Intake
   def review_errors
     detail.errors.messages
   end
-
-  def cancel!(reason:, other: nil)
-    transaction do
-      detail.destroy!
-      add_cancel_reason!(reason: reason, other: other)
-      complete_with_status!(:canceled)
-    end
-  end
 end
