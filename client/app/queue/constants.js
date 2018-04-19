@@ -1,10 +1,9 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-
-export REMAND_REASONS from '../../../constants/REMAND_REASONS.json';
+import REMAND_REASONS_BY_ID from '../../../constants/REMAND_REASONS_BY_ID.json';
 // https://git.io/vxBtN
-export ISSUE_INFO from '../../../constants/ISSUE_LEVELS.json';
+export ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -66,5 +65,12 @@ export const SEARCH_ERROR_FOR = {
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
   {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
     (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
+  )
+);
+
+export const REMAND_REASONS = Object.assign({},
+  ...Object.keys(REMAND_REASONS_BY_ID).map((id) => ({
+      [id]: Object.entries(REMAND_REASONS_BY_ID[id]).map((label, id) => ({ id, label }))
+    })
   )
 );
