@@ -6,9 +6,9 @@ import _ from 'lodash';
 import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
 import {
   boldText,
-  CASE_DISPOSITION_ID_BY_DESCRIPTION,
-  ISSUE_INFO
+  CASE_DISPOSITION_ID_BY_DESCRIPTION
 } from '../constants';
+import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
@@ -54,7 +54,7 @@ export default class IssueListItem extends React.PureComponent {
       }
     } = this.props;
     const issueLevels = [];
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
+    const vacolsIssue = ISSUE_INFO[program].levels[type];
 
     if (!vacolsIssue) {
       return levels;
