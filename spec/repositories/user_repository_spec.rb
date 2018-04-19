@@ -23,6 +23,13 @@ describe UserRepository do
       end
     end
 
+    context "when a user is an acting judge and has an attorney number" do
+      it "should return an attorney role" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "A", sattyid: "1234"))
+        expect(subject).to eq "Attorney"
+      end
+    end
+
     context "when a user is neither" do
       it "should not return a role" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "L"))
