@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
+import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 
@@ -68,6 +69,9 @@ export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
 
 export const REMAND_REASONS = Object.assign({},
   ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({ id: reasonId, label }))
+    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
+      id: reasonId,
+      label
+    }))
   }))
 );
