@@ -5,6 +5,7 @@
 class Veteran
   include ActiveModel::Model
   include ActiveModel::Validations
+  include CachedAttributes
 
   BGS_ATTRIBUTES = [
     :file_number, :sex, :first_name, :last_name, :ssn,
