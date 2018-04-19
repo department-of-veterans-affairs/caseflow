@@ -1,23 +1,38 @@
 class Rating
+  include ActiveModel::Model
+
   attr_accessor :participant_id, :profile_date, :promulgation_date
 
-  def initialize(attrs)
-    # TODO: set attrs
-  end
+  TIMELY_DAYS = 372.days
 
-  def issues
-    @rating_issues ||= RatingIssue.fetch(rating: self)
-  end
-
-  def self.fetch_timely(participant_id:)
-    bgs_response = BGSService.new.fetch_ratings_in_range(
+  class << self
+    def fetch_timely(participant_id:)
+      response = BGSService.new.fetch_ratings_in_range(
         participant_id: participant_id,
-        start_date: Time.zone.now - 372.days,
-        end_date: Time.zone.now)
-    rating_profile = bgs_response[:rating_profile_list][:rating_profile]
-    if rating_profile.class == Hash
-        rating_profile = [rating_profile]
+        start_date: Time.zone.today - TIMELY_DAYS,
+        end_date: Time.zone.today
+      )
+
+      ratings_from_bgs_response(response).select do |rating|
+        rating.promulgation_date > (Time.zone.today - 372)
+      end
     end
-    rating_profile
+
+    def from_bgs_hash(data)
+      new(
+        participant_id: data[:comp_id][:ptcpnt_vet_id],
+        profile_date: data[:comp_id][:prfil_dt],
+        promulgation_date: data[:prmlgn_dt]
+      )
+    end
+
+    private
+
+    def ratings_from_bgs_response(response)
+      # If only one rating is returned, we need to convert it to an array
+      [response[:rating_profile_list][:rating_profile]].flatten.map do |rating_data|
+        Rating.from_bgs_hash(rating_data)
+      end
+    end
   end
 end

@@ -208,6 +208,8 @@ class Fakes::BGSService
     self.ssn_not_found = false
     self.inaccessible_appeal_vbms_ids = []
     self.end_product_records = {}
+    self.rating_records = {}
+    self.rating_issue_records = {}
   end
 
   def get_end_products(veteran_id)
