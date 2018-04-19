@@ -508,6 +508,11 @@ RSpec.feature "Queue" do
         expect(page).to have_content "Program: #{field_values.first}"
         expect(page).to have_content "Issue: #{field_values.second}"
         expect(page).to have_content "Note: added issue"
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq(appeal.issues.length.to_s)
       end
 
       scenario "deletes issue" do
@@ -537,6 +542,11 @@ RSpec.feature "Queue" do
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues.length - 1)
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq(appeal.issues.length.to_s)
       end
     end
 
