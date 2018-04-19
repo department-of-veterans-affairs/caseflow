@@ -62,15 +62,14 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign(
-  {}, ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map(
-    (id) => ({ [VACOLS_DISPOSITIONS_BY_ID[id].toLowerCase().replace(/ /g, '_')]: id })
-  )
+export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
+  ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
+    [VACOLS_DISPOSITIONS_BY_ID[dispositionId].toLowerCase().replace(/ /g, '_')]: dispositionId
+  }))
 );
 
 export const REMAND_REASONS = Object.assign({},
-  ...Object.keys(REMAND_REASONS_BY_ID).map((id) => ({
-      [id]: Object.entries(REMAND_REASONS_BY_ID[id]).map((label, id) => ({ id, label }))
-    })
-  )
+  ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
+    [reasonType]: Object.entries(REMAND_REASONS_BY_ID[reasonType]).map((label, reasonId) => ({ reasonId, label }))
+  }))
 );
