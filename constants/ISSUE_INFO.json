@@ -1,12 +1,17 @@
 {
   "01": {
     "description": "VBA Burial benefits",
+    "plain_description": "Burial benefits",
     "levels": {
       "01": {
         "description": "Entitlement",
         "levels": {
-          "01": { "description": "Service connected" },
-          "02": { "description": "Nonservice connected" }
+          "01": {
+            "description": "Service connected"
+          },
+          "02": {
+            "description": "Nonservice connected"
+          }
         }
       },
       "02": {
@@ -20,132 +25,313 @@
       "01": {
         "description": "1151 Eligibility",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Other" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Benefits as a result of VA error (Section 1151)"
+          },
+          "02": {
+            "description": "Other",
+            "plain_description": "Benefits as a result of VA error (Section 1151)"
+          }
         }
       },
-      "02": { "description": "Apportionment" },
+      "02": {
+        "description": "Apportionment"
+      },
       "03": {
         "description": "Automobile or adaptive equipment",
         "levels": {
-          "01": { "description": "Eligibility" },
-          "02": { "description": "Other" }
+          "01": {
+            "description": "Eligibility",
+            "plain_description": "Eligibility for adaptive equipment"
+          },
+          "02": {
+            "description": "Other",
+            "plain_description": "Adaptive equipment"
+          }
         }
       },
       "04": {
         "description": "Civil Service preference",
         "levels": {
-          "01": { "description": "Eligibility" }
+          "01": {
+            "description": "Eligibility",
+            "plain_description": "Eligibility for Civil Service preference"
+          }
         }
       },
       "05": {
         "description": "Clothing allowance",
         "levels": {
-          "01": { "description": "Eligibility" },
-          "02": { "description": "Other" },
-          "03": { "description": "Timeliness of filing" }
+          "01": {
+            "description": "Eligibility",
+            "plain_description": "Eligibility for clothing allowance"
+          },
+          "02": {
+            "description": "Other",
+            "plain_description": "Clothing allowance"
+          },
+          "03": {
+            "description": "Timeliness of filing",
+            "plain_description": "Timeliness of filing for clothing allowance"
+          }
         }
       },
-      "06": { "description": "Competency of payee" },
+      "06": {
+        "description": "Competency of payee",
+        "plain_description": "Competence to manage own finances"
+      },
       "07": {
         "description": "CUE (38 C.F.R. 3.105)",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "DIC" },
-          "03": { "description": "Effective date" },
-          "04": { "description": "Rating increase or decrease" },
-          "05": { "description": "Service connection grant or severance" },
-          "06": { "description": "TDIU grant or termination" },
-          "07": { "description": "Temporary total grant or termination" },
-          "08": { "description": "Other" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Clear and unmistakeable error, accrued benefits"
+          },
+          "02": {
+            "description": "DIC",
+            "plain_description": "Clear and unmistakeable error, survivor benefits"
+          },
+          "03": {
+            "description": "Effective date",
+            "plain_description": "Clear and unmistakeable error, effective date"
+          },
+          "04": {
+            "description": "Rating increase or decrease",
+            "plain_description": "Clear and unmistakeable error, rating"
+          },
+          "05": {
+            "description": "Service connection grant or severance",
+            "plain_description": "Clear and unmistakeable error, service connection"
+          },
+          "06": {
+            "description": "TDIU grant or termination",
+            "plain_description": "Clear and unmistakeable error, 100% rating for individual unemployability"
+          },
+          "07": {
+            "description": "Temporary total grant or termination",
+            "plain_description": "Clear and unmistakeable error, 100% rating for temporary total disability"
+          },
+          "08": {
+            "description": "Other",
+            "plain_description": "Clear and unmistakeable error"
+          }
         }
       },
       "08": {
         "description": "DIC",
         "levels": {
-          "01": { "description": "38 U.S.C. 1318" },
-          "02": { "description": "Contested claim" },
-          "03": { "description": "SC cause of death" },
-          "04": { "description": "Status as claimant" },
-          "05": { "description": "Other" }
+          "01": {
+            "description": "38 U.S.C. 1318",
+            "plain_description": "Benefits for survivors of Veterans with total disability"
+          },
+          "02": {
+            "description": "Contested claim",
+            "plain_description": "Survivor benefits"
+          },
+          "03": {
+            "description": "SC cause of death",
+            "plain_description": "Service-connected cause of death"
+          },
+          "04": {
+            "description": "Status as claimant",
+            "plain_description": "Status as claimant of survivor benefits"
+          },
+          "05": {
+            "description": "Other",
+            "plain_description": "Survivor benefits"
+          }
         }
       },
       "09": {
         "description": "Effective date",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "DIC" },
-          "03": { "description": "Rating increase or decrease" },
-          "04": { "description": "Service connection grant or severance" },
-          "05": { "description": "TDIU grant or termination" },
-          "06": { "description": "Temporary total grant or termination" },
-          "07": { "description": "Other" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Effective date, accrued benefits"
+          },
+          "02": {
+            "description": "DIC",
+            "plain_description": "Effective date, survivor benefits"
+          },
+          "03": {
+            "description": "Rating increase or decrease",
+            "plain_description": "Effective date, rating"
+          },
+          "04": {
+            "description": "Service connection grant or severance",
+            "plain_description": "Effective date, service connection"
+          },
+          "05": {
+            "description": "TDIU grant or termination",
+            "plain_description": "Effective date, 100% rating for individual unemployability"
+          },
+          "06": {
+            "description": "Temporary total grant or termination",
+            "plain_description": "Effective date, 100% rating for temporary total disability"
+          },
+          "07": {
+            "description": "Other",
+            "plain_description": "Effective date"
+          }
         }
       },
-      "10": { "description": "Forfeiture of benefits" },
+      "10": {
+        "description": "Forfeiture of benefits"
+      },
       "11": {
         "description": "Increased rate for dependents",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Adoption" },
-          "03": { "description": "Helpless child" },
-          "04": { "description": "Paternity" },
-          "05": { "description": "Stepchild" },
-          "06": { "description": "Validity of marriage" },
-          "07": { "description": "Other" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Increased rate for dependents"
+          },
+          "02": {
+            "description": "Adoption",
+            "plain_description": "Increased rate for adoption of dependent"
+          },
+          "03": {
+            "description": "Helpless child",
+            "plain_description": "Increased rate for helpless child"
+          },
+          "04": {
+            "description": "Paternity",
+            "plain_description": "Paternity"
+          },
+          "05": {
+            "description": "Stepchild",
+            "plain_description": "Increased rate for stepchild"
+          },
+          "06": {
+            "description": "Validity of marriage",
+            "plain_description": "Validity of marriage for VA purposes"
+          },
+          "07": {
+            "description": "Other",
+            "plain_description": "Increased rate for dependents"
+          }
         }
       },
       "12": {
         "description": "Increased rating",
         "levels": {
-          "01": { "description": "10% under 38 C.F.R. 3.324" },
-          "02": { "description": "Accrued" },
-          "03": { "description": "Extraschedular" },
-          "04": { "description": "Schedular" },
-          "05": { "description": "SMC" },
-          "06": { "description": "Temporary total" },
-          "07": { "description": "Other" },
-          "08": { "description": "Schedular & Extraschedular" }
+          "01": {
+            "description": "10% under 38 C.F.R. 3.324",
+            "plain_description": "10% rating for multiple noncompensable disabilities"
+          },
+          "02": {
+            "description": "Accrued",
+            "plain_description": "Increased rating, %s"
+          },
+          "03": {
+            "description": "Extraschedular",
+            "plain_description": "Increased rating, %s"
+          },
+          "04": {
+            "description": "Schedular",
+            "plain_description": "Increased rating, %s"
+          },
+          "05": {
+            "description": "SMC",
+            "plain_description": "Increased rating, special monthly compensation"
+          },
+          "06": {
+            "description": "Temporary total",
+            "plain_description": "100% rating for temporary total disability"
+          },
+          "07": {
+            "description": "Other",
+            "plain_description": "Increased rating"
+          },
+          "08": {
+            "description": "Schedular & Extraschedular",
+            "plain_description": "Increased rating, %s"
+          }
         }
       },
       "13": {
         "description": "Overpayment",
         "levels": {
-          "01": { "description": "Validity of debt" },
-          "02": { "description": "Waiver" }
+          "01": {
+            "description": "Validity of debt",
+            "plain_description": "Validity of debt owed"
+          },
+          "02": {
+            "description": "Waiver",
+            "plain_description": "Waiver of indebtedness"
+          }
         }
       },
       "14": {
         "description": "Severance of service connection",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Dental" },
-          "03": { "description": "All others" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Severance of service connection, %s"
+          },
+          "02": {
+            "description": "Dental",
+            "plain_description": "Severance of service connection, dental"
+          },
+          "03": {
+            "description": "All others",
+            "plain_description": "Severance of service connection, %s"
+          }
         }
       },
       "15": {
         "description": "Service connection",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Dental" },
-          "03": { "description": "All Others" },
-          "04": { "description": "New and Material" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Service connection, %s"
+          },
+          "02": {
+            "description": "Dental",
+            "plain_description": "Service connection, dental"
+          },
+          "03": {
+            "description": "All Others",
+            "plain_description": "Service connection, %s"
+          },
+          "04": {
+            "description": "New and Material",
+            "plain_description": "New and material evidence to reopen claim for service connection, %s"
+          }
         }
       },
       "16": {
         "description": "Status as a veteran",
         "levels": {
-          "01": { "description": "Character of discharge" },
-          "02": { "description": "Recognized service" },
-          "03": { "description": "Other" }
+          "01": {
+            "description": "Character of discharge",
+            "plain_description": "Character of discharge for VA purposes"
+          },
+          "02": {
+            "description": "Recognized service",
+            "plain_description": "Recognized service"
+          },
+          "03": {
+            "description": "Other",
+            "plain_description": "Status as a Veteran"
+          }
         }
       },
       "17": {
         "description": "TDIU",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Entitlement" },
-          "03": { "description": "Termination" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "100% rating for individual unemployability"
+          },
+          "02": {
+            "description": "Entitlement",
+            "plain_description": "100% rating for individual unemployability"
+          },
+          "03": {
+            "description": "Termination",
+            "plain_description": "Rating reduction, 100% rating for individual unemployability"
+          }
         }
       },
       "18": {
@@ -154,23 +340,59 @@
           "01": {
             "description": "Rating reductions",
             "levels": {
-              "01": { "description": "Accrued" },
-              "02": { "description": "Extraschedular" },
-              "03": { "description": "Protection" },
-              "04": { "description": "Schedular" },
-              "05": { "description": "SMC" },
-              "06": { "description": "Temporary total" },
-              "07": { "description": "Other" }
+              "01": {
+                "description": "Accrued",
+                "plain_description": "Rating reduction, %s"
+              },
+              "02": {
+                "description": "Extraschedular",
+                "plain_description": "Rating reduction, %s"
+              },
+              "03": {
+                "description": "Protection",
+                "plain_description": "Protection of rating"
+              },
+              "04": {
+                "description": "Schedular",
+                "plain_description": "Rating reduction, %s"
+              },
+              "05": {
+                "description": "SMC",
+                "plain_description": "Rating reduction, special monthly compensation"
+              },
+              "06": {
+                "description": "Temporary total",
+                "plain_description": "Rating reduction, 100% rating for temporary total disability"
+              },
+              "07": {
+                "description": "Other",
+                "plain_description": "Rating reduction"
+              }
             }
           },
           "02": {
             "description": "Nonrating reductions",
             "levels": {
-              "01": { "description": "Incarcerated payee" },
-              "02": { "description": "Institutionalized payee" },
-              "03": { "description": "Removal of dependent" },
-              "04": { "description": "Recoupment" },
-              "05": { "description": "Other" }
+              "01": {
+                "description": "Incarcerated payee",
+                "plain_description": "Reduction in compensation, incarceration"
+              },
+              "02": {
+                "description": "Institutionalized payee",
+                "plain_description": "Reduction in compensation, institutionalization"
+              },
+              "03": {
+                "description": "Removal of dependent",
+                "plain_description": "Reduction in compensation, removal of dependent"
+              },
+              "04": {
+                "description": "Recoupment",
+                "plain_description": "Reduction in compensation, recoupment"
+              },
+              "05": {
+                "description": "Other",
+                "plain_description": "Reduction in compensation"
+              }
             }
           }
         }
@@ -178,198 +400,420 @@
       "19": {
         "description": "Specially adapted housing",
         "levels": {
-          "01": { "description": "Eligibility " },
-          "02": { "description": "Other" }
+          "01": {
+            "description": "Eligibility ",
+            "plain_description": "Eligibility for specially adapted housing"
+          },
+          "02": {
+            "description": "Other",
+            "plain_description": "Specially adapted housing"
+          }
         }
       },
       "20": {
         "description": "Survivors & dependents educational assistance (Cha",
         "levels": {
-          "01": { "description": "Accrued" },
-          "02": { "description": "Eligibility" },
-          "03": { "description": "Other" }
+          "01": {
+            "description": "Accrued",
+            "plain_description": "Educational assistance for survivors"
+          },
+          "02": {
+            "description": "Eligibility",
+            "plain_description": "Eligibility for educational assistance for survivors and dependents"
+          },
+          "03": {
+            "description": "Other",
+            "plain_description": "Educational assistance for survivors and dependents"
+          }
         }
       },
-      "21": { "description": "Willfull misconduct/LOD" },
-      "22": { "description": "Eligibility for Substitution" }
+      "21": {
+        "description": "Willfull misconduct/LOD"
+      },
+      "22": {
+        "description": "Eligibility for Substitution"
+      }
     }
   },
   "03": {
     "description": "Education",
+    "plain_description": "Education benefits",
     "levels": {
-      "01": { "description": "Accrued" },
+      "01": {
+        "description": "Accrued",
+        "plain_description": "Education benefits"
+      },
       "02": {
         "description": "Eligibility",
         "levels": {
-          "01": { "description": "38 U.S.C. ch. 30" },
-          "02": { "description": "38 U.S.C. ch. 35" },
-          "03": { "description": "38 U.S.C. ch. 32" },
-          "04": { "description": "Ed. Assist. Test Program" }
+          "01": {
+            "description": "38 U.S.C. ch. 30",
+            "plain_description": "Eligibility for Montgomery GI Bill, Active Duty"
+          },
+          "02": {
+            "description": "38 U.S.C. ch. 35",
+            "plain_description": "Eligibility for Dependents' Educational Assistance"
+          },
+          "03": {
+            "description": "38 U.S.C. ch. 32",
+            "plain_description": "Eligibility for Veterans Education Assistance Program"
+          },
+          "04": {
+            "description": "Ed. Assist. Test Program",
+            "plain_description": "Eligibility for Educational Assistance Test Program"
+          }
         }
       },
       "03": {
         "description": "Effective Date of Award",
         "levels": {
-          "01": { "description": "38 U.S.C ch.30" },
-          "02": { "description": "10 U.S.C. ch. 1606" },
-          "03": { "description": "38 U.S.C. ch. 35" },
-          "04": { "description": "38 U.S.C. ch. 32" },
-          "05": { "description": "Ed. Assist. Test Program" }
+          "01": {
+            "description": "38 U.S.C ch.30",
+            "plain_description": "Effective date, Montgomery GI Bill, Active Duty"
+          },
+          "02": {
+            "description": "10 U.S.C. ch. 1606",
+            "plain_description": "Effective date, Montgomery GI Bill, Selected Reserve"
+          },
+          "03": {
+            "description": "38 U.S.C. ch. 35",
+            "plain_description": "Effective date, Dependents' Educational Assistance"
+          },
+          "04": {
+            "description": "38 U.S.C. ch. 32",
+            "plain_description": "Effective date, Veterans Education Assistance Program"
+          },
+          "05": {
+            "description": "Ed. Assist. Test Program",
+            "plain_description": "Effective date, Educational Assistance Test Program"
+          }
         }
       },
       "04": {
         "description": "Extension of Delimiting Date",
         "levels": {
-          "01": { "description": "38 U.S.C. ch. 30" },
-          "02": { "description": "10 U.S.C. ch. 1606" },
-          "03": { "description": "38 U.S.C. ch. 35" },
-          "04": { "description": "38 U.S.C. ch. 32" }
+          "01": {
+            "description": "38 U.S.C. ch. 30",
+            "plain_description": "Extension of delimiting date, Montgomery GI Bill, Active Duty"
+          },
+          "02": {
+            "description": "10 U.S.C. ch. 1606",
+            "plain_description": "Extension of delimiting date, Montgomery GI Bill, Selected Reserve"
+          },
+          "03": {
+            "description": "38 U.S.C. ch. 35",
+            "plain_description": "Extension of delimiting date, Dependents' Educational Assistance"
+          },
+          "04": {
+            "description": "38 U.S.C. ch. 32",
+            "plain_description": "Extension of delimiting date, Veterans Education Assistance Program"
+          }
         }
       },
       "05": {
         "description": "Overpayment",
         "levels": {
-          "01": { "description": "Validity of debt" },
-          "02": { "description": "Waiver" }
+          "01": {
+            "description": "Validity of debt",
+            "plain_description": "Validity of debt owed"
+          },
+          "02": {
+            "description": "Waiver",
+            "plain_description": "Waiver of indebtedness"
+          }
         }
       },
-      "06": { "description": "Other" }
+      "06": {
+        "description": "Other",
+        "plain_description": "Education benefits"
+      }
     }
   },
   "04": {
     "description": "Insurance",
+    "plain_description": "Insurance benefits",
     "levels": {
       "01": {
         "description": "Waiver of premiums (1912-1914)",
         "levels": {
-          "01": { "description": "Date of total disability" },
-          "02": { "description": "Effective date" },
-          "03": { "description": "TDIP (1915)" },
-          "04": { "description": "Other" }
+          "01": {
+            "description": "Date of total disability"
+          },
+          "02": {
+            "description": "Effective date"
+          },
+          "03": {
+            "description": "TDIP (1915)"
+          },
+          "04": {
+            "description": "Other"
+          }
         }
       },
       "02": {
         "description": "Reinstatement",
         "levels": {
-          "01": { "description": "Medically qualified" },
-          "02": { "description": "Other" }
+          "01": {
+            "description": "Medically qualified"
+          },
+          "02": {
+            "description": "Other"
+          }
         }
       },
       "03": {
         "description": "RH (1922(a) S-DVI)",
         "levels": {
-          "01": { "description": "Timely application" },
-          "02": { "description": "Medically qualified" },
-          "03": { "description": "Discharged before 4/25/51" },
-          "04": { "description": "Other" }
+          "01": {
+            "description": "Timely application"
+          },
+          "02": {
+            "description": "Medically qualified"
+          },
+          "03": {
+            "description": "Discharged before 4/25/51"
+          },
+          "04": {
+            "description": "Other"
+          }
         }
       },
       "04": {
         "description": "SRH (1922(b) S-DVI)",
         "levels": {
-          "01": { "description": "Timely application" },
-          "02": { "description": "Over age 65" },
-          "03": { "description": "Other" }
+          "01": {
+            "description": "Timely application"
+          },
+          "02": {
+            "description": "Over age 65"
+          },
+          "03": {
+            "description": "Other"
+          }
         }
       },
       "05": {
         "description": "Contested death claim",
         "levels": {
-          "01": { "description": "Relationships" },
-          "02": { "description": "Testamentary capacity" },
-          "03": { "description": "Undue influence" },
-          "04": { "description": "Intent of insured" },
-          "05": { "description": "Other" }
+          "01": {
+            "description": "Relationships"
+          },
+          "02": {
+            "description": "Testamentary capacity"
+          },
+          "03": {
+            "description": "Undue influence"
+          },
+          "04": {
+            "description": "Intent of insured"
+          },
+          "05": {
+            "description": "Other"
+          }
         }
       },
-      "06": { "description": "Other" }
+      "06": {
+        "description": "Other"
+      }
     }
   },
   "05": {
     "description": "Loan Guaranty",
     "levels": {
-      "01": { "description": "Basic eligibility" },
-      "02": { "description": "Validity of debt" },
-      "03": { "description": "Waiver of indebtedness" },
-      "04": { "description": "Retroactive release of liability" },
-      "05": { "description": "Restoration of entitlement" },
-      "06": { "description": "Other" }
+      "01": {
+        "description": "Basic eligibility",
+        "plain_description": "Eligibility for loan guaranty benefits"
+      },
+      "02": {
+        "description": "Validity of debt",
+        "plain_description": "Validity of debt owed"
+      },
+      "03": {
+        "description": "Waiver of indebtedness",
+        "plain_description": "Waiver of indebtedness"
+      },
+      "04": {
+        "description": "Retroactive release of liability",
+        "plain_description": "Retroactive release of liability"
+      },
+      "05": {
+        "description": "Restoration of entitlement",
+        "plain_description": "Restoration of entitlement"
+      },
+      "06": {
+        "description": "Other",
+        "plain_description": "Loan guaranty benefits"
+      }
     }
   },
   "06": {
     "description": "Medical",
+    "plain_description": "Medical benefits",
     "levels": {
       "01": {
         "description": "Eligibility for treatment",
         "levels": {
-          "01": { "description": "Dental" },
-          "02": { "description": "Other" }
+          "01": {
+            "description": "Dental"
+          },
+          "02": {
+            "description": "Other"
+          }
         }
       },
-      "02": { "description": "Medical expense reimbursement" },
-      "03": { "description": "Eligibility for fee basis care" },
+      "02": {
+        "description": "Medical expense reimbursement"
+      },
+      "03": {
+        "description": "Eligibility for fee basis care"
+      },
       "04": {
         "description": "Indebtedness",
         "levels": {
-          "01": { "description": "Validity of Debt" },
-          "02": { "description": "Waiver" }
+          "01": {
+            "description": "Validity of Debt"
+          },
+          "02": {
+            "description": "Waiver"
+          }
         }
       },
-      "05": { "description": "Level of priority for treatment" },
-      "06": { "description": "Other" },
-      "07": { "description": "Clothing allowance § 3.810(b) certification" }
+      "05": {
+        "description": "Level of priority for treatment"
+      },
+      "06": {
+        "description": "Other"
+      },
+      "07": {
+        "description": "Clothing allowance § 3.810(b) certification"
+      }
     }
   },
   "07": {
     "description": "Pension",
     "levels": {
-      "01": { "description": "Accrued benefits" },
-      "02": { "description": "Apportionment" },
-      "03": { "description": "Countable income" },
-      "04": { "description": "CUE (38 C.F.R. 3.105)" },
-      "05": { "description": "Death pension" },
-      "06": { "description": "Effective date" },
+      "01": {
+        "description": "Accrued benefits",
+        "plain_description": "Pension benefits"
+      },
+      "02": {
+        "description": "Apportionment",
+        "plain_description": "Apportionment"
+      },
+      "03": {
+        "description": "Countable income",
+        "plain_description": "Countable income"
+      },
+      "04": {
+        "description": "CUE (38 C.F.R. 3.105)",
+        "plain_description": "Clear and unmistakeable error, pension benefits"
+      },
+      "05": {
+        "description": "Death pension",
+        "plain_description": "Survivors pension benefits"
+      },
+      "06": {
+        "description": "Effective date",
+        "plain_description": "Effective date, pension benefits"
+      },
       "07": {
         "description": "Eligibility",
         "levels": {
-          "01": { "description": "Wartime service" },
-          "02": { "description": "Unemployability" },
-          "03": { "description": "Recognized service" }
+          "01": {
+            "description": "Wartime service",
+            "plain_description": "Eligibility for pension, wartime service"
+          },
+          "02": {
+            "description": "Unemployability",
+            "plain_description": "Eligibility for pension, unemployability"
+          },
+          "03": {
+            "description": "Recognized service",
+            "plain_description": "Eligibility for pension, recognized service"
+          }
         }
       },
       "08": {
         "description": "Increased rate for dependents",
         "levels": {
-          "01": { "description": "Adoption" },
-          "02": { "description": "Helpless child" },
-          "03": { "description": "Paternity" },
-          "04": { "description": "Stepchild" },
-          "05": { "description": "Validity of marriage" },
-          "06": { "description": "Other" }
+          "01": {
+            "description": "Adoption",
+            "plain_description": "Increased rate for adoption of dependent"
+          },
+          "02": {
+            "description": "Helpless child",
+            "plain_description": "Increased rate for helpless child"
+          },
+          "03": {
+            "description": "Paternity",
+            "plain_description": "Paternity"
+          },
+          "04": {
+            "description": "Stepchild",
+            "plain_description": "Increased rate for stepchild"
+          },
+          "05": {
+            "description": "Validity of marriage",
+            "plain_description": "Validity of marriage for VA purposes"
+          },
+          "06": {
+            "description": "Other",
+            "plain_description": "Increased rate for dependents"
+          }
         }
       },
-      "09": { "description": "SMP" },
+      "09": {
+        "description": "SMP",
+        "plain_description": "Special monthly pension"
+      },
       "10": {
         "description": "Overpayment",
         "levels": {
-          "01": { "description": "Validity of debt" },
-          "02": { "description": "Waiver" }
+          "01": {
+            "description": "Validity of debt",
+            "plain_description": "Validity of debt owed"
+          },
+          "02": {
+            "description": "Waiver",
+            "plain_description": "Waiver of indebtedness"
+          }
         }
       },
-      "11": { "description": "Willful misconduct/LOD" },
-      "12": { "description": "Other" }
+      "11": {
+        "description": "Willful misconduct/LOD",
+        "plain_description": "Willful misconduct"
+      },
+      "12": {
+        "description": "Other",
+        "plain_description": "Pension benefits"
+      }
     }
   },
   "08": {
     "description": "VRE",
+    "plain_description": "Vocational Rehabilitation and Employment benefits",
     "levels": {
-      "01": { "description": "Basic Eligibility" },
-      "02": { "description": "Entitlement to Services" },
-      "03": { "description": "Plan/Goal Selection" },
-      "04": { "description": "Equipment Purchases" },
-      "05": { "description": "Additional Training" },
-      "06": { "description": "Change of Program" },
-      "07": { "description": "Other" }
+      "01": {
+        "description": "Basic Eligibility"
+      },
+      "02": {
+        "description": "Entitlement to Services"
+      },
+      "03": {
+        "description": "Plan/Goal Selection"
+      },
+      "04": {
+        "description": "Equipment Purchases"
+      },
+      "05": {
+        "description": "Additional Training"
+      },
+      "06": {
+        "description": "Change of Program"
+      },
+      "07": {
+        "description": "Other"
+      }
     }
   },
   "09": {
@@ -378,22 +822,50 @@
       "01": {
         "description": "Attorney fees",
         "levels": {
-          "01": { "description": "Failure to withhold fees" },
-          "02": { "description": "Eligibility for direct fee payment" }
+          "01": {
+            "description": "Failure to withhold fees",
+            "plain_description": "Failure to withhold attorney fees"
+          },
+          "02": {
+            "description": "Eligibility for direct fee payment",
+            "plain_description": "Eligibility for attorney fees"
+          },
+          "03": {
+            "description": "Reasonabless of attorney fees",
+            "plain_description": "Reasonabless of attorney fees"
+          }
         }
       },
       "02": {
         "description": "REPS",
         "levels": {
-          "01": { "description": "Basic Eligibility" },
-          "02": { "description": "Relationship" },
-          "03": { "description": "Full-time school attendance" },
-          "04": { "description": "Income/self-employment" },
+          "01": {
+            "description": "Basic Eligibility",
+            "plain_description": "Eligibility for Restored Entitlement Program for Survivors"
+          },
+          "02": {
+            "description": "Relationship",
+            "plain_description": "Relationship to Veteran"
+          },
+          "03": {
+            "description": "Full-time school attendance",
+            "plain_description": "Full-time school attendance"
+          },
+          "04": {
+            "description": "Income/self-employment",
+            "plain_description": "Income or self-employment"
+          },
           "05": {
             "description": "Indebtedness",
             "levels": {
-              "01": { "description": "Validity of debt" },
-              "02": { "description": "Waiver" }
+              "01": {
+                "description": "Validity of debt",
+                "plain_description": "Validity of debt owed"
+              },
+              "02": {
+                "description": "Waiver",
+                "plain_description": "Waiver of indebtedness"
+              }
             }
           }
         }
@@ -401,15 +873,40 @@
       "03": {
         "description": "Spina bifida",
         "levels": {
-          "01": { "description": "Effective date" },
-          "02": { "description": "Eligibility" },
-          "03": { "description": "Level of disability" },
-          "04": { "description": "Other" }
+          "01": {
+            "description": "Effective date",
+            "plain_description": "Effective date, spina bifida"
+          },
+          "02": {
+            "description": "Eligibility",
+            "plain_description": "Eligibility for spina bifida"
+          },
+          "03": {
+            "description": "Level of disability",
+            "plain_description": "Level of disability"
+          },
+          "04": {
+            "description": "Other",
+            "plain_description": "Spina bifida"
+          }
         }
       },
-      "04": { "description": "Waiver of VA employee indebtedness" },
-      "05": { "description": "Death Gratuity Certification (38 USC 1323)" },
-      "07": { "description": "VBMS Access" }
+      "04": {
+        "description": "Waiver of VA employee indebtedness",
+        "plain_description": "Waiver of VA employee indebtedness"
+      },
+      "05": {
+        "description": "Death Gratuity Certification (38 USC 1323)",
+        "plain_description": "Certifications with respect to circumstances of death"
+      },
+      "06": {
+        "description": "Accreditation",
+        "plain_description": "Accreditation"
+      },
+      "07": {
+        "description": "VBMS Access",
+        "plain_description": "VBMS Access"
+      }
     }
   },
   "10": {
@@ -418,72 +915,154 @@
       "01": {
         "description": "Attorney fees/expenses",
         "levels": {
-          "01": { "description": "Payment from past-due benefits" },
-          "02": { "description": "Reasonableness" }
+          "01": {
+            "description": "Payment from past-due benefits",
+            "plain_description": "Payment from past-due benefits"
+          },
+          "02": {
+            "description": "Reasonableness",
+            "plain_description": "Reasonableness of attorney fees"
+          }
         }
       },
       "02": {
         "description": "CUE under 38 U.S.C. 7111",
         "levels": {
-          "01": { "description": "Compensation" },
-          "02": { "description": "Pension" },
-          "03": { "description": "Other" }
+          "01": {
+            "description": "Compensation",
+            "plain_description": "Clear and unmistakeable error, compensation"
+          },
+          "02": {
+            "description": "Pension",
+            "plain_description": "Clear and unmistakeable error, pension"
+          },
+          "03": {
+            "description": "Other",
+            "plain_description": "Clear and unmistakeable error"
+          }
         }
       },
       "03": {
         "description": "Motions",
         "levels": {
-          "01": { "description": "Rule 608 motion to withdraw" },
-          "02": { "description": "Rule 702, 704, or 717 motion for new hearing date" },
-          "03": { "description": "Rule 711 motion to issue or quash subpoena" },
-          "04": { "description": "Rule 716 motion for correction of hearing transcription" },
-          "05": { "description": "Rule 900 motion to advance on docket" },
-          "06": { "description": "Rule 904 motion to vacate" },
-          "07": { "description": "Rule 1001 motion for consideration" },
+          "01": {
+            "description": "Rule 608 motion to withdraw",
+            "plain_description": "Rule 608 motion to withdraw"
+          },
+          "02": {
+            "description": "Rule 702, 704, or 717 motion for new hearing date",
+            "plain_description": "Rule 702, 704, or 717 motion for new hearing date"
+          },
+          "03": {
+            "description": "Rule 711 motion to issue or quash subpoena",
+            "plain_description": "Rule 711 motion to issue or quash subpoena"
+          },
+          "04": {
+            "description": "Rule 716 motion for correction of hearing transcription",
+            "plain_description": "Rule 716 motion for correction of hearing transcript"
+          },
+          "05": {
+            "description": "Rule 900 motion to advance on docket",
+            "plain_description": "Rule 900 motion to advance on docket"
+          },
+          "06": {
+            "description": "Rule 904 motion to vacate",
+            "plain_description": "Rule 904 motion to vacate"
+          },
+          "07": {
+            "description": "Rule 1001 motion for consideration",
+            "plain_description": "Rule 1001 motion for reconsideration"
+          },
           "08": {
             "description": "Rule 1304(b) motion",
             "levels": {
-              "01": { "description": "Evidence submission" },
-              "02": { "description": "Hearing request" },
-              "03": { "description": "Request to change representative" }
+              "01": {
+                "description": "Evidence submission",
+                "plain_description": "Rule 1304(b) motion to submit additional evidence"
+              },
+              "02": {
+                "description": "Hearing request",
+                "plain_description": "Rule 1304(b) motion to request personal hearing"
+              },
+              "03": {
+                "description": "Request to change representative",
+                "plain_description": "Rule 1304(b) motion to change representative"
+              }
             }
           }
         }
       },
-      "04": { "description": "Designation of record" }
+      "04": {
+        "description": "Designation of record",
+        "plain_description": "Designation of record"
+      }
     }
   },
   "11": {
     "description": "NCA Burial benefits",
+    "plain_description": "Burial benefits",
     "levels": {
       "01": {
         "description": "Entitlement",
         "levels": {
-          "01": { "description": "Reserves/National Guard" },
-          "02": { "description": "Less than 24 months" },
-          "03": { "description": "Character of service" },
-          "04": { "description": "Merchant Marine" },
-          "05": { "description": "No military information" },
-          "06": { "description": "Cadet (service academies)" },
-          "07": { "description": "Adult child with waiver request" },
-          "08": { "description": "Allied forces and non-citizens" },
-          "09": { "description": "Pre-need" },
-          "10": { "description": "Spouse or dependent" },
-          "11": { "description": "Non-qualifying service" },
-          "12": { "description": "ABMC/overseas burial" },
-          "13": { "description": "Pre-WWI/burial site unknown" },
-          "14": { "description": "Marked grave (death prior to 10-18-78)" },
-          "15": { "description": "Marked grave (death on/after 10-18-78 to 10-31-90)" }
+          "01": {
+            "description": "Reserves/National Guard"
+          },
+          "02": {
+            "description": "Less than 24 months"
+          },
+          "03": {
+            "description": "Character of service"
+          },
+          "04": {
+            "description": "Merchant Marine"
+          },
+          "05": {
+            "description": "No military information"
+          },
+          "06": {
+            "description": "Cadet (service academies)"
+          },
+          "07": {
+            "description": "Adult child with waiver request"
+          },
+          "08": {
+            "description": "Allied forces and non-citizens"
+          },
+          "09": {
+            "description": "Pre-need"
+          },
+          "10": {
+            "description": "Spouse or dependent"
+          },
+          "11": {
+            "description": "Non-qualifying service"
+          },
+          "12": {
+            "description": "ABMC/overseas burial"
+          },
+          "13": {
+            "description": "Pre-WWI/burial site unknown"
+          },
+          "14": {
+            "description": "Marked grave (death prior to 10-18-78)"
+          },
+          "15": {
+            "description": "Marked grave (death on/after 10-18-78 to 10-31-90)"
+          }
         }
       },
-      "02": { "description": "Other" }
+      "02": {
+        "description": "Other"
+      }
     }
   },
   "12": {
     "description": "Fiduciary",
     "levels": {
       "01": {
-        "description": "Fiduciary Appointment"
+        "description": "Fiduciary Appointment",
+        "plain_description": "Fiduciary Appointment"
       }
     }
   }
