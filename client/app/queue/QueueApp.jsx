@@ -12,7 +12,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
-import QueueListView from './QueueListView';
+import AttorneyTaskListView from './AttorneyTaskListView';
+import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
@@ -30,9 +31,11 @@ class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}
-    >
-      <QueueListView {...this.props} />
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {this.props.userRole === 'Attorney' ?
+        <AttorneyTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />
+      }
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
@@ -128,6 +131,7 @@ QueueApp.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
+  userRole: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };
