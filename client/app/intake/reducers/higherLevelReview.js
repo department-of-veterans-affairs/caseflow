@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError } from '../util';
+import { getReceiptDateError, getInformalConferenceError, getSameOfficeError } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.HIGHER_LEVEL_REVIEW.key) {
@@ -113,10 +113,10 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       informalConferenceError: {
-        $set: getOptionSelectedError(action.payload.responseErrorCodes)
+        $set: getInformalConferenceError(action.payload.responseErrorCodes)
       },
       sameOfficeError: {
-        $set: getOptionSelectedError(action.payload.responseErrorCodes)
+        $set: getSameOfficeError(action.payload.responseErrorCodes)
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
