@@ -36,7 +36,7 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
+export const submitReview = (intakeId, higherLevelReview) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
@@ -45,7 +45,7 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   const data = {
     informal_conference: higherLevelReview.informalConference,
     same_office: higherLevelReview.sameOffice,
-    receipt_date: formatDateStringForApi(supplementalClaim.receiptDate)
+    receipt_date: formatDateStringForApi(higherLevelReview.receiptDate)
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).

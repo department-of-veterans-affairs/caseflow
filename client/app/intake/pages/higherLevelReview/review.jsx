@@ -49,9 +49,10 @@ class Review extends React.PureComponent {
       />
 
       <RadioField
-        name="opt-in-election"
+        name="informal-conference"
         label="Did the Veteran request an informal conference?"
         strongLabel
+        vertical
         options={radioOptions}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
@@ -59,9 +60,10 @@ class Review extends React.PureComponent {
       />
 
       <RadioField
-        name="opt-in-election"
+        name="same-office"
         label="Did the Veteran request review by the same office?"
         strongLabel
+        vertical
         options={radioOptions}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
@@ -121,6 +123,8 @@ export default connect(
     sameOfficeError: state.higherLevelReview.sameOfficeError
   }),
   (dispatch) => bindActionCreators({
+    setInformalConference,
+    setSameOffice,
     setReceiptDate
   }, dispatch)
 )(Review);

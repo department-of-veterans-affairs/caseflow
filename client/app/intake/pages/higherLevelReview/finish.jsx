@@ -8,10 +8,10 @@ import { getIntakeStatus } from '../../selectors';
 class Finish extends React.PureComponent {
   render() {
     const {
-      supplementalClaimStatus
+      higherLevelReviewStatus
     } = this.props;
 
-    switch (supplementalClaimStatus) {
+    switch (higherLevelReviewStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
@@ -38,6 +38,6 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    supplementalClaimStatus: getIntakeStatus(state)
+    higherLevelReviewStatus: getIntakeStatus(state)
   })
 )(Finish);
