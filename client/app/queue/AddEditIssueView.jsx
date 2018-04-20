@@ -22,6 +22,7 @@ import {
   hideModal,
   requestSave
 } from './uiReducer/uiActions';
+import { getIssueDiagnosticCodeLabel } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -157,10 +158,8 @@ class AddEditIssueView extends React.Component {
     ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   };
 
-  diagnosticCodeLabel = (code) => `${code} - ${_.capitalize(DIAGNOSTIC_CODE_DESCRIPTIONS[code])}`
-
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
-    label: this.diagnosticCodeLabel(value),
+    label: getIssueDiagnosticCodeLabel(value),
     value
   }));
 

@@ -6,6 +6,7 @@ import {
   DECISION_TYPES
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -85,3 +86,5 @@ export const getIssueTypeDescription = (issue) => {
 
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
+
+export const getIssueDiagnosticCodeLabel = (code) => `${code} - ${_.capitalize(DIAGNOSTIC_CODE_DESCRIPTIONS[code])}`;

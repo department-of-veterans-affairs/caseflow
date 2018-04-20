@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
+import {
+  getIssueProgramDescription,
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel
+} from '../utils';
 import {
   boldText,
   CASE_DISPOSITION_ID_BY_DESCRIPTION
 } from '../constants';
 import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -33,12 +36,6 @@ const dispositionLabelForDescription = (descr) => {
 
   return `${dispositionId} - ${dispositionDescr}`;
 };
-
-const diagnosticLabel = (code) => {
-  const diagnosticCode = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
-
-  return `${code} - ${_.capitalize(diagnosticCode)}`;
-}
 
 export default class IssueListItem extends React.PureComponent {
   formatIdx = () => <td {...leftAlignTd} width="10px">
@@ -70,6 +67,7 @@ export default class IssueListItem extends React.PureComponent {
     const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
     const issueLevel2 = _.get(issueLevel1, ['levels', isslev2]);
     const issueLevel3 = _.get(issueLevel2, ['levels', isslev3]);
+    const diagnosticCodeLabel = getIssueDiagnosticCodeLabel(_.last(codes));
 
     if (issueLevel1) {
       issueLevels.push(issueLevel1.description);
@@ -77,12 +75,12 @@ export default class IssueListItem extends React.PureComponent {
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
 
-        issueLevels.push(issueLevel3 ? issueLevel3.description : diagnosticLabel(_.last(codes)));
+        issueLevels.push(issueLevel3 ? issueLevel3.description : diagnosticCodeLabel);
       } else {
-        issueLevels.push(diagnosticLabel(_.last(codes)));
+        issueLevels.push(diagnosticCodeLabel);
       }
     } else {
-      issueLevels.push(diagnosticLabel(_.last(codes)));
+      issueLevels.push(diagnosticCodeLabel);
     }
 
     return issueLevels;
