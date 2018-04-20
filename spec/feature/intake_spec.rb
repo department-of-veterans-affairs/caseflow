@@ -889,6 +889,10 @@ RSpec.feature "RAMP Intake" do
         FeatureToggle.disable!(:intakeAma)
       end
 
+      let!(:rating) do
+        Generators::Rating.build(participant_id: veteran.participant_id)
+      end
+
       scenario "Searchable dropdown when more than three forms are available" do
         visit "/intake"
         safe_click ".Select"

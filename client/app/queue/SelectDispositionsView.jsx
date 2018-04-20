@@ -18,10 +18,7 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import {
-  highlightInvalidFormItems,
-  hideSuccessMessage
-} from './uiReducer/uiActions';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -125,7 +122,11 @@ class SelectDispositionsView extends React.PureComponent {
   }];
 
   render = () => {
-    const { saveResult } = this.props;
+    const {
+      saveResult,
+      vacolsId,
+      appeal: { attributes: { issues } }
+    } = this.props;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -138,13 +139,13 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={this.props.appeal.attributes.issues}
+        rowObjects={issues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
       <div {...marginLeft(1.5)}>
-        <Link>Add Issue</Link>
+        <Link to={`/tasks/${vacolsId}/dispositions/add`}>Add Issue</Link>
       </div>
     </React.Fragment>;
   };
@@ -163,7 +164,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,
-  highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue,
