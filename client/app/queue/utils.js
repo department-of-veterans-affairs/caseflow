@@ -87,4 +87,12 @@ export const getIssueTypeDescription = (issue) => {
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
-export const getIssueDiagnosticCodeLabel = (code) => `${code} - ${_.capitalize(DIAGNOSTIC_CODE_DESCRIPTIONS[code])}`;
+export const getIssueDiagnosticCodeLabel = (code) => {
+  const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+
+  if (!readableLabel) {
+    return false;
+  }
+
+  return `${code} - ${_.capitalize(readableLabel)}`;
+};
