@@ -34,6 +34,7 @@ export const initialState = {
   }
 };
 
+// eslint-disable-next-line max-statements
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
@@ -160,19 +161,25 @@ const workQueueReducer = (state = initialState, action = {}) => {
       editingIssue,
       pendingChanges: { appeals }
     } = state;
+    const issues = appeals[appealId].attributes.issues;
+    let updatedIssues = [];
 
-    const issues = appeals[appealId].attributes.issues.map((issue) =>
-      issue.vacols_sequence_id === Number(editingIssue.vacols_sequence_id) ?
-        editingIssue : issue);
+    const editingIssueId = Number(editingIssue.vacols_sequence_id);
+    const editingExistingIssue = _.map(issues, 'vacols_sequence_id').includes(editingIssueId);
 
-    // todo: if (idx === -1) { push } (#4477)
+    if (editingExistingIssue) {
+      updatedIssues = _.map(issues, (issue) => issue.vacols_sequence_id === editingIssueId ? editingIssue : issue);
+    } else {
+      updatedIssues = issues.concat(editingIssue);
+    }
+
     return update(state, {
       pendingChanges: {
         appeals: {
           [appealId]: {
             attributes: {
               issues: {
-                $set: issues
+                $set: updatedIssues
               }
             }
           }
