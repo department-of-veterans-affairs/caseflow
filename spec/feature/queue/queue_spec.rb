@@ -472,10 +472,11 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
-        expect(page).to have_content("You updated issue 1.")
-        expect(page).to have_content("Program: #{field_values.first}")
-        expect(page).to have_content("Issue: #{field_values.second}")
-        expect(page).to have_content("Note: this is the note")
+        expect(page).to have_content "You updated issue 1."
+        expect(page).to have_content "Program: #{field_values.first}"
+        expect(page).to have_content "Issue: #{field_values.second}"
+        expect(page).to have_content field_values.last # diagnostic code
+        expect(page).to have_content "Note: this is the note"
       end
 
       scenario "adds issue" do
@@ -507,6 +508,7 @@ RSpec.feature "Queue" do
         expect(page).to have_content "You created a new issue."
         expect(page).to have_content "Program: #{field_values.first}"
         expect(page).to have_content "Issue: #{field_values.second}"
+        expect(page).to have_content field_values.last
         expect(page).to have_content "Note: added issue"
       end
 

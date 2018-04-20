@@ -287,9 +287,9 @@ class AddEditIssueView extends React.Component {
           placeholder="Select diagnostic code"
           options={this.renderDiagnosticCodes()}
           onChange={({ value }) => {
-            let { codes } = issue;
+            const { codes } = issue;
 
-            if (_.last(codes).length === 4) {
+            if (codes.length && _.last(codes).length === 4) {
               codes.splice(codes.length - 1, 1, value);
             } else {
               codes.push(value);
