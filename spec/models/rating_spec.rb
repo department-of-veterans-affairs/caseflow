@@ -103,12 +103,12 @@ describe Rating do
 
         expect(subject.first).to have_attributes(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 370.days,
+          promulgation_date: Time.zone.today - 370.days
         )
 
         expect(subject.last).to have_attributes(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 371.days,
+          promulgation_date: Time.zone.today - 371.days
         )
       end
     end

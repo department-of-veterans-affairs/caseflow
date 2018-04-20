@@ -256,7 +256,7 @@ class Fakes::BGSService
 
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     unless ratings
-      raise Savon::Error.new("java.lang.IndexOutOfBoundsException: Index: 0, Size: 0")
+      fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
     end
 
     ratings = ratings.select do |r|
@@ -277,8 +277,8 @@ class Fakes::BGSService
 
     # Simulate the error bgs throws if rating profile doesn't exist
     unless rating_issues
-      raise Savon::Error.new("a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
-        " and PRFL_DT = '#{profile_date}'")
+      fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
+        " and PRFL_DT = '#{profile_date}'"
     end
 
     # BGS returns the data not as an array if there is only one issue
