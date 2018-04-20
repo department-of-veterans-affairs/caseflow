@@ -18,8 +18,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    issues: {
-      $set: state.issues || _.keyBy(serverIntake.issues, 'id')
+    ratings: {
+      $set: serverIntake.ratings
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)

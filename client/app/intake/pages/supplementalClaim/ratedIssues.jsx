@@ -8,28 +8,11 @@ class RatedIssues extends React.PureComponent {
   onCheckIssue = (issueId) => (checked) => this.props.setIssueSelected(issueId, checked)
 
   render() {
-    const ratedIssuesData = [
-      {
-        rba_issue_id: '123',
-        decision_date: '01/28/2018',
-        decision_text: 'I am a rated issue'
-      },
-      {
-        rba_issue_id: '456',
-        decision_date: '01/28/2018',
-        decision_text: 'I am another rated issue'
-      },
-      {
-        rba_issue_id: '789',
-        decision_date: '02/28/2018',
-        decision_text: 'I am a rated issue on a different date'
-      }
-    ];
 
-    const ratedIssuesByDecisionDate = _.groupBy(ratedIssuesData, 'decision_date');
+    const { supplementalClaim } = this.props
 
-    const ratedIssuesSections = _.map(ratedIssuesByDecisionDate, (dateWithIssues) => {
-      const ratedIssueCheckboxes = _.map(dateWithIssues, (issue) => {
+    const ratedIssuesSections = _.map(supplementalClaim.ratings, (rating) => {
+      const ratedIssueCheckboxes = _.map(rating.issues, (issue) => {
         return (
           <Checkbox
             label={issue.decision_text}
@@ -40,9 +23,9 @@ class RatedIssues extends React.PureComponent {
         )
       });
 
-      return (<div key={dateWithIssues[0].rba_issue_id}>
-        <p key={dateWithIssues[0].rba_issue_id}>
-          Decision date: { dateWithIssues[0].decision_date }
+      return (<div key={rating.profile_date}>
+        <p>
+          Decision date: { rating.promulgation_date }
         </p>
 
         { ratedIssueCheckboxes }
