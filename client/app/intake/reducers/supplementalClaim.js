@@ -18,6 +18,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
+    issues: {
+      $set: state.issues || _.keyBy(serverIntake.issues, 'id')
+    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     }
@@ -76,6 +79,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       isReviewed: {
         $set: true
       },
+      issuesSelectedError: {
+        $set: null
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -124,6 +130,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         completeIntake: {
           $set: REQUEST_STATE.IN_PROGRESS
         }
+      }
+    });
+  case ACTIONS.NO_ISSUES_SELECTED_ERROR:
+    return update(state, {
+      issuesSelectedError: {
+        $set: 'You must select at least one issue.'
       }
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
