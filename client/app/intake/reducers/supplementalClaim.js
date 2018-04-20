@@ -93,6 +93,19 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      issues: {
+        [action.payload.issueId]: {
+          isSelected: {
+            $set: action.payload.isSelected
+          }
+        }
+      },
+      issuesSelectedError: {
+        $set: null
+      }
+    });
   case ACTIONS.CONFIRM_FINISH_INTAKE:
     return update(state, {
       finishConfirmed: {

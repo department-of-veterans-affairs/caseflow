@@ -54,6 +54,19 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
     );
 };
 
+export const setIssueSelected = (issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    issueId,
+    isSelected
+  },
+  meta: {
+    analytics: {
+      label: isSelected ? 'selected' : 'de-selected'
+    }
+  }
+});
+
 export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
   if (!supplementalClaim.finishConfirmed) {
     dispatch({
