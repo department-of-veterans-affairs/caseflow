@@ -33,6 +33,7 @@ class ExternalApi::EfolderService
     }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.efolder_v2_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
@@ -61,9 +62,11 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, user_id: #{user.id}, response attributes: #{response_attrs}"
+    msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, \
+      user_id: #{user.id}, response attributes: #{response_attrs}"
     fail Caseflow::Error::DocumentRetrievalError, msg
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.generate_response(response_attrs, vbms_id)
     documents = response_attrs["records"] || []
