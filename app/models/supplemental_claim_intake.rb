@@ -3,6 +3,12 @@ class SupplementalClaimIntake < Intake
     SupplementalClaim.new(veteran_file_number: veteran_file_number)
   end
 
+  def ui_hash
+    super.merge(
+      ratings: veteran.cached_serialized_timely_ratings
+    )
+  end
+
   def review!(request_params)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date))
@@ -10,13 +16,5 @@ class SupplementalClaimIntake < Intake
 
   def review_errors
     detail.errors.messages
-  end
-
-  def cancel!(reason:, other: nil)
-    transaction do
-      detail.destroy!
-      add_cancel_reason!(reason: reason, other: other)
-      complete_with_status!(:canceled)
-    end
   end
 end
