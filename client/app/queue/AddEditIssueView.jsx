@@ -35,6 +35,7 @@ import {
   ERROR_FIELD_REQUIRED
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -156,6 +157,13 @@ class AddEditIssueView extends React.Component {
     ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   };
 
+  diagnosticCodeLabel = (code) => `${code} - ${_.capitalize(DIAGNOSTIC_CODE_DESCRIPTIONS[code])}`
+
+  renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
+    label: this.diagnosticCodeLabel(value),
+    value
+  }));
+
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
@@ -273,6 +281,26 @@ class AddEditIssueView extends React.Component {
           readOnly={_.isEmpty(issueLevels3)}
           errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
           value={_.get(this.props.issue, 'codes[2]', '')} />
+      </div>
+      <div {...dropdownMarginTop}>
+        <SearchableDropdown
+          name="Diagnostic code"
+          placeholder="Select diagnostic code"
+          options={this.renderDiagnosticCodes()}
+          onChange={({ value }) => {
+            let { codes } = issue;
+
+            if (_.last(codes).length === 4) {
+              codes.splice(codes.length - 1, 1, value);
+            } else {
+              codes.push(value);
+            }
+
+            this.updateIssue({ codes });
+          }}
+          value={_.last(issue.codes)}
+          readOnly={!(issue.program && issue.type)}
+        />
       </div>
       <TextField
         name="Notes:"

@@ -10,6 +10,7 @@ import {
 } from '../constants';
 import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -33,6 +34,12 @@ const dispositionLabelForDescription = (descr) => {
   return `${dispositionId} - ${dispositionDescr}`;
 };
 
+const diagnosticLabel = (code) => {
+  const diagnosticCode = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+
+  return `${code} - ${_.capitalize(diagnosticCode)}`;
+}
+
 export default class IssueListItem extends React.PureComponent {
   formatIdx = () => <td {...leftAlignTd} width="10px">
     {this.props.idx}.
@@ -45,7 +52,7 @@ export default class IssueListItem extends React.PureComponent {
         program,
         type,
         levels,
-        description,
+        codes,
         codes: [
           isslev1,
           isslev2,
@@ -70,12 +77,12 @@ export default class IssueListItem extends React.PureComponent {
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
 
-        issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
+        issueLevels.push(issueLevel3 ? issueLevel3.description : diagnosticLabel(_.last(codes)));
       } else {
-        issueLevels.push(_.last(description));
+        issueLevels.push(diagnosticLabel(_.last(codes)));
       }
     } else {
-      issueLevels.push(_.last(description));
+      issueLevels.push(diagnosticLabel(_.last(codes)));
     }
 
     return issueLevels;
