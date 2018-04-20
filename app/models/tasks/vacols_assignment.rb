@@ -4,7 +4,7 @@ class VacolsAssignment
 
   ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name,
            :docket_date, :added_by_name, :added_by_css_id, :task_id,
-           :task_type].freeze
+           :task_type, :document_id].freeze
 
   attr_accessor(*ATTRS)
 
@@ -30,7 +30,8 @@ class VacolsAssignment
       docket_date: case_assignment.docket_date,
       appeal_id: case_assignment.vacols_id,
       user_id: user_id,
-      task_id: task_id
+      task_id: task_id,
+      document_id: case_assignment.document_id
     )
   end
 end

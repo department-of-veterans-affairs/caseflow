@@ -10,6 +10,7 @@ describe Veteran do
     let(:veteran_record) do
       {
         file_number: "445566",
+        ptcpnt_id: "123123",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
@@ -61,6 +62,7 @@ describe Veteran do
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
         file_number: "445566",
+        participant_id: "123123",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
