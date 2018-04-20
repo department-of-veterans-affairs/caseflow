@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
+import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
 
@@ -220,6 +221,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
 };
 
 const rootReducer = combineReducers({
+  caseDetail: caseDetailReducer,
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,

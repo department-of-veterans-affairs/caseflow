@@ -82,10 +82,10 @@ class QueueDetailView extends React.PureComponent {
     } = this.props;
     const tabs = [{
       label: 'Appeal',
-      page: <AppealDetail appeal={this.props.appeal} />
+      page: <AppealDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }, {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
-      page: <AppellantDetail appeal={this.props.appeal} />
+      page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }];
 
     const readerLinkMsg = appeal.docCount ?

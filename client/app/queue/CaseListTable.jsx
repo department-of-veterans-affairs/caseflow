@@ -1,11 +1,15 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import Table from '../components/Table';
-import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
+import { renderAppealType } from './utils';
+
+import { setActiveCase } from './CaseDetail/CaseDetailActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -15,14 +19,14 @@ const labelForLocation = (locationCode) => {
   return locationCode;
 };
 
-export default class CaseListTable extends React.PureComponent {
+class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => [
     {
       header: 'Docket Number',
       valueFunction: (appeal) => <span>
-        <Link to={`/tasks/${appeal.attributes.vacols_id}`}>
+        <Link to={`/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveCase(appeal)}>
           {appeal.attributes.docket_number}
         </Link>
       </span>
@@ -61,3 +65,10 @@ export default class CaseListTable extends React.PureComponent {
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired
 };
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setActiveCase }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+

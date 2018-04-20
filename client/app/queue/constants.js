@@ -38,6 +38,7 @@ export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 
 export const CATEGORIES = {
+  CASE_DETAIL: 'Queue Appeal',
   QUEUE_TABLE: 'Queue Table',
   QUEUE_TASK: 'Queue Task'
 };

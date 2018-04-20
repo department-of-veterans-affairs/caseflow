@@ -17,6 +17,18 @@ class AppealsController < ApplicationController
     end
   end
 
+  def show
+    vacols_id = params[:id]
+
+    MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                          name: "AppealsController.show") do
+      appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+      render json: {
+        appeal: appeal.to_hash(issues: appeal)
+      }
+    end
+  end
+
   private
 
   def veteran_id
