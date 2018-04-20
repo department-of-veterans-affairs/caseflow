@@ -69,7 +69,7 @@ class Generators::Rating
     end
 
     def generate_profile_date(participant_id)
-      dates = (0..100).map { |offset_days| Time.zone.today - offset_days }
+      dates = (0..100).lazy.map { |offset_days| Time.zone.today - offset_days }
 
       dates.find do |date|
         !Fakes::BGSService.rating_issue_records[participant_id][date]
