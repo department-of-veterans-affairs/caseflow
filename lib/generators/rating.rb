@@ -4,8 +4,9 @@ class Generators::Rating
   class << self
     def default_attrs
       {
-        profile_date: Time.zone.today - 30,
         participant_id: generate_external_id,
+        # we'll do a little more logic to find an open profile date, see: generate_profile_date
+        profile_date: nil,
         promulgation_date: Time.zone.today - 30,
         issues: [
           {
@@ -25,6 +26,8 @@ class Generators::Rating
 
       Fakes::BGSService.rating_issue_records ||= {}
       Fakes::BGSService.rating_issue_records[attrs[:participant_id]] ||= {}
+
+      attrs[:profile_date] ||= generate_profile_date(attrs[:participant_id])
 
       existing_rating = Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]]
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
@@ -57,6 +60,14 @@ class Generators::Rating
           rba_issue_id: issue_data[:rba_issue_id] || generate_external_id,
           decn_txt: issue_data[:decision_text]
         }
+      end
+    end
+
+    def generate_profile_date(participant_id)
+      dates = (0..100).map { |offset_days| Time.zone.today - offset_days }
+
+      dates.find do |date|
+        !Fakes::BGSService.rating_issue_records[participant_id][date]
       end
     end
   end
