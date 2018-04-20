@@ -43,9 +43,11 @@ class Rating
         end_date: Time.zone.today
       )
 
-      ratings_from_bgs_response(response).select do |rating|
+      unsorted = ratings_from_bgs_response(response).select do |rating|
         rating.promulgation_date > (Time.zone.today - 372)
       end
+
+      unsorted.sort_by(&:promulgation_date).reverse
     end
 
     def from_bgs_hash(data)
