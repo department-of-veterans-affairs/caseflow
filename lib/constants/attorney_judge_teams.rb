@@ -3,18 +3,14 @@ module Constants::AttorneyJudgeTeams
   # rubocop:disable Metrics/LineLength
   JUDGES = {
     preprod: {
-      "BVAJWAGNER" => { attorneys: %w[CASEFLOW_283 CASEFLOW_317 CASEFLOW_317] },
-      "CASEFLOW1" => { attorneys: %w[CASEFLOW_317 CASEFLOW_317 CASEFLOW_317] },
+      "BVAJWAGNER" => { attorneys: %w[CASEFLOW_283 CASEFLOW_317] },
+      "CASEFLOW1" => { attorneys: %w[CASEFLOW_317] },
       "BVACPARKER" => { attorneys: %w[CASEFLOW_317 CF_KHAN_397] }
     },
     uat: {
-      "CASEFLOW_317" => { attorneys: %w[CASEFLOW_317 CASEFLOW_317 CASEFLOW_317] },
-      "CF_KIRK_397" => { attorneys: %w[CASEFLOW_317 CASEFLOW_317 CF_SPOCK_317] },
-      "CF_CHEKOV_397" => { attorneys: %w[CASEFLOW_317 CF_DATA_317 CASEFLOW_317] },
-      "CF_RIKER_397" => { attorneys: %w[CASEFLOW_317 CF_PICARD_397 CASEFLOW_317] },
-      "CF_PICARD_283" => { attorneys: %w[CF_LAFORGE_397 CASEFLOW_283 CASEFLOW_317] },
-      "CF_KIRK_283" => { attorneys: %w[CASEFLOW_317 CASEFLOW_317 CASEFLOW_317] },
-      "CF_LAFORGE_283" => { attorneys: %w[CASEFLOW_317 CASEFLOW_317 CASEFLOW_317] }
+      "CASEFLOW_317" => { attorneys: ["CF_DATA_317"] },
+      "CF_PICARD_317" => { attorneys: %w[CF_SPOCK_317 CF_KHAN_397] },
+      "CF_KIRK_397" => { attorneys: %w[CASEFLOW_283 CF_Q_317 CF_SCOTTY_397] }
     },
     test: {
       "BVARZIEMANN1" => { attorneys: %w[BVACFRANECKI1 BVAEDUBUQUE BVAKSIMONIS] },
