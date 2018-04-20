@@ -126,7 +126,7 @@ export const deleteEditingAppealIssue = (appealId, issueId, attributes) => (disp
       issueId
     }
   });
-  dispatch(editAppeal(appealId, attributes))
+  dispatch(editAppeal(appealId, attributes));
 };
 
 export const cancelEditingAppealIssue = () => ({
