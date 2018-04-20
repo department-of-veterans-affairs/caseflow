@@ -890,7 +890,7 @@ RSpec.feature "RAMP Intake" do
       end
 
       let!(:rating) do
-        Generators::Rating.build(participant_id: veteran.participant_id)
+        Generators::Rating.build(participant_id: veteran.participant_id, promulgation_date: 1.month.ago)
       end
 
       scenario "Searchable dropdown when more than three forms are available" do
@@ -926,7 +926,9 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
 
         expect(page).to have_current_path("/intake/finish")
-        expect(page).to have_content("Finish page")
+        expect(page).to have_content("Finish processing")
+        expect(page).to have_content("Decision date: 04/25/2018")
+        expect(page).to have_content("Service connection for Emphysema is granted with an evaluation of 100 percent effective June 1, 2013.")
 
         supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
         expect(supplemental_claim).to_not be_nil
