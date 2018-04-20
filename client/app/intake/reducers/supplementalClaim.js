@@ -2,14 +2,15 @@ import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import { getReceiptDateError } from '../util';
+import _ from 'lodash';
 
 const formatRatings = (ratings) => {
   return _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
       { issues: _.keyBy(rating.issues, 'rba_issue_id') }
-    )
-  }), 'profile_date')
-}
+    );
+  }), 'profile_date');
+};
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -87,9 +88,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       isReviewed: {
         $set: true
       },
-      issuesSelectedError: {
-        $set: null
-      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -118,60 +116,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
               }
             }
           }
-        }
-      },
-      issuesSelectedError: {
-        $set: null
-      }
-    });
-  case ACTIONS.CONFIRM_FINISH_INTAKE:
-    return update(state, {
-      finishConfirmed: {
-        $set: action.payload.isConfirmed
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED:
-    return update(state, {
-      finishConfirmedError: {
-        $set: "You must confirm you've completed the steps"
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_START:
-    return update(state, {
-      requestStatus: {
-        completeIntake: {
-          $set: REQUEST_STATE.IN_PROGRESS
-        }
-      }
-    });
-  case ACTIONS.NO_ISSUES_SELECTED_ERROR:
-    return update(state, {
-      issuesSelectedError: {
-        $set: 'You must select at least one issue.'
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
-    return updateFromServerIntake(update(state, {
-      isComplete: {
-        $set: true
-      },
-      requestStatus: {
-        completeIntake: {
-          $set: REQUEST_STATE.SUCCEEDED
-        }
-      }
-    }), action.payload.intake);
-  case ACTIONS.COMPLETE_INTAKE_FAIL:
-    return update(state, {
-      requestStatus: {
-        completeIntake: {
-          $set: REQUEST_STATE.FAILED
-        },
-        completeIntakeErrorCode: {
-          $set: action.payload.responseErrorCode
-        },
-        completeIntakeErrorData: {
-          $set: action.payload.responseErrorData
         }
       }
     });

@@ -1,23 +1,18 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { completeIntake, confirmFinishIntake } from '../../actions/supplementalClaim';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
     const {
       supplementalClaimStatus,
-      requestState,
       veteranName
     } = this.props;
 
@@ -41,12 +36,6 @@ class Finish extends React.PureComponent {
 
     return <div>
       <h1>Finish processing { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
-
-      { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
-      }
 
       <p>
         Select or enter the issue(s) that best match the form you are processing.
@@ -89,10 +78,7 @@ const FinishNextButtonConnected = connect(
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
     supplementalClaim
-  }),
-  (dispatch) => bindActionCreators({
-    completeIntake
-  }, dispatch)
+  })
 )(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {
