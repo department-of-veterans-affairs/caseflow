@@ -16,7 +16,7 @@ class UserRepository
       when "J"
         "Judge"
       when "A"
-        "Judge"
+        staff_record.sattyid ? "Attorney" : "Judge"
       when nil
         "Attorney" if staff_record.sattyid
       end
