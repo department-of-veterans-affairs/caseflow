@@ -54,9 +54,10 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
     );
 };
 
-export const setIssueSelected = (issueId, isSelected) => ({
+export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {
+    profileDate,
     issueId,
     isSelected
   },
