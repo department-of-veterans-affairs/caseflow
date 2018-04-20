@@ -9,5 +9,5 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :added_by_css_id
   attribute :task_id
   attribute :task_type
-  attribute :decision_document_id
+  attribute :document_id
 end
