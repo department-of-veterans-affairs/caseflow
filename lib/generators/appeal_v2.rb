@@ -183,7 +183,7 @@ class Generators::Appeal_v2
       setup_vbms_documents(attrs)
 
       add_inaccessible_appeal(appeal) if inaccessible
-      veteran || Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
+      veteran || Generators::Veteran.build(file_number: attrs[:vbms_id])
 
       appeal
     end
