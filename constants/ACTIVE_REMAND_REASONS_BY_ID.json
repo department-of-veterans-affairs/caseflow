@@ -1,0 +1,36 @@
+{
+  "dutyToNotify": {
+    "AA": "No notice sent",
+    "AB": "Incorrect notice sent",
+    "AC": "Legally inadequate notice"
+  },
+  "dutyToAssistRecordsRequest": {
+    "BA": "Service treatment records",
+    "BB": "Service personnel records",
+    "BC": "JSRRC",
+    "BD": "VA medical records",
+    "BE": "Social security records",
+    "BF": "Private medical records",
+    "BG": "Other federal records",
+    "BH": "Other private records",
+    "BI": "Certification from appellant"
+  },
+  "medicalExam": {
+    "DA": "Current findings",
+    "DB": "Incomplete/inadequate findings",
+    "DI": "Nexus opinion",
+    "DD": "Clarify diagnosis",
+    "DE": "No VA exam conducted"
+  },
+  "dueProcess": {
+    "EA": "BVA travel board and video hearing",
+    "EB": "AOJ hearing",
+    "EC": "Adjudicate intertwined issue(s)",
+    "ED": "Issuance of SOC/Manlincon",
+    "EE": "Issuance of SSOC",
+    "EG": "Consider merits of reopened claim",
+    "EH": "Apply contested claims procedures",
+    "EI": "Noncompliance/Stegall",
+    "EK": "Other due process deficiency"
+  }
+}

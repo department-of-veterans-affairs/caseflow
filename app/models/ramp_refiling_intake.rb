@@ -13,14 +13,6 @@ class RampRefilingIntake < Intake
     ramp_election && ramp_election.recreate_issues_from_contentions!
   end
 
-  def cancel!(reason:, other: nil)
-    transaction do
-      detail.destroy!
-      add_cancel_reason!(reason: reason, other: other)
-      complete_with_status!(:canceled)
-    end
-  end
-
   def review!(request_params)
     detail.start_review!
     detail.update_attributes(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
