@@ -48,6 +48,7 @@ const Hearings = ({ hearings }) => {
                   title="Your Hearing Days"
                   component={() => {
                     const browser = detect();
+                    
                     return browser.name !== 'chrome' ? <UnsupportedBrowserBanner /> :
                       <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />;
                   }}
