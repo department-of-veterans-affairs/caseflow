@@ -113,6 +113,10 @@ RSpec.feature "Reader" do
     Time.zone = "America/New_York"
   end
 
+  after do
+    FeatureToggle.disable!(:fakes_off)
+  end
+
   let(:vacols_record) { :remand_decided }
 
   let(:documents) { [] }
