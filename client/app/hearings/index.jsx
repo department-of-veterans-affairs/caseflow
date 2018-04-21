@@ -12,11 +12,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import detectie from 'detectie';
-import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
-import UnsupportedBrowserBanner from './components/UnsupportedBrowserBanner'
+import UnsupportedBrowserBanner from './components/UnsupportedBrowserBanner';
 import { detect } from 'detect-browser';
-
 
 const Hearings = ({ hearings }) => {
 
@@ -51,10 +48,10 @@ const Hearings = ({ hearings }) => {
                   title="Your Hearing Days"
                   component={() => {
                     const browser = detect();
-                    return browser.name !== 'chrome' ? <UnsupportedBrowserBanner />
-                    : <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />;
+                    return browser.name !== 'chrome' ? <UnsupportedBrowserBanner /> :
+                      <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />;
                   }}
-                  />
+                />
 
                 <PageRoute exact path="/hearings/dockets/:date"
                   breadcrumb="Daily Docket"
@@ -75,7 +72,6 @@ const Hearings = ({ hearings }) => {
                       hearingId={props.match.params.hearingId} />
                   )}
                 />
-
 
               </AppFrame>
             </NavigationBar>
