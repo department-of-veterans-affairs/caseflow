@@ -242,7 +242,7 @@ RSpec.feature "Reader" do
           documents: documents,
           manifest_vbms_fetched_at: vbms_fetched_ts,
           manifest_vva_fetched_at: vva_fetched_ts,
-          issues: []
+          case_issue_attrs: []
         )
       end
 

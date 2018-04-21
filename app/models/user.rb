@@ -199,6 +199,7 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
+      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
       @appeal_repository ||= AppealRepository
     end
 

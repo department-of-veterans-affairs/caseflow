@@ -201,6 +201,7 @@ class Issue
     attr_writer :repository
 
     def repository
+      return IssueRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= IssueRepository
     end
 

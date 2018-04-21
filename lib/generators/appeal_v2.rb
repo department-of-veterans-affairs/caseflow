@@ -168,13 +168,9 @@ class Generators::Appeal_v2
 
       # Setting up vacols data must come prior to creating appeal so
       # appeal code picks up the persisted data.
-      set_vacols_data(vacols_id: attrs[:vacols_id], vbms_id: attrs[:vbms_id])
+      set_vacols_data(attrs)
 
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
-
-      if (attrs[:issues] == [])
-        appeal.issues = []
-      end
 
       inaccessible = attrs.delete(:inaccessible)
       veteran = attrs.delete(:veteran)
@@ -191,7 +187,13 @@ class Generators::Appeal_v2
     private
 
     def set_vacols_data(attrs)
-      Generators::Vacols::Case.create(case_attrs: {bfkey: attrs[:vacols_id], bfcorlid: attrs[:vbms_id]})
+      Generators::Vacols::Case.create(
+        attrs.merge(
+          case_attrs: {
+            bfkey: attrs[:vacols_id], bfcorlid: attrs[:vbms_id]
+          }
+        )
+      )
     end
 
     def setup_vbms_documents(attrs)
