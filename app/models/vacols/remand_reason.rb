@@ -1,9 +1,9 @@
 class VACOLS::RemandReason < VACOLS::Record
   self.table_name = "vacols.rmdrea"
 
-  CODES = %w[AA AB AC BA BB BC BD BE BF BG BH BI CA CB CC
-             CD CE CF CG CH DA DB DC DD DE DF DG DH DI EA
-             EB EC ED EE EF EG EH EI EJ EK].freeze
+  CODES = Constants::ACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys).concat(
+    Constants::INACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys)
+  ).freeze
 
   validates :rmdkey, :rmdissseq, :rmdval, :rmddev, :rmdmdusr, :rmdmdtim, presence: true, on: :create
   validates :rmdval, inclusion: { in: CODES }
