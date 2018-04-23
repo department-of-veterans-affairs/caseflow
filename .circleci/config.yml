@@ -7,6 +7,7 @@ jobs:
       # customized container.
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
         environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
           - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml

@@ -75,47 +75,41 @@ describe Rating do
     let!(:rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 371.days,
-        profile_date: Time.zone.today - 370.days
+        promulgation_date: Time.zone.today - 371.days
       )
     end
 
     let!(:untimely_rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 373.days,
-        profile_date: Time.zone.today - 373.days
+        promulgation_date: Time.zone.today - 373.days
       )
     end
 
-    let!(:untimely_rating_in_service_range) do
-      Generators::Rating.build(
-        promulgation_date: Time.zone.today - 373.days,
-        profile_date: Time.zone.today - 371.days
-      )
-    end
-
-    it "returns rating objects for all timely ratings" do
+    it "returns rating objects for timely ratings" do
       expect(subject.count).to eq(1)
-
-      expect(subject.first).to have_attributes(
-        participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 371.days,
-        profile_date: Time.zone.today - 370.days
-      )
     end
 
     context "when multiple timely ratings exist" do
       let!(:another_rating) do
         Generators::Rating.build(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 300.days,
-          profile_date: Time.zone.today - 300.days
+          promulgation_date: Time.zone.today - 370.days
         )
       end
 
-      it "returns rating objects for all timely ratings" do
+      it "returns rating objects sorted desc by promulgation_date for all timely ratings" do
         expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          participant_id: "DRAYMOND",
+          promulgation_date: Time.zone.today - 370.days
+        )
+
+        expect(subject.last).to have_attributes(
+          participant_id: "DRAYMOND",
+          promulgation_date: Time.zone.today - 371.days
+        )
       end
     end
   end
