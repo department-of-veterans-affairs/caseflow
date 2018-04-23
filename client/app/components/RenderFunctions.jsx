@@ -134,30 +134,6 @@ export const missingSymbolHtml = function() {
   );
 };
 
-export class WarningSymbol extends React.PureComponent {
-  render = () => <span {...css(this.props)} role="warning">
-    &nbsp;&nbsp;!&nbsp;&nbsp;
-  </span>;
-}
-
-WarningSymbol.propTypes = {
-  backgroundColor: PropTypes.string,
-  color: PropTypes.string,
-  borderRadius: PropTypes.string,
-  marginLeft: PropTypes.string,
-  marginRight: PropTypes.string,
-  fontWeight: PropTypes.string
-};
-
-WarningSymbol.defaultProps = {
-  backgroundColor: '#E60000',
-  color: COMMON_COLORS.WHITE,
-  borderRadius: '50%',
-  marginLeft: '-2.5rem',
-  marginRight: '0.5rem',
-  fontWeight: 'bold'
-};
-
 export const checkSymbolHtml = function() {
   return (
     <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
