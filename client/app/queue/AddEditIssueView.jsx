@@ -139,11 +139,7 @@ class AddEditIssueView extends React.Component {
         updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
       }
 
-      if (updatedIssue) {
-        this.updateIssue(updatedIssue);
-      } else if (!resp.issues.length) {
-        console.warn('no issues returned from server');
-      }
+      this.updateIssue(updatedIssue);
       this.props.saveEditedAppealIssue(this.props.vacolsId);
     });
   };
@@ -189,7 +185,12 @@ class AddEditIssueView extends React.Component {
     const lastIssueLevel = _.last(_.reject(issueLevels, _.isEmpty));
     const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
 
-    return _.get(lastIssueLevel[lastIssueLevelCode], 'diagnostic_code') || false;
+    // if issueLevels[n] has options and issue.codes[n].length is 2 (issue level), check diagnostic_code
+    if (issueLevels.indexOf(lastIssueLevel) === issue.codes.indexOf(lastIssueLevelCode)) {
+      return _.get(lastIssueLevel[lastIssueLevelCode], 'diagnostic_code') || false;
+    }
+
+    return false;
   }
 
   render = () => {
