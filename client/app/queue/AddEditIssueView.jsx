@@ -82,13 +82,17 @@ class AddEditIssueView extends React.Component {
     const vacolsIssues = _.get(ISSUE_INFO[program], 'levels', {});
     const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
     const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
-    const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
 
-    return [issueLevel1, issueLevel2, issueLevel3];
+    return [issueLevel1, issueLevel2];
   };
 
   validateForm = () => {
     const { issue: { program, type, codes } } = this.props;
+    const issueDiagCode = _.find(codes, (code) => code.length === 4);
+
+    if (this.issueLevelsConfigHasDiagCode() && !issueDiagCode) {
+      return false;
+    }
 
     return program && type && this.getIssueLevelOptions().every((level, idx) =>
       _.isEmpty(level) || (codes[idx] in level)
@@ -135,7 +139,11 @@ class AddEditIssueView extends React.Component {
         updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
       }
 
-      this.updateIssue(updatedIssue);
+      if (updatedIssue) {
+        this.updateIssue(updatedIssue);
+      } else if (!resp.issues.length) {
+        console.warn('no issues returned from server');
+      }
       this.props.saveEditedAppealIssue(this.props.vacolsId);
     });
   };
@@ -168,6 +176,22 @@ class AddEditIssueView extends React.Component {
     value
   }));
 
+  issueLevelsConfigHasDiagCode = () => {
+    const {
+      issue
+    } = this.props;
+    const issueLevels = this.getIssueLevelOptions();
+
+    if (!issue.codes || !issue.codes.length) {
+      return false;
+    }
+
+    const lastIssueLevel = _.last(_.reject(issueLevels, _.isEmpty));
+    const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
+
+    return _.get(lastIssueLevel[lastIssueLevelCode], 'diagnostic_code') || false;
+  }
+
   render = () => {
     const {
       issue,
@@ -180,7 +204,6 @@ class AddEditIssueView extends React.Component {
     const programs = ISSUE_INFO;
     const issues = _.get(programs[issue.program], 'levels');
     const issueLevels = this.getIssueLevelOptions();
-    let diagCodeReadOnly = true;
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
@@ -188,16 +211,8 @@ class AddEditIssueView extends React.Component {
       type: highlight && !issue.type,
       level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels[0]),
       level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels[1]),
-      level3: highlight && !_.get(issue, 'codes[2]') && !_.isEmpty(issueLevels[2])
+      diagCode: highlight &&  this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
     };
-
-    // some configurations allow providing an issue code instead of level 2, 3
-    if (issue.codes && issue.codes.length) {
-      const lastIssueLevel = _.last(_.reject(issueLevels, _.isEmpty));
-      const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
-
-      diagCodeReadOnly = !lastIssueLevel[lastIssueLevelCode].diagnostic_code;
-    }
 
     return <React.Fragment>
       {modal && <div className="cf-modal-scroll">
@@ -282,16 +297,6 @@ class AddEditIssueView extends React.Component {
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
-          name="Level 3:"
-          placeholder="Select level 3"
-          options={this.renderIssueAttrs(issueLevels[2])}
-          onChange={({ value }) => this.updateIssueCode(2, value)}
-          readOnly={_.isEmpty(issueLevels[2])}
-          errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(issue, 'codes[2]', '')} />
-      </div>
-      <div {...dropdownMarginTop}>
-        <SearchableDropdown
           name="Diagnostic code"
           placeholder="Select diagnostic code"
           options={this.renderDiagnosticCodes()}
@@ -307,8 +312,8 @@ class AddEditIssueView extends React.Component {
             this.updateIssue({ codes });
           }}
           value={_.last(issue.codes)}
-          readOnly={diagCodeReadOnly}
-        />
+          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''}
+          readOnly={!this.issueLevelsConfigHasDiagCode()} />
       </div>
       <TextField
         name="Notes:"

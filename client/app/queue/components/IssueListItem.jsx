@@ -53,8 +53,7 @@ export default class IssueListItem extends React.PureComponent {
         codes,
         codes: [
           isslev1,
-          isslev2,
-          isslev3
+          isslev2
         ]
       }
     } = this.props;
@@ -67,7 +66,6 @@ export default class IssueListItem extends React.PureComponent {
 
     const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
     const issueLevel2 = _.get(issueLevel1, ['levels', isslev2]);
-    const issueLevel3 = _.get(issueLevel2, ['levels', isslev3]);
     const diagnosticCodeLabel = getIssueDiagnosticCodeLabel(_.last(codes)) || _.last(description);
 
     if (issueLevel1) {
@@ -76,7 +74,7 @@ export default class IssueListItem extends React.PureComponent {
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
 
-        issueLevels.push(issueLevel3 ? issueLevel3.description : diagnosticCodeLabel);
+        issueLevels.push(diagnosticCodeLabel);
       } else {
         issueLevels.push(diagnosticCodeLabel);
       }
