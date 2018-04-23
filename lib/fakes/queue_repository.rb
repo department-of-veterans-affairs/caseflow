@@ -3,6 +3,7 @@ class Fakes::QueueRepository
     attr_accessor :appeal_records
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.tasks_for_user(_css_id)
     appeal_records || Fakes::Data::AppealData.default_queue_records.map do |record|
       # For now, we're using appeal records, which
@@ -30,6 +31,7 @@ class Fakes::QueueRepository
       Appeal.new(task_attrs)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.appeals_from_tasks(_tasks)
     appeals = appeal_records || Fakes::Data::AppealData.default_queue_records
