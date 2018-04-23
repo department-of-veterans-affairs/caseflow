@@ -18,7 +18,7 @@ const CaseDetailsLink = (props) => {
     <Link to={`/tasks/${props.task.vacolsId}`} disabled={!props.task.attributes.task_id}>
       {props.appeal.attributes.veteran_full_name} ({props.appeal.attributes.vbms_id})
     </Link>
-    {!_.isNull(props.appeal) && <React.Fragment>
+    {!_.isNull(_.get(props.appeal.attributes, 'appellant_full_name')) && <React.Fragment>
       <br />
       <span {...subHeadStyle}>Veteran is not the appellant</span>
     </React.Fragment>}
