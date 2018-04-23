@@ -212,7 +212,7 @@ class AddEditIssueView extends React.Component {
       type: highlight && !issue.type,
       level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels[0]),
       level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels[1]),
-      diagCode: highlight &&  this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
+      diagCode: highlight && this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
     };
 
     return <React.Fragment>
@@ -255,7 +255,8 @@ class AddEditIssueView extends React.Component {
           options={this.renderIssueAttrs(programs)}
           onChange={({ value }) => this.updateIssue({
             program: value,
-            type: null
+            type: null,
+            codes: []
           })}
           errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
           value={issue.program} />
