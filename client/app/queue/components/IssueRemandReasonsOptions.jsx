@@ -143,7 +143,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>Issue {idx + 1}</h2>
       <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes)) || _.last(issue.description)}</div>
+      <div {...smallBottomMargin}>
+        Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes)) || _.last(issue.description)}
+      </div>
       <div {...smallBottomMargin}>Certified: {formatDateStr(appeal.certification_date)}</div>
 
       <div {...flexContainer}>

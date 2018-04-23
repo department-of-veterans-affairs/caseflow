@@ -179,16 +179,25 @@ class AddEditIssueView extends React.Component {
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[issue.program], 'levels');
-    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
+    const issueLevels = this.getIssueLevelOptions();
+    let diagCodeReadOnly = true;
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
       program: highlight && !issue.program,
       type: highlight && !issue.type,
-      level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels1),
-      level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels2),
-      level3: highlight && !_.get(issue, 'codes[2]') && !_.isEmpty(issueLevels3)
+      level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels[0]),
+      level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels[1]),
+      level3: highlight && !_.get(issue, 'codes[2]') && !_.isEmpty(issueLevels[2])
     };
+
+    // some configurations allow providing an issue code instead of level 2, 3
+    if (issue.codes && issue.codes.length) {
+      const lastIssueLevel = _.last(_.reject(issueLevels, _.isEmpty));
+      const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
+
+      diagCodeReadOnly = !lastIssueLevel[lastIssueLevelCode].diagnostic_code;
+    }
 
     return <React.Fragment>
       {modal && <div className="cf-modal-scroll">
@@ -255,31 +264,31 @@ class AddEditIssueView extends React.Component {
         <SearchableDropdown
           name="Level 1:"
           placeholder="Select level 1"
-          options={this.renderIssueAttrs(issueLevels1)}
+          options={this.renderIssueAttrs(issueLevels[0])}
           onChange={({ value }) => this.updateIssueCode(0, value)}
-          readOnly={_.isEmpty(issueLevels1)}
+          readOnly={_.isEmpty(issueLevels[0])}
           errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[0]', '')} />
+          value={_.get(issue, 'codes[0]', '')} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 2:"
           placeholder="Select level 2"
-          options={this.renderIssueAttrs(issueLevels2)}
+          options={this.renderIssueAttrs(issueLevels[1])}
           onChange={({ value }) => this.updateIssueCode(1, value)}
-          readOnly={_.isEmpty(issueLevels2)}
+          readOnly={_.isEmpty(issueLevels[1])}
           errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[1]', '')} />
+          value={_.get(issue, 'codes[1]', '')} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 3:"
           placeholder="Select level 3"
-          options={this.renderIssueAttrs(issueLevels3)}
+          options={this.renderIssueAttrs(issueLevels[2])}
           onChange={({ value }) => this.updateIssueCode(2, value)}
-          readOnly={_.isEmpty(issueLevels3)}
+          readOnly={_.isEmpty(issueLevels[2])}
           errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[2]', '')} />
+          value={_.get(issue, 'codes[2]', '')} />
       </div>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
@@ -298,7 +307,7 @@ class AddEditIssueView extends React.Component {
             this.updateIssue({ codes });
           }}
           value={_.last(issue.codes)}
-          readOnly={!(issue.program && issue.type)}
+          readOnly={diagCodeReadOnly}
         />
       </div>
       <TextField
