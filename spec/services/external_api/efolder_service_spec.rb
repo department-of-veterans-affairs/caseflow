@@ -64,7 +64,7 @@ describe ExternalApi::EfolderService do
   end
 
   context "#efolder_v2_api" do
-    let(:user) { Generators::User.build }
+    let(:user) { Generators::User.create }
     let(:appeal) { Generators::Appeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
@@ -249,12 +249,30 @@ describe ExternalApi::EfolderService do
         end
       end
 
-      context "when HTTP error" do
-        let(:expected_response) { HTTPI::Response.new(404, [], {}) }
+      context "when 404 HTTP error" do
+        let(:expected_response) { HTTPI::Response.new(404, [], {}.to_json) }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
+          expect { subject }
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, user_id: #{user.id}, error: {}, HTTP code: 404")
+        end
+      end
+
+      context "when 403 HTTP error" do
+        let(:expected_response) { HTTPI::Response.new(403, [], { status: "forbidden: sensitive record" }.to_json) }
+
+        it "throws Caseflow::Error::EfolderAccessForbidden" do
+          expect { subject }
+            .to raise_error(Caseflow::Error::EfolderAccessForbidden, "403")
+        end
+      end
+
+      context "when 500 HTTP error" do
+        let(:expected_response) { HTTPI::Response.new(500, [], { status: "terrible error" }.to_json) }
+
+        it "throws Caseflow::Error::DocumentRetrievalError" do
+          expect { subject }
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "502")
         end
       end
 
@@ -482,7 +500,7 @@ describe ExternalApi::EfolderService do
       end
     end
 
-    context "when efolder returns an error403 HTTP response" do
+    context "when efolder returns an error 403 HTTP response" do
       context "receives 403 HTTP response" do
         let(:http_resp_403) { HTTPI::Response.new(403, [], status: "forbidden: sensitive record") }
         let(:err) { Caseflow::Error::EfolderAccessForbidden }

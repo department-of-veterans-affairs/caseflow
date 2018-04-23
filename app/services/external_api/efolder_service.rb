@@ -43,7 +43,9 @@ class ExternalApi::EfolderService
       response_body = JSON.parse(response.body)
 
       if response.error?
-        msg = "Failed for #{vbms_id}, user_id: #{user.id}, error: #{response_body}"
+        fail Caseflow::Error::EfolderAccessForbidden, "403" if response.code == 403
+        fail Caseflow::Error::DocumentRetrievalError, "502" if response.code == 500
+        msg = "Failed for #{vbms_id}, user_id: #{user.id}, error: #{response_body}, HTTP code: #{response.code}"
         fail Caseflow::Error::DocumentRetrievalError, msg
       end
 
