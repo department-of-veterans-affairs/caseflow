@@ -47,7 +47,7 @@ class Generators::Veteran
         phone_type_name_two: nil,
         prep_phrase_type: nil,
         province_name: nil,
-        ptcpnt_id: "124443",
+        ptcpnt_id: generate_external_id,
         ptcpnt_relationship: nil,
         return_code: "SHAR 9999",
         return_message: "Records found.",
