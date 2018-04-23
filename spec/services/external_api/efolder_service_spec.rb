@@ -254,7 +254,8 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { subject }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, user_id: #{user.id}, error: {}, HTTP code: 404")
+            .to raise_error(Caseflow::Error::DocumentRetrievalError,
+                            "Failed for #{vbms_id}, user_id: #{user.id}, error: {}, HTTP code: 404")
         end
       end
 

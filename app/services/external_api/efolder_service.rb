@@ -33,7 +33,6 @@ class ExternalApi::EfolderService
     }
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.efolder_v2_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
@@ -42,23 +41,12 @@ class ExternalApi::EfolderService
     TRIES.times do
       response_body = JSON.parse(response.body)
 
-      if response.error?
-        fail Caseflow::Error::EfolderAccessForbidden, "403" if response.code == 403
-        fail Caseflow::Error::DocumentRetrievalError, "502" if response.code == 500
-        msg = "Failed for #{vbms_id}, user_id: #{user.id}, error: #{response_body}, HTTP code: #{response.code}"
-        fail Caseflow::Error::DocumentRetrievalError, msg
-      end
+      check_for_error(response_body: response_body, code: response.code, vbms_id: vbms_id, user_id: user.id)
 
       response_attrs = response_body["data"]["attributes"]
-
-      if response_attrs["sources"].blank?
-        fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
-      end
-
       if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
         return generate_response(response_attrs, vbms_id)
       end
-
       sleep 1
       manifest_id = response_body["data"]["id"]
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
@@ -68,7 +56,19 @@ class ExternalApi::EfolderService
       user_id: #{user.id}, response attributes: #{response_attrs}"
     fail Caseflow::Error::DocumentRetrievalError, msg
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def self.check_for_error(response_body:, code:, vbms_id:, user_id:)
+    if code != 200
+      fail Caseflow::Error::EfolderAccessForbidden, "403" if code == 403
+      fail Caseflow::Error::DocumentRetrievalError, "502" if code == 500
+      msg = "Failed for #{vbms_id}, user_id: #{user_id}, error: #{response_body}, HTTP code: #{code}"
+      fail Caseflow::Error::DocumentRetrievalError, msg
+    end
+
+    if response_body["data"]["attributes"]["sources"].blank?
+      fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
+    end
+  end
 
   def self.generate_response(response_attrs, vbms_id)
     documents = response_attrs["records"] || []
