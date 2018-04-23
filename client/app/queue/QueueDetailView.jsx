@@ -106,6 +106,8 @@ class QueueDetailView extends React.PureComponent {
         message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
+        docCount={appeal.docCount}
+        taskId={task.task_id}
         taskType="Draft Decision" />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"

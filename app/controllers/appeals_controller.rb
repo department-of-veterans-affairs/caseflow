@@ -17,6 +17,7 @@ class AppealsController < ApplicationController
     end
   end
 
+  # TODO: Respond to format here.
   def show
     vacols_id = params[:id]
 
@@ -28,6 +29,20 @@ class AppealsController < ApplicationController
       }
     end
   end
+
+    # respond_to do |format|
+    #   format.html do
+    #     return redirect_to "/queue" if feature_enabled?(:queue_welcome_gate)
+    #     render(:index)
+    #   end
+    #   format.json do
+    #     MetricsService.record "Get assignments for #{current_user.id}" do
+    #       render json: {
+    #         cases: current_user.current_case_assignments_with_views
+    #       }
+    #     end
+    #   end
+    # end
 
   private
 

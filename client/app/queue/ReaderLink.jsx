@@ -8,7 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { TASK_ACTIONS } from './constants';
 
-class ReaderLink extends React.PureComponent {
+export default class ReaderLink extends React.PureComponent {
 
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
@@ -35,8 +35,8 @@ class ReaderLink extends React.PureComponent {
     const {
       redirectUrl,
       taskType,
-      task_id: taskId,
-      vacols_id: vacolsId
+      taskId,
+      vacolsId
     } = this.props;
     const linkProps = {};
 
@@ -63,14 +63,9 @@ class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
+  docCount: PropTypes.string,
   redirectUrl: PropTypes.string,
+  taskId: PropTypes.string,
   taskType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  ..._.pick(state.queue.loadedQueue.tasks[ownProps.vacolsId].attributes, 'task_id'),
-  ..._.pick(state.queue.loadedQueue.appeals[ownProps.vacolsId].attributes, 'docCount', 'vacols_id')
-});
-
-export default connect(mapStateToProps)(ReaderLink);
