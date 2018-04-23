@@ -60,6 +60,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.deassign as assigned_to_attorney_date",
              "decass.dereceive as reassigned_to_judge_date",
              "decass.decomp as date_completed",
+             "decass.dedocid as document_id",
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
              "s1.snamel as added_by_last_name",

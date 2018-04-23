@@ -3,6 +3,12 @@ class SupplementalClaimIntake < Intake
     SupplementalClaim.new(veteran_file_number: veteran_file_number)
   end
 
+  def ui_hash
+    super.merge(
+      ratings: veteran.cached_serialized_timely_ratings
+    )
+  end
+
   def review!(request_params)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date))

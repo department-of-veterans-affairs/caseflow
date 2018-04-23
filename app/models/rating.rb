@@ -9,6 +9,19 @@ class Rating
     @issues ||= fetch_issues
   end
 
+  # If you change this method, you will need
+  # to clear cache in prod for your changes to
+  # take effect immediately.
+  # See Veteran#cached_serialized_timely_ratings.
+  def ui_hash
+    {
+      participant_id: participant_id,
+      profile_date: profile_date,
+      promulgation_date: promulgation_date,
+      issues: issues.map(&:ui_hash)
+    }
+  end
+
   private
 
   def fetch_issues
@@ -30,9 +43,11 @@ class Rating
         end_date: Time.zone.today
       )
 
-      ratings_from_bgs_response(response).select do |rating|
+      unsorted = ratings_from_bgs_response(response).select do |rating|
         rating.promulgation_date > (Time.zone.today - 372)
       end
+
+      unsorted.sort_by(&:promulgation_date).reverse
     end
 
     def from_bgs_hash(data)

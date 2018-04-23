@@ -26,6 +26,10 @@ class JudgeReviewTaskTable extends React.PureComponent {
       valueFunction: this.getCaseDetailsLink
     },
     {
+      header: 'Document ID',
+      valueFunction: (task) => task.attributes.document_id
+    },
+    {
       header: 'Type(s)',
       valueFunction: (task) => renderAppealType(this.getAppealForTask(task))
     },

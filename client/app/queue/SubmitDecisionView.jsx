@@ -141,7 +141,8 @@ class SubmitDecisionView extends React.PureComponent {
     return [{
       displayText: `Go back to ${vetName} (${vbmsId})`
     }, {
-      displayText: 'Submit'
+      displayText: 'Submit',
+      loadingText: 'Submitting...'
     }];
   };
 

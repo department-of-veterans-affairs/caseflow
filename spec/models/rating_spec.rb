@@ -5,16 +5,21 @@ describe Rating do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:rating) do
+    Generators::Rating.build(
+      issues: issues
+    )
+  end
+
+  let(:issues) do
+    [
+      { rba_issue_id: "Issue1", decision_text: "Decision1" },
+      { rba_issue_id: "Issue2", decision_text: "Decision2" }
+    ]
+  end
+
   context "#issues" do
     subject { rating.issues }
-    let!(:rating) do
-      Generators::Rating.build(
-        issues: [
-          { rba_issue_id: "Issue1", decision_text: "Decision1" },
-          { rba_issue_id: "Issue2", decision_text: "Decision2" }
-        ]
-      )
-    end
 
     it "returns the issues" do
       expect(subject.count).to eq(2)
@@ -23,6 +28,19 @@ describe Rating do
       )
       expect(subject.second).to have_attributes(
         rba_issue_id: "Issue2", decision_text: "Decision2"
+      )
+    end
+  end
+
+  context "#ui_hash" do
+    subject { rating.ui_hash }
+
+    it do
+      is_expected.to match(
+        participant_id: rating.participant_id,
+        profile_date: rating.profile_date,
+        promulgation_date: rating.promulgation_date,
+        issues: issues
       )
     end
   end
@@ -57,47 +75,41 @@ describe Rating do
     let!(:rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 371.days,
-        profile_date: Time.zone.today - 370.days
+        promulgation_date: Time.zone.today - 371.days
       )
     end
 
     let!(:untimely_rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 373.days,
-        profile_date: Time.zone.today - 373.days
+        promulgation_date: Time.zone.today - 373.days
       )
     end
 
-    let!(:untimely_rating_in_service_range) do
-      Generators::Rating.build(
-        promulgation_date: Time.zone.today - 373.days,
-        profile_date: Time.zone.today - 371.days
-      )
-    end
-
-    it "returns rating objects for all timely ratings" do
+    it "returns rating objects for timely ratings" do
       expect(subject.count).to eq(1)
-
-      expect(subject.first).to have_attributes(
-        participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 371.days,
-        profile_date: Time.zone.today - 370.days
-      )
     end
 
     context "when multiple timely ratings exist" do
       let!(:another_rating) do
         Generators::Rating.build(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 300.days,
-          profile_date: Time.zone.today - 300.days
+          promulgation_date: Time.zone.today - 370.days
         )
       end
 
-      it "returns rating objects for all timely ratings" do
+      it "returns rating objects sorted desc by promulgation_date for all timely ratings" do
         expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          participant_id: "DRAYMOND",
+          promulgation_date: Time.zone.today - 370.days
+        )
+
+        expect(subject.last).to have_attributes(
+          participant_id: "DRAYMOND",
+          promulgation_date: Time.zone.today - 371.days
+        )
       end
     end
   end
