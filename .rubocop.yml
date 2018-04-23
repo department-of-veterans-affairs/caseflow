@@ -67,7 +67,7 @@ Rails/Present:
   UnlessBlank: false
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 40
 
 Metrics/ClassLength:
   Max: 400
