@@ -23,7 +23,9 @@ class Fakes::QueueRepository
         added_by_middle_name: record.added_by_middle_name,
         added_by_last_name: record.added_by_last_name,
         added_by_css_id: record.added_by_css_id,
-        document_id: "173341517.524"
+        document_id: "173341517.524",
+        assigned_by_first_name: "Joe",
+        assigned_by_last_name: "Snuffy"
       }
       Appeal.new(task_attrs)
     end
