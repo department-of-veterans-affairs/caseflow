@@ -27,7 +27,13 @@ class JudgeReviewTaskTable extends React.PureComponent {
     },
     {
       header: 'Document ID',
-      valueFunction: (task) => task.attributes.document_id
+      valueFunction: (task) => {
+        let firstInitial = String.fromCodePoint(task.attributes.assigned_by_first_name.codePointAt(0));
+        let nameAbbrev = `${firstInitial}. ${task.attributes.assigned_by_last_name}`
+        return <React.Fragment>
+          {task.attributes.document_id}<br />from {nameAbbrev}
+        </React.Fragment>
+      }
     },
     {
       header: 'Type(s)',
