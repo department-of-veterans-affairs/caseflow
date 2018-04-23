@@ -73,14 +73,9 @@ export default class IssueListItem extends React.PureComponent {
 
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
-
-        issueLevels.push(diagnosticCodeLabel);
-      } else {
-        issueLevels.push(diagnosticCodeLabel);
       }
-    } else {
-      issueLevels.push(diagnosticCodeLabel);
     }
+    issueLevels.push(diagnosticCodeLabel);
 
     return issueLevels;
   };
