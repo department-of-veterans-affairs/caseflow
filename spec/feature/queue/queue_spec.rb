@@ -479,6 +479,49 @@ RSpec.feature "Queue" do
         expect(page).to have_content "Note: this is the note"
       end
 
+      scenario "shows/hides diagnostic code option" do
+        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click ".Select-control"
+        safe_click "div[id$='--option-0']"
+
+        expect(page).to have_content "Select Dispositions"
+
+        diag_code_no_l2 = %w[4 5 0 nil *]
+        no_diag_code_no_l2 = %w[4 5 1]
+        diag_code_w_l2 = %w[4 8 0 1 *]
+        no_diag_code_w_l2 = %w[4 8 0 0]
+
+        [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
+          safe_click "a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']"
+          expect(page).to have_content "Edit Issue"
+          selected_vals = select_issue_level_options(opt_set)
+          click_on "Save"
+          selected_vals.each { |v| expect(page).to have_content v }
+        end
+      end
+
+      def select_issue_level_options(opts)
+        field_options = page.find_all ".Select--single"
+
+        field_options.map do |row|
+          next if row.matches_css? ".is-disabled"
+
+          row_idx = field_options.index row
+          row.find(".Select-control").click
+
+          if opts[row_idx].eql? "*"
+            # there're about 800 diagnostic code options, but getting the count
+            # of '.Select-option's from the DOM takes a while
+            row.find("div[id$='--option-#{rand(800)}']").click
+          elsif opts[row_idx].is_a? String
+            row.find("div[id$='--option-#{opts[row_idx]}']").click
+          end
+          row.find(".Select-value-label").text
+        end
+      end
       scenario "adds issue" do
         appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
         visit "/queue"
