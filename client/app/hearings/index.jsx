@@ -12,7 +12,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import UnsupportedBrowserBanner from './components/UnsupportedBrowserBanner';
+import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 import { detect } from 'detect-browser';
 
 const Hearings = ({ hearings }) => {
@@ -48,7 +48,7 @@ const Hearings = ({ hearings }) => {
                   title="Your Hearing Days"
                   component={() => {
                     const browser = detect();
-                    
+
                     return browser.name !== 'chrome' ? <UnsupportedBrowserBanner /> :
                       <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />;
                   }}
