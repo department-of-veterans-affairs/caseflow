@@ -11,11 +11,11 @@ export default class UnsupportedBrowserBanner extends React.PureComponent {
 
     return <div>
       <StatusMessage
-       title={browser.name !== 'chrome' ? title : ''}>
+        title={browser.name !== 'chrome' ? title : ''}>
        To access Hearing Prep, you must use Chrome as your browser.<br />
        If you need to install Chrome on your computer, please call the <br />
        VA Enterprise Service Desk at
-      <a className="hearing-status-message" href="tel:855-673-4357"> 855-673-4357 </a>.
+        <a className="hearing-status-message" href="tel:855-673-4357"> 855-673-4357 </a>.
       </StatusMessage>
     </div>;
   }
