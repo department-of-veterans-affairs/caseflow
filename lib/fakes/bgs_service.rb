@@ -252,29 +252,34 @@ class Fakes::BGSService
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
-    ratings = ((self.class.rating_records || {})[participant_id] || [])
+    ratings = (self.class.rating_records || {})[participant_id]
 
-    ratings = ratings.select do |r|
-      # TODO: does BGS do inclusive comparison?
-      start_date <= r[:comp_id][:prfil_dt] && end_date >= r[:comp_id][:prfil_dt]
+    # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
+    unless ratings
+      fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
     end
 
-    # TODO: if there are no ratings, what does BGS do?
+    ratings = ratings.select do |r|
+      start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
+    end
 
     # BGS returns the data not as an array if there is only one rating
     ratings = ratings.first if ratings.count == 1
 
-    { rating_profile_list: { rating_profile: ratings } }
+    { rating_profile_list: ratings.empty? ? nil : { rating_profile: ratings } }
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
     self.class.rating_issue_records ||= {}
     self.class.rating_issue_records[participant_id] ||= {}
 
-    # TODO: what does BGS do if the participant id doesn't exist?
-    # TODO: what does BGS do if the rating profile for the date doesn't exist?
+    rating_issues = self.class.rating_issue_records[participant_id][profile_date]
 
-    rating_issues = self.class.rating_issue_records[participant_id][profile_date] || []
+    # Simulate the error bgs throws if rating profile doesn't exist
+    unless rating_issues
+      fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
+        " and PRFL_DT = '#{profile_date}'"
+    end
 
     # BGS returns the data not as an array if there is only one issue
     rating_issues = rating_issues.first if rating_issues.count == 1

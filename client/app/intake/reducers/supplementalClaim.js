@@ -2,6 +2,15 @@ import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import { getReceiptDateError } from '../util';
+import _ from 'lodash';
+
+const formatRatings = (ratings) => {
+  return _.keyBy(_.map(ratings, (rating) => {
+    return _.assign(rating,
+      { issues: _.keyBy(rating.issues, 'rba_issue_id') }
+    );
+  }), 'profile_date');
+};
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -17,6 +26,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
+    },
+    ratings: {
+      $set: state.ratings || formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -90,6 +102,20 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      ratings: {
+        [action.payload.profileDate]: {
+          issues: {
+            [action.payload.issueId]: {
+              isSelected: {
+                $set: action.payload.isSelected
+              }
+            }
+          }
         }
       }
     });

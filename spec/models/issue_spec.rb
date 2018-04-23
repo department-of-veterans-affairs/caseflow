@@ -102,6 +102,19 @@ describe Issue do
     end
   end
 
+  context "#dic" do
+    subject { issue.dic }
+
+    context "when the issue is dic" do
+      let(:codes) { %w[02 08] }
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the issue is not dic" do
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#aoj" do
     subject { issue.aoj }
 
