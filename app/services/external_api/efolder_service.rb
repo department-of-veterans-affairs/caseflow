@@ -33,31 +33,40 @@ class ExternalApi::EfolderService
     }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.efolder_v2_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
-
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
+    response_attrs = {}
 
     TRIES.times do
-      fail Caseflow::Error::DocumentRetrievalError if response.error?
+      response_body = JSON.parse(response.body)
 
-      response_attrs = JSON.parse(response.body)["data"]["attributes"]
+      if response.error?
+        msg = "Failed for #{vbms_id}, user_id: #{user.id}, error: #{response_body}"
+        fail Caseflow::Error::DocumentRetrievalError, msg
+      end
 
-      fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
+      response_attrs = response_body["data"]["attributes"]
+
+      if response_attrs["sources"].blank?
+        fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
+      end
 
       if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
         return generate_response(response_attrs, vbms_id)
       end
 
       sleep 1
-
-      manifest_id = JSON.parse(response.body)["data"]["id"]
-
+      manifest_id = response_body["data"]["id"]
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    fail Caseflow::Error::DocumentRetrievalError
+    msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, \
+      user_id: #{user.id}, response attributes: #{response_attrs}"
+    fail Caseflow::Error::DocumentRetrievalError, msg
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.generate_response(response_attrs, vbms_id)
     documents = response_attrs["records"] || []
