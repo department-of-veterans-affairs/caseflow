@@ -512,7 +512,7 @@ RSpec.feature "Queue" do
         click_on "Your Queue"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
-        expect(issue_count).to eq(appeal.issues.length.to_s)
+        expect(issue_count).to eq "2"
       end
 
       scenario "deletes issue" do
@@ -546,7 +546,7 @@ RSpec.feature "Queue" do
         click_on "Your Queue"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
-        expect(issue_count).to eq(appeal.issues.length.to_s)
+        expect(issue_count).to eq "4"
       end
     end
 
