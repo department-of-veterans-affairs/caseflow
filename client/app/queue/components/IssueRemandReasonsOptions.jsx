@@ -182,7 +182,7 @@ IssueRemandReasonsOptions.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const appeal = state.queue.pendingChanges.appeals[ownProps.appealId];
+  const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
   const issues = appeal.attributes.issues;
 
   return {
