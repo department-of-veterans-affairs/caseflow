@@ -96,7 +96,15 @@ describe IssueMapper do
       end
 
       context "when codes are not complete" do
-        let(:issue_attrs) { { note: "another one", vacols_user_id: "TEST1", program: "02", issue: "01", level_1: "03" } }
+        let(:issue_attrs) do
+          {
+            note: "another one",
+            vacols_user_id: "TEST1",
+            program: "02",
+            issue: "01",
+            level_1: "03"
+          }
+        end
 
         it "raises Caseflow::Error::IssueRepositoryError" do
           expect(IssueRepository).to_not receive(:find_issue_reference)
