@@ -129,6 +129,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   render = () => {
     const {
       issue,
+      issues,
       idx,
       appeal: { attributes: appeal }
     } = this.props;
@@ -139,7 +140,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     };
 
     return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
-      <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>Issue {idx + 1}</h2>
+      <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
+      </h2>
       <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
       <div {...smallBottomMargin}>Code: {_.last(issue.description)}</div>
@@ -187,6 +190,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
+    issues: _.filter(issues, (issue) => issue.disposition === 'Remanded'),
     issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId)
   };
 };

@@ -11,6 +11,7 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import { fullWidth } from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
+const floatRight = css({ float: 'right' });
 
 class SelectRemandReasonsView extends React.Component {
   constructor(props) {
@@ -24,11 +25,21 @@ class SelectRemandReasonsView extends React.Component {
     path: `/tasks/${this.props.appealId}/remands`
   });
 
-  getFooterButtons = () => [{
-    displayText: 'Go back to Select Dispositions'
-  }, {
-    displayText: 'Review Draft Decision'
-  }];
+  getFooterButtons = () => {
+    const { issues } = this.props;
+    const { issuesRendered } = this.state;
+    const buttons = [{
+      displayText: 'Go back to Select Dispositions'
+    }];
+
+    if (issuesRendered === issues.length) {
+      buttons.push({
+        displayText: 'Continue'
+      });
+    }
+
+    return buttons;
+  }
 
   validateForm = () => true;
 
@@ -48,10 +59,10 @@ class SelectRemandReasonsView extends React.Component {
       renderedOptions.push(
         <Button
           willNeverBeLoading
-          linkStyling
+          styling={floatRight}
           key="show-more"
-          onClick={() => this.setState({ issuesRendered: Math.min(this.state.issuesRendered + 2, issues.length) })}>
-          Show more
+          onClick={() => this.setState({ issuesRendered: Math.min(this.state.issuesRendered + 1, issues.length) })}>
+          Next Issue
         </Button>
       );
     }
