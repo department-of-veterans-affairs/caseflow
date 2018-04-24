@@ -76,7 +76,7 @@ AttorneyListView.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
   ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.pendingChanges, 'taskDecision'),
+  ..._.pick(state.queue.stagedChanges, 'taskDecision'),
   judges: state.queue.judges
 });
 
