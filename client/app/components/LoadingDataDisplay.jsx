@@ -71,7 +71,7 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.createLoadPromise !== nextProps.createLoadPromise) {
+    if (this.props.createLoadPromise.toString() !== nextProps.createLoadPromise.toString()) {
       throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
   }
