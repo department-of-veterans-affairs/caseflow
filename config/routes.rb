@@ -132,6 +132,7 @@ Rails.application.routes.draw do
     get '/:user_id', to: 'queue#tasks'
     post '/tasks/:task_id/complete', to: 'queue#complete'
     post '/tasks', to: 'queue#create'
+    patch '/tasks/:task_id', to: 'queue#update'
   end
 
   get "health-check", to: "health_checks#show"

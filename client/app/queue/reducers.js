@@ -22,11 +22,11 @@ export const initialState = {
   editingIssue: {},
 
   /**
-   * `pendingChanges` is an object of appeals that have been modified since
+   * `stagedChanges` is an object of appeals that have been modified since
    * loading from the server. When a user starts editing an appeal/task, we copy
    * it from `loadedQueue[obj.type]`.
    */
-  pendingChanges: {
+  stagedChanges: {
     appeals: {},
     taskDecision: {
       type: '',
@@ -65,6 +65,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
         tasks: { $unset: action.payload.appealId }
       }
     });
+  case ACTIONS.EDIT_APPEAL:
+    return update(state, {
+      loadedQueue: {
+        appeals: {
+          [action.payload.appealId]: {
+            attributes: {
+              $merge: action.payload.attributes
+            }
+          }
+        }
+      }
+    });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
   case ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE:
     return update(state, {
@@ -82,7 +94,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_REVIEW_ACTION_TYPE:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         taskDecision: {
           type: { $set: action.payload.type }
         }
@@ -90,7 +102,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_DECISION_OPTIONS:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         taskDecision: {
           opts: { $merge: action.payload.opts }
         }
@@ -98,15 +110,15 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.RESET_DECISION_OPTIONS:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         taskDecision: {
-          $set: initialState.pendingChanges.taskDecision
+          $set: initialState.stagedChanges.taskDecision
         }
       }
     });
-  case ACTIONS.START_EDITING_APPEAL:
+  case ACTIONS.STAGE_APPEAL:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         appeals: {
           [action.payload.appealId]: {
             $set: state.loadedQueue.appeals[action.payload.appealId]
@@ -114,9 +126,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.EDIT_APPEAL:
+  case ACTIONS.EDIT_STAGED_APPEAL:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         appeals: {
           [action.payload.appealId]: {
             attributes: {
@@ -126,9 +138,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.CANCEL_EDITING_APPEAL:
+  case ACTIONS.CHECKOUT_STAGED_APPEAL:
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         appeals: {
           $unset: action.payload.appealId
         }
@@ -136,7 +148,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.START_EDITING_APPEAL_ISSUE: {
     const { appealId, issueId } = action.payload;
-    const issues = state.pendingChanges.appeals[appealId].attributes.issues;
+    const issues = state.stagedChanges.appeals[appealId].attributes.issues;
 
     return update(state, {
       editingIssue: {
@@ -160,7 +172,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const { appealId } = action.payload;
     const {
       editingIssue,
-      pendingChanges: { appeals }
+      stagedChanges: { appeals }
     } = state;
     const issues = appeals[appealId].attributes.issues;
     let updatedIssues = [];
@@ -175,7 +187,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     }
 
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         appeals: {
           [appealId]: {
             attributes: {
@@ -193,13 +205,13 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
   case ACTIONS.DELETE_EDITING_APPEAL_ISSUE: {
     const { appealId, issueId } = action.payload;
-    const { pendingChanges: { appeals } } = state;
+    const { stagedChanges: { appeals } } = state;
 
     const issues = _.reject(appeals[appealId].attributes.issues,
       (issue) => issue.vacols_sequence_id === Number(issueId));
 
     return update(state, {
-      pendingChanges: {
+      stagedChanges: {
         appeals: {
           [appealId]: {
             attributes: {

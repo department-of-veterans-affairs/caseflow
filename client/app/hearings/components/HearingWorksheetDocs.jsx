@@ -33,6 +33,7 @@ class HearingWorksheetDocs extends Component {
             <p className="cf-appeal-stream-label">
               APPEAL STREAM <span>{key + 1}</span>
               {appeal.contested_claim && <span className="cf-red-text"> CC</span>}
+              {appeal.dic && <span className="cf-red-text"> DIC</span>}
             </p>
           }
           {this.props.print &&

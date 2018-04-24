@@ -17,8 +17,8 @@ import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
-  startEditingAppeal,
-  cancelEditingAppeal,
+  stageAppeal,
+  checkoutStagedAppeal,
   resetDecisionOptions
 } from './QueueActions';
 import {
@@ -61,15 +61,15 @@ class QueueDetailView extends React.PureComponent {
 
     this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.cancelEditingAppeal(vacolsId);
+      this.props.checkoutStagedAppeal(vacolsId);
     }
 
     if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      this.props.startEditingAppeal(vacolsId, {
+      this.props.stageAppeal(vacolsId, {
         issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
       });
     } else {
-      this.props.startEditingAppeal(vacolsId);
+      this.props.stageAppeal(vacolsId);
     }
     this.props.setCaseReviewActionType(decisionType);
     history.push(`${history.location.pathname}/${route}`);
@@ -126,13 +126,13 @@ QueueDetailView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  changedAppeals: _.keys(state.queue.pendingChanges.appeals)
+  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
-  startEditingAppeal,
-  cancelEditingAppeal,
+  stageAppeal,
+  checkoutStagedAppeal,
   resetDecisionOptions,
   pushBreadcrumb,
   resetBreadcrumbs
