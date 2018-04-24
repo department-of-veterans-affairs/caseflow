@@ -6,7 +6,7 @@ module AssociatedBgsRecord
   module ClassMethods
     # bgs_attr_accessor will lazy load the underlying data from BGS upon first call
     #
-    # For example, veteran = Veteran.new(file_number: file_number) will *not* make any calls to load 
+    # For example, veteran = Veteran.new(file_number: file_number) will *not* make any calls to load
     # the data from BGS, but soon as we call veteran.ssn, it will trigger the BGS request and fill in
     # all instance variables for the veteran. Further requests will pull the values from memory and not
     # do subsequent BGS lookups
@@ -16,7 +16,6 @@ module AssociatedBgsRecord
       @bgs_fields = fields
 
       fields.each do |field|
-
         define_method field do
           # foreign keys are not loaded from BGS, however there are some situations where
           # the foreign key in the response overrides the foriegn key sent in the request.
