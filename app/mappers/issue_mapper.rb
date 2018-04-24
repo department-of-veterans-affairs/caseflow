@@ -37,6 +37,12 @@ module IssueMapper
 
     def validate!(issue_attrs)
       return if (issue_attrs.keys & [:issprog, :isscode, :isslev1, :isslev2, :isslev3]).empty?
+
+      if issue_attrs.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3).size != 5
+        msg = "All keys must be present: program, issue, level_1, level_2, level_3"
+        fail Caseflow::Error::IssueRepositoryError, msg
+      end
+
       if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
                                               issue: issue_attrs[:isscode],
                                               level_1: issue_attrs[:isslev1],
