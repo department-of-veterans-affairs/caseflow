@@ -158,7 +158,7 @@ SelectDispositionsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   saveResult: state.ui.messages.success
 });
 
