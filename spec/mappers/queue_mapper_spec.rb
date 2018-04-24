@@ -12,7 +12,11 @@ describe QueueMapper do
           overtime: false,
           document_id: "123456789.1234",
           note: "Require action4",
-          modifying_user: "TESTSLOGID" }
+          modifying_user: "TESTSLOGID",
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
+          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+          attorney_id: "123",
+          group_name: "DCS" }
       end
       let(:expected_result) do
         { deprod: :IME,
@@ -20,7 +24,10 @@ describe QueueMapper do
           deatcom: "Require action4",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
           demdtim: VacolsHelper.local_date_with_utc_timezone,
-          demdusr: "TESTSLOGID" }
+          demdusr: "TESTSLOGID",
+          deassign: VacolsHelper.local_date_with_utc_timezone,
+          deatty: "123",
+          deteam: "DCS" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -30,6 +37,7 @@ describe QueueMapper do
         { work_product: "OMO - IME",
           overtime: true,
           note: nil,
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
           document_id: "123456789.1234",
           modifying_user: "TESTSLOGID" }
       end
@@ -48,6 +56,7 @@ describe QueueMapper do
       let(:info) do
         { work_product: "OMO - IME",
           overtime: false,
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
           document_id: "123456789.1234",
           modifying_user: "TESTSLOGID" }
       end
@@ -59,29 +68,6 @@ describe QueueMapper do
           demdusr: "TESTSLOGID" }
       end
       it { is_expected.to eq expected_result }
-    end
-
-    context "when required document ID is missing" do
-      let(:info) do
-        { work_product: "OMO - IME",
-          overtime: true,
-          note: "Require action4" }
-      end
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredFieldError)
-      end
-    end
-
-    context "when required work product is missing" do
-      let(:info) do
-        { work_product: "Invalid",
-          overtime: true,
-          document_id: "1234",
-          note: "Require action4" }
-      end
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredFieldError)
-      end
     end
   end
 
