@@ -1,9 +1,9 @@
 class HigherLevelReview < ApplicationRecord
   validate :validate_receipt_date
 
-  with_options if: :saving_review do |review|
-    review.validates :receipt_date, presence: { message: "blank" }
-    review.validates :informal_conference, inclusion: { in: [true, false], message: "blank" }
+  with_options if: :saving_review do
+    validates :receipt_date, presence: { message: "blank" }
+    validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
   AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze

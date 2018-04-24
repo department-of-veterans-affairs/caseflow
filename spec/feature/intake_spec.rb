@@ -950,7 +950,7 @@ RSpec.feature "RAMP Intake" do
 
         safe_click ".cf-submit.usa-button"
 
-        expect(page).to have_content("process this Request for Higher-Level Review (VA Form 20-0988).")
+        expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
 
         fill_in "Search small", with: "12341234"
 
