@@ -44,8 +44,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 874ef2515fc6b4a02c5fedf0bb6af70dc68c2ade
-  ref: 874ef2515fc6b4a02c5fedf0bb6af70dc68c2ade
+  revision: 07a398fb0102ad93684f5423e73be68ba97c74d2
+  ref: 07a398fb0102ad93684f5423e73be68ba97c74d2
   specs:
     bgs (0.2)
       nokogiri (~> 1.8.2)
@@ -288,7 +288,7 @@ GEM
     public_suffix (3.0.1)
     puma (2.16.0)
     quantile (0.2.0)
-    rack (2.0.4)
+    rack (2.0.5)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails (5.1.6)
