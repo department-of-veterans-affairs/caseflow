@@ -1,5 +1,4 @@
 import * as Constants from './actionTypes';
-import { SEARCH_ERROR_FOR } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
 export const initialState = {

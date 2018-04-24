@@ -66,7 +66,7 @@ CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({ setActiveCase }, dispatch);
 

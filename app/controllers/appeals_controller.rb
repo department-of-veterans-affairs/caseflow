@@ -17,32 +17,19 @@ class AppealsController < ApplicationController
     end
   end
 
-  # TODO: Respond to format here.
   def show
-    vacols_id = params[:id]
-
-    MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
-                          name: "AppealsController.show") do
-      appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
-      render json: {
-        appeal: appeal.to_hash(issues: appeal)
-      }
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        vacols_id = params[:vacols_id]
+        MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                              name: "AppealsController.show") do
+          appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+          render json: { appeal: json_appeals([appeal])[:data][0] }
+        end
+      end
     end
   end
-
-    # respond_to do |format|
-    #   format.html do
-    #     return redirect_to "/queue" if feature_enabled?(:queue_welcome_gate)
-    #     render(:index)
-    #   end
-    #   format.json do
-    #     MetricsService.record "Get assignments for #{current_user.id}" do
-    #       render json: {
-    #         cases: current_user.current_case_assignments_with_views
-    #       }
-    #     end
-    #   end
-    # end
 
   private
 
