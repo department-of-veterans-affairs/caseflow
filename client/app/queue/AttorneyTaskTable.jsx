@@ -119,7 +119,7 @@ class AttorneyTaskTable extends React.PureComponent {
     columns={this.getQueueColumns}
     rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
     getKeyForRow={this.getKeyForRow}
-    rowClassNames={(task) => !task.attributes.task_id ? 'usa-input-error' : null}
+    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
   />;
 }
 

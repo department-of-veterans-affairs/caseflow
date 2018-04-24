@@ -2,11 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
-import {
-  COLORS as COMMON_COLORS,
-  COLORS
-} from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 /* eslint-disable max-len */
