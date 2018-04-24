@@ -50,10 +50,14 @@ class Appeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at
+                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
   end
 
   cache_attribute :remand_return_date do
@@ -309,6 +313,7 @@ class Appeal < ApplicationRecord
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
       "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }

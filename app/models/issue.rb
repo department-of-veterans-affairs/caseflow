@@ -84,6 +84,10 @@ class Issue
     codes[2..-1].zip(labels[2..-1]).map { |code, label| "#{code} - #{label}" }
   end
 
+  def dic
+    program == :compensation && codes[1] == "08"
+  end
+
   def formatted_program_type_levels
     [
       [
@@ -178,13 +182,20 @@ class Issue
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def friendly_description_for_codes(code_array)
-    issue_description = code_array.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
-      descriptions = descriptions[code]
-      # If there is no value, we probably haven't added the issue type in our list, so return.
-      return nil unless descriptions
-      break descriptions if descriptions.is_a?(String)
-      descriptions
+    issue_description = code_array.reduce(Constants::ISSUE_INFO) do |levels, code|
+      return nil unless levels[code]
+
+      child_levels = levels[code]["levels"]
+
+      unless child_levels
+        description = levels[code]["plain_description"] || levels[code]["description"]
+        break description if description.is_a?(String)
+        return nil
+      end
+
+      child_levels
     end
 
     if diagnostic_code
@@ -196,6 +207,7 @@ class Issue
 
     issue_description
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   class << self
     attr_writer :repository

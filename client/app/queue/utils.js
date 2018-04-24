@@ -3,9 +3,9 @@ import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  DECISION_TYPES,
-  ISSUE_INFO
+  DECISION_TYPES
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -83,5 +83,5 @@ export const getIssueTypeDescription = (issue) => {
     type
   } = issue;
 
-  return _.get(ISSUE_INFO[program].issue, `${type}.description`);
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };

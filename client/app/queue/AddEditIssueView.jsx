@@ -11,7 +11,7 @@ import {
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  deleteAppealIssue,
+  deleteEditingAppealIssue,
   editAppeal
 } from './QueueActions';
 import {
@@ -32,9 +32,9 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ISSUE_INFO,
   ERROR_FIELD_REQUIRED
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -46,12 +46,11 @@ class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, vacolsId } = this.props;
 
+    this.props.cancelEditingAppealIssue();
     if (this.props.action === 'edit') {
       this.props.startEditingAppealIssue(vacolsId, issueId);
     }
   };
-
-  componentWillUnmount = () => this.props.cancelEditingAppealIssue();
 
   getFooterButtons = () => [{
     displayText: 'Go back to Select Dispositions'
@@ -77,7 +76,7 @@ class AddEditIssueView extends React.Component {
 
   getIssueLevelOptions = () => {
     const { issue: { program, type, codes } } = this.props;
-    const vacolsIssues = _.get(ISSUE_INFO[program], 'issue', {});
+    const vacolsIssues = _.get(ISSUE_INFO[program], 'levels', {});
     const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
     const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
     const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
@@ -102,11 +101,11 @@ class AddEditIssueView extends React.Component {
     const params = {
       data: {
         issues: {
-          ..._.pick(issue, 'note', 'program'),
           issue: issue.type,
-          level_1: _.get(issue.codes, 0),
-          level_2: _.get(issue.codes, 1),
-          level_3: _.get(issue.codes, 2)
+          level_1: _.get(issue.codes, 0, null),
+          level_2: _.get(issue.codes, 1, null),
+          level_3: _.get(issue.codes, 2, null),
+          ..._.omit(issue, 'type', 'codes')
         }
       }
     };
@@ -123,19 +122,9 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((response) => {
-      const resp = JSON.parse(response.text);
-      let updatedIssue = {};
-
-      if (this.props.action === 'add') {
-        updatedIssue = _.differenceBy(resp.issues, issues, 'vacols_sequence_id')[0];
-      } else {
-        updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
-      }
-
-      this.updateIssue(updatedIssue);
-      this.props.saveEditedAppealIssue(this.props.vacolsId);
-    });
+    requestPromise.then((resp) =>
+      this.props.saveEditedAppealIssue(this.props.vacolsId, JSON.parse(resp.text))
+    );
   };
 
   deleteIssue = () => {
@@ -153,8 +142,8 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
-    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
-  };
+    ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
+  }
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
@@ -171,7 +160,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
 
     const programs = ISSUE_INFO;
-    const issues = _.get(programs[issue.program], 'issue');
+    const issues = _.get(programs[issue.program], 'levels');
     const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)
@@ -294,7 +283,7 @@ AddEditIssueView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
@@ -307,7 +296,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
   highlightInvalidFormItems,
-  deleteAppealIssue,
+  deleteEditingAppealIssue,
   requestUpdate,
   requestDelete,
   showModal,

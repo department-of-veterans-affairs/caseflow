@@ -146,7 +146,10 @@ SearchableDropdown.propTypes = {
   options: PropTypes.array,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
-  placeholder: PropTypes.string,
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   creatableOptions: PropTypes.shape({
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func

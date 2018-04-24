@@ -5,6 +5,7 @@
 class Veteran
   include ActiveModel::Model
   include ActiveModel::Validations
+  include CachedAttributes
 
   BGS_ATTRIBUTES = [
     :file_number, :sex, :first_name, :last_name, :ssn,
@@ -32,6 +33,15 @@ class Veteran
   validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: :country_requires_zip?
   validates :state, presence: true, if: :country_requires_state?
+
+  cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
+    timely_ratings.map(&:ui_hash)
+  end
+
+  def id
+    # Aliasing file_number to id for use in cache_attribute key
+    file_number
+  end
 
   # TODO: get middle initial from BGS
   def name
@@ -97,6 +107,11 @@ class Veteran
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
+  end
+
+  def timely_ratings
+    load_bgs_record!
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
   end
 
   private

@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { WarningSymbol } from '../components/RenderFunctions';
 
 const subHeadStyle = css({
   fontSize: 'small',
@@ -14,11 +13,10 @@ const subHeadStyle = css({
 
 const CaseDetailsLink = (props) => {
   return <React.Fragment>
-    {!props.task.attributes.task_id && <WarningSymbol />}
     <Link to={`/tasks/${props.task.vacolsId}`} disabled={!props.task.attributes.task_id}>
       {props.appeal.attributes.veteran_full_name} ({props.appeal.attributes.vbms_id})
     </Link>
-    {!_.isNull(props.appeal) && <React.Fragment>
+    {!_.isNull(_.get(props.appeal.attributes, 'appellant_full_name')) && <React.Fragment>
       <br />
       <span {...subHeadStyle}>Veteran is not the appellant</span>
     </React.Fragment>}
