@@ -40,11 +40,11 @@ RSpec.describe UsersController, type: :controller do
 
     context "when current user a judge" do
       it "should return a list of attorneys" do
-        User.create(css_id: "BVALREIN", station_id: User::BOARD_STATION_ID)
-        get :index, params: { role: "Attorney", judge_css_id: "BVALREIN" }
+        User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID)
+        get :index, params: { role: "Attorney", judge_css_id: "BVARZIEMANN1" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq 8
+        expect(response_body["attorneys"].size).to eq 3
       end
     end
   end
