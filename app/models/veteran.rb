@@ -8,7 +8,9 @@ class Veteran
   include AssociatedBgsRecord
   include CachedAttributes
 
-  bgs_attr_accessor :file_number, :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
+  bgs_attr_accessor :file_number, foreign_key: true
+
+  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
                     :address_line1, :address_line2, :address_line3, :city,
                     :state, :country, :zip_code, :military_postal_type_code,
                     :military_post_office_type_code, :service, :date_of_birth
