@@ -66,7 +66,7 @@ class ExternalApi::EfolderService
     when 403
       fail Caseflow::Error::EfolderAccessForbidden, "403"
     when 400
-      fail Caseflow::Error::ClientRequestError, response_body
+      fail Caseflow::Error::ClientRequestError, "400"
     when 500
       fail Caseflow::Error::DocumentRetrievalError, "502"
     else
