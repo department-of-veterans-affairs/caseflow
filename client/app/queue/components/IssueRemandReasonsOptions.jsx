@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
+import scrollToComponent from 'react-scroll-to-component';
 
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
@@ -58,12 +59,28 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.saveEditedAppealIssue(appealId);
   };
 
-  componentDidMount = () => _.each(this.props.issue.remand_reasons, (reason) => this.setState({
-    [reason.code]: {
-      checked: true,
-      after_certification: reason.after_certification
+  componentDidMount = () => {
+    const {
+      issue: { vacols_sequence_id: issueId },
+      issues
+    } = this.props;
+
+    _.each(this.props.issue.remand_reasons, (reason) => this.setState({
+      [reason.code]: {
+        checked: true,
+        after_certification: reason.after_certification
+      }
+    }));
+
+    if (_.map(issues, 'vacols_sequence_id').indexOf(issueId) > 0) {
+      scrollToComponent(this, {
+        align: 'top',
+        duration: 1500,
+        ease: 'outCube',
+        offset: -35
+      });
     }
-  }));
+  }
 
   componentWillUnmount = () => {
     // on unmount, update issue attrs from state
