@@ -32,8 +32,8 @@ class Review extends React.PureComponent {
     }
 
     const radioOptions = [
-      { value: 'No', displayText: 'No' },
-      { value: 'Yes', displayText: 'Yes' }
+      { value: 'false', displayText: 'No' },
+      { value: 'true', displayText: 'Yes' }
     ];
 
     return <div>
@@ -53,7 +53,6 @@ class Review extends React.PureComponent {
         label="Did the Veteran request an informal conference?"
         strongLabel
         vertical
-        required
         options={radioOptions}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
@@ -65,7 +64,6 @@ class Review extends React.PureComponent {
         label="Did the Veteran request review by the same office?"
         strongLabel
         vertical
-        required
         options={radioOptions}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}

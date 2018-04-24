@@ -43,8 +43,8 @@ export const submitReview = (intakeId, higherLevelReview) => (dispatch) => {
   });
 
   const data = {
-    informal_conference: higherLevelReview.informalConference,
-    same_office: higherLevelReview.sameOffice,
+    informal_conference: Boolean(higherLevelReview.informalConference === 'true'),
+    same_office: Boolean(higherLevelReview.sameOffice === 'true'),
     receipt_date: formatDateStringForApi(higherLevelReview.receiptDate)
   };
 
