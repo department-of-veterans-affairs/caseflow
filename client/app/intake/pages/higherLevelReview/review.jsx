@@ -20,7 +20,7 @@ class Review extends React.PureComponent {
       informalConference,
       informalConferenceError,
       sameOffice,
-      sameOfficeError,
+      sameOfficeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -32,8 +32,10 @@ class Review extends React.PureComponent {
     }
 
     const radioOptions = [
-      { value: 'false', displayText: 'No' },
-      { value: 'true', displayText: 'Yes' }
+      { value: 'false',
+        displayText: 'No' },
+      { value: 'true',
+        displayText: 'Yes' }
     ];
 
     return <div>
