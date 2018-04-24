@@ -419,6 +419,12 @@ class Fakes::AppealRepository
       veteran: veteran,
       issues: (1..3).map { Generators::Issue.build }
     )
+
+    # Rating data from BGS
+    veteran = Generators::Veteran.build(file_number: "23232323")
+    Generators::Rating.build(
+      participant_id: veteran.participant_id
+    )
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
