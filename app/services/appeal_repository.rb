@@ -1,5 +1,6 @@
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
+  include PowerOfAttorneyMapper
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError; end
 
@@ -121,7 +122,7 @@ class AppealRepository
     folder_record = case_record.folder
     outcoder_record = folder_record.outcoder
 
-    rep_info = VACOLS::Case.get_poa_from_vacols_poa(
+    rep_info = get_poa_from_vacols_poa(
       vacols_code: case_record.bfso,
       representative_record: case_record.representative
     )
