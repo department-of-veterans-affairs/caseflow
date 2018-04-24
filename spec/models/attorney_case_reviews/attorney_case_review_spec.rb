@@ -47,7 +47,8 @@ describe AttorneyCaseReview do
             document_id: "123456789.1234",
             overtime: true,
             modifying_user: "CFS456",
-            note: "something"
+            note: "something",
+            reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
           }
         ).and_return(true)
 
@@ -89,7 +90,8 @@ describe AttorneyCaseReview do
             document_id: "123456789.1234",
             overtime: true,
             note: "something",
-            modifying_user: "CFS456"
+            modifying_user: "CFS456",
+            reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
           }
         ).and_return(true)
 
