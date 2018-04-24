@@ -16,7 +16,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import ApiUtil from '../util/ApiUtil';
 
-import { clearActiveCase, setActiveCase } from './CaseDetail/CaseDetailActions';
+import { clearActiveCase, setActiveCase, setDocumentCount } from './CaseDetail/CaseDetailActions';
+import { resetBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -26,6 +27,9 @@ const backLinkStyling = css({
 });
 
 class CaseDetailView extends React.PureComponent {
+  // We might have breadcrumbs hanging around from navigating to a task.
+  componentDidMount = () => this.props.resetBreadcrumbs();
+
   componentWillUnmount = () => this.props.clearActiveCase();
 
   vacolsId = () => this.props.match.params.vacolsId;
@@ -42,10 +46,31 @@ class CaseDetailView extends React.PureComponent {
     });
   }
 
+  populateActiveCaseDocumentCount = () => {
+    if (!this.props.appeal || this.props.docCount) {
+      return;
+    }
+
+    const appeal = this.props.appeal.attributes;
+    const requestOptions = {
+      withCredentials: true,
+      timeout: true,
+      headers: { 'FILE-NUMBER': appeal.vbms_id }
+    };
+
+    ApiUtil.get(appeal.number_of_documents_url, requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setDocumentCount(resp.data.attributes.documents.length);
+    });
+  }
+
   showCaseDetails = () => {
     if (!this.props.appeal) {
       return null;
     }
+
+    this.populateActiveCaseDocumentCount();
 
     const appeal = this.props.appeal.attributes;
 
@@ -56,6 +81,10 @@ class CaseDetailView extends React.PureComponent {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
       page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.CASE_DETAIL} />
     }];
+
+    const readerLinkMsg = this.props.docCount ?
+      `Open ${this.props.docCount.toLocaleString()} documents in Caseflow Reader` :
+      'Open documents in Caseflow Reader';
 
     return <React.Fragment>
       <div {...backLinkStyling}>
@@ -72,7 +101,7 @@ class CaseDetailView extends React.PureComponent {
         </p>
         <ReaderLink
           vacolsId={this.vacolsId()}
-          message="Open documents in Caseflow Reader"
+          message={readerLinkMsg}
           analyticsSource={CATEGORIES.CASE_DETAIL}
           redirectUrl={window.location.pathname}
           taskId="DUMMY ID TO MAKE LINK WORK"
@@ -104,12 +133,15 @@ class CaseDetailView extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  appeal: state.caseDetail.activeCase
+  appeal: state.caseDetail.activeCase,
+  docCount: state.caseDetail.documentCount
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveCase,
-  setActiveCase
+  resetBreadcrumbs,
+  setActiveCase,
+  setDocumentCount
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CaseDetailView));
