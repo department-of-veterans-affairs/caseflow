@@ -195,39 +195,6 @@ class VACOLS::Case < VACOLS::Record
       .order("BFDDEC ASC")
   end
 
-  def self.get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
-    if vacols_code.blank? || get_short_rep_name(vacols_code).blank?
-      # If VACOLS doesn't have a rep code in its dropdown,
-      # it still may have a representative name in the REP table
-      # so let's grab that if we can, since we want to show all
-      # the information we have.
-      {
-        representative_name: get_rep_name_from_rep_record(representative_record),
-        representative_type: nil
-      }
-    elsif get_short_rep_name(vacols_code) == "None"
-      { representative_type: "None" }
-    elsif !VACOLS::Case.rep_name_found_in_rep_table?(vacols_code)
-      # VACOLS lists many Service Organizations by name in the dropdown.
-      # If the selection is one of those, use that as the rep name.
-      {
-        representative_name: get_full_rep_name(vacols_code),
-        representative_type: "Service Organization"
-      }
-    else
-      # Otherwise we have to look up the specific name of the rep
-      # in the REP table.
-      {
-        representative_name: get_rep_name_from_rep_record(representative_record),
-        representative_type: get_short_rep_name(vacols_code)
-      }
-    end
-  end
-
-  def self.rep_name_found_in_rep_table?(vacols_code)
-    !!VACOLS::Case::REPRESENTATIVES[vacols_code][:rep_name_in_rep_table]
-  end
-
   # The attributes that are copied over when the case is cloned because of a remand
   def remand_clone_attributes
     slice(
@@ -329,23 +296,6 @@ class VACOLS::Case < VACOLS::Record
 
     result.each_with_object({}) do |row, memo|
       memo[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
-    end
-  end
-
-  class << self
-    private
-
-    def get_rep_name_from_rep_record(rep_record)
-      return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
-      "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
-    end
-
-    def get_short_rep_name(vacols_code)
-      VACOLS::Case::REPRESENTATIVES[vacols_code].blank? ? nil : VACOLS::Case::REPRESENTATIVES[vacols_code][:short]
-    end
-
-    def get_full_rep_name(vacols_code)
-      VACOLS::Case::REPRESENTATIVES[vacols_code].blank? ? nil : VACOLS::Case::REPRESENTATIVES[vacols_code][:full_name]
     end
   end
 
