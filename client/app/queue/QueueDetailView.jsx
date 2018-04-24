@@ -88,10 +88,6 @@ class QueueDetailView extends React.PureComponent {
       page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }];
 
-    const readerLinkMsg = appeal.docCount ?
-      `Open ${appeal.docCount.toLocaleString()} documents in Caseflow Reader` :
-      'Open documents in Caseflow Reader';
-
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
         {appeal.veteran_full_name} ({appeal.vbms_id})
@@ -103,12 +99,12 @@ class QueueDetailView extends React.PureComponent {
       </p>
       <ReaderLink
         vacolsId={this.props.vacolsId}
-        message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
         docCount={appeal.docCount}
         taskId={task.task_id}
-        taskType="Draft Decision" />
+        taskType="Draft Decision"
+        longMessage />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"

@@ -17,7 +17,6 @@ import ReaderLink from './ReaderLink';
 import ApiUtil from '../util/ApiUtil';
 
 import { clearActiveCase, setActiveCase, setDocumentCount } from './CaseDetail/CaseDetailActions';
-import { resetBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -27,19 +26,14 @@ const backLinkStyling = css({
 });
 
 class CaseDetailView extends React.PureComponent {
-  // We might have breadcrumbs hanging around from navigating to a task.
-  componentDidMount = () => this.props.resetBreadcrumbs();
-
   componentWillUnmount = () => this.props.clearActiveCase();
-
-  vacolsId = () => this.props.match.params.vacolsId;
 
   loadCaseDetails = () => {
     if (this.props.appeal) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/queue/appeals/${this.vacolsId()}`).then((response) => {
+    return ApiUtil.get(`/queue/appeals/${this.props.vacolsId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveCase(resp.appeal);
@@ -82,10 +76,6 @@ class CaseDetailView extends React.PureComponent {
       page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.CASE_DETAIL} />
     }];
 
-    const readerLinkMsg = this.props.docCount ?
-      `Open ${this.props.docCount.toLocaleString()} documents in Caseflow Reader` :
-      'Open documents in Caseflow Reader';
-
     return <React.Fragment>
       <div {...backLinkStyling}>
         <Link to="/" onClick={this.props.clearActiveCase}>
@@ -100,12 +90,13 @@ class CaseDetailView extends React.PureComponent {
           Docket Number: {appeal.docket_number}, Assigned to Location {appeal.location_code}
         </p>
         <ReaderLink
-          vacolsId={this.vacolsId()}
-          message={readerLinkMsg}
+          vacolsId={this.props.vacolsId}
           analyticsSource={CATEGORIES.CASE_DETAIL}
           redirectUrl={window.location.pathname}
           taskId="DUMMY ID TO MAKE LINK WORK"
-          taskType="Draft Decision" />
+          taskType="Draft Decision"
+          docCount={this.props.docCount}
+          longMessage />
         <TabWindow
           name="casedetail-tabwindow"
           tabs={tabs} />
@@ -139,7 +130,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveCase,
-  resetBreadcrumbs,
   setActiveCase,
   setDocumentCount
 }, dispatch);

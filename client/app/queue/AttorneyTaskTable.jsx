@@ -77,7 +77,6 @@ class AttorneyTaskTable extends React.PureComponent {
     }
   ];
 
-  // TODO: Pass docCount to ReaderLink in here.
   createLoadPromise = (task) => () => {
     if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
       return Promise.resolve();

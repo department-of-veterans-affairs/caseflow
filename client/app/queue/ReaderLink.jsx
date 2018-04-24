@@ -15,19 +15,22 @@ export default class ReaderLink extends React.PureComponent {
 
   getLinkText = () => {
     const {
-      message,
-      docCount
+      docCount,
+      longMessage,
+      message
     } = this.props;
 
-    let linkText = 'View in Reader';
-
     if (message) {
-      linkText = message;
-    } else if (_.isNumber(docCount)) {
-      linkText = `View ${docCount.toLocaleString()} in Reader`;
+      return message;
     }
 
-    return linkText;
+    if (_.isNumber(docCount)) {
+      const cnt = docCount.toLocaleString();
+
+      return longMessage ? `Open ${cnt} documents in Caseflow Reader` : `View ${cnt} in Reader`;
+    }
+
+    return longMessage ? 'Open documents in Caseflow Reader' : 'View in Reader';
   };
 
   render = () => {
@@ -63,8 +66,13 @@ export default class ReaderLink extends React.PureComponent {
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   docCount: PropTypes.string,
+  longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskId: PropTypes.string,
   taskType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
+};
+
+ReaderLink.defaultProps = {
+  longMessage: false
 };
