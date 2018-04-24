@@ -102,11 +102,11 @@ class AddEditIssueView extends React.Component {
     const params = {
       data: {
         issues: {
-          ..._.pick(issue, 'note', 'program'),
           issue: issue.type,
-          level_1: _.get(issue.codes, 0),
-          level_2: _.get(issue.codes, 1),
-          level_3: _.get(issue.codes, 2)
+          level_1: _.get(issue.codes, 0, null),
+          level_2: _.get(issue.codes, 1, null),
+          level_3: _.get(issue.codes, 2, null),
+          ..._.omit(issue, 'type', 'codes')
         }
       }
     };
