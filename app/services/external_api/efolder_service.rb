@@ -1,7 +1,7 @@
 require "json"
 
 class ExternalApi::EfolderService
-  TRIES = 60
+  TRIES = 180
 
   def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
@@ -58,15 +58,20 @@ class ExternalApi::EfolderService
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)
-    if code != 200
-      fail Caseflow::Error::EfolderAccessForbidden, "403" if code == 403
-      fail Caseflow::Error::DocumentRetrievalError, "502" if code == 500
+    case code
+    when 200
+      if response_body["data"]["attributes"]["sources"].blank?
+        fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
+      end
+    when 403
+      fail Caseflow::Error::EfolderAccessForbidden, "403"
+    when 400
+      fail Caseflow::Error::ClientRequestError, response_body
+    when 500
+      fail Caseflow::Error::DocumentRetrievalError, "502"
+    else
       msg = "Failed for #{vbms_id}, user_id: #{user_id}, error: #{response_body}, HTTP code: #{code}"
       fail Caseflow::Error::DocumentRetrievalError, msg
-    end
-
-    if response_body["data"]["attributes"]["sources"].blank?
-      fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
     end
   end
 
