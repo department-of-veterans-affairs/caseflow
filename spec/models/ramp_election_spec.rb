@@ -1,4 +1,4 @@
-describe RampElection do
+describe RampElection, focus:true do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -84,7 +84,7 @@ describe RampElection do
 
     context "when option_selected is nil" do
       it "raises error" do
-        expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
       end
     end
 
@@ -96,7 +96,7 @@ describe RampElection do
         let(:receipt_date) { nil }
 
         it "raises error" do
-          expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+          expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
         end
       end
 

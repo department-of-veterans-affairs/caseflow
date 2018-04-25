@@ -7,6 +7,7 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
+  # TODO move to EstablishesEndProduct
   def self.active
     # We only know the set of inactive EP statuses
     # We also only know the EP status after fetching it from BGS
@@ -27,6 +28,7 @@ class RampElection < RampReview
     end
   end
 
+  # TODO move to EstablishesEndProduct, rename to end_product_active ?
   def active?
     sync_ep_status! && cached_status_active?
   end
@@ -43,10 +45,6 @@ class RampElection < RampReview
 
   def control_time
     receipt_date && established_at && (established_at.beginning_of_day - receipt_date.in_time_zone)
-  end
-
-  def established_end_product
-    @established_end_product ||= fetch_established_end_product
   end
 
   def recreate_issues_from_contentions!
@@ -67,6 +65,7 @@ class RampElection < RampReview
     end
   end
 
+  # TODO move to EstablishesEndProduct
   def sync_ep_status!
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
@@ -84,6 +83,7 @@ class RampElection < RampReview
       .last
   end
 
+  # TODO move to EstablishesEndProduct
   def end_product_canceled?
     sync_ep_status! && end_product_status == "CAN"
   end
@@ -104,20 +104,10 @@ class RampElection < RampReview
   end
 
   private
-
+  
+  # TODO move to EstablishesEndProduct
   def cached_status_active?
     !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
-  end
-
-  def fetch_established_end_product
-    return nil unless end_product_reference_id
-
-    result = veteran.end_products.find do |end_product|
-      end_product.claim_id == end_product_reference_id
-    end
-
-    fail EstablishedEndProductNotFound unless result
-    result
   end
 
   def validate_receipt_date
