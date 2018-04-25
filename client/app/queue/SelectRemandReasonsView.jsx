@@ -28,47 +28,37 @@ class SelectRemandReasonsView extends React.Component {
   getFooterButtons = () => {
     const { issues } = this.props;
     const { issuesRendered } = this.state;
-    const buttons = [{
-      displayText: 'Go back to Select Dispositions'
-    }];
 
-    if (issuesRendered === issues.length) {
-      buttons.push({
-        displayText: 'Continue'
-      });
+    return [{
+      displayText: 'Go back to Select Dispositions'
+    }, {
+      displayText: issuesRendered < issues.length ? 'Next Issue' : 'Continue'
+    }];
+  }
+
+  goToNextStep = () => {
+    const { issues } = this.props;
+    const { issuesRendered } = this.state;
+
+    if (issuesRendered < issues.length) {
+      this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
+      return false;
     }
 
-    return buttons;
+    return true;
   }
 
   validateForm = () => true;
 
-  renderIssueOptions = () => {
-    const { issues, appealId } = this.props;
-    const renderedOptions = _.map(_.range(this.state.issuesRendered), (idx) => {
-      const { vacols_sequence_id: issueId } = issues[idx];
+  renderIssueOptions = () => _.map(_.range(this.state.issuesRendered), (idx) => {
+    const { vacols_sequence_id: issueId } = this.props.issues[idx];
 
-      return <IssueRemandReasonsOptions
-        appealId={appealId}
-        issueId={issueId}
-        key={`remand-reasons-options-${issueId}`}
-        idx={idx} />;
-    });
-
-    if (issues.length > 1 && renderedOptions.length < issues.length) {
-      renderedOptions.push(
-        <Button
-          willNeverBeLoading
-          styling={floatRight}
-          key="show-more"
-          onClick={() => this.setState({ issuesRendered: Math.min(this.state.issuesRendered + 1, issues.length) })}>
-          Next Issue
-        </Button>
-      );
-    }
-
-    return renderedOptions;
-  };
+    return <IssueRemandReasonsOptions
+      appealId={this.props.appealId}
+      issueId={issueId}
+      key={`remand-reasons-options-${issueId}`}
+      idx={idx} />;
+  });
 
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
