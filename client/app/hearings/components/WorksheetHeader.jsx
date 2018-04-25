@@ -9,6 +9,8 @@ import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 
+const VBMS_ID_LENGTH = 9;
+
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
 
@@ -33,6 +35,9 @@ class WorksheetHeader extends React.PureComponent {
 
       return gender;
     };
+
+    const fillVBMSId = (vbmsId) => vbmsId.length <= VBMS_ID_LENGTH ?
+      Array((VBMS_ID_LENGTH - vbmsId.length) + 1).join('0') + vbmsId : vbmsId;
 
     return <div>
       <div className="cf-title-meta-right">
@@ -99,7 +104,7 @@ class WorksheetHeader extends React.PureComponent {
                 <button
                   name="Copy Veteran ID"
                   className={['usa-button-outline cf-copy-to-clipboard']}>
-                  {worksheet.sanitized_vbms_id}
+                  {fillVBMSId(worksheet.sanitized_vbms_id)}
                   <ClipboardIcon />
                 </button>
               </CopyToClipboard>
