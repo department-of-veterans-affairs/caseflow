@@ -64,7 +64,7 @@ export default class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
-  docCount: PropTypes.string,
+  docCount: PropTypes.number,
   longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
