@@ -23,7 +23,7 @@ class Appeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :representative, :contested_claim
+  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :representative_type, :representative_name
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -232,21 +232,6 @@ class Appeal < ApplicationRecord
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
-  end
-
-  def representative_name
-    representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
-  end
-
-  def representative_type
-    case representative
-    when "None", "One Time Representative"
-      "Other"
-    when "Agent", "Attorney"
-      representative
-    else
-      "Organization"
-    end
   end
 
   def can_be_accessed_by_current_user?

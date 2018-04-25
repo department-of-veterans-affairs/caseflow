@@ -210,7 +210,8 @@ module Fakes::Data::AppealData
         added_by_css_id: "MAPAPPAS",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative: "Virginia Department of Veterans Affairs",
+        representative_name: "Virginia Department of Veterans Affairs",
+        representative_type: "Service Organization",
         issues: [
           {
             vacols_sequence_id: 1,
@@ -252,7 +253,8 @@ module Fakes::Data::AppealData
         added_by_css_id: nil,
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
-        representative: "No Representative",
+        representative_name: "No Representative",
+        representative_type: "No Representative",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -312,7 +314,8 @@ module Fakes::Data::AppealData
         added_by_css_id: "HROBERT",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
-        representative: "One Time Representative",
+        representative_name: "One Time Representative",
+        representative_type: "One Time Representative",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -358,7 +361,8 @@ module Fakes::Data::AppealData
         added_by_css_id: "DFREY",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
-        representative: "Agent",
+        representative_name: "Agent",
+        representative_type: "Agent",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -395,7 +399,8 @@ module Fakes::Data::AppealData
         added_by_last_name: "More",
         added_by_css_id: "DMORE",
         regional_office_key: "RO13",
-        representative: "Disabled American Veterans",
+        representative_name: "Disabled American Veterans",
+        representative_type: "Service Organization",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,

@@ -77,7 +77,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representative)
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -131,7 +131,6 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
       representative_type: rep_info[:representative_type],
       representative_name: rep_info[:representative_name],
       contested_claim: case_record.representative.try(:reptype) == "C",
