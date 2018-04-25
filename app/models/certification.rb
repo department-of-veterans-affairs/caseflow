@@ -26,7 +26,7 @@ class Certification < ApplicationRecord
   end
 
   def bgs_rep_address_found?
-    !!appeal.power_of_attorney.bgs_representative_address
+    !!power_of_attorney.bgs_representative_address
   end
 
   def create_or_update_form8
@@ -76,7 +76,7 @@ class Certification < ApplicationRecord
   end
 
   def update_vacols_poa!
-    appeal.power_of_attorney.update_vacols_rep_info!(
+    power_of_attorney.update_vacols_rep_info!(
       appeal: appeal,
       representative_type: rep_type,
       representative_name: rep_name,
@@ -104,6 +104,10 @@ class Certification < ApplicationRecord
 
   def form8
     @form8 ||= Form8.find_by(certification_id: id)
+  end
+
+  def power_of_attorney
+    @poa ||= PowerOfAttorney.new(file_number: appeal.sanitized_vbms_id, vacols_id: appeal.vacols_id).load_bgs_record!
   end
 
   def time_to_certify

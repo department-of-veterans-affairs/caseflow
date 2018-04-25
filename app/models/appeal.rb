@@ -202,12 +202,6 @@ class Appeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney(load_bgs_record: true)
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
-
-    load_bgs_record ? @poa.load_bgs_record! : @poa
-  end
-
   attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
