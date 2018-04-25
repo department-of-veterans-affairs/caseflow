@@ -89,7 +89,12 @@ class Veteran
   end
 
   def fetch_bgs_record
-    self.class.bgs.fetch_veteran_info(file_number)
+    result = self.class.bgs.fetch_veteran_info(file_number)
+
+    # If the result is nil, the veteran wasn't found.
+    # If the file number is nil, that's another way of saying the veteran wasn't found.
+    result && result[:file_number] && result
+
   rescue BGS::ShareError => error
     # Set the veteran as inaccessible if a sensitivity error is thrown
     raise error unless error.message =~ /Sensitive File/
@@ -97,7 +102,7 @@ class Veteran
     @accessible = false
   end
 
-  def fetch_accessible
+  def accessible?
     self.class.bgs.can_access?(file_number)
   end
 
@@ -142,7 +147,7 @@ class Veteran
   end
 
   def vbms_attributes
-    BGS_ATTRIBUTES \
+    self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
       + [:address_type]
   end
