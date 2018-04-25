@@ -38,7 +38,6 @@ describe Veteran do
   let(:date_of_birth) { "21/12/1989" }
   let(:service) { [{ branch_of_service: "army" }] }
 
-
   context "lazily loaded bgs attributes" do
     subject { veteran }
 

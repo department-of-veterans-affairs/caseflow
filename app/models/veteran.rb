@@ -94,7 +94,6 @@ class Veteran
     # If the result is nil, the veteran wasn't found.
     # If the file number is nil, that's another way of saying the veteran wasn't found.
     result && result[:file_number] && result
-
   rescue BGS::ShareError => error
     # Set the veteran as inaccessible if a sensitivity error is thrown
     raise error unless error.message =~ /Sensitive File/
