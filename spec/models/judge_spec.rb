@@ -48,25 +48,6 @@ describe Judge do
     end
   end
 
-  context ".create_from_vacols" do
-    let(:staff_record) do
-      OpenStruct.new(
-        sdomainid: "CSS1",
-        snamef: "Jenny",
-        snamel: "Jackson"
-      )
-    end
-
-    subject { Judge.create_from_vacols(staff_record) }
-
-    it "should create a user record with a judge station ID" do
-      expect(subject.class).to eq User
-      expect(subject.css_id).to eq "CSS1"
-      expect(subject.station_id).to eq "101"
-      expect(subject.full_name).to eq "Jenny Jackson"
-    end
-  end
-
   context ".list_all" do
     it "should cache the values" do
       expect(Fakes::JudgeRepository).to receive(:find_all_judges).once

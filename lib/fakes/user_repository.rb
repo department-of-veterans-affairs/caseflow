@@ -18,4 +18,8 @@ class Fakes::UserRepository
   def self.vacols_uniq_id(css_id)
     css_id
   end
+
+  def self.vacols_full_name(_css_id)
+    %w[George John Thomas].sample + " " + %w[Washington King Jefferson].sample
+  end
 end

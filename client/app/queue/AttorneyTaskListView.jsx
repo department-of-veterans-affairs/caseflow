@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import QueueTable from './QueueTable';
+import AttorneyTaskTable from './AttorneyTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
@@ -19,7 +19,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 
-class QueueListView extends React.PureComponent {
+class AttorneyListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -58,7 +58,7 @@ class QueueListView extends React.PureComponent {
         {messages.success && <Alert type="success" title={messages.success}>
           If you made a mistake please email your judge to resolve the issue.
         </Alert>}
-        <QueueTable />
+        <AttorneyTaskTable />
       </div>;
     }
 
@@ -68,7 +68,7 @@ class QueueListView extends React.PureComponent {
   };
 }
 
-QueueListView.propTypes = {
+AttorneyListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -76,7 +76,7 @@ QueueListView.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
   ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.pendingChanges, 'taskDecision'),
+  ..._.pick(state.queue.stagedChanges, 'taskDecision'),
   judges: state.queue.judges
 });
 
@@ -90,4 +90,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);
+export default connect(mapStateToProps, mapDispatchToProps)(AttorneyListView);

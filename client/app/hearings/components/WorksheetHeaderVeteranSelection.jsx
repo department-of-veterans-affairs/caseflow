@@ -91,7 +91,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} /> : ''}
+            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+              message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.id}
