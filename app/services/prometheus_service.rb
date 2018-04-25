@@ -84,6 +84,26 @@ class PrometheusService
                                            "latency of completed Reader requests")
     end
 
+    def hearings_request_attempt_counter
+      @hearings_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :hearings_request_attempt_counter,
+                                "A counter of attempted Hearing Prep requests")
+    end
+
+    def hearings_request_error_counter
+      @hearings_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :hearings_request_error_counter,
+                                "A counter of errored Hearing Prep requests")
+    end
+
+    def hearings_request_latency
+      @hearings_request_latency ||=
+        find_or_register_gauge_and_summary(:hearings_request_latency,
+                                           "latency of completed Hearing Prep requests")
+    end
+
     def bgs_request_attempt_counter
       @bgs_request_attempt_counter ||=
         find_or_register_metric(:counter,
