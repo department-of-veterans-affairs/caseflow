@@ -21,11 +21,16 @@ import {
 } from '../QueueActions';
 import {
   fullWidth,
-  REMAND_REASONS
+  REMAND_REASONS,
+  redText,
+  boldText
 } from '../constants';
 
 const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
+const errorNoTopMargin = css({
+  '.usa-input-error': { marginTop: 0 }
+});
 const flexContainer = css({
   display: 'flex',
   maxWidth: '75rem'
@@ -59,11 +64,17 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.saveEditedAppealIssue(appealId);
   };
 
-  validateChosenOptions = () => _(this.state).
-    map((val) => val.checked && val.after_certification !== null).
-    compact().
-    value().
-    length >= 1;
+  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
+
+  validateChosenOptionsHaveCertification = () => {
+    const chosenOptions = this.getChosenOptions();
+    const chosenOptionsWithCertification = _.filter(chosenOptions, (opt) => !_.isNull(opt.after_certification));
+
+    return chosenOptions.length === chosenOptionsWithCertification.length;
+  }
+
+  validate = () => this.getChosenOptions().length >= 1 &&
+    this.validateChosenOptionsHaveCertification()
 
   componentDidMount = () => {
     const {
@@ -126,10 +137,11 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       label={option.label}
       unpadded />
     {values[option.id].checked && <RadioField
+      errorMessage={this.props.highlight && _.isNull(this.state[option.id].after_certification) && 'Choose one'}
       id={option.id}
       vertical
       key={`${option.id}-after-certification`}
-      styling={css(smallLeftMargin, smallBottomMargin)}
+      styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
       name={`${this.props.issue.vacols_sequence_id}-${option.id}`}
       hideLabel
       options={[{
@@ -154,6 +166,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issue,
       issues,
       idx,
+      highlight,
       appeal: { attributes: appeal }
     } = this.props;
     const checkboxGroupProps = {
@@ -170,6 +183,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
       <div {...smallBottomMargin}>Code: {_.last(issue.description)}</div>
       <div {...smallBottomMargin}>Certified: {formatDateStr(appeal.certification_date)}</div>
+      {highlight && !this.getChosenOptions().length &&
+        <div className="usa-input-error" {...css(redText, boldText)}>Choose at least one</div>
+      }
 
       <div {...flexContainer}>
         <div {...flexColumn}>
@@ -214,7 +230,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     issues: _.filter(issues, (issue) => issue.disposition === 'Remanded'),
-    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId)
+    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
+    highlight: state.ui.highlightFormItems
   };
 };
 

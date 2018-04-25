@@ -33,7 +33,7 @@ class SelectRemandReasonsView extends React.Component {
     return [{
       displayText: 'Go back to Select Dispositions'
     }, {
-      displayText: issuesRendered < issues.length ? 'Next Issue' : 'Continue'
+      displayText: issuesRendered < issues.length ? 'Continue to review the next issue' : 'Continue'
     }];
   }
 
@@ -50,7 +50,7 @@ class SelectRemandReasonsView extends React.Component {
     return true;
   }
 
-  validateForm = () => _.every(this.state.renderedChildren, (child) => _.invoke(child, 'validateChosenOptions'));
+  validateForm = () => _.every(this.state.renderedChildren, (child) => _.invoke(child, 'validate'));
 
   getChildRef = (ref) => this.setState({
     renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
