@@ -3,7 +3,7 @@ class AppealsController < ApplicationController
     return veteran_id_not_found_error unless veteran_id
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          name: "QueueController.appeals") do
+                          name: "AppealsController.index") do
 
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
