@@ -20,6 +20,7 @@ class AppealsController < ApplicationController
   end
 
   def show
+    # :nocov:
     no_cache
 
     respond_to do |format|
@@ -33,15 +34,18 @@ class AppealsController < ApplicationController
         end
       end
     end
+    # :nocov:
   end
 
   private
 
   # https://stackoverflow.com/a/748646
   def no_cache
+    # :nocov:
     response.headers["Cache-Control"] = "no-cache, no-store"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
   end
 
   def veteran_id
