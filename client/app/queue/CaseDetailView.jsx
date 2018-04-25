@@ -93,7 +93,6 @@ class CaseDetailView extends React.PureComponent {
           vacolsId={this.props.vacolsId}
           analyticsSource={CATEGORIES.CASE_DETAIL}
           redirectUrl={window.location.pathname}
-          taskId="DUMMY ID TO MAKE LINK WORK"
           taskType="Draft Decision"
           docCount={this.props.docCount}
           longMessage />

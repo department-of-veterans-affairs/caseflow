@@ -70,7 +70,7 @@ class AttorneyTaskTable extends React.PureComponent {
         return <LoadingDataDisplay
           createLoadPromise={this.createLoadPromise(task)}
           errorComponent="span"
-          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} taskId={task.task_id} />}
+          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
           loadingComponent={SmallLoader}
           loadingComponentProps={{
             message: 'Loading...',
@@ -82,8 +82,7 @@ class AttorneyTaskTable extends React.PureComponent {
           }}>
           <ReaderLink vacolsId={task.vacolsId}
             analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname}
-            taskId={task.task_id} />
+            redirectUrl={window.location.pathname} />
         </LoadingDataDisplay>;
       }
     }

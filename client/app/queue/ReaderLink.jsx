@@ -37,12 +37,11 @@ export default class ReaderLink extends React.PureComponent {
     const {
       redirectUrl,
       taskType,
-      taskId,
       vacolsId
     } = this.props;
     const linkProps = {};
 
-    if (taskId) {
+    if (redirectUrl) {
       const queryParams = {
         queue_redirect_url: redirectUrl
       };
@@ -68,7 +67,6 @@ ReaderLink.propTypes = {
   docCount: PropTypes.string,
   longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
-  taskId: PropTypes.string,
   taskType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
