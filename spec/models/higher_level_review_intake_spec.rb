@@ -1,4 +1,4 @@
-describe SupplementalClaimIntake do
+describe HigherLevelReviewIntake do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
@@ -10,7 +10,7 @@ describe SupplementalClaimIntake do
   let(:completed_at) { nil }
 
   let(:intake) do
-    SupplementalClaimIntake.new(
+    HigherLevelReviewIntake.new(
       user: user,
       detail: detail,
       veteran_file_number: veteran_file_number,
@@ -22,13 +22,13 @@ describe SupplementalClaimIntake do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      HigherLevelReview.create!(
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
     end
 
-    it "cancels and deletes the supplemental claim record created" do
+    it "cancels and deletes the Higher Level Review record created" do
       subject
 
       expect(intake.reload).to be_canceled
