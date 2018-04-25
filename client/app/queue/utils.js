@@ -6,7 +6,7 @@ import {
   DECISION_TYPES
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -88,7 +88,7 @@ export const getIssueTypeDescription = (issue) => {
 };
 
 export const getIssueDiagnosticCodeLabel = (code) => {
-  const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+  const readableLabel = STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
     return false;
