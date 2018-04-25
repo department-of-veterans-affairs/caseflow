@@ -13,7 +13,7 @@ import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
-import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeTaskListView from './JudgeTaskListView';
 
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
@@ -34,7 +34,7 @@ class QueueApp extends React.PureComponent {
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
       {this.props.userRole === 'Attorney' ?
         <AttorneyTaskListView {...this.props} /> :
-        <JudgeReviewTaskListView {...this.props} />
+        <JudgeTaskListView {...this.props} />
       }
     </SearchEnabledView>
   </QueueLoadingScreen>;
