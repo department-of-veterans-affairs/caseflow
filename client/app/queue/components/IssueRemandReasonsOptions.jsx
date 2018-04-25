@@ -79,7 +79,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
         return {
           code: key,
-          ..._.pick(val, 'after_certification')
+          after_certification: val.after_certification === 'true'
         };
       }).
       compact().
