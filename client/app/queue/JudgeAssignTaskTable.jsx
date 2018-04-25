@@ -85,7 +85,7 @@ class JudgeAssignTaskTable extends React.PureComponent {
           createLoadPromise={this.createLoadPromise(task)}
           errorComponent='span'
           failStatusMessageProps={{ title: 'Unknown failure' }}
-          failStatusMessageChildren={<span>Failed to load</span>}
+          failStatusMessageChildren={<span>?</span>}
           loadingComponent={SmallLoader}
           loadingComponentProps={{
             message: 'Loading...',
