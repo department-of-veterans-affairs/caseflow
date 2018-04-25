@@ -5,19 +5,20 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import decisionViewBase from './components/DecisionViewBase';
-import Button from '../components/Button';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
 import { fullWidth } from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
-const floatRight = css({ float: 'right' });
 
 class SelectRemandReasonsView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { issuesRendered: 1 };
+    this.state = {
+      issuesRendered: 1,
+      renderedChildren: []
+    };
   }
 
   getBreadcrumb = () => ({
@@ -42,22 +43,17 @@ class SelectRemandReasonsView extends React.Component {
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
+
       return false;
     }
 
     return true;
   }
 
-  validateForm = () => true;
+  validateForm = () => _.every(this.state.renderedChildren, (child) => _.invoke(child, 'validateChosenOptions'));
 
-  renderIssueOptions = () => _.map(_.range(this.state.issuesRendered), (idx) => {
-    const { vacols_sequence_id: issueId } = this.props.issues[idx];
-
-    return <IssueRemandReasonsOptions
-      appealId={this.props.appealId}
-      issueId={issueId}
-      key={`remand-reasons-options-${issueId}`}
-      idx={idx} />;
+  getChildRef = (ref) => this.setState({
+    renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
   });
 
   render = () => <React.Fragment>
@@ -68,7 +64,14 @@ class SelectRemandReasonsView extends React.Component {
       Please select the appropriate remand reason(s) for all the remand dispositions.
     </p>
     <hr />
-    {this.renderIssueOptions()}
+    {_.map(_.range(this.state.issuesRendered), (idx) =>
+      <IssueRemandReasonsOptions
+        appealId={this.props.appealId}
+        issueId={this.props.issues[idx].vacols_sequence_id}
+        key={`remand-reasons-options-${idx}`}
+        ref={this.getChildRef}
+        idx={idx} />
+    )}
   </React.Fragment>;
 }
 

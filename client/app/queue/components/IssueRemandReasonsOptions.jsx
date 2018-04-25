@@ -45,7 +45,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       _.map(options, 'id'),
       _.map(options, () => ({
         checked: false,
-        after_certification: 'false'
+        after_certification: null
       }))
     );
 
@@ -58,6 +58,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.props.startEditingAppealIssue(appealId, issueId, attributes);
     this.props.saveEditedAppealIssue(appealId);
   };
+
+  validateChosenOptions = () => _(this.state).
+    map((val) => val.checked && val.after_certification !== null).
+    compact().
+    value().
+    length >= 1;
 
   componentDidMount = () => {
     const {
@@ -80,7 +86,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         offset: -35
       });
     }
-  }
+  };
 
   componentWillUnmount = () => {
     // on unmount, update issue attrs from state
@@ -103,12 +109,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       value();
 
     this.updateIssue({ remand_reasons: remandReasons });
-  }
+  };
 
   toggleRemandReason = (checked, event) => this.setState({
     [event.target.id.split('-')[1]]: {
       checked,
-      after_certification: 'false'
+      after_certification: null
     }
   });
 
@@ -217,4 +223,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   saveEditedAppealIssue
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(IssueRemandReasonsOptions);
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(IssueRemandReasonsOptions);
