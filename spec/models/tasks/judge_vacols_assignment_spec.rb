@@ -13,7 +13,9 @@ describe JudgeVacolsAssignment do
                        docket_date: nil,
                        created_at: 5.days.ago,
                        assigned_to_location_date: 6.months.ago,
-                       document_id: "173341517.524")
+                       document_id: "173341517.524",
+                       assigned_by_first_name: "Joe",
+                       assigned_by_last_name: "Snuffy")
       end
 
       context "when a case has been reaasigned back to judge" do
@@ -27,6 +29,8 @@ describe JudgeVacolsAssignment do
           expect(subject.task_type).to eq "Review"
           expect(subject.task_id).to eq "1111-2015-01-25"
           expect(subject.document_id).to eq "173341517.524"
+          expect(subject.assigned_by_first_name).to eq "Joe"
+          expect(subject.assigned_by_last_name).to eq "Snuffy"
         end
       end
 
