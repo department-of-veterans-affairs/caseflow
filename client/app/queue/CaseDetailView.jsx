@@ -78,16 +78,14 @@ class CaseDetailView extends React.PureComponent {
 
     return <React.Fragment>
       <div {...backLinkStyling}>
-        <Link to="/" onClick={this.props.clearActiveCase}>
-          &lt; Back to {appeal.veteran_full_name} ({appeal.vbms_id})'s Case List
-        </Link>
+        <Link to="/" onClick={this.props.clearActiveCase}>&lt; Back to {appeal.veteran_full_name}'s case list</Link>
       </div>
       <AppSegment filledBackground>
         <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
           {appeal.veteran_full_name} ({appeal.vbms_id})
         </h1>
         <p className="cf-lead-paragraph" {...subHeadStyling}>
-          Docket Number: {appeal.docket_number}, Assigned to Location {appeal.location_code}
+          Docket Number: {appeal.docket_number}, Assigned to {appeal.location_code}
         </p>
         <ReaderLink
           vacolsId={this.props.vacolsId}
