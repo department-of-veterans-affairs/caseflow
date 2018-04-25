@@ -1,4 +1,6 @@
 class AppealsController < ApplicationController
+  before_action :react_routed
+
   def index
     return veteran_id_not_found_error unless veteran_id
 
@@ -18,6 +20,8 @@ class AppealsController < ApplicationController
   end
 
   def show
+    no_cache
+
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
@@ -32,6 +36,13 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
 
   def veteran_id
     request.headers["HTTP_VETERAN_ID"]
