@@ -1,7 +1,16 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getInformalConferenceError, getSameOfficeError } from '../util';
+import { getReceiptDateError } from '../util';
+import _ from 'lodash';
+
+const getInformalConferenceError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.informal_conference, 0) === 'blank') && 'Please select an option.'
+);
+
+const getSameOfficeError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.same_office, 0) === 'blank') && 'Please select an option.'
+);
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.HIGHER_LEVEL_REVIEW.key) {

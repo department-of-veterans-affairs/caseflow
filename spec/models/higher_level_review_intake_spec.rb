@@ -28,7 +28,7 @@ describe HigherLevelReviewIntake do
       )
     end
 
-    it "cancels and deletes the supplemental claim record created" do
+    it "cancels and deletes the Higher Level Review record created" do
       subject
 
       expect(intake.reload).to be_canceled

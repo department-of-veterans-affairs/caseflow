@@ -9,14 +9,6 @@ export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
 );
 
-export const getInformalConferenceError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.informal_conference, 0) === 'blank') && 'Please select an option.'
-);
-
-export const getSameOfficeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.same_office, 0) === 'blank') && 'Please select an option.'
-);
-
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
