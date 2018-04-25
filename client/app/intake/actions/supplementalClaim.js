@@ -5,13 +5,6 @@ import _ from 'lodash';
 
 const analytics = true;
 
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
