@@ -52,9 +52,15 @@ class SelectRemandReasonsView extends React.Component {
 
   validateForm = () => _.every(this.state.renderedChildren, (child) => _.invoke(child, 'validate'));
 
-  getChildRef = (ref) => this.setState({
-    renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
-  });
+  getChildRef = (ref) => {
+    if (!ref) {
+      return;
+    }
+
+    this.setState({
+      renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
+    });
+  }
 
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
