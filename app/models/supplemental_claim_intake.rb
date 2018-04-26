@@ -5,8 +5,6 @@ class SupplementalClaimIntake < Intake
 
   def ui_hash
     super.merge(
-      receipt_date: detail.receipt_date,
-      end_product_description: detail.end_product_description,
       ratings: veteran.cached_serialized_timely_ratings
     )
   end
@@ -18,13 +16,5 @@ class SupplementalClaimIntake < Intake
 
   def review_errors
     detail.errors.messages
-  end
-
-  def complete!(_request_params)
-    if detail.create_or_connect_end_product! == :connected
-      update!(error_code: "connected_preexisting_ep")
-    end
-
-    complete_with_status!(:success)
   end
 end

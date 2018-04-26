@@ -52,7 +52,7 @@ class RampReview < ApplicationRecord
     end_product_reference_id && end_product_to_establish.description_with_routing
   end
 
-  # TODO rename
+  # TODO: rename
   def pending_end_product_description
     # This is for EPs not yet created or that failed to create
     end_product_to_establish.modifier

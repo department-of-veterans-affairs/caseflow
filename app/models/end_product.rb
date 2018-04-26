@@ -16,10 +16,6 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
-  AMA_CODES = {
-    "" => "Supplemental Claim Review Rating"
-  }.freeze
-
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?

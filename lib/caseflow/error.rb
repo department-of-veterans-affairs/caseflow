@@ -8,6 +8,7 @@ module Caseflow::Error
   class InvalidSSN < StandardError; end
   class InvalidFileNumber < StandardError; end
   class MustImplementInSubclass < StandardError; end
+  class MustImplementInSuperclass < StandardError; end
   class AttributeNotLoaded < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError

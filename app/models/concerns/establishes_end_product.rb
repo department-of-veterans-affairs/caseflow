@@ -86,7 +86,6 @@ module EstablishesEndProduct
     )
   end
 
-# TODO Remove load_bgs_record when veteran lazy loading is merged
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,

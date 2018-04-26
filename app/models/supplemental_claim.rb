@@ -14,7 +14,7 @@ class SupplementalClaim < ApplicationRecord
 
   private
 
-  # TODO Update with real code and modifier data
+  # TODO: Update with real code and modifier data
   def end_product_code
     "040SCRAMA"
   end
