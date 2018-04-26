@@ -386,7 +386,7 @@ describe RampElection do
         end
 
         context "when it is nil" do
-          it "adds error to receipt_date" do
+          it "adds error to option_selected" do
             is_expected.to be false
             expect(ramp_election.errors[:option_selected]).to include("blank")
           end
