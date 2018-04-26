@@ -93,6 +93,11 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueList} />
           <PageRoute
             exact
+            path="/:userId"
+            title="Your Queue | Caseflow"
+            render={this.routedQueueList} />
+          <PageRoute
+            exact
             path="/tasks/:vacolsId"
             title="Draft Decision | Caseflow"
             render={this.routedQueueDetail} />
