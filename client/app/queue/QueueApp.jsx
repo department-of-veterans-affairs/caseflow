@@ -40,6 +40,14 @@ class QueueApp extends React.PureComponent {
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
+  routedJudgeQueueList = (taskType) => () => <QueueLoadingScreen {...this.props}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      <JudgeTaskListView taskType={taskType} {...this.props} />
+    </SearchEnabledView>
+  </QueueLoadingScreen>;
+
   routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
     <CaseDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
@@ -96,6 +104,16 @@ class QueueApp extends React.PureComponent {
             path="/:userId"
             title="Your Queue | Caseflow"
             render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/:userId/review"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList("Review")} />
+          <PageRoute
+            exact
+            path="/:userId/assign"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList("Assign")} />
           <PageRoute
             exact
             path="/tasks/:vacolsId"

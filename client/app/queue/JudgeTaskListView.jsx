@@ -47,7 +47,12 @@ class JudgeTaskListView extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = DISPLAYING_REVIEW_TASKS;
+    const { taskType } = props;
+    if (taskType === 'Assign') {
+      this.state = DISPLAYING_ASSIGN_TASKS;
+    } else {
+      this.state = DISPLAYING_REVIEW_TASKS;
+    }
   }
 
   handleSwitchToAssign = () => this.setState(DISPLAYING_ASSIGN_TASKS)
