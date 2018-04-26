@@ -117,7 +117,7 @@ RSpec.feature "Queue" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -147,7 +147,7 @@ RSpec.feature "Queue" do
       end
 
       it "page displays no cases found message" do
-        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals))
       end
 
       it "search bar moves from top right to main page body" do
@@ -178,7 +178,7 @@ RSpec.feature "Queue" do
       end
 
       it "displays error message" do
-        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -190,7 +190,7 @@ RSpec.feature "Queue" do
         fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
         click_on "Search"
 
-        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do

@@ -1,0 +1,11 @@
+{
+  "CASE_SEARCH_ERROR_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
+  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
+  "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
+  "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",
+  "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
+
+  "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
+  "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
+  "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %d Cases"
+}
