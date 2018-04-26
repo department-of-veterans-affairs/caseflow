@@ -24,12 +24,6 @@ class JudgeAssignTaskTable extends React.PureComponent {
 
   getCaseDetailsLink = ({ task }) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
 
-  getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.vacolsId];
-
-    return attr ? _.get(appeal.attributes, attr) : appeal;
-  };
-
   createLoadPromise = (task) => () => {
     if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
       return Promise.resolve();
