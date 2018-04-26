@@ -15,6 +15,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 
+import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -37,6 +38,10 @@ class QueueApp extends React.PureComponent {
         <JudgeReviewTaskListView {...this.props} />
       }
     </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
+    <CaseDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -116,6 +121,11 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/appeals/:vacolsId"
+            title="Case Details | Caseflow"
+            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
@@ -139,7 +149,7 @@ QueueApp.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.pendingChanges.taskDecision.type
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);

@@ -5,13 +5,15 @@ import { intakeReducer, mapDataToInitialIntake } from './reducers/intake';
 import { rampElectionReducer, mapDataToInitialRampElection } from './reducers/rampElection';
 import { rampRefilingReducer, mapDataToInitialRampRefiling } from './reducers/rampRefiling';
 import { supplementalClaimReducer, mapDataToInitialSupplementalClaim } from './reducers/supplementalClaim';
+import { higherLevelReviewReducer, mapDataToInitialHigherLevelReview } from './reducers/higherLevelReview';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 
 const reducer = combineReducers({
   intake: intakeReducer,
   rampElection: rampElectionReducer,
   rampRefiling: rampRefilingReducer,
-  supplementalClaim: supplementalClaimReducer
+  supplementalClaim: supplementalClaimReducer,
+  higherLevelReview: higherLevelReviewReducer
 });
 
 class Intake extends React.PureComponent {
@@ -20,7 +22,8 @@ class Intake extends React.PureComponent {
       intake: mapDataToInitialIntake(this.props),
       rampElection: mapDataToInitialRampElection(this.props),
       rampRefiling: mapDataToInitialRampRefiling(this.props),
-      supplementalClaim: mapDataToInitialSupplementalClaim(this.props)
+      supplementalClaim: mapDataToInitialSupplementalClaim(this.props),
+      higherLevelReview: mapDataToInitialHigherLevelReview(this.props)
     };
 
     return <ReduxBase initialState={initialState} reducer={reducer} analyticsMiddlewareArgs={['intake']}>

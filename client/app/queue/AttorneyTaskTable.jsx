@@ -16,7 +16,7 @@ import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import ApiUtil from '../util/ApiUtil';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { CATEGORIES } from './constants';
+import { CATEGORIES, redText } from './constants';
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -28,6 +28,8 @@ class AttorneyTaskTable extends React.PureComponent {
 
   getCaseDetailsLink = (task) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
 
+  collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
+
   getQueueColumns = () => [
     {
       header: 'Case Details',
@@ -35,32 +37,44 @@ class AttorneyTaskTable extends React.PureComponent {
     },
     {
       header: 'Type(s)',
-      valueFunction: (task) => renderAppealType(this.getAppealForTask(task))
+      valueFunction: (task) => task.attributes.task_id ?
+        renderAppealType(this.getAppealForTask(task)) :
+        <span {...redText}>Please ask your judge to assign this case to you in DAS</span>,
+      span: (task) => task.attributes.task_id ? 1 : 5
     },
     {
       header: 'Docket Number',
-      valueFunction: (task) => this.getAppealForTask(task, 'docket_number')
+      valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
+      span: this.collapseColumnIfNoDASRecord
     },
     {
       header: 'Issues',
-      valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
+      valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
+      span: this.collapseColumnIfNoDASRecord
     },
     {
       header: 'Due Date',
-      valueFunction: (task) => <DateString date={task.attributes.due_on} />
+      valueFunction: (task) => task.attributes.task_id ? <DateString date={task.attributes.due_on} /> : null,
+      span: this.collapseColumnIfNoDASRecord
     },
     {
       header: 'Reader Documents',
+      span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
-
-      // TODO: We should use ReaderLink instead of Link as the loading component child.
+        if (!task.attributes.task_id) {
+          return null;
+        }
         const redirectUrl = encodeURIComponent(window.location.pathname);
         const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirectUrl}`;
+        const docCount = this.props.appeals[task.vacolsId].attributes.docCount;
 
         return <LoadingDataDisplay
           createLoadPromise={this.createLoadPromise(task)}
           errorComponent="span"
-          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
+          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId}
+            analyticsSource={CATEGORIES.QUEUE_TABLE}
+            redirectUrl={window.location.pathname}
+            docCount={docCount} />}
           loadingComponent={SmallLoader}
           loadingComponentProps={{
             message: 'Loading...',
@@ -72,7 +86,8 @@ class AttorneyTaskTable extends React.PureComponent {
           }}>
           <ReaderLink vacolsId={task.vacolsId}
             analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname} />
+            redirectUrl={window.location.pathname}
+            docCount={docCount} />
         </LoadingDataDisplay>;
       }
     }
@@ -107,6 +122,7 @@ class AttorneyTaskTable extends React.PureComponent {
     columns={this.getQueueColumns}
     rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
     getKeyForRow={this.getKeyForRow}
+    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
   />;
 }
 
