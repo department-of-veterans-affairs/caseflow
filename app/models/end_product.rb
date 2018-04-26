@@ -16,6 +16,11 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
+  # TODO Put real codes in here when we know them
+  AMA_CODES = {
+    "040SCRAMA" => "Higher Level Review Rating"
+  }.freeze
+
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?
@@ -47,7 +52,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 

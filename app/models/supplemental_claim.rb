@@ -12,7 +12,24 @@ class SupplementalClaim < ApplicationRecord
     @saving_review = true
   end
 
+  def create_end_product!
+    establish_end_product! && :created
+  end
+
+  def end_product_description
+    end_product_reference_id && end_product_to_establish.description_with_routing
+  end
+
+  def pending_end_product_description
+    # This is for EPs not yet created or that failed to create
+    end_product_to_establish.modifier
+  end
+
   private
+
+  def veteran
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
+  end
 
   # TODO: Update with real code and modifier data
   def end_product_code

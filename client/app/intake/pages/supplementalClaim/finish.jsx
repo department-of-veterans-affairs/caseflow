@@ -6,8 +6,10 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
+import { completeIntake, confirmFinishIntake } from '../../actions/supplementalClaim';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
@@ -36,6 +38,12 @@ class Finish extends React.PureComponent {
 
     return <div>
       <h1>Finish processing { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
+      }
 
       <p>
         Select or enter the issue(s) that best match the form you are processing.
@@ -78,7 +86,10 @@ const FinishNextButtonConnected = connect(
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
     supplementalClaim
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    completeIntake
+  }, dispatch)
 )(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {
@@ -92,6 +103,14 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    higherLevelReviewStatus: getIntakeStatus(state)
-  })
+    finishConfirmed: state.supplementalClaim.finishConfirmed,
+    finishConfirmedError: state.supplementalClaim.finishConfirmedError,
+    supplementalClaimStatus: getIntakeStatus(state),
+    requestState: state.supplementalClaim.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.supplementalClaim.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.supplementalClaim.requestStatus.completeIntakeErrorData
+  }),
+  (dispatch) => bindActionCreators({
+    confirmFinishIntake
+  }, dispatch)
 )(Finish);
