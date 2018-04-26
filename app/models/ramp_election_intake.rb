@@ -104,7 +104,7 @@ class RampElectionIntake < Intake
   end
 
   def active_veteran_appeals
-    @veteran_appeals ||= Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
+    @veteran_appeals ||= Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:end_product_active?)
   end
 
   def validate_detail_on_start

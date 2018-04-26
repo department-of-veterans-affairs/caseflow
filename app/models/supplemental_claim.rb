@@ -1,4 +1,6 @@
 class SupplementalClaim < ApplicationRecord
+  include EstablishesEndProduct
+
   validate :validate_receipt_date
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
 
@@ -11,6 +13,19 @@ class SupplementalClaim < ApplicationRecord
   end
 
   private
+
+  # TODO Update with real code and modifier data
+  def end_product_code
+    "040SCRAMA"
+  end
+
+  def end_product_modifier
+    "040"
+  end
+
+  def end_product_station
+    "499" # National Work Queue
+  end
 
   def validate_receipt_date_not_before_ama
     errors.add(:receipt_date, "before_ama") if receipt_date < AMA_BEGIN_DATE

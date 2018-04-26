@@ -56,7 +56,7 @@ class RampRefilingIntake < Intake
   def validate_detail_on_start
     if !ramp_election
       self.error_code = :no_complete_ramp_election
-    elsif ramp_election.active?
+    elsif ramp_election.end_product_active?
       self.error_code = :ramp_election_is_active
     elsif ramp_election.issues.empty?
       self.error_code = :ramp_election_no_issues

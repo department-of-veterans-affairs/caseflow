@@ -228,8 +228,8 @@ describe RampElection, focus:true do
     end
   end
 
-  context "#active?" do
-    subject { ramp_election.active? }
+  context "#end_product_active?" do
+    subject { ramp_election.end_product_active? }
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do

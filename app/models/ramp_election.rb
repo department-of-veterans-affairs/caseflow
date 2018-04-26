@@ -7,15 +7,6 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  # TODO move to EstablishesEndProduct
-  def self.active
-    # We only know the set of inactive EP statuses
-    # We also only know the EP status after fetching it from BGS
-    # Therefore, our definition of active is when the EP is either
-    #   not known or not known to be inactive
-    established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
-  end
-
   def self.sync_all!
     RampElection.active.each do |ramp_election|
       begin
@@ -26,11 +17,6 @@ class RampElection < RampReview
         Raven.capture_exception(e)
       end
     end
-  end
-
-  # TODO move to EstablishesEndProduct, rename to end_product_active ?
-  def active?
-    sync_ep_status! && cached_status_active?
   end
 
   # RAMP letters request that Veterans respond within 60 days; elections will
@@ -54,38 +40,21 @@ class RampElection < RampReview
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    end_product.contentions
+    end_product_to_establish.contentions
 
     transaction do
       issues.destroy_all
 
-      end_product.contentions.each do |contention|
+      end_product_to_establish.contentions.each do |contention|
         issues.create!(contention: contention)
       end
     end
-  end
-
-  # TODO move to EstablishesEndProduct
-  def sync_ep_status!
-    # There is no need to sync end_product_status if the status
-    # is already inactive since an EP can never leave that state
-    return true unless cached_status_active?
-
-    update!(
-      end_product_status: established_end_product.status_type_code,
-      end_product_status_last_synced_at: Time.zone.now
-    )
   end
 
   def successful_intake
     @successful_intake ||= intakes.where(completion_status: "success")
       .order(:completed_at)
       .last
-  end
-
-  # TODO move to EstablishesEndProduct
-  def end_product_canceled?
-    sync_ep_status! && end_product_status == "CAN"
   end
 
   def rollback!
@@ -104,11 +73,6 @@ class RampElection < RampReview
   end
 
   private
-  
-  # TODO move to EstablishesEndProduct
-  def cached_status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
-  end
 
   def validate_receipt_date
     return unless receipt_date

@@ -28,11 +28,6 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
-  # TODO move to EstablishesEndProduct
-  def self.established
-    where.not(established_at: nil)
-  end
-
   # Allows us to enable certain validations only when saving the review
   def start_review!
     @saving_review = true
@@ -50,16 +45,17 @@ class RampReview < ApplicationRecord
   def create_or_connect_end_product!
     return connect_end_product! if matching_end_product
 
-    create_end_product! && :created
+    establish_end_product! && :created
   end
 
   def end_product_description
-    end_product_reference_id && end_product.description_with_routing
+    end_product_reference_id && end_product_to_establish.description_with_routing
   end
 
+  # TODO rename
   def pending_end_product_description
     # This is for EPs not yet created or that failed to create
-    end_product.modifier
+    end_product_to_establish.modifier
   end
 
   private
@@ -70,7 +66,7 @@ class RampReview < ApplicationRecord
 
   # Find an end product that has the traits of the end product that should be created.
   def matching_end_product
-    @matching_end_product ||= veteran.end_products.find { |ep| end_product.matches?(ep) }
+    @matching_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
   def connect_end_product!
