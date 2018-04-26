@@ -5,6 +5,7 @@ class Intake < ApplicationRecord
   belongs_to :detail, polymorphic: true
 
   enum completion_status: {
+    pending: "pending",
     success: "success",
     canceled: "canceled",
     error: "error"
@@ -21,7 +22,8 @@ class Intake < ApplicationRecord
   FORM_TYPES = {
     ramp_election: "RampElectionIntake",
     ramp_refiling: "RampRefilingIntake",
-    supplemental_claim: "SupplementalClaimIntake"
+    supplemental_claim: "SupplementalClaimIntake",
+    higher_level_review: "HigherLevelReviewIntake"
   }.freeze
 
   attr_reader :error_data
@@ -93,7 +95,7 @@ class Intake < ApplicationRecord
   end
 
   def cancel!(reason:, other: nil)
-    return if complete?
+    return if complete? || pending?
 
     transaction do
       cancel_detail!
@@ -122,6 +124,12 @@ class Intake < ApplicationRecord
   # Optional step to load data into the Caseflow DB that will be used for the intake
   def preload_intake_data!
     nil
+  end
+
+  def start_complete!
+    update_attributes!(
+      completion_status: "pending"
+    )
   end
 
   def complete_with_status!(status)
@@ -164,7 +172,7 @@ class Intake < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
   end
 
   def ui_hash
