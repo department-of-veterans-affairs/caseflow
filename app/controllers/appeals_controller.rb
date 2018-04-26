@@ -29,6 +29,7 @@ class AppealsController < ApplicationController
       format.json do
         vacols_id = params[:vacols_id]
         MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                              service: :queue,
                               name: "AppealsController.show") do
           appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
           render json: { appeal: json_appeals([appeal])[:data][0] }
