@@ -89,7 +89,7 @@ describe RampElection do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number).load_bgs_record! }
+      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
