@@ -8,6 +8,7 @@ import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../../actions/supplementalClaim';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -15,7 +16,12 @@ class Finish extends React.PureComponent {
   render() {
     const {
       supplementalClaimStatus,
-      veteranName
+      requestState,
+      veteranName,
+      finishConfirmed,
+      finishConfirmedError,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     const tabs = [{
