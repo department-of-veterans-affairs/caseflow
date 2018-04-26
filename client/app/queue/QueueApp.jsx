@@ -15,7 +15,6 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeTaskListView from './JudgeTaskListView';
 
-import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -38,10 +37,6 @@ class QueueApp extends React.PureComponent {
         <JudgeTaskListView {...this.props} />
       }
     </SearchEnabledView>
-  </QueueLoadingScreen>;
-
-  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <CaseDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -93,8 +88,8 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId"
-            title="Draft Decision | Caseflow"
+            path="/appeals/:vacolsId"
+            title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
@@ -121,11 +116,6 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
-          <PageRoute
-            exact
-            path="/appeals/:vacolsId"
-            title="Case Details | Caseflow"
-            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
