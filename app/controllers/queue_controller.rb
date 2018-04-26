@@ -50,13 +50,13 @@ class QueueController < ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "QueueController.tasks") do
-        tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
-        render json: {
-          tasks: json_tasks(tasks),
-          appeals: json_appeals(appeals)
-        }
+          tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+          render json: {
+            tasks: json_tasks(tasks),
+            appeals: json_appeals(appeals)
+          }
+        end
       end
-    end
     end
   end
 
