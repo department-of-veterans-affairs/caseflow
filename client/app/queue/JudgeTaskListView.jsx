@@ -20,7 +20,7 @@ import { fullWidth } from './constants';
 
 const DISPLAYING_REVIEW_TASKS = {
   title: (reviewableCount) => <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>,
-  switchLink: (that) => <a onClick={() => that.handleSwitchToAssign()} href="#">Switch to Assign Cases</a>,
+  switchLink: (that) => <a onClick={that.handleSwitchToAssign} href="#">Switch to Assign Cases</a>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
   noTasksMessage: () => 'Congratulations! You don\'t have any decisions to sign.',
   table: () => <JudgeReviewTaskTable />
@@ -28,7 +28,7 @@ const DISPLAYING_REVIEW_TASKS = {
 
 const DISPLAYING_ASSIGN_TASKS = {
   title: (reviewableCount) => <h1 {...fullWidth}>Assign {reviewableCount} Cases</h1>,
-  switchLink: (that) => <a onClick={() => that.handleSwitchToReview()} href="#">Switch to Review Cases</a>,
+  switchLink: (that) => <a onClick={that.handleSwitchToReview} href="#">Switch to Review Cases</a>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign'),
   noTasksMessage: () => 'Congratulations! You don\'t have any cases to assign.',
   table: () => <JudgeAssignTaskTable />
