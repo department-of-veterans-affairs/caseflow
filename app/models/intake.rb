@@ -172,7 +172,7 @@ class Intake < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
   end
 
   def ui_hash

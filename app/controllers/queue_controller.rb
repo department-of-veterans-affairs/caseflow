@@ -44,7 +44,6 @@ class QueueController < ApplicationController
   def tasks
     MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                           name: "QueueController.tasks") do
-
       return invalid_role_error unless ROLES.include?(user.vacols_role)
 
       tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)

@@ -223,7 +223,7 @@ RSpec.feature "Queue" do
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
     end
   end
