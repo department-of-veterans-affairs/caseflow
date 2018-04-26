@@ -35,7 +35,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
     let tableContent;
 
     if (reviewableCount === 0) {
-      tableContent = <StatusMessage title="Tasks not found">
+      tableContent = <StatusMessage title="Cases not found">
         Congratulations! You don't have any decisions to sign.
       </StatusMessage>;
     } else {
