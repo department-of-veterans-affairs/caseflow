@@ -14,6 +14,11 @@
   }
 }
 
+
+.cf-hearings-column {
+  width: 45%;
+}
+
 .hearings {
   thead > tr {
     display: inline-table;
@@ -53,6 +58,10 @@
   margin-top: 10px;
   font-size: 15px;
   font-weight: bold;
+}
+
+.cf-hearings-mb {
+  margin-bottom: 20px;
 }
 
 .cf-hearings-daily-docket-container {
@@ -319,10 +328,6 @@
       min-height: 44px;
       min-width: 100%;
     }
-  }
-
-  table {
-    margin: .5em 0 0;
   }
 }
 
