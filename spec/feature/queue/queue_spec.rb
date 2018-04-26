@@ -489,10 +489,10 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content "Select Dispositions"
 
-        diag_code_no_l2 = %w[4 5 0 nil *]
+        diag_code_no_l2 = %w[4 5 0 *]
         no_diag_code_no_l2 = %w[4 5 1]
         diag_code_w_l2 = %w[4 8 0 1 *]
-        no_diag_code_w_l2 = %w[4 8 0 0]
+        no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
           safe_click "a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']"
@@ -504,12 +504,17 @@ RSpec.feature "Queue" do
       end
 
       def select_issue_level_options(opts)
-        field_options = page.find_all ".Select--single"
+        puts "selecting #{opts}"
+        Array.new(5).map.with_index do |*, row_idx|
+          # Issue level 2 and diagnostic code dropdowns render based on earlier
+          # values, so we have to re-get elements per loop. There are at most 5
+          # dropdowns rendered: Program, Type, Levels 1, 2, Diagnostic Code
+          field_options = page.find_all ".Select--single"
+          row = field_options[row_idx]
 
-        field_options.map do |row|
+          next unless row
           next if row.matches_css? ".is-disabled"
 
-          row_idx = field_options.index row
           row.find(".Select-control").click
 
           if opts[row_idx].eql? "*"
