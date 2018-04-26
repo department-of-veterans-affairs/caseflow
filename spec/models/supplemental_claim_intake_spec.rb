@@ -1,4 +1,4 @@
-describe RampElectionIntake do
+describe SupplementalClaimIntake do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

@@ -70,16 +70,18 @@ class Row extends React.PureComponent {
     const rowId = props.footer ? 'footer' : props.rowId;
 
     return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
-      {getColumns(props).map((column, columnNumber) =>
-        <td
-          key={columnNumber}
-          className={cellClasses(column)}
-          colSpan={getCellSpan(props.rowObject, column)}>
-          {props.footer ?
-            column.footer :
-            getCellValue(props.rowObject, props.rowId, column)}
-        </td>
-      )}
+      {getColumns(props).
+        filter((column) => getCellSpan(props.rowObject, column) > 0).
+        map((column, columnNumber) =>
+          <td
+            key={columnNumber}
+            className={cellClasses(column)}
+            colSpan={getCellSpan(props.rowObject, column)}>
+            {props.footer ?
+              column.footer :
+              getCellValue(props.rowObject, props.rowId, column)}
+          </td>
+        )}
     </tr>;
   }
 }
