@@ -14,6 +14,11 @@
   }
 }
 
+
+.cf-hearings-column {
+  width: 45%;
+}
+
 .hearings {
   thead > tr {
     display: inline-table;
@@ -327,10 +332,6 @@
       min-height: 44px;
       min-width: 100%;
     }
-  }
-
-  table {
-    margin: .5em 0 0;
   }
 }
 
