@@ -8,6 +8,7 @@
 /.bundle
 
 client/.eslintcache
+client/yarn-error.log
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -34,3 +35,6 @@ node_modules
 
 # Generated js bundles
 /app/assets/webpack/*
+
+# Oracle instant client
+ci-bin/circle_docker_container/instant*

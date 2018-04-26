@@ -36,9 +36,16 @@ export default function decisionViewBase(ComponentToWrap) {
       }
 
       const breadcrumb = this.state.wrapped.getBreadcrumb();
+      const renderedCrumbs = _.map(this.props.breadcrumbs, 'path');
+      const newCrumbIdx = renderedCrumbs.indexOf(breadcrumb.path);
 
-      if (breadcrumb && _.last(this.props.breadcrumbs).path !== breadcrumb.path) {
+      if (newCrumbIdx === -1) {
         this.props.pushBreadcrumb(breadcrumb);
+      } else if (newCrumbIdx < (renderedCrumbs.length - 1)) {
+        // if returning to an earlier page, remove later crumbs
+        const crumbsToPop = renderedCrumbs.length - (newCrumbIdx + 1);
+
+        this.props.popBreadcrumb(crumbsToPop);
       }
     };
 
@@ -51,21 +58,24 @@ export default function decisionViewBase(ComponentToWrap) {
 
       const [backButton, nextButton] = getButtons();
 
-      _.defaults(backButton, {
-        classNames: ['cf-btn-link', 'cf-prev-step'],
-        callback: this.goToPrevStep
-      });
       _.defaults(nextButton, {
         classNames: ['cf-right-side', 'cf-next-step'],
         callback: this.goToNextStep,
-        disabled: this.props.savePending
+        loading: this.props.savePending,
+        name: 'next-button'
       });
+      _.defaults(backButton, {
+        classNames: ['cf-btn-link', 'cf-prev-step'],
+        callback: this.goToPrevStep,
+        name: 'back-button'
+      });
+
+      backButton.displayText = `< ${backButton.displayText}`;
 
       return [backButton, nextButton];
     };
 
     goToStep = (url) => {
-      // todo: confirmation message, trigger reloading tasks
       this.props.history.push(url);
       window.scrollTo(0, 0);
     };
@@ -88,6 +98,8 @@ export default function decisionViewBase(ComponentToWrap) {
       }
     };
 
+    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
+
     goToNextStep = () => {
       // This handles moving to the next step in the flow. The wrapped
       // component's validateForm is used to trigger highlighting form
@@ -102,14 +114,14 @@ export default function decisionViewBase(ComponentToWrap) {
       }
 
       if (!nextStepHook) {
-        return this.goToStep(this.props.nextStep);
+        return this.goToStep(this.getNextStepUrl());
       }
 
       const hookResult = nextStepHook();
 
       // nextStepHook may return a Promise, in which case do nothing here.
       if (hookResult === true) {
-        return this.goToStep(this.props.nextStep);
+        return this.goToStep(this.getNextStepUrl());
       }
     };
 
@@ -118,7 +130,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          this.goToStep(this.props.nextStep);
+          this.goToStep(this.getNextStepUrl());
         } else {
           this.props.highlightInvalidFormItems(true);
         }

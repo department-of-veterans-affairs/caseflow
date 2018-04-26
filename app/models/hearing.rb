@@ -1,4 +1,4 @@
-class Hearing < ActiveRecord::Base
+class Hearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include HearingConcern
@@ -145,7 +145,7 @@ class Hearing < ActiveRecord::Base
         :appellant_mi_formatted,
         :veteran_fi_last_formatted,
         :vbms_id,
-        :issue_count,
+        :current_issue_count,
         :prepped
       ],
       except: :military_service
@@ -179,8 +179,12 @@ class Hearing < ActiveRecord::Base
     active_appeal_streams.map(&:attributes_for_hearing)
   end
 
-  def issue_count
-    active_appeal_streams.map(&:worksheet_issues_count).reduce(0, :+)
+  def current_issue_count
+    active_appeal_streams.map(&:worksheet_issues).flatten
+      .reject do |issue|
+        issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
+      end
+      .count
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then

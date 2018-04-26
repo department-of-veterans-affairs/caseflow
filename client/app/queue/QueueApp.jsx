@@ -6,50 +6,42 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import QueueLoadingScreen from './QueueLoadingScreen';
-import QueueListView from './QueueListView';
 import AppFrame from '../components/AppFrame';
+import Breadcrumbs from './components/BreadcrumbManager';
+import QueueLoadingScreen from './QueueLoadingScreen';
+import AttorneyTaskListView from './AttorneyTaskListView';
+import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+
+import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
+import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
+import SelectRemandReasonsView from './SelectRemandReasonsView';
+
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
-import Breadcrumbs from './components/BreadcrumbManager';
 
 const appStyling = css({ paddingTop: '3rem' });
-const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
-  '.section-search': {
-    '& .usa-alert-info, & .usa-alert-error': {
-      marginBottom: '1.5rem',
-      marginTop: 0
-    },
-    '& .cf-search-input-with-close': {
-      marginLeft: `calc(100% - ${isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
-    },
-    '& .cf-submit': {
-      width: '10.5rem'
-    }
-  }
-});
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <CaseSelectSearch
-      navigateToPath={(path) => {
-        const redirectUrl = encodeURIComponent(window.location.pathname);
-
-        location.href = `/reader/appeal${path}?queue_redirect_url=${redirectUrl}`;
-      }}
-      alwaysShowCaseSelectionModal
+    <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
-      searchSize="big"
-      styling={searchStyling(this.props.isRequestingAppealsUsingVeteranId)} />
-    <QueueListView {...this.props} />
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {this.props.userRole === 'Attorney' ?
+        <AttorneyTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />
+      }
+    </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
+    <CaseDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -75,6 +67,10 @@ class QueueApp extends React.PureComponent {
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
     prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    {...props.match.params} />;
+
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
+    nextStep={`/tasks/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
   render = () => <BrowserRouter basename="/queue">
@@ -112,14 +108,24 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId"
+            path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
+          <PageRoute
+            exact
+            path="/tasks/:appealId/remands"
+            title="Draft Decision | Select Issue Remand Reasons"
+            render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/appeals/:vacolsId"
+            title="Case Details | Caseflow"
+            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
@@ -135,14 +141,15 @@ QueueApp.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
+  userRole: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']),
+  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.pendingChanges.taskDecision.type
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 export default connect(mapStateToProps)(QueueApp);

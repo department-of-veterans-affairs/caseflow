@@ -1,4 +1,4 @@
-class PersistForm8Data < ActiveRecord::Migration
+class PersistForm8Data < ActiveRecord::Migration[5.1]
   def change
     # We're adding a table to store the Form 8 data for later analysis.
     # Fields that can be modified before certification have counterparts

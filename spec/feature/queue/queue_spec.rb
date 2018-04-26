@@ -57,7 +57,7 @@ RSpec.feature "Queue" do
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
-  context "search for appeals using veteran id" do
+  context "reader-style search for appeals using veteran id" do
     scenario "appeal not found" do
       visit "/queue"
       fill_in "searchBar", with: "obviouslyfakecaseid"
@@ -95,10 +95,136 @@ RSpec.feature "Queue" do
       expect(appeal_options[0].find_all("li").count).to eq(appeal.issues.size)
 
       appeal_options[0].click
-      click_on "Okay"
+      click_on "Open Claims Folder"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_link("Back to Your Queue", href: "/queue")
+    end
+  end
+
+  context "queue case search for appeals using veteran id" do
+    let(:appeal) { appeals.first }
+    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
+    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+    before { FeatureToggle.enable!(:queue_case_search) }
+    after { FeatureToggle.disable!(:queue_case_search) }
+
+    context "when invalid Veteran ID input" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: invalid_veteran_id
+        click_on "Search"
+      end
+
+      it "page displays invalid Veteran ID message" do
+        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when no appeals found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: veteran_id_with_no_appeals
+        click_on "Search"
+      end
+
+      it "page displays no cases found message" do
+        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when backend encounters an error" do
+      before do
+        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "displays error message" do
+        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+      end
+
+      it "search bar moves from top right to main page body" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        click_on "Search"
+
+        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+    end
+
+    context "when one appeal found" do
+      before do
+        visit "/queue"
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "page displays table of results" do
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content("Docket Number")
+      end
+
+      it "search bar stays in top right" do
+        expect(page).to have_selector("#searchBar")
+        expect(page).to_not have_selector("#searchBarEmptyList")
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content("Your Queue")
+      end
+
+      it "clicking on docket number sends us to the case details page" do
+        click_on appeal.docket_number
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+      end
     end
   end
 
@@ -136,7 +262,10 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
+        # TODO: these false positives are fixed in rubocop 0.53.0 (#5496)
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
@@ -146,7 +275,9 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
@@ -206,7 +337,9 @@ RSpec.feature "Queue" do
         expect(page).to have_content("The veteran is the appellant.")
 
         expect(page).to have_content("She/Her")
+        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        # rubocop:enable Style/FormatStringToken
         expect(page).to have_content("The veteran is the appellant.")
       end
 
@@ -240,6 +373,15 @@ RSpec.feature "Queue" do
         click_on "Open #{number_with_delimiter(appeal.documents.length)} documents in Caseflow Reader"
 
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
+      end
+    end
+
+    context "displays issue dispositions" do
+      scenario "from appellant details page" do
+        appeal = vacols_appeals.first
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        expect(page).to have_content("Disposition: 1 - Allowed")
       end
     end
   end
@@ -295,7 +437,7 @@ RSpec.feature "Queue" do
         # select all dispositions
         table_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-2']").click
         end
 
         click_on "Finish dispositions"
@@ -330,9 +472,81 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
+        expect(page).to have_content("You updated issue 1.")
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
+      end
+
+      scenario "adds issue" do
+        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click ".Select-control"
+        safe_click "div[id$='--option-0']"
+
+        expect(page).to have_content "Select Dispositions"
+
+        click_on "Add Issue"
+        expect(page).to have_content "Add Issue"
+
+        fields = page.find_all ".Select--single"
+
+        field_values = fields.map do |row|
+          next if row.matches_css? ".is-disabled"
+
+          row.find(".Select-control").click
+          row.find("div[id$='--option-0']").click
+          row.find(".Select-value-label").text
+        end
+        fill_in "Notes:", with: "added issue"
+
+        click_on "Save"
+
+        expect(page).to have_content "You created a new issue."
+        expect(page).to have_content "Program: #{field_values.first}"
+        expect(page).to have_content "Issue: #{field_values.second}"
+        expect(page).to have_content "Note: added issue"
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "2"
+      end
+
+      scenario "deletes issue" do
+        appeal = vacols_appeals.select { |a| a.issues.length > 1 }.first
+        old_issues = appeal.issues
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click(".Select-control")
+        safe_click("div[id$='--option-0']")
+
+        expect(page).to have_content("Select Dispositions")
+
+        issue_rows = page.find_all("tr[id^='table-row-']")
+        expect(issue_rows.length).to eq(appeal.issues.length)
+
+        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        expect(page).to have_content("Edit Issue")
+
+        issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }
+
+        click_on "Delete Issue"
+        expect(page).to have_content "Delete Issue?"
+        click_on "Delete issue"
+
+        expect(page).to have_content("You deleted issue #{issue_idx + 1}.")
+
+        issue_rows = page.find_all("tr[id^='table-row-']")
+        expect(issue_rows.length).to eq(old_issues.length - 1)
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "4"
       end
     end
 
@@ -361,8 +575,8 @@ RSpec.feature "Queue" do
         sleep 1
         expect(page).to(
           have_content(
-            "OMO for #{appeal.veteran_full_name} has been
-            marked completed and sent to Andrew Mackenzie."
+            "Thank you for drafting #{appeal.veteran_full_name}'s outside medical
+            opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
           )
         )
         expect(page.current_path).to eq("/queue/")
@@ -381,11 +595,16 @@ RSpec.feature "Queue" do
 
         issue_rows.each do |row|
           row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          row.find("div[id$='--option-#{issue_rows.index(row) % 7}']").click
         end
 
-        click_on "Finish dispositions"
+        click_on "Select remand reasons"
+        expect(page).to have_content("Select Remand Reasons")
 
+        remand_reasons = page.execute_script "return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')"
+        remand_reasons.sample(4).each(&:click)
+
+        click_on "Review Draft Decision"
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: "12345"
@@ -400,8 +619,8 @@ RSpec.feature "Queue" do
         sleep 1
         expect(page).to(
           have_content(
-            "Draft Decision for #{appeal.veteran_full_name} has been
-            marked completed and sent to Andrew Mackenzie."
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision.
+            It's been sent to Andrew Mackenzie for review."
           )
         )
         expect(page.current_path).to eq("/queue/")
@@ -423,7 +642,7 @@ RSpec.feature "Queue" do
 
       issue_rows.each do |row|
         row.find(".Select-control").click
-        row.find("div[id$='--option-1']").click
+        row.find("div[id$='--option-2']").click
       end
 
       click_on "Finish dispositions"

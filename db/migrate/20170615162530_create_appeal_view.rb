@@ -1,4 +1,4 @@
-class CreateAppealView < ActiveRecord::Migration
+class CreateAppealView < ActiveRecord::Migration[5.1]
   # This is a new table, so the new indices will be fine
   safety_assured
   

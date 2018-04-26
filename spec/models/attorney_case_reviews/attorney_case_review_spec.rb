@@ -1,5 +1,5 @@
 describe AttorneyCaseReview do
-  let(:judge) { User.create(css_id: "CFS123", station_id: Judge::JUDGE_STATION_ID) }
+  let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
   let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
 
   before do
@@ -47,7 +47,8 @@ describe AttorneyCaseReview do
             document_id: "123456789.1234",
             overtime: true,
             modifying_user: "CFS456",
-            note: "something"
+            note: "something",
+            reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
           }
         ).and_return(true)
 
@@ -89,7 +90,8 @@ describe AttorneyCaseReview do
             document_id: "123456789.1234",
             overtime: true,
             note: "something",
-            modifying_user: "CFS456"
+            modifying_user: "CFS456",
+            reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
           }
         ).and_return(true)
 
@@ -169,7 +171,7 @@ describe AttorneyCaseReview do
       end
 
       it "should not create AttorneyCaseReview record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
@@ -194,7 +196,8 @@ describe AttorneyCaseReview do
       end
 
       it "should not create OMORequest record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+        expect(AttorneyCaseReview.count).to eq 0
       end
     end
 
@@ -222,7 +225,8 @@ describe AttorneyCaseReview do
       end
 
       it "should not create DraftDecision record" do
-        expect(subject).to eq nil
+        expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
+        expect(AttorneyCaseReview.count).to eq 0
       end
     end
 

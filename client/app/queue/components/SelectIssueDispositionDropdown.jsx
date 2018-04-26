@@ -6,21 +6,8 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import {
-  COLORS,
-  ERROR_FIELD_REQUIRED
-} from '../constants';
-
-// todo: map to VACOLS attrs (VACOLS::Case::DISPOSITIONS)
-const issueDispositionOptions = [
-  [1, 'Allowed'],
-  [3, 'Remanded'],
-  [4, 'Denied'],
-  [5, 'Vacated'],
-  [6, 'Dismissed, Other'],
-  [8, 'Dismissed, Death'],
-  [9, 'Withdrawn']
-];
+import { COLORS, ERROR_FIELD_REQUIRED } from '../constants';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
   if (highlight && !issueDisposition) {
@@ -49,13 +36,15 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
-        options={issueDispositionOptions.map((opt) => ({
-          label: `${opt[0]} - ${opt[1]}`,
-          value: opt[1]
-        }))}
+        options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
+          map((opt) => ({
+            label: `${opt[0]} - ${opt[1]}`,
+            value: opt[1]
+          }))}
         onChange={({ value }) => this.props.updateIssue({
           disposition: value,
-          readjudication: false
+          readjudication: false,
+          remand_reasons: []
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
       {issue.disposition === 'Vacated' && <Checkbox

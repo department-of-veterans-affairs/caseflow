@@ -5,9 +5,8 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import QueueTable from './QueueTable';
+import JudgeReviewTaskTable from './JudgeReviewTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Alert from '../components/Alert';
 
 import {
   resetErrorMessages,
@@ -18,7 +17,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 
-class QueueListView extends React.PureComponent {
+class JudgeReviewTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -30,21 +29,19 @@ class QueueListView extends React.PureComponent {
   };
 
   render = () => {
-    const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    const reviewableCount = _.filter(
+      this.props.tasks,
+      (task) => task.attributes.task_type === 'Review').length;
     let tableContent;
 
-    if (noTasks) {
+    if (reviewableCount === 0) {
       tableContent = <StatusMessage title="Tasks not found">
-        Sorry! We couldn't find any tasks for you.
+        Congratulations! You don't have any decisions to sign.
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 {...fullWidth}>Your Queue</h1>
-        {messages.success.message && <Alert type="success" title={messages.success.message}>
-          If you made a mistake please email your judge to resolve the issue.
-        </Alert>}
-        <QueueTable />
+        <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>
+        <JudgeReviewTaskTable />
       </div>;
     }
 
@@ -54,25 +51,21 @@ class QueueListView extends React.PureComponent {
   };
 }
 
-QueueListView.propTypes = {
+JudgeReviewTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.pendingChanges, 'taskDecision'),
-  judges: state.queue.judges
-});
+const mapStateToProps = (state) => (
+  _.pick(state.queue.loadedQueue, 'tasks', 'appeals'));
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState
   }, dispatch)
-});
+);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeReviewTaskListView);

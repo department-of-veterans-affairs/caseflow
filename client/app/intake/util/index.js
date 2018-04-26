@@ -15,8 +15,8 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
       'Please enter a valid receipt date.',
     in_future:
       'Receipt date cannot be in the future.',
-    before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
-      `date of ${state.noticeDate}`,
+    before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
+    before_ama: 'Receipt Date cannot be earlier than the AMA pilot start date.',
     before_ramp_receipt_date: 'Receipt date cannot be earlier than the original ' +
       `RAMP election receipt date of ${state.electionReceiptDate}`
   }[_.get(responseErrorCodes.receipt_date, 0)]

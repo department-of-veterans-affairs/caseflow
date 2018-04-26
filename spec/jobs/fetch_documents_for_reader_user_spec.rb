@@ -94,6 +94,9 @@ describe FetchDocumentsForReaderUserJob do
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
 
       # Expect all tests to call Slack service at the end
+      # expect with nil because of https://github.com/rails/rails/pull/28582
+      # TODO: find more elegant solution
+      expect(Rails.logger).to receive(log_type).with(nil).at_least(:once)
       expect(Rails.logger).to receive(log_type).with(expected_log_msg).once
     end
 
@@ -198,6 +201,28 @@ describe FetchDocumentsForReaderUserJob do
         allow(EFolderService).to receive(:fetch_documents_for).and_call_original
         allow(EFolderService).to receive(:fetch_documents_for).with(appeals[0], anything)
           .and_raise(Caseflow::Error::EfolderAccessForbidden)
+
+        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
+      end
+    end
+
+    context "when efolder returns 400 response for one of many appeals" do
+      let(:appeals) { [Generators::Appeal.create, Generators::Appeal.create, Generators::Appeal.create] }
+      let(:expected_log_msg) do
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
+          "Retrieved #{appeal_cnt_successful} / #{appeal_cnt_total} appeals"
+      end
+      let(:current_user_id) { reader_user.user.id }
+      let(:appeal_cnt_total) { appeals.count }
+      let(:appeal_cnt_successful) { appeals.count - 1 }
+
+      it "returns an ERROR log with status when a eFolder client error occurs" do
+        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
+          .with(reader_user.user.css_id).and_return(appeals).once
+
+        allow(EFolderService).to receive(:fetch_documents_for).and_call_original
+        allow(EFolderService).to receive(:fetch_documents_for).with(appeals[0], anything)
+          .and_raise(Caseflow::Error::ClientRequestError)
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
       end

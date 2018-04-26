@@ -1,4 +1,4 @@
-class CreateIntakes < ActiveRecord::Migration
+class CreateIntakes < ActiveRecord::Migration[5.1]
   safety_assured # this is a new and unused table
 
   def change

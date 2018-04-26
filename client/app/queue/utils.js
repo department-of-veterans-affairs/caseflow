@@ -5,6 +5,7 @@ import {
   redText,
   DECISION_TYPES
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -73,4 +74,14 @@ export const getDecisionTypeDisplay = (decision = {}) => {
   default:
     return StringUtil.titleCase(decisionType);
   }
+};
+
+export const getIssueProgramDescription = (issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueTypeDescription = (issue) => {
+  const {
+    program,
+    type
+  } = issue;
+
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };

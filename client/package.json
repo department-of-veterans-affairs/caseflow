@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.3",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.6",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -48,6 +48,7 @@
     "moment-timezone": "^0.5.13",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "1.10.97",
+    "pluralize": "^7.0.0",
     "prop-types": "^15.6.0",
     "rc-collapse": "^1.7.6",
     "react": "^16.2.0",

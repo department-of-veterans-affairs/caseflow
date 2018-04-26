@@ -104,8 +104,6 @@ Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffyb
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 
-ActiveRecord::Migration.maintain_test_schema!
-
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
@@ -118,12 +116,12 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!(roles: nil)
+    def authenticate!(css_id: nil, roles: nil)
       Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
       self.stub = User.from_session(
         "user" =>
-          { "id" => "DSUSER",
+          { "id" => css_id || "DSUSER",
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",

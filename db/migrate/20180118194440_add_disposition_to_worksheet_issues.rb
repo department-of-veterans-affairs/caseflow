@@ -1,4 +1,4 @@
-class AddDispositionToWorksheetIssues < ActiveRecord::Migration
+class AddDispositionToWorksheetIssues < ActiveRecord::Migration[5.1]
   def change
     add_column :worksheet_issues, :disposition, :string
   end

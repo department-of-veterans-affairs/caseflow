@@ -1,4 +1,4 @@
-class Intake < ActiveRecord::Base
+class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -20,7 +20,9 @@ class Intake < ActiveRecord::Base
 
   FORM_TYPES = {
     ramp_election: "RampElectionIntake",
-    ramp_refiling: "RampRefilingIntake"
+    ramp_refiling: "RampRefilingIntake",
+    supplemental_claim: "SupplementalClaimIntake",
+    higher_level_review: "HigherLevelReviewIntake"
   }.freeze
 
   attr_reader :error_data
@@ -35,6 +37,30 @@ class Intake < ActiveRecord::Base
     fail FormTypeNotSupported unless intake_classname
 
     intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
+  end
+
+  def self.flagged_for_manager_review
+    Intake.select("intakes.*, intakes.type as form_type, users.full_name")
+      .joins(:user,
+             # Exclude an intake from results if an intake with the same veteran_file_number
+             # and intake type has succeeded since the completed_at time (indicating the issue has been resolved)
+             "LEFT JOIN
+               (SELECT veteran_file_number,
+                 type,
+                 MAX(completed_at) as succeeded_at
+               FROM intakes
+               WHERE completion_status = 'success'
+               GROUP BY veteran_file_number, type) latest_success
+               ON intakes.veteran_file_number = latest_success.veteran_file_number
+               AND intakes.type = latest_success.type",
+             # To exclude ramp elections that were established outside of Caseflow
+             "LEFT JOIN ramp_elections ON intakes.veteran_file_number = ramp_elections.veteran_file_number")
+      .where.not(completion_status: "success")
+      .where(error_code: [nil, "veteran_not_accessible", "veteran_not_valid"])
+      .where(
+        "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
+        AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
+      )
   end
 
   def complete?
@@ -67,8 +93,21 @@ class Intake < ActiveRecord::Base
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def cancel!
-    fail Caseflow::Error::MustImplementInSubclass
+  def cancel!(reason:, other: nil)
+    return if complete?
+
+    transaction do
+      cancel_detail!
+      update_attributes!(
+        cancel_reason: reason,
+        cancel_other: other
+      )
+      complete_with_status!(:canceled)
+    end
+  end
+
+  def cancel_detail!
+    detail.destroy!
   end
 
   def save_error!(*)

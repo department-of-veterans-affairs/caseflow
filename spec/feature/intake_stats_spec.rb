@@ -2,7 +2,11 @@ require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 7, 17, 55, 0, rand(1000)))
+    Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
+  end
+
+  after do
+    Timecop.return
   end
 
   scenario "Switching tab intervals" do
@@ -117,7 +121,7 @@ RSpec.feature "Intake Stats Dashboard" do
       established_at: nil
     )
 
-    expect(CalculateIntakeStatsJob).to receive(:perform_later)
+    expect(CalculateIntakeStatsJob).to receive(:perform_later).twice
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
@@ -172,6 +176,17 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 0")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
+
+    click_on "By Fiscal Year"
+    expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for FY 2020 (so far)")
+  end
+
+  scenario "Fiscal Year tab shows correct year after October 1" do
+    Timecop.freeze(Time.utc(2020, 11, 7, 17, 55, 0, rand(1000)))
+    User.authenticate!(roles: ["Admin Intake"])
+    expect(CalculateIntakeStatsJob).to receive(:perform_later)
+    visit "/intake/stats/fiscal_yearly"
+    expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for FY 2021 (so far)")
   end
 
   scenario "Unauthorized user access" do

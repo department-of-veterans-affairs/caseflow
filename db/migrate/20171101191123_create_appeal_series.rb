@@ -1,4 +1,4 @@
-class CreateAppealSeries < ActiveRecord::Migration
+class CreateAppealSeries < ActiveRecord::Migration[5.1]
   def change
     create_table :appeal_series do |t|
       t.boolean :incomplete, default: false

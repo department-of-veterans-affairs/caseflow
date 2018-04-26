@@ -30,7 +30,11 @@ class HearingWorksheetDocs extends Component {
 
         return <div key={appeal.id} id={appeal.id}><div>
           {!this.props.print &&
-            <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
+            <p className="cf-appeal-stream-label">
+              APPEAL STREAM <span>{key + 1}</span>
+              {appeal.contested_claim && <span className="cf-red-text"> CC</span>}
+              {appeal.dic && <span className="cf-red-text"> DIC</span>}
+            </p>
           }
           {this.props.print &&
             <p className="cf-hearings-print-appeal-stream">APPEAL STREAM <span>{key + 1}</span></p>

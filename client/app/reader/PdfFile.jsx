@@ -433,7 +433,7 @@ export class PdfFile extends React.PureComponent {
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -447,9 +447,12 @@ export class PdfFile extends React.PureComponent {
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
             this.props.pdfDocument.pdfInfo.numPages);
 
+          let visibility = this.props.isVisible ? 'visible' : 'hidden';
+
           return <Grid
             ref={this.getGrid}
             containerStyle={{
+              visibility: `${visibility}`,
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}

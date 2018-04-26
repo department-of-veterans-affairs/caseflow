@@ -1,4 +1,4 @@
-class AddCompletedAttrsToIntakes < ActiveRecord::Migration
+class AddCompletedAttrsToIntakes < ActiveRecord::Migration[5.1]
   safety_assured # this table is behind a feature flag so it's good
 
   def change
