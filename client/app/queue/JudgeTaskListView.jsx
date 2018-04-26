@@ -69,7 +69,7 @@ class JudgeTaskListView extends React.PureComponent {
       tableContent = <div>
         {this.state.title(reviewableCount)}
         {this.state.switchLink(this)}
-        <StatusMessage title="Tasks not found">
+        <StatusMessage title="Cases not found">
           {this.state.noTasksMessage()}
         </StatusMessage>
       </div>;
