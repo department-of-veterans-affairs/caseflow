@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180416184214) do
+ActiveRecord::Schema.define(version: 20180418224851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -328,6 +328,18 @@ ActiveRecord::Schema.define(version: 20180416184214) do
     t.string "military_service"
     t.string "comments_for_attorney"
     t.boolean "prepped"
+  end
+
+  create_table "higher_level_reviews", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.boolean "informal_conference"
+    t.boolean "same_office"
+    t.datetime "established_at"
+    t.string "end_product_reference_id"
+    t.string "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
+    t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
   create_table "intakes", id: :serial, force: :cascade do |t|

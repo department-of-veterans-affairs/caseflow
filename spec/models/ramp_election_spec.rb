@@ -89,7 +89,7 @@ describe RampElection, focus:true do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number).load_bgs_record! }
+      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
@@ -386,7 +386,7 @@ describe RampElection, focus:true do
         end
 
         context "when it is nil" do
-          it "adds error to receipt_date" do
+          it "adds error to option_selected" do
             is_expected.to be false
             expect(ramp_election.errors[:option_selected]).to include("blank")
           end
