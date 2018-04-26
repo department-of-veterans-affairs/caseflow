@@ -92,12 +92,41 @@ class ExternalApi::BGSService
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
+    current_user = RequestStore[:current_user]
+    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
+    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      DBService.release_db_connections
+
+      MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+                            service: :bgs,
+                            name: "can_access?") do
+        client.can_access?(vbms_id)
+      end
+    end
+  end
+
+  def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
-    MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+    MetricsService.record("BGS: fetch ratings in range: \
+                           participant_id = #{participant_id}, \
+                           start_date = #{start_date} \
+                           end_date = #{end_date}",
                           service: :bgs,
-                          name: "can_access?") do
-      client.can_access?(vbms_id)
+                          name: "rating.find_by_participant_id_and_date_range") do
+      client.rating.find_by_participant_id_and_date_range(participant_id, start_date, end_date)
+    end
+  end
+
+  def fetch_rating_profile(participant_id:, profile_date:)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: fetch rating profile: \
+                           participant_id = #{participant_id}, \
+                           profile_date = #{profile_date}",
+                          service: :bgs,
+                          name: "rating_profile.find") do
+      client.rating_profile.find(participant_id: participant_id, profile_date: profile_date)
     end
   end
 

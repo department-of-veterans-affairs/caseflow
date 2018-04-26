@@ -49,10 +49,15 @@ class Appeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at
+                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
+                :assigned_by_first_name, :assigned_by_last_name
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
   end
 
   cache_attribute :remand_return_date do
@@ -105,6 +110,11 @@ class Appeal < ApplicationRecord
   LOCATION_CODES = {
     remand_returned_to_bva: "96"
   }.freeze
+
+  BVA_DISPOSITIONS = [
+    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
+    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
+  ].freeze
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -303,6 +313,7 @@ class Appeal < ApplicationRecord
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
       "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
@@ -438,6 +449,10 @@ class Appeal < ApplicationRecord
 
   def remand?
     status == "Remand"
+  end
+
+  def decided_by_bva?
+    !active? && BVA_DISPOSITIONS.include?(disposition)
   end
 
   def merged?
@@ -683,9 +698,9 @@ class Appeal < ApplicationRecord
       @repository ||= AppealRepository
     end
 
+    # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    # rubocop:disable Metrics/ParameterLists
     def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
@@ -704,6 +719,18 @@ class Appeal < ApplicationRecord
       end
     end
     # rubocop:enable Metrics/ParameterLists
+
+    def reopen(appeals:, user:, disposition:)
+      repository.transaction do
+        appeals.each do |reopen_appeal|
+          reopen_single(
+            appeal: reopen_appeal,
+            user: user,
+            disposition: disposition
+          )
+        end
+      end
+    end
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -764,7 +791,7 @@ class Appeal < ApplicationRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -780,6 +807,32 @@ class Appeal < ApplicationRecord
           user: user,
           closed_on: closed_on,
           disposition_code: disposition_code
+        )
+      end
+    end
+
+    def reopen_single(appeal:, user:, disposition:)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      # If the appeal was decided at the board, then it was a remand which means
+      # we need to clear the post-remand appeal
+      if appeal.decided_by_bva?
+        # Currently we don't check that there is a closed post remand appeal here
+        # because it requires some additional probing into VACOLS.
+        # That check is in AppealsRepository.reopen_remand!
+
+        repository.reopen_remand!(
+          appeal: appeal,
+          user: user,
+          disposition_code: disposition_code
+        )
+      else
+        fail "Only closed appeals can be reopened" if appeal.active?
+
+        repository.reopen_undecided_appeal!(
+          appeal: appeal,
+          user: user
         )
       end
     end

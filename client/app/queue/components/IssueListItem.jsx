@@ -6,10 +6,10 @@ import _ from 'lodash';
 import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
 import {
   boldText,
-  CASE_DISPOSITION_DESCRIPTION_BY_ID,
-  CASE_DISPOSITION_ID_BY_DESCRIPTION,
-  ISSUE_INFO
+  CASE_DISPOSITION_ID_BY_DESCRIPTION
 } from '../constants';
+import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -28,7 +28,7 @@ const dispositionLabelForDescription = (descr) => {
   const dispositionId = CASE_DISPOSITION_ID_BY_DESCRIPTION[descr.toLowerCase()];
 
   // Use the disposition description from constants in order to get the proper capitalization.
-  const dispositionDescr = CASE_DISPOSITION_DESCRIPTION_BY_ID[dispositionId];
+  const dispositionDescr = VACOLS_DISPOSITIONS_BY_ID[dispositionId];
 
   return `${dispositionId} - ${dispositionDescr}`;
 };
@@ -54,7 +54,7 @@ export default class IssueListItem extends React.PureComponent {
       }
     } = this.props;
     const issueLevels = [];
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
+    const vacolsIssue = ISSUE_INFO[program].levels[type];
 
     if (!vacolsIssue) {
       return levels;

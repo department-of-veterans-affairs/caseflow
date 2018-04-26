@@ -106,6 +106,10 @@ class Fakes::AppealRepository
 
   def self.close_remand!(*); end
 
+  def self.reopen_undecided_appeal!(*); end
+
+  def self.reopen_remand!(*); end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
@@ -414,6 +418,12 @@ class Fakes::AppealRepository
       vbms_id: "19555555C",
       veteran: veteran,
       issues: (1..3).map { Generators::Issue.build }
+    )
+
+    # Rating data from BGS
+    veteran = Generators::Veteran.build(file_number: "23232323")
+    Generators::Rating.build(
+      participant_id: veteran.participant_id
     )
   end
   # rubocop:enable Metrics/MethodLength
