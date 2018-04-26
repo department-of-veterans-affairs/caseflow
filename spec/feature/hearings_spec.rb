@@ -189,7 +189,7 @@ RSpec.feature "Hearings" do
     scenario "Hearing worksheet page displays worksheet information" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Docket Number: 4198")
+      expect(page).to have_content("Docket #4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
       expect(page).to have_content("CC")
