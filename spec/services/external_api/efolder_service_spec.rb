@@ -259,6 +259,15 @@ describe ExternalApi::EfolderService do
         end
       end
 
+      context "when 400 HTTP error" do
+        let(:expected_response) { HTTPI::Response.new(400, [], {}.to_json) }
+
+        it "throws Caseflow::Error::ClientRequestError" do
+          expect { subject }
+            .to raise_error(Caseflow::Error::ClientRequestError)
+        end
+      end
+
       context "when 403 HTTP error" do
         let(:expected_response) { HTTPI::Response.new(403, [], { status: "forbidden: sensitive record" }.to_json) }
 

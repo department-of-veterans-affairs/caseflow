@@ -28,6 +28,10 @@
       min-width: 75px;
     }
 
+    th:nth-child(1) {
+      padding-left: 36px;
+    }
+
     th {
       max-width: 165px;
       min-width: 155px;
@@ -40,6 +44,10 @@
 
     td:nth-child(3) {
       min-width: 75px;
+    }
+
+    td:nth-child(1) {
+      padding-left: 36px;
     }
 
     td {
