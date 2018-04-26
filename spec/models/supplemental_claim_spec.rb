@@ -1,4 +1,4 @@
-describe SupplementalClaim do
+describe SupplementalClaim, focus:true do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -58,6 +58,49 @@ describe SupplementalClaim do
           end
         end
       end
+    end
+  end
+
+  context "#create_end_product!" do
+    subject { supplemental_claim.create_end_product! }
+    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+
+    # Stub the id of the end product being created
+    before do
+      Fakes::VBMSService.end_product_claim_id = "454545"
+    end
+
+    context "when option receipt_date is nil" do
+      let(:receipt_date) { nil }
+
+      it "raises error" do
+        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+      end
+    end
+
+    it "creates end product and saves end_product_reference_id" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+      expect(subject).to eq(:created)
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: receipt_date.to_date,
+          end_product_modifier: "040",
+          end_product_label: "Supplemental Claim Review Rating",
+          end_product_code: "040SCRAMA",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: veteran.to_vbms_hash
+      )
+
+      expect(supplemental_claim.reload.end_product_reference_id).to eq("454545")
     end
   end
 end
