@@ -41,7 +41,7 @@ class SupplementalClaim < ApplicationRecord
   end
 
   def end_product_station
-    "499" # National Work Queue
+    "397" # TODO Change to 499 National Work Queue
   end
 
   def validate_receipt_date_not_before_ama

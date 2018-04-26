@@ -6,7 +6,7 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
-import { completeIntake, confirmFinishIntake } from '../../actions/supplementalClaim';
+import { completeIntake } from '../../actions/supplementalClaim';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
@@ -109,14 +109,9 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    finishConfirmed: state.supplementalClaim.finishConfirmed,
-    finishConfirmedError: state.supplementalClaim.finishConfirmedError,
     supplementalClaimStatus: getIntakeStatus(state),
     requestState: state.supplementalClaim.requestStatus.completeIntake,
     completeIntakeErrorCode: state.supplementalClaim.requestStatus.completeIntakeErrorCode,
     completeIntakeErrorData: state.supplementalClaim.requestStatus.completeIntakeErrorData
-  }),
-  (dispatch) => bindActionCreators({
-    confirmFinishIntake
-  }, dispatch)
+  })
 )(Finish);

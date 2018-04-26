@@ -105,18 +105,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
-  case ACTIONS.CONFIRM_FINISH_INTAKE:
-    return update(state, {
-      finishConfirmed: {
-        $set: action.payload.isConfirmed
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED:
-    return update(state, {
-      finishConfirmedError: {
-        $set: "You must confirm you've completed the steps"
-      }
-    });
   case ACTIONS.COMPLETE_INTAKE_START:
     return update(state, {
       requestStatus: {

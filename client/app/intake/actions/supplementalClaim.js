@@ -68,16 +68,7 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const completeIntake = (intakeId, rampElection) => (dispatch) => {
-  if (!rampElection.finishConfirmed) {
-    dispatch({
-      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED,
-      meta: { analytics }
-    });
-
-    return Promise.resolve(false);
-  }
-
+export const completeIntake = (intakeId) => (dispatch) => {
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START,
     meta: { analytics }
@@ -120,13 +111,3 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
       }
     );
 };
-
-export const confirmFinishIntake = (isConfirmed) => ({
-  type: ACTIONS.CONFIRM_FINISH_INTAKE,
-  payload: { isConfirmed },
-  meta: {
-    analytics: {
-      label: isConfirmed ? 'confirmed' : 'not-confirmed'
-    }
-  }
-});
