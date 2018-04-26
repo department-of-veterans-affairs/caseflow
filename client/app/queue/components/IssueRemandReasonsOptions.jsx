@@ -13,7 +13,8 @@ import RadioField from '../../components/RadioField';
 
 import {
   getIssueProgramDescription,
-  getIssueTypeDescription
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel
 } from '../utils';
 import {
   startEditingAppealIssue,
@@ -197,7 +198,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       </h2>
       <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      <div {...smallBottomMargin}>Code: {_.last(issue.description)}</div>
+      <div {...smallBottomMargin}>
+        Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
+      </div>
       <div {...smallBottomMargin}>Certified: {formatDateStr(appeal.certification_date)}</div>
       {highlight && !this.getChosenOptions().length &&
         <div className="usa-input-error"
