@@ -64,15 +64,17 @@ class AttorneyTaskTable extends React.PureComponent {
         if (!task.attributes.task_id) {
           return null;
         }
-
-        // TODO: We should use ReaderLink instead of Link as the loading component child.
         const redirectUrl = encodeURIComponent(window.location.pathname);
         const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirectUrl}`;
+        const docCount = this.props.appeals[task.vacolsId].attributes.docCount;
 
         return <LoadingDataDisplay
           createLoadPromise={this.createLoadPromise(task)}
           errorComponent="span"
-          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId} />}
+          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId}
+            analyticsSource={CATEGORIES.QUEUE_TABLE}
+            redirectUrl={window.location.pathname}
+            docCount={docCount} />}
           loadingComponent={SmallLoader}
           loadingComponentProps={{
             message: 'Loading...',
@@ -84,7 +86,8 @@ class AttorneyTaskTable extends React.PureComponent {
           }}>
           <ReaderLink vacolsId={task.vacolsId}
             analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname} />
+            redirectUrl={window.location.pathname}
+            docCount={docCount} />
         </LoadingDataDisplay>;
       }
     }

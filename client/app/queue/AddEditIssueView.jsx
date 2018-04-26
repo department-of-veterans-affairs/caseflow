@@ -11,7 +11,7 @@ import {
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  deleteAppealIssue,
+  deleteEditingAppealIssue,
   editAppeal
 } from './QueueActions';
 import {
@@ -46,12 +46,11 @@ class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, vacolsId } = this.props;
 
+    this.props.cancelEditingAppealIssue();
     if (this.props.action === 'edit') {
       this.props.startEditingAppealIssue(vacolsId, issueId);
     }
   };
-
-  componentWillUnmount = () => this.props.cancelEditingAppealIssue();
 
   getFooterButtons = () => [{
     displayText: 'Go back to Select Dispositions'
@@ -123,19 +122,9 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((response) => {
-      const resp = JSON.parse(response.text);
-      let updatedIssue = {};
-
-      if (this.props.action === 'add') {
-        updatedIssue = _.differenceBy(resp.issues, issues, 'vacols_sequence_id')[0];
-      } else {
-        updatedIssue = _.find(resp.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id);
-      }
-
-      this.updateIssue(updatedIssue);
-      this.props.saveEditedAppealIssue(this.props.vacolsId);
-    });
+    requestPromise.then((resp) =>
+      this.props.saveEditedAppealIssue(this.props.vacolsId, JSON.parse(resp.text))
+    );
   };
 
   deleteIssue = () => {
@@ -153,8 +142,8 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
-    ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
-  };
+    ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
+  }
 
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
@@ -294,7 +283,7 @@ AddEditIssueView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
@@ -307,7 +296,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
   highlightInvalidFormItems,
-  deleteAppealIssue,
+  deleteEditingAppealIssue,
   requestUpdate,
   requestDelete,
   showModal,
