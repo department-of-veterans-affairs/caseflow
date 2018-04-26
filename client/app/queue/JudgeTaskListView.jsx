@@ -34,7 +34,7 @@ const DISPLAYING_ASSIGN_TASKS = {
   table: () => <JudgeAssignTaskTable />
 };
 
-class JudgeReviewTaskListView extends React.PureComponent {
+class JudgeTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -80,7 +80,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
   };
 }
 
-JudgeReviewTaskListView.propTypes = {
+JudgeTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -97,4 +97,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeReviewTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeTaskListView);
