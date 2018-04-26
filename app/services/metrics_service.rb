@@ -6,6 +6,7 @@ class MetricsService
   def self.record(description, service: nil, name: "unknown")
     return_value = nil
     app = RequestStore[:application] || "other"
+    service ||= app
 
     Rails.logger.info("STARTED #{description}")
     stopwatch = Benchmark.measure do

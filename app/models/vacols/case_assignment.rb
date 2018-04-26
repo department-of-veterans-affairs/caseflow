@@ -68,7 +68,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.dedeadline as date_due",
              "decass.deadusr as added_by",
              "decass.deadtim as created_at",
-             "folder.tinum as docket_number")
+             "folder.tinum as docket_number",
+             "s3.snamef as assigned_by_first_name",
+             "s3.snamel as assigned_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -78,6 +80,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfcurloc = s2.slogid
           JOIN folder
             ON brieff.bfkey = folder.ticknum
+          LEFT JOIN staff s3
+            ON decass.demdusr = s3.slogid
         SQL
     end
     # rubocop:enable Metrics/MethodLength

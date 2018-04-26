@@ -118,7 +118,7 @@ class RampReview < ApplicationRecord
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.load_bgs_record!.to_vbms_hash
+      veteran_hash: veteran.to_vbms_hash
     )
   end
 

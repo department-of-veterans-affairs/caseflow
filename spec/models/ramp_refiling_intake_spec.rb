@@ -233,6 +233,32 @@ describe RampRefilingIntake do
         cancel_other: nil
       )
     end
+
+    context "when already complete" do
+      let(:completed_at) { 2.seconds.ago }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+      end
+    end
+
+    context "when completion is pending" do
+      let(:completion_status) { "pending" }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+      end
+    end
   end
 
   context "#save_error!" do

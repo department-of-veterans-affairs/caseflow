@@ -80,7 +80,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
         return {
           code: key,
-          ..._.pick(val, 'after_certification')
+          after_certification: val.after_certification === 'true'
         };
       }).
       compact().
@@ -185,7 +185,7 @@ IssueRemandReasonsOptions.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const appeal = state.queue.pendingChanges.appeals[ownProps.appealId];
+  const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
   const issues = appeal.attributes.issues;
 
   return {

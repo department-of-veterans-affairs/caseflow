@@ -223,7 +223,7 @@ RSpec.feature "Queue" do
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
     end
   end
@@ -553,6 +553,11 @@ RSpec.feature "Queue" do
         expect(page).to have_content "Issue: #{field_values.second}"
         expect(page).to have_content field_values.last
         expect(page).to have_content "Note: added issue"
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "2"
       end
 
       scenario "deletes issue" do
@@ -582,6 +587,11 @@ RSpec.feature "Queue" do
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues.length - 1)
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "4"
       end
     end
 
