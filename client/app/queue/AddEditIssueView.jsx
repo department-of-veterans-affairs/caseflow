@@ -36,7 +36,7 @@ import {
   ERROR_FIELD_REQUIRED
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -162,7 +162,7 @@ class AddEditIssueView extends React.Component {
     ).then(() => this.props.deleteAppealIssue(vacolsId, issueId));
   };
 
-  renderDiagnosticCodes = () => _.keys(STAFF_DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
+  renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
     label: getIssueDiagnosticCodeLabel(value),
     value
   }));
