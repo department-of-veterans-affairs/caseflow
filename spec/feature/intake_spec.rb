@@ -882,20 +882,111 @@ RSpec.feature "RAMP Intake" do
     context "AMA feature is enabled" do
       before do
         FeatureToggle.enable!(:intakeAma)
+        Timecop.freeze(Time.utc(2018, 5, 26))
       end
 
       after do
         FeatureToggle.disable!(:intakeAma)
       end
 
-      scenario "Searchable dropdown when more than three forms are available" do
+      let!(:rating) do
+        Generators::Rating.build(participant_id: veteran.participant_id, promulgation_date: 1.month.ago)
+      end
+
+      scenario "Supplemental Claim" do
         visit "/intake"
-        expect(page).to have_css(".cf-form-dropdown")
         safe_click ".Select"
+        expect(page).to have_css(".cf-form-dropdown")
         expect(page).to have_content("RAMP Selection (VA Form 21-4138)")
         expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
         expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
         expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: "Supplemental Claim (VA Form 21-526b)"
+        find("#form-select").send_keys :enter
+
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+
+        fill_in "Search small", with: "12341234"
+
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review-request")
+
+        fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+        safe_click "#button-submit-review"
+        expect(page).to have_content(
+          "Receipt date cannot be in the future."
+        )
+
+        fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+        safe_click "#button-submit-review"
+
+        expect(page).to have_current_path("/intake/finish")
+        expect(page).to have_content("Finish processing")
+        expect(page).to have_content("Decision date: 04/25/2018")
+        expect(page).to have_content("Service connection for Emphysema is granted")
+
+        supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+        expect(supplemental_claim).to_not be_nil
+        expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
+      end
+
+      scenario "Higher Level Review" do
+        visit "/intake"
+        safe_click ".Select"
+        expect(page).to have_css(".cf-form-dropdown")
+        expect(page).to have_content("RAMP Selection (VA Form 21-4138)")
+        expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+        expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+        expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+        find("#form-select").send_keys :enter
+
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
+
+        fill_in "Search small", with: "12341234"
+
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review-request")
+
+        fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+        safe_click "#button-submit-review"
+        expect(page).to have_content(
+          "Receipt date cannot be in the future."
+        )
+        expect(page).to have_content(
+          "Please select an option."
+        )
+
+        fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+        within_fieldset("Did the Veteran request an informal conference?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        within_fieldset("Did the Veteran request review by the same office?") do
+          find("label", text: "No", match: :prefer_exact).click
+        end
+
+        safe_click "#button-submit-review"
+
+        expect(page).to have_current_path("/intake/finish")
+        expect(page).to have_content("Finish page")
+
+        higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
+        expect(higher_level_review).to_not be_nil
+        expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
+        expect(higher_level_review.informal_conference).to eq(true)
+        expect(higher_level_review.same_office).to eq(false)
       end
     end
   end

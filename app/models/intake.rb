@@ -20,7 +20,9 @@ class Intake < ApplicationRecord
 
   FORM_TYPES = {
     ramp_election: "RampElectionIntake",
-    ramp_refiling: "RampRefilingIntake"
+    ramp_refiling: "RampRefilingIntake",
+    supplemental_claim: "SupplementalClaimIntake",
+    higher_level_review: "HigherLevelReviewIntake"
   }.freeze
 
   attr_reader :error_data
@@ -91,8 +93,21 @@ class Intake < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def cancel!
-    fail Caseflow::Error::MustImplementInSubclass
+  def cancel!(reason:, other: nil)
+    return if complete?
+
+    transaction do
+      cancel_detail!
+      update_attributes!(
+        cancel_reason: reason,
+        cancel_other: other
+      )
+      complete_with_status!(:canceled)
+    end
+  end
+
+  def cancel_detail!
+    detail.destroy!
   end
 
   def save_error!(*)
@@ -114,13 +129,6 @@ class Intake < ApplicationRecord
     update_attributes!(
       completed_at: Time.zone.now,
       completion_status: status
-    )
-  end
-
-  def add_cancel_reason!(reason:, other: nil)
-    update_attributes!(
-      cancel_reason: reason,
-      cancel_other: other
     )
   end
 
@@ -157,7 +165,7 @@ class Intake < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: veteran_file_number)
   end
 
   def ui_hash

@@ -95,7 +95,7 @@ RSpec.feature "Queue" do
       expect(appeal_options[0].find_all("li").count).to eq(appeal.issues.size)
 
       appeal_options[0].click
-      click_on "Okay"
+      click_on "Open Claims Folder"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_link("Back to Your Queue", href: "/queue")
@@ -223,7 +223,7 @@ RSpec.feature "Queue" do
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
     end
   end
@@ -472,10 +472,47 @@ RSpec.feature "Queue" do
 
         click_on "Save"
 
-        expect(page).to have_content("You have updated issue 1.")
+        expect(page).to have_content("You updated issue 1.")
         expect(page).to have_content("Program: #{field_values.first}")
         expect(page).to have_content("Issue: #{field_values.second}")
         expect(page).to have_content("Note: this is the note")
+      end
+
+      scenario "adds issue" do
+        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        visit "/queue"
+
+        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        safe_click ".Select-control"
+        safe_click "div[id$='--option-0']"
+
+        expect(page).to have_content "Select Dispositions"
+
+        click_on "Add Issue"
+        expect(page).to have_content "Add Issue"
+
+        fields = page.find_all ".Select--single"
+
+        field_values = fields.map do |row|
+          next if row.matches_css? ".is-disabled"
+
+          row.find(".Select-control").click
+          row.find("div[id$='--option-0']").click
+          row.find(".Select-value-label").text
+        end
+        fill_in "Notes:", with: "added issue"
+
+        click_on "Save"
+
+        expect(page).to have_content "You created a new issue."
+        expect(page).to have_content "Program: #{field_values.first}"
+        expect(page).to have_content "Issue: #{field_values.second}"
+        expect(page).to have_content "Note: added issue"
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "2"
       end
 
       scenario "deletes issue" do
@@ -501,10 +538,15 @@ RSpec.feature "Queue" do
         expect(page).to have_content "Delete Issue?"
         click_on "Delete issue"
 
-        expect(page).to have_content("You have deleted issue #{issue_idx + 1}")
+        expect(page).to have_content("You deleted issue #{issue_idx + 1}.")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues.length - 1)
+
+        click_on "Your Queue"
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        expect(issue_count).to eq "4"
       end
     end
 

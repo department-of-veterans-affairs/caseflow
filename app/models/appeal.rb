@@ -49,10 +49,15 @@ class Appeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at
+                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
+                :assigned_by_first_name, :assigned_by_last_name
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
   end
 
   cache_attribute :remand_return_date do
@@ -181,15 +186,15 @@ class Appeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
-  # Eventually we'd like to reference methods on the veteran with data from VACOLS
-  # and only "lazy load" data from BGS when necessary
   def veteran
-    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: sanitized_vbms_id)
   end
 
   delegate :age, to: :veteran, prefix: true
   delegate :sex, to: :veteran, prefix: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products, to: :veteran
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -308,6 +313,7 @@ class Appeal < ApplicationRecord
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
       "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
@@ -612,12 +618,6 @@ class Appeal < ApplicationRecord
     end.sort_by(&:received_at)
   end
 
-  # List of all end products for the appeal's veteran.
-  # NOTE: we cannot currently match end products to a specific appeal.
-  def end_products
-    @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
-  end
-
   def fetch_documents_from_service!
     return if @fetched_documents
 
@@ -657,10 +657,6 @@ class Appeal < ApplicationRecord
 
       appeal.save
       appeal
-    end
-
-    def fetch_end_products(vbms_id)
-      bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
     def for_api(vbms_id:)
@@ -785,7 +781,7 @@ class Appeal < ApplicationRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -806,7 +802,7 @@ class Appeal < ApplicationRecord
     end
 
     def reopen_single(appeal:, user:, disposition:)
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       # If the appeal was decided at the board, then it was a remand which means
