@@ -276,17 +276,16 @@ class AddEditIssueView extends React.Component {
           errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[0]', '')} />
       </div>
-      <div {...dropdownMarginTop}>
+      {!_.isEmpty(issueLevels[1]) && <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 2:"
           placeholder="Select level 2"
           options={this.renderIssueAttrs(issueLevels[1])}
           onChange={({ value }) => this.updateIssueCode(1, value)}
-          readOnly={_.isEmpty(issueLevels[1])}
           errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[1]', '')} />
-      </div>
-      <div {...dropdownMarginTop}>
+      </div>}
+      {this.issueLevelsConfigHasDiagCode() && <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Diagnostic code"
           placeholder="Select diagnostic code"
@@ -303,9 +302,8 @@ class AddEditIssueView extends React.Component {
             this.updateIssue({ codes });
           }}
           value={_.last(issue.codes)}
-          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''}
-          readOnly={!this.issueLevelsConfigHasDiagCode()} />
-      </div>
+          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''} />
+      </div>}
       <TextField
         name="Notes:"
         value={_.get(this.props.issue, 'note', '')}
