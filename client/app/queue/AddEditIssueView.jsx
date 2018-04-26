@@ -175,7 +175,7 @@ class AddEditIssueView extends React.Component {
     const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
 
     // if issueLevels[n] has options and issue.codes[n].length is 2 (issue level), check diagnostic_code
-    if (issueLevels.indexOf(lastIssueLevel) === issue.codes.indexOf(lastIssueLevelCode)) {
+    if (issueLevels.indexOf(lastIssueLevel) === _.lastIndexOf(issue.codes, lastIssueLevelCode)) {
       return _.get(lastIssueLevel[lastIssueLevelCode], 'diagnostic_code') || false;
     }
 
