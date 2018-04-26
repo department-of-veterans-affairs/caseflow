@@ -103,7 +103,8 @@ class JudgeAssignTaskTable extends React.PureComponent {
           _.pick(this.props, 'tasks', 'appeals')).
           filter(
             (task) => task.attributes.task_type === 'Assign').
-          map((task) => ({ task,
+          map((task) => ({
+            task,
             appeal: this.getAppealForTask(task) }))
       }
       getKeyForRow={this.getKeyForRow}
