@@ -72,6 +72,23 @@ describe RampElectionIntake do
         )
       end
     end
+
+    context "when completion is pending" do
+      let(:completion_status) { "pending" }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+        expect(detail.reload).to have_attributes(
+          option_selected: "supplemental_claim",
+          receipt_date: 3.days.ago.to_date
+        )
+      end
+    end
   end
 
   context "#complete!" do
