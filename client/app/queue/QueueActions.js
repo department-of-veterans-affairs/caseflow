@@ -142,6 +142,7 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   });
 
   if (attributes) {
+    dispatch(editStagedAppeal(appealId, attributes));
     dispatch(editAppeal(appealId, attributes));
   }
 };
