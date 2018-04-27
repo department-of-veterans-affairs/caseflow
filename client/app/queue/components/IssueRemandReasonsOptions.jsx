@@ -156,7 +156,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         onChange={onChange}
         value={values[option.id].checked}
         label={option.label}
-        unpadded/>
+        unpadded />
       {values[option.id].checked && <RadioField
         errorMessage={this.props.highlight && _.isNull(this.state[option.id].after_certification) && 'Choose one'}
         styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
