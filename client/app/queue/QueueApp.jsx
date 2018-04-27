@@ -13,7 +13,8 @@ import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
-import JudgeTaskListView from './JudgeTaskListView';
+import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
 import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
@@ -35,8 +36,18 @@ class QueueApp extends React.PureComponent {
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
       {this.props.userRole === 'Attorney' ?
         <AttorneyTaskListView {...this.props} /> :
-        <JudgeTaskListView {...this.props} />
+        <JudgeReviewTaskListView {...this.props} />
       }
+    </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedJudgeQueueList = (taskType) => () => <QueueLoadingScreen {...this.props}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {taskType === 'Assign' ?
+        <JudgeAssignTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />}
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
@@ -91,6 +102,21 @@ class QueueApp extends React.PureComponent {
             path="/"
             title="Your Queue | Caseflow"
             render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/:userId"
+            title="Your Queue | Caseflow"
+            render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/:userId/review"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Review')} />
+          <PageRoute
+            exact
+            path="/:userId/assign"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
             path="/tasks/:vacolsId"

@@ -61,6 +61,7 @@
     "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
+    "react-scroll-to-component": "^1.0.2",
     "react-select": "^1.0.0-rc.4",
     "react-textarea-autosize": "^5.1.0",
     "react-virtualized": "^9.10.1",
