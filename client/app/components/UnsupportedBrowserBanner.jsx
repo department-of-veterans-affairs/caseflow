@@ -14,12 +14,12 @@ export default class UnsupportedBrowserBanner extends React.PureComponent {
 
     const errorTitle = `${browser.name !== 'chrome' && title}`;
 
-    const hearingStatusMessage = css({ textDecoration: 'underline' });
+    const linkStyling = css({ textDecoration: 'underline' });
 
     const message = <span> To access {this.props.appName}, you must use Chrome as your browser.<br />
     If you need to install Chrome on your computer, please call the <br />
     VA Enterprise Service Desk at
-      <a {...hearingStatusMessage} href="tel:855-673-4357"> 855-673-4357</a>.</span>;
+      <a {...linkStyling} href="tel:855-673-4357"> 855-673-4357</a>.</span>;
 
     return <div>
       <StatusMessage
