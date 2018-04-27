@@ -402,13 +402,12 @@
 }
 
 .cf-hearings-worksheet-issues {
-  margin: 0;
   white-space: pre-line;
-  margin: .5em 0 1.5em 0;
-  
+  margin: .5em 0 1.5em;
+
   tr:last-child {
     .cf-form-textarea {
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
   }
 
