@@ -51,13 +51,13 @@ class SelectRemandReasonsView extends React.Component {
   }
 
   validateForm = () => {
-    const valid = _.every(this.state.renderedChildren, (child) => _.invoke(child, 'validate'));
+    const invalidReasons = _.reject(this.state.renderedChildren, (child) => _.invoke(child, 'validate'));
 
-    if (!valid) {
-      _.last(this.state.renderedChildren).scrollToWarning();
+    if (invalidReasons.length) {
+      invalidReasons[0].scrollToWarning();
     }
 
-    return valid;
+    return !invalidReasons.length;
   }
 
   getChildRef = (ref) => {

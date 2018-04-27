@@ -72,10 +72,10 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const chosenOptionsWithCertification = _.filter(chosenOptions, (opt) => !_.isNull(opt.after_certification));
 
     return chosenOptions.length === chosenOptionsWithCertification.length;
-  }
+  };
 
   validate = () => this.getChosenOptions().length >= 1 &&
-    this.validateChosenOptionsHaveCertification()
+    this.validateChosenOptionsHaveCertification();
 
   scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
     align: 'top',
@@ -136,7 +136,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       offset: 25,
       duration: 1000
     });
-  }
+  };
 
   toggleRemandReason = (checked, event) => this.setState({
     [event.target.id.split('-')[1]]: {
@@ -145,37 +145,39 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     }
   });
 
-  getCheckbox = (option, onChange, values) => <React.Fragment key={option.id}>
-    <Checkbox
-      name={`${this.props.issue.vacols_sequence_id}-${option.id}`}
-      onChange={onChange}
-      value={values[option.id].checked}
-      label={option.label}
-      unpadded />
-    {values[option.id].checked && <RadioField
-      errorMessage={this.props.highlight && _.isNull(this.state[option.id].after_certification) && 'Choose one'}
-      id={option.id}
-      vertical
-      key={`${option.id}-after-certification`}
-      styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-      name={`${this.props.issue.vacols_sequence_id}-${option.id}`}
-      hideLabel
-      options={[{
-        displayText: 'Before certification',
-        value: 'false'
-      }, {
-        displayText: 'After certification',
-        value: 'true'
-      }]}
-      value={this.state[option.id].after_certification}
-      onChange={(afterCertification) => this.setState({
-        [option.id]: {
-          checked: true,
-          after_certification: afterCertification
-        }
-      })}
-    />}
-  </React.Fragment>;
+  getCheckbox = (option, onChange, values) => {
+    const rowOptId = `${this.props.issue.vacols_sequence_id}-${option.id}`;
+
+    return <React.Fragment key={option.id}>
+      <Checkbox
+        name={rowOptId}
+        onChange={onChange}
+        value={values[option.id].checked}
+        label={option.label}
+        unpadded/>
+      {values[option.id].checked && <RadioField
+        errorMessage={this.props.highlight && _.isNull(this.state[option.id].after_certification) && 'Choose one'}
+        styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
+        name={rowOptId}
+        vertical
+        hideLabel
+        options={[{
+          displayText: 'Before certification',
+          value: 'false'
+        }, {
+          displayText: 'After certification',
+          value: 'true'
+        }]}
+        value={this.state[option.id].after_certification}
+        onChange={(afterCertification) => this.setState({
+          [option.id]: {
+            checked: true,
+            after_certification: afterCertification
+          }
+        })}
+      />}
+    </React.Fragment>;
+  };
 
   render = () => {
     const {
