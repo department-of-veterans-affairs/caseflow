@@ -221,15 +221,18 @@
           },
           "02": {
             "description": "Accrued",
-            "plain_description": "Increased rating, %s"
+            "plain_description": "Increased rating, %s",
+            "diagnostic_code": true
           },
           "03": {
             "description": "Extraschedular",
-            "plain_description": "Increased rating, %s"
+            "plain_description": "Increased rating, %s",
+            "diagnostic_code": true
           },
           "04": {
             "description": "Schedular",
-            "plain_description": "Increased rating, %s"
+            "plain_description": "Increased rating, %s",
+            "diagnostic_code": true
           },
           "05": {
             "description": "SMC",
@@ -245,7 +248,8 @@
           },
           "08": {
             "description": "Schedular & Extraschedular",
-            "plain_description": "Increased rating, %s"
+            "plain_description": "Increased rating, %s",
+            "diagnostic_code": true
           }
         }
       },
@@ -267,7 +271,8 @@
         "levels": {
           "01": {
             "description": "Accrued",
-            "plain_description": "Severance of service connection, %s"
+            "plain_description": "Severance of service connection, %s",
+            "diagnostic_code": true
           },
           "02": {
             "description": "Dental",
@@ -275,7 +280,8 @@
           },
           "03": {
             "description": "All others",
-            "plain_description": "Severance of service connection, %s"
+            "plain_description": "Severance of service connection, %s",
+            "diagnostic_code": true
           }
         }
       },
@@ -284,7 +290,8 @@
         "levels": {
           "01": {
             "description": "Accrued",
-            "plain_description": "Service connection, %s"
+            "plain_description": "Service connection, %s",
+            "diagnostic_code": true
           },
           "02": {
             "description": "Dental",
@@ -292,11 +299,13 @@
           },
           "03": {
             "description": "All Others",
-            "plain_description": "Service connection, %s"
+            "plain_description": "Service connection, %s",
+            "diagnostic_code": true
           },
           "04": {
             "description": "New and Material",
-            "plain_description": "New and material evidence to reopen claim for service connection, %s"
+            "plain_description": "New and material evidence to reopen claim for service connection, %s",
+            "diagnostic_code": true
           }
         }
       },
@@ -342,11 +351,13 @@
             "levels": {
               "01": {
                 "description": "Accrued",
-                "plain_description": "Rating reduction, %s"
+                "plain_description": "Rating reduction, %s",
+                "diagnostic_code": true
               },
               "02": {
                 "description": "Extraschedular",
-                "plain_description": "Rating reduction, %s"
+                "plain_description": "Rating reduction, %s",
+                "diagnostic_code": true
               },
               "03": {
                 "description": "Protection",
@@ -354,7 +365,8 @@
               },
               "04": {
                 "description": "Schedular",
-                "plain_description": "Rating reduction, %s"
+                "plain_description": "Rating reduction, %s",
+                "diagnostic_code": true
               },
               "05": {
                 "description": "SMC",
