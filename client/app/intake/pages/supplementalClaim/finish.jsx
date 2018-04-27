@@ -18,8 +18,6 @@ class Finish extends React.PureComponent {
       supplementalClaimStatus,
       requestState,
       veteranName,
-      finishConfirmed,
-      finishConfirmedError,
       completeIntakeErrorCode,
       completeIntakeErrorData
     } = this.props;

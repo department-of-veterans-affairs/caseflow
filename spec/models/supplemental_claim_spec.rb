@@ -1,6 +1,6 @@
-describe SupplementalClaim, focus:true do
+describe SupplementalClaim do
   before do
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -64,6 +64,7 @@ describe SupplementalClaim, focus:true do
   context "#create_end_product!" do
     subject { supplemental_claim.create_end_product! }
     let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+    let(:receipt_date) { 2.days.ago }
 
     # Stub the id of the end product being created
     before do
@@ -101,6 +102,25 @@ describe SupplementalClaim, focus:true do
       )
 
       expect(supplemental_claim.reload.end_product_reference_id).to eq("454545")
+    end
+
+    context "when VBMS throws an error" do
+      before do
+        allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
+      end
+
+      let(:vbms_error) do
+        VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+          "A duplicate claim for this EP code already exists in CorpDB. Please " \
+          "use a different EP code modifier. GUID: 13fcd</faultstring>")
+      end
+
+      it "raises a parsed EstablishClaimFailedInVBMS error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
+          expect(error.error_code).to eq("duplicate_ep")
+        end
+      end
     end
   end
 end

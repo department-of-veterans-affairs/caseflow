@@ -16,7 +16,7 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
-  # TODO Put real codes in here when we know them
+  # TODO: Put real codes in here when we know them
   AMA_CODES = {
     "040SCRAMA" => "Supplemental Claim Review Rating"
   }.freeze
