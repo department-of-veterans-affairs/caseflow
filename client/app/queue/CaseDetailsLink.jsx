@@ -36,7 +36,7 @@ class CaseDetailsLink extends React.PureComponent {
       </React.Fragment>}
     </React.Fragment>;
   }
-};
+}
 
 CaseDetailsLink.propTypes = {
   task: PropTypes.object.isRequired,

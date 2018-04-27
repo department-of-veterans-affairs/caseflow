@@ -64,7 +64,7 @@ class QueueDetailView extends React.PureComponent {
       }, {
         breadcrumb: this.props.appeal.attributes.veteran_full_name,
         path: `/appeals/${this.props.vacolsId}`
-      });  
+      });
     } else if (this.props.appeal) {
       this.props.pushBreadcrumb({
         breadcrumb: `< Back to ${this.props.appeal.attributes.veteran_full_name}'s case list`,
@@ -79,12 +79,14 @@ class QueueDetailView extends React.PureComponent {
     }
 
     const loadedQueue = this.props.loadedQueue;
+
     if (loadedQueue.appeals && loadedQueue.appeals[this.props.vacolsId]) {
       this.props.setActiveCase(loadedQueue.appeals[this.props.vacolsId]);
 
       if (loadedQueue.tasks && loadedQueue.tasks[this.props.vacolsId]) {
         this.props.setActiveTask(loadedQueue.tasks[this.props.vacolsId]);
       }
+
       return Promise.resolve();
     }
 
@@ -101,8 +103,10 @@ class QueueDetailView extends React.PureComponent {
     }
 
     const appeal = this.props.appeal.attributes;
+
     if (appeal.docCount) {
       this.props.setDocumentCount(appeal.docCount);
+
       return;
     }
 
@@ -146,6 +150,7 @@ class QueueDetailView extends React.PureComponent {
 
   tabs = () => {
     const appeal = this.props.appeal;
+
     return [{
       label: 'Appeal',
       page: <AppealDetail appeal={appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
@@ -158,6 +163,7 @@ class QueueDetailView extends React.PureComponent {
   subHead = () => {
     if (this.props.task) {
       const task = this.props.task.attributes;
+
       return <React.Fragment>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
@@ -166,6 +172,7 @@ class QueueDetailView extends React.PureComponent {
     }
 
     const appeal = this.props.appeal.attributes;
+
     return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
   }
 
@@ -227,7 +234,7 @@ QueueDetailView.propTypes = {
   vacolsId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeCase,
   breadcrumbs: state.ui.breadcrumbs,
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
