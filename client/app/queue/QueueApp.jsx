@@ -55,17 +55,17 @@ class QueueApp extends React.PureComponent {
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      prevStep={`/tasks/${vacolsId}`}
-      nextStep={`/tasks/${vacolsId}/submit`} />;
+      prevStep={`/appeals/${vacolsId}`}
+      nextStep={`/appeals/${vacolsId}/submit`} />;
   };
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/appeals/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/tasks/${props.match.params.appealId}/submit`}
+    nextStep={`/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
   render = () => <BrowserRouter basename="/queue">
@@ -93,7 +93,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/submit"
+            path="/appeals/:vacolsId/submit"
             title={() => {
               const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
                 'OMO' : 'Draft Decision';
@@ -103,17 +103,17 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/tasks/:appealId/remands"
+            path="/appeals/:appealId/remands"
             title="Draft Decision | Select Issue Remand Reasons"
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions"
+            path="/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
         </div>

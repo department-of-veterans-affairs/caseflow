@@ -397,8 +397,8 @@ RSpec.feature "Queue" do
         safe_click("div[id$='--option-1']")
 
         expect(page).to have_link("Your Queue", href: "/queue/")
-        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
-        expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
+        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/appeals/#{appeal.vacols_id}")
+        expect(page).to have_link("Submit OMO", href: "/queue/appeals/#{appeal.vacols_id}/submit")
 
         expect(page).to have_content("Go back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
@@ -442,7 +442,7 @@ RSpec.feature "Queue" do
 
         click_on "Finish dispositions"
 
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}/submit")
       end
 
       scenario "edits issue information" do
@@ -455,7 +455,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Select Dispositions")
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
@@ -495,7 +495,7 @@ RSpec.feature "Queue" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          safe_click "a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']"
+          safe_click "a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']"
           expect(page).to have_content "Edit Issue"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Save"
@@ -579,7 +579,7 @@ RSpec.feature "Queue" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }

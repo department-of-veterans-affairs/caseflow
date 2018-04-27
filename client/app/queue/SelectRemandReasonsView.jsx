@@ -21,7 +21,7 @@ class SelectRemandReasonsView extends React.Component {
 
   getBreadcrumb = () => ({
     breadcrumb: 'Select Remand Reasons',
-    path: `/tasks/${this.props.appealId}/remands`
+    path: `/appeals/${this.props.appealId}/remands`
   });
 
   getFooterButtons = () => [{
