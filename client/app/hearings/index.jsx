@@ -49,8 +49,9 @@ const Hearings = ({ hearings }) => {
                   component={() => {
                     const browser = detect();
 
-                    return browser.name !== 'chrome' ? <UnsupportedBrowserBanner /> :
-                      <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />;
+                    return browser.name === 'chrome' ?
+                      <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} /> :
+                      <UnsupportedBrowserBanner appName="Hearing Prep" />;
                   }}
                 />
 
