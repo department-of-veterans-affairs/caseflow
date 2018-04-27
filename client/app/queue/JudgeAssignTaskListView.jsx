@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
@@ -19,7 +20,7 @@ import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const DISPLAYING_ASSIGN_TASKS = {
-  title: (reviewableCount) => <h1 {...fullWidth}>Assign {reviewableCount} Cases</h1>,
+  title: (reviewableCount) => <h1>Assign {reviewableCount} Cases</h1>,
   switchLink: (that) => <Link to={`/${that.props.userId}/review`}>Switch to Review Cases</Link>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign'),
   noTasksMessage: () => 'Congratulations! You don\'t have any cases to assign.',
@@ -56,9 +57,26 @@ class JudgeAssignTaskListView extends React.PureComponent {
       </div>;
     } else {
       tableContent = <div>
-        {this.state.title(reviewableCount)}
-        {this.state.switchLink(this)}
-        {this.state.table()}
+        <div {...fullWidth}>
+          {this.state.title(reviewableCount)}
+          {this.state.switchLink(this)}
+        </div>
+        <div class="usa-width-one-fourth">
+          <ul class="usa-sidenav-list" {...css({ 'margin-top': '2em' })}>
+            <li>
+              <a class="usa-current" href="javascript:void(0);">Current page</a>
+            </li>
+            <li>
+              <a href="javascript:void(0);">Parent link</a>
+            </li>
+            <li>
+              <a href="javascript:void(0);">Parent link</a>
+            </li>
+          </ul>
+        </div>
+        <div class="usa-width-three-fourths">
+          {this.state.table()}
+        </div>
       </div>;
     }
 
