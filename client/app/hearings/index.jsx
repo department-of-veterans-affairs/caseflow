@@ -16,6 +16,7 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 import { detect } from 'detect-browser';
 
 const Hearings = ({ hearings }) => {
+  const browser = detect();
 
   return <ReduxBase reducer={hearingsReducers} initialState={mapDataToInitialState(hearings)}>
     <BrowserRouter>
@@ -47,7 +48,6 @@ const Hearings = ({ hearings }) => {
                 <PageRoute exact path="/hearings/dockets"
                   title="Your Hearing Days"
                   component={() => {
-                    const browser = detect();
 
                     return browser.name === 'chrome' ?
                       <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} /> :
@@ -68,11 +68,15 @@ const Hearings = ({ hearings }) => {
                 <PageRoute exact path="/hearings/:hearingId/worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
                   title="Hearing Worksheet"
-                  component={(props) => (
-                    <HearingWorksheetContainer
-                      veteran_law_judge={hearings.veteran_law_judge}
-                      hearingId={props.match.params.hearingId} />
-                  )}
+                  component={(props) => {
+
+                    return browser.name === 'chrome' ?
+                      <HearingWorksheetContainer
+                        veteran_law_judge={hearings.veteran_law_judge}
+                        hearingId={props.match.params.hearingId} /> :
+                      <UnsupportedBrowserBanner appName="Hearing Prep" />;
+                  }
+                  }
                 />
 
               </AppFrame>
