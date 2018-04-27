@@ -86,14 +86,17 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
   componentDidMount = () => {
     const {
-      issue: { vacols_sequence_id: issueId },
+      issue: {
+        vacols_sequence_id: issueId,
+        remand_reasons: remandReasons
+      },
       issues
     } = this.props;
 
-    _.each(this.props.issue.remand_reasons, (reason) => this.setState({
+    _.each(remandReasons, (reason) => this.setState({
       [reason.code]: {
         checked: true,
-        after_certification: reason.after_certification
+        after_certification: reason.after_certification.toString()
       }
     }));
 
@@ -125,18 +128,14 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     this.updateIssue({ remand_reasons: remandReasons });
   };
 
-  componentDidUpdate = (prevProps) => {
-    // todo: move this to SelectRemandReasonsView to handle multiple sequential clicks/errors?
-    // if the user clicks Continue multiple times without addressing the error, this
-    // component does not update (highlightFormItems remains true). moving this to the
-    // SelectRemandReasonsView.goToNextStep would allow us to scroll after multiple clicks
-    if (this.props.highlight && !prevProps.highlight && !this.getChosenOptions().length) {
-      // if the user gets the 'Choose at least one' error, scroll up so they can see it
-      this.scrollTo(this.noOptsChosenWarning, {
-        offset: -15,
-        duration: 1000
-      });
-    }
+  scrollToWarning = () => {
+    // If the user gets the 'Choose at least one' error, scroll up so they can see it.
+    // If the warning element isn't in the DOM when this is triggered (the first time),
+    // it won't scroll to the correct position: scroll to where the element will be.
+    this.scrollTo(this.elTopOfWarning, {
+      offset: 25,
+      duration: 1000
+    });
   }
 
   toggleRemandReason = (checked, event) => this.setState({
@@ -201,11 +200,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <div {...smallBottomMargin}>
         Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
       </div>
-      <div {...smallBottomMargin}>Certified: {formatDateStr(appeal.certification_date)}</div>
+      <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
+        Certified: {formatDateStr(appeal.certification_date)}
+      </div>
       {highlight && !this.getChosenOptions().length &&
         <div className="usa-input-error"
-          {...css(redText, boldText)}
-          ref={(node) => this.noOptsChosenWarning = node}>
+          {...css(redText, boldText, errorNoTopMargin)}>
           Choose at least one
         </div>
       }
