@@ -1,4 +1,6 @@
 class SupplementalClaim < ApplicationRecord
+  include EstablishesEndProduct
+
   validate :validate_receipt_date
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
 
