@@ -1,0 +1,3214 @@
+{
+  "5000": {
+    "staff_description": "Osteomyelitis",
+    "status_description": "osteomyelitis"
+  },
+  "5001": {
+    "staff_description": "Bones and joints, tuberculosis of",
+    "status_description": "tuberculosis of bones and joints"
+  },
+  "5002": {
+    "staff_description": "Arthritis rheumatoid (atrophic)",
+    "status_description": "rheumatoid arthritis"
+  },
+  "5003": {
+    "staff_description": "Arthritis, degenerative (hypertrophic or osteoarthritis)",
+    "status_description": "degenerative arthritis"
+  },
+  "5004": {
+    "staff_description": "Arthritis, gonorrheal",
+    "status_description": "gonorrheal arthritis"
+  },
+  "5005": {
+    "staff_description": "Arthritis, pneumococcic",
+    "status_description": "pneumococcic arthritis"
+  },
+  "5006": {
+    "staff_description": "Arthritis, typhoid",
+    "status_description": "typhoid arthritis"
+  },
+  "5007": {
+    "staff_description": "Arthritis, syphilitic",
+    "status_description": "syphilitic arthritis"
+  },
+  "5008": {
+    "staff_description": "Arthritis, streptococcic",
+    "status_description": "streptococcic arthritis"
+  },
+  "5009": {
+    "staff_description": "Arthritis, other types",
+    "status_description": "arthritis"
+  },
+  "5010": {
+    "staff_description": "Arthritis, due to trauma",
+    "status_description": "arthritis due to trauma"
+  },
+  "5011": {
+    "staff_description": "Bones, caisson disease of",
+    "status_description": "caisson disease of bones"
+  },
+  "5012": {
+    "staff_description": "Bones, new growths of, malignant",
+    "status_description": "malignant bone growth"
+  },
+  "5013": {
+    "staff_description": "Osteoporosis, with joint manifestations",
+    "status_description": "osteoporosis"
+  },
+  "5014": {
+    "staff_description": "Osteomalacia",
+    "status_description": "osteomalacia"
+  },
+  "5015": {
+    "staff_description": "Bones, new growths of, benign",
+    "status_description": "benign bone growth"
+  },
+  "5016": {
+    "staff_description": "Osteitis deformans",
+    "status_description": "osteitis deformans"
+  },
+  "5017": {
+    "staff_description": "Gout",
+    "status_description": "gout"
+  },
+  "5018": {
+    "staff_description": "Hydrarthrosis, intermittent",
+    "status_description": "intermittent hydrarthrosis"
+  },
+  "5019": {
+    "staff_description": "Bursitis",
+    "status_description": "bursitis"
+  },
+  "5020": {
+    "staff_description": "Synovitis",
+    "status_description": "synovitis"
+  },
+  "5021": {
+    "staff_description": "Myositis",
+    "status_description": "myositis"
+  },
+  "5022": {
+    "staff_description": "Periostitis",
+    "status_description": "periostitis"
+  },
+  "5023": {
+    "staff_description": "Myositis ossificans",
+    "status_description": "myositis ossificans"
+  },
+  "5024": {
+    "staff_description": "Tenosynovitis",
+    "status_description": "tenosynovitis"
+  },
+  "5025": {
+    "staff_description": "Fibromyalgia (fibrositis, primary fibromyalgia syndrome)",
+    "status_description": "fibromyalgia"
+  },
+  "5051": {
+    "staff_description": "Shoulder replacement (prosthesis)",
+    "status_description": "shoulder replacement"
+  },
+  "5052": {
+    "staff_description": "Elbow replacement (prosthesis)",
+    "status_description": "elbow replacement"
+  },
+  "5053": {
+    "staff_description": "Wrist replacement (prosthesis)",
+    "status_description": "wrist replacement"
+  },
+  "5054": {
+    "staff_description": "Hip replacement (prosthesis)",
+    "status_description": "hip replacement"
+  },
+  "5055": {
+    "staff_description": "Knee replacement (prosthesis)",
+    "status_description": "knee replacement"
+  },
+  "5056": {
+    "staff_description": "Ankle replacement (prosthesis)",
+    "status_description": "ankle replacement"
+  },
+  "5099": {
+    "staff_description": "Other musculoskeletal disease",
+    "status_description": "musculoskeletal disease"
+  },
+  "5104": {
+    "staff_description": "Anatomical loss of one hand and loss of use of one foot",
+    "status_description": "loss of hand and loss of use of foot"
+  },
+  "5105": {
+    "staff_description": "Anatomical loss of one foot and loss of use of one hand",
+    "status_description": "loss of foot and loss of use of hand"
+  },
+  "5106": {
+    "staff_description": "Anatomical loss of both hands",
+    "status_description": "loss of both hands"
+  },
+  "5107": {
+    "staff_description": "Anatomical loss of both feet",
+    "status_description": "loss of both feet"
+  },
+  "5108": {
+    "staff_description": "Anatomical loss of one hand and one foot",
+    "status_description": "loss of hand and foot"
+  },
+  "5109": {
+    "staff_description": "Loss of use of both hands",
+    "status_description": "loss of use of both hands"
+  },
+  "5110": {
+    "staff_description": "Loss of use of both feet",
+    "status_description": "loss of use of both feet"
+  },
+  "5111": {
+    "staff_description": "Loss of use of one hand and one foot",
+    "status_description": "loss of use of hand and foot"
+  },
+  "5120": {
+    "staff_description": "Arm, amputation of:  Disarticulation",
+    "status_description": "amputation of arm"
+  },
+  "5121": {
+    "staff_description": "Arm, amputation of:  Above insertion of deltoid",
+    "status_description": "amputation of arm"
+  },
+  "5122": {
+    "staff_description": "Arm, amputation of:  Below insertion of deltoid",
+    "status_description": "amputation of arm"
+  },
+  "5123": {
+    "staff_description": "Forearm, amputation of:  Above insertion of pronator teres",
+    "status_description": "amputation of forearm"
+  },
+  "5124": {
+    "staff_description": "Forearm, amputation of:  Below insertion of pronator teres",
+    "status_description": "amputation of forearm"
+  },
+  "5125": {
+    "staff_description": "Hand, loss of use of",
+    "status_description": "loss of use of hand"
+  },
+  "5126": {
+    "staff_description": "Five digits of one hand, amputation of",
+    "status_description": "amputation of fingers"
+  },
+  "5127": {
+    "staff_description": "Four digits of one hand, amputation of:  Thumb, index, middle and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5128": {
+    "staff_description": "Four digits of one hand, amputation of:  Thumb, index, middle and little.",
+    "status_description": "amputation of fingers"
+  },
+  "5129": {
+    "staff_description": "Four digits of one hand, amputation of:  Thumb, index, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5130": {
+    "staff_description": "Four digits of one hand, amputation of:  Thumb, middle, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5131": {
+    "staff_description": "Four digits of one hand, amputation of:  Index, middle, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5132": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, index and middle",
+    "status_description": "amputation of fingers"
+  },
+  "5133": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, index and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5134": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, index and little",
+    "status_description": "amputation of fingers"
+  },
+  "5135": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, middle and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5136": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, middle and little",
+    "status_description": "amputation of fingers"
+  },
+  "5137": {
+    "staff_description": "Three digits of one hand, amputation of:  Thumb, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5138": {
+    "staff_description": "Three digits of one hand, amputation of:  Index, middle and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5139": {
+    "staff_description": "Three digits of one hand, amputation of:  Index, middle and little",
+    "status_description": "amputation of fingers"
+  },
+  "5140": {
+    "staff_description": "Three digits of one hand, amputation of:  Index, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5141": {
+    "staff_description": "Three digits of one hand, amputation of:  Middle, ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5142": {
+    "staff_description": "Two digits of one hand, amputation of:  Thumb and index",
+    "status_description": "amputation of fingers"
+  },
+  "5143": {
+    "staff_description": "Two digits of one hand, amputation of:  Thumb and middle",
+    "status_description": "amputation of fingers"
+  },
+  "5144": {
+    "staff_description": "Two digits of one hand, amputation of:  Thumb and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5145": {
+    "staff_description": "Two digits of one hand, amputation of:  Thumb and little",
+    "status_description": "amputation of fingers"
+  },
+  "5146": {
+    "staff_description": "Two digits of one hand, amputation of:  Index and middle",
+    "status_description": "amputation of fingers"
+  },
+  "5147": {
+    "staff_description": "Two digits of one hand, amputation of:  Index and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5148": {
+    "staff_description": "Two digits of one hand, amputation of:  Index and little",
+    "status_description": "amputation of fingers"
+  },
+  "5149": {
+    "staff_description": "Two digits of one hand, amputation of:  Middle and ring",
+    "status_description": "amputation of fingers"
+  },
+  "5150": {
+    "staff_description": "Two digits of one hand, amputation of:  Middle and little",
+    "status_description": "amputation of fingers"
+  },
+  "5151": {
+    "staff_description": "Two digits of one hand, amputation of:  Ring and little",
+    "status_description": "amputation of fingers"
+  },
+  "5152": {
+    "staff_description": "Thumb, amputation of",
+    "status_description": "amputation of thumb"
+  },
+  "5153": {
+    "staff_description": "Index finger, amputation of",
+    "status_description": "amputation of finger"
+  },
+  "5154": {
+    "staff_description": "Middle finger, amputation of",
+    "status_description": "amputation of finger"
+  },
+  "5155": {
+    "staff_description": "Ring finger, amputation of",
+    "status_description": "amputation of finger"
+  },
+  "5156": {
+    "staff_description": "Little finger, amputation of",
+    "status_description": "amputation of finger"
+  },
+  "5160": {
+    "staff_description": "Thigh, amputation of:  Disarticulation, with loss of extrinsic pelvic girdle muscles",
+    "status_description": "amputation of thigh"
+  },
+  "5161": {
+    "staff_description": "Thigh, amputation of:  Upper third",
+    "status_description": "amputation of thigh"
+  },
+  "5162": {
+    "staff_description": "Thigh, amputation of:  Middle or lower thirds",
+    "status_description": "amputation of thigh"
+  },
+  "5163": {
+    "staff_description": "Leg, amputation of:  With defective stump, thigh amputation recommended",
+    "status_description": "amputation of leg"
+  },
+  "5164": {
+    "staff_description": "Leg, amputation of:  Not improvable by prosthesis controlled by natural knee action",
+    "status_description": "amputation of leg"
+  },
+  "5165": {
+    "staff_description": "Leg, amputation of:  At a lower level, permitting prosthesis",
+    "status_description": "amputation of leg"
+  },
+  "5166": {
+    "staff_description": "Forefoot, amputation proximal to metatarsal bones (more than one-half of metatarsal loss)",
+    "status_description": "amputation of forefoot"
+  },
+  "5167": {
+    "staff_description": "Foot, loss of use of",
+    "status_description": "loss of use of foot"
+  },
+  "5170": {
+    "staff_description": "Toes, all, amputation of, without metatarsal loss",
+    "status_description": "amputation of toes"
+  },
+  "5171": {
+    "staff_description": "Toe, great, amputation of",
+    "status_description": "amputation of toes"
+  },
+  "5172": {
+    "staff_description": "Toes, one or two, other than great, amputation of",
+    "status_description": "amputation of toes"
+  },
+  "5173": {
+    "staff_description": "Toes, three or four, amputation of, without metatarsal involvement",
+    "status_description": "amputation of toes"
+  },
+  "5199": {
+    "staff_description": "Other amputations",
+    "status_description": "amputation"
+  },
+  "5200": {
+    "staff_description": "Scapulohumeral articulation, ankylosis of",
+    "status_description": "ankylosis of shoulder"
+  },
+  "5201": {
+    "staff_description": "Arm, limitation of motion of",
+    "status_description": "limitation of arm motion"
+  },
+  "5202": {
+    "staff_description": "Humerus, other impairment of",
+    "status_description": "impairment of upper arm"
+  },
+  "5203": {
+    "staff_description": "Clavicle or scapula, impairment of",
+    "status_description": "impairment of collar bone or shoulder blade"
+  },
+  "5205": {
+    "staff_description": "Elbow, ankylosis of",
+    "status_description": "ankylosis of elbow"
+  },
+  "5206": {
+    "staff_description": "Forearm, limitation of flexion of",
+    "status_description": "limitation of forearm motion (flexion)"
+  },
+  "5207": {
+    "staff_description": "Forearm, limitation of extension of",
+    "status_description": "limitation of forearm motion (extension)"
+  },
+  "5208": {
+    "staff_description": "Forearm, flexion limited to 100 deg. and extension to 45 deg.",
+    "status_description": "limitation of forearm motion"
+  },
+  "5209": {
+    "staff_description": "Elbow, other impairment of Flail joint",
+    "status_description": "impairment of elbow with flail joint"
+  },
+  "5210": {
+    "staff_description": "Radius and ulna, nonunion of, with flail false joint",
+    "status_description": "forearm nonunion with flail false joint"
+  },
+  "5211": {
+    "staff_description": "Ulna, impairment of",
+    "status_description": "impairment of forearm"
+  },
+  "5212": {
+    "staff_description": "Radius, impairment of",
+    "status_description": "impairment of forearm"
+  },
+  "5213": {
+    "staff_description": "Forearm, supination and pronation, impairment of",
+    "status_description": "impairment of forearm"
+  },
+  "5214": {
+    "staff_description": "Wrist, ankylosis of",
+    "status_description": "ankylosis of wrist"
+  },
+  "5215": {
+    "staff_description": "Wrist, limitation of motion of",
+    "status_description": "limitation of wrist motion"
+  },
+  "5216": {
+    "staff_description": "Five digits of one hand, unfavorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5217": {
+    "staff_description": "Four digits of one hand, unfavorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5218": {
+    "staff_description": "Three digits of one hand, unfavorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5219": {
+    "staff_description": "Two digits of one hand, unfavorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5220": {
+    "staff_description": "Five digits of one hand, favorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5221": {
+    "staff_description": "Four digits of one hand, favorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5222": {
+    "staff_description": "Three digits of one hand, favorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5223": {
+    "staff_description": "Two digits of one hand, favorable ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5224": {
+    "staff_description": "Thumb, ankylosis of",
+    "status_description": "ankylosis of thumb"
+  },
+  "5225": {
+    "staff_description": "Index finger, ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5226": {
+    "staff_description": "Middle finger, ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5227": {
+    "staff_description": "Ring or little finger, ankylosis of",
+    "status_description": "ankylosis of fingers"
+  },
+  "5228": {
+    "staff_description": "Thumb, limitation of motion",
+    "status_description": "limitation of thumb motion"
+  },
+  "5229": {
+    "staff_description": "Index or long finger, limitation of motion",
+    "status_description": "limitation of finger motion"
+  },
+  "5230": {
+    "staff_description": "Ring or little finger, limitation of motion",
+    "status_description": "limitation of finger motion"
+  },
+  "5235": {
+    "staff_description": "Vertebral fracture or dislocation",
+    "status_description": "vertebral fracture or dislocation"
+  },
+  "5236": {
+    "staff_description": "Sacroiliac injury and weakness",
+    "status_description": "sacroiliac injury and weakness"
+  },
+  "5237": {
+    "staff_description": "Lumbosacral or cervical strain",
+    "status_description": "lumbosacral or cervical strain"
+  },
+  "5238": {
+    "staff_description": "Spinal stenosis",
+    "status_description": "spinal stenosis"
+  },
+  "5239": {
+    "staff_description": "Spondylolisthesis or segmental instability",
+    "status_description": "spondylolisthesis or segmental instability"
+  },
+  "5240": {
+    "staff_description": "Ankylosing spondylitis",
+    "status_description": "ankylosing spondylitis"
+  },
+  "5241": {
+    "staff_description": "Spinal Fusion",
+    "status_description": "spinal fusion"
+  },
+  "5242": {
+    "staff_description": "Degenerative arthritis of the spine (see also diagnostic code 5003)",
+    "status_description": "degenerative arthritis of the spine"
+  },
+  "5243": {
+    "staff_description": "Intervertebral disc syndrome",
+    "status_description": "intervertebral disc syndrome"
+  },
+  "5250": {
+    "staff_description": "Hip, ankylosis of",
+    "status_description": "ankylosis of hip"
+  },
+  "5251": {
+    "staff_description": "Thigh, limitation of extension of",
+    "status_description": "limitation of thigh motion (extension)"
+  },
+  "5252": {
+    "staff_description": "Thigh, limitation of flexion of",
+    "status_description": "limitation of thigh motion (flexion)"
+  },
+  "5253": {
+    "staff_description": "Thigh, impairment of",
+    "status_description": "limitation of thigh motion"
+  },
+  "5254": {
+    "staff_description": "Hip, flail joint",
+    "status_description": "impairment of hip"
+  },
+  "5255": {
+    "staff_description": "Femur, impairment of",
+    "status_description": "impairment of femur"
+  },
+  "5256": {
+    "staff_description": "Knee, ankylosis of",
+    "status_description": "ankylosis of knee"
+  },
+  "5257": {
+    "staff_description": "Knee, other impairment of",
+    "status_description": "impairment of knee"
+  },
+  "5258": {
+    "staff_description": "Cartilage, semilunar, dislocated",
+    "status_description": "dislocated knee cartilage"
+  },
+  "5259": {
+    "staff_description": "Cartilage, semilunar, removal of, symptomatic",
+    "status_description": "removal of knee cartilage"
+  },
+  "5260": {
+    "staff_description": "Leg, limitation of flexion of",
+    "status_description": "limitation of leg motion (flexion)"
+  },
+  "5261": {
+    "staff_description": "Leg, limitation of extension of",
+    "status_description": "limitation of leg motion (extension)"
+  },
+  "5262": {
+    "staff_description": "Tibia and fibula, impairment of",
+    "status_description": "impairment of lower leg"
+  },
+  "5263": {
+    "staff_description": "Genu recurvatum",
+    "status_description": "knee hyperextension"
+  },
+  "5270": {
+    "staff_description": "Ankle, ankylosis of",
+    "status_description": "ankylosis of ankle"
+  },
+  "5271": {
+    "staff_description": "Ankle, limited motion of",
+    "status_description": "limitation of ankle motion"
+  },
+  "5272": {
+    "staff_description": "Subastragalar or tarsal joint, ankylosis of",
+    "status_description": "ankylosis of foot joints"
+  },
+  "5273": {
+    "staff_description": "Os calcis or astragalus, malunion of",
+    "status_description": "malunion of foot bones"
+  },
+  "5274": {
+    "staff_description": "Astragalectomy",
+    "status_description": "astragalectomy"
+  },
+  "5275": {
+    "staff_description": "Bones, of the lower extremity, shortening of",
+    "status_description": "shortening of lower extremity"
+  },
+  "5276": {
+    "staff_description": "Flatfoot, acquired",
+    "status_description": "flatfoot"
+  },
+  "5277": {
+    "staff_description": "Weak foot, bilateral",
+    "status_description": "weak feet"
+  },
+  "5278": {
+    "staff_description": "Claw foot (pes cavus), acquired",
+    "status_description": "claw foot"
+  },
+  "5279": {
+    "staff_description": "Metatarsalgia, anterior (Morton's disease)",
+    "status_description": "metatarsalgia"
+  },
+  "5280": {
+    "staff_description": "Hallux valgus, unilateral",
+    "status_description": "bunion"
+  },
+  "5281": {
+    "staff_description": "Hallux rigidus, unilateral, severe",
+    "status_description": "hallux rigidus"
+  },
+  "5282": {
+    "staff_description": "Hammer toe",
+    "status_description": "hammer toe"
+  },
+  "5283": {
+    "staff_description": "Tarsal, or metatarsal bones, malunion of, or nonunion of",
+    "status_description": "malunion or nonunion of foot bones"
+  },
+  "5284": {
+    "staff_description": "Foot injuries, other",
+    "status_description": "foot injury"
+  },
+  "5285": {
+    "staff_description": "Vertebra, fracture of, residuals",
+    "status_description": "residuals of vertebral fracture"
+  },
+  "5286": {
+    "staff_description": "Spine, complete bony fixation (ankylosis) of",
+    "status_description": "ankylosis of the spine"
+  },
+  "5287": {
+    "staff_description": "Spine, ankylosis of, cervical",
+    "status_description": "ankylosis of the spine"
+  },
+  "5288": {
+    "staff_description": "Spine, ankylosis of, dorsal",
+    "status_description": "ankylosis of the spine"
+  },
+  "5289": {
+    "staff_description": "Spine, ankylosis of, lumbar",
+    "status_description": "ankylosis of the spine"
+  },
+  "5290": {
+    "staff_description": "Spine, limitation of motion of, cervical",
+    "status_description": "limitation of spinal motion"
+  },
+  "5291": {
+    "staff_description": "Spine, limitation of motion of, dorsal",
+    "status_description": "limitation of spinal motion"
+  },
+  "5292": {
+    "staff_description": "Spine, limitation of motion of, lumbar",
+    "status_description": "limitation of spinal motion"
+  },
+  "5293": {
+    "staff_description": "Intervertebral disc syndrome",
+    "status_description": "intervertebral disc syndrome"
+  },
+  "5294": {
+    "staff_description": "Sacro-iliac injury and weakness",
+    "status_description": "sacroiliac injury and weakness"
+  },
+  "5295": {
+    "staff_description": "Lumbosacral strain",
+    "status_description": "lumbosacral strain"
+  },
+  "5296": {
+    "staff_description": "Skull, loss of part of, both inner and outer tables",
+    "status_description": "partial loss of skull"
+  },
+  "5297": {
+    "staff_description": "Ribs, removal of",
+    "status_description": "removal of ribs"
+  },
+  "5298": {
+    "staff_description": "Coccyx, removal of",
+    "status_description": "removal of coccyx"
+  },
+  "5299": {
+    "staff_description": "Other skeletal injury or motion loss",
+    "status_description": "skeletal injury or loss of motion"
+  },
+  "5301": {
+    "staff_description": "Muscle injury, Group I",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5302": {
+    "staff_description": "Muscle injury, Group II",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5303": {
+    "staff_description": "Muscle injury, Group III",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5304": {
+    "staff_description": "Muscle injury, Group IV",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5305": {
+    "staff_description": "Muscle injury, Group V",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5306": {
+    "staff_description": "Muscle injury, Group VI",
+    "status_description": "shoulder or arm muscle injury"
+  },
+  "5307": {
+    "staff_description": "Muscle injury, Group VII",
+    "status_description": "forearm or hand muscle injury"
+  },
+  "5308": {
+    "staff_description": "Muscle injury, Group VIII",
+    "status_description": "forearm or hand muscle injury"
+  },
+  "5309": {
+    "staff_description": "Muscle injury, Group IX",
+    "status_description": "forearm or hand muscle injury"
+  },
+  "5310": {
+    "staff_description": "Muscle injury, Group X",
+    "status_description": "foot or leg muscle injury"
+  },
+  "5311": {
+    "staff_description": "Muscle injury, Group XI",
+    "status_description": "foot or leg muscle injury"
+  },
+  "5312": {
+    "staff_description": "Muscle injury, Group XII",
+    "status_description": "foot or leg muscle injury"
+  },
+  "5313": {
+    "staff_description": "Muscle injury, Group XIII",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5314": {
+    "staff_description": "Muscle injury, Group XIV",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5315": {
+    "staff_description": "Muscle injury, Group XV",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5316": {
+    "staff_description": "Muscle injury, Group XVI",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5317": {
+    "staff_description": "Muscle injury, Group XVII",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5318": {
+    "staff_description": "Muscle injury, Group XVIII",
+    "status_description": "pelvic or thigh muscle injury"
+  },
+  "5319": {
+    "staff_description": "Muscle injury, Group XIX",
+    "status_description": "torso or neck muscle injury"
+  },
+  "5320": {
+    "staff_description": "Muscle injury, Group XX",
+    "status_description": "torso or neck muscle injury"
+  },
+  "5321": {
+    "staff_description": "Muscle injury, Group XXI",
+    "status_description": "torso or neck muscle injury"
+  },
+  "5322": {
+    "staff_description": "Muscle injury, Group XXII",
+    "status_description": "torso or neck muscle injury"
+  },
+  "5323": {
+    "staff_description": "Muscle injury, Group XXIII",
+    "status_description": "torso or neck muscle injury"
+  },
+  "5324": {
+    "staff_description": "Diaphragm, rupture of, with herniation",
+    "status_description": "rupture of diaphragm"
+  },
+  "5325": {
+    "staff_description": "Muscle injury, facial muscles",
+    "status_description": "facial muscle injury"
+  },
+  "5326": {
+    "staff_description": "Muscle hernia, extensive",
+    "status_description": "muscle hernia"
+  },
+  "5327": {
+    "staff_description": "Muscle, neoplasm of, malignant (excluding soft tissue sarcoma)",
+    "status_description": "malignant muscle neoplasm"
+  },
+  "5328": {
+    "staff_description": "Muscle, neoplasm of, benign, postoperative",
+    "status_description": "benign muscle neoplasm"
+  },
+  "5329": {
+    "staff_description": "Sarcoma, soft tissue (of muscle, fat, or fibrous connective tissue)",
+    "status_description": "soft tissue sarcoma"
+  },
+  "5399": {
+    "staff_description": "Other muscle injury",
+    "status_description": "muscle injury"
+  },
+  "6000": {
+    "staff_description": "Uveitis",
+    "status_description": "uveitis"
+  },
+  "6001": {
+    "staff_description": "Keratitis",
+    "status_description": "keratitis"
+  },
+  "6002": {
+    "staff_description": "Scleritis",
+    "status_description": "scleritis"
+  },
+  "6003": {
+    "staff_description": "Iritis",
+    "status_description": "iritis"
+  },
+  "6004": {
+    "staff_description": "Cyclitis",
+    "status_description": "cyclitis"
+  },
+  "6005": {
+    "staff_description": "Choroiditis",
+    "status_description": "choroiditis"
+  },
+  "6006": {
+    "staff_description": "Retinitis",
+    "status_description": "retinitis"
+  },
+  "6007": {
+    "staff_description": "Hemorrhage, intra-ocular, recent",
+    "status_description": "intraocular hemorrhage"
+  },
+  "6008": {
+    "staff_description": "Retina, detachment of",
+    "status_description": "retinal detachment"
+  },
+  "6009": {
+    "staff_description": "Eye, injury of, unhealed",
+    "status_description": "eye injury"
+  },
+  "6010": {
+    "staff_description": "Eye, tuberculosis of, active or inactive",
+    "status_description": "tuberculosis of the eye"
+  },
+  "6011": {
+    "staff_description": "Retina, localized scars, atrophy, or irregularities of",
+    "status_description": "retinal scarring or atrophy"
+  },
+  "6012": {
+    "staff_description": "Glaucoma, congestive or inflammatory",
+    "status_description": "glaucoma"
+  },
+  "6013": {
+    "staff_description": "Glaucoma, simple, primary, noncongestive",
+    "status_description": "glaucoma"
+  },
+  "6014": {
+    "staff_description": "New growths, malignant (eyeball only)",
+    "status_description": "malignant eye growth"
+  },
+  "6015": {
+    "staff_description": "New growths, benign (eyeball and adnexa, other than superficial)",
+    "status_description": "benign eye growth"
+  },
+  "6016": {
+    "staff_description": "Nystagmus, central",
+    "status_description": "nystagmus"
+  },
+  "6017": {
+    "staff_description": "Conjunctivitis, trachomatous, chronic",
+    "status_description": "trachoma"
+  },
+  "6018": {
+    "staff_description": "Conjunctivitis, other, chronic",
+    "status_description": "chronic conjunctivitis"
+  },
+  "6019": {
+    "staff_description": "Ptosis, unilateral or bilateral",
+    "status_description": "ptosis"
+  },
+  "6020": {
+    "staff_description": "Ectropion",
+    "status_description": "ectropion"
+  },
+  "6021": {
+    "staff_description": "Entropion",
+    "status_description": "entropion"
+  },
+  "6022": {
+    "staff_description": "Lagophthalmos",
+    "status_description": "lagophthalmos"
+  },
+  "6023": {
+    "staff_description": "Eyebrows, loss of, complete, unilateral or bilateral",
+    "status_description": "loss of eyebrows"
+  },
+  "6024": {
+    "staff_description": "Eyelashes, loss of, complete, unilateral or bilateral",
+    "status_description": "loss of eyelashes"
+  },
+  "6025": {
+    "staff_description": "Epiphora (lacrymal duct, interference with, from any cause)",
+    "status_description": "epiphora"
+  },
+  "6026": {
+    "staff_description": "Neuritis, optic",
+    "status_description": "optic neuritis"
+  },
+  "6027": {
+    "staff_description": "Cataract, traumatic",
+    "status_description": "traumatic cataract"
+  },
+  "6028": {
+    "staff_description": "Cataract, senile, and others",
+    "status_description": "cataract"
+  },
+  "6029": {
+    "staff_description": "Aphakia",
+    "status_description": "aphakia"
+  },
+  "6030": {
+    "staff_description": "Accommodation, paralysis of",
+    "status_description": "paralysis of accommodation"
+  },
+  "6031": {
+    "staff_description": "Dacryocystitis",
+    "status_description": "dacryocystitis"
+  },
+  "6032": {
+    "staff_description": "Eyelids, loss of portion of",
+    "status_description": "partial loss of eyelids"
+  },
+  "6033": {
+    "staff_description": "Lens, crystalline, dislocation of",
+    "status_description": "crystalline lens dislocation"
+  },
+  "6034": {
+    "staff_description": "Pterygium",
+    "status_description": "pterygium"
+  },
+  "6035": {
+    "staff_description": "Keratoconus",
+    "status_description": "keratoconus"
+  },
+  "6061": {
+    "staff_description": "Anatomical loss both eyes",
+    "status_description": "loss of both eyes"
+  },
+  "6062": {
+    "staff_description": "Blindness in both eyes having only light perception",
+    "status_description": "blindness in both eyes"
+  },
+  "6063": {
+    "staff_description": "Anatomical loss of 1 eye; other eye blind (5/200 (1.5/60) or less)",
+    "status_description": "loss of one eye and blindness in other eye"
+  },
+  "6064": {
+    "staff_description": "Anatomical loss of 1 eye; other eye impaired (20/200 (6/60) or less)",
+    "status_description": "loss of one eye and impairment of other eye"
+  },
+  "6065": {
+    "staff_description": "Anatomical loss of 1 eye; other eye impaired (20/50 (6/21) or less)",
+    "status_description": "loss of one eye and impairment of other eye"
+  },
+  "6066": {
+    "staff_description": "Anatomical loss of 1 eye; other eye normal",
+    "status_description": "loss of one eye"
+  },
+  "6067": {
+    "staff_description": "Blindness in 1 eye, having only light perception; other eye blind (5/200 (1.5/60) or less)",
+    "status_description": "blindness in both eyes"
+  },
+  "6068": {
+    "staff_description": "Blindness in 1 eye, having only light perception; other eye impaired (20/200 (6/60) or less)",
+    "status_description": "blindness in one eye and impairment of other eye"
+  },
+  "6069": {
+    "staff_description": "Blindness in 1 eye, having only light perception; other eye impaired (20/50 (6/21) or less)",
+    "status_description": "blindness in one eye and impairment of other eye"
+  },
+  "6070": {
+    "staff_description": "Blindness in 1 eye, having only light perception; other eye normal",
+    "status_description": "blindness in one eye"
+  },
+  "6071": {
+    "staff_description": "Blindness in both eyes (5/200 (1.5/60) or less)",
+    "status_description": "blindness in both eyes"
+  },
+  "6072": {
+    "staff_description": "Blindness in one eye (5/200 (1.5/60) or less); other eye impaired (20/200 (6/60) or less)",
+    "status_description": "blindness in one eye and impairment of other eye"
+  },
+  "6073": {
+    "staff_description": "Blindness in one eye (5/200 (1.5/60) or less); other eye impaired (20/50 (6/21) or less)",
+    "status_description": "blindness in one eye and impairment of other eye"
+  },
+  "6074": {
+    "staff_description": "Blindness in one eye (5/200 (1.5/60) or less); other eye normal",
+    "status_description": "blindness in one eye"
+  },
+  "6075": {
+    "staff_description": "Partial blindness in both eyes (20/200 (3/60) or less)",
+    "status_description": "partial blindness in both eyes"
+  },
+  "6076": {
+    "staff_description": "Partial blindness in one eye (20/200 (3/60) or less); other eye impaired (20/50 (6/21) or",
+    "status_description": "partial blindness in one eye and impairment of other eye"
+  },
+  "6077": {
+    "staff_description": "Partial blindness in one eye (20/200 (3/60) or less); other eye normal",
+    "status_description": "partial blindness in one eye"
+  },
+  "6078": {
+    "staff_description": "Partial blindness in both eyes (20/50 (6/21) or less)",
+    "status_description": "partial blindness in both eyes"
+  },
+  "6079": {
+    "staff_description": "Partial blindness in one eye (20/50 (6/21) or less); other eye other eye normal",
+    "status_description": "partial blindness in one eye"
+  },
+  "6080": {
+    "staff_description": "Field vision, impairment of",
+    "status_description": "impairment of field vision"
+  },
+  "6081": {
+    "staff_description": "Scotoma, pathological, unilateral",
+    "status_description": "scotoma"
+  },
+  "6090": {
+    "staff_description": "Diplopia (double vision)",
+    "status_description": "double vision"
+  },
+  "6091": {
+    "staff_description": "Symblepharon",
+    "status_description": "symblepharon"
+  },
+  "6092": {
+    "staff_description": "Diplopia, due to limited muscle function",
+    "status_description": "double vision"
+  },
+  "6099": {
+    "staff_description": "Other eye disability",
+    "status_description": "eye disability"
+  },
+  "6100": {
+    "staff_description": "Hearing loss",
+    "status_description": "hearing loss"
+  },
+  "6199": {
+    "staff_description": "Other hearing loss",
+    "status_description": "hearing loss"
+  },
+  "6200": {
+    "staff_description": "Chronic suppurative otitis media, mastoiditis, or cholesteatoma (or any combination)",
+    "status_description": "chronic suppurative otitis media mastoiditis or cholesteatoma"
+  },
+  "6201": {
+    "staff_description": "Chronic nonsuppurative otitis media with effusion (serous otitis media)",
+    "status_description": "chronic otitis media with effusion"
+  },
+  "6202": {
+    "staff_description": "Otosclerosis",
+    "status_description": "otosclerosis"
+  },
+  "6204": {
+    "staff_description": "Peripheral vestibular disorders",
+    "status_description": "inner ear or vestibular nerve disorder"
+  },
+  "6205": {
+    "staff_description": "Meniere's syndrome",
+    "status_description": "M\u00e9ni\u00e8re's disease"
+  },
+  "6207": {
+    "staff_description": "Auricle, loss or deformity",
+    "status_description": "loss or deformity of ear"
+  },
+  "6208": {
+    "staff_description": "Malignant neoplasm of the ear (other than skin only)",
+    "status_description": "malignant ear neoplasm"
+  },
+  "6209": {
+    "staff_description": "Benign neoplasm of the ear (other than skin only)",
+    "status_description": "benign ear neoplasm"
+  },
+  "6210": {
+    "staff_description": "Chronic otitis externa",
+    "status_description": "chronic otitis externa"
+  },
+  "6211": {
+    "staff_description": "Tympanic membrane, perforation of",
+    "status_description": "perforation of tympanic membrane"
+  },
+  "6260": {
+    "staff_description": "Tinnitus, recurrent",
+    "status_description": "tinnitus"
+  },
+  "6275": {
+    "staff_description": "Loss of sense of smell, complete",
+    "status_description": "loss of sense of smell"
+  },
+  "6276": {
+    "staff_description": "Loss of sense of taste, complete",
+    "status_description": "loss of sense of taste"
+  },
+  "6299": {
+    "staff_description": "Other sense organ disability",
+    "status_description": "sense organ disability"
+  },
+  "6300": {
+    "staff_description": "Cholera, Asiatic",
+    "status_description": "cholera"
+  },
+  "6301": {
+    "staff_description": "Visceral Leishmaniasis",
+    "status_description": "visceral leishmaniasis"
+  },
+  "6302": {
+    "staff_description": "Leprosy (Hansen's Disease)",
+    "status_description": "Hansen's disease (leprosy)"
+  },
+  "6304": {
+    "staff_description": "Malaria",
+    "status_description": "malaria"
+  },
+  "6305": {
+    "staff_description": "Lymphatic Filariasis",
+    "status_description": "lymphatic filariasis"
+  },
+  "6306": {
+    "staff_description": "Bartonellosis",
+    "status_description": "bartonellosis"
+  },
+  "6307": {
+    "staff_description": "Plague",
+    "status_description": "plague"
+  },
+  "6308": {
+    "staff_description": "Relapsing Fever",
+    "status_description": "relapsing fever"
+  },
+  "6309": {
+    "staff_description": "Rheumatic fever",
+    "status_description": "rheumatic fever"
+  },
+  "6310": {
+    "staff_description": "Syphilis, and other treponemal infections",
+    "status_description": "syphilis or other treponemal infection"
+  },
+  "6311": {
+    "staff_description": "Tuberculosis, miliary",
+    "status_description": "miliary tuberculosis"
+  },
+  "6313": {
+    "staff_description": "Avitaminosis",
+    "status_description": "avitaminosis"
+  },
+  "6314": {
+    "staff_description": "Beriberi",
+    "status_description": "thiamine deficiency"
+  },
+  "6315": {
+    "staff_description": "Pellagra",
+    "status_description": "pellagra"
+  },
+  "6316": {
+    "staff_description": "Brucellosis",
+    "status_description": "brucellosis"
+  },
+  "6317": {
+    "staff_description": "Typhus, scrub",
+    "status_description": "scrub typhus"
+  },
+  "6318": {
+    "staff_description": "Melioidosis",
+    "status_description": "melioidosis"
+  },
+  "6319": {
+    "staff_description": "Lyme Disease",
+    "status_description": "Lyme disease"
+  },
+  "6320": {
+    "staff_description": "Parasitic diseases otherwise not specified",
+    "status_description": "parasitic disease"
+  },
+  "6350": {
+    "staff_description": "Lupus erythematosus, systemic (disseminated)",
+    "status_description": "lupus"
+  },
+  "6351": {
+    "staff_description": "HIV-Related Illness",
+    "status_description": "HIV-related illness"
+  },
+  "6354": {
+    "staff_description": "Chronic Fatigue Syndrome (CFS)",
+    "status_description": "chronic fatigue syndrome"
+  },
+  "6399": {
+    "staff_description": "Other infectious disease, immune disorder, or nutritional deficiency",
+    "status_description": "infectious disease immune disorder or nutritional deficiency"
+  },
+  "6502": {
+    "staff_description": "Septum, nasal, deviation of",
+    "status_description": "deviated septum"
+  },
+  "6504": {
+    "staff_description": "Nose, loss of part of, or scars",
+    "status_description": "partial loss or scarring of nose"
+  },
+  "6510": {
+    "staff_description": "Sinusitis, pansinusitis, chronic",
+    "status_description": "chronic sinusitis"
+  },
+  "6511": {
+    "staff_description": "Sinusitis, ethmoid, chronic",
+    "status_description": "chronic sinusitis"
+  },
+  "6512": {
+    "staff_description": "Sinusitis, frontal, chronic",
+    "status_description": "chronic sinusitis"
+  },
+  "6513": {
+    "staff_description": "Sinusitis, maxillary, chronic",
+    "status_description": "chronic sinusitis"
+  },
+  "6514": {
+    "staff_description": "Sinusitis, sphenoid, chronic",
+    "status_description": "chronic sinusitis"
+  },
+  "6515": {
+    "staff_description": "Laryngitis, tuberculous, active or inactive",
+    "status_description": "laryngeal tuberculosis"
+  },
+  "6516": {
+    "staff_description": "Laryngitis, chronic",
+    "status_description": "chronic laryngitis"
+  },
+  "6518": {
+    "staff_description": "Laryngectomy, total",
+    "status_description": "laryngectomy"
+  },
+  "6519": {
+    "staff_description": "Aphonia, complete organic",
+    "status_description": "aphonia"
+  },
+  "6520": {
+    "staff_description": "Larynx, stenosis of, including residuals of laryngeal trauma (unilateral or bilateral)",
+    "status_description": "laryngeal stenosis"
+  },
+  "6521": {
+    "staff_description": "Pharynx, injuries to",
+    "status_description": "throat injury"
+  },
+  "6522": {
+    "staff_description": "Allergic or vasomotor rhinitis",
+    "status_description": "rhinitis"
+  },
+  "6523": {
+    "staff_description": "Bacterial rhinitis",
+    "status_description": "bacterial rhinitis"
+  },
+  "6524": {
+    "staff_description": "Granulomatous rhinitis",
+    "status_description": "granulomatous rhinitis"
+  },
+  "6599": {
+    "staff_description": "Other disease of nose or throat",
+    "status_description": "nose or throat disease"
+  },
+  "6600": {
+    "staff_description": "Bronchitis, chronic",
+    "status_description": "chornic bronchitis"
+  },
+  "6601": {
+    "staff_description": "Bronchiectasis",
+    "status_description": "bronchiectasis"
+  },
+  "6602": {
+    "staff_description": "Asthma, bronchial",
+    "status_description": "broncial asthma"
+  },
+  "6603": {
+    "staff_description": "Emphysema, pulmonary",
+    "status_description": "emphysema"
+  },
+  "6604": {
+    "staff_description": "Chronic obstructive pulmonary disease",
+    "status_description": "chronic obstructive pulmonary disease"
+  },
+  "6699": {
+    "staff_description": "Other disease of trachea and/or bronchi",
+    "status_description": "tracheal or bronchial disease"
+  },
+  "6701": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, far advanced, active [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6702": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, moderately advanced, active [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6703": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, minimal, active [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6704": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, active, advancement unspecified [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6721": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, far advanced, inactive [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6722": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, moderately advanced, inactive [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6723": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, minimal, inactive [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6724": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, inactive, advancement unspecified [entitled 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6730": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, active [after 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6731": {
+    "staff_description": "Tuberculosis, pulmonary, chronic, inactive [after 8/19/68]",
+    "status_description": "pulmonary tuberculosis"
+  },
+  "6732": {
+    "staff_description": "Pleurisy, tuberculous, active or inactive [after 8/19/68]",
+    "status_description": "tuberculous pleurisy"
+  },
+  "6799": {
+    "staff_description": "Other tuberculous disease of lungs and/or pleura",
+    "status_description": "tuberculous disease"
+  },
+  "6817": {
+    "staff_description": "Pulmonary Vascular Disease",
+    "status_description": "pulmonary vascular disease"
+  },
+  "6819": {
+    "staff_description": "Neoplasms, malignant, any specified part of respiratory system exclusive of skin growths",
+    "status_description": "malignant neoplasm of the respiratory system"
+  },
+  "6820": {
+    "staff_description": "Neoplasms, benign, any specified part of respiratory system",
+    "status_description": "benign neoplasm of the respiratory system"
+  },
+  "6822": {
+    "staff_description": "Actinomycosis",
+    "status_description": "actinomycosis"
+  },
+  "6823": {
+    "staff_description": "Nocardiosis",
+    "status_description": "nocardiosis"
+  },
+  "6824": {
+    "staff_description": "Chronic lung abscess",
+    "status_description": "chronic lung abscess"
+  },
+  "6825": {
+    "staff_description": "Diffuse interstitial fibrosis (interstitial pneumonitis, fibrosing alveolitis)",
+    "status_description": "diffuse interstitial fibrosis"
+  },
+  "6826": {
+    "staff_description": "Desquamative interstitial pneumonitis",
+    "status_description": "desquamative interstitial pneumonitis"
+  },
+  "6827": {
+    "staff_description": "Pulmonary alveolar proteinosis",
+    "status_description": "pulmonary alveolar proteinosis"
+  },
+  "6828": {
+    "staff_description": "Eosinophilic granuloma of lung",
+    "status_description": "eosinophilic granuloma"
+  },
+  "6829": {
+    "staff_description": "Drug-induced pulmonary pneumonitis and fibrosis",
+    "status_description": "drug-induced pneumonitis or fibrosis"
+  },
+  "6830": {
+    "staff_description": "Radiation-induced pulmonary pneumonitis and fibrosis",
+    "status_description": "radiation-induced pneumonitis or fibrosis"
+  },
+  "6831": {
+    "staff_description": "Hypersensitivity pneumonitis (extrinsic allergic alveolitis)",
+    "status_description": "hypersensitivity pneumonitis"
+  },
+  "6832": {
+    "staff_description": "Pneumoconiosis (silicosis, anthracosis, etc.)",
+    "status_description": "pneumoconiosis"
+  },
+  "6833": {
+    "staff_description": "Asbestosis",
+    "status_description": "asbestosis"
+  },
+  "6834": {
+    "staff_description": "Histoplasmosis of lung",
+    "status_description": "histoplasmosis"
+  },
+  "6835": {
+    "staff_description": "Coccidioidomycosis",
+    "status_description": "coccidioidomycosis"
+  },
+  "6836": {
+    "staff_description": "Blastomycosis",
+    "status_description": "blastomycosis"
+  },
+  "6837": {
+    "staff_description": "Cryptococcosis",
+    "status_description": "cryptococcosis"
+  },
+  "6838": {
+    "staff_description": "Aspergillosis",
+    "status_description": "aspergillosis"
+  },
+  "6839": {
+    "staff_description": "Mucormycosis",
+    "status_description": "mucormycosis"
+  },
+  "6840": {
+    "staff_description": "Diaphragm paralysis or paresis",
+    "status_description": "diaphragm paralysis or paresis"
+  },
+  "6841": {
+    "staff_description": "Spinal cord injury with respiratory insufficiency",
+    "status_description": "spinal cord injury affecting the respiratory system"
+  },
+  "6842": {
+    "staff_description": "Kyphoscoliosis, pectus excavatum, pectus carinatum",
+    "status_description": "kyphoscoliosis pectus excavatum or pectus carinatum"
+  },
+  "6843": {
+    "staff_description": "Traumatic chest wall defect, pneumothorax, hernia, etc",
+    "status_description": "collapsed lung hernia or other traumatic chest wall defect"
+  },
+  "6844": {
+    "staff_description": "Post-surgical residual (lobectomy, pneumonectomy, etc.)",
+    "status_description": "lung surgery"
+  },
+  "6845": {
+    "staff_description": "Chronic pleural effusion or fibrosis",
+    "status_description": "chronic pleural effusion or fibrosis"
+  },
+  "6846": {
+    "staff_description": "Sarcoidosis",
+    "status_description": "sarcoidosis"
+  },
+  "6847": {
+    "staff_description": "Sleep Apnea Syndromes (Obstructive, Central, Mixed)",
+    "status_description": "sleep apnea"
+  },
+  "6899": {
+    "staff_description": "Other nontuberculous disease of lungs and/or pleura",
+    "status_description": "lung disease"
+  },
+  "7000": {
+    "staff_description": "Valvular heart disease (including rheumatic heart disease)",
+    "status_description": "heart valve disease"
+  },
+  "7001": {
+    "staff_description": "Endocarditis",
+    "status_description": "endocarditis"
+  },
+  "7002": {
+    "staff_description": "Pericarditis",
+    "status_description": "pericarditis"
+  },
+  "7003": {
+    "staff_description": "Pericardial adhesions",
+    "status_description": "pericardial adhesions"
+  },
+  "7004": {
+    "staff_description": "Syphilitic heart disease",
+    "status_description": "syphilitic heart disease"
+  },
+  "7005": {
+    "staff_description": "Arteriosclerotic heart disease (Coronary artery disease)",
+    "status_description": "coronary artery disease"
+  },
+  "7006": {
+    "staff_description": "Myocardial infarction",
+    "status_description": "myocardial infarction"
+  },
+  "7007": {
+    "staff_description": "Hypertensive heart disease",
+    "status_description": "hypertensive heart disease"
+  },
+  "7008": {
+    "staff_description": "Hyperthyroid heart disease",
+    "status_description": "hyperthyroid heart disease"
+  },
+  "7010": {
+    "staff_description": "Supraventricular arrhythmias",
+    "status_description": "supraventricular arrhythmias"
+  },
+  "7011": {
+    "staff_description": "Ventricular arrhythmias (sustained)",
+    "status_description": "ventricular arrhythmias"
+  },
+  "7015": {
+    "staff_description": "Atrioventricular block",
+    "status_description": "atrioventricular block"
+  },
+  "7016": {
+    "staff_description": "Heart valve replacement (prosthesis)",
+    "status_description": "heart valve replacement"
+  },
+  "7017": {
+    "staff_description": "Coronary bypass surgery",
+    "status_description": "coronary bypass surgery"
+  },
+  "7018": {
+    "staff_description": "Implantable cardiac pacemakers",
+    "status_description": "pacemaker"
+  },
+  "7019": {
+    "staff_description": "Cardiac transplantation",
+    "status_description": "heart transplant"
+  },
+  "7020": {
+    "staff_description": "Cardiomyopathy",
+    "status_description": "cardiomyopathy"
+  },
+  "7099": {
+    "staff_description": "Other heart disease",
+    "status_description": "heart disease"
+  },
+  "7101": {
+    "staff_description": "Hypertensive vascular disease (hypertension and isolated systolic hypertension)",
+    "status_description": "hypertensive vascular disease"
+  },
+  "7110": {
+    "staff_description": "Aortic aneurysm",
+    "status_description": "aortic aneurysm"
+  },
+  "7111": {
+    "staff_description": "Aneurysm, any large artery",
+    "status_description": "arterial aneurysm"
+  },
+  "7112": {
+    "staff_description": "Aneurysm, any small artery",
+    "status_description": "arterial aneurysm"
+  },
+  "7113": {
+    "staff_description": "Arteriovenous fistula, traumatic",
+    "status_description": "arteriovenous fistula"
+  },
+  "7114": {
+    "staff_description": "Arteriosclerosis obliterans",
+    "status_description": "arteriosclerosis obliterans"
+  },
+  "7115": {
+    "staff_description": "Thrombo-angiitis obliterans (Buerger's Disease)",
+    "status_description": "Buerger's disease"
+  },
+  "7117": {
+    "staff_description": "Raynaud's syndrome",
+    "status_description": "Raynaud's disease"
+  },
+  "7118": {
+    "staff_description": "Angioneurotic edema",
+    "status_description": "angioedema"
+  },
+  "7119": {
+    "staff_description": "Erythromelalgia",
+    "status_description": "erythromelalgia"
+  },
+  "7120": {
+    "staff_description": "Varicose veins",
+    "status_description": "varicose veins"
+  },
+  "7121": {
+    "staff_description": "Post-phlebitic syndrome of any etiology",
+    "status_description": "post-thrombotic syndrome"
+  },
+  "7122": {
+    "staff_description": "Cold injury residuals",
+    "status_description": "cold injury"
+  },
+  "7123": {
+    "staff_description": "Soft tissue sarcoma (of vascular origin)",
+    "status_description": "soft tissue sarcoma"
+  },
+  "7199": {
+    "staff_description": "Other disease of arteries and/or veins",
+    "status_description": "arterial or venous disease"
+  },
+  "7200": {
+    "staff_description": "Mouth, injuries of",
+    "status_description": "mouth injury"
+  },
+  "7201": {
+    "staff_description": "Lips, injuries of",
+    "status_description": "lips injury"
+  },
+  "7202": {
+    "staff_description": "Tongue, loss of whole or part",
+    "status_description": "whole or partial loss of tongue"
+  },
+  "7203": {
+    "staff_description": "Esophagus, stricture of",
+    "status_description": "esophageal stricture"
+  },
+  "7204": {
+    "staff_description": "Esophagus, spasm of (cardiospasm)",
+    "status_description": "esophageal spasm"
+  },
+  "7205": {
+    "staff_description": "Esophagus, diverticulum of, acquired",
+    "status_description": "esophageal diverticulum"
+  },
+  "7299": {
+    "staff_description": "Other digestive system injury",
+    "status_description": "digestive system injury"
+  },
+  "7301": {
+    "staff_description": "Peritoneum, adhesions of",
+    "status_description": "peritoneal adhesions"
+  },
+  "7304": {
+    "staff_description": "Ulcer, gastric",
+    "status_description": "ulcer"
+  },
+  "7305": {
+    "staff_description": "Ulcer, duodenal",
+    "status_description": "ulcer"
+  },
+  "7306": {
+    "staff_description": "Ulcer, marginal (gastrojejunal)",
+    "status_description": "ulcer"
+  },
+  "7307": {
+    "staff_description": "Gastritis, hypertrophic (identified by gastroscope)",
+    "status_description": "giant hypertrophic gastritis"
+  },
+  "7308": {
+    "staff_description": "Postgastrectomy syndromes",
+    "status_description": "postgastrectomy syndromes"
+  },
+  "7309": {
+    "staff_description": "Stomach, stenosis of",
+    "status_description": "stomach stenosis"
+  },
+  "7310": {
+    "staff_description": "Stomach, injury of, residuals",
+    "status_description": "stomach injury"
+  },
+  "7311": {
+    "staff_description": "Residuals of injury of the liver",
+    "status_description": "liver injury"
+  },
+  "7312": {
+    "staff_description": "Cirrhosis of the liver, primary biliary cirrhosis, or cirrhotic phase of sclerosing cholangitis",
+    "status_description": "cirrhosis"
+  },
+  "7313": {
+    "staff_description": "Liver, abscess of, residuals",
+    "status_description": "liver abscess"
+  },
+  "7314": {
+    "staff_description": "Cholecystitis, chronic",
+    "status_description": "chronic cholecystitis"
+  },
+  "7315": {
+    "staff_description": "Cholelithiasis, chronic",
+    "status_description": "chronic cholelithiasis"
+  },
+  "7316": {
+    "staff_description": "Cholangitis, chronic",
+    "status_description": "chronic cholangitis"
+  },
+  "7317": {
+    "staff_description": "Gall bladder, injury of",
+    "status_description": "gallbladder injury"
+  },
+  "7318": {
+    "staff_description": "Gall bladder, removal of",
+    "status_description": "gallbladder removal"
+  },
+  "7319": {
+    "staff_description": "Irritable colon syndrome (spastic colitis, mucous colitis, etc.)",
+    "status_description": "irritable bowel syndrome"
+  },
+  "7321": {
+    "staff_description": "Amebiasis",
+    "status_description": "amebiasis"
+  },
+  "7322": {
+    "staff_description": "Dysentery, bacillary",
+    "status_description": "bacillary dysentery"
+  },
+  "7323": {
+    "staff_description": "Colitis, ulcerative",
+    "status_description": "ulcerative colitis"
+  },
+  "7324": {
+    "staff_description": "Distomiasis, intestinal or hepatic",
+    "status_description": "distomiasis"
+  },
+  "7325": {
+    "staff_description": "Enteritis, chronic",
+    "status_description": "chronic enteritis"
+  },
+  "7326": {
+    "staff_description": "Enterocolitis, chronic",
+    "status_description": "chronic enterocolitis"
+  },
+  "7327": {
+    "staff_description": "Diverticulitis",
+    "status_description": "diverticulitis"
+  },
+  "7328": {
+    "staff_description": "Intestine, small, resection of",
+    "status_description": "bowel resection"
+  },
+  "7329": {
+    "staff_description": "Intestine, large, resection of",
+    "status_description": "bowel resection"
+  },
+  "7330": {
+    "staff_description": "Intestine, fistula of, persistent, or after attempt at operative closure",
+    "status_description": "intestinal fistula"
+  },
+  "7331": {
+    "staff_description": "Peritonitis, tuberculous, active or inactive",
+    "status_description": "peritoneal tuberculosis"
+  },
+  "7332": {
+    "staff_description": "Rectum and anus, impairment of sphincter control",
+    "status_description": "impairment of sphincter control"
+  },
+  "7333": {
+    "staff_description": "Rectum and anus, stricture of",
+    "status_description": "anal stricture"
+  },
+  "7334": {
+    "staff_description": "Rectum, prolapse of",
+    "status_description": "prolapsed rectum"
+  },
+  "7335": {
+    "staff_description": "Ano, fistula in",
+    "status_description": "anal fistula"
+  },
+  "7336": {
+    "staff_description": "Hemorrhoids, external or internal",
+    "status_description": "hemorrhoids"
+  },
+  "7337": {
+    "staff_description": "Pruritus ani",
+    "status_description": "pruritus ani"
+  },
+  "7338": {
+    "staff_description": "Hernia, inguinal",
+    "status_description": "groin hernia"
+  },
+  "7339": {
+    "staff_description": "Hernia, ventral, postoperative",
+    "status_description": "ventral hernia"
+  },
+  "7340": {
+    "staff_description": "Hernia, femoral",
+    "status_description": "femoral hernia"
+  },
+  "7342": {
+    "staff_description": "Visceroptosis, symptomatic, marked",
+    "status_description": "visceroptosis"
+  },
+  "7343": {
+    "staff_description": "Malignant neoplasms of the digestive system, exclusive of skin growths ",
+    "status_description": "malignant digestive neoplasm"
+  },
+  "7344": {
+    "staff_description": "Benign neoplasms, exclusive of skin growths",
+    "status_description": "benign digestive neoplasm"
+  },
+  "7345": {
+    "staff_description": "Chronic liver disease without cirrhosis (including hepatitis B, chronic active hepatitis, etc.)",
+    "status_description": "chronic liver disease"
+  },
+  "7346": {
+    "staff_description": "Hernia hiatal",
+    "status_description": "stomach hernia"
+  },
+  "7347": {
+    "staff_description": "Pancreatitis",
+    "status_description": "pancreatitis"
+  },
+  "7348": {
+    "staff_description": "Vagotomy with pyloroplasty or gastroenterostomy",
+    "status_description": "vagotomy"
+  },
+  "7351": {
+    "staff_description": "Liver transplant",
+    "status_description": "liver transplant"
+  },
+  "7354": {
+    "staff_description": "Hepatitis C (or non-A, non-B hepatitis)",
+    "status_description": "hepatitis C"
+  },
+  "7399": {
+    "staff_description": "Other digestive system disease",
+    "status_description": "digestive system disease"
+  },
+  "7500": {
+    "staff_description": "Kidney, removal of one",
+    "status_description": "removal of kidney"
+  },
+  "7501": {
+    "staff_description": "Kidney, abscess of",
+    "status_description": "kidney abscess"
+  },
+  "7502": {
+    "staff_description": "Nephritis, chronic",
+    "status_description": "chronic nephritis"
+  },
+  "7504": {
+    "staff_description": "Pyelonephritis, chronic",
+    "status_description": "chronic pyelonephritis"
+  },
+  "7505": {
+    "staff_description": "Kidney, tuberculosis of",
+    "status_description": "tuberculosis of the kidney"
+  },
+  "7507": {
+    "staff_description": "Nephrosclerosis, arteriolar",
+    "status_description": "arteriolar nephrosclerosis"
+  },
+  "7508": {
+    "staff_description": "Nephrolithiasis",
+    "status_description": "nephrolithiasis"
+  },
+  "7509": {
+    "staff_description": "Hydronephrosis",
+    "status_description": "hydronephrosis"
+  },
+  "7510": {
+    "staff_description": "Ureterolithiasis",
+    "status_description": "ureterolithiasis"
+  },
+  "7511": {
+    "staff_description": "Ureter, stricture of",
+    "status_description": "ureter stricture"
+  },
+  "7512": {
+    "staff_description": "Cystitis, chronic, includes interstitial and all etiologies, infectious and non-infectious",
+    "status_description": "chornic cystitis"
+  },
+  "7515": {
+    "staff_description": "Bladder, calculus in, with symptoms interfering with function",
+    "status_description": "bladder stone"
+  },
+  "7516": {
+    "staff_description": "Bladder, fistula of",
+    "status_description": "bladder fistula"
+  },
+  "7517": {
+    "staff_description": "Bladder, injury of",
+    "status_description": "bladder injury"
+  },
+  "7518": {
+    "staff_description": "Urethra, stricture of",
+    "status_description": "ureteral stricture"
+  },
+  "7519": {
+    "staff_description": "Urethra, fistual of",
+    "status_description": "ureteral fistula"
+  },
+  "7520": {
+    "staff_description": "Penis, removal of half or more",
+    "status_description": "removal of penis"
+  },
+  "7521": {
+    "staff_description": "Penis removal of glans",
+    "status_description": "removal of glans"
+  },
+  "7522": {
+    "staff_description": "Penis, deformity, with loss of erectile power",
+    "status_description": "penile deformity"
+  },
+  "7523": {
+    "staff_description": "Testis, atrophy complete",
+    "status_description": "testicular atrophy"
+  },
+  "7524": {
+    "staff_description": "Testis, removal",
+    "status_description": "removal of testis"
+  },
+  "7525": {
+    "staff_description": "Epididymo-orchitis, chronic only",
+    "status_description": "chronic epididymo-orchitis"
+  },
+  "7527": {
+    "staff_description": "Prostate gland injuries, infections, hypertrophy, postoperative residuals",
+    "status_description": "prostate gland injury"
+  },
+  "7528": {
+    "staff_description": "Malignant neoplasms of the genitourinary system",
+    "status_description": "malignant genital or urinary neoplasm"
+  },
+  "7529": {
+    "staff_description": "Benign neoplasms of the genitourinary system",
+    "status_description": "benign genital or urinary neoplasm"
+  },
+  "7530": {
+    "staff_description": "Chronic renal disease requiring regular dialysis",
+    "status_description": "chronic renal disease"
+  },
+  "7531": {
+    "staff_description": "Kidney transplant",
+    "status_description": "kidney transplant"
+  },
+  "7532": {
+    "staff_description": "Renal tubular disorders",
+    "status_description": "renal tubular disorder"
+  },
+  "7533": {
+    "staff_description": "Cystic diseases of the kidneys",
+    "status_description": "cystic kidney disease"
+  },
+  "7534": {
+    "staff_description": "Atherosclerotic renal disease (renal artery stenosis or atheroembolic renal disease)",
+    "status_description": "atherosclerotic renal disease"
+  },
+  "7535": {
+    "staff_description": "Toxic nephropathy",
+    "status_description": "toxic nephropathy"
+  },
+  "7536": {
+    "staff_description": "Glomerulonephritis",
+    "status_description": "glomerulonephritis"
+  },
+  "7537": {
+    "staff_description": "Interstitial nephritis",
+    "status_description": "interstitial nephritis"
+  },
+  "7538": {
+    "staff_description": "Papillary necrosis",
+    "status_description": "papillary necrosis"
+  },
+  "7539": {
+    "staff_description": "Renal amyloid disease",
+    "status_description": "renal amyloid disease"
+  },
+  "7540": {
+    "staff_description": "Disseminated intravascular coagulation with renal cortical necrosis",
+    "status_description": "renal cortical necrosis"
+  },
+  "7541": {
+    "staff_description": "Renal involvement in systemic disease processes (see code for list)",
+    "status_description": "renal manifestation of systemic disease"
+  },
+  "7542": {
+    "staff_description": "Neurogenic bladder",
+    "status_description": "neurogenic bladder"
+  },
+  "7599": {
+    "staff_description": "Other genitourinary disability",
+    "status_description": "genital or urinary disability"
+  },
+  "7610": {
+    "staff_description": "Vulva, disease or injury of (including vulvovaginitis)",
+    "status_description": "vulval disease or injury"
+  },
+  "7611": {
+    "staff_description": "Vagina, disease or injury of",
+    "status_description": "vaginal disease or injury"
+  },
+  "7612": {
+    "staff_description": "Cervix, disease or injury of",
+    "status_description": "cervical disease or injury"
+  },
+  "7613": {
+    "staff_description": "Uterus, disease, injury, or adhesions of",
+    "status_description": "uterine disease injury or adhesions"
+  },
+  "7614": {
+    "staff_description": "Fallopian tube, disease, injury, or adhesions of (including PID)",
+    "status_description": "fallopian tube disease injury or adhesions"
+  },
+  "7615": {
+    "staff_description": "Ovary, disease, injury, or adhesions of",
+    "status_description": "ovarian disease injury or adhesions"
+  },
+  "7617": {
+    "staff_description": "Uterus and both ovaries, removal of, complete",
+    "status_description": "removal of uterus and both ovaries"
+  },
+  "7618": {
+    "staff_description": "Uterus, removal of, including corpus",
+    "status_description": "removal of uterus"
+  },
+  "7619": {
+    "staff_description": "Ovary, removal of",
+    "status_description": "removal of ovary"
+  },
+  "7620": {
+    "staff_description": "Ovaries, atrophy of both, complete",
+    "status_description": "ovarian atrophy"
+  },
+  "7621": {
+    "staff_description": "Uterus, prolapse",
+    "status_description": "prolapsed uterus"
+  },
+  "7622": {
+    "staff_description": "Uterus, displacement of",
+    "status_description": "displaced uterus"
+  },
+  "7623": {
+    "staff_description": "Pregnancy, surgical complications of",
+    "status_description": "surgical complications of pregnancy"
+  },
+  "7624": {
+    "staff_description": "Fistula, rectovaginal",
+    "status_description": "rectovaginal fistula"
+  },
+  "7625": {
+    "staff_description": "Fistula, urethrovaginal",
+    "status_description": "urethrovaginal fistula"
+  },
+  "7626": {
+    "staff_description": "Breast, surgery of",
+    "status_description": "breast surgery"
+  },
+  "7627": {
+    "staff_description": "Malignant neoplasms of gynecological system or breast",
+    "status_description": "malignant gynecological or breast neoplasm"
+  },
+  "7628": {
+    "staff_description": "Benign neoplasms of the gynecological system or breast",
+    "status_description": "benign gynecological or breast neoplasm"
+  },
+  "7629": {
+    "staff_description": "Endometriosis",
+    "status_description": "endometriosis"
+  },
+  "7699": {
+    "staff_description": "Other gynecological or breast disability",
+    "status_description": "gynecological or breast disability"
+  },
+  "7700": {
+    "staff_description": "Anemia, hypochromic-microcytic and megaloblastic",
+    "status_description": "microcytic or megaloblastic anemia"
+  },
+  "7702": {
+    "staff_description": "Agranulocytosis, acute",
+    "status_description": "agranulocytosis"
+  },
+  "7703": {
+    "staff_description": "Leukemia",
+    "status_description": "leukemia"
+  },
+  "7704": {
+    "staff_description": "Polycythemia vera",
+    "status_description": "polycythemia vera"
+  },
+  "7705": {
+    "staff_description": "Thrombocytopenia, primary, idiopathic or immune",
+    "status_description": "thrombocytopenia"
+  },
+  "7706": {
+    "staff_description": "Splenectomy",
+    "status_description": "splenectomy"
+  },
+  "7707": {
+    "staff_description": "Spleen, injury of, healed",
+    "status_description": "spleen injury"
+  },
+  "7709": {
+    "staff_description": "Hodgkin's disease",
+    "status_description": "Hodgkin's disease"
+  },
+  "7710": {
+    "staff_description": "Adenitis, tuberculous, active or inactive",
+    "status_description": "tuberculous lymphadenitis"
+  },
+  "7714": {
+    "staff_description": "Sickle cell anemia",
+    "status_description": "sickle cell anemia"
+  },
+  "7715": {
+    "staff_description": "Non-Hodgkin's lymphoma",
+    "status_description": "non-Hodgkin's lymphoma"
+  },
+  "7716": {
+    "staff_description": "Aplastic anemia",
+    "status_description": "aplastic anemia"
+  },
+  "7799": {
+    "staff_description": "Other hemic or lymphatic system disability",
+    "status_description": "hemic or lymphatic disability"
+  },
+  "7800": {
+    "staff_description": "Disfigurement of the head, face, or neck",
+    "status_description": "disfigurement of head face or neck"
+  },
+  "7801": {
+    "staff_description": "Scars, other than head, face, or neck, that are deep or that cause limited motion",
+    "status_description": "scarring"
+  },
+  "7802": {
+    "staff_description": "Scars, other than head, face, or neck, that are superficial and that do not cause limited motion",
+    "status_description": "scarring"
+  },
+  "7803": {
+    "staff_description": "Scars, superficial, unstable",
+    "status_description": "scarring"
+  },
+  "7804": {
+    "staff_description": "Scars, superficial, painful on examination",
+    "status_description": "scarring"
+  },
+  "7805": {
+    "staff_description": "Scars, other",
+    "status_description": "scarring"
+  },
+  "7806": {
+    "staff_description": "Dermatitis or eczema",
+    "status_description": "eczema"
+  },
+  "7807": {
+    "staff_description": "American (New World) leishmaniasis (mucocutaneous, espundia)",
+    "status_description": "leishmaniasis"
+  },
+  "7808": {
+    "staff_description": "Old World leishmaniasis (cutaneous, Oriental sore)",
+    "status_description": "leishmaniasis"
+  },
+  "7809": {
+    "staff_description": "Discoid lupus erythematosus or subacute cutaneous lupus erythematosus",
+    "status_description": "cutaneous lupus erythematosus"
+  },
+  "7810": {
+    "staff_description": "Pinta",
+    "status_description": "pinta"
+  },
+  "7811": {
+    "staff_description": "Tuberculosis luposa (lupus vulgaris), active or inactive",
+    "status_description": "tuberculosis luposa"
+  },
+  "7812": {
+    "staff_description": "Verruga peruana",
+    "status_description": "verruga peruana"
+  },
+  "7813": {
+    "staff_description": "Dermatophytosis",
+    "status_description": "ringworm"
+  },
+  "7814": {
+    "staff_description": "Tinea barbae",
+    "status_description": "tinea barbae"
+  },
+  "7815": {
+    "staff_description": "Bullous disorders",
+    "status_description": "bullous disease"
+  },
+  "7816": {
+    "staff_description": "Psoriasis",
+    "status_description": "psoriasis"
+  },
+  "7817": {
+    "staff_description": "Exfoliative dermatitis (erythroderma)",
+    "status_description": "exfoliative dermatitis"
+  },
+  "7818": {
+    "staff_description": "Malignant skin neoplasms (other than malignant melanoma)",
+    "status_description": "malignant skin neoplasm"
+  },
+  "7819": {
+    "staff_description": "Benign skin neoplasms",
+    "status_description": "benign skin neoplasm"
+  },
+  "7820": {
+    "staff_description": "Infections of the skin not listed elsewhere (including bacterial, fungal, viral, treponemal)",
+    "status_description": "skin infection"
+  },
+  "7821": {
+    "staff_description": "Cutaneous manifestations of collagen-vascular diseases not listed elsewhere (including scleroderma)",
+    "status_description": "cutaneous manifestation of collagen-vascular disease"
+  },
+  "7822": {
+    "staff_description": "Papulosquamous disorders not listed elsewhere (including lichen planus, large or small plaque parap)",
+    "status_description": "papulosquamous disorder"
+  },
+  "7823": {
+    "staff_description": "Vitiligo",
+    "status_description": "vitiligo"
+  },
+  "7824": {
+    "staff_description": "Diseases of keratinization (including icthyoses, Darier's disease, and palmoplantar keratoderma)",
+    "status_description": "keratinization disease"
+  },
+  "7825": {
+    "staff_description": "Urticaria",
+    "status_description": "hives"
+  },
+  "7826": {
+    "staff_description": "Vasculitis, primary cutaneous",
+    "status_description": "vasculitis"
+  },
+  "7827": {
+    "staff_description": "Erythema multiforme; Toxic epidermal necrolysis",
+    "status_description": "erythema multiforme or toxic epidermal necrolysis"
+  },
+  "7828": {
+    "staff_description": "Acne",
+    "status_description": "acne"
+  },
+  "7829": {
+    "staff_description": "Chloracne",
+    "status_description": "chloracne"
+  },
+  "7830": {
+    "staff_description": "Scarring alopecia",
+    "status_description": "scarring alopecia"
+  },
+  "7831": {
+    "staff_description": "Alopecia areata",
+    "status_description": "alopecia areata"
+  },
+  "7832": {
+    "staff_description": "Hyperhidrosis",
+    "status_description": "hyperhidrosis"
+  },
+  "7833": {
+    "staff_description": "Malignant melanoma",
+    "status_description": "malignant melanoma"
+  },
+  "7899": {
+    "staff_description": "Other skin disability",
+    "status_description": "skin disability"
+  },
+  "7900": {
+    "staff_description": "Hyperthyroidism",
+    "status_description": "hyperthyroidism"
+  },
+  "7901": {
+    "staff_description": "Thyroid gland, toxic adenoma of",
+    "status_description": "thyroid adenoma"
+  },
+  "7902": {
+    "staff_description": "Thyroid gland, nontoxic adenoma of",
+    "status_description": "thyroid adenoma"
+  },
+  "7903": {
+    "staff_description": "Hypothyroidism",
+    "status_description": "hypothyroidism"
+  },
+  "7904": {
+    "staff_description": "Hyperparathyroidism",
+    "status_description": "hyperparathyroidism"
+  },
+  "7905": {
+    "staff_description": "Hypoparathyroidism",
+    "status_description": "hypoparathyroidism"
+  },
+  "7907": {
+    "staff_description": "Cushing's syndrome",
+    "status_description": "Cushing's syndrome"
+  },
+  "7908": {
+    "staff_description": "Acromegaly",
+    "status_description": "acromegaly"
+  },
+  "7909": {
+    "staff_description": "Diabetes insipidus",
+    "status_description": "diabetes insipidus"
+  },
+  "7911": {
+    "staff_description": "Addison's disease (Adrenal Cortical Hypofunction)",
+    "status_description": "Addison's disease"
+  },
+  "7912": {
+    "staff_description": "Pluriglandular syndrome",
+    "status_description": "pluriglandular syndrome"
+  },
+  "7913": {
+    "staff_description": "Diabetes mellitus",
+    "status_description": "diabetes"
+  },
+  "7914": {
+    "staff_description": "Neoplasm, malignant, any specified part of the endocrine system",
+    "status_description": "malignant endocrine neoplasm"
+  },
+  "7915": {
+    "staff_description": "Neoplasm, benign, any specified part of the endocrine system",
+    "status_description": "benign endocrine neoplasm"
+  },
+  "7916": {
+    "staff_description": "Hyperpituitarism (prolactin secreting pituitary dysfunction)",
+    "status_description": "hyperpituitarism"
+  },
+  "7917": {
+    "staff_description": "Hyperaldosteronism (benign or malignant)",
+    "status_description": "hyperaldosteronism"
+  },
+  "7918": {
+    "staff_description": "Pheochromocytoma (benign or malignant)",
+    "status_description": "pheochromocytoma"
+  },
+  "7919": {
+    "staff_description": "C-cell hyperplasia of the thyroid",
+    "status_description": "C-cell hyperplasia"
+  },
+  "7999": {
+    "staff_description": "Other endocrine system disability",
+    "status_description": "endocrine system disability"
+  },
+  "8000": {
+    "staff_description": "Encephalitis, epidemic, chronic",
+    "status_description": "chronic epidemic encephalitis"
+  },
+  "8002": {
+    "staff_description": "Brain, new growth of, malignant",
+    "status_description": "malignant brain growth"
+  },
+  "8003": {
+    "staff_description": "Brain, new growth of, benign",
+    "status_description": "benign brain growth"
+  },
+  "8004": {
+    "staff_description": "Paralysis agitans",
+    "status_description": "Parkinson's disease"
+  },
+  "8005": {
+    "staff_description": "Bulbar palsy",
+    "status_description": "bulbar palsy"
+  },
+  "8007": {
+    "staff_description": "Brain, vessels, embolism of",
+    "status_description": "brain aneurysm"
+  },
+  "8008": {
+    "staff_description": "Brain, vessels, thrombosis of",
+    "status_description": "cerebral venous sinus thrombosis"
+  },
+  "8009": {
+    "staff_description": "Brain, vessels, hemorrhage from",
+    "status_description": "hemorrhagic stroke"
+  },
+  "8010": {
+    "staff_description": "Myelitis",
+    "status_description": "myelitis"
+  },
+  "8011": {
+    "staff_description": "Poliomyelitis, anterior",
+    "status_description": "polio"
+  },
+  "8012": {
+    "staff_description": "Hematomyelia",
+    "status_description": "hematomyelia"
+  },
+  "8013": {
+    "staff_description": "Syphilis, cerebrospinal",
+    "status_description": "neurosyphilis"
+  },
+  "8014": {
+    "staff_description": "Syphilis, meningovascular",
+    "status_description": "meningovascular syphilis"
+  },
+  "8015": {
+    "staff_description": "Tabes dorsalis",
+    "status_description": "tabes dorsalis"
+  },
+  "8017": {
+    "staff_description": "Amyotrophic lateral sclerosis",
+    "status_description": "amyotrophic lateral sclerosis"
+  },
+  "8018": {
+    "staff_description": "Multiple sclerosis",
+    "status_description": "multiple sclerosis"
+  },
+  "8019": {
+    "staff_description": "Meningitis, cerebrospinal, epidemic",
+    "status_description": "epidemic cerebrospinal meningitis"
+  },
+  "8020": {
+    "staff_description": "Brain, abscess of",
+    "status_description": "brain abscess"
+  },
+  "8021": {
+    "staff_description": "Spinal cord, new growths of, malignant",
+    "status_description": "malignant spinal cord growth"
+  },
+  "8022": {
+    "staff_description": "Spinal cord, new growths of, benign",
+    "status_description": "benign spinal cord growth"
+  },
+  "8023": {
+    "staff_description": "Progressive muscular atrophy",
+    "status_description": "progressive muscular atrophy"
+  },
+  "8024": {
+    "staff_description": "Syringomyelia",
+    "status_description": "syringomyelia"
+  },
+  "8025": {
+    "staff_description": "Myasthenia gravis",
+    "status_description": "myasthenia gravis"
+  },
+  "8045": {
+    "staff_description": "Brain disease due to trauma",
+    "status_description": "brain disease due to trauma"
+  },
+  "8046": {
+    "staff_description": "Cerebral arteriosclerosis",
+    "status_description": "cerebral arteriosclerosis"
+  },
+  "8099": {
+    "staff_description": "Other central nervous system disease",
+    "status_description": "central nervous system disease"
+  },
+  "8100": {
+    "staff_description": "Migraine",
+    "status_description": "migraines"
+  },
+  "8103": {
+    "staff_description": "Tic, convulsive",
+    "status_description": "convulsive tic"
+  },
+  "8104": {
+    "staff_description": "Paramyoclonus multiplex (convulsive state, myoclonic type)",
+    "status_description": "paramyoclonus multiplex"
+  },
+  "8105": {
+    "staff_description": "Chorea, Sydenham's",
+    "status_description": "Sydenham's chorea"
+  },
+  "8106": {
+    "staff_description": "Chorea, Huntington's",
+    "status_description": "Huntington's disease"
+  },
+  "8107": {
+    "staff_description": "Athetosis, acquired",
+    "status_description": "athetosis"
+  },
+  "8108": {
+    "staff_description": "Narcolepsy",
+    "status_description": "narcolepsy"
+  },
+  "8199": {
+    "staff_description": "Other misc. neurological diseases",
+    "status_description": "neurological disease"
+  },
+  "8205": {
+    "staff_description": "Fifth (trigeminal) cranial nerve, paralysis of",
+    "status_description": "trigeminal nerve paralysis"
+  },
+  "8207": {
+    "staff_description": "Seventh (facial) cranial nerve, paralysis of",
+    "status_description": "facial nerve paralysis"
+  },
+  "8209": {
+    "staff_description": "Ninth (glossopharyngeal) cranial nerve, paralysis of",
+    "status_description": "glossopharyngeal nerve paralysis"
+  },
+  "8210": {
+    "staff_description": "Tenth (pneumogastric, vagus) cranial nerve, paralysis of",
+    "status_description": "vagus nerve paralysis"
+  },
+  "8211": {
+    "staff_description": "Eleventh (spinal accessory, external branch) cranial nerve, paralysis of",
+    "status_description": "accessory nerve paralysis"
+  },
+  "8212": {
+    "staff_description": "Twelfth (hypoglossal) cranial nerve, paralysis of",
+    "status_description": "hypoglossal nerve paralysis"
+  },
+  "8299": {
+    "staff_description": "Other cranial nerve paralysis",
+    "status_description": "cranial nerve paralysis"
+  },
+  "8305": {
+    "staff_description": "Fifth (trigeminal) cranial nerve, neuritis",
+    "status_description": "trigeminal nerve neuritis"
+  },
+  "8307": {
+    "staff_description": "Seventh (facial) cranial nerve, neuritis",
+    "status_description": "facial nerve neuritis"
+  },
+  "8309": {
+    "staff_description": "Ninth (glossopharyngeal) cranial nerve, neuritis",
+    "status_description": "glossopharyngeal nerve neuritis"
+  },
+  "8310": {
+    "staff_description": "Tenth (pneumogastric, vagus) cranial nerve, neuritis",
+    "status_description": "vagus nerve neuritis"
+  },
+  "8311": {
+    "staff_description": "Eleventh (spinal accessory, external branch) cranial nerve, neuritis",
+    "status_description": "accessory nerve neuritis"
+  },
+  "8312": {
+    "staff_description": "Twelfth (hypoglossal) cranial nerve, neuritis",
+    "status_description": "hypoglossal nerve neuritis"
+  },
+  "8399": {
+    "staff_description": "Other cranial nerve neuritis",
+    "status_description": "cranial nerve neuritis"
+  },
+  "8405": {
+    "staff_description": "Fifth (trigeminal) cranial nerve, neuralgia",
+    "status_description": "trigeminal nerve neuralgia"
+  },
+  "8407": {
+    "staff_description": "Seventh (facial) cranial nerve, neuralgia",
+    "status_description": "facial nerve neuralgia"
+  },
+  "8409": {
+    "staff_description": "Ninth (glossopharyngeal) cranial nerve, neuralgia",
+    "status_description": "glossopharyngeal nerve neuralgia"
+  },
+  "8410": {
+    "staff_description": "Tenth (pneumogastric, vagus) cranial nerve, neuralgia",
+    "status_description": "vagus nerve neuralgia"
+  },
+  "8411": {
+    "staff_description": "Eleventh (spinal accessory, external branch) cranial nerve, neuralgia",
+    "status_description": "accessory nerve neuralgia"
+  },
+  "8412": {
+    "staff_description": "Twelfth (hypoglossal) cranial nerve, neuralgia",
+    "status_description": "hypoglossal nerve neuralgia"
+  },
+  "8499": {
+    "staff_description": "Other cranial nerve neuralgia",
+    "status_description": "cranial nerve neuralgia"
+  },
+  "8510": {
+    "staff_description": "Upper radicular group (fifth and sixth cervicals), paralysis of",
+    "status_description": "paralysis of upper radicular group"
+  },
+  "8511": {
+    "staff_description": "Middle radicular group, paralysis of",
+    "status_description": "paralysis of middle radicular group"
+  },
+  "8512": {
+    "staff_description": "Lower radicular group, paralysis of",
+    "status_description": "paralysis of lower radicular group"
+  },
+  "8513": {
+    "staff_description": "All radicular groups, paralysis of",
+    "status_description": "paralysis of all radicular groups"
+  },
+  "8514": {
+    "staff_description": "The musculospiral nerve (radial nerve), paralysis of",
+    "status_description": "musculospiral nerve paralysis"
+  },
+  "8515": {
+    "staff_description": "The median nerve, paralysis of",
+    "status_description": "median nerve paralysis"
+  },
+  "8516": {
+    "staff_description": "The ulnar nerve, paralysis of",
+    "status_description": "ulnar nerve paralysis"
+  },
+  "8517": {
+    "staff_description": "Musculocutaneous nerve, paralysis of",
+    "status_description": "musculocutaneous nerve paralysis"
+  },
+  "8518": {
+    "staff_description": "Circumflex nerve, paralysis of",
+    "status_description": "circumflex nerve paralysis"
+  },
+  "8519": {
+    "staff_description": "Long thoracic nerve, paralysis of",
+    "status_description": "long thoracic nerve paralysis"
+  },
+  "8520": {
+    "staff_description": "Sciatic nerve, paralysis of",
+    "status_description": "sciatic nerve paralysis"
+  },
+  "8521": {
+    "staff_description": "External popliteal nerve (common peroneal), paralysis of",
+    "status_description": "external popliteal nerve paralysis"
+  },
+  "8522": {
+    "staff_description": "Musculocutaneous nerve (superficial peroneal), paralysis of",
+    "status_description": "musculocutaneous nerve paralysis"
+  },
+  "8523": {
+    "staff_description": "Anterior tibial nerve (deep peroneal), paralysis of",
+    "status_description": "anterior tibial nerve paralysis"
+  },
+  "8524": {
+    "staff_description": "Internal popliteal nerve (tibial), paralysis of",
+    "status_description": "internal popliteal nerve paralysis"
+  },
+  "8525": {
+    "staff_description": "Posterior tibial nerve, paralysis of",
+    "status_description": "posterior tibial nerve paralysis"
+  },
+  "8526": {
+    "staff_description": "Anterior crural nerve (femoral), paralysis of",
+    "status_description": "anterior crural nerve paralysis"
+  },
+  "8527": {
+    "staff_description": "Internal saphenous nerve, paralysis of",
+    "status_description": "internal saphenous nerve paralysis"
+  },
+  "8528": {
+    "staff_description": "Obturator nerve, paralysis of",
+    "status_description": "obturator nerve paralysis"
+  },
+  "8529": {
+    "staff_description": "External cutaneous nerve of thigh, paralysis of",
+    "status_description": "external cutaneous nerve of thigh paralysis"
+  },
+  "8530": {
+    "staff_description": "Ilio-inguinal nerve, paralysis of",
+    "status_description": "ilioinguinal nerve paralysis"
+  },
+  "8540": {
+    "staff_description": "Soft-tissue sarcoma (of neurogenic origin)",
+    "status_description": "soft-tissue sarcoma"
+  },
+  "8599": {
+    "staff_description": "Other peripheral nerve paralysis",
+    "status_description": "peripheral nerve paralysis"
+  },
+  "8610": {
+    "staff_description": "Upper radicular group (fifth and sixth cervicals), neuritis",
+    "status_description": "neuritis of upper radicular group"
+  },
+  "8611": {
+    "staff_description": "Middle radicular group, neuritis",
+    "status_description": "neuritis of middle radicular group"
+  },
+  "8612": {
+    "staff_description": "Lower radicular group, neuritis",
+    "status_description": "neuritis of lower radicular group"
+  },
+  "8613": {
+    "staff_description": "All radicular groups, neuritis",
+    "status_description": "neuritis of all radicular groups"
+  },
+  "8614": {
+    "staff_description": "The musculospiral nerve (radial nerve), neuritis",
+    "status_description": "musculospiral nerve neuritis"
+  },
+  "8615": {
+    "staff_description": "The median nerve, neuritis",
+    "status_description": "median nerve neuritis"
+  },
+  "8616": {
+    "staff_description": "The ulnar nerve, neuritis",
+    "status_description": "ulnar nerve neuritis"
+  },
+  "8617": {
+    "staff_description": "Musculocutaneous nerve, neuritis",
+    "status_description": "musculocutaneous nerve neuritis"
+  },
+  "8618": {
+    "staff_description": "Circumflex nerve, neuritis",
+    "status_description": "circumflex nerve neuritis"
+  },
+  "8619": {
+    "staff_description": "Long thoracic nerve, neuritis",
+    "status_description": "long thoracic nerve neuritis"
+  },
+  "8620": {
+    "staff_description": "Sciatic nerve, neuritis",
+    "status_description": "sciatic nerve neuritis"
+  },
+  "8621": {
+    "staff_description": "External popliteal nerve (common peroneal), neuritis",
+    "status_description": "external popliteal nerve neuritis"
+  },
+  "8622": {
+    "staff_description": "Musculocutaneous nerve (superficial peroneal), neuritis",
+    "status_description": "musculocutaneous nerve neuritis"
+  },
+  "8623": {
+    "staff_description": "Anterior tibial nerve (deep peroneal), neuritis",
+    "status_description": "anterior tibial nerve neuritis"
+  },
+  "8624": {
+    "staff_description": "Internal popliteal nerve (tibial), neuritis",
+    "status_description": "internal popliteal nerve neuritis"
+  },
+  "8625": {
+    "staff_description": "Posterior tibial nerve, neuritis",
+    "status_description": "posterior tibial nerve neuritis"
+  },
+  "8626": {
+    "staff_description": "Anterior crural nerve (femoral), neuritis",
+    "status_description": "anterior crural nerve neuritis"
+  },
+  "8627": {
+    "staff_description": "Internal saphenous nerve, neuritis",
+    "status_description": "internal saphenous nerve neuritis"
+  },
+  "8628": {
+    "staff_description": "Obturator nerve, neuritis",
+    "status_description": "obturator nerve neuritis"
+  },
+  "8629": {
+    "staff_description": "External cutaneous nerve of thigh, neuritis",
+    "status_description": "external cutaneous nerve of thigh neuritis"
+  },
+  "8630": {
+    "staff_description": "Ilio-inguinal nerve, neuritis",
+    "status_description": "ilioinguinal nerve neuritis"
+  },
+  "8699": {
+    "staff_description": "Other peripheral nerve neuritis",
+    "status_description": "peripheral nerve neuritis"
+  },
+  "8710": {
+    "staff_description": "Upper radicular group (fifth and sixth cervicals), neuralgia",
+    "status_description": "neuralgia of upper radicular group"
+  },
+  "8711": {
+    "staff_description": "Middle radicular group, neuralgia",
+    "status_description": "neuralgia of middle radicular group"
+  },
+  "8712": {
+    "staff_description": "Lower radicular group, neuralgia",
+    "status_description": "neuralgia of lower radicular group"
+  },
+  "8713": {
+    "staff_description": "All radicular groups, neuralgia",
+    "status_description": "neuralgia of all radicular groups"
+  },
+  "8714": {
+    "staff_description": "The musculospiral nerve (radial nerve), neuralgia",
+    "status_description": "musculospiral nerve neuralgia"
+  },
+  "8715": {
+    "staff_description": "The median nerve, neuralgia",
+    "status_description": "median nerve neuralgia"
+  },
+  "8716": {
+    "staff_description": "The ulnar nerve, neuralgia",
+    "status_description": "ulnar nerve neuralgia"
+  },
+  "8717": {
+    "staff_description": "Musculocutaneous nerve, neuralgia",
+    "status_description": "musculocutaneous nerve neuralgia"
+  },
+  "8718": {
+    "staff_description": "Circumflex nerve, neuralgia",
+    "status_description": "circumflex nerve neuralgia"
+  },
+  "8719": {
+    "staff_description": "Long thoracic nerve, neuralgia",
+    "status_description": "long thoracic nerve neuralgia"
+  },
+  "8720": {
+    "staff_description": "Sciatic nerve, neuralgia",
+    "status_description": "sciatic nerve neuralgia"
+  },
+  "8721": {
+    "staff_description": "External popliteal nerve (common peroneal), neuralgia",
+    "status_description": "external popliteal nerve neuralgia"
+  },
+  "8722": {
+    "staff_description": "Musculocutaneous nerve (superficial peroneal), neuralgia",
+    "status_description": "musculocutaneous nerve neuralgia"
+  },
+  "8723": {
+    "staff_description": "Anterior tibial nerve (deep peroneal), neuralgia",
+    "status_description": "anterior tibial nerve neuralgia"
+  },
+  "8724": {
+    "staff_description": "Internal popliteal nerve (tibial), neuralgia",
+    "status_description": "internal popliteal nerve neuralgia"
+  },
+  "8725": {
+    "staff_description": "Posterior tibial nerve, neuralgia",
+    "status_description": "posterior tibial nerve neuralgia"
+  },
+  "8726": {
+    "staff_description": "Anterior crural nerve (femoral), neuralgia",
+    "status_description": "anterior crural nerve neuralgia"
+  },
+  "8727": {
+    "staff_description": "Internal saphenous nerve, neuralgia",
+    "status_description": "internal saphenous nerve neuralgia"
+  },
+  "8728": {
+    "staff_description": "Obturator nerve, neuralgia",
+    "status_description": "obturator nerve neuralgia"
+  },
+  "8729": {
+    "staff_description": "External cutaneous nerve of thigh, neuralgia",
+    "status_description": "external cutaneous nerve of thigh neuralgia"
+  },
+  "8730": {
+    "staff_description": "Ilio-inguinal nerve, neuralgia",
+    "status_description": "ilioinguinal nerve neuralgia"
+  },
+  "8799": {
+    "staff_description": "Other peripheral nerve neuralgia",
+    "status_description": "peripheral nerve neuralgia"
+  },
+  "8850": {
+    "staff_description": "Undiagnosed condition, musculoskeletal diseases",
+    "status_description": "undiagnosed condition related to musculoskeletal disease"
+  },
+  "8851": {
+    "staff_description": "Undiagnosed condition, amputations",
+    "status_description": "undiagnosed condition related to amputation"
+  },
+  "8852": {
+    "staff_description": "Undiagnosed condition, joints, skull, and ribs",
+    "status_description": "undiagnosed joints skull or ribs condition"
+  },
+  "8853": {
+    "staff_description": "Undiagnosed condition, muscle injuries",
+    "status_description": "undiagnosed condition related to muscle injuries"
+  },
+  "8860": {
+    "staff_description": "Undiagnosed condition, diseases of the eye",
+    "status_description": "undiagnosed condition related to diseases of the eye"
+  },
+  "8861": {
+    "staff_description": "Undiagnosed condition, hearing loss",
+    "status_description": "undiagnosed condition related to hearing loss"
+  },
+  "8862": {
+    "staff_description": "Undiagnosed condition, ear and other sense organs",
+    "status_description": "undiagnosed ear or other sense organ condition"
+  },
+  "8863": {
+    "staff_description": "Undiagnosed condition, systemic diseases",
+    "status_description": "undiagnosed condition related to systemic disease"
+  },
+  "8865": {
+    "staff_description": "Undiagnosed condition, nose and throat",
+    "status_description": "undiagnosed nose or throat condition"
+  },
+  "8866": {
+    "staff_description": "Undiagnosed condition, trachea and bronchi",
+    "status_description": "undiagnosed tracheal or broncheal condition"
+  },
+  "8867": {
+    "staff_description": "Undiagnosed condition, tuberculosis",
+    "status_description": "undiagnosed condition related to tuberculosis"
+  },
+  "8868": {
+    "staff_description": "Undiagnosed condition, lungs and pleura",
+    "status_description": "undiagnosed lung condition"
+  },
+  "8870": {
+    "staff_description": "Undiagnosed condition, heart diseases",
+    "status_description": "undiagnosed condition related to heart disease"
+  },
+  "8871": {
+    "staff_description": "Undiagnosed condition, arteries and veins",
+    "status_description": "undiagnosed arterial or venous condition"
+  },
+  "8872": {
+    "staff_description": "Undiagnosed condition, upper digestive system",
+    "status_description": "undiagnosed digestive condition"
+  },
+  "8873": {
+    "staff_description": "Undiagnosed condition, lower digestive system",
+    "status_description": "undiagnosed digestive condition"
+  },
+  "8875": {
+    "staff_description": "Undiagnosed condition, genitourinary system",
+    "status_description": "undiagnosed genital or urniary condition"
+  },
+  "8876": {
+    "staff_description": "Undiagnosed condition, gynecological system",
+    "status_description": "undiagnosed gynecological condition"
+  },
+  "8877": {
+    "staff_description": "Undiagnosed condition, hemic and lymphatic system",
+    "status_description": "undiagnosed hemic or lymphatic condition"
+  },
+  "8878": {
+    "staff_description": "Undiagnosed condition, skin",
+    "status_description": "undiagnosed skin condition"
+  },
+  "8879": {
+    "staff_description": "Undiagnosed condition, endocrine system",
+    "status_description": "undiagnosed endocrine condition"
+  },
+  "8880": {
+    "staff_description": "Undiagnosed condition, central nervous system",
+    "status_description": "undiagnosed condition of the central nervous system"
+  },
+  "8881": {
+    "staff_description": "Undiagnosed condition, miscellaneous neurological",
+    "status_description": "undiagnosed neurological condition"
+  },
+  "8882": {
+    "staff_description": "Undiagnosed condition, cranial nerve paralysis",
+    "status_description": "undiagnosed condition related to cranial nerve paralysis"
+  },
+  "8883": {
+    "staff_description": "Undiagnosed condition, cranial nerve neuritis",
+    "status_description": "undiagnosed condition related to cranial nerve neuritis"
+  },
+  "8884": {
+    "staff_description": "Undiagnosed condition, cranial nerve neuralgia",
+    "status_description": "undiagnosed condition related to cranial nerve neuralgia"
+  },
+  "8885": {
+    "staff_description": "Undiagnosed condition, peripheral nerve paralysis",
+    "status_description": "undiagnosed condition related to peripheral nerve paralysis"
+  },
+  "8886": {
+    "staff_description": "Undiagnosed condition, peripheral nerve neuritis",
+    "status_description": "undiagnosed condition related to peripheral nerve neuritis"
+  },
+  "8887": {
+    "staff_description": "Undiagnosed condition, peripheral nerve neuralgia",
+    "status_description": "undiagnosed condition related to peripheral nerve neuralgia"
+  },
+  "8889": {
+    "staff_description": "Undiagnosed condition, epilepsies",
+    "status_description": "undiagnosed epileptic condition"
+  },
+  "8892": {
+    "staff_description": "Undiagnosed condition, psychotic disorders",
+    "status_description": "undiagnosed psychotic condition"
+  },
+  "8893": {
+    "staff_description": "Undiagnosed condition, organic mental",
+    "status_description": "undiagnosed organic mental condition"
+  },
+  "8894": {
+    "staff_description": "Undiagnosed condition, psychoneurotic",
+    "status_description": "undiagnosed psychonerotic condition"
+  },
+  "8895": {
+    "staff_description": "Undiagnosed condition, psychophysiologic",
+    "status_description": "undiagnosed psychophysiologic condition"
+  },
+  "8899": {
+    "staff_description": "Undiagnosed condition, dental and oral",
+    "status_description": "undiagnosed dental or oral condition"
+  },
+  "8910": {
+    "staff_description": "Epilepsy, grand mal",
+    "status_description": "epilepsy"
+  },
+  "8911": {
+    "staff_description": "Epilepsy, petit mal",
+    "status_description": "epilepsy"
+  },
+  "8912": {
+    "staff_description": "Epilepsy, Jacksonian and focal motor or sensory",
+    "status_description": "epilepsy"
+  },
+  "8913": {
+    "staff_description": "Epilepsy, diencephalic",
+    "status_description": "epilepsy"
+  },
+  "8914": {
+    "staff_description": "Epilepsy, psychomotor",
+    "status_description": "epilepsy"
+  },
+  "8999": {
+    "staff_description": "Other epilepsy",
+    "status_description": "epilepsy"
+  },
+  "9201": {
+    "staff_description": "Schizophrenia, disorganized type",
+    "status_description": "schizophrenia"
+  },
+  "9202": {
+    "staff_description": "Schizophrenia, catatonic type",
+    "status_description": "schizophrenia"
+  },
+  "9203": {
+    "staff_description": "Schizophrenia, paranoid type",
+    "status_description": "schizophrenia"
+  },
+  "9204": {
+    "staff_description": "Schizophrenia, undifferentiated type",
+    "status_description": "schizophrenia"
+  },
+  "9205": {
+    "staff_description": "Schizophrenia, residual type; other and unspecified types",
+    "status_description": "schizophrenia"
+  },
+  "9208": {
+    "staff_description": "Delusional disorder",
+    "status_description": "delusional disorder"
+  },
+  "9210": {
+    "staff_description": "Psychotic disorder, not otherwise specified (atypical psychosis)",
+    "status_description": "psychotic disorder"
+  },
+  "9211": {
+    "staff_description": "Schizoaffective disorder",
+    "status_description": "schizoaffective disorder"
+  },
+  "9299": {
+    "staff_description": "Other psychotic disorder",
+    "status_description": "psychotic disorder"
+  },
+  "9300": {
+    "staff_description": "Delirium",
+    "status_description": "delirium"
+  },
+  "9301": {
+    "staff_description": "Dementia due to infection (see code for list)",
+    "status_description": "dementia"
+  },
+  "9304": {
+    "staff_description": "Dementia due to head trauma",
+    "status_description": "dementia"
+  },
+  "9305": {
+    "staff_description": "Vascular dementia",
+    "status_description": "vascular dementia"
+  },
+  "9310": {
+    "staff_description": "Dementia of unknown etiology",
+    "status_description": "dementia"
+  },
+  "9312": {
+    "staff_description": "Dementia of the Alzheimer's type",
+    "status_description": "Alzheimer's disease"
+  },
+  "9326": {
+    "staff_description": "Dementia due to other neurologic or general medical conditions, or substance- induced",
+    "status_description": "dementia"
+  },
+  "9327": {
+    "staff_description": "Organic mental disorder, other (inc. personality change due to a general medical condition)",
+    "status_description": "organic mental disorder"
+  },
+  "9400": {
+    "staff_description": "Generalized anxiety disorder",
+    "status_description": "generalized anxiety disorder"
+  },
+  "9403": {
+    "staff_description": "Specific (simple) phobia; social phobia",
+    "status_description": "specific phobia"
+  },
+  "9404": {
+    "staff_description": "Obsessive compulsive disorder",
+    "status_description": "obsessive compulsive disorder"
+  },
+  "9410": {
+    "staff_description": "Other and unspecified neurosis",
+    "status_description": "neurosis"
+  },
+  "9411": {
+    "staff_description": "Post-traumatic stress disorder",
+    "status_description": "post-traumatic stress disorder"
+  },
+  "9412": {
+    "staff_description": "Panic disorder and/or agoraphobia",
+    "status_description": "panic disorder or agoraphobia"
+  },
+  "9413": {
+    "staff_description": "Anxiety disorder, not otherwise specified",
+    "status_description": "anxiety disorder"
+  },
+  "9416": {
+    "staff_description": "Dissociative amnesia; diss. fugue; diss. identity disorder (multiple personality disorder)",
+    "status_description": "dissociative disorder"
+  },
+  "9417": {
+    "staff_description": "Depersonalization disorder",
+    "status_description": "depersonalization disorder"
+  },
+  "9421": {
+    "staff_description": "Somatization disorder",
+    "status_description": "somatization disorder"
+  },
+  "9422": {
+    "staff_description": "Pain disorder",
+    "status_description": "pain disorder"
+  },
+  "9423": {
+    "staff_description": "Undifferentiated somatoform disorder",
+    "status_description": "undifferentiated somatoform disorder"
+  },
+  "9424": {
+    "staff_description": "Conversion disorder",
+    "status_description": "conversion disorder"
+  },
+  "9425": {
+    "staff_description": "Hypochondriasis",
+    "status_description": "hypochondriasis"
+  },
+  "9431": {
+    "staff_description": "Cyclothymic disorder",
+    "status_description": "cyclothymic disorder"
+  },
+  "9432": {
+    "staff_description": "Bipolar disorder",
+    "status_description": "bipolar disorder"
+  },
+  "9433": {
+    "staff_description": "Dysthymic disorder",
+    "status_description": "dysthymic disorder"
+  },
+  "9434": {
+    "staff_description": "Major depressive disorder",
+    "status_description": "major depressive disorder"
+  },
+  "9435": {
+    "staff_description": "Mood disorder, not otherwise specified",
+    "status_description": "mood disorder"
+  },
+  "9440": {
+    "staff_description": "Chronic adjustment disorder",
+    "status_description": "chronic adjustment disorder"
+  },
+  "9499": {
+    "staff_description": "Other nonpsychotic emotional illness",
+    "status_description": "nonpsychotic emotional illness"
+  },
+  "9520": {
+    "staff_description": "Anorexia nervosa",
+    "status_description": "anorexia"
+  },
+  "9521": {
+    "staff_description": "Bulimia nervosa",
+    "status_description": "bulimia"
+  },
+  "9599": {
+    "staff_description": "Other eating disorder",
+    "status_description": "eating disorder"
+  },
+  "9900": {
+    "staff_description": "Maxilla or mandible, chronic osteomyelitis or osteoradionecrosis of",
+    "status_description": "chronic osteomyelitis or osteoradionecrosis of jaws"
+  },
+  "9901": {
+    "staff_description": "Mandible, loss of, complete, between angles",
+    "status_description": "loss of lower jaw"
+  },
+  "9902": {
+    "staff_description": "Mandible, loss of approximately one-half",
+    "status_description": "partial loss of lower jaw"
+  },
+  "9903": {
+    "staff_description": "Mandible, nonunion of",
+    "status_description": "nonunion of lower jaw"
+  },
+  "9904": {
+    "staff_description": "Mandible, malunion of",
+    "status_description": "malunion of lower jaw"
+  },
+  "9905": {
+    "staff_description": "Temporomandibular articulation, limited motion of",
+    "status_description": "limitation of jaw motion"
+  },
+  "9906": {
+    "staff_description": "Ramus, loss of whole or part of",
+    "status_description": "partial loss of lower jaw"
+  },
+  "9907": {
+    "staff_description": "Ramus, loss of less than one-half the substance of",
+    "status_description": "partial loss of lower jaw"
+  },
+  "9908": {
+    "staff_description": "Condyloid process, loss of, one or both sides",
+    "status_description": "partial loss of lower jaw"
+  },
+  "9909": {
+    "staff_description": "Coronoid process, loss of",
+    "status_description": "partial loss of lower jaw"
+  },
+  "9911": {
+    "staff_description": "Hard palate, loss of half or more",
+    "status_description": "loss of hard palate"
+  },
+  "9912": {
+    "staff_description": "Hard palate, loss of less than half of",
+    "status_description": "partial loss of hard palate"
+  },
+  "9913": {
+    "staff_description": "Teeth, loss of, due to loss of body of maxilla or mandible without loss of continuity",
+    "status_description": "tooth loss"
+  },
+  "9914": {
+    "staff_description": "Maxilla, loss of more than half",
+    "status_description": "loss of upper jaw"
+  },
+  "9915": {
+    "staff_description": "Maxilla, loss of half or less",
+    "status_description": "partial loss of upper jaw"
+  },
+  "9916": {
+    "staff_description": "Maxilla, malunion or nonunion of",
+    "status_description": "malunion or nonunion of upper jaw"
+  },
+  "9999": {
+    "staff_description": "Other dental or oral condition",
+    "status_description": "dental or oral condition"
+  }
+}
