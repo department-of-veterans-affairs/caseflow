@@ -231,6 +231,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/admin"
+      sleep 1
       expect(page).to have_content("Oldest Unassigned Tasks")
       # Expect 3 table rows, the header and 2 tasks
       expect(page).to have_selector("tr", count: 3)
