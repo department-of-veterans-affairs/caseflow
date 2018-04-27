@@ -10,6 +10,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
+import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
 import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
@@ -30,34 +31,29 @@ class AttorneyTaskTable extends React.PureComponent {
 
   collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
 
-  getQueueColumns = () => [
-    {
+  getQueueColumns = () => {
+    const columns = [{
       header: 'Case Details',
       valueFunction: this.getCaseDetailsLink
-    },
-    {
+    }, {
       header: 'Type(s)',
       valueFunction: (task) => task.attributes.task_id ?
         renderAppealType(this.getAppealForTask(task)) :
         <span {...redText}>Please ask your judge to assign this case to you in DAS</span>,
       span: (task) => task.attributes.task_id ? 1 : 5
-    },
-    {
+    }, {
       header: 'Docket Number',
       valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
       span: this.collapseColumnIfNoDASRecord
-    },
-    {
+    }, {
       header: 'Issues',
       valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
       span: this.collapseColumnIfNoDASRecord
-    },
-    {
+    }, {
       header: 'Due Date',
       valueFunction: (task) => task.attributes.task_id ? <DateString date={task.attributes.due_on} /> : null,
       span: this.collapseColumnIfNoDASRecord
-    },
-    {
+    }, {
       header: 'Reader Documents',
       span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
@@ -90,8 +86,20 @@ class AttorneyTaskTable extends React.PureComponent {
             docCount={docCount} />
         </LoadingDataDisplay>;
       }
+    }];
+
+    if (this.props.featureToggles.phase_two) {
+      columns.push({
+        header: 'Action',
+        span: this.collapseColumnIfNoDASRecord,
+        valueFunction: (task) => <SelectCheckoutFlowDropdown
+          constructRoute={(route) => `tasks/${task.vacolsId}/${route}`}
+          vacolsId={task.vacolsId} />
+      });
     }
-  ];
+
+    return columns;
+  };
 
   createLoadPromise = (task) => () => {
     if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
@@ -128,7 +136,8 @@ class AttorneyTaskTable extends React.PureComponent {
 
 AttorneyTaskTable.propTypes = {
   tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.object.isRequired,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');

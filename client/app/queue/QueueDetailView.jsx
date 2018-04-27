@@ -3,24 +3,19 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import _ from 'lodash';
 
-import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ReaderLink from './ReaderLink';
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
 import TabWindow from '../components/TabWindow';
-import SearchableDropdown from '../components/SearchableDropdown';
+import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
-import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
-import { DateString } from '../util/DateUtil';
 import {
-  setCaseReviewActionType,
-  stageAppeal,
-  checkoutStagedAppeal,
-  resetDecisionOptions
-} from './QueueActions';
+  fullWidth,
+  CATEGORIES
+} from './constants';
+import { DateString } from '../util/DateUtil';
 import {
   pushBreadcrumb,
   resetBreadcrumbs
@@ -28,15 +23,6 @@ import {
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
-const dropdownStyling = css({ minHeight: 0 });
-
-const draftDecisionOptions = [{
-  label: 'Decision Ready for Review',
-  value: DECISION_TYPES.DRAFT_DECISION
-}, {
-  label: 'OMO Ready for Review',
-  value: DECISION_TYPES.OMO_REQUEST
-}];
 
 class QueueDetailView extends React.PureComponent {
   componentDidMount = () => {
@@ -50,33 +36,9 @@ class QueueDetailView extends React.PureComponent {
     });
   }
 
-  changeRoute = (props) => {
-    const {
-      vacolsId,
-      history,
-      appeal: { attributes: { issues } }
-    } = this.props;
-    const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
-
-    this.props.resetDecisionOptions();
-    if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.checkoutStagedAppeal(vacolsId);
-    }
-
-    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      this.props.stageAppeal(vacolsId, {
-        issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
-      });
-    } else {
-      this.props.stageAppeal(vacolsId);
-    }
-    this.props.setCaseReviewActionType(decisionType);
-    history.push(`${history.location.pathname}/${route}`);
-  }
-
   render = () => {
     const {
+      vacolsId,
       appeal: { attributes: appeal },
       task: { attributes: task }
     } = this.props;
@@ -104,13 +66,7 @@ class QueueDetailView extends React.PureComponent {
         docCount={appeal.docCount}
         taskType="Draft Decision"
         longMessage />
-      {this.props.featureToggles.phase_two && <SearchableDropdown
-        name="Select an action"
-        placeholder="Select an action&hellip;"
-        options={draftDecisionOptions}
-        onChange={this.changeRoute}
-        hideLabel
-        dropdownStyling={dropdownStyling} />}
+      {this.props.featureToggles.phase_two && <SelectCheckoutFlowDropdown vacolsId={vacolsId} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={tabs} />
@@ -119,22 +75,18 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setCaseReviewActionType,
-  stageAppeal,
-  checkoutStagedAppeal,
-  resetDecisionOptions,
   pushBreadcrumb,
   resetBreadcrumbs
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));
+export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);

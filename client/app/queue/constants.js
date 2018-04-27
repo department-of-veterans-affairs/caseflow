@@ -37,6 +37,7 @@ export const ACTIONS = {
 export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
+export const dropdownStyling = css({ minHeight: 0 });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
@@ -56,6 +57,14 @@ export const DECISION_TYPES = {
   OMO_REQUEST: 'OMORequest',
   DRAFT_DECISION: 'DraftDecision'
 };
+
+export const DRAFT_DECISION_OPTIONS = [{
+  label: 'Decision Ready for Review',
+  value: DECISION_TYPES.DRAFT_DECISION
+}, {
+  label: 'OMO Ready for Review',
+  value: DECISION_TYPES.OMO_REQUEST
+}];
 
 export const SEARCH_ERROR_FOR = {
   INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
