@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import JudgeReviewTaskTable from './JudgeReviewTaskTable';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 

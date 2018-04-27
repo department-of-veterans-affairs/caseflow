@@ -6,7 +6,6 @@ import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
 import JudgeReviewTaskTable from './JudgeReviewTaskTable';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -40,7 +39,6 @@ class JudgeReviewTaskListView extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    const { taskType } = props;
 
     this.state = DISPLAYING_REVIEW_TASKS;
   }

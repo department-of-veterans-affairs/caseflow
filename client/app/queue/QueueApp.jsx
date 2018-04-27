@@ -45,7 +45,7 @@ class QueueApp extends React.PureComponent {
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {taskType === "Assign" ?
+      {taskType === 'Assign' ?
         <JudgeAssignTaskListView {...this.props} /> :
         <JudgeReviewTaskListView {...this.props} />}
     </SearchEnabledView>
