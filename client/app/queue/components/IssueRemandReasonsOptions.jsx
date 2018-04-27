@@ -77,6 +77,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   validate = () => this.getChosenOptions().length >= 1 &&
     this.validateChosenOptionsHaveCertification();
 
+  // todo: make scrollTo util function that also sets focus
+  // element focus info https://goo.gl/jCkoxP
   scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
     align: 'top',
     duration: 1500,
