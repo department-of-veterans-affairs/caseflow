@@ -34,17 +34,17 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
       {text && <div className="cf-loading-button-text">
         {text}
       </div>}
-        <div className="cf-loading-button-symbol">
-          <svg
-            width={imgSize}
-            height={imgSize}
-            viewBox="0 0 500 500"
-            className="cf-react-icon-loading-back">
-            <path
-              opacity="1"
-              fill={color}
-              fillOpacity="1"
-              d="M249.9,362c-6.5,0-12.8,1.2-18.9,3.5l-34.4,13.3l12.7,28.8l33-12.8c2.4-0.9,5-1.4,7.5-1.4s5.1,0.5,7.5,1.4
+      <div className="cf-loading-button-symbol">
+        <svg
+          width={imgSize}
+          height={imgSize}
+          viewBox="0 0 500 500"
+          className="cf-react-icon-loading-back">
+          <path
+            opacity="1"
+            fill={color}
+            fillOpacity="1"
+            d="M249.9,362c-6.5,0-12.8,1.2-18.9,3.5l-34.4,13.3l12.7,28.8l33-12.8c2.4-0.9,5-1.4,7.5-1.4s5.1,0.5,7.5,1.4
                   l33.2,12.8l12.7-28.8l-34.6-13.4C262.7,363.2,256.4,362,249.9,362 M418.9,319.9l-28.8,12.7l19.1,49.6c3.5,9,0.1,15.9-2.1,19.3
                   c-4,5.8-10.4,9.3-17.2,9.3h0c-2.6,0-5.2-0.5-7.7-1.5l-49.5-19.1L320,418.9l50.9,19.7c6.2,2.4,12.6,3.6,19,3.6h0
                   c17.1,0,33.2-8.6,43.1-23c9.8-14.3,11.9-32,5.5-48.3L418.9,319.9 M81,319.9l-19.7,51c-6.3,16.4-4.3,34,5.5,48.3
@@ -60,17 +60,17 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
                   L196.6,378.8 M407.6,290.6l-28.8,12.7l11.3,29.3l28.8-12.7L407.6,290.6 M92.4,290.5L81,319.9l28.8,12.7l11.3-29.3L92.4,290.5
                    M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1
                   l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81" />
-          </svg>
-          <svg
-            width={imgSize}
-            height={imgSize}
-            viewBox="0 0 500 500"
-            style={style}
-            className="cf-react-icon-loading-front">
-            <path opacity="1"
-              fill={COLORS.GREY_DARK}
-              fillOpacity=".25"
-              d="M209.3,407.5L180,418.9l22.1,50C210.6,488.1,229,500,250,500s39.4-11.9,47.9-31.1l22.1-49.9l-29.3-11.3
+        </svg>
+        <svg
+          width={imgSize}
+          height={imgSize}
+          viewBox="0 0 500 500"
+          style={style}
+          className="cf-react-icon-loading-front">
+          <path opacity="1"
+            fill={COLORS.GREY_DARK}
+            fillOpacity=".25"
+            d="M209.3,407.5L180,418.9l22.1,50C210.6,488.1,229,500,250,500s39.4-11.9,47.9-31.1l22.1-49.9l-29.3-11.3
                   l-21.5,48.5c-3.5,7.8-10.6,12.5-19.1,12.5c-8.5,0-15.7-4.7-19.1-12.5L209.3,407.5 M378.8,303.3l-33.8,15
                   c-11.9,5.3-21.4,14.7-26.7,26.7l-15,33.9l29.3,11.3l14.4-32.5c2.1-4.8,5.9-8.6,10.7-10.7l32.4-14.3L378.8,303.3 M121.1,303.3
                   l-11.3,29.3l32.4,14.4c4.8,2.1,8.6,5.9,10.7,10.7l14.4,32.5l29.3-11.3l-15-33.9c-5.3-11.9-14.8-21.4-26.7-26.7L121.1,303.3 M81,180
@@ -84,7 +84,7 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
                   L196.6,378.8 M407.6,290.6l-28.8,12.7l11.3,29.3l28.8-12.7L407.6,290.6 M92.4,290.5L81,319.9l28.8,12.7l11.3-29.3L92.4,290.5
                    M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1
                   l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81" />
-          </svg>
+        </svg>
       </div>
     </div>
   );
