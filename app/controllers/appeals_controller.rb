@@ -1,9 +1,12 @@
 class AppealsController < ApplicationController
+  before_action :react_routed
+
   def index
     return veteran_id_not_found_error unless veteran_id
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          name: "QueueController.appeals") do
+                          service: :queue,
+                          name: "AppealsController.index") do
 
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
@@ -17,7 +20,35 @@ class AppealsController < ApplicationController
     end
   end
 
+  def show
+    # :nocov:
+    no_cache
+
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        vacols_id = params[:vacols_id]
+        MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                              service: :queue,
+                              name: "AppealsController.show") do
+          appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+          render json: { appeal: json_appeals([appeal])[:data][0] }
+        end
+      end
+    end
+    # :nocov:
+  end
+
   private
+
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
+  end
 
   def veteran_id
     request.headers["HTTP_VETERAN_ID"]

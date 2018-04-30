@@ -82,15 +82,11 @@ class QueueDetailView extends React.PureComponent {
     } = this.props;
     const tabs = [{
       label: 'Appeal',
-      page: <AppealDetail appeal={this.props.appeal} />
+      page: <AppealDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }, {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
-      page: <AppellantDetail appeal={this.props.appeal} />
+      page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }];
-
-    const readerLinkMsg = appeal.docCount ?
-      `Open ${appeal.docCount.toLocaleString()} documents in Caseflow Reader` :
-      'Open documents in Caseflow Reader';
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
@@ -103,10 +99,11 @@ class QueueDetailView extends React.PureComponent {
       </p>
       <ReaderLink
         vacolsId={this.props.vacolsId}
-        message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
-        taskType="Draft Decision" />
+        docCount={appeal.docCount}
+        taskType="Draft Decision"
+        longMessage />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"

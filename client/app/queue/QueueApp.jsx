@@ -14,7 +14,9 @@ import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
+import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -37,6 +39,20 @@ class QueueApp extends React.PureComponent {
         <JudgeReviewTaskListView {...this.props} />
       }
     </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedJudgeQueueList = (taskType) => () => <QueueLoadingScreen {...this.props}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {taskType === 'Assign' ?
+        <JudgeAssignTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />}
+    </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
+    <CaseDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
@@ -78,18 +94,33 @@ class QueueApp extends React.PureComponent {
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
-      appName="Queue">
+      appName="">
       <AppFrame wideApp>
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
             path="/"
-            title="Your Queue | Caseflow Queue"
+            title="Your Queue | Caseflow"
             render={this.routedQueueList} />
           <PageRoute
             exact
+            path="/:userId"
+            title="Your Queue | Caseflow"
+            render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/:userId/review"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Review')} />
+          <PageRoute
+            exact
+            path="/:userId/assign"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Assign')} />
+          <PageRoute
+            exact
             path="/tasks/:vacolsId"
-            title="Draft Decision | Caseflow Queue"
+            title="Draft Decision | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
@@ -116,11 +147,16 @@ class QueueApp extends React.PureComponent {
             path="/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/appeals/:vacolsId"
+            title="Case Details | Caseflow"
+            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
         wideApp
-        appName="Queue"
+        appName=""
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />
     </NavigationBar>

@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { getIssueProgramDescription, getIssueTypeDescription } from '../utils';
+import {
+  getIssueProgramDescription,
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel
+} from '../utils';
 import {
   boldText,
   CASE_DISPOSITION_ID_BY_DESCRIPTION
@@ -45,11 +49,10 @@ export default class IssueListItem extends React.PureComponent {
         program,
         type,
         levels,
-        description,
+        codes,
         codes: [
           isslev1,
-          isslev2,
-          isslev3
+          isslev2
         ]
       }
     } = this.props;
@@ -62,21 +65,16 @@ export default class IssueListItem extends React.PureComponent {
 
     const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
     const issueLevel2 = _.get(issueLevel1, ['levels', isslev2]);
-    const issueLevel3 = _.get(issueLevel2, ['levels', isslev3]);
+    const diagnosticCodeLabel = getIssueDiagnosticCodeLabel(_.last(codes));
 
     if (issueLevel1) {
       issueLevels.push(issueLevel1.description);
 
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
-
-        issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
-      } else {
-        issueLevels.push(_.last(description));
       }
-    } else {
-      issueLevels.push(_.last(description));
     }
+    issueLevels.push(diagnosticCodeLabel);
 
     return issueLevels;
   };

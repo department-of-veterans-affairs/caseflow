@@ -44,6 +44,66 @@ class PrometheusService
                                            "latency of completed VBMS requests")
     end
 
+    def queue_request_attempt_counter
+      @queue_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :queue_request_attempt_counter,
+                                "A counter of attempted Queue requests")
+    end
+
+    def queue_request_error_counter
+      @queue_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :queue_request_error_counter,
+                                "A counter of errored Queue requests")
+    end
+
+    def queue_request_latency
+      @queue_request_latency ||=
+        find_or_register_gauge_and_summary(:queue_request_latency,
+                                           "latency of completed Queue requests")
+    end
+
+    def reader_request_attempt_counter
+      @reader_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :reader_request_attempt_counter,
+                                "A counter of attempted Reader requests")
+    end
+
+    def reader_request_error_counter
+      @reader_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :reader_request_error_counter,
+                                "A counter of errored Reader requests")
+    end
+
+    def reader_request_latency
+      @reader_request_latency ||=
+        find_or_register_gauge_and_summary(:reader_request_latency,
+                                           "latency of completed Reader requests")
+    end
+
+    def hearings_request_attempt_counter
+      @hearings_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :hearings_request_attempt_counter,
+                                "A counter of attempted Hearing Prep requests")
+    end
+
+    def hearings_request_error_counter
+      @hearings_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :hearings_request_error_counter,
+                                "A counter of errored Hearing Prep requests")
+    end
+
+    def hearings_request_latency
+      @hearings_request_latency ||=
+        find_or_register_gauge_and_summary(:hearings_request_latency,
+                                           "latency of completed Hearing Prep requests")
+    end
+
     def bgs_request_attempt_counter
       @bgs_request_attempt_counter ||=
         find_or_register_metric(:counter,
