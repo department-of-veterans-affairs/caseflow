@@ -941,7 +941,10 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "Basic eligibility to Dependents").click
         safe_click "#button-finish-intake"
 
-        expect(page).to_not have_content("Finish processing")
+        expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+        expect(page).to have_content(
+          "Established EP: 040SCRAMA - Supplemental Claim Review Rating for Station 397 - ARC"
+        )
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
@@ -1014,7 +1017,9 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
 
         expect(page).to have_current_path("/intake/finish")
-        expect(page).to have_content("Finish page")
+        expect(page).to have_content("Finish processing")
+        expect(page).to have_content("Decision date: 04/25/2018")
+        expect(page).to have_content("Service connection for Emphysema is granted")
 
         higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
         expect(higher_level_review).to_not be_nil

@@ -6,7 +6,8 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import { setReceiptDate, setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
+import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
+import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 

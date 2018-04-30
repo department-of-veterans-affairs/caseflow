@@ -5,13 +5,6 @@ import _ from 'lodash';
 
 const analytics = true;
 
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
@@ -53,20 +46,6 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
       }
     );
 };
-
-export const setIssueSelected = (profileDate, issueId, isSelected) => ({
-  type: ACTIONS.SET_ISSUE_SELECTED,
-  payload: {
-    profileDate,
-    issueId,
-    isSelected
-  },
-  meta: {
-    analytics: {
-      label: isSelected ? 'selected' : 'de-selected'
-    }
-  }
-});
 
 export const completeIntake = (intakeId) => (dispatch) => {
   dispatch({
