@@ -77,7 +77,7 @@ class FinishNextButton extends React.PureComponent {
 
   render = () =>
     <Button
-      name="submit-review"
+      name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
@@ -91,7 +91,10 @@ const FinishNextButtonConnected = connect(
     requestState: higherLevelReview.requestStatus.completeIntake,
     intakeId: intake.id,
     higherLevelReview
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    completeIntake
+  }, dispatch)
 )(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {

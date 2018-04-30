@@ -169,6 +169,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        }
+      }
+    });
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {

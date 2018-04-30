@@ -1040,7 +1040,7 @@ RSpec.feature "RAMP Intake" do
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
-            date: supplemental_claim.receipt_date.to_date,
+            date: higher_level_review.receipt_date.to_date,
             end_product_modifier: "030",
             end_product_label: "Higher Level Review Rating",
             end_product_code: "030HLRAMA",
@@ -1055,8 +1055,8 @@ RSpec.feature "RAMP Intake" do
 
         expect(intake).to be_success
 
-        supplemental_claim.reload
-        expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
+        higher_level_review.reload
+        expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
       end
     end
   end
