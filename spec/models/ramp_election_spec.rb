@@ -84,7 +84,7 @@ describe RampElection do
 
     context "when option_selected is nil" do
       it "raises error" do
-        expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
       end
     end
 
@@ -96,7 +96,7 @@ describe RampElection do
         let(:receipt_date) { nil }
 
         it "raises error" do
-          expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+          expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
         end
       end
 
@@ -228,8 +228,8 @@ describe RampElection do
     end
   end
 
-  context "#active?" do
-    subject { ramp_election.active? }
+  context "#end_product_active?" do
+    subject { ramp_election.end_product_active? }
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do

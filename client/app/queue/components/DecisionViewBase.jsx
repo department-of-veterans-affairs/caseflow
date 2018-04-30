@@ -113,6 +113,7 @@ export default function decisionViewBase(ComponentToWrap) {
       if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
       }
+      this.props.highlightInvalidFormItems(false);
 
       if (!nextStepHook) {
         return this.goToStep(this.getNextStepUrl());
