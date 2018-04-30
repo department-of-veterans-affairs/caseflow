@@ -23,6 +23,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    endProductDescription: {
+      $set: serverIntake.end_product_description
     }
   });
 };
@@ -34,6 +37,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isStarted: false,
     isReviewed: false,
     isComplete: false,
+    endProductDescription: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
