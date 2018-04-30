@@ -54,15 +54,15 @@ export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
   });
 
   const data = {
-    request_issues: 
-      _(supplementalClaim.ratings)
-        .map((rating) => {
+    request_issues:
+      _(supplementalClaim.ratings).
+        map((rating) => {
           return _.map(rating.issues, (issue) => {
-            return _.merge(issue, {profile_date: rating.profile_date})
-          })
-        })
-        .flatten()
-        .filter('isSelected')
+            return _.merge(issue, { profile_date: rating.profile_date });
+          });
+        }).
+        flatten().
+        filter('isSelected')
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).

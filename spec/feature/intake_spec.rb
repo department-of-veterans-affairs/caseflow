@@ -895,9 +895,10 @@ RSpec.feature "RAMP Intake" do
           promulgation_date: Date.new(2018, 4, 25),
           profile_date: Date.new(2018, 4, 28),
           issues: [
-            {reference_id: 'abc123', decision_text: 'Left knee granted'},
-            {reference_id: 'def456', decision_text: 'PTSD denied'}
-          ])
+            { reference_id: "abc123", decision_text: "Left knee granted" },
+            { reference_id: "def456", decision_text: "PTSD denied" }
+          ]
+        )
       end
 
       scenario "Supplemental Claim" do
@@ -979,9 +980,9 @@ RSpec.feature "RAMP Intake" do
         expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
         expect(supplemental_claim.request_issues.count).to eq 1
         expect(supplemental_claim.request_issues.first).to have_attributes(
-          rating_issue_reference_id: 'def456',
+          rating_issue_reference_id: "def456",
           rating_issue_profile_date: Date.new(2018, 4, 28),
-          description: 'PTSD denied'
+          description: "PTSD denied"
         )
       end
 
