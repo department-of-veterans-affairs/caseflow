@@ -142,7 +142,7 @@ class EstablishClaim < Task
   end
 
   def bgs_info_valid?
-    appeal.veteran.valid?
+    appeal.veteran.valid?(:bgs)
   end
 
   def should_invalidate?

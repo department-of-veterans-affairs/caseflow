@@ -149,7 +149,7 @@ class Intake < ApplicationRecord
     elsif !veteran.accessible?
       self.error_code = :veteran_not_accessible
 
-    elsif !veteran.valid?
+    elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
       errors = veteran.errors.messages.map { |(key, _value)| key }
       @error_data = { veteran_missing_fields: errors }
@@ -172,7 +172,7 @@ class Intake < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   def ui_hash
