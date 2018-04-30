@@ -175,13 +175,14 @@ class Intake < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+
   def ui_hash
     {
       id: id,
       form_type: form_type,
       veteran_file_number: veteran_file_number,
-      veteran_name: veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran.name.formatted(:form),
+      veteran_name: veteran && veteran.name.formatted(:readable_short),
+      veteran_form_name: veteran && veteran.name.formatted(:form),
       completed_at: completed_at
     }
   end
