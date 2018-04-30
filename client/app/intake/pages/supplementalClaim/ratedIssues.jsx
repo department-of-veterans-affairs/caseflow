@@ -18,10 +18,10 @@ class RatedIssues extends React.PureComponent {
         return (
           <Checkbox
             label={issue.decision_text}
-            name={issue.rba_issue_id}
-            key={issue.rba_issue_id}
+            name={issue.reference_id}
+            key={issue.reference_id}
             value={issue.isSelected}
-            onChange={this.onCheckIssue(rating.profile_date, issue.rba_issue_id)}
+            onChange={this.onCheckIssue(rating.profile_date, issue.reference_id)}
             unpadded
           />
         );

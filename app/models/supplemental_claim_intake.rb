@@ -20,9 +20,11 @@ class SupplementalClaimIntake < Intake
     detail.errors.messages
   end
 
-  def complete!(_request_params)
+  def complete!(request_params)
     return if complete? || pending?
     start_complete!
+
+    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
     detail.create_end_product!
     complete_with_status!(:success)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180418224851) do
+ActiveRecord::Schema.define(version: 20180430210552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -414,6 +414,16 @@ ActiveRecord::Schema.define(version: 20180418224851) do
     t.datetime "documents_fetched_at"
     t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
+  end
+
+  create_table "request_issues", force: :cascade do |t|
+    t.string "review_request_type", null: false
+    t.bigint "review_request_id", null: false
+    t.string "rating_issue_reference_id", null: false
+    t.date "rating_issue_profile_date", null: false
+    t.string "contention_reference_id"
+    t.string "description", null: false
+    t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

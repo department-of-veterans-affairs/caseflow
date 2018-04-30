@@ -41,7 +41,13 @@ describe SupplementalClaimIntake do
   end
 
   context "#complete!" do
-    subject { intake.complete!({}) }
+    subject { intake.complete!(params) }
+
+    let(:params) do
+      { request_issues: [
+        { profile_date: '2018-04-30', reference_id: 'reference-id', decision_text: 'decision text'}
+      ]}
+    end
 
     let(:detail) do
       SupplementalClaim.create!(
@@ -56,6 +62,13 @@ describe SupplementalClaimIntake do
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
       expect(intake.detail.end_product_reference_id).to_not be_nil
+      expect(intake.detail.end_product_reference_id).to_not be_nil
+      expect(intake.detail.request_issues.count).to eq 1
+      expect(intake.detail.request_issues.first).to have_attributes(
+        rating_issue_reference_id: 'reference-id',
+        rating_issue_profile_date: Date.new(2018, 4, 30),
+        description: 'decision text'
+      )
     end
   end
 end
