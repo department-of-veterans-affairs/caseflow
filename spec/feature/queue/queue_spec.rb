@@ -223,7 +223,7 @@ RSpec.feature "Queue" do
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/appeals/#{appeal.vacols_id}")
       end
     end
   end
@@ -396,7 +396,7 @@ RSpec.feature "Queue" do
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
-        expect(page).to have_link("Your Queue", href: "/queue/")
+        expect(page).to have_link("Your Queue", href: "/queue")
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
         expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
 
@@ -630,7 +630,7 @@ RSpec.feature "Queue" do
             opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
           )
         )
-        expect(page.current_path).to eq("/queue/")
+        expect(page.current_path).to eq("/queue")
       end
 
       scenario "submits draft decision" do
@@ -679,7 +679,7 @@ RSpec.feature "Queue" do
             It's been sent to Andrew Mackenzie for review."
           )
         )
-        expect(page.current_path).to eq("/queue/")
+        expect(page.current_path).to eq("/queue")
       end
     end
   end
