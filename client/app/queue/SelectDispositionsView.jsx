@@ -110,8 +110,9 @@ class SelectDispositionsView extends React.PureComponent {
       stretchToFullWidth />
   }, {
     header: 'Actions',
-    valueFunction: (issue) => <Link to={`/queue/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
-      Edit Issue
+    valueFunction: (issue) => <Link
+      to={`/queue/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+        Edit Issue
     </Link>
   }, {
     header: 'Dispositions',

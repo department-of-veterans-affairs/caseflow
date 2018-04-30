@@ -78,7 +78,9 @@ class CaseDetailView extends React.PureComponent {
 
     return <React.Fragment>
       <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearActiveCase}>&lt; Back to {appeal.veteran_full_name}'s case list</Link>
+        <Link to="/queue" onClick={this.props.clearActiveCase}>
+          &lt; Back to {appeal.veteran_full_name}'s case list
+        </Link>
       </div>
       <AppSegment filledBackground>
         <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
