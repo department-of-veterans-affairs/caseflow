@@ -125,10 +125,13 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/appeals/:vacols_id', to: 'appeals#show'
     get '/tasks/:vacols_id', to: 'queue#index'
     get '/tasks/:vacols_id/*all', to: redirect('/queue/tasks/%{vacols_id}')
     get '/docs_for_dev', to: 'queue#dev_document_count'
     get '/:user_id', to: 'queue#tasks'
+    get '/:user_id/review', to: 'queue#tasks'
+    get '/:user_id/assign', to: 'queue#tasks'
     post '/tasks/:task_id/complete', to: 'queue#complete'
     post '/tasks', to: 'queue#create'
     patch '/tasks/:task_id', to: 'queue#update'

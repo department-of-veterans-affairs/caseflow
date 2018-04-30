@@ -42,17 +42,21 @@ class QueueController < ApplicationController
   end
 
   def tasks
-    MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                          name: "QueueController.tasks") do
-
-      return invalid_role_error unless ROLES.include?(user.vacols_role)
-
-      tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
-
-      render json: {
-        tasks: json_tasks(tasks),
-        appeals: json_appeals(appeals)
-      }
+    return invalid_role_error unless ROLES.include?(user.vacols_role)
+    respond_to do |format|
+      format.html do
+        render "queue/show"
+      end
+      format.json do
+        MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
+                              name: "QueueController.tasks") do
+          tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+          render json: {
+            tasks: json_tasks(tasks),
+            appeals: json_appeals(appeals)
+          }
+        end
+      end
     end
   end
 
@@ -78,6 +82,7 @@ class QueueController < ApplicationController
   def user
     @user ||= User.find(params[:user_id])
   end
+  helper_method :user
 
   def verify_queue_phase_three
     # :nocov:

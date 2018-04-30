@@ -39,4 +39,23 @@ describe SupplementalClaimIntake do
       )
     end
   end
+
+  context "#complete!" do
+    subject { intake.complete!({}) }
+
+    let(:detail) do
+      SupplementalClaim.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    it "completes the intake and creates an end product" do
+      subject
+
+      expect(intake.reload).to be_success
+      expect(intake.detail.established_at).to_not be_nil
+      expect(intake.detail.end_product_reference_id).to_not be_nil
+    end
+  end
 end
