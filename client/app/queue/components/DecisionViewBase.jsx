@@ -9,6 +9,7 @@ import {
   popBreadcrumb,
   highlightInvalidFormItems
 } from '../uiReducer/uiActions';
+import { getRedirectUrl } from '../utils';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
@@ -88,7 +89,7 @@ export default function decisionViewBase(ComponentToWrap) {
         // If the wrapped component has no prevStep prop, return to the
         // path of the previous page (the penultimate breadcrumb)
         const prevStepCrumb = breadcrumbs[breadcrumbs.length - 2];
-        const prevStepUrl = prevStep || prevStepCrumb.path;
+        const prevStepUrl = getRedirectUrl() || prevStep || prevStepCrumb.path;
 
         if (!prevStep) {
           this.props.popBreadcrumb();

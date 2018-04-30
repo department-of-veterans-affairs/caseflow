@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import querystring from 'querystring';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -93,7 +94,11 @@ class AttorneyTaskTable extends React.PureComponent {
         header: 'Action',
         span: this.collapseColumnIfNoDASRecord,
         valueFunction: (task) => <SelectCheckoutFlowDropdown
-          constructRoute={(route) => `tasks/${task.vacolsId}/${route}`}
+          constructRoute={(route) => {
+            const queryParams = { prev: '/' };
+
+            return `tasks/${task.vacolsId}/${route}?${querystring.stringify(queryParams)}`;
+          }}
           vacolsId={task.vacolsId} />
       });
     }
