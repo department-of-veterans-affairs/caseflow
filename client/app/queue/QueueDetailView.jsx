@@ -43,10 +43,10 @@ class QueueDetailView extends React.PureComponent {
     this.props.resetBreadcrumbs();
     this.props.pushBreadcrumb({
       breadcrumb: 'Your Queue',
-      path: '/'
+      path: '/queue'
     }, {
       breadcrumb: this.props.appeal.attributes.veteran_full_name,
-      path: `/tasks/${this.props.vacolsId}`
+      path: `/queue/tasks/${this.props.vacolsId}`
     });
   }
 

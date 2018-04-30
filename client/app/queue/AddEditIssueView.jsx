@@ -116,7 +116,7 @@ class AddEditIssueView extends React.Component {
       }
     };
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
-    const url = `/appeals/${appeal.id}/issues`;
+    const url = `/queue/appeals/${appeal.id}/issues`;
     let requestPromise;
 
     if (this.props.action === 'add') {
@@ -146,7 +146,7 @@ class AddEditIssueView extends React.Component {
     this.props.hideModal();
 
     this.props.requestDelete(
-      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
+      `/queue/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
     ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
   }
