@@ -894,6 +894,8 @@ RSpec.feature "RAMP Intake" do
       end
 
       scenario "Supplemental Claim" do
+        Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+
         visit "/intake"
         safe_click ".Select"
         expect(page).to have_css(".cf-form-dropdown")
@@ -931,8 +933,40 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("Service connection for Emphysema is granted")
 
         supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+
         expect(supplemental_claim).to_not be_nil
         expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
+        intake = Intake.find_by(veteran_file_number: "12341234")
+
+        find("label", text: "Basic eligibility to Dependents").click
+        safe_click "#button-finish-intake"
+
+        expect(page).to_not have_content("Finish processing")
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: supplemental_claim.receipt_date.to_date,
+            end_product_modifier: "040",
+            end_product_label: "Supplemental Claim Review Rating",
+            end_product_code: "040SCRAMA",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: intake.veteran.to_vbms_hash
+        )
+
+        intake.reload
+        expect(intake.completed_at).to eq(Time.zone.now)
+
+        expect(intake).to be_success
+
+        supplemental_claim.reload
+        expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
       end
 
       scenario "Higher Level Review" do
