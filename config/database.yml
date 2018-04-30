@@ -31,9 +31,9 @@ ssh_forwarding:
   <<: *default
   database: caseflow_certification_ssh_forwarding
 
-local:
+development:
   <<: *default
-  database: caseflow_certification_local
+  database: caseflow_certification_development
 
 staging:
   <<: *default
@@ -52,7 +52,7 @@ stubbed_vacols:
   database: db/development-vacols.sqlite3
 
 # Docker setup
-local_vacols:
+development_vacols:
  adapter: oracle_enhanced
  host: localhost
  port: 1521

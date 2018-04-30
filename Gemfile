@@ -89,7 +89,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging, :ssh_forwarding, :local, :test do
+group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :local do
+group :stubbed, :test, :development do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"

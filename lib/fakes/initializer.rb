@@ -3,7 +3,7 @@ class Fakes::Initializer
     def load!(rails_env: nil)
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      if !rails_env || !rails_env.local?
+      if !rails_env || !rails_env.development?
         Appeal.repository = Fakes::AppealRepository
         AttorneyCaseReview.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
@@ -28,7 +28,7 @@ class Fakes::Initializer
         Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.stubbed? || rails_env.demo? || rails_env.local?
+      if rails_env.stubbed? || rails_env.demo? || rails_env.development?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
@@ -69,7 +69,7 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
-      return if rails_env.local?
+      return if rails_env.development?
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
