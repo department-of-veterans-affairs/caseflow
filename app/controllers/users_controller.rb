@@ -12,6 +12,6 @@ class UsersController < ApplicationController
   end
 
   def judge
-    @judge ||= User.find_by(css_id: params[:judge_css_id], station_id: User::BOARD_STATION_ID)
+    @judge ||= User.find_by(css_id: params[:judge_css_id])
   end
 end
