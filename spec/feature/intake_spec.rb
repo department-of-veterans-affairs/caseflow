@@ -943,7 +943,7 @@ RSpec.feature "RAMP Intake" do
 
         expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
         expect(page).to have_content(
-          "Established EP: 040SCRAMA"
+          "Established EP: 040SCRAMA - Supplemental Claim Review Rating for Station 397 - ARC"
         )
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
