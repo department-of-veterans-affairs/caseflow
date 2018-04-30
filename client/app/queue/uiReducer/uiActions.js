@@ -59,9 +59,19 @@ export const popBreadcrumb = (crumbsToDrop = 1) => ({
   }
 });
 
-export const resetBreadcrumbs = () => ({
-  type: ACTIONS.RESET_BREADCRUMBS
-});
+export const resetBreadcrumbs = (vetName, vacolsId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_BREADCRUMBS
+  });
+
+  dispatch(pushBreadcrumb({
+    breadcrumb: 'Your Queue',
+    path: '/'
+  }, {
+    breadcrumb: vetName,
+    path: `/tasks/${vacolsId}`
+  }));
+};
 
 export const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
