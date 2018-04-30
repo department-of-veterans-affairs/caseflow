@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { getDecisionTypeDisplay } from './utils';
+import {
+  getDecisionTypeDisplay,
+  getRedirectUrl
+} from './utils';
 
 import {
   setDecisionOptions,
@@ -137,9 +140,11 @@ class SubmitDecisionView extends React.PureComponent {
         }
       }
     } = this.props;
+    const prevUrl = getRedirectUrl();
+    const prevStepText = prevUrl === '/' ? 'Your Queue' : `${vetName} (${vbmsId})`;
 
     return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
+      displayText: `Go back to ${prevStepText}`
     }, {
       displayText: 'Submit',
       loadingText: 'Submitting...'
