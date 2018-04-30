@@ -18,7 +18,7 @@ class Certification < ApplicationRecord
     )
 
     # Most developers don't run shoryuken in development mode.
-    if Rails.env.development? || Rails.env.test?
+    if Rails.env.stubbed? || Rails.env.test?
       StartCertificationJob.perform_now(self)
     else
       StartCertificationJob.perform_later(self, RequestStore[:current_user])
@@ -197,7 +197,7 @@ class Certification < ApplicationRecord
   end
 
   def can_be_updated?
-    Rails.env.development? || Rails.env.demo? || !already_certified
+    Rails.env.stubbed? || Rails.env.demo? || !already_certified
   end
 
   class << self

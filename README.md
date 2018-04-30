@@ -137,8 +137,8 @@ docker-compose down -v
 
 ## Setup your Database Schema
 ```
-rake [RAILS_ENV=<local|test|development>] db:setup
-rake [RAILS_ENV=<local|test|development>] db:seed
+rake [RAILS_ENV=<local|test|development|stubbed>] db:setup
+rake [RAILS_ENV=<local|test|development|stubbed>] db:seed
 
 # setup local VACOLS (FAKOLS)
 rake [RAILS_ENV=<local|test|development>] local:vacols:setup

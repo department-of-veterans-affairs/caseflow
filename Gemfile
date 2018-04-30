@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :development, :test, :local do
+group :stubbed, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -140,7 +140,7 @@ group :development, :test, :local do
   gem "rspec_junit_formatter"
 end
 
-group :development do
+group :stubbed do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"

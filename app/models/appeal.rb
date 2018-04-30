@@ -519,7 +519,7 @@ class Appeal < ApplicationRecord
   def sanitized_vbms_id
     # If testing against a local eFolder express instance then we want to pass DEMO
     # values, so we should not sanitize the vbms_id.
-    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.stubbed?
 
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
@@ -733,7 +733,7 @@ class Appeal < ApplicationRecord
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
-      vbms.clean_document(form8.pdf_location) unless Rails.env.development?
+      vbms.clean_document(form8.pdf_location) unless Rails.env.stubbed?
     end
 
     # This method is used for converting a file_number (also called a vbms_id)

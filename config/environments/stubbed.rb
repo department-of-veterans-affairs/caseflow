@@ -101,4 +101,7 @@ Rails.application.configure do
     rescue LoadError
     end
   end
+
+  # permit using the web console for dev environments not named "development"
+  config.web_console.development_only = false
 end
