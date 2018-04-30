@@ -76,7 +76,7 @@ class FinishNextButton extends React.PureComponent {
 
   render = () =>
     <Button
-      name="submit-review"
+      name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
