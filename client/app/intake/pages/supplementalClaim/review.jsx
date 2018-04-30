@@ -5,7 +5,8 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import { setReceiptDate, submitReview } from '../../actions/supplementalClaim';
+import { submitReview } from '../../actions/supplementalClaim';
+import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 

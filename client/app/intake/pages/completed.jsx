@@ -39,4 +39,3 @@ export const CompletedNextButton = connect(
     startNewIntake
   }, dispatch)
 )(UnconnectedCompletedNextButton);
-
