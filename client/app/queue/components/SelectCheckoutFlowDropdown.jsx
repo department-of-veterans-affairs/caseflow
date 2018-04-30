@@ -55,7 +55,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
   };
 
   render = () => <SearchableDropdown
-    name="Select an action"
+    name={`start-checkout-flow-${this.props.vacolsId}`}
     placeholder="Select an action&hellip;"
     options={DRAFT_DECISION_OPTIONS}
     onChange={this.changeRoute}

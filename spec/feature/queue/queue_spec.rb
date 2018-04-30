@@ -387,6 +387,30 @@ RSpec.feature "Queue" do
   end
 
   context "loads decision views" do
+    scenario "starts checkout flow from table view" do
+      appeal = vacols_appeals.first
+      visit "/queue"
+
+      dropdown = page.find("#table-row-#{appeal.vacols_id}").find(".Select-control")
+      dropdown.click
+      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-0']").click
+
+      expect(page).to have_content "Select Dispositions"
+
+      back_button = page.find "#button-back-button"
+      expect(back_button.text).to eql "< Go back to Your Queue"
+      back_button.click
+
+      dropdown = page.find("#table-row-#{appeal.vacols_id}").find(".Select-control")
+      dropdown.click
+      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-1']").click
+
+      expect(page).to have_content "Submit OMO for Review"
+
+      back_button = page.find "#button-back-button"
+      expect(back_button.text).to eql "< Go back to Your Queue"
+    end
+
     context "prepares/fails to submit decision" do
       scenario "fails to submit omo decision" do
         appeal = vacols_appeals.first
