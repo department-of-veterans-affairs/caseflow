@@ -35,7 +35,7 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     endProductDescription: {
       $set: serverIntake.end_product_description
-    },
+    }
   });
 };
 
