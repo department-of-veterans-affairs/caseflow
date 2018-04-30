@@ -9,8 +9,8 @@ import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { setOptionSelected, setReceiptDate, setAppealDocket,
-  submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 
