@@ -143,7 +143,7 @@ class Intake < ApplicationRecord
     if !file_number_valid?
       self.error_code = :invalid_file_number
 
-    elsif !veteran.found?
+    elsif !veteran
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
