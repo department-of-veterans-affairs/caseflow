@@ -70,7 +70,7 @@ SelectCheckoutFlowDropdown.propTypes = {
 
 SelectCheckoutFlowDropdown.defaultProps = {
   constructRoute: _.noop
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],

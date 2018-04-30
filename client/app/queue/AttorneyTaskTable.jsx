@@ -34,7 +34,7 @@ class AttorneyTaskTable extends React.PureComponent {
   tableStyle = css({
     '& > tr > td': {
       '&:last-of-type': {
-        width: this.props.featureToggles.phase_two ? '25%': ''
+        width: this.props.featureToggles.phase_two ? '25%' : ''
       }
     }
   });
