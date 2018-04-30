@@ -22,7 +22,8 @@ export default class TextField extends React.Component {
       title,
       onKeyPress,
       strongLabel,
-      maxLength
+      maxLength,
+      inline
     } = this.props;
 
     let textInputClass = className.concat(
@@ -30,6 +31,15 @@ export default class TextField extends React.Component {
     ).concat(
       errorMessage ? 'usa-input-error' : ''
     );
+
+    let labelClass = 'question-label '.concat(
+      inline ? 'cf-push-left cf-inline-textbox-label' : ''
+    );
+
+    let buttonInputClass = className.concat(
+      inline ? 'cf-push-right cf-inline-textbox' : ''
+    );
+
 
     // Use empty string instead of null or undefined,
     // otherwise React displays the following error:
@@ -44,7 +54,7 @@ export default class TextField extends React.Component {
 
     return <div className={textInputClass.join(' ')}>
       {label !== false &&
-        <label className="question-label" htmlFor={name}>
+        <label className={labelClass} htmlFor={name}>
           {
             strongLabel ?
               <strong>{labelContents}</strong> :
@@ -56,7 +66,7 @@ export default class TextField extends React.Component {
       {this.props.fixedInput ?
         <p>{value}</p> :
         <input
-          className={className}
+          className={buttonInputClass}
           name={name}
           id={name}
           onChange={this.onChange}
@@ -104,6 +114,7 @@ TextField.propTypes = {
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,
+  inline: PropTypes.bool,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
