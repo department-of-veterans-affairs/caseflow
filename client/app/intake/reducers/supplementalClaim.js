@@ -1,16 +1,8 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError } from '../util';
+import { getReceiptDateError, formatRatings } from '../util';
 import _ from 'lodash';
-
-const formatRatings = (ratings) => {
-  return _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'rba_issue_id') }
-    );
-  }), 'profile_date');
-};
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {

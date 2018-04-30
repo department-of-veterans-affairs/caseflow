@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setIssueSelected } from '../../actions/higherLevelReview';
+import { setIssueSelected } from '../../actions/common';
 import Checkbox from '../../../components/Checkbox';
 import { formatDateStr } from '../../../util/DateUtil';
 import _ from 'lodash';

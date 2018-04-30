@@ -92,6 +92,6 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    higherLevelReviewStatus: getIntakeStatus(state)
+    supplementalClaimStatus: getIntakeStatus(state)
   })
 )(Finish);

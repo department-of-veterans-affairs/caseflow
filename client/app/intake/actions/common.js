@@ -86,6 +86,20 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setIssueSelected = (profileDate, issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    profileDate,
+    issueId,
+    isSelected
+  },
+  meta: {
+    analytics: {
+      label: isSelected ? 'selected' : 'de-selected'
+    }
+  }
+});
+
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
   meta: {
