@@ -175,7 +175,6 @@ class Intake < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-
   def ui_hash
     {
       id: id,
