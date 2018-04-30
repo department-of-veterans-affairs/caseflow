@@ -29,13 +29,6 @@ export const setSameOffice = (sameOffice) => ({
   }
 });
 
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, higherLevelReview) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
