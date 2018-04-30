@@ -271,16 +271,14 @@ body {
 
 .cf-loading-button-text {
   display: inline-block;
-  margin-right: 10px;
-  line-height: 0;
-  position: relative;
 }
 
 .cf-loading-button-symbol {
-  display: inline-block;
+  position: relative;
+  top: 5px;
+  left: 3px;
 }
 
-//TODO(marian): add to style guide
 .cf-button-aligned-with-textfield {
   padding-left: 10px;
   padding-top: 2px;
