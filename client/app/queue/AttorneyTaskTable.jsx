@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import querystring from 'querystring';
+import { css } from 'glamor';
 
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -30,6 +31,13 @@ class AttorneyTaskTable extends React.PureComponent {
 
   getCaseDetailsLink = (task) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
 
+  tableStyle = css({
+    '& > tr > td': {
+      '&:last-of-type': {
+        width: this.props.featureToggles.phase_two ? '25%': ''
+      }
+    }
+  });
   collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
 
   getQueueColumns = () => {
@@ -136,6 +144,7 @@ class AttorneyTaskTable extends React.PureComponent {
     rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
     getKeyForRow={this.getKeyForRow}
     rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
+    bodyStyling={this.tableStyle}
   />;
 }
 
