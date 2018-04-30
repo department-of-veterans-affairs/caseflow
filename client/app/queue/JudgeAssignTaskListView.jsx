@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import JudgeReviewTaskTable from './JudgeReviewTaskTable';
+import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -18,15 +18,15 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const DISPLAYING_REVIEW_TASKS = {
-  title: (reviewableCount) => <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>,
-  switchLink: (that) => <Link to={`/${that.props.userId}/assign`}>Switch to Assign Cases</Link>,
-  visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
-  noTasksMessage: () => 'Congratulations! You don\'t have any decisions to sign.',
-  table: () => <JudgeReviewTaskTable />
+const DISPLAYING_ASSIGN_TASKS = {
+  title: (reviewableCount) => <h1 {...fullWidth}>Assign {reviewableCount} Cases</h1>,
+  switchLink: (that) => <Link to={`/${that.props.userId}/review`}>Switch to Review Cases</Link>,
+  visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign'),
+  noTasksMessage: () => 'Congratulations! You don\'t have any cases to assign.',
+  table: () => <JudgeAssignTaskTable />
 };
 
-class JudgeReviewTaskListView extends React.PureComponent {
+class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -39,8 +39,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    this.state = DISPLAYING_REVIEW_TASKS;
+    this.state = DISPLAYING_ASSIGN_TASKS;
   }
 
   render = () => {
@@ -51,7 +50,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
       tableContent = <div>
         {this.state.title(reviewableCount)}
         {this.state.switchLink(this)}
-        <StatusMessage title="Cases not found">
+        <StatusMessage title="Tasks not found">
           {this.state.noTasksMessage()}
         </StatusMessage>
       </div>;
@@ -69,7 +68,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
   };
 }
 
-JudgeReviewTaskListView.propTypes = {
+JudgeAssignTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -86,4 +85,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeReviewTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeAssignTaskListView);

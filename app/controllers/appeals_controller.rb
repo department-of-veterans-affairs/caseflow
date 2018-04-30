@@ -5,7 +5,8 @@ class AppealsController < ApplicationController
     return veteran_id_not_found_error unless veteran_id
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          name: "QueueController.appeals") do
+                          service: :queue,
+                          name: "AppealsController.index") do
 
       begin
         appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
@@ -28,6 +29,7 @@ class AppealsController < ApplicationController
       format.json do
         vacols_id = params[:vacols_id]
         MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                              service: :queue,
                               name: "AppealsController.show") do
           appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
           render json: { appeal: json_appeals([appeal])[:data][0] }

@@ -186,15 +186,15 @@ class Appeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
-  # Eventually we'd like to reference methods on the veteran with data from VACOLS
-  # and only "lazy load" data from BGS when necessary
   def veteran
-    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: sanitized_vbms_id)
   end
 
   delegate :age, to: :veteran, prefix: true
   delegate :sex, to: :veteran, prefix: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products, to: :veteran
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -618,12 +618,6 @@ class Appeal < ApplicationRecord
     end.sort_by(&:received_at)
   end
 
-  # List of all end products for the appeal's veteran.
-  # NOTE: we cannot currently match end products to a specific appeal.
-  def end_products
-    @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
-  end
-
   def fetch_documents_from_service!
     return if @fetched_documents
 
@@ -663,10 +657,6 @@ class Appeal < ApplicationRecord
 
       appeal.save
       appeal
-    end
-
-    def fetch_end_products(vbms_id)
-      bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
     def for_api(vbms_id:)

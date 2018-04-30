@@ -22,6 +22,7 @@ import {
   hideModal,
   requestSave
 } from './uiReducer/uiActions';
+import { getIssueDiagnosticCodeLabel } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -35,6 +36,7 @@ import {
   ERROR_FIELD_REQUIRED
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -79,13 +81,17 @@ class AddEditIssueView extends React.Component {
     const vacolsIssues = _.get(ISSUE_INFO[program], 'levels', {});
     const issueLevel1 = _.get(vacolsIssues, [type, 'levels'], {});
     const issueLevel2 = _.get(issueLevel1, [_.get(codes, 0), 'levels'], {});
-    const issueLevel3 = _.get(issueLevel2, [_.get(codes, 1), 'levels'], {});
 
-    return [issueLevel1, issueLevel2, issueLevel3];
+    return [issueLevel1, issueLevel2];
   };
 
   validateForm = () => {
     const { issue: { program, type, codes } } = this.props;
+    const issueDiagCode = _.find(codes, (code) => code.length === 4);
+
+    if (this.issueLevelsConfigHasDiagCode() && !issueDiagCode) {
+      return false;
+    }
 
     return program && type && this.getIssueLevelOptions().every((level, idx) =>
       _.isEmpty(level) || (codes[idx] in level)
@@ -145,10 +151,36 @@ class AddEditIssueView extends React.Component {
     ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
   }
 
+  renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
+    label: getIssueDiagnosticCodeLabel(value),
+    value
+  }));
+
   renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));
+
+  issueLevelsConfigHasDiagCode = () => {
+    const {
+      issue
+    } = this.props;
+    const issueLevels = this.getIssueLevelOptions();
+
+    if (!issue.codes || !issue.codes.length) {
+      return false;
+    }
+
+    const lastIssueLevel = _.last(_.reject(issueLevels, _.isEmpty));
+    const lastIssueLevelCode = _.findLast(issue.codes, (code) => code.length === 2);
+
+    // if issueLevels[n] has options and issue.codes[n].length is 2 (issue level), check diagnostic_code
+    if (issueLevels.indexOf(lastIssueLevel) === _.lastIndexOf(issue.codes, lastIssueLevelCode)) {
+      return _.get(lastIssueLevel[lastIssueLevelCode], 'diagnostic_code') || false;
+    }
+
+    return false;
+  }
 
   render = () => {
     const {
@@ -161,15 +193,15 @@ class AddEditIssueView extends React.Component {
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[issue.program], 'levels');
-    const [issueLevels1, issueLevels2, issueLevels3] = this.getIssueLevelOptions();
+    const issueLevels = this.getIssueLevelOptions();
 
     // only highlight invalid fields with options (i.e. not disabled)
     const errorHighlightConditions = {
       program: highlight && !issue.program,
       type: highlight && !issue.type,
-      level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels1),
-      level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels2),
-      level3: highlight && !_.get(issue, 'codes[2]') && !_.isEmpty(issueLevels3)
+      level1: highlight && !_.get(issue, 'codes[0]') && !_.isEmpty(issueLevels[0]),
+      level2: highlight && !_.get(issue, 'codes[1]') && !_.isEmpty(issueLevels[1]),
+      diagCode: highlight && this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
     };
 
     return <React.Fragment>
@@ -212,7 +244,8 @@ class AddEditIssueView extends React.Component {
           options={this.renderIssueAttrs(programs)}
           onChange={({ value }) => this.updateIssue({
             program: value,
-            type: null
+            type: null,
+            codes: []
           })}
           errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
           value={issue.program} />
@@ -237,32 +270,40 @@ class AddEditIssueView extends React.Component {
         <SearchableDropdown
           name="Level 1:"
           placeholder="Select level 1"
-          options={this.renderIssueAttrs(issueLevels1)}
+          options={this.renderIssueAttrs(issueLevels[0])}
           onChange={({ value }) => this.updateIssueCode(0, value)}
-          readOnly={_.isEmpty(issueLevels1)}
+          readOnly={_.isEmpty(issueLevels[0])}
           errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[0]', '')} />
+          value={_.get(issue, 'codes[0]', '')} />
       </div>
-      <div {...dropdownMarginTop}>
+      {!_.isEmpty(issueLevels[1]) && <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 2:"
           placeholder="Select level 2"
-          options={this.renderIssueAttrs(issueLevels2)}
+          options={this.renderIssueAttrs(issueLevels[1])}
           onChange={({ value }) => this.updateIssueCode(1, value)}
-          readOnly={_.isEmpty(issueLevels2)}
           errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[1]', '')} />
-      </div>
-      <div {...dropdownMarginTop}>
+          value={_.get(issue, 'codes[1]', '')} />
+      </div>}
+      {this.issueLevelsConfigHasDiagCode() && <div {...dropdownMarginTop}>
         <SearchableDropdown
-          name="Level 3:"
-          placeholder="Select level 3"
-          options={this.renderIssueAttrs(issueLevels3)}
-          onChange={({ value }) => this.updateIssueCode(2, value)}
-          readOnly={_.isEmpty(issueLevels3)}
-          errorMessage={errorHighlightConditions.level3 ? ERROR_FIELD_REQUIRED : ''}
-          value={_.get(this.props.issue, 'codes[2]', '')} />
-      </div>
+          name="Diagnostic code"
+          placeholder="Select diagnostic code"
+          options={this.renderDiagnosticCodes()}
+          onChange={({ value }) => {
+            const { codes } = issue;
+
+            if (codes.length && _.last(codes).length === 4) {
+              codes.splice(codes.length - 1, 1, value);
+            } else {
+              codes.push(value);
+            }
+
+            this.updateIssue({ codes });
+          }}
+          value={_.last(issue.codes)}
+          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''} />
+      </div>}
       <TextField
         name="Notes:"
         value={_.get(this.props.issue, 'note', '')}
