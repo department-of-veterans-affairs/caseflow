@@ -33,7 +33,8 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
     <div>
       {text && <div className="cf-loading-button-text">
         {text}
-        <span className="cf-loading-button-symbol">
+      </div>}
+        <div className="cf-loading-button-symbol">
           <svg
             width={imgSize}
             height={imgSize}
@@ -84,8 +85,7 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
                    M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1
                   l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81" />
           </svg>
-        </span>
-      </div>}
+      </div>
     </div>
   );
 };
