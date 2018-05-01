@@ -26,3 +26,11 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
   hasInvalidOption && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
+
+export const formatRatings = (ratings) => {
+  return _.keyBy(_.map(ratings, (rating) => {
+    return _.assign(rating,
+      { issues: _.keyBy(rating.issues, 'rba_issue_id') }
+    );
+  }), 'profile_date');
+};
