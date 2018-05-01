@@ -8,7 +8,7 @@ import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
 import { completeIntake } from '../../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
