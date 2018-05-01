@@ -90,10 +90,20 @@ describe SupplementalClaim do
     end
   end
 
-  context "#create_end_product!" do
-    subject { supplemental_claim.create_end_product! }
+  context "#create_end_product_and_contentions!" do
+    subject { supplemental_claim.create_end_product_and_contentions! }
     let(:veteran) { Veteran.new(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
+    let!(:request_issues_data) do
+      [
+        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+      ]
+    end
+    before do
+      supplemental_claim.save!
+      supplemental_claim.create_issues!(request_issues_data: request_issues_data)
+    end
 
     # Stub the id of the end product being created
     before do
@@ -111,7 +121,7 @@ describe SupplementalClaim do
     it "creates end product and saves end_product_reference_id" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-      expect(subject).to eq(:created)
+      subject
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
