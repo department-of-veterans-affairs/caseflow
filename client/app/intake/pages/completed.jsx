@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS } from '../constants';
 import RampElectionPage from './rampElection/completed';
 import RampRefilingPage from './rampRefiling/completed';
+import SupplementalClaimPage from './supplementalClaim/completed';
 import SwitchOnForm from '../components/SwitchOnForm';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../actions/common';
@@ -14,7 +15,8 @@ class Completed extends React.PureComponent {
     <SwitchOnForm
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
-        ramp_refiling: <RampRefilingPage />
+        ramp_refiling: <RampRefilingPage />,
+        supplemental_claim: <SupplementalClaimPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
@@ -39,4 +41,3 @@ export const CompletedNextButton = connect(
     startNewIntake
   }, dispatch)
 )(UnconnectedCompletedNextButton);
-
