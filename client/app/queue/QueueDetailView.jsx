@@ -97,7 +97,7 @@ class QueueDetailView extends React.PureComponent {
       leadPgContent = <React.Fragment>
         Prepared by {nameAbbrev}<br />
         Document ID: {task.document_id}
-      </React.Fragment>
+      </React.Fragment>;
     } else {
       leadPgContent = <React.Fragment>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;

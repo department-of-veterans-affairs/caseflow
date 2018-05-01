@@ -3,8 +3,8 @@ class Fakes::UserRepository
     true
   end
 
-  def self.vacols_role(_css_id)
-    _css_id.eql?("BVAAABSHIRE") ? "Judge" : "Attorney"
+  def self.vacols_role(css_id)
+    css_id.eql?("BVAAABSHIRE") ? "Judge" : "Attorney"
   end
 
   def self.vacols_attorney_id(_css_id)
