@@ -527,6 +527,7 @@ RSpec.feature "Queue" do
           row.find(".Select-value-label").text
         end
       end
+
       scenario "adds issue" do
         appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
         visit "/queue"
@@ -651,10 +652,15 @@ RSpec.feature "Queue" do
         click_on "Select remand reasons"
         expect(page).to have_content("Select Remand Reasons")
 
-        remand_reasons = page.execute_script "return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')"
-        remand_reasons.sample(4).each(&:click)
+        page.execute_script("return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')")
+          .sample(4)
+          .each(&:click)
 
-        click_on "Review Draft Decision"
+        page.find_all("input[type='radio'] + label").to_a.each_with_index do |label, idx|
+          label.click unless (idx % 2).eql? 0
+        end
+
+        click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: "12345"
