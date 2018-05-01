@@ -86,7 +86,7 @@ namespace :local do
           css_id: s.sdomainid
         ) do |user|
           user.station_id = "101"
-          user.full_name = "#{s.snamef} + #{s.snamel}"
+          user.full_name = "#{s.snamef} #{s.snamel}"
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)
