@@ -498,6 +498,13 @@ ActiveRecord::Schema.define(version: 20180430210552) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  create_table "veterans", force: :cascade do |t|
+    t.string "file_number", null: false
+    t.string "participant_id"
+    t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+    t.index ["participant_id"], name: "index_veterans_on_participant_id", unique: true
+  end
+
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "vacols_sequence_id"
