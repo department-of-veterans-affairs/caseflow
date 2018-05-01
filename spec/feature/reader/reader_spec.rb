@@ -325,7 +325,7 @@ RSpec.feature "Reader" do
 
       scenario "View Hearing Worksheet" do
         visit "/reader/appeal"
-        expect(page).to have_selector('a', text: "Hearing Worksheet" count: 1)
+        expect(page).to have_selector("a", text: "Hearing Worksheet", count: 1)
 
         new_window = window_opened_by { click_on "Hearing Worksheet" }
         within_window new_window do
