@@ -1,16 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError } from '../util';
-import _ from 'lodash';
-
-const formatRatings = (ratings) => {
-  return _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'rba_issue_id') }
-    );
-  }), 'profile_date');
-};
+import { getReceiptDateError, formatRatings } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -32,6 +23,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    endProductDescription: {
+      $set: serverIntake.end_product_description
     }
   });
 };
@@ -43,6 +37,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isStarted: false,
     isReviewed: false,
     isComplete: false,
+    endProductDescription: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -102,6 +97,39 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });

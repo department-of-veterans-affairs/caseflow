@@ -5,13 +5,6 @@ import _ from 'lodash';
 
 const analytics = true;
 
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
@@ -54,16 +47,46 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
     );
 };
 
-export const setIssueSelected = (profileDate, issueId, isSelected) => ({
-  type: ACTIONS.SET_ISSUE_SELECTED,
-  payload: {
-    profileDate,
-    issueId,
-    isSelected
-  },
-  meta: {
-    analytics: {
-      label: isSelected ? 'selected' : 'de-selected'
-    }
-  }
-});
+export const completeIntake = (intakeId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.COMPLETE_INTAKE_START,
+    meta: { analytics }
+  });
+
+  return ApiUtil.patch(`/intake/${intakeId}/complete`, {}, ENDPOINT_NAMES.COMPLETE_INTAKE).
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
+          meta: { analytics }
+        });
+
+        return true;
+      },
+      (error) => {
+        let responseObject = {};
+
+        try {
+          responseObject = JSON.parse(error.response.text);
+        } catch (ex) { /* pass */ }
+
+        const responseErrorCode = responseObject.error_code;
+        const responseErrorData = responseObject.error_data;
+
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          payload: {
+            responseErrorCode,
+            responseErrorData
+          },
+          meta: { analytics }
+        });
+        throw error;
+      }
+    );
+};
