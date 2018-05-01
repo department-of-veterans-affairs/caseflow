@@ -1035,7 +1035,7 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_current_path("/intake/finish")
         expect(page).to have_content("Finish processing")
         expect(page).to have_content("Decision date: 04/25/2018")
-        expect(page).to have_content("Service connection for Emphysema is granted")
+        expect(page).to have_content("Left knee granted")
 
         higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
         expect(higher_level_review).to_not be_nil
