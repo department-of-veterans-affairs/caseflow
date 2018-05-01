@@ -77,6 +77,7 @@ class QueueDetailView extends React.PureComponent {
 
   render = () => {
     const {
+      userRole,
       appeal: { attributes: appeal },
       task: { attributes: task }
     } = this.props;
@@ -87,15 +88,30 @@ class QueueDetailView extends React.PureComponent {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
       page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }];
+    let leadPgContent;
+
+    if (userRole === 'Judge') {
+      const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
+
+      leadPgContent = <React.Fragment>
+        Prepared by {nameAbbrev}<br />
+        Document ID: {task.document_id}
+      </React.Fragment>;
+    } else {
+      leadPgContent = <React.Fragment>
+        Assigned to you {task.added_by_name && `by ${task.added_by_name}`} on&nbsp;
+        <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
+        Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
+      </React.Fragment>;
+    }
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
         {appeal.veteran_full_name} ({appeal.vbms_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
-        <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
-        Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
+        {leadPgContent}
       </p>
       <ReaderLink
         vacolsId={this.props.vacolsId}
@@ -119,7 +135,8 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  userRole: PropTypes.string
 };
 
 const mapStateToProps = (state, ownProps) => ({

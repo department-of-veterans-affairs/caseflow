@@ -61,7 +61,7 @@ class RampReview < ApplicationRecord
   private
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   # Find an end product that has the traits of the end product that should be created.

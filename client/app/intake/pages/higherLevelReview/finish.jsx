@@ -6,14 +6,20 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { completeIntake } from '../../actions/higherLevelReview';
+import { bindActionCreators } from 'redux';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
     const {
       higherLevelReviewStatus,
-      veteranName
+      requestState,
+      veteranName,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     const tabs = [{
@@ -47,6 +53,12 @@ class Finish extends React.PureComponent {
         name="higher-level-review-tabwindow"
         tabs={tabs} />
 
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
+      }
+
     </div>;
   }
 }
@@ -64,7 +76,7 @@ class FinishNextButton extends React.PureComponent {
 
   render = () =>
     <Button
-      name="submit-review"
+      name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
@@ -78,7 +90,10 @@ const FinishNextButtonConnected = connect(
     requestState: higherLevelReview.requestStatus.completeIntake,
     intakeId: intake.id,
     higherLevelReview
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    completeIntake
+  }, dispatch)
 )(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {
@@ -92,6 +107,9 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    higherLevelReviewStatus: getIntakeStatus(state)
+    higherLevelReviewStatus: getIntakeStatus(state),
+    requestState: state.higherLevelReview.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.higherLevelReview.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.higherLevelReview.requestStatus.completeIntakeErrorData
   })
 )(Finish);
