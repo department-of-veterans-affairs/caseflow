@@ -99,13 +99,12 @@ export class DocketHearingRow extends React.PureComponent {
     };
 
     // Appellant differs Veteran
-    let appellantDiffersVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
-
     const appellantDisplay = <div>
-      { appellantDiffersVeteran || !_.isEmpty(hearing.appellant_mi_formatted) ?
+      { _.isEmpty(hearing.appellant_mi_formatted) ||
+        hearing.appellant_mi_formatted === hearing.veteran_mi_formatted ?
+        (<b>{hearing.veteran_mi_formatted}</b>) :
         (<span><b>{hearing.appellant_mi_formatted}</b>
-          {hearing.veteran_mi_formatted} (Veteran)</span>) :
-        (<b>{hearing.veteran_mi_formatted}</b>)
+          {hearing.veteran_mi_formatted} (Veteran)</span>)
       }
     </div>;
 
