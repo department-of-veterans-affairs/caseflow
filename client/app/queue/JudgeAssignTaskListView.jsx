@@ -57,12 +57,12 @@ class JudgeAssignTaskListView extends React.PureComponent {
       </div>;
     } else {
       tableContent = <div>
-        <div {...fullWidth}>
+        <div {...fullWidth} {...css({ 'margin-bottom': '2em' })}>
           {this.state.title(reviewableCount)}
           {this.state.switchLink(this)}
         </div>
         <div class="usa-width-one-fourth">
-          <ul class="usa-sidenav-list" {...css({ 'margin-top': '2em' })}>
+          <ul class="usa-sidenav-list">
             <li>
               <a class="usa-current" href="javascript:void(0);">Current page</a>
             </li>
@@ -75,6 +75,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
           </ul>
         </div>
         <div class="usa-width-three-fourths">
+          <h2>Unassigned Cases</h2>
           {this.state.table()}
         </div>
       </div>;
