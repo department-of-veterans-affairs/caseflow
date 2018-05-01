@@ -74,7 +74,7 @@ describe SupplementalClaimIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: intake.detail.end_product_reference_id,
-        contention_descriptions: ['decision text']
+        contention_descriptions: ["decision text"]
       )
     end
 
