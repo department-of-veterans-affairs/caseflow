@@ -100,7 +100,7 @@ class QueueDetailView extends React.PureComponent {
       </React.Fragment>;
     } else {
       leadPgContent = <React.Fragment>
-        Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
+        Assigned to you {task.added_by_name && `by ${task.added_by_name}`} on&nbsp;
         <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
         Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
       </React.Fragment>;
