@@ -971,6 +971,12 @@ RSpec.feature "RAMP Intake" do
           veteran_hash: intake.veteran.to_vbms_hash
         )
 
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: "12341234",
+          claim_id: "IAMANEPID",
+          contention_descriptions: ["PTSD denied"]
+        )
+
         intake.reload
         expect(intake.completed_at).to eq(Time.zone.now)
 
@@ -1045,7 +1051,7 @@ RSpec.feature "RAMP Intake" do
 
         intake = Intake.find_by(veteran_file_number: "12341234")
 
-        find("label", text: "Basic eligibility to Dependents").click
+        find("label", text: "PTSD denied").click
         safe_click "#button-finish-intake"
 
         expect(page).to_not have_content("Finish processing")

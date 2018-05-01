@@ -26,7 +26,7 @@ class SupplementalClaimIntake < Intake
 
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
-    detail.create_end_product!
+    detail.create_end_product_and_contentions!
     complete_with_status!(:success)
   end
 end
