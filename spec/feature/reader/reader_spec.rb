@@ -304,7 +304,11 @@ RSpec.feature "Reader" do
       end
 
       let!(:hearing) do
-        Generators::Hearing.create(appeal: appeal)
+        Generators::Hearing.create(appeal: appeal, user: current_user)
+      end
+
+      let!(:hearing_view) do
+        HearingView.create(user: current_user, hearing_id: hearing.id)
       end
 
       before do
