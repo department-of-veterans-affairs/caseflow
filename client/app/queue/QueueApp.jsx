@@ -57,9 +57,8 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Breadcrumbs />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
+    <QueueDetailView {...this.props}
+      vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
