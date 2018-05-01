@@ -51,7 +51,9 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     this.props.setCaseReviewActionType(decisionType);
     this.props.resetBreadcrumbs(vetName, vacolsId);
 
-    history.push(constructRoute(route) || `${history.location.pathname}/${route}`);
+    // history.push(constructRoute(route) || `${history.location.pathname}/${route}`);
+    history.push('');
+    history.replace(`/tasks/${vacolsId}/${route}`);
   };
 
   render = () => <SearchableDropdown
