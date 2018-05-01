@@ -30,7 +30,7 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
 export const formatRatings = (ratings) => {
   return _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'rba_issue_id') }
+      { issues: _.keyBy(rating.issues, 'reference_id') }
     );
   }), 'profile_date');
 };
