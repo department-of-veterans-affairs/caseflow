@@ -54,7 +54,7 @@ class Generators::Rating
     def bgs_rating_profile_data(attrs)
       attrs[:issues].map do |issue_data|
         {
-          rba_issue_id: issue_data[:rba_issue_id] || generate_external_id,
+          rba_issue_id: issue_data[:reference_id] || generate_external_id,
           decn_txt: issue_data[:decision_text]
         }
       end
