@@ -14,6 +14,7 @@ import moment from 'moment';
 import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 const textareaStyling = css({
   '@media only screen and (max-width : 1024px)': {
@@ -98,10 +99,10 @@ export class DocketHearingRow extends React.PureComponent {
     };
 
     // Appellant differs Veteran
-    let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
+    let appellantDiffersVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
 
     const appellantDisplay = <div>
-      { differsVeteran ?
+      { appellantDiffersVeteran || !_.isEmpty(hearing.appellant_mi_formatted) ?
         (<span><b>{hearing.appellant_mi_formatted}</b>
           {hearing.veteran_mi_formatted} (Veteran)</span>) :
         (<b>{hearing.veteran_mi_formatted}</b>)
