@@ -51,7 +51,7 @@ RSpec.feature "Queue" do
   end
   let!(:issues) { [Generators::Issue.build] }
   let! :attorney_user do
-    User.authenticate!
+    User.authenticate!(roles: ["System Admin"])
   end
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
