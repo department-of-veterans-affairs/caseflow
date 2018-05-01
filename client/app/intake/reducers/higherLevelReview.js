@@ -139,6 +139,39 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       }
     });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
+        }
+      }
+    });
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {

@@ -5,6 +5,8 @@ class HigherLevelReviewIntake < Intake
 
   def ui_hash
     super.merge(
+      receipt_date: detail.receipt_date,
+      end_product_description: detail.end_product_description,
       ratings: veteran.cached_serialized_timely_ratings
     )
   end
@@ -16,5 +18,13 @@ class HigherLevelReviewIntake < Intake
 
   def review_errors
     detail.errors.messages
+  end
+
+  def complete!(_request_params)
+    return if complete? || pending?
+    start_complete!
+
+    detail.create_end_product!
+    complete_with_status!(:success)
   end
 end
