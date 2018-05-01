@@ -527,7 +527,6 @@ RSpec.feature "Queue" do
       end
 
       def select_issue_level_options(opts)
-        puts "selecting #{opts}"
         Array.new(5).map.with_index do |*, row_idx|
           # Issue level 2 and diagnostic code dropdowns render based on earlier
           # values, so we have to re-get elements per loop. There are at most 5
