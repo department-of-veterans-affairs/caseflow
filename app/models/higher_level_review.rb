@@ -1,6 +1,6 @@
 class HigherLevelReview < ApplicationRecord
   include EstablishesEndProduct
-  
+
   validate :validate_receipt_date
 
   with_options if: :saving_review do
