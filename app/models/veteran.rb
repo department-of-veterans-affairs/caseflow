@@ -2,13 +2,9 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran
-  include ActiveModel::Model
-  include ActiveModel::Validations
+class Veteran < ApplicationRecord
   include AssociatedBgsRecord
   include CachedAttributes
-
-  bgs_attr_accessor :file_number, foreign_key: true
 
   bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
                     :address_line1, :address_line2, :address_line3, :city,
@@ -28,17 +24,13 @@ class Veteran
 
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
-  validates :zip_code, presence: true, if: :country_requires_zip?
-  validates :state, presence: true, if: :country_requires_state?
+  validates :ssn, :sex, :first_name, :last_name, :city,
+            :address_line1, :country, presence: true, on: :bgs
+  validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
+  validates :state, presence: true, if: :country_requires_state?, on: :bgs
 
   cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
     timely_ratings.map(&:ui_hash)
-  end
-
-  def id
-    # Aliasing file_number to id for use in cache_attribute key
-    file_number
   end
 
   # TODO: get middle initial from BGS
@@ -83,11 +75,6 @@ class Veteran
     BGSService.new
   end
 
-  # aliasing because short names suck
-  def participant_id
-    ptcpnt_id
-  end
-
   def fetch_bgs_record
     result = self.class.bgs.fetch_veteran_info(file_number)
 
@@ -116,6 +103,26 @@ class Veteran
 
   def timely_ratings
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
+  end
+
+  def participant_id
+    super || ptcpnt_id
+  end
+
+  class << self
+    def find_or_create_by_file_number(file_number)
+      find_by(file_number: file_number) || create_by_file_number(file_number)
+    end
+
+    private
+
+    def create_by_file_number(file_number)
+      veteran = Veteran.new(file_number: file_number)
+
+      return nil unless veteran.found?
+
+      veteran.tap { |v| v.update!(participant_id: v.ptcpnt_id) }
+    end
   end
 
   private
@@ -152,7 +159,7 @@ class Veteran
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:address_type]
+      + [:file_number, :address_type]
   end
 
   def military_address?
