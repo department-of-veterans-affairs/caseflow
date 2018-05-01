@@ -8,7 +8,7 @@ import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { toggleIneligibleError } from '../../util';
@@ -33,9 +33,9 @@ class Review extends React.PureComponent {
     } = this.props;
 
     switch (rampRefilingStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
