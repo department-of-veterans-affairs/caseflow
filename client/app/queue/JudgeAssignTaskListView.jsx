@@ -83,7 +83,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             createLoadPromise={this.createLoadPromise}
             errorComponent="span"
             failStatusMessageProps={{ title: 'Unknown failure' }}
-            failStatusMessageChildren={<span>?</span>}
+            failStatusMessageChildren={<span>Failed to load sidebar</span>}
             loadingComponent={SmallLoader}
             loadingComponentProps={{
               message: 'Loading...',
@@ -92,14 +92,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
             }}>
             <ul className="usa-sidenav-list">
               <li>
-                <a className="usa-current" href="javascript:void(0);">Current page</a>
+                <a className="usa-current" href="javascript:void(0);">Unassigned Cases</a>
               </li>
-              <li>
-                <a href="javascript:void(0);">Parent link</a>
-              </li>
-              <li>
-                <a href="javascript:void(0);">Parent link</a>
-              </li>
+              {this.props.attorneysOfJudge.map((attorney) => <li><Link to={`/${attorney.id}`}>{attorney.full_name}</Link></li>)}
             </ul>
           </LoadingDataDisplay>
         </div>
@@ -118,7 +113,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
 JudgeAssignTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.object.isRequired,
+  attorneysOfJudge: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => ({

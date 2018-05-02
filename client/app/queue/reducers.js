@@ -31,9 +31,9 @@ export const initialState = {
     taskDecision: {
       type: '',
       opts: {}
-    },
-    attorneysOfJudge: []
-  }
+    }
+  },
+  attorneysOfJudge: []
 };
 
 // eslint-disable-next-line max-statements
