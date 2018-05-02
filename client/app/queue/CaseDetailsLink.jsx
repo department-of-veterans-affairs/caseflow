@@ -13,7 +13,7 @@ const subHeadStyle = css({
 
 const CaseDetailsLink = (props) => {
   return <React.Fragment>
-    <Link to={`/tasks/${props.task.vacolsId}`} disabled={!props.task.attributes.task_id}>
+    <Link to={`/queue/tasks/${props.task.vacolsId}`} disabled={!props.task.attributes.task_id}>
       {props.appeal.attributes.veteran_full_name} ({props.appeal.attributes.vbms_id})
     </Link>
     {!_.isNull(_.get(props.appeal.attributes, 'appellant_full_name')) && <React.Fragment>
