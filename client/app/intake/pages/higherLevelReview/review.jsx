@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -25,9 +25,9 @@ class Review extends React.PureComponent {
     } = this.props;
 
     switch (higherLevelReviewStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }

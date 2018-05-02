@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, FORM_TYPES } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
@@ -137,11 +137,11 @@ class Search extends React.PureComponent {
     }
 
     switch (intakeStatus) {
-    case RAMP_INTAKE_STATES.STARTED:
+    case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.REVIEWED:
+    case INTAKE_STATES.REVIEWED:
       return <Redirect to={PAGE_PATHS.FINISH} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }

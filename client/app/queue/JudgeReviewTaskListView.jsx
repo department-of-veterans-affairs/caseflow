@@ -20,7 +20,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 const DISPLAYING_REVIEW_TASKS = {
   title: (reviewableCount) => <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>,
-  switchLink: (that) => <Link to={`/${that.props.userId}/assign`}>Switch to Assign Cases</Link>,
+  switchLink: (that) => <Link to={`/queue/${that.props.userId}/assign`}>Switch to Assign Cases</Link>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
   noTasksMessage: () => 'Congratulations! You don\'t have any decisions to sign.',
   table: () => <JudgeReviewTaskTable />
