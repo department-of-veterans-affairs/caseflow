@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "RAMP Intake" do
+RSpec.feature "RAMP Election Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
@@ -54,10 +54,6 @@ RSpec.feature "RAMP Intake" do
       "A duplicate claim for this EP code already exists in CorpDB. Please " \
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
   end
-
-  # let(:unknown_error) do
-  #   VBMS::HTTPError.new("500", "<faultstring>Unknown</faultstring>")
-  # end
 
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])

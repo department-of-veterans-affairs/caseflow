@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "RAMP Intake" do
+RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
 

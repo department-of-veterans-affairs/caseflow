@@ -1,14 +1,19 @@
 require "rails_helper"
 
-RSpec.feature "Higher Level Review Intake" do
+RSpec.feature "Higher Level Review Intake", focus:true do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:intakeAma)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(Time.utc(2018, 5, 26))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+  end
+
+  after do
+    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do
@@ -27,15 +32,6 @@ RSpec.feature "Higher Level Review Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  before do
-    FeatureToggle.enable!(:intakeAma)
-    Timecop.freeze(Time.utc(2018, 5, 26))
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
-  end
-
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
@@ -48,89 +44,87 @@ RSpec.feature "Higher Level Review Intake" do
     )
   end
 
-  context "Higher Level Review" do
-    it "Creates an end product" do
-      Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+  it "Creates an end product" do
+    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
 
-      visit "/intake"
-      safe_click ".Select"
+    visit "/intake"
+    safe_click ".Select"
 
-      fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
-      find("#form-select").send_keys :enter
+    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+    find("#form-select").send_keys :enter
 
-      safe_click ".cf-submit.usa-button"
+    safe_click ".cf-submit.usa-button"
 
-      expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
 
-      fill_in "Search small", with: "12341234"
+    fill_in "Search small", with: "12341234"
 
-      click_on "Search"
+    click_on "Search"
 
-      expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review-request")
 
-      fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
-      safe_click "#button-submit-review"
-      expect(page).to have_content(
-        "Receipt date cannot be in the future."
-      )
-      expect(page).to have_content(
-        "Please select an option."
-      )
+    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+    safe_click "#button-submit-review"
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    expect(page).to have_content(
+      "Please select an option."
+    )
 
-      fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
-      within_fieldset("Did the Veteran request an informal conference?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-
-      within_fieldset("Did the Veteran request review by the same office?") do
-        find("label", text: "No", match: :prefer_exact).click
-      end
-
-      safe_click "#button-submit-review"
-
-      expect(page).to have_current_path("/intake/finish")
-      expect(page).to have_content("Finish processing")
-      expect(page).to have_content("Decision date: 04/25/2018")
-      expect(page).to have_content("Left knee granted")
-
-      higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
-      expect(higher_level_review).to_not be_nil
-      expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
-      expect(higher_level_review.informal_conference).to eq(true)
-      expect(higher_level_review.same_office).to eq(false)
-
-      intake = Intake.find_by(veteran_file_number: "12341234")
-
-      find("label", text: "PTSD denied").click
-      safe_click "#button-finish-intake"
-
-      expect(page).to_not have_content("Finish processing")
-
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
-          benefit_type_code: "1",
-          payee_code: "00",
-          predischarge: false,
-          claim_type: "Claim",
-          station_of_jurisdiction: "397",
-          date: higher_level_review.receipt_date.to_date,
-          end_product_modifier: "030",
-          end_product_label: "Higher Level Review Rating",
-          end_product_code: "030HLRAMA",
-          gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
-        },
-        veteran_hash: intake.veteran.to_vbms_hash
-      )
-
-      intake.reload
-      expect(intake.completed_at).to eq(Time.zone.now)
-
-      expect(intake).to be_success
-
-      higher_level_review.reload
-      expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
+    within_fieldset("Did the Veteran request an informal conference?") do
+      find("label", text: "Yes", match: :prefer_exact).click
     end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Decision date: 04/25/2018")
+    expect(page).to have_content("Left knee granted")
+
+    higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
+    expect(higher_level_review).to_not be_nil
+    expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
+    expect(higher_level_review.informal_conference).to eq(true)
+    expect(higher_level_review.same_office).to eq(false)
+
+    intake = Intake.find_by(veteran_file_number: "12341234")
+
+    find("label", text: "PTSD denied").click
+    safe_click "#button-finish-intake"
+
+    expect(page).to_not have_content("Finish processing")
+
+    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      claim_hash: {
+        benefit_type_code: "1",
+        payee_code: "00",
+        predischarge: false,
+        claim_type: "Claim",
+        station_of_jurisdiction: "397",
+        date: higher_level_review.receipt_date.to_date,
+        end_product_modifier: "030",
+        end_product_label: "Higher Level Review Rating",
+        end_product_code: "030HLRAMA",
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false
+      },
+      veteran_hash: intake.veteran.to_vbms_hash
+    )
+
+    intake.reload
+    expect(intake.completed_at).to eq(Time.zone.now)
+
+    expect(intake).to be_success
+
+    higher_level_review.reload
+    expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
   end
 end
