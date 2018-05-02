@@ -69,6 +69,16 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
+      # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
+      if rails_env.local?
+        CSV.foreach(Rails.root.join("local", "vacols", "vbms_setup.csv"), headers: true) do |row|
+          row_hash = row.to_h
+          if row_hash["documents"]== "amc_full_grants" || row_hash["documents"]=="remands_ready_for_claims_establishment" 
+            Generators::Veteran.build(file_number: row_hash["vbms_id"].chop) 
+          end
+        end
+      end
+
       return if rails_env.local?
       Functions.grant!("Global Admin", users: ["System Admin"])
 

@@ -66,7 +66,7 @@ namespace :local do
 
     desc "Seeds local VACOLS"
     task seed: :environment do
-      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
+      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
 
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
@@ -172,7 +172,7 @@ namespace :local do
 
     def dateshift_field(items, date_shift, k)
       items.map! do |item|
-        item[k] = item[k] + date_shift if item[k]
+        item[k] = item[k] + date_shift.seconds if item[k]
         item
       end
     end
@@ -192,8 +192,9 @@ namespace :local do
         h = row.to_h
         items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
       end
+
       klass.columns_hash.each do |k, v|
-        if v.type == :datetime
+        if v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)

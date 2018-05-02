@@ -3,6 +3,16 @@ vacols_id,vbms_id,bgs_id,used_in_app,comments
 2774535,fuzzy_match_documents,,certification,Appeal with fuzzy matching docs
 2771149,mismatched_documents,,certification,Appeal with mismatched docs
 3242524,,,certification,Appeal already certified
+3306315,amc_full_grants,,dispatch,AMC full grants appeals
+2096907,amc_full_grants,,dispatch,AMC full grants appeals
+3642997,amc_full_grants,,dispatch,AMC full grants appeals
+2430857,amc_full_grants,,dispatch,AMC full grants appeals
+3363848,amc_full_grants,,dispatch,AMC full grants appeals
+3085659,remands_ready_for_claims_establishment,,dispatch,Remands ready
+3436456,remands_ready_for_claims_establishment,,dispatch,Remands ready
+2214968,remands_ready_for_claims_establishment,,dispatch,Remands ready
+3310775,remands_ready_for_claims_establishment,,dispatch,Remands ready
+2537880,remands_ready_for_claims_establishment,,dispatch,Remands ready
 3575931,static_documents,,reader queue,Case assigned to ZZHU
 3619838,no_categories,,reader queue,Case assigned to ZZHU
 3625593,random_documents,,reader queue,Case assigned to ZZHU

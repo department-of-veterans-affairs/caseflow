@@ -71,6 +71,22 @@ module Fakes::Data::AppealData
     ]
   end
 
+  def self.dispatch_documents
+    [
+      Generators::Document.build(vbms_document_id: 11, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 12, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 13, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 14, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 15, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 16, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 17, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 18, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 19, type: "BVA Decision"),
+      Generators::Document.build(vbms_document_id: 20, type: "BVA Decision")
+    ]
+  end
+
+
   READER_REDACTED_DOCS = [
     "VA 8 Certification of Appeal",
     "Supplemental Statement of the Case",
@@ -109,7 +125,9 @@ module Fakes::Data::AppealData
       "static_documents" => static_reader_documents,
       "no_categories" => reader_docs_no_categories,
       "random_documents" => random_reader_documents(1000),
-      "redacted_documents" => redacted_reader_documents
+      "redacted_documents" => redacted_reader_documents,
+      "amc_full_grants" => dispatch_documents,
+      "remands_ready_for_claims_establishment" => dispatch_documents
     }
   end
 
