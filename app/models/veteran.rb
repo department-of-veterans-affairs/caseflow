@@ -121,7 +121,15 @@ class Veteran < ApplicationRecord
 
       return nil unless veteran.found?
 
+      before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap { |v| v.update!(participant_id: v.ptcpnt_id) }
+
+    rescue ActiveRecord::RecordNotUnique
+      find_by(file_number: file_number)
+    end
+
+    def before_create_veteran_by_file_number
+      # noop - used to simulate race conditions
     end
   end
 
