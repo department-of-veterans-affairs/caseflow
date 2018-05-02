@@ -1353,14 +1353,13 @@ button {
   &.cf-cert,
   &.cf-dispatch,
     .cf-loading-icon-front {
-      &::after {
-        content: ' ';
-        display: inline-block;
-        width: 0;
-        height: 0;
+    &::after {
+      content: ' ';
+      display: inline-block;
+      width: 0;
+      height: 0;
       }
     }
-  }
 
   &.cf-cert {
     .cf-loading-icon-back {
