@@ -72,15 +72,12 @@ gem "therubyracer", platforms: :ruby
 gem "pg", platforms: :ruby
 
 # new sha for dev/uat/preprod/demo
-install_if -> { ENV["CONNECT_VBMS_ENV"] == "uat" || ENV["CONNECT_VBMS_ENV"] == "preprod" || ENV["CONNECT_VBMS_ENV"] == "demo" } do
+if  ENV["CONNECT_VBMS_ENV"] == "uat" || ENV["CONNECT_VBMS_ENV"] == "preprod" || ENV["CONNECT_VBMS_ENV"] == "demo" 
   gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "1a2d9b2d293935d5cf1b2088a1667820d783fcf6"
-end
-
 # old sha for prod
-install_if -> { ENV["CONNECT_VBMS_ENV"] == "prod" } do
+else 
   gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "783200ca61b57fc75f818334838181993535229a"
 end
-
 
 gem "redis-rails", "~> 5.0.2"
 
