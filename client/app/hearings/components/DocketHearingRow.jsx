@@ -98,7 +98,6 @@ export class DocketHearingRow extends React.PureComponent {
         replace(/(\w)(DT|ST)/g, '$1T');
     };
 
-    // Appellant differs Veteran
     const appellantDisplay = <div>
       { _.isEmpty(hearing.appellant_mi_formatted) ||
         hearing.appellant_mi_formatted === hearing.veteran_mi_formatted ?
