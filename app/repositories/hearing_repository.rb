@@ -47,13 +47,20 @@ class HearingRepository
     end
 
     def load_vacols_data(hearing)
+
+      vacols_case_hearing = nil
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
                                             service: :vacols,
                                             name: "load_vacols_data") do
-        VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+        vacols_case_hearing = VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
-      set_vacols_values(hearing, vacols_record)
-      true
+
+      if vacols_case_hearing
+        set_vacols_values(hearing, vacols_record)
+        true
+      else
+        raise Caseflow::Error::VacolsRecordNotFound, "Vacols record not found."
+      end
     rescue ActiveRecord::RecordNotFound
       false
     end
