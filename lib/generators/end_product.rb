@@ -26,6 +26,10 @@ class Generators::EndProduct
       Fakes::BGSService.end_product_records[attrs[:veteran_file_number]] ||= []
       Fakes::BGSService.end_product_records[attrs[:veteran_file_number]] << attrs[:bgs_attrs]
 
+      unless Veteran.new(file_number: attrs[:veteran_file_number]).found?
+        Generators::Veteran.build(file_number: attrs[:veteran_file_number])
+      end
+
       EndProduct.from_bgs_hash(attrs[:bgs_attrs])
     end
   end

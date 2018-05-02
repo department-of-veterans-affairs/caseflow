@@ -6,14 +6,20 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { completeIntake } from '../../actions/supplementalClaim';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
     const {
       supplementalClaimStatus,
-      veteranName
+      requestState,
+      veteranName,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     const tabs = [{
@@ -25,17 +31,23 @@ class Finish extends React.PureComponent {
     }];
 
     switch (supplementalClaimStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.STARTED:
+    case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
     return <div>
       <h1>Finish processing { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
+      }
 
       <p>
         Select or enter the issue(s) that best match the form you are processing.
@@ -64,7 +76,7 @@ class FinishNextButton extends React.PureComponent {
 
   render = () =>
     <Button
-      name="submit-review"
+      name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
@@ -78,7 +90,10 @@ const FinishNextButtonConnected = connect(
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
     supplementalClaim
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    completeIntake
+  }, dispatch)
 )(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {
@@ -92,6 +107,9 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    higherLevelReviewStatus: getIntakeStatus(state)
+    supplementalClaimStatus: getIntakeStatus(state),
+    requestState: state.supplementalClaim.requestStatus.completeIntake,
+    completeIntakeErrorCode: state.supplementalClaim.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.supplementalClaim.requestStatus.completeIntakeErrorData
   })
 )(Finish);

@@ -890,10 +890,20 @@ RSpec.feature "RAMP Intake" do
       end
 
       let!(:rating) do
-        Generators::Rating.build(participant_id: veteran.participant_id, promulgation_date: 1.month.ago)
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Date.new(2018, 4, 25),
+          profile_date: Date.new(2018, 4, 28),
+          issues: [
+            { reference_id: "abc123", decision_text: "Left knee granted" },
+            { reference_id: "def456", decision_text: "PTSD denied" }
+          ]
+        )
       end
 
       scenario "Supplemental Claim" do
+        Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+
         visit "/intake"
         safe_click ".Select"
         expect(page).to have_css(".cf-form-dropdown")
@@ -928,14 +938,63 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_current_path("/intake/finish")
         expect(page).to have_content("Finish processing")
         expect(page).to have_content("Decision date: 04/25/2018")
-        expect(page).to have_content("Service connection for Emphysema is granted")
+        expect(page).to have_content("Left knee granted")
 
         supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+
         expect(supplemental_claim).to_not be_nil
         expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
+        intake = Intake.find_by(veteran_file_number: "12341234")
+
+        find("label", text: "PTSD denied").click
+        safe_click "#button-finish-intake"
+
+        expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+        expect(page).to have_content(
+          "Established EP: 040SCRAMA - Supplemental Claim Review Rating for Station 397 - ARC"
+        )
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: supplemental_claim.receipt_date.to_date,
+            end_product_modifier: "040",
+            end_product_label: "Supplemental Claim Review Rating",
+            end_product_code: "040SCRAMA",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: intake.veteran.to_vbms_hash
+        )
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: "12341234",
+          claim_id: "IAMANEPID",
+          contention_descriptions: ["PTSD denied"]
+        )
+
+        intake.reload
+        expect(intake.completed_at).to eq(Time.zone.now)
+
+        expect(intake).to be_success
+
+        supplemental_claim.reload
+        expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
+        expect(supplemental_claim.request_issues.count).to eq 1
+        expect(supplemental_claim.request_issues.first).to have_attributes(
+          rating_issue_reference_id: "def456",
+          rating_issue_profile_date: Date.new(2018, 4, 28),
+          description: "PTSD denied"
+        )
       end
 
       scenario "Higher Level Review" do
+        Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+
         visit "/intake"
         safe_click ".Select"
         expect(page).to have_css(".cf-form-dropdown")
@@ -980,13 +1039,47 @@ RSpec.feature "RAMP Intake" do
         safe_click "#button-submit-review"
 
         expect(page).to have_current_path("/intake/finish")
-        expect(page).to have_content("Finish page")
+        expect(page).to have_content("Finish processing")
+        expect(page).to have_content("Decision date: 04/25/2018")
+        expect(page).to have_content("Left knee granted")
 
         higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
         expect(higher_level_review).to_not be_nil
         expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
         expect(higher_level_review.informal_conference).to eq(true)
         expect(higher_level_review.same_office).to eq(false)
+
+        intake = Intake.find_by(veteran_file_number: "12341234")
+
+        find("label", text: "PTSD denied").click
+        safe_click "#button-finish-intake"
+
+        expect(page).to_not have_content("Finish processing")
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: higher_level_review.receipt_date.to_date,
+            end_product_modifier: "030",
+            end_product_label: "Higher Level Review Rating",
+            end_product_code: "030HLRAMA",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: intake.veteran.to_vbms_hash
+        )
+
+        intake.reload
+        expect(intake.completed_at).to eq(Time.zone.now)
+
+        expect(intake).to be_success
+
+        higher_level_review.reload
+        expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
       end
     end
   end
