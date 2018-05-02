@@ -2,7 +2,7 @@ import React from 'react';
 import StatusMessage from '../../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Completed extends React.PureComponent {
@@ -14,11 +14,11 @@ class Completed extends React.PureComponent {
     } = this.props;
 
     switch (supplementalClaimStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.STARTED:
+    case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.REVIEWED:
+    case INTAKE_STATES.REVIEWED:
       return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
     }
