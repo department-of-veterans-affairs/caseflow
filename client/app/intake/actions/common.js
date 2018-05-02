@@ -86,6 +86,18 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setOptionSelected = (optionSelected) => ({
+  type: ACTIONS.SET_OPTION_SELECTED,
+  payload: {
+    optionSelected
+  },
+  meta: {
+    analytics: {
+      label: optionSelected
+    }
+  }
+});
+
 export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {

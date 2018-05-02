@@ -27,7 +27,7 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        vacols_id = params[:vacols_id]
+        vacols_id = params[:id]
         MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
                               service: :queue,
                               name: "AppealsController.show") do

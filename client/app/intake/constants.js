@@ -47,7 +47,7 @@ export const REQUEST_STATE = {
   FAILED: 'FAILED'
 };
 
-export const RAMP_INTAKE_STATES = {
+export const INTAKE_STATES = {
   NONE: 'NONE',
   STARTED: 'STARTED',
   REVIEWED: 'REVIEWED',

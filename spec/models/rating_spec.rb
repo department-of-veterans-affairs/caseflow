@@ -13,8 +13,8 @@ describe Rating do
 
   let(:issues) do
     [
-      { rba_issue_id: "Issue1", decision_text: "Decision1" },
-      { rba_issue_id: "Issue2", decision_text: "Decision2" }
+      { reference_id: "Issue1", decision_text: "Decision1" },
+      { reference_id: "Issue2", decision_text: "Decision2" }
     ]
   end
 
@@ -24,10 +24,10 @@ describe Rating do
     it "returns the issues" do
       expect(subject.count).to eq(2)
       expect(subject.first).to have_attributes(
-        rba_issue_id: "Issue1", decision_text: "Decision1"
+        reference_id: "Issue1", decision_text: "Decision1"
       )
       expect(subject.second).to have_attributes(
-        rba_issue_id: "Issue2", decision_text: "Decision2"
+        reference_id: "Issue2", decision_text: "Decision2"
       )
     end
   end
