@@ -10,10 +10,10 @@ class Completed extends React.PureComponent {
     const {
       veteran,
       endProductDescription,
-      supplementalClaimStatus
+      higherLevelReviewStatus
     } = this.props;
 
-    switch (supplementalClaimStatus) {
+    switch (higherLevelReviewStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
@@ -24,7 +24,7 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'Request for Supplemental Claim (VA Form 21-526b) has been processed.';
+      'Request for Higher Level Review (VA Form 20-0988) has been processed.';
 
     return <div>
       <StatusMessage
@@ -45,7 +45,7 @@ class Completed extends React.PureComponent {
 export default connect(
   (state) => ({
     veteran: state.intake.veteran,
-    endProductDescription: state.supplementalClaim.endProductDescription,
-    supplementalClaimStatus: getIntakeStatus(state)
+    endProductDescription: state.higherLevelReview.endProductDescription,
+    higherLevelReviewStatus: getIntakeStatus(state)
   })
 )(Completed);

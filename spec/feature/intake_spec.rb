@@ -949,7 +949,7 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "PTSD denied").click
         safe_click "#button-finish-intake"
 
-        expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+        expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
         expect(page).to have_content(
           "Established EP: 040SCRAMA - Supplemental Claim Review Rating for Station 397 - ARC"
         )
@@ -1054,7 +1054,10 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "PTSD denied").click
         safe_click "#button-finish-intake"
 
-        expect(page).to_not have_content("Finish processing")
+        expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+        expect(page).to have_content(
+          "Established EP: 030HLRAMA - Higher Level Review Rating for Station 397 - ARC"
+        )
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {

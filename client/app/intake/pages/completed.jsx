@@ -5,6 +5,7 @@ import { PAGE_PATHS } from '../constants';
 import RampElectionPage from './rampElection/completed';
 import RampRefilingPage from './rampRefiling/completed';
 import SupplementalClaimPage from './supplementalClaim/completed';
+import HigherLevelReviewPage from './higherLevelReview/completed';
 import SwitchOnForm from '../components/SwitchOnForm';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../actions/common';
@@ -16,7 +17,8 @@ class Completed extends React.PureComponent {
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
         ramp_refiling: <RampRefilingPage />,
-        supplemental_claim: <SupplementalClaimPage />
+        supplemental_claim: <SupplementalClaimPage />,
+        higher_level_review: <HigherLevelReviewPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
