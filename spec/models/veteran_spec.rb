@@ -64,6 +64,20 @@ describe Veteran do
             participant_id: "123123"
           )
         end
+
+        context "when duplicate veteran is saved while fetching BGS data (race condition)" do
+          let(:saved_veteran) do
+            Veteran.new(file_number: file_number, participant_id: "123123")
+          end
+
+          before do
+            allow(Veteran).to receive(:before_create_veteran_by_file_number) do
+              saved_veteran.save!
+            end
+          end
+
+          it { is_expected.to eq(saved_veteran) }
+        end
       end
 
       context "when veteran isn't found in BGS" do
