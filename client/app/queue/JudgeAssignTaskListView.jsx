@@ -48,14 +48,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
       timeout: true
     };
     const url = `/users?role=Attorney&judge_css_id=${this.props.userCssId}`;
-    console.log(url);
 
     return ApiUtil.get(url, requestOptions).
       then(
         (response) => {
           const resp = JSON.parse(response.text);
 
-          this.props.setAttorneysOfJudge();
+          this.props.setAttorneysOfJudge(resp.attorneys);
         },
         () => null);
   }
@@ -63,6 +62,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   render = () => {
     const reviewableCount = this.visibleTasks(this.props.tasks).length;
     let tableContent;
+    console.log(this.props.attorneysOfJudge);
 
     if (reviewableCount === 0) {
       tableContent = <div>
@@ -121,8 +121,10 @@ JudgeAssignTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => (
-  _.pick(state.queue.loadedQueue, 'tasks', 'appeals'));
+const mapStateToProps = (state) => ({
+  ..._.pick(state.queue, 'attorneysOfJudge'),
+  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

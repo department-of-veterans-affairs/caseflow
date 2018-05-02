@@ -31,7 +31,8 @@ export const initialState = {
     taskDecision: {
       type: '',
       opts: {}
-    }
+    },
+    attorneysOfJudge: []
   }
 };
 
@@ -227,6 +228,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.SET_ATTORNEYS_OF_JUDGE:
+    return update(state, {
+      attorneysOfJudge: {
+        $set: action.payload.attorneys
+      }
+    });
   default:
     return state;
   }
