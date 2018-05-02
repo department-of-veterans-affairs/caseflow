@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
-import { RAMP_INTAKE_STATES } from './constants';
+import { INTAKE_STATES } from './constants';
 import _ from 'lodash';
 
 const getIntakeDetailStatus = (intakeDetail) => {
   if (intakeDetail.isComplete) {
-    return RAMP_INTAKE_STATES.COMPLETED;
+    return INTAKE_STATES.COMPLETED;
   } else if (intakeDetail.isReviewed) {
-    return RAMP_INTAKE_STATES.REVIEWED;
+    return INTAKE_STATES.REVIEWED;
   } else if (intakeDetail.isStarted) {
-    return RAMP_INTAKE_STATES.STARTED;
+    return INTAKE_STATES.STARTED;
   }
 
   return null;
@@ -30,6 +30,6 @@ export const getIntakeStatus = createSelector(
       result || getIntakeDetailStatus(intakeDetail)
     ), null);
 
-    return status || RAMP_INTAKE_STATES.NONE;
+    return status || INTAKE_STATES.NONE;
   }
 );
