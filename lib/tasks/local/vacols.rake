@@ -85,8 +85,8 @@ namespace :local do
         User.find_or_create_by(
           css_id: s.sdomainid
         ) do |user|
-          user.station_id = "283"
-          user.full_name = "#{s.snamef} + #{s.snamel}"
+          user.station_id = "101"
+          user.full_name = "#{s.snamef} #{s.snamel}"
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)

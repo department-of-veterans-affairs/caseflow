@@ -196,6 +196,7 @@ RSpec.configure do |config|
   end
   config.before(:all) do
     User.unauthenticate!
+    Rails.cache.clear
   end
 
   config.after(:each) do

@@ -10,10 +10,10 @@ class Completed extends React.PureComponent {
     const {
       veteran,
       endProductDescription,
-      rampElectionStatus
+      supplementalClaimStatus
     } = this.props;
 
-    switch (rampElectionStatus) {
+    switch (supplementalClaimStatus) {
     case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case INTAKE_STATES.STARTED:
@@ -24,7 +24,7 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'opt-in election has been processed.';
+      'Request for Higher Level Review (VA Form 20-0988) has been processed.';
 
     return <div>
       <StatusMessage
@@ -32,7 +32,8 @@ class Completed extends React.PureComponent {
         type="success"
         leadMessageList={[message]}
         checklist={[
-          'Caseflow closed the VACOLS record',
+          'Reviewed Form',
+          'Selected issues',
           `Established EP: ${endProductDescription}`
         ]}
         wrapInAppSegment={false}
@@ -44,7 +45,7 @@ class Completed extends React.PureComponent {
 export default connect(
   (state) => ({
     veteran: state.intake.veteran,
-    endProductDescription: state.rampElection.endProductDescription,
-    rampElectionStatus: getIntakeStatus(state)
+    endProductDescription: state.supplementalClaim.endProductDescription,
+    supplementalClaimStatus: getIntakeStatus(state)
   })
 )(Completed);

@@ -61,7 +61,7 @@ class CaseListView extends React.PureComponent {
 
     return <React.Fragment>
       <div {...backLinkStyling}>
-        <Link to="/" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
+        <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
       </div>
       <AppSegment filledBackground>
         <div>
