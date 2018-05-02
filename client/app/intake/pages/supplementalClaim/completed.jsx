@@ -24,7 +24,7 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'Request for Higher Level Review (VA Form 20-0988) has been processed.';
+      'Request for Supplemental Claim (VA Form 21-526b) has been processed.';
 
     return <div>
       <StatusMessage
