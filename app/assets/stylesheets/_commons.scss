@@ -1350,11 +1350,8 @@ button {
   }
 
   // preload app-specific loading button SVGs
-
   &.cf-cert,
   &.cf-dispatch,
-  &.cf-efolder,
-  &.cf-feedback {
     .cf-loading-icon-front {
       &::after {
         content: ' ';
@@ -1377,22 +1374,6 @@ button {
     .cf-loading-icon-back {
       &::after {
         background: image-url('icons/loading-pill-cf-dispatch.svg') center center no-repeat;
-      }
-    }
-  }
-
-  &.cf-efolder {
-    .cf-loading-icon-back {
-      &::after {
-        background: image-url('icons/loading-pill-cf-efolder.svg') center center no-repeat;
-      }
-    }
-  }
-
-  &.cf-feedback {
-    .cf-loading-icon-back {
-      &::after {
-        background: image-url('icons/loading-pill-cf-feedback.svg') center center no-repeat;
       }
     }
   }
