@@ -86,7 +86,6 @@ module Fakes::Data::AppealData
     ]
   end
 
-
   READER_REDACTED_DOCS = [
     "VA 8 Certification of Appeal",
     "Supplemental Statement of the Case",
