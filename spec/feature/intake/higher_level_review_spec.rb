@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher Level Review Intake", focus:true do
+RSpec.feature "Higher Level Review Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
