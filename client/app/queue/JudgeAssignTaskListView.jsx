@@ -37,7 +37,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 
   title = (reviewableCount) => <h1>Assign {reviewableCount} Cases</h1>
-  switchLink = (that) => <Link to={`/${that.props.userId}/review`}>Switch to Review Cases</Link>
+  switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
   visibleTasks = (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign')
   noTasksMessage = () => 'Congratulations! You don\'t have any cases to assign.'
   table = () => <JudgeAssignTaskTable />
@@ -62,6 +62,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   render = () => {
     const reviewableCount = this.visibleTasks(this.props.tasks).length;
     let tableContent;
+
     console.log(this.props.attorneysOfJudge);
 
     if (reviewableCount === 0) {
@@ -94,7 +95,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
               <li>
                 <a className="usa-current" href="javascript:void(0);">Unassigned Cases</a>
               </li>
-              {this.props.attorneysOfJudge.map((attorney) => <li><Link to={`/${attorney.id}`}>{attorney.full_name}</Link></li>)}
+              {this.props.attorneysOfJudge.map((attorney) => <li><Link to={`/queue/${attorney.id}`}>{attorney.full_name}</Link></li>)}
             </ul>
           </LoadingDataDisplay>
         </div>
