@@ -303,8 +303,20 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
       end
 
+      let!(:judge) do
+        User.authenticate!(roles: ["Hearing Prep"])
+      end
+
       let!(:hearing) do
-        Generators::Hearing.create(appeal: appeal)
+        Generators::Hearing.create(appeal: appeal, user: judge)
+      end
+
+      let!(:hearing2) do
+        Generators::Hearing.create(appeal: appeal, user: judge)
+      end
+
+      let!(:hearing_view) do
+        HearingView.create(user: judge, hearing_id: hearing.id)
       end
 
       before do
@@ -313,6 +325,8 @@ RSpec.feature "Reader" do
 
       scenario "View Hearing Worksheet" do
         visit "/reader/appeal"
+        expect(page).to have_selector("a", text: "Hearing Worksheet", count: 1)
+
         new_window = window_opened_by { click_on "Hearing Worksheet" }
         within_window new_window do
           expect(page).to have_content("Hearing Worksheet")

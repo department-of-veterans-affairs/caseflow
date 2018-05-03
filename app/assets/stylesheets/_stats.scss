@@ -1,0 +1,67 @@
+@import 'bourbon';
+@import 'neat';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
+@import 'global/fonts';
+
+.cf-stats-container {
+
+  .cf-stats {
+    margin-top: 20px;
+  }
+
+  .cf-stats-section {
+    @include outer-container;
+    margin-bottom: 20px;
+  }
+
+  .cf-stats-active-users {
+    margin-top: 40px;
+  }
+
+  .cf-stats-table {
+    margin-top: 0;
+  }
+
+  .cf-stat-panel {
+    @include span-columns(4);
+    position: relative;
+    border: 1px solid $color-gray-lighter;
+    padding: 1em;
+    padding-bottom: 6em;
+    overflow: hidden;
+
+    &.-toggle .cf-stat-option {
+      display: none;
+      &.active { display: block; }
+    }
+  }
+
+  .cf-stat-title {
+    color: $color-gray;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .cf-stat-figure {
+    font-size: 6rem;
+    font-weight: bold;
+    color: $color-gray;
+    line-height: .9;
+  }
+
+  .cf-stat-unit {
+    font-size: 1.6rem;
+    font-weight: normal;
+    color: $color-gray;
+    margin-left: -0.5em;
+  }
+
+  .data-chart svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    * { pointer-events: none; }
+  }
+}

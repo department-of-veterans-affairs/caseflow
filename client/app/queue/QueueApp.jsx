@@ -57,37 +57,36 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
     <Breadcrumbs />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
+    <QueueDetailView {...this.props}
+      vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     vacolsId={props.match.params.vacolsId}
-    nextStep="/" />;
+    nextStep="/queue" />;
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      prevStep={`/tasks/${vacolsId}`}
-      nextStep={`/tasks/${vacolsId}/submit`} />;
+      prevStep={`/queue/tasks/${vacolsId}`}
+      nextStep={`/queue/tasks/${vacolsId}/submit`} />;
   };
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/queue/tasks/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/queue/tasks/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/tasks/${props.match.params.appealId}/submit`}
+    nextStep={`/queue/tasks/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
-  render = () => <BrowserRouter basename="/queue">
+  render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl="/"
+      defaultUrl="/queue"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -99,32 +98,32 @@ class QueueApp extends React.PureComponent {
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
-            path="/"
+            path="/queue"
             title="Your Queue | Caseflow"
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/:userId"
+            path="/queue/:userId"
             title="Your Queue | Caseflow"
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/:userId/review"
+            path="/queue/:userId/review"
             title="Your Queue | Caseflow"
             render={this.routedJudgeQueueList('Review')} />
           <PageRoute
             exact
-            path="/:userId/assign"
+            path="/queue/:userId/assign"
             title="Your Queue | Caseflow"
             render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId"
+            path="/queue/tasks/:vacolsId"
             title="Draft Decision | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/submit"
+            path="/queue/tasks/:vacolsId/submit"
             title={() => {
               const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
                 'OMO' : 'Draft Decision';
@@ -134,17 +133,17 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/queue/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/tasks/:appealId/remands"
+            path="/queue/tasks/:appealId/remands"
             title="Draft Decision | Select Issue Remand Reasons"
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions"
+            path="/queue/tasks/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
           <PageRoute
