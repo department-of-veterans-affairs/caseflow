@@ -89,10 +89,49 @@ describe HigherLevelReview do
     end
   end
 
-  context "#create_end_product!" do
-    subject { higher_level_review.create_end_product! }
+  context "#create_issues!" do
+    before { higher_level_review.save! }
+    subject { higher_level_review.create_issues!(request_issues_data: request_issues_data) }
+
+    let!(:request_issues_data) do
+      [
+        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+      ]
+    end
+
+    let!(:outdated_issue) do
+      higher_level_review.request_issues.create!(
+        rating_issue_reference_id: "000",
+        rating_issue_profile_date: Date.new,
+        description: "i will be destroyed"
+      )
+    end
+
+    it "creates issues from request_issues_data" do
+      subject
+      expect(higher_level_review.request_issues.count).to eq(2)
+      expect(higher_level_review.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
+        rating_issue_profile_date: Date.new(2018, 4, 4),
+        description: "hello"
+      )
+    end
+  end
+
+  context "#create_end_product_and_contentions!" do
+    subject { higher_level_review.create_end_product_and_contentions! }
     let(:veteran) { Veteran.new(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
+    let!(:request_issues_data) do
+      [
+        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+      ]
+    end
+    before do
+      higher_level_review.save!
+      higher_level_review.create_issues!(request_issues_data: request_issues_data)
+    end
 
     # Stub the id of the end product being created
     before do
@@ -110,7 +149,7 @@ describe HigherLevelReview do
     it "creates end product and saves end_product_reference_id" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-      expect(subject).to eq(:created)
+      subject
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
