@@ -112,7 +112,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       stagedChanges: {
         taskDecision: {
-          $set: initialState.stagedChanges.taskDecision
+          opts: { $set: initialState.stagedChanges.taskDecision.opts }
         }
       }
     });
