@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import querystring from 'querystring';
 import { css } from 'glamor';
 
 import Table from '../components/Table';

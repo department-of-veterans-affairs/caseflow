@@ -25,17 +25,27 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     const {
       vacolsId,
       history,
-      appeal: {
-        attributes: {
-          issues,
-          veteran_full_name: vetName
-        }
-      }
+      appeal: { attributes: { veteran_full_name: vetName } }
     } = this.props;
     const decisionType = props.value;
     const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
+    this.stageAppeal(decisionType);
+
     this.props.resetDecisionOptions();
+    this.props.setCaseReviewActionType(decisionType);
+    this.props.resetBreadcrumbs(vetName, vacolsId);
+
+    history.push('');
+    history.replace(`/queue/tasks/${vacolsId}/${route}`);
+  };
+
+  stageAppeal = (decisionType) => {
+    const {
+      vacolsId,
+      appeal: { attributes: { issues } }
+    } = this.props;
+
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.checkoutStagedAppeal(vacolsId);
     }
@@ -47,12 +57,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     } else {
       this.props.stageAppeal(vacolsId);
     }
-    this.props.setCaseReviewActionType(decisionType);
-    this.props.resetBreadcrumbs(vetName, vacolsId);
-
-    history.push('');
-    history.replace(`/queue/tasks/${vacolsId}/${route}`);
-  };
+  }
 
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.vacolsId}`}
