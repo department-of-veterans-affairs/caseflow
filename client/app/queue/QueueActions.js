@@ -153,3 +153,12 @@ export const setAttorneysOfJudge = (attorneys) => ({
     attorneys
   }
 });
+
+export const setTasksAndAppealsOfAttorney = ({attorneyId, tasks, appeals}) => ({
+  type: ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    tasks,
+    appeals
+  }
+});

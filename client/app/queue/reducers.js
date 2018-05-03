@@ -33,7 +33,9 @@ export const initialState = {
       opts: {}
     }
   },
-  attorneysOfJudge: []
+  attorneysOfJudge: [],
+  tasksOfAttorney: {},
+  appealsOfAttorney: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -232,6 +234,25 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       attorneysOfJudge: {
         $set: action.payload.attorneys
+      }
+    });
+  case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADED',
+            data: action.payload.tasks
+          }
+        }
+      },
+      appealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADED',
+            data: action.payload.appeals
+          }
+        }
       }
     });
   default:

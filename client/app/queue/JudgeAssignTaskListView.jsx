@@ -22,7 +22,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge } from './QueueActions';
+import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney } from './QueueActions';
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -50,8 +50,17 @@ class JudgeAssignTaskListView extends React.PureComponent {
           const resp = JSON.parse(response.text);
 
           this.props.setAttorneysOfJudge(resp.attorneys);
-          for (const attorney in resp.attorneys) {
-            ApiUtil.get()
+          for (const attorney of resp.attorneys) {
+            ApiUtil.get(`/queue/${attorney.id}`, requestOptions).then(
+              (respText) => {
+                const resp = JSON.parse(respText.text);
+
+                this.props.setTasksAndAppealsOfAttorney(
+                  {attorneyId: attorney.id, tasks: resp.tasks.data, appeals: resp.tasks.data});
+              },
+              (resp) => {
+              }
+            );
           }
         });
   }
@@ -70,6 +79,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <JudgeAssignTaskTable />
       </React.Fragment>;
     }
+    console.log(this.props.tasksOfAttorney);
 
     return <AppSegment filledBackground>
       <div>
@@ -94,7 +104,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
                 <a className="usa-current" disabled>Unassigned Cases</a>
               </li>
               {this.props.attorneysOfJudge.
-                map((attorney) => <li><Link to={`/queue/${attorney.id}`}>{attorney.full_name}</Link></li>)}
+                map((attorney) => <li key={attorney.id}>
+                  <Link to={`/queue/${attorney.id}`}>{attorney.full_name}</Link>
+                </li>)}
             </ul>
           </LoadingDataDisplay>
         </div>
@@ -109,11 +121,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
 JudgeAssignTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
-  attorneysOfJudge: PropTypes.array.isRequired
+  attorneysOfJudge: PropTypes.array.isRequired,
+  tasksOfAttorney: PropTypes.object.isRequired,
+  appealsOfAttorney: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge'),
+  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksOfAttorney', 'appealsOfAttorney'),
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
 });
 
@@ -123,7 +137,8 @@ const mapDispatchToProps = (dispatch) => (
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
-    setAttorneysOfJudge
+    setAttorneysOfJudge,
+    setTasksAndAppealsOfAttorney
   }, dispatch)
 );
 
