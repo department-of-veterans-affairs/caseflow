@@ -21,6 +21,24 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
+import PageRoute from '../components/PageRoute';
+
+const UnassignedCasesPage = ({ tasksWithAppeals }) => {
+  const reviewableCount = tasksWithAppeals.length;
+  let tableContent;
+
+  if (reviewableCount === 0) {
+    tableContent = <StatusMessage title="Tasks not found">
+       Congratulations! You don't have any cases to assign.
+    </StatusMessage>;
+  } else {
+    tableContent = <React.Fragment>
+      <h2>Unassigned Cases</h2>
+      <JudgeAssignTaskTable tasksAndAppeals={tasksWithAppeals} />
+    </React.Fragment>;
+  }
+  return tableContent;
+}
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -33,7 +51,14 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
   };
 
-  title = (reviewableCount) => <h1>Assign {reviewableCount} Cases</h1>
+  unassignedTasksWithAppeals = () => {
+    return sortTasks(_.pick(this.props, 'tasks', 'appeals')).
+      filter((task) => task.attributes.task_type === 'Assign').
+      map((task) => ({
+        task,
+        appeal: this.props.appeals[task.vacolsId] }));
+  }
+
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
@@ -64,31 +89,10 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
-    const unassignedTasks = sortTasks(_.pick(this.props, 'tasks', 'appeals')).
-      filter((task) => task.attributes.task_type === 'Assign');
-    const reviewableCount = unassignedTasks.length;
-    let tableContent;
-
-    if (reviewableCount === 0) {
-      tableContent = <StatusMessage title="Tasks not found">
-         Congratulations! You don't have any cases to assign.
-      </StatusMessage>;
-    } else {
-      tableContent = <React.Fragment>
-        <h2>Unassigned Cases</h2>
-        <JudgeAssignTaskTable tasksAndAppeals={
-          unassignedTasks.
-            map((task) => ({
-              task,
-              appeal: this.props.appeals[task.vacolsId] }))
-          } />
-      </React.Fragment>;
-    }
-
     return <AppSegment filledBackground>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          {this.title(reviewableCount)}
+          <h1>Assign {this.unassignedTasksWithAppeals().length} Cases</h1>
           {this.switchLink(this)}
         </div>
         <div className="usa-width-one-fourth">
@@ -115,7 +119,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
           </LoadingDataDisplay>
         </div>
         <div className="usa-width-three-fourths">
-          {tableContent}
+          <PageRoute
+            path={this.props.match.url}
+            title="Your Queue | Unassigned Cases"
+            render={() => <UnassignedCasesPage tasksWithAppeals={this.unassignedTasksWithAppeals()} />}
+            />
         </div>
       </div>
     </AppSegment>;

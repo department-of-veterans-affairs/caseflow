@@ -41,12 +41,12 @@ class QueueApp extends React.PureComponent {
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (taskType) => () => <QueueLoadingScreen {...this.props}>
+  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
       {taskType === 'Assign' ?
-        <JudgeAssignTaskListView {...this.props} /> :
+        <JudgeAssignTaskListView {...this.props} match={match} /> :
         <JudgeReviewTaskListView {...this.props} />}
     </SearchEnabledView>
   </QueueLoadingScreen>;
