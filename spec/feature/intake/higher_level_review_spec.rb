@@ -44,7 +44,7 @@ RSpec.feature "Higher Level Review Intake" do
     )
   end
 
-  it "Creates an end product" do
+  it "Creates an end product and contentions for it" do
     Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
 
     visit "/intake"
@@ -122,6 +122,12 @@ RSpec.feature "Higher Level Review Intake" do
       veteran_hash: intake.veteran.to_vbms_hash
     )
 
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      veteran_file_number: "12341234",
+      claim_id: "IAMANEPID",
+      contention_descriptions: ["PTSD denied"]
+    )
+
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
 
@@ -129,5 +135,11 @@ RSpec.feature "Higher Level Review Intake" do
 
     higher_level_review.reload
     expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
+    expect(higher_level_review.request_issues.count).to eq 1
+    expect(higher_level_review.request_issues.first).to have_attributes(
+      rating_issue_reference_id: "def456",
+      rating_issue_profile_date: Date.new(2018, 4, 28),
+      description: "PTSD denied"
+    )
   end
 end
