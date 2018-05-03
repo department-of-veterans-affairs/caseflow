@@ -25,7 +25,6 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     const {
       vacolsId,
       history,
-      constructRoute,
       appeal: {
         attributes: {
           issues,
@@ -51,9 +50,8 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     this.props.setCaseReviewActionType(decisionType);
     this.props.resetBreadcrumbs(vetName, vacolsId);
 
-    // history.push(constructRoute(route) || `${history.location.pathname}/${route}`);
     history.push('');
-    history.replace(`/tasks/${vacolsId}/${route}`);
+    history.replace(`/queue/tasks/${vacolsId}/${route}`);
   };
 
   render = () => <SearchableDropdown
@@ -66,12 +64,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
 }
 
 SelectCheckoutFlowDropdown.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  constructRoute: PropTypes.func
-};
-
-SelectCheckoutFlowDropdown.defaultProps = {
-  constructRoute: _.noop
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({

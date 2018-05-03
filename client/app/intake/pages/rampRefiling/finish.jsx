@@ -5,7 +5,7 @@ import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import Table from '../../../components/Table';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, RAMP_INTAKE_STATES, REQUEST_STATE } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setIssueSelected, setHasIneligibleIssue, setOutsideCaseflowStepsConfirmed, completeIntake,
@@ -42,11 +42,11 @@ class Finish extends React.PureComponent {
     } = this.props;
 
     switch (rampRefilingStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.STARTED:
+    case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }

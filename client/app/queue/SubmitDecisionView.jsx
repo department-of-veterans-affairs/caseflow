@@ -69,7 +69,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/tasks/${this.props.vacolsId}/submit`
+    path: `/queue/tasks/${this.props.vacolsId}/submit`
   });
 
   goToPrevStep = () => {
@@ -124,7 +124,7 @@ class SubmitDecisionView extends React.PureComponent {
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's 
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).

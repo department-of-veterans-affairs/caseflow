@@ -101,13 +101,7 @@ class AttorneyTaskTable extends React.PureComponent {
       columns.push({
         header: 'Action',
         span: this.collapseColumnIfNoDASRecord,
-        valueFunction: (task) => <SelectCheckoutFlowDropdown
-          constructRoute={(route) => {
-            const queryParams = { prev: '/' };
-
-            return `tasks/${task.vacolsId}/${route}?${querystring.stringify(queryParams)}`;
-          }}
-          vacolsId={task.vacolsId} />
+        valueFunction: (task) => <SelectCheckoutFlowDropdown vacolsId={task.vacolsId} />
       });
     }
 
