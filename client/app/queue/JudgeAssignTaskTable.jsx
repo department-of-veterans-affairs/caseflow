@@ -16,21 +16,15 @@ import { sortTasks, renderAppealType } from './utils';
 class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
 
-  getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.vacolsId];
+  getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
-    return attr ? _.get(appeal.attributes, attr) : appeal;
-  };
-
-  getCaseDetailsLink = ({ task }) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
-
-  createLoadPromise = (task) => () => {
-    if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
+  createLoadPromise = ({ task, appeal }) => () => {
+    if (!_.isUndefined(_.get(appeal.attributes, 'docCount'))) {
       return Promise.resolve();
     }
 
-    const url = this.getAppealForTask(task, 'number_of_documents_url');
-    const vbmsId = this.getAppealForTask(task, 'vbms_id');
+    const url = _.get(appeal.attributes, 'number_of_documents_url');
+    const vbmsId = _.get(appeal.attributes, 'vbms_id');
     const requestOptions = {
       withCredentials: true,
       timeout: true,
@@ -58,21 +52,21 @@ class JudgeAssignTaskTable extends React.PureComponent {
     },
     {
       header: 'Type(s)',
-      valueFunction: ({ task }) => renderAppealType(this.getAppealForTask(task))
+      valueFunction: ({ appeal }) => renderAppealType(appeal)
     },
     {
       header: 'Docket Number',
-      valueFunction: ({ task }) => this.getAppealForTask(task, 'docket_number')
+      valueFunction: ({ appeal }) => _.get(appeal.attributes, 'docket_number')
     },
     {
       header: 'Issues',
-      valueFunction: ({ task }) => this.getAppealForTask(task, 'issues.length')
+      valueFunction: ({ appeal }) => _.get(appeal.attributes, 'issues.length')
     },
     {
       header: 'Docs in Claims Folder',
-      valueFunction: ({ task }) => {
+      valueFunction: ({ task, appeal }) => {
         return <LoadingDataDisplay
-          createLoadPromise={this.createLoadPromise(task)}
+          createLoadPromise={this.createLoadPromise({task, appeal})}
           errorComponent="span"
           failStatusMessageProps={{ title: 'Unknown failure' }}
           failStatusMessageChildren={<span>?</span>}
@@ -82,7 +76,7 @@ class JudgeAssignTaskTable extends React.PureComponent {
             spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
             component: 'span'
           }}>
-          {this.getAppealForTask(task, 'docCount')}
+          {_.get(appeal.attributes, 'docCount')}
         </LoadingDataDisplay>;
       }
     },
@@ -98,26 +92,17 @@ class JudgeAssignTaskTable extends React.PureComponent {
   render = () => {
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={
-        sortTasks(
-          _.pick(this.props, 'tasks', 'appeals')).
-          filter(
-            (task) => task.attributes.task_type === 'Assign').
-          map((task) => ({
-            task,
-            appeal: this.getAppealForTask(task) }))
-      }
+      rowObjects={this.props.tasksAndAppeals}
       getKeyForRow={this.getKeyForRow}
     />;
   }
 }
 
 JudgeAssignTaskTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  tasksAndAppeals: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealDocCount,

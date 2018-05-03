@@ -4,18 +4,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { css } from 'glamor';
-
 import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-
 import {
   resetErrorMessages,
   resetSuccessMessages,
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ApiUtil from '../util/ApiUtil';
@@ -23,6 +20,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney } from './QueueActions';
+import { sortTasks, renderAppealType } from './utils';
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -66,7 +64,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
-    const reviewableCount = _.filter(this.props.tasks, (task) => task.attributes.task_type === 'Assign').length;
+    const unassignedTasks = sortTasks(_.pick(this.props, 'tasks', 'appeals')).
+      filter((task) => task.attributes.task_type === 'Assign');
+    const reviewableCount = unassignedTasks.length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -76,10 +76,14 @@ class JudgeAssignTaskListView extends React.PureComponent {
     } else {
       tableContent = <React.Fragment>
         <h2>Unassigned Cases</h2>
-        <JudgeAssignTaskTable />
+        <JudgeAssignTaskTable tasksAndAppeals={
+          unassignedTasks.
+            map((task) => ({
+              task,
+              appeal: this.props.appeals[task.vacolsId] }))
+          } />
       </React.Fragment>;
     }
-    console.log(this.props.tasksOfAttorney);
 
     return <AppSegment filledBackground>
       <div>
