@@ -38,13 +38,13 @@ ReactOnRails.configure do |config|
   config.prerender = false
 
   # default is true for development, off otherwise
-  config.trace = Rails.env.stubbed?
+  config.trace = Rails.env.stubbed? || Rails.env.development?
 
   ################################################################################
   # SERVER RENDERING OPTIONS
   ################################################################################
   # If set to true, this forces Rails to reload the server bundle if it is modified
-  config.development_mode = Rails.env.stubbed?
+  config.development_mode = Rails.env.stubbed? || Rails.env.development?
 
   # For server rendering. This can be set to false so that server side messages are discarded.
   # Default is true. Be cautious about turning this off.

@@ -140,7 +140,7 @@ group :stubbed, :test, :development do
   gem "rspec_junit_formatter"
 end
 
-group :stubbed do
+group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
