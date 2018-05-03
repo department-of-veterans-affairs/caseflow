@@ -39,7 +39,7 @@ export default class Alert extends React.Component {
     const className = classnames('usa-alert', typeClass, {
       'lower-margin': lowerMargin,
       'no-title': !title,
-      'fixed': fixed
+      fixed
     });
 
     return <div className={className} {...this.getRole()} {...styling}>
