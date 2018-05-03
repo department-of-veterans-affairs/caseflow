@@ -563,6 +563,9 @@ RSpec.feature "Queue" do
         click_on "Add Issue"
         expect(page).to have_content "Add Issue"
 
+        delete_btn = find("button", text: "Delete Issue")
+        expect(delete_btn.disabled?).to eq true
+
         fields = page.find_all ".Select--single"
 
         field_values = fields.map do |row|
