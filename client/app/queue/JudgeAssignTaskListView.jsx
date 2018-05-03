@@ -19,7 +19,6 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ApiUtil from '../util/ApiUtil';
-import CaseDetailsLink from './CaseDetailsLink';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -38,9 +37,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   title = (reviewableCount) => <h1>Assign {reviewableCount} Cases</h1>
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
-  visibleTasks = (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign')
-  noTasksMessage = () => 'Congratulations! You don\'t have any cases to assign.'
-  table = () => <JudgeAssignTaskTable />
 
   createLoadPromise = () => {
     const requestOptions = {
@@ -55,22 +51,19 @@ class JudgeAssignTaskListView extends React.PureComponent {
           const resp = JSON.parse(response.text);
 
           this.props.setAttorneysOfJudge(resp.attorneys);
-        },
-        () => null);
+        });
   }
 
   render = () => {
-    const reviewableCount = this.visibleTasks(this.props.tasks).length;
+    const reviewableCount = _.filter(this.props.tasks, (task) => task.attributes.task_type === 'Assign').length;
     let tableContent;
-
-    console.log(this.props.attorneysOfJudge);
 
     if (reviewableCount === 0) {
       tableContent = <div>
         {this.title(reviewableCount)}
         {this.switchLink(this)}
         <StatusMessage title="Tasks not found">
-          {this.noTasksMessage()}
+           Congratulations! You don't have any cases to assign.
         </StatusMessage>
       </div>;
     } else {
@@ -93,15 +86,16 @@ class JudgeAssignTaskListView extends React.PureComponent {
             }}>
             <ul className="usa-sidenav-list">
               <li>
-                <a className="usa-current" href="javascript:void(0);">Unassigned Cases</a>
+                <a className="usa-current" disabled>Unassigned Cases</a>
               </li>
-              {this.props.attorneysOfJudge.map((attorney) => <li><Link to={`/queue/${attorney.id}`}>{attorney.full_name}</Link></li>)}
+              {this.props.attorneysOfJudge.
+                map((attorney) => <li><Link to={`/queue/${attorney.id}`}>{attorney.full_name}</Link></li>)}
             </ul>
           </LoadingDataDisplay>
         </div>
         <div className="usa-width-three-fourths">
           <h2>Unassigned Cases</h2>
-          {this.table()}
+          <JudgeAssignTaskTable />
         </div>
       </div>;
     }
