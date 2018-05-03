@@ -307,7 +307,7 @@ class Helpers::Sanitizers
     %w[hearing_pkseq hearing_type folder_nr hearing_date hearing_disp board_member
        team room mduser mdtime reqdate clsdate recmed consent conret
        contapes tranreq transent wbtapes wbbackup wbsent recprob taskno adduser addtime
-       aod holdays vdkey canceldate]
+       aod holddays vdkey canceldate]
   end
 
   ONLY_NUMBER_REGEX = /^\d*$/
@@ -330,7 +330,7 @@ class Helpers::Sanitizers
   def white_list_decass
     %w[defolder deatty deteam depdiff defdiff deassign dereceive deprod detrem dearem deoq
        deadusr deadtim deprogrev demdusr demdtim delock dememid decomp dedeadline
-       deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 derecommend]
+       deicr defcr deqr1 deqr2 deqr3 deqr4 deqr5 deqr6 deqr7 deqr8 deqr9 deqr10 deqr11 derecommend dedocid]
   end
 
   def sanitize_decass(decass, exist_hash)

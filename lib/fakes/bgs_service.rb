@@ -10,6 +10,8 @@ class Fakes::BGSService
   cattr_accessor :power_of_attorney_records
   cattr_accessor :address_records
   cattr_accessor :ssn_not_found
+  cattr_accessor :rating_records
+  cattr_accessor :rating_issue_records
   attr_accessor :client
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
@@ -206,6 +208,8 @@ class Fakes::BGSService
     self.ssn_not_found = false
     self.inaccessible_appeal_vbms_ids = []
     self.end_product_records = {}
+    self.rating_records = {}
+    self.rating_issue_records = {}
   end
 
   def get_end_products(veteran_id)
@@ -245,6 +249,42 @@ class Fakes::BGSService
 
   def fetch_file_number_by_ssn(ssn)
     ssn_not_found ? nil : ssn
+  end
+
+  def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
+    ratings = (self.class.rating_records || {})[participant_id]
+
+    # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
+    unless ratings
+      fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
+    end
+
+    ratings = ratings.select do |r|
+      start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
+    end
+
+    # BGS returns the data not as an array if there is only one rating
+    ratings = ratings.first if ratings.count == 1
+
+    { rating_profile_list: ratings.empty? ? nil : { rating_profile: ratings } }
+  end
+
+  def fetch_rating_profile(participant_id:, profile_date:)
+    self.class.rating_issue_records ||= {}
+    self.class.rating_issue_records[participant_id] ||= {}
+
+    rating_issues = self.class.rating_issue_records[participant_id][profile_date]
+
+    # Simulate the error bgs throws if rating profile doesn't exist
+    unless rating_issues
+      fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
+        " and PRFL_DT = '#{profile_date}'"
+    end
+
+    # BGS returns the data not as an array if there is only one issue
+    rating_issues = rating_issues.first if rating_issues.count == 1
+
+    { rating_issues: rating_issues }
   end
 
   private

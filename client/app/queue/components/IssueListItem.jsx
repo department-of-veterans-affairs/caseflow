@@ -3,7 +3,17 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import { boldText, ISSUE_INFO } from '../constants';
+import {
+  getIssueProgramDescription,
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel
+} from '../utils';
+import {
+  boldText,
+  CASE_DISPOSITION_ID_BY_DESCRIPTION
+} from '../constants';
+import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });
@@ -18,6 +28,15 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
+const dispositionLabelForDescription = (descr) => {
+  const dispositionId = CASE_DISPOSITION_ID_BY_DESCRIPTION[descr.toLowerCase()];
+
+  // Use the disposition description from constants in order to get the proper capitalization.
+  const dispositionDescr = VACOLS_DISPOSITIONS_BY_ID[dispositionId];
+
+  return `${dispositionId} - ${dispositionDescr}`;
+};
+
 export default class IssueListItem extends React.PureComponent {
   formatIdx = () => <td {...leftAlignTd} width="10px">
     {this.props.idx}.
@@ -30,16 +49,15 @@ export default class IssueListItem extends React.PureComponent {
         program,
         type,
         levels,
-        description,
+        codes,
         codes: [
           isslev1,
-          isslev2,
-          isslev3
+          isslev2
         ]
       }
     } = this.props;
     const issueLevels = [];
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
+    const vacolsIssue = ISSUE_INFO[program].levels[type];
 
     if (!vacolsIssue) {
       return levels;
@@ -47,32 +65,18 @@ export default class IssueListItem extends React.PureComponent {
 
     const issueLevel1 = _.get(vacolsIssue.levels, isslev1);
     const issueLevel2 = _.get(issueLevel1, ['levels', isslev2]);
-    const issueLevel3 = _.get(issueLevel2, ['levels', isslev3]);
+    const diagnosticCodeLabel = getIssueDiagnosticCodeLabel(_.last(codes));
 
     if (issueLevel1) {
       issueLevels.push(issueLevel1.description);
 
       if (issueLevel2) {
         issueLevels.push(issueLevel2.description);
-
-        issueLevels.push(issueLevel3 ? issueLevel3.description : _.last(description));
-      } else {
-        issueLevels.push(_.last(description));
       }
-    } else {
-      issueLevels.push(_.last(description));
     }
+    issueLevels.push(diagnosticCodeLabel);
 
     return issueLevels;
-  };
-
-  getIssueType = () => {
-    const {
-      issue: { program, type }
-    } = this.props;
-    const vacolsIssue = ISSUE_INFO[program].issue[type];
-
-    return _.get(vacolsIssue, 'description');
   };
 
   formatLevels = () => this.getIssueLevelValues().map((code, idx) =>
@@ -85,13 +89,15 @@ export default class IssueListItem extends React.PureComponent {
 
   render = () => {
     const {
+      issue,
       issue: {
+        disposition,
         type,
         levels,
-        note,
-        program
+        note
       },
-      issuesOnly
+      issuesOnly,
+      showDisposition
     } = this.props;
     let issueContent = <span />;
 
@@ -101,9 +107,9 @@ export default class IssueListItem extends React.PureComponent {
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
-        <span {...boldText}>Program:</span> {ISSUE_INFO[program].description}
+        <span {...boldText}>Program:</span> {getIssueProgramDescription(issue)}
         <div {...issueMarginTop}>
-          <span {...boldText}>Issue:</span> {this.getIssueType()} {this.formatLevels()}
+          <span {...boldText}>Issue:</span> {getIssueTypeDescription(issue)} {this.formatLevels()}
         </div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}
@@ -116,6 +122,9 @@ export default class IssueListItem extends React.PureComponent {
       <td {...minimalLeftPadding}>
         {issueContent}
       </td>
+      {!issuesOnly && disposition && showDisposition && <td>
+        <span {...boldText}>Disposition:</span> {dispositionLabelForDescription(disposition)}
+      </td>}
     </React.Fragment>;
   };
 }
@@ -123,9 +132,11 @@ export default class IssueListItem extends React.PureComponent {
 IssueListItem.propTypes = {
   issue: PropTypes.object.isRequired,
   issuesOnly: PropTypes.bool,
-  idx: PropTypes.number.isRequired
+  idx: PropTypes.number.isRequired,
+  showDisposition: PropTypes.bool
 };
 
 IssueListItem.defaultProps = {
-  issuesOnly: false
+  issuesOnly: false,
+  showDisposition: true
 };

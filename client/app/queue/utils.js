@@ -5,6 +5,8 @@ import {
   redText,
   DECISION_TYPES
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -73,4 +75,24 @@ export const getDecisionTypeDisplay = (decision = {}) => {
   default:
     return StringUtil.titleCase(decisionType);
   }
+};
+
+export const getIssueProgramDescription = (issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueTypeDescription = (issue) => {
+  const {
+    program,
+    type
+  } = issue;
+
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
+};
+
+export const getIssueDiagnosticCodeLabel = (code) => {
+  const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+
+  if (!readableLabel) {
+    return false;
+  }
+
+  return `${code} - ${readableLabel.staff_description}`;
 };

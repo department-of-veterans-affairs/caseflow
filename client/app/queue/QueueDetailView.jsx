@@ -17,8 +17,8 @@ import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
 import { DateString } from '../util/DateUtil';
 import {
   setCaseReviewActionType,
-  startEditingAppeal,
-  cancelEditingAppeal,
+  stageAppeal,
+  checkoutStagedAppeal,
   resetDecisionOptions
 } from './QueueActions';
 import {
@@ -43,10 +43,10 @@ class QueueDetailView extends React.PureComponent {
     this.props.resetBreadcrumbs();
     this.props.pushBreadcrumb({
       breadcrumb: 'Your Queue',
-      path: '/'
+      path: '/queue'
     }, {
       breadcrumb: this.props.appeal.attributes.veteran_full_name,
-      path: `/tasks/${this.props.vacolsId}`
+      path: `/queue/tasks/${this.props.vacolsId}`
     });
   }
 
@@ -61,15 +61,15 @@ class QueueDetailView extends React.PureComponent {
 
     this.props.resetDecisionOptions();
     if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.cancelEditingAppeal(vacolsId);
+      this.props.checkoutStagedAppeal(vacolsId);
     }
 
     if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      this.props.startEditingAppeal(vacolsId, {
+      this.props.stageAppeal(vacolsId, {
         issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
       });
     } else {
-      this.props.startEditingAppeal(vacolsId);
+      this.props.stageAppeal(vacolsId);
     }
     this.props.setCaseReviewActionType(decisionType);
     history.push(`${history.location.pathname}/${route}`);
@@ -77,36 +77,49 @@ class QueueDetailView extends React.PureComponent {
 
   render = () => {
     const {
+      userRole,
       appeal: { attributes: appeal },
       task: { attributes: task }
     } = this.props;
     const tabs = [{
       label: 'Appeal',
-      page: <AppealDetail appeal={this.props.appeal} />
+      page: <AppealDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }, {
       label: `Appellant (${appeal.appellant_full_name || appeal.veteran_full_name})`,
-      page: <AppellantDetail appeal={this.props.appeal} />
+      page: <AppellantDetail appeal={this.props.appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
     }];
+    let leadPgContent;
 
-    const readerLinkMsg = appeal.docCount ?
-      `Open ${appeal.docCount.toLocaleString()} documents in Caseflow Reader` :
-      'Open documents in Caseflow Reader';
+    if (userRole === 'Judge') {
+      const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
+
+      leadPgContent = <React.Fragment>
+        Prepared by {nameAbbrev}<br />
+        Document ID: {task.document_id}
+      </React.Fragment>;
+    } else {
+      leadPgContent = <React.Fragment>
+        Assigned to you {task.added_by_name && `by ${task.added_by_name}`} on&nbsp;
+        <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
+        Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
+      </React.Fragment>;
+    }
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
         {appeal.veteran_full_name} ({appeal.vbms_id})
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>
-        Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
-        <DateString date={task.assigned_on} dateFormat="MM/DD/YY" />.
-        Due <DateString date={task.due_on} dateFormat="MM/DD/YY" />.
+        {leadPgContent}
       </p>
       <ReaderLink
         vacolsId={this.props.vacolsId}
-        message={readerLinkMsg}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
-        taskType="Draft Decision" />
+        docCount={appeal.docCount}
+        taskType="Draft Decision"
+        longMessage />
       {this.props.featureToggles.phase_two && <SearchableDropdown
         name="Select an action"
         placeholder="Select an action&hellip;"
@@ -122,19 +135,20 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  userRole: PropTypes.string
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  changedAppeals: _.keys(state.queue.pendingChanges.appeals)
+  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
-  startEditingAppeal,
-  cancelEditingAppeal,
+  stageAppeal,
+  checkoutStagedAppeal,
   resetDecisionOptions,
   pushBreadcrumb,
   resetBreadcrumbs

@@ -13,14 +13,6 @@ class RampRefilingIntake < Intake
     ramp_election && ramp_election.recreate_issues_from_contentions!
   end
 
-  def cancel!(reason:, other: nil)
-    transaction do
-      detail.destroy!
-      add_cancel_reason!(reason: reason, other: other)
-      complete_with_status!(:canceled)
-    end
-  end
-
   def review!(request_params)
     detail.start_review!
     detail.update_attributes(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
@@ -35,6 +27,8 @@ class RampRefilingIntake < Intake
   end
 
   def complete!(request_params)
+    return if complete? || pending?
+    start_complete!
     detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
     detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
 
@@ -64,7 +58,7 @@ class RampRefilingIntake < Intake
   def validate_detail_on_start
     if !ramp_election
       self.error_code = :no_complete_ramp_election
-    elsif ramp_election.active?
+    elsif ramp_election.end_product_active?
       self.error_code = :ramp_election_is_active
     elsif ramp_election.issues.empty?
       self.error_code = :ramp_election_no_issues

@@ -23,7 +23,7 @@ class Appeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :representative
+  vacols_attr_accessor :representative, :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -49,10 +49,15 @@ class Appeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at
+                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
+                :assigned_by_first_name, :assigned_by_last_name
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
   end
 
   cache_attribute :remand_return_date do
@@ -105,6 +110,11 @@ class Appeal < ApplicationRecord
   LOCATION_CODES = {
     remand_returned_to_bva: "96"
   }.freeze
+
+  BVA_DISPOSITIONS = [
+    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
+    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
+  ].freeze
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -176,15 +186,15 @@ class Appeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
-  # Eventually we'd like to reference methods on the veteran with data from VACOLS
-  # and only "lazy load" data from BGS when necessary
   def veteran
-    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   delegate :age, to: :veteran, prefix: true
   delegate :sex, to: :veteran, prefix: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products, to: :veteran
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -193,7 +203,7 @@ class Appeal < ApplicationRecord
   end
 
   def power_of_attorney(load_bgs_record: true)
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
 
     load_bgs_record ? @poa.load_bgs_record! : @poa
   end
@@ -245,8 +255,9 @@ class Appeal < ApplicationRecord
     end
   end
 
+  # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
-    self.class.bgs.can_access?(sanitized_vbms_id)
+    self.class.bgs.can_access?(veteran_file_number)
   end
 
   def task_header
@@ -278,7 +289,7 @@ class Appeal < ApplicationRecord
   end
 
   def ramp_election
-    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
+    RampElection.find_by(veteran_file_number: veteran_file_number)
   end
 
   def in_location?(location)
@@ -302,6 +313,8 @@ class Appeal < ApplicationRecord
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
+      "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
@@ -439,6 +452,10 @@ class Appeal < ApplicationRecord
     status == "Remand"
   end
 
+  def decided_by_bva?
+    !active? && BVA_DISPOSITIONS.include?(disposition)
+  end
+
   def merged?
     disposition == "Merged Appeal"
   end
@@ -490,8 +507,6 @@ class Appeal < ApplicationRecord
     super
   end
 
-  delegate :count, to: :worksheet_issues, prefix: true
-
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
@@ -515,6 +530,11 @@ class Appeal < ApplicationRecord
     else
       numeric
     end
+  end
+
+  # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
+  def veteran_file_number
+    sanitized_vbms_id
   end
 
   def pending_eps
@@ -604,12 +624,6 @@ class Appeal < ApplicationRecord
     end.sort_by(&:received_at)
   end
 
-  # List of all end products for the appeal's veteran.
-  # NOTE: we cannot currently match end products to a specific appeal.
-  def end_products
-    @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
-  end
-
   def fetch_documents_from_service!
     return if @fetched_documents
 
@@ -651,10 +665,6 @@ class Appeal < ApplicationRecord
       appeal
     end
 
-    def fetch_end_products(vbms_id)
-      bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
-    end
-
     def for_api(vbms_id:)
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
@@ -684,14 +694,15 @@ class Appeal < ApplicationRecord
       @repository ||= AppealRepository
     end
 
+    # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    # rubocop:disable Metrics/ParameterLists
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
+          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,
@@ -704,6 +715,18 @@ class Appeal < ApplicationRecord
       end
     end
     # rubocop:enable Metrics/ParameterLists
+
+    def reopen(appeals:, user:, disposition:)
+      repository.transaction do
+        appeals.each do |reopen_appeal|
+          reopen_single(
+            appeal: reopen_appeal,
+            user: user,
+            disposition: disposition
+          )
+        end
+      end
+    end
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -764,7 +787,7 @@ class Appeal < ApplicationRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -780,6 +803,32 @@ class Appeal < ApplicationRecord
           user: user,
           closed_on: closed_on,
           disposition_code: disposition_code
+        )
+      end
+    end
+
+    def reopen_single(appeal:, user:, disposition:)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      # If the appeal was decided at the board, then it was a remand which means
+      # we need to clear the post-remand appeal
+      if appeal.decided_by_bva?
+        # Currently we don't check that there is a closed post remand appeal here
+        # because it requires some additional probing into VACOLS.
+        # That check is in AppealsRepository.reopen_remand!
+
+        repository.reopen_remand!(
+          appeal: appeal,
+          user: user,
+          disposition_code: disposition_code
+        )
+      else
+        fail "Only closed appeals can be reopened" if appeal.active?
+
+        repository.reopen_undecided_appeal!(
+          appeal: appeal,
+          user: user
         )
       end
     end

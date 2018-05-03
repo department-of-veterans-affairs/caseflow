@@ -4,10 +4,8 @@ class SyncIntakeJob < ApplicationJob
   queue_as :low_priority
 
   def perform
-    # First sync the issues
-    RampElection.active.map(&:recreate_issues_from_contentions!)
-
-    # Then sync the EP statuses
-    RampElection.active.map(&:sync_ep_status!)
+    # Set user to system_user to avoid sensitivity errors
+    RequestStore.store[:current_user] = User.system_user
+    RampElection.sync_all!
   end
 end

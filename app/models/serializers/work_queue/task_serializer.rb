@@ -9,4 +9,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :added_by_css_id
   attribute :task_id
   attribute :task_type
+  attribute :document_id
+  attribute :assigned_by_first_name
+  attribute :assigned_by_last_name
 end

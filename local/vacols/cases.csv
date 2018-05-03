@@ -1,4 +1,8 @@
 vacols_id,vbms_id,bgs_id,used_in_app,comments
+2367429,ready_documents,,certification,Appeal with matching docs
+2774535,fuzzy_match_documents,,certification,Appeal with fuzzy matching docs
+2771149,mismatched_documents,,certification,Appeal with mismatched docs
+3242524,,,certification,Appeal already certified
 3575931,static_documents,,reader queue,Case assigned to ZZHU
 3619838,no_categories,,reader queue,Case assigned to ZZHU
 3625593,random_documents,,reader queue,Case assigned to ZZHU

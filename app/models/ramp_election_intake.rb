@@ -7,7 +7,10 @@ class RampElectionIntake < Intake
     no_eligible_appeals: "no_eligible_appeals",
     no_active_compensation_appeals: "no_active_compensation_appeals",
     no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
-    no_active_appeals: "no_active_appeals"
+    no_active_appeals: "no_active_appeals",
+    # This status will be set on successful intakes to signify that we had to
+    # connect an existing EP, which in theory, shouldn't happen, but does in practice.
+    connected_preexisting_ep: "connected_preexisting_ep"
   }.merge(Intake::ERROR_CODES)
 
   def ramp_election
@@ -28,18 +31,17 @@ class RampElectionIntake < Intake
   end
 
   def complete!(_request_params)
+    return if complete? || pending?
+    start_complete!
+
+    if ramp_election.create_or_connect_end_product! == :connected
+      update!(error_code: "connected_preexisting_ep")
+    end
+
+    close_eligible_appeals!
+
     transaction do
       complete_with_status!(:success)
-
-      Appeal.close(
-        appeals: eligible_appeals,
-        user: user,
-        closed_on: Time.zone.today,
-        disposition: "RAMP Opt-in"
-      ) do
-        ramp_election.create_end_product!
-      end
-
       eligible_appeals.each do |appeal|
         RampClosedAppeal.create!(
           vacols_id: appeal.vacols_id,
@@ -50,17 +52,11 @@ class RampElectionIntake < Intake
     end
   end
 
-  def cancel!(reason:, other: nil)
-    return if complete?
-
-    transaction do
-      detail.update_attributes!(
-        receipt_date: nil,
-        option_selected: nil
-      )
-      add_cancel_reason!(reason: reason, other: other)
-      complete_with_status!(:canceled)
-    end
+  def cancel_detail!
+    detail.update_attributes!(
+      receipt_date: nil,
+      option_selected: nil
+    )
   end
 
   cache_attribute :cached_serialized_appeal_issues, expires_in: 10.minutes do
@@ -87,6 +83,16 @@ class RampElectionIntake < Intake
   end
 
   private
+
+  def close_eligible_appeals!
+    Appeal.close(
+      appeals: eligible_appeals,
+      user: user,
+      closed_on: Time.zone.today,
+      disposition: "RAMP Opt-in",
+      election_receipt_date: ramp_election.receipt_date
+    )
+  end
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals

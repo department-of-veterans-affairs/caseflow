@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :hearing_views
   has_many :annotations
 
+  BOARD_STATION_ID = "101".freeze
+
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
@@ -42,6 +44,20 @@ class User < ApplicationRecord
     @vacols_role ||= self.class.user_repository.vacols_role(css_id)
   end
 
+  def vacols_attorney_id
+    @vacols_attorney_id ||= self.class.user_repository.vacols_attorney_id(css_id)
+  end
+
+  def vacols_group_id
+    @vacols_group_id ||= self.class.user_repository.vacols_group_id(css_id)
+  end
+
+  def vacols_full_name
+    @vacols_full_name ||= self.class.user_repository.vacols_full_name(css_id)
+  rescue Caseflow::Error::UserRepositoryError
+    nil
+  end
+
   def access_to_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end
@@ -52,6 +68,16 @@ class User < ApplicationRecord
 
   def timezone
     (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+  end
+
+  # If user has never logged in, we might not have their full name in Caseflow DB.
+  # So if we do not yet have the full name saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
+  def full_name
+    super || begin
+      update(full_name: vacols_full_name) if persisted?
+      super
+    end
   end
 
   def display_name
@@ -153,7 +179,11 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids)
+    # return only the hearings viewed by the judge assigned to the hearings.
+    Hearing.includes(:hearing_views).where(appeal_id: appeal_ids).select do |hearing|
+      hearing_viewed_by_judge = hearing.hearing_views.any? { |hearing_view| hearing_view.user_id == hearing.user.id }
+      hearing_viewed_by_judge ? hearing : nil
+    end
   end
 
   class << self

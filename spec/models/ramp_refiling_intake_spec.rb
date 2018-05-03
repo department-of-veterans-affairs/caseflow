@@ -1,6 +1,6 @@
 describe RampRefilingIntake do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   let(:user) { Generators::User.build }
@@ -232,6 +232,32 @@ describe RampRefilingIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+    end
+
+    context "when already complete" do
+      let(:completed_at) { 2.seconds.ago }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+      end
+    end
+
+    context "when completion is pending" do
+      let(:completion_status) { "pending" }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+      end
     end
   end
 
