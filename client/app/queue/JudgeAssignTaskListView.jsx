@@ -43,14 +43,16 @@ class JudgeAssignTaskListView extends React.PureComponent {
       withCredentials: true,
       timeout: true
     };
-    const url = `/users?role=Attorney&judge_css_id=${this.props.userCssId}`;
 
-    return ApiUtil.get(url, requestOptions).
+    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
       then(
         (response) => {
           const resp = JSON.parse(response.text);
 
           this.props.setAttorneysOfJudge(resp.attorneys);
+          for (const attorney in resp.attorneys) {
+            ApiUtil.get()
+          }
         });
   }
 
@@ -59,15 +61,18 @@ class JudgeAssignTaskListView extends React.PureComponent {
     let tableContent;
 
     if (reviewableCount === 0) {
-      tableContent = <div>
-        {this.title(reviewableCount)}
-        {this.switchLink(this)}
-        <StatusMessage title="Tasks not found">
-           Congratulations! You don't have any cases to assign.
-        </StatusMessage>
-      </div>;
+      tableContent = <StatusMessage title="Tasks not found">
+         Congratulations! You don't have any cases to assign.
+      </StatusMessage>;
     } else {
-      tableContent = <div>
+      tableContent = <React.Fragment>
+        <h2>Unassigned Cases</h2>
+        <JudgeAssignTaskTable />
+      </React.Fragment>;
+    }
+
+    return <AppSegment filledBackground>
+      <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           {this.title(reviewableCount)}
           {this.switchLink(this)}
@@ -94,14 +99,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
           </LoadingDataDisplay>
         </div>
         <div className="usa-width-three-fourths">
-          <h2>Unassigned Cases</h2>
-          <JudgeAssignTaskTable />
+          {tableContent}
         </div>
-      </div>;
-    }
-
-    return <AppSegment filledBackground>
-      {tableContent}
+      </div>
     </AppSegment>;
   };
 }
