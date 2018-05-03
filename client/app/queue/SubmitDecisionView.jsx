@@ -5,10 +5,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import classNames from 'classnames';
-import {
-  getDecisionTypeDisplay,
-  getRedirectUrl
-} from './utils';
+import { getDecisionTypeDisplay } from './utils';
 
 import {
   setDecisionOptions,
@@ -129,26 +126,6 @@ class SubmitDecisionView extends React.PureComponent {
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
-  };
-
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId
-        }
-      }
-    } = this.props;
-    const prevUrl = getRedirectUrl();
-    const prevStepText = prevUrl === '/' ? 'Your Queue' : `${vetName} (${vbmsId})`;
-
-    return [{
-      displayText: `Go back to ${prevStepText}`
-    }, {
-      displayText: 'Submit',
-      loadingText: 'Submitting...'
-    }];
   };
 
   getJudgeSelectComponent = () => {

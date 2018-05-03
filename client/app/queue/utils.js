@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import querystring from 'querystring';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
@@ -96,14 +95,4 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   }
 
   return `${code} - ${readableLabel.staff_description}`;
-};
-
-export const getRedirectUrl = (attr = 'prev') => {
-  const query = querystring.parse(window.location.search.slice(1));
-
-  if (!_.get(query, attr)) {
-    return null;
-  }
-
-  return decodeURIComponent(query[attr]);
 };

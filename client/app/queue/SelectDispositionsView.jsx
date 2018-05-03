@@ -12,7 +12,6 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Table from '../components/Table';
 import Alert from '../components/Alert';
 
-import { getRedirectUrl } from './utils';
 import {
   updateEditingAppealIssue,
   setDecisionOptions,
@@ -77,30 +76,6 @@ class SelectDispositionsView extends React.PureComponent {
     const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
 
     return !issuesWithoutDisposition.length;
-  };
-
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId,
-          issues
-        }
-      }
-    } = this.props;
-    const prevUrl = getRedirectUrl();
-    const prevStepText = prevUrl === '/' ? 'Your Queue' : `${vetName} (${vbmsId})`;
-
-    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
-      'Select remand reasons' : 'Finish dispositions';
-
-    return [{
-      displayText: `Go back to ${prevStepText}`
-    }, {
-      displayText: nextStepText,
-      id: 'finish-dispositions'
-    }];
   };
 
   getKeyForRow = (rowNumber) => rowNumber;
