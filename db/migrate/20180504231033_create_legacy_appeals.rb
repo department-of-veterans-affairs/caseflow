@@ -1,4 +1,4 @@
-class CreateAppeals < ActiveRecord::Migration[5.1]
+class CreateLegacyAppeals < ActiveRecord::Migration[5.1]
   def change
     create_table :legacy_appeals do |t|
       t.string    :vacols_id, null: false
@@ -32,7 +32,5 @@ class CreateAppeals < ActiveRecord::Migration[5.1]
       t.boolean   :issues_pulled
     end
     add_index(:legacy_appeals, :vacols_id, unique: true)
-    add_reference :appeals, :appeal_series, foreign_key: true
-    add_index :appeals, :appeal_series_id, algorithm: :concurrently # disable_ddl_transaction
   end
 end
