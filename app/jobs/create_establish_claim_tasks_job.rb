@@ -5,12 +5,12 @@ class CreateEstablishClaimTasksJob < ApplicationJob
     # fetch all full grants
     # These are imported first to enforce the required order of tasks
     AppealRepository.amc_full_grants(outcoded_after: full_grant_outcoded_after).each do |appeal|
-      EstablishClaim.find_or_create_by(appeal: appeal)
+      Dispatch::EstablishClaim.find_or_create_by(appeal: appeal)
     end
 
     # fetch all partial grants
     AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
-      EstablishClaim.find_or_create_by(appeal: appeal)
+      Dispatch::EstablishClaim.find_or_create_by(appeal: appeal)
     end
   end
 

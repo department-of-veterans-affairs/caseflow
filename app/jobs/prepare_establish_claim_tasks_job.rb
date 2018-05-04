@@ -4,7 +4,7 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   def perform
     count = { success: 0, fail: 0 }
 
-    EstablishClaim.unprepared.each do |task|
+    Dispatch::EstablishClaim.unprepared.each do |task|
       status = task.prepare_with_decision!
       count[:success] += ((status == :success) ? 1 : 0)
       count[:fail] += ((status == :failed) ? 1 : 0)

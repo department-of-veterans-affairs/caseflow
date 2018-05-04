@@ -45,7 +45,7 @@ class CreateEstablishClaim
   end
 
   def establish_claim
-    @establish_claim ||= EstablishClaim.find_or_create_by(appeal: create_appeal)
+    @establish_claim ||= Dispatch::EstablishClaim.find_or_create_by(appeal: create_appeal)
   end
 
   def validate_decision_type
