@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
+import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -95,6 +96,7 @@ class QueueApp extends React.PureComponent {
       }}
       appName="">
       <AppFrame wideApp>
+        <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
@@ -167,6 +169,7 @@ QueueApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
   userRole: PropTypes.string.isRequired,
+  userCssId: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };

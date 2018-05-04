@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
+import Alert from './Alert';
+import Button from './Button';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
+const alertStyling = css({
+  width: '57%'
+});
 
 export default class AutoSave extends React.Component {
 
@@ -35,7 +42,23 @@ export default class AutoSave extends React.Component {
     }
 
     if (this.props.saveFailed) {
-      return <span className="saving">Save failed.</span>;
+
+      const alertMessage = <div>
+        Unable to save. Please check your internet connection and try again. <span>
+          <Button
+            name="RETRY"
+            onClick={this.props.save}
+            linkStyling
+          />
+        </span>
+      </div>;
+
+      return <Alert
+        message={alertMessage}
+        type="error"
+        fixed
+        styling={alertStyling}
+      />;
     }
 
     return <span className="saving">Last saved at {this.props.timeSaved}</span>;

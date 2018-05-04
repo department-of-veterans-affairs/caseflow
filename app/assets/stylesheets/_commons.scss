@@ -1,0 +1,1451 @@
+@import 'bourbon';
+@import 'neat';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
+@import 'uswds_rails_overrides/all';
+@import 'global/fonts';
+
+$cf-background: #f9f9f9;
+$cf-link: #0872b9;
+$cf-drop-shadow-color: rgba(91, 97, 107, 0.5);
+$cf-drop-shadow: 1px 1px 5px 0 $cf-drop-shadow-color;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: $cf-background;
+}
+
+.content {
+  min-height: calc(100vh - 125px);
+  padding-bottom: 30px;
+}
+
+a {
+  color: $cf-link;
+  text-decoration: none;
+}
+
+a:visited {
+  color: $color-primary; // Override USWDS
+}
+
+abbr {
+  border: 0;
+  text-decoration: none;
+
+  &[title] {
+    border-bottom: none;
+  }
+}
+
+.cf-success {
+  color: $color-green;
+}
+
+.cf-error {
+  color: $color-secondary;
+}
+
+label {
+  font-weight: normal;
+  margin-top: 0; // Override USWDS
+}
+
+p {
+  margin-top: rem(20px);
+  margin-bottom: rem(24px);
+  color: $color-gray-dark;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.5em;
+}
+
+.cf-help-content,
+ .cf-sg-content {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    max-width: 70rem;
+  }
+}
+
+.cf-lead-paragraph {
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 30px;
+}
+
+.cf-display-1 {
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1.3em;
+  margin-bottom: 40px;
+}
+
+.cf-display-2 {
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1.3em;
+  margin-bottom: 40px;
+
+}
+
+.cf-red-text {
+  color: $color-secondary;
+}
+
+.cf-font-light {
+  font-weight: 300;
+}
+
+.cf-doc-embed {
+
+  width: 100%;
+  height: 80vh;
+}
+
+.cf-notice {
+  padding: 8px 20px;
+  text-align: center;
+  background-color: $color-primary;
+  color: $color-white;
+
+  a {
+    color: $color-white;
+  }
+}
+
+//----------------------------------*
+// Globals, Resets, and overrides
+//-----------------------------------*/
+
+.cf-txt-c {
+  text-align: center;
+}
+
+.cf-txt-r {
+  text-align: right;
+}
+
+.cf-txt-l {
+  text-align: left;
+}
+
+.cf-txt-uc {
+  text-transform: uppercase;
+}
+
+.cf-txt-example {
+  font-style: italic;
+  color: $color-gray;
+  vertical-align: middle;
+}
+
+// Use cf-push-row to wrap elements that float to the left or right
+.cf-push-row {
+  @include clearfix;
+}
+
+.cf-push-left {
+  float: left;
+}
+
+.cf-push-right {
+  float: right;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: inherit;
+  margin-top: 0;
+  color: $color-gray-dark;
+}
+
+h1 {
+  font-size: 34px;
+  margin-bottom: 30px;
+}
+
+h3 {
+  font-size: 19px;
+  margin-bottom: 16px;
+}
+
+h4 {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+h5 {
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.usa-alert-heading {
+  font-family: 'Source Sans Pro';
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+
+  &[id="page-title"] {
+    margin-left: 0;
+  }
+}
+
+[hidden] {
+  display: none;
+}
+
+legend {
+  display: table; // Causes legend text to wrap in IE
+  font: inherit;
+  white-space: normal;
+}
+
+
+dd {
+  margin-left: 0;
+}
+
+.cf-pos-fixed {
+  position: fixed;
+}
+
+//------------------------------------
+// Icons
+//-----------------------------------*/
+
+[class|=cf-icon] {
+  display: inline-block;
+  height: .8em; // Should be an em
+  margin: 0 .1ex;
+}
+
+.cf-icon-missing {
+  vertical-align: -.15ex;
+  width: .8em;
+  height: .8em;
+
+  path {
+    fill: $color-secondary;
+  }
+}
+
+.cf-icon-found {
+  vertical-align: -.45ex;
+  width: 1em;
+  height: 1em;
+
+  path {
+    fill: $color-green;
+  }
+}
+
+.cf-icon-close {
+  display: block;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+
+  path {
+    fill: $color-gray-dark;
+  }
+
+  &:hover {
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+.cf-icon-success--bg {
+  background: image-url('icons/icon-check.svg') bottom no-repeat;
+  background-size: auto 2rem;
+  display: inline-block;
+  height: 3rem;
+  width: 3rem;
+}
+
+//--- Appeal button ---*/
+
+.cf-apppeal-id {
+  box-sizing: border-box;
+  background: $color-white;
+  border: 2px solid $color-gray;
+  color: $color-gray;
+  padding: 1rem;
+
+  &:hover {
+    color: $color-white;
+    background: $color-gray;
+    border-bottom: 2px solid $color-gray;
+
+    path {
+      fill: $color-white;
+    }
+  }
+}
+
+.cf-icon-appeal-id {
+  display: inline-block;
+  margin-left: .25rem;
+  vertical-align: -1px;
+}
+
+//------ Dropdowns --------*/
+.cf-dropdown {
+  $large-screen: em(640) !default;
+  display: inline-block;
+  position: relative;
+
+  a {
+    color: inherit;
+  }
+}
+
+.cf-dropdown-trigger {
+  cursor: pointer;
+  background-color: $color-white;
+
+  &::after {
+    // CG: This image doesn't appear to exist in any repo (9/20/16)
+    background: image-url('arrow-down.svg') 50% 100% no-repeat;
+    background-size: 100% 100%;
+    content: ' ';
+    display: inline-block;
+    height: 1rem;
+    margin-left: 1rem;
+    width: 1rem;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// Quick fix to property count lint
+%overlay {
+  background: $color-white;
+  z-index: 1;
+  position: absolute;
+}
+
+.cf-dropdown-menu {
+  @include unstyled-list();
+  @include transition (all 0.2s ease-in-out);
+  @extend %overlay;
+  border: 1px solid $color-gray-lighter;
+  box-shadow: $cf-drop-shadow;
+  cursor: pointer;
+  display: none;
+  text-align: left;
+  top: 2em;
+  width: 18rem;
+  min-width: 215px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  &.active {
+    display: block;
+  }
+
+  a {
+    display: block;
+    color: $color-gray;
+    padding: 10px 20px;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+    }
+  }
+
+  .dropdown-border {
+    width: 175px;
+    height: 1px;
+    background-color: $color-gray-lighter;
+    margin: 5px 20px;
+  }
+
+}
+
+@media screen and (max-width: 1264px) {
+  .cf-dropdown-menu {
+    right: .05rem;
+  }
+}
+
+//------ Modals --------*/
+
+
+// don't trip the accessibility warning for white on white, even if title isn't visible
+svg title {
+  color: $color-gray-dark;
+}
+
+.cf-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: none;
+
+  &.active {
+    display: block;
+  }
+
+  &::before {
+    content: ' ';
+    background: rgba($color-gray-dark, .4);
+    position: fixed;
+    height: inherit;
+    width: inherit;
+  }
+}
+
+.cf-modal-body {
+  @include transform(translateY(-50%));
+  top: 50%;
+  // Previous two lines vertically center this block
+  background: $color-white;
+  border-radius: 3px;
+  box-shadow: $cf-drop-shadow;
+  color: $color-gray;
+  padding: 3rem;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 490px;
+
+  table {
+    margin: 0 0 2em;
+  }
+}
+
+.cf-modal-title {
+  font-size: rem(35px);
+  text-align: left;
+}
+
+.cf-modal-close {
+  background: transparent;
+  height: 1.5rem;
+  padding: .1rem;
+  position: absolute;
+  right: rem(10px);
+  width: 1.5rem;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: transparent;
+
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+
+.cf-modal-text,
+.cf-modal-controls {
+  margin: auto;
+  width: 100%;
+}
+
+.cf-modal-text {
+  font-size: rem(20px);
+  line-height: 2;
+  text-align: center;
+}
+
+.cf-modal-normal-text {
+  margin: 0;
+  width: 100%;
+}
+
+.cf-modal-divider {
+  border-bottom: 1px solid $color-gray-lighter;
+  width: 100%;
+  padding-bottom: 30px;
+}
+
+.cf-modal-controls {
+  position: relative;
+  bottom: 0;
+  margin-top: rem(30px);
+}
+
+.cf-modal-link {
+  padding: 0;
+}
+
+div {
+  &[id="questionemail"] {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+// ===========================*
+// Application progress bar  *
+// ============================*/
+.cf-progress-bar {
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+  font-size: 18px;
+}
+
+.cf-progress-bar-section {
+  display: table-cell;
+  padding: 4px;
+}
+
+.cf-progress-bar-activated {
+  color: $color-gray-dark;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 7px solid $color-gray-dark;
+}
+
+.cf-progress-bar-not-activated {
+  color: $color-gray-dark;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 7px solid $color-gray-light;
+}
+
+// ===========================*
+// Application navigation bar  *
+// ============================*/
+.cf-nav {
+  background: $color-white;
+  color: $color-gray;
+  margin: 0;
+  padding: rem(30px) 0;
+  position: relative;
+  border-bottom: 1px solid $color-gray-lighter;
+
+  .usa-grid-full {
+    position: relative;
+    padding: 0 2rem;
+  }
+}
+
+.cf-nav-dropdown {
+  position: absolute;
+  right: 2rem;
+}
+
+.cf-logo {
+  color: $color-gray-dark;
+  font-size: 1.7rem;
+  display: inline;
+
+  &:hover {
+    color: $color-gray;
+  }
+
+}
+
+.cf-logo-name {
+  color: $color-gray;
+  font-weight: normal;
+}
+
+.cf-logo-image {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 15px;
+  height: 32px;
+  width: 32px;
+  background-size: 32px;
+}
+
+.cf-application-title {
+  color: $color-gray;
+  font-size: 1.7rem;
+  font-weight: normal;
+  display: inline;
+}
+
+.cf-app-screen {
+  margin: auto;
+  width: 90%;
+}
+
+.cf-name-header {
+  font-size: 3rem;
+  margin-bottom: 0;
+}
+
+//.cf-app-segment represents a chunk of an application's
+// page Should be an immediate child of .cf-app. Avoid
+// making .cf-app-segment a grandchild element of .cf-app.
+.cf-app-segment {
+  // Clearfix
+  &::before,
+  &::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
+
+  &--alt {
+    background: $color-white;
+    border: 1px solid $color-gray-lighter;
+    padding: rem(40px);
+  }
+
+  // Make the top margin larger whenever
+  // cf-app-segment is the first-child
+  &:first-child {
+    margin-top: rem(40px);
+  }
+}
+
+// Adds top margin when .cf-app-segment
+// is preceded by an element
+* + .cf-app-segment {
+  margin-top: rem(30px);
+}
+
+.cf-layout-3-up {
+  border: 1px solid $color-gray-lighter;
+  display: table;
+  width: 100%;
+
+  > * {
+    display: table-cell;
+    padding: 1.5rem;
+    vertical-align: middle;
+    width: 33%;
+  }
+
+  > *:nth-child(even) {
+    border-left: 1px solid $color-gray-lighter;
+    border-right: 1px solid $color-gray-lighter;
+  }
+
+  &-title {
+    color: $color-gray;
+    font-weight: inherit;
+  }
+
+  &-text {
+    font-weight: 600;
+    margin-bottom: 0;
+    margin-top: 1rem;
+  }
+}
+
+.cf-app-footer {
+  > div {
+    box-sizing: border-box;
+    height: 125px;
+    padding: 50px 0;
+    border-top: 1px solid $color-gray-lighter;
+    overflow: hidden;
+  }
+}
+
+
+//-----------------------------------*
+// CSS based on Web Design Guidelines.
+// - Uses Neat.bourbon.io as a grid
+// - Uses patterns and components
+//   from refills.bourbon.io/unstyled/
+//-----------------------------------*/
+
+//===========================
+// Tooltip
+// =========================*/
+
+.cf-tooltip {
+  display: inline-block;
+  position: relative;
+}
+
+.cf-tooltip-trigger {
+  &:hover + .cf-tooltip-text {
+    display: block;
+  }
+}
+
+.cf-tooltip-text {
+  @include transform(translateX(-50%));
+  background: $color-white;
+  box-shadow: 0 0 10px -3px $color-gray;
+  display: none;
+  left: 50%;
+  margin-top: rem(10px);
+  padding: rem(10px);
+  position: absolute;
+  width: rem(300px);
+
+  &::before {
+    @include transform(scaleX(1.2));
+    color: $color-white;
+    content: '\25B2';
+    display: block;
+    font-size: rem(15px);
+    text-align: center;
+    text-shadow: 0 -2px 2px rgba($color-gray, .5);
+    margin-top: rem(-25px);
+    position: relative;
+    z-index: -1;
+  }
+}
+
+//===========================
+// Form controls
+// =========================*/
+
+input,
+[type="text"],
+[type="email"],
+[type="password"],
+[type="url"],
+[type="tel"],
+[type="number"],
+[type="search"],
+[type="file"],
+[type="date"],
+[type="datetime-local"],
+[type="month"],
+[type="time"],
+[type="week"],
+textarea,
+select,
+[type="checkbox"] + label,
+[type="radio"] + label {
+  margin-bottom: 0;
+}
+
+// Overrides USWDS */
+textarea {
+  max-width: 100%;
+
+  &[id="Explanation"] {
+    width: 430px;
+  }
+}
+
+// Overrides USWDS */
+form {
+  max-width: none;
+}
+
+.hidden-field {
+  display: none;
+}
+
+//------ Buttons --------*/
+[type="submit"],
+[type="button"],
+.usa-button {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: rem(20px);
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+// Make a button look like a link */
+.cf-btn-link {
+  background: transparent;
+  color: $color-primary;
+  display: inline-block;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: inherit;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  &:visited {
+    color: $color-primary;
+  }
+
+  // Removes padding, so that these links can be placed inline.
+  &--inline {
+    padding: 0;
+  }
+
+  &:hover {
+    background-color: inherit;
+    color: $color-primary-darker;
+    text-decoration: none;
+  }
+
+  &:hover,
+  &.button-hover {
+    color: $color-primary-darker;
+    text-decoration: underline;
+  }
+
+  &:active,
+  &.button-active {
+    background-color: $color-white;
+    color: $color-primary-darkest;
+    text-decoration: underline;
+  }
+
+  &.usa-button-disabled {
+    color: $color-gray-light;
+  }
+
+  &--confirm {
+    &:visited {
+      color: $color-secondary;
+    }
+
+    color: $color-secondary;
+    font-weight: bold;
+  }
+
+  &--cancel {
+    display: inline-block;
+    font-weight: bold;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+
+.cf-btn-help {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+//--- Table styles ---*/
+
+table {
+  color: $color-gray-dark;
+}
+
+.cf-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+
+  table {
+    min-width: rem(400px);
+    width: 100%;
+  }
+}
+
+// Overrides table th, table td classes
+// from web design standards
+.cf-table-borderless {
+  th,
+  td {
+    border-width: 0;
+  }
+
+  tr {
+    border-bottom: 1px solid $color-gray-lighter;
+  }
+
+  thead th {
+    background-color: $color-white;
+  }
+
+}
+
+// ===========================*
+// Form-related states
+// ============================*/
+
+.required {
+  strong,
+  b {
+    &::after {
+      content: '* ';
+      color: $color-secondary;
+      font-family: inherit;
+      font-weight: bold;
+      font-style: normal;
+    }
+  }
+
+  &-msg {
+    @extend .usa-input-error-message;
+
+    &::before {
+      content: '* ';
+    }
+  }
+}
+
+.cf-form {
+  header {
+    border-bottom: 1px solid $color-gray-lighter;
+    margin-bottom: rem(30px);
+  }
+
+  .cf-btn-forward {
+    display: inline-block;
+    margin-right: 0;
+  }
+}
+
+input {
+  &[type=number] {
+    display: inline;
+  }
+}
+
+.cf-inline-form {
+  label,
+  input {
+    display: inline;
+    margin-right: 10px;
+  }
+
+  input {
+    &[type=number] {
+      width: 60px;
+      height: 35px;
+    }
+  }
+}
+
+.cf-required {
+  color: $color-secondary;
+  float: right;
+  font-style: italic;
+  margin-left: .25em;
+}
+
+.cf-subtext {
+  color: $color-gray;
+}
+
+.cf-characters-left {
+  color: $color-gray;
+  font-size: 0.9em;
+  font-style: italic;
+  height: 1em;
+}
+
+.cf-loading-indicator {
+  display: none;
+  background-color: $color-white;
+  border-radius: 5px;
+  padding: 0.4rem 2.7em;
+  svg { vertical-align: middle; }
+}
+
+.cf-is-loading {
+  .cf-submit {
+    display: none;
+  }
+
+  .cf-loading-indicator {
+    display: block;
+
+    .using-logo {
+      color: transparent;
+      display: inline-block;
+      width: 40%;
+      height: 90%;
+      position: relative;
+      background: image-url('icons/cf-logo-pill.svg') center no-repeat;
+      background-size: 65%;
+      @include animation(spin 2s linear infinite);
+    }
+  }
+}
+
+fieldset {
+  margin-bottom: rem(40px);
+
+  > *,
+  .cf-form-textinput {
+    margin-bottom: 0;
+    color: $color-gray-dark;
+  }
+}
+
+* + .cf-form-textinput {
+  @include clearfix;
+  margin-top: rem(20px);
+  margin-bottom: rem(20px);
+  color: $color-gray-dark;
+}
+
+.cf-form-textarea {
+  clear: both;
+  max-width: rem(455px);
+}
+
+// Wrapping element for each option */
+.cf-form-radio-options {
+  @include clearfix;
+  margin-top: rem(10px);
+}
+
+.cf-form-radio-option {
+  @include clearfix;
+  margin-bottom: rem(20px);
+
+  label {
+    // This important can be removed when the latest USWDS
+    // are merged into the gem we use.
+    // scss-lint:disable ImportantRule
+    margin-bottom: 0 !important;
+    // scss-lint:enable ImportantRule
+  }
+}
+
+.cf-form-radio-inline {
+  .cf-form-radio-option {
+    float: left;
+    padding-right: rem(30px);
+    margin-bottom: .5em;
+  }
+}
+
+.cf-form-showhide-radio {
+  .cf-required {
+    float: none;
+  }
+}
+
+.cf-form-checkboxes.usa-grid-full {
+  margin-bottom: 0;
+}
+
+.cf-form-checkboxes,
+.cf-form-cond-req {
+  margin-top: rem(20px);
+  margin-bottom: rem(40px);
+}
+
+.cf-form-checkbox {
+  &:not(:last-child) {
+    margin-bottom: rem(20px);
+  }
+}
+
+.cf-form-checkboxes-inline {
+  .checkbox {
+    float: left;
+    padding-right: rem(30px);
+    margin-bottom: .5em;
+  }
+}
+
+[class*='cf-form-checkbox'] {
+  legend {
+    margin-bottom: .75em;
+  }
+}
+
+.usa-input-error {
+  [type="radio"] + label::before {
+    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
+  }
+}
+
+//========================
+// Certified success page
+//==========================*/
+.cf-app-msg-screen {
+  color: $color-gray;
+}
+
+.cf-msg-screen-heading {
+  font-size: rem(52px);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+// "deck" is newspaper speak for "subhead"
+.cf-msg-screen-deck {
+  text-align: center;
+  font-size: rem(20px);
+  font-weight: normal;
+  color: $color-gray;
+  line-height: 1.5;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: rem(65px);
+  margin-top: rem(15px);
+  width: 65%;
+}
+
+.cf-msg-screen-text {
+  width: 65%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  color: $color-gray;
+}
+
+.cf-list-checklist {
+  list-style-type: none;
+  margin: 5rem auto 6.5rem;
+  position: relative;
+  width: 50%;
+
+  li::before {
+    content: '';
+  }
+
+  .cf-icon-success--bg {
+    font-size: 2.5rem;
+    margin-right: 1.8rem;
+  }
+}
+
+.cf-success-checklist {
+  position: relative;
+  max-width: 400px;
+  margin: 50px 0 65px 25%;
+  list-style-type: none;
+
+  li {
+    background: url('icons/icon-check.svg') no-repeat left top transparent;
+    background-size: 22px 17px;
+    background-position-y: 7px;
+    padding-left: 38px;
+    padding-top: 3px;
+  }
+}
+
+.cf-login-input {
+  // This important can be removed when the latest USWDS
+  // are merged into the gem we use.
+  // scss-lint:disable ImportantRule
+  display: inline !important;
+  // scss-lint:enable ImportantRule
+}
+
+[id=username_input_id] ~ .cf-txt-example {
+  margin-left: rem(20px);
+}
+
+//------------------------------
+// Help page
+// -------------------------------
+[id=help-page] {
+  dt {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 3rem auto 0;
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  img {
+    box-shadow: 0 0 20px -5px rgba($color-gray-dark, .5);
+    clear: both;
+    display: block;
+    margin: 2rem;
+    max-width: 60rem;
+    height: auto;
+  }
+}
+
+.cf-help-image-wrapper {
+  text-align: center;
+}
+
+.cf-help-image {
+  max-width: 50%;
+  height: auto;
+}
+
+.cf-help-divider {
+  margin: 30px auto;
+  border-bottom: 1px solid $color-gray-lighter;
+}
+
+ul {
+  &[id=toc] {
+    li {
+      padding-bottom: 10px;
+    }
+  }
+}
+
+//---------------------------
+// Date picker overrides
+//----------------------------*/
+.ui-datepicker {
+  background: $cf-background;
+  box-shadow: 0 0 30px rgba($color-base, .8);
+
+  &-header {
+    background: $color-gray;
+    color: $color-white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    width: 100%;
+  }
+
+  &-title {
+    font-weight: bold;
+  }
+
+  &-prev,
+  &-next {
+    color: $color-white;
+    cursor: pointer;
+    font-size: .85em;
+    line-height: 1.6;
+    position: absolute;
+
+    &:hover {
+      color: $color-white;
+    }
+  }
+
+  &-prev {
+    left: 1rem;
+  }
+
+  &-next {
+    right: 1rem;
+  }
+
+  &-calendar {
+    margin: 0;
+
+    th {
+      background: $color-gray-light;
+      color: $color-gray-dark;
+      padding: 1rem;
+      border-color: $color-gray;
+
+      &:first-child {
+        border-left-color: $color-gray-light;
+      }
+
+      &:last-child {
+        border-right-color: $color-gray-light;
+      }
+    }
+
+    td {
+      background: $cf-background;
+      border-color: $color-gray-light;
+      padding: 0;
+      text-align: right;
+    }
+
+    .ui-state-default {
+      display: block;
+      padding: 1rem;
+    }
+  }
+}
+
+.cf-icon-alert {
+  margin-right: .25em;
+  vertical-align: -.25ex;
+  width: 1em;
+  height: 1em;
+
+  path {
+    fill: $color-secondary;
+  }
+}
+
+.icon-loading-front {
+  @include animation(backwardspin 9s linear infinite);
+}
+
+.icon-loading-back {
+  @include animation(spin 9s linear infinite);
+  margin-left: -33px;
+}
+
+@include keyframes(spin) {
+  from {
+    @include transform(rotate(0deg));
+  }
+
+  to {
+    @include transform(rotate(360deg));
+  }
+}
+
+@include keyframes(backwardspin) {
+  from {
+    @include transform(scale(1) rotate(-30deg));
+  }
+
+  to {
+    @include transform(scale(1) rotate(-390deg));
+  }
+}
+
+
+.cf-form-checkbox,
+.cf-form-radio-option {
+  position: relative;
+
+  input {
+    left: -999em;
+  }
+
+  label {
+    padding-left: 3rem;
+    display: inline-block;
+
+    &::before {
+      position: absolute;
+      left: 3px;
+      top: 2px;
+    }
+  }
+}
+
+button {
+
+  // preload default loading button SVG
+  .cf-loading-icon-back,
+  .cf-loading-icon-front {
+    &::after {
+      content: ' ';
+      display: inline-block;
+      width: 0;
+      height: 0;
+      background: image-url('icons/loading-pill.svg') center center no-repeat;
+    }
+  }
+
+  // preload app-specific loading button SVGs
+  &.cf-cert,
+  &.cf-dispatch,
+    .cf-loading-icon-front {
+    &::after {
+      content: ' ';
+      display: inline-block;
+      width: 0;
+      height: 0;
+      }
+    }
+
+  &.cf-cert {
+    .cf-loading-icon-back {
+      &::after {
+        background: image-url('icons/loading-pill-cf-cert.svg') center center no-repeat;
+      }
+    }
+  }
+
+  &.cf-dispatch {
+    .cf-loading-icon-back {
+      &::after {
+        background: image-url('icons/loading-pill-cf-dispatch.svg') center center no-repeat;
+      }
+    }
+  }
+}
+
+.cf-secondary-disabled {
+  opacity: .25;
+}
+
+.cf-loading {
+  display: inline-block;
+  position: relative;
+
+  .cf-loading-icon-container {
+    display: inline-block;
+    position: relative;
+    padding-right: 23px;
+
+    .cf-loading-icon-back,
+    .cf-loading-icon-front {
+      &::after {
+        // container for preloaded images was 0x0, but now...
+        // scss-lint:disable ImportantRule
+        width: 20px !important;
+        height: 20px !important;
+        // scss-lint:enable ImportantRule
+        box-sizing: border-box;
+        position: absolute;
+        right: 0;
+        top: -.1rem;
+        @include animation(spin 5s linear infinite);
+      }
+    }
+
+    .cf-loading-icon-front {
+      &::after {
+        @include animation(backwardspin 5s linear infinite);
+        opacity: .5;
+      }
+    }
+  }
+}
+
+.cf-form-showhide-radio,
+ .cf-form-checkboxes {
+  .question-label {
+    margin-bottom: 20px;
+ }
+}
+
+
+.usa-accordion-button {
+  background-image: url(asset-path('minus.svg'));
+
+  &[aria-expanded=false] {
+    background-image: url(asset-path('plus.svg'));
+  }
+}
+
+.usa-accordion-bordered-outline {
+  .usa-accordion-button {
+    border: 1px solid $color-gray-light;
+  }
+}
+
+.usa-accordion-bordered,
+.usa-accordion,
+.usa-accordion-bordered-outline {
+  margin-bottom: 20px;
+
+  .usa-accordion-button {
+    &,
+    i {
+      color: $color-gray-dark;
+    }
+  }
+}
