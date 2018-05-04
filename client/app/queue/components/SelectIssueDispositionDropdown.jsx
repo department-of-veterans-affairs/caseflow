@@ -33,7 +33,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
     return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
       <SearchableDropdown
         placeholder="Select Disposition"
-        value={issue.disposition}
+        value={issue.readable_disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
         options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
