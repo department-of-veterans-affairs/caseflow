@@ -7,7 +7,7 @@ import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
 import { completeIntake } from '../../actions/supplementalClaim';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
@@ -31,11 +31,11 @@ class Finish extends React.PureComponent {
     }];
 
     switch (supplementalClaimStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.STARTED:
+    case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }

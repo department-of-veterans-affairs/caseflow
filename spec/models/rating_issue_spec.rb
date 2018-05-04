@@ -16,7 +16,7 @@ describe RatingIssue do
 
     it do
       is_expected.to have_attributes(
-        rba_issue_id: "NBA",
+        reference_id: "NBA",
         decision_text: "This broadcast may not be reproduced or \
           retransmitted without the express written consent of the NBA"
       )

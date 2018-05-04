@@ -50,11 +50,11 @@ RSpec.feature "Queue" do
     ]
   end
   let!(:issues) { [Generators::Issue.build] }
-  let!(:current_user) do
+  let! :attorney_user do
     User.authenticate!(roles: ["System Admin"])
   end
 
-  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(current_user.css_id) }
+  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
   context "reader-style search for appeals using veteran id" do
@@ -223,7 +223,7 @@ RSpec.feature "Queue" do
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/appeals/#{appeal.vacols_id}")
       end
     end
   end
@@ -249,7 +249,7 @@ RSpec.feature "Queue" do
     end
   end
 
-  context "loads task detail views" do
+  context "loads attorney task detail views" do
     context "displays who assigned task" do
       scenario "appeal has assigner" do
         appeal = vacols_appeals.select(&:added_by_first_name).first
@@ -386,6 +386,29 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "loads judge task detail views" do
+    scenario "displays who prepared task" do
+      User.unauthenticate!
+      User.authenticate!(css_id: "BVAAABSHIRE")
+
+      vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
+
+      task = vacols_tasks.select(&:assigned_by_first_name).first
+      visit "/queue"
+
+      click_on "#{task.veteran_full_name} (#{task.vbms_id})"
+
+      assigned_by_name = FullName.new(
+        task.assigned_by_first_name,
+        nil,
+        task.assigned_by_last_name
+      ).formatted(:readable_fi_last_formatted)
+
+      expect(page).to have_content("Prepared by #{assigned_by_name}")
+      expect(page).to have_content("Document ID: #{task.document_id}")
+    end
+  end
+
   context "loads decision views" do
     context "prepares/fails to submit decision" do
       scenario "fails to submit omo decision" do
@@ -396,7 +419,7 @@ RSpec.feature "Queue" do
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
-        expect(page).to have_link("Your Queue", href: "/queue/")
+        expect(page).to have_link("Your Queue", href: "/queue")
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
         expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
 
@@ -504,7 +527,6 @@ RSpec.feature "Queue" do
       end
 
       def select_issue_level_options(opts)
-        puts "selecting #{opts}"
         Array.new(5).map.with_index do |*, row_idx|
           # Issue level 2 and diagnostic code dropdowns render based on earlier
           # values, so we have to re-get elements per loop. There are at most 5
@@ -540,6 +562,9 @@ RSpec.feature "Queue" do
 
         click_on "Add Issue"
         expect(page).to have_content "Add Issue"
+
+        delete_btn = find("button", text: "Delete Issue")
+        expect(delete_btn.disabled?).to eq true
 
         fields = page.find_all ".Select--single"
 
@@ -630,7 +655,7 @@ RSpec.feature "Queue" do
             opinion (OMO) request. It's been sent to Andrew Mackenzie for review."
           )
         )
-        expect(page.current_path).to eq("/queue/")
+        expect(page.current_path).to eq("/queue")
       end
 
       scenario "submits draft decision" do
@@ -679,7 +704,7 @@ RSpec.feature "Queue" do
             It's been sent to Andrew Mackenzie for review."
           )
         )
-        expect(page.current_path).to eq("/queue/")
+        expect(page.current_path).to eq("/queue")
       end
     end
   end
