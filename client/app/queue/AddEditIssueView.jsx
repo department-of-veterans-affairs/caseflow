@@ -226,6 +226,7 @@ class AddEditIssueView extends React.Component {
       <Button
         willNeverBeLoading
         linkStyling
+        disabled={!issue.vacols_sequence_id}
         styling={noLeftPadding}
         onClick={this.props.showModal}>
         Delete Issue
