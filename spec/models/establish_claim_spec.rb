@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe EstablishClaim do
+describe Dispatch::EstablishClaim do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -15,7 +15,7 @@ describe EstablishClaim do
   end
 
   let(:establish_claim) do
-    EstablishClaim.new(
+    Dispatch::EstablishClaim.new(
       appeal: appeal,
       aasm_state: aasm_state,
       completion_status: completion_status,
@@ -170,7 +170,7 @@ describe EstablishClaim do
       let(:claim_modifier) { nil }
 
       it "raises InvalidEndProductError and rolls back DB changes" do
-        expect { subject }.to raise_error(EstablishClaim::InvalidEndProductError)
+        expect { subject }.to raise_error(Dispatch::EstablishClaim::InvalidEndProductError)
       end
     end
 
@@ -538,11 +538,11 @@ describe EstablishClaim do
     end
 
     it "returns tasks completed in the specified range" do
-      expect(EstablishClaim.past_weeks(2).count).to eql(1)
+      expect(Dispatch::EstablishClaim.past_weeks(2).count).to eql(1)
     end
 
     it "returns no tasks outside the specified range" do
-      expect(EstablishClaim.past_weeks(1).count).to eql(0)
+      expect(Dispatch::EstablishClaim.past_weeks(1).count).to eql(0)
     end
   end
 end
