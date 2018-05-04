@@ -10,13 +10,43 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 import { css } from 'glamor';
 
+class WorksheetFormEntry extends React.PureComponent {
+  render() {
+    const textAreaProps = {
+      minRows: 3,
+      maxRows: 5000,
+      value: this.props.value || '',
+      ..._.pick(
+        this.props,
+        [
+          'name',
+          'onChange',
+          'id',
+          'minRows'
+        ]
+      )
+    };
+
+    return <div className="cf-hearings-worksheet-data">
+      <label htmlFor={this.props.id}>{this.props.name}</label>
+      {this.props.print ?
+        <p>{this.props.value}</p> :
+        <Textarea {...textAreaProps} />}
+    </div>;
+  }
+}
+
 const copyButtonStyling = css({
   marginTop: '-18px',
   marginBottom: '10px'
 });
 
-const columnStyling = css({
-  width: '48%'
+const firstColumnStyling = css({
+  width: '35%'
+});
+
+const secondColumnStyling = css({
+  width: '70%'
 });
 
 class WorksheetHeader extends React.PureComponent {
@@ -103,11 +133,13 @@ class WorksheetHeader extends React.PureComponent {
           <div>{worksheet.appellant_city && worksheet.appellant_state ?
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>REPRESENTATIVE ORG.</h5>
+          <div>{worksheet.representative}</div>
+        </div>
       </div>
 
-
-
-      <div {...columnStyling} className="cf-push-left">
+      <div {...firstColumnStyling} className="cf-push-left">
         <TextField
           name="Representative Name"
           id="appellant-vet-rep-name"
@@ -120,37 +152,9 @@ class WorksheetHeader extends React.PureComponent {
           strongLabel
         />
       </div>
-      <div {...columnStyling} className="cf-push-right">
+      <div {...secondColumnStyling} className="cf-push-right">
         <TextField
-          name="Representative Org."
-          id="appellant-vet-rep-org"
-          aria-label="Representative Org."
-          value={worksheet.representative || ''}
-          onChange={this.props.onRepOrgChange}
-          maxLength={50}
-          fixedInput={this.props.print}
-          inline
-          strongLabel
-        />
-      </div>
-
-
-      <div {...columnStyling} className="cf-push-left">
-        <TextField
-          name="Additional Notes"
-          id="additional-notes"
-          aria-label="Additional Notes"
-          value={worksheet.additional_notes || ''}
-          onChange={this.props.onAdditionalNotesChange}
-          maxLength={50}
-          fixedInput={this.props.print}
-          inline
-          strongLabel
-        />
-      </div>
-      <div {...columnStyling} className="cf-push-right">
-        <TextField
-          name="Witness (W)/Observer (O)"
+          name="Witness (W)/Observer (O) and Additional Details"
           id="appellant-vet-witness"
           aria-label="Witness Observer"
           value={worksheet.witness || ''}
@@ -160,7 +164,16 @@ class WorksheetHeader extends React.PureComponent {
           strongLabel
         />
       </div>
-
+      <div>
+        <WorksheetFormEntry
+          name="Periods and circumstances of service"
+          value={worksheet.military_service}
+          onChange={this.onMilitaryServiceChange}
+          id="worksheet-military-service"
+          minRows={1}
+          print={this.props.print}
+        />
+      </div>
     </div>;
   }
 }
