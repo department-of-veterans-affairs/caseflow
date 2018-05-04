@@ -70,6 +70,8 @@ class Intake < ApplicationRecord
 
   def start!
     if duplicate_intake_in_progress
+      self.error_code = :duplicate_intake_in_progress
+      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
       return false
     end
 
