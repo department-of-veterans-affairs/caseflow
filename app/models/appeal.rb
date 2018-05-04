@@ -289,9 +289,8 @@ class Appeal < ApplicationRecord
   end
 
   def prior_bva_decision_date
-    type == 'Post Remand' ? prior_decision_date : decision_date
+    (type == "Post Remand") ? prior_decision_date : decision_date
   end
-
 
   def ramp_election
     RampElection.find_by(veteran_file_number: veteran_file_number)
