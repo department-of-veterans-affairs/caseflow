@@ -69,7 +69,9 @@ class Intake < ApplicationRecord
   end
 
   def start!
-    return if duplicate_intake_in_progress?
+    if duplicate_intake_in_progress
+      return false
+    end
 
     preload_intake_data!
 

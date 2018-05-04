@@ -55,6 +55,18 @@ describe RampRefilingIntake do
         expect(completed_ramp_election.issues.first.description).to eq("Left knee")
       end
     end
+
+    context "intake is already in progress" do
+      it "should not create another intake" do
+        RampRefilingIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number,
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
   end
 
   context "#validate_start" do
