@@ -1,4 +1,4 @@
-class EstablishClaimsController < TasksController
+class Dispatch::EstablishClaimsController < Dispatch::TasksController
   before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform, :update_appeal, :cancel]
@@ -48,7 +48,7 @@ class EstablishClaimsController < TasksController
     # If we've already created the EP, no-op and send the user to the note page
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
-  rescue EstablishClaim::InvalidEndProductError
+  rescue Dispatch::EstablishClaim::InvalidEndProductError
     render json: { error_code: "end_product_invalid" }, status: 422
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
     render json: { error_code: e.error_code }, status: 422
@@ -77,7 +77,7 @@ class EstablishClaimsController < TasksController
   end
 
   def cancel
-    Task.transaction do
+    Dispatch::Task.transaction do
       task.appeal.update!(special_issues_params) if params[:special_issues]
       task.cancel!(cancel_feedback)
     end
@@ -87,13 +87,13 @@ class EstablishClaimsController < TasksController
 
   # Index of all tasks that are unprepared at least 1 day
   def unprepared_tasks
-    @unprepared_tasks = EstablishClaim.unprepared.oldest_first.select do |task|
+    @unprepared_tasks = Dispatch::EstablishClaim.unprepared.oldest_first.select do |task|
       (Time.zone.now - task.created_at).to_i / 1.day > 0
     end
   end
 
   def canceled_tasks
-    @canceled_tasks = EstablishClaim.past_weeks(5).canceled.newest_first
+    @canceled_tasks = Dispatch::EstablishClaim.past_weeks(5).canceled.newest_first
   end
 
   private
@@ -119,7 +119,7 @@ class EstablishClaimsController < TasksController
   helper_method :start_text
 
   def tasks
-    EstablishClaim
+    Dispatch::EstablishClaim
   end
   helper_method :tasks
 
@@ -136,7 +136,7 @@ class EstablishClaimsController < TasksController
   end
 
   def logo_path
-    establish_claims_path
+    dispatch_establish_claims_path
   end
 
   def set_application

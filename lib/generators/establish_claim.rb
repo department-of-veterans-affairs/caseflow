@@ -6,7 +6,7 @@ class Generators::EstablishClaim
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::Appeal.create.id
       attrs[:user_id] ||= attrs[:user].try(:id)
 
-      EstablishClaim.create(attrs)
+      Dispatch::EstablishClaim.create(attrs)
     end
   end
 end
