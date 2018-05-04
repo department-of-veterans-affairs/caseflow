@@ -40,6 +40,10 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   return tableContent;
 }
 
+const AssignedCasesPage = connect((state) => _.pick(state, 'tasksOfAttorney', 'appealsOfAttorney'))((props) => {
+  return props.match.params.attorneyId;
+})
+
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
@@ -120,9 +124,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
         </div>
         <div className="usa-width-three-fourths">
           <PageRoute
+            exact
             path={this.props.match.url}
-            title="Your Queue | Unassigned Cases"
+            title="Unassigned Cases | Caseflow"
             render={() => <UnassignedCasesPage tasksWithAppeals={this.unassignedTasksWithAppeals()} />}
+            />
+          <PageRoute
+            path={this.props.match.url + '/:attorneyId'}
+            title="Assigned Cases | Caseflow"
+            component={AssignedCasesPage}
             />
         </div>
       </div>
