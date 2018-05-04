@@ -139,7 +139,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Total Issues 4")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
-    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement")
+    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
     expect(find("#ramp-elections-received")).to have_content("Average Control Time 12.00 hours")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
