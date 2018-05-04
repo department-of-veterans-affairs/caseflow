@@ -1,6 +1,7 @@
 // Add scss includes explicitly here.
-@import 'caseflow_main';
-
+@import 'global/fonts';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
 // variables here should eventually find their way into commons
 @import 'variables';
 
@@ -278,12 +279,6 @@ body {
 
 .cf-loading-button-symbol {
   display: inline-block;
-}
-
-//TODO(marian): add to style guide
-.cf-button-aligned-with-textfield {
-  padding-left: 10px;
-  padding-top: 2px;
 }
 
 .cf-button-associated-text {
@@ -607,36 +602,6 @@ select {
 
 .vbms-id {
   color: $color-gray;
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-button {
-  background-image: url(asset-path('minus.svg'));
-
-  &[aria-expanded=false] {
-    background-image: url(asset-path('plus.svg'));
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered-outline {
-  .usa-accordion-button {
-    border: 1px solid $color-gray-light;
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered,
-.usa-accordion,
-.usa-accordion-bordered-outline {
-  margin-bottom: 20px;
-
-  .usa-accordion-button {
-    &,
-    i {
-      color: $color-gray-dark;
-    }
-  }
 }
 
 .cf-work-assignments {
