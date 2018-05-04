@@ -78,28 +78,6 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId,
-          issues
-        }
-      }
-    } = this.props;
-
-    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
-      'Select remand reasons' : 'Finish dispositions';
-
-    return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
-    }, {
-      displayText: nextStepText,
-      id: 'finish-dispositions'
-    }];
-  };
-
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',

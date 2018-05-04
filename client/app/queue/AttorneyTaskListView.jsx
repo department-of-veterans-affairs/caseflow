@@ -19,7 +19,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 
-class AttorneyListView extends React.PureComponent {
+class AttorneyTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -58,7 +58,7 @@ class AttorneyListView extends React.PureComponent {
         {messages.success && <Alert type="success" title={messages.success}>
           If you made a mistake please email your judge to resolve the issue.
         </Alert>}
-        <AttorneyTaskTable />
+        <AttorneyTaskTable featureToggles={this.props.featureToggles} />
       </div>;
     }
 
@@ -68,7 +68,7 @@ class AttorneyListView extends React.PureComponent {
   };
 }
 
-AttorneyListView.propTypes = {
+AttorneyTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -90,4 +90,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AttorneyListView);
+export default connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView);
