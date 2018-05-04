@@ -118,7 +118,7 @@ export default function decisionViewBase(ComponentToWrap) {
           this.props.popBreadcrumb();
         }
 
-        return this.goToStep(prevStepUrl);
+        return this.props.history.push(prevStepUrl);
       }
     };
 
@@ -139,14 +139,14 @@ export default function decisionViewBase(ComponentToWrap) {
       this.props.highlightInvalidFormItems(false);
 
       if (!nextStepHook) {
-        return this.goToStep(this.getNextStepUrl());
+        return this.props.history.push(this.getNextStepUrl());
       }
 
       const hookResult = nextStepHook();
 
       // nextStepHook may return a Promise, in which case do nothing here.
       if (hookResult === true) {
-        return this.goToStep(this.getNextStepUrl());
+        return this.props.history.push(this.getNextStepUrl());
       }
     };
 
@@ -155,7 +155,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          this.goToStep(this.getNextStepUrl());
+          this.props.history.push(this.getNextStepUrl());
         } else {
           this.props.highlightInvalidFormItems(true);
         }
