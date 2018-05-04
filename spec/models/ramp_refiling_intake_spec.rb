@@ -60,7 +60,7 @@ describe RampRefilingIntake do
       it "should not create another intake" do
         RampRefilingIntake.new(
           user: user,
-          veteran_file_number: veteran_file_number,
+          veteran_file_number: veteran_file_number
         ).start!
 
         expect(intake).to_not be_nil
