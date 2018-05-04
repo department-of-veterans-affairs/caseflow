@@ -370,7 +370,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def certify!
-    Appeal.certify(self)
+    LegacyAppeal.certify(self)
   end
 
   def fetch_documents!(save:)
@@ -775,7 +775,7 @@ class LegacyAppeal < ApplicationRecord
     def fetch_appeal_streams(appeals)
       appeal_vbms_ids = appeals.reduce({}) { |acc, appeal| acc.merge(appeal.vbms_id => appeal.id) }
 
-      Appeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
+      LegacyAppeal.where(vbms_id: appeal_vbms_ids.keys).each_with_object({}) do |appeal, acc|
         appeal_id = appeal_vbms_ids[appeal.vbms_id]
         acc[appeal_id] ||= []
         acc[appeal_id] << appeal
