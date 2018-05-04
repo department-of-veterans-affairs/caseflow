@@ -7,8 +7,9 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import _ from 'lodash';
-import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
+import { submitReview } from '../../actions/rampElection';
+import { setReceiptDate, setOptionSelected } from '../../actions/common';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -23,9 +24,9 @@ class Review extends React.PureComponent {
     } = this.props;
 
     switch (rampElectionStatus) {
-    case RAMP_INTAKE_STATES.NONE:
+    case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.COMPLETED:
+    case INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }

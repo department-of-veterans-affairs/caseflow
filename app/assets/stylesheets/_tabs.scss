@@ -1,0 +1,143 @@
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+$color-tab-text-hover: #1f5593;
+
+.cf-tab-navigation {
+
+  margin-top: 2em;
+  position: relative;
+  width: 100%;
+  border-bottom: 1px solid $color-primary;
+
+  li {
+    display: inline-block;
+    margin: 0 -4px 0 0;
+  }
+
+  button {
+    display: inline-block;
+    margin: 0 -1px 0 0;
+
+    &::-moz-focus-inner {
+      // scss-lint:disable ImportantRule
+      padding: 0 !important;
+      border: 0 none !important;
+      // scss-lint:enable ImportantRule
+    }
+  }
+
+  div {
+    display: inline-block;
+    margin: 0 -1px 0 0;
+  }
+}
+
+.cf-tab {
+  box-sizing: border-box;
+  border: 1px solid $color-gray-light;
+  border-bottom: 0;
+  border-radius: 0;
+  background: $color-white;
+  padding: 0;
+  color: $color-gray;
+  line-height: normal;
+  font-weight: 500;
+
+  > span {
+    display: inline-block;
+    padding: 15px 1.5em;
+  }
+
+  i {
+    width: 17px;
+    height: 17px;
+    margin-right: 0.25em;
+    margin-left: -0.4em;
+  }
+
+  svg {
+    margin-right: 0.25em;
+    margin-left: -0.4em;
+    path { fill: $color-gray; }
+  }
+
+  &:hover {
+    color: $color-gray-dark;
+    background-color: $color-white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &.disabled {
+    background-color: $color-gray-lighter;
+    color: $color-gray;
+    font-weight: 500;
+
+    &:hover {
+      color: $color-gray;
+      cursor: default;
+    }
+  }
+
+  &:disabled:hover {
+    color: $color-gray;
+  }
+
+  &:focus {
+    svg path {
+      fill: $color-primary;
+    }
+  }
+}
+
+.cf-active {
+  color: $color-primary;
+  border: 1px solid $color-primary;
+  box-shadow: 0 1px 0 $color-white;
+  border-bottom: 0;
+  font-weight: 700;
+
+  > span {
+    top: 1px;
+    background: $color-white;
+    box-shadow: 0 2px 0 0 $color-primary inset;
+
+    > span {
+      top: -1px;
+    }
+  }
+
+  span {
+    &:hover {
+      color: $color-tab-text-hover;
+    }
+  }
+
+  + .cf-tab {
+    border-left: 1px solid $color-primary;
+  }
+
+  svg path {
+    fill: $color-primary;
+  }
+}
+
+.cf-tab-content {
+  border: 1px solid $color-gray-lighter;
+  border-top: 0;
+  padding-top: 1px;
+  max-height: 600px;
+  overflow-y: scroll;
+}
+
+svg {
+
+  &.cf-tab-check {
+    vertical-align: -3px;
+  }
+
+  &.cf-tab-cross {
+    vertical-align: -4px;
+  }
+}

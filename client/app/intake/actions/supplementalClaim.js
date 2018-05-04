@@ -5,13 +5,6 @@ import _ from 'lodash';
 
 const analytics = true;
 
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
@@ -54,27 +47,25 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
     );
 };
 
-export const setIssueSelected = (profileDate, issueId, isSelected) => ({
-  type: ACTIONS.SET_ISSUE_SELECTED,
-  payload: {
-    profileDate,
-    issueId,
-    isSelected
-  },
-  meta: {
-    analytics: {
-      label: isSelected ? 'selected' : 'de-selected'
-    }
-  }
-});
-
-export const completeIntake = (intakeId) => (dispatch) => {
+export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START,
     meta: { analytics }
   });
 
-  return ApiUtil.patch(`/intake/${intakeId}/complete`, {}, ENDPOINT_NAMES.COMPLETE_INTAKE).
+  const data = {
+    request_issues:
+      _(supplementalClaim.ratings).
+        map((rating) => {
+          return _.map(rating.issues, (issue) => {
+            return _.merge(issue, { profile_date: rating.profile_date });
+          });
+        }).
+        flatten().
+        filter('isSelected')
+  };
+
+  return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);

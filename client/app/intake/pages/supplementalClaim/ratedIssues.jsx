@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setIssueSelected } from '../../actions/supplementalClaim';
+import { setIssueSelected } from '../../actions/common';
 import Checkbox from '../../../components/Checkbox';
 import { formatDateStr } from '../../../util/DateUtil';
 import _ from 'lodash';
@@ -18,10 +18,10 @@ class RatedIssues extends React.PureComponent {
         return (
           <Checkbox
             label={issue.decision_text}
-            name={issue.rba_issue_id}
-            key={issue.rba_issue_id}
+            name={issue.reference_id}
+            key={issue.reference_id}
             value={issue.isSelected}
-            onChange={this.onCheckIssue(rating.profile_date, issue.rba_issue_id)}
+            onChange={this.onCheckIssue(rating.profile_date, issue.reference_id)}
             unpadded
           />
         );
