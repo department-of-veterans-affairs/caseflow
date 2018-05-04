@@ -187,7 +187,7 @@ class Appeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: sanitized_vbms_id)
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   delegate :age, to: :veteran, prefix: true
@@ -203,7 +203,7 @@ class Appeal < ApplicationRecord
   end
 
   def power_of_attorney(load_bgs_record: true)
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
 
     load_bgs_record ? @poa.load_bgs_record! : @poa
   end
@@ -255,8 +255,9 @@ class Appeal < ApplicationRecord
     end
   end
 
+  # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
-    self.class.bgs.can_access?(sanitized_vbms_id)
+    self.class.bgs.can_access?(veteran_file_number)
   end
 
   def task_header
@@ -288,7 +289,7 @@ class Appeal < ApplicationRecord
   end
 
   def ramp_election
-    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
+    RampElection.find_by(veteran_file_number: veteran_file_number)
   end
 
   def in_location?(location)
@@ -529,6 +530,11 @@ class Appeal < ApplicationRecord
     else
       numeric
     end
+  end
+
+  # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
+  def veteran_file_number
+    sanitized_vbms_id
   end
 
   def pending_eps

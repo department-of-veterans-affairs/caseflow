@@ -62,6 +62,12 @@ export default class FlaggedForReview extends Component {
           successfully established, you can <a href="" className="cf-action-refresh">refresh</a> the
           page to update this list.
           </p>
+
+          <Table
+            columns={columns}
+            rowObjects={this.props.intakes}
+            summary={summary}
+            slowReRendersAreOk />
         </div>
         <div>
           <a href="/stats">
@@ -72,12 +78,6 @@ export default class FlaggedForReview extends Component {
           </a>
         </div>
       </div>
-
-      <Table
-        columns={columns}
-        rowObjects={this.props.intakes}
-        summary={summary}
-        slowReRendersAreOk />
     </div>;
   }
 }
