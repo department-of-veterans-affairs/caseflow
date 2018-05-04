@@ -66,7 +66,7 @@ export const resetBreadcrumbs = (vetName, vacolsId) => (dispatch) => {
 
   dispatch(pushBreadcrumb({
     breadcrumb: 'Your Queue',
-    path: '/'
+    path: '/queue'
   }, {
     breadcrumb: vetName,
     path: `/queue/tasks/${vacolsId}`
