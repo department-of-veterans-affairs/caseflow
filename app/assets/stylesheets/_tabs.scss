@@ -107,12 +107,6 @@
     }
   }
 
-  span {
-    &:hover {
-      color: $color-tab-text-hover;
-    }
-  }
-
   + .cf-tab {
     border-left: 1px solid $color-primary;
   }
