@@ -128,24 +128,6 @@ class SubmitDecisionView extends React.PureComponent {
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId
-        }
-      }
-    } = this.props;
-
-    return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
-    }, {
-      displayText: 'Submit',
-      loadingText: 'Submitting...'
-    }];
-  };
-
   getJudgeSelectComponent = () => {
     const {
       selectingJudge,

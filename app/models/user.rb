@@ -179,11 +179,7 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    # return only the hearings viewed by the judge assigned to the hearings.
-    Hearing.includes(:hearing_views).where(appeal_id: appeal_ids).select do |hearing|
-      hearing_viewed_by_judge = hearing.hearing_views.any? { |hearing_view| hearing_view.user_id == hearing.user.id }
-      hearing_viewed_by_judge ? hearing : nil
-    end
+    Hearing.where(appeal_id: appeal_ids)
   end
 
   class << self
