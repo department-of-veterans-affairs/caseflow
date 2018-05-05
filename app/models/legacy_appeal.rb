@@ -1,3 +1,2 @@
 class LegacyAppeal < ApplicationRecord
-
 end
