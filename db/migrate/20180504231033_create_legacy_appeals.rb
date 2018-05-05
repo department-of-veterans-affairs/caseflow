@@ -1,4 +1,6 @@
 class CreateLegacyAppeals < ActiveRecord::Migration[5.1]
+  safety_assured
+
   def change
     create_table :legacy_appeals do |t|
       t.string    :vacols_id, null: false
@@ -31,6 +33,7 @@ class CreateLegacyAppeals < ActiveRecord::Migration[5.1]
       t.string    :dispatched_to_station
       t.boolean   :issues_pulled
     end
-    add_index(:legacy_appeals, :vacols_id, unique: true)
+    add_index     :legacy_appeals, :vacols_id, unique: true
+    add_reference :legacy_appeals, :appeal_series, foreign_key: true
   end
 end
