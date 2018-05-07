@@ -3,16 +3,24 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import { css } from 'glamor';
 
 import {
   pushBreadcrumb,
   popBreadcrumb,
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  showModal,
+  hideModal
 } from '../uiReducer/uiActions';
+import {
+  checkoutStagedAppeal,
+  resetDecisionOptions
+} from '../QueueActions';
 
 import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Modal from '../../components/Modal';
 
 const getDisplayName = (WrappedComponent) => {
   return WrappedComponent.displayName || WrappedComponent.name || 'WrappedComponent';
@@ -50,30 +58,46 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     getFooterButtons = () => {
-      const getButtons = _.get(this.state.wrapped, 'getFooterButtons');
-
-      if (!getButtons) {
-        return [];
-      }
-
-      const [backButton, nextButton] = getButtons();
-
-      _.defaults(nextButton, {
+      const cancelButton = {
+        classNames: ['cf-btn-link'],
+        callback: this.props.showModal,
+        name: 'cancel-button',
+        displayText: 'Cancel',
+        willNeverBeLoading: true
+      };
+      const nextButton = {
         classNames: ['cf-right-side', 'cf-next-step'],
         callback: this.goToNextStep,
         loading: this.props.savePending,
-        name: 'next-button'
-      });
-      _.defaults(backButton, {
-        classNames: ['cf-btn-link', 'cf-prev-step'],
+        name: 'next-button',
+        displayText: 'Continue',
+        loadingText: 'Submitting...',
+        willNeverBeLoading: true,
+        styling: css({ marginLeft: '1rem' })
+      };
+      const backButton = {
+        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
         callback: this.goToPrevStep,
-        name: 'back-button'
-      });
+        name: 'back-button',
+        displayText: 'Back',
+        willNeverBeLoading: true
+      };
 
-      backButton.displayText = `< ${backButton.displayText}`;
-
-      return [backButton, nextButton];
+      return [cancelButton, nextButton, backButton];
     };
+
+    cancelCheckoutFlow = () => {
+      const {
+        history,
+        stagedAppeals
+      } = this.props;
+
+      this.props.hideModal();
+      this.props.resetDecisionOptions();
+      _.each(stagedAppeals, this.props.checkoutStagedAppeal);
+
+      history.push('/queue');
+    }
 
     goToStep = (url) => {
       this.props.history.push(url);
@@ -94,7 +118,7 @@ export default function decisionViewBase(ComponentToWrap) {
           this.props.popBreadcrumb();
         }
 
-        return this.goToStep(prevStepUrl);
+        return this.props.history.push(prevStepUrl);
       }
     };
 
@@ -112,16 +136,17 @@ export default function decisionViewBase(ComponentToWrap) {
       if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
       }
+      this.props.highlightInvalidFormItems(false);
 
       if (!nextStepHook) {
-        return this.goToStep(this.getNextStepUrl());
+        return this.props.history.push(this.getNextStepUrl());
       }
 
       const hookResult = nextStepHook();
 
       // nextStepHook may return a Promise, in which case do nothing here.
       if (hookResult === true) {
-        return this.goToStep(this.getNextStepUrl());
+        return this.props.history.push(this.getNextStepUrl());
       }
     };
 
@@ -130,7 +155,7 @@ export default function decisionViewBase(ComponentToWrap) {
 
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          this.goToStep(this.getNextStepUrl());
+          this.props.history.push(this.getNextStepUrl());
         } else {
           this.props.highlightInvalidFormItems(true);
         }
@@ -139,6 +164,23 @@ export default function decisionViewBase(ComponentToWrap) {
 
     render = () => <React.Fragment>
       <Breadcrumbs />
+      {this.props.modal && <div className="cf-modal-scroll">
+        <Modal
+          title="Are you sure you want to cancel?"
+          buttons={[{
+            classNames: ['usa-button', 'cf-btn-link'],
+            name: 'Return to editing',
+            onClick: this.props.hideModal
+          }, {
+            classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+            name: 'Yes, cancel',
+            onClick: this.cancelCheckoutFlow
+          }]}
+          closeHandler={this.props.hideModal}>
+          All changes made to this page will be lost, except for the adding,
+          editing, and deleting of issues.
+        </Modal>
+      </div>}
       <AppSegment filledBackground>
         <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
       </AppSegment>
@@ -149,13 +191,18 @@ export default function decisionViewBase(ComponentToWrap) {
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
   const mapStateToProps = (state) => ({
-    ..._.pick(state.ui, 'breadcrumbs'),
-    ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful')
+    ..._.pick(state.ui, 'breadcrumbs', 'modal'),
+    ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful'),
+    stagedAppeals: _.keys(state.queue.stagedChanges.appeals)
   });
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
-    highlightInvalidFormItems
+    highlightInvalidFormItems,
+    showModal,
+    hideModal,
+    checkoutStagedAppeal,
+    resetDecisionOptions
   }, dispatch);
 
   return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));

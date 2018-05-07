@@ -24,21 +24,14 @@ import {
   resetDecisionOptions
 } from './QueueActions';
 import {
-  pushBreadcrumb,
-  resetBreadcrumbs
-} from './uiReducer/uiActions';
+  fullWidth,
+  CATEGORIES
+} from './constants';
+import { DateString } from '../util/DateUtil';
+import { resetBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
-const dropdownStyling = css({ minHeight: 0 });
-
-const draftDecisionOptions = [{
-  label: 'Decision Ready for Review',
-  value: DECISION_TYPES.DRAFT_DECISION
-}, {
-  label: 'OMO Ready for Review',
-  value: DECISION_TYPES.OMO_REQUEST
-}];
 
 class QueueDetailView extends React.PureComponent {
   componentWillUnmount = () => this.props.clearActiveCaseAndTask();
@@ -67,27 +60,11 @@ class QueueDetailView extends React.PureComponent {
 
   changeRoute = (props) => {
     const {
-      vacolsId,
-      history,
-      appeal: { attributes: { issues } }
+      appeal: { attributes: { veteran_full_name: vetName } },
+      vacolsId
     } = this.props;
-    const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
-    this.props.resetDecisionOptions();
-    if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.checkoutStagedAppeal(vacolsId);
-    }
-
-    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      this.props.stageAppeal(vacolsId, {
-        issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
-      });
-    } else {
-      this.props.stageAppeal(vacolsId);
-    }
-    this.props.setCaseReviewActionType(decisionType);
-    history.push(`${history.location.pathname}/${route}`);
+    this.props.resetBreadcrumbs(vetName, vacolsId);
   }
 
   tabs = () => {
@@ -129,7 +106,7 @@ class QueueDetailView extends React.PureComponent {
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
       <ReaderLink
-        vacolsId={this.props.vacolsId}
+        vacolsId={vacolsId}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
         appeal={this.props.appeal}
@@ -150,7 +127,9 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  featureToggles: PropTypes.object,
+  userRole: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -170,4 +149,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   stageAppeal
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueDetailView));
+export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);

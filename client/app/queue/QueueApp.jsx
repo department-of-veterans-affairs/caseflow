@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
+import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -13,7 +14,8 @@ import AppFrame from '../components/AppFrame';
 import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
-import JudgeTaskListView from './JudgeTaskListView';
+import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
@@ -34,44 +36,53 @@ class QueueApp extends React.PureComponent {
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
       {this.props.userRole === 'Attorney' ?
         <AttorneyTaskListView {...this.props} /> :
-        <JudgeTaskListView {...this.props} />
+        <JudgeReviewTaskListView {...this.props} />
       }
+    </SearchEnabledView>
+  </QueueLoadingScreen>;
+
+  routedJudgeQueueList = (taskType) => () => <QueueLoadingScreen {...this.props}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {taskType === 'Assign' ?
+        <JudgeAssignTaskListView {...this.props} /> :
+        <JudgeReviewTaskListView {...this.props} />}
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
+    <QueueDetailView {...this.props}
+      vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     vacolsId={props.match.params.vacolsId}
-    nextStep="/" />;
+    nextStep="/queue" />;
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      prevStep={`/appeals/${vacolsId}`}
-      nextStep={`/appeals/${vacolsId}/submit`} />;
+      prevStep={`/queue/appeals/${vacolsId}`}
+      nextStep={`/queue/appeals/${vacolsId}/submit`} />;
   };
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/appeals/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/appeals/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/appeals/${props.match.params.appealId}/submit`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
-  render = () => <BrowserRouter basename="/queue">
+  render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl="/"
+      defaultUrl="/queue"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -80,20 +91,36 @@ class QueueApp extends React.PureComponent {
       }}
       appName="">
       <AppFrame wideApp>
+        <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
-            path="/"
+            path="/queue"
             title="Your Queue | Caseflow"
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/appeals/:vacolsId"
+            path="/queue/:userId"
+            title="Your Queue | Caseflow"
+            render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/queue/:userId/review"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Review')} />
+          <PageRoute
+            exact
+            path="/queue/:userId/assign"
+            title="Your Queue | Caseflow"
+            render={this.routedJudgeQueueList('Assign')} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:vacolsId"
             title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/appeals/:vacolsId/submit"
+            path="/queue/appeals/:vacolsId/submit"
             title={() => {
               const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
                 'OMO' : 'Draft Decision';
@@ -103,17 +130,17 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/queue/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/appeals/:appealId/remands"
+            path="/queue/appeals/:appealId/remands"
             title="Draft Decision | Select Issue Remand Reasons"
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/appeals/:vacolsId/dispositions"
+            path="/queue/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
         </div>
@@ -132,6 +159,7 @@ QueueApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
   userRole: PropTypes.string.isRequired,
+  userCssId: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };

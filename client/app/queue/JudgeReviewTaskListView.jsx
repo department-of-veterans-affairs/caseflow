@@ -6,7 +6,6 @@ import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
 import JudgeReviewTaskTable from './JudgeReviewTaskTable';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -17,24 +16,17 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const DISPLAYING_REVIEW_TASKS = {
   title: (reviewableCount) => <h1 {...fullWidth}>Review {reviewableCount} Cases</h1>,
-  switchLink: (that) => <a onClick={that.handleSwitchToAssign} href="#">Switch to Assign Cases</a>,
+  switchLink: (that) => <Link to={`/queue/${that.props.userId}/assign`}>Switch to Assign Cases</Link>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
   noTasksMessage: () => 'Congratulations! You don\'t have any decisions to sign.',
   table: () => <JudgeReviewTaskTable />
 };
 
-const DISPLAYING_ASSIGN_TASKS = {
-  title: (reviewableCount) => <h1 {...fullWidth}>Assign {reviewableCount} Cases</h1>,
-  switchLink: (that) => <a onClick={that.handleSwitchToReview} href="#">Switch to Review Cases</a>,
-  visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Assign'),
-  noTasksMessage: () => 'Congratulations! You don\'t have any cases to assign.',
-  table: () => <JudgeAssignTaskTable />
-};
-
-class JudgeTaskListView extends React.PureComponent {
+class JudgeReviewTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -47,12 +39,9 @@ class JudgeTaskListView extends React.PureComponent {
 
   constructor(props) {
     super(props);
+
     this.state = DISPLAYING_REVIEW_TASKS;
   }
-
-  handleSwitchToAssign = () => this.setState(DISPLAYING_ASSIGN_TASKS)
-
-  handleSwitchToReview = () => this.setState(DISPLAYING_REVIEW_TASKS)
 
   render = () => {
     const reviewableCount = this.state.visibleTasks(this.props.tasks).length;
@@ -80,7 +69,7 @@ class JudgeTaskListView extends React.PureComponent {
   };
 }
 
-JudgeTaskListView.propTypes = {
+JudgeReviewTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -97,4 +86,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeReviewTaskListView);
