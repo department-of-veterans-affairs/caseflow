@@ -69,12 +69,6 @@ class SubmitDecisionView extends React.PureComponent {
     path: `/queue/tasks/${this.props.vacolsId}/submit`
   });
 
-  goToPrevStep = () => {
-    this.props.resetDecisionOptions();
-
-    return true;
-  };
-
   validateForm = () => {
     const {
       type: decisionType,
