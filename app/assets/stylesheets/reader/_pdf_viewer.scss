@@ -7,55 +7,52 @@
   bottom: 0;
   overflow: hidden;
   opacity: 0.2;
-  line-height: 1.0;
+  line-height: 1;
+
   div {
     color: transparent;
     position: absolute;
     white-space: pre;
     cursor: text;
-    -webkit-transform-origin: 0% 0%;
-    -moz-transform-origin: 0% 0%;
-    -o-transform-origin: 0% 0%;
-    -ms-transform-origin: 0% 0%;
     transform-origin: 0% 0%;
   }
+
    .highlight {
       margin: -1px;
       padding: 1px;
       background-color: rgb(180, 0, 170);
       border-radius: 4px;
       &.begin {
-        border-radius: 4px 0px 0px 4px;
+        border-radius: 4px 0 0 4px;
       }
       &.end {
-        border-radius: 0px 4px 4px 0px;
+        border-radius: 0 4px 4px 0;
       }
       &.middle {
-        border-radius: 0px;
+        border-radius: 0;
       }
       &.selected {
         background-color: rgb(0, 100, 0);
       }
-  }
+
     .endOfContent {
     display: block;
     position: absolute;
-    left: 0px;
+    left: 0;
     top: 100%;
-    right: 0px;
-    bottom: 0px;
+    right: 0;
+    bottom: 0;
     z-index: -1;
     cursor: default;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
+    user-select: none;
     &.active {
-      top: 0px;
+      top: 0;
     }
   }
     ::selection, ::-moz-selection {
     background: rgb(0, 0, 255);
   }
+}
 }
 
 
@@ -63,6 +60,7 @@
   section {
     position: absolute;
   }
+
   .linkAnnotation > a {
     position: absolute;
     font-size: 1em;
@@ -74,13 +72,15 @@
     &:hover {
       opacity: 0.2;
       background: #ff0;
-      box-shadow: 0px 2px 10px #ff0;
+      box-shadow: 0 2px 10 #ff0;
     }
   }
+
   .textAnnotation img {
     position: absolute;
     cursor: pointer;
   }
+
   .textWidgetAnnotation {
     input, textarea {
       background-color: rgba(0, 54, 255, 0.13);
@@ -94,6 +94,7 @@
       width: 100%;
     }
   }
+
   .choiceWidgetAnnotation select {
     background-color: rgba(0, 54, 255, 0.13);
     border: 1px solid transparent;
@@ -105,6 +106,7 @@
     vertical-align: top;
     width: 100%;
   }
+
   .buttonWidgetAnnotation {
     &.checkBox input, &.radioButton input {
       background-color: rgba(0, 54, 255, 0.13);
@@ -118,29 +120,36 @@
       width: 100%;
     }
   }
+
   .choiceWidgetAnnotation select option {
     padding: 0;
   }
+
   .buttonWidgetAnnotation.radioButton input {
     border-radius: 50%;
   }
+
   .textWidgetAnnotation {
+
     textarea {
       font: message-box;
       font-size: 9px;
       resize: none;
     }
+
     input[disabled], textarea[disabled] {
       background: none;
       border: 1px solid transparent;
       cursor: not-allowed;
     }
   }
+
   .choiceWidgetAnnotation select[disabled] {
     background: none;
     border: 1px solid transparent;
     cursor: not-allowed;
   }
+
   .buttonWidgetAnnotation {
     &.checkBox input[disabled], &.radioButton input[disabled] {
       background: none;
@@ -148,11 +157,13 @@
       cursor: not-allowed;
     }
   }
+
   .textWidgetAnnotation {
     input:hover, textarea:hover {
       border: 1px solid #000;
     }
   }
+
   .choiceWidgetAnnotation select:hover {
     border: 1px solid #000;
   }
@@ -161,16 +172,19 @@
       border: 1px solid #000;
     }
   }
+
   .textWidgetAnnotation {
     input:focus, textarea:focus {
       background: none;
       border: 1px solid transparent;
     }
   }
+
   .choiceWidgetAnnotation select:focus {
     background: none;
     border: 1px solid transparent;
   }
+
   .buttonWidgetAnnotation {
     &.checkBox input:checked {
       &:before, &:after {
@@ -180,12 +194,14 @@
         position: absolute;
       }
     }
+
     &.radioButton input:checked:before {
       background-color: #000;
       content: '';
       display: block;
       position: absolute;
     }
+
     &.checkBox input:checked {
       &:before, &:after {
         height: 80%;
@@ -199,6 +215,7 @@
         transform: rotate(-45deg);
       }
     }
+
     &.radioButton input:checked:before {
       border-radius: 50%;
       height: 50%;
@@ -207,6 +224,7 @@
       width: 50%;
     }
   }
+
   .textWidgetAnnotation input.comb {
     font-family: monospace;
     padding-left: 2px;
@@ -221,6 +239,7 @@
       width: 115%;
     }
   }
+
   .buttonWidgetAnnotation {
     &.checkBox input, &.radioButton input {
       -webkit-appearance: none;
@@ -239,7 +258,7 @@
     z-index: 200;
     max-width: 20em;
     background-color: #fff1d2;
-    box-shadow: 0px 2px 5px #333;
+    box-shadow: 0 2px 5px #333;
     border-radius: 2px;
     padding: 0.6em;
     margin-left: 5px;
@@ -266,6 +285,7 @@
   .canvasWrapper {
     overflow: hidden;
   }
+
   .page {
     direction: ltr;
     width: 816px;
@@ -278,10 +298,12 @@
     border-image: url(images/shadow.png) 9 9 repeat;
     background-color: white;
   }
+
   &.removePageBorders .page {
-    margin: 0px auto 10px auto;
+    margin: 0 auto 10px auto;
     border: none;
   }
+
   &.singlePageView {
     display: inline-block;
     .page {
@@ -289,6 +311,7 @@
       border: none;
     }
   }
+
   .page {
     canvas {
       margin: 0;
@@ -297,6 +320,7 @@
         display: none;
       }
     }
+
     .loadingIcon {
       position: absolute;
       display: block;
@@ -310,14 +334,17 @@
 }
 
 .pdfPresentationMode {
+
   &:-webkit-full-screen .pdfViewer .page, &:-moz-full-screen .pdfViewer .page {
     margin-bottom: 100%;
     border: 0;
   }
+
   &:-ms-fullscreen .pdfViewer .page {
     margin-bottom: 100% !important;
     border: 0;
   }
+
   &:fullscreen .pdfViewer .page {
     margin-bottom: 100%;
     border: 0;
