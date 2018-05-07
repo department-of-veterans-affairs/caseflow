@@ -1,7 +1,6 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
-
-$color-tab-text-hover: #1f5593;
+@import 'variables';
 
 .cf-tab-navigation {
 
@@ -105,12 +104,6 @@ $color-tab-text-hover: #1f5593;
 
     > span {
       top: -1px;
-    }
-  }
-
-  span {
-    &:hover {
-      color: $color-tab-text-hover;
     }
   }
 
