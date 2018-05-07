@@ -213,7 +213,7 @@ def read_csv(klass, date_shift)
 end
 
 # Setup fakes
-Appeal.repository = AppealRepository
+Appeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
 HearingDocket.repository = Fakes::HearingRepository
