@@ -1549,12 +1549,14 @@ RSpec.feature "Reader" do
 
     it "should alert user" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Reader")
       click_on Document.last.type
       expect(page).to have_content("Document Viewer")
 
       add_comment("test comment")
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Reader")
       click_on Document.last.type
 
       expect(page).to have_content("This document has been updated")

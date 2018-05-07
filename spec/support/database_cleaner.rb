@@ -17,24 +17,15 @@ RSpec.configure do |config|
       MSG
     end
     #ActiveRecord::Base.logger = Logger.new($stdout)
-    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-    DatabaseCleaner.clean_with(:truncation)
-    ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.clean_with(:truncation, { :except => %w[vftypes issref] })
   end
 
   config.before(:each) do
-    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-    DatabaseCleaner.strategy = :transaction
-    ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
     DatabaseCleaner.strategy = :transaction
   end
 
   config.before(:each, db_clean: :truncation) do
-    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-    DatabaseCleaner.strategy = :truncation
-    ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :truncation, { :except => %w[vftypes issref] }
   end
 
   config.before(:each, type: :feature) do
@@ -46,10 +37,7 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-      DatabaseCleaner.strategy = :truncation
-      ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
-      DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.strategy = :truncation, { :except => %w[vftypes issref] }
     end
 
   end
