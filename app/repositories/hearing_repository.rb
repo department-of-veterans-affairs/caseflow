@@ -47,15 +47,13 @@ class HearingRepository
     end
 
     def load_vacols_data(hearing)
-
-      vacols_case_hearing = nil
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
                                             service: :vacols,
                                             name: "load_vacols_data") do
-        vacols_case_hearing = VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+        VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
 
-      if vacols_case_hearing
+      if vacols_record
         set_vacols_values(hearing, vacols_record)
         true
       else
