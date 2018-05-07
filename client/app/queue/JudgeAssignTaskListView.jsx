@@ -22,6 +22,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
 import PageRoute from '../components/PageRoute';
+import { associateTasksWithAppeals } from './utils';
 
 const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   const reviewableCount = tasksWithAppeals.length;
@@ -40,8 +41,18 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   return tableContent;
 }
 
-const AssignedCasesPage = connect((state) => _.pick(state, 'tasksOfAttorney', 'appealsOfAttorney'))((props) => {
-  return props.match.params.attorneyId;
+const AssignedCasesPage = connect((state) => _.pick(state.queue, 'tasksOfAttorney', 'appealsOfAttorney'))((props) => {
+  const attorneyId = props.match.params.attorneyId;
+  if (!(attorneyId in props.tasksOfAttorney)) {
+    return 'Loading';
+  }
+  const tasks = props.tasksOfAttorney[attorneyId].data;
+  const appeals = props.appealsOfAttorney[attorneyId].data;
+
+  return <JudgeAssignTaskTable tasksAndAppeals={
+    sortTasks({ tasks, appeals }).
+      map((task) => ({ task, appeal: appeals[task.vacolsId] }))
+  } />
 })
 
 class JudgeAssignTaskListView extends React.PureComponent {
@@ -79,11 +90,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
           this.props.setAttorneysOfJudge(resp.attorneys);
           for (const attorney of resp.attorneys) {
             ApiUtil.get(`/queue/${attorney.id}`, requestOptions).then(
-              (respText) => {
-                const resp = JSON.parse(respText.text);
-
+              (resp) => {
                 this.props.setTasksAndAppealsOfAttorney(
-                  {attorneyId: attorney.id, tasks: resp.tasks.data, appeals: resp.tasks.data});
+                  {attorneyId: attorney.id, ...associateTasksWithAppeals(JSON.parse(resp.text))});
               },
               (resp) => {
               }
