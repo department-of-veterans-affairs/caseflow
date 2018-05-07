@@ -165,7 +165,7 @@ namespace :local do
     def setup_dispatch
       CreateEstablishClaimTasksJob.perform_now
       Timecop.freeze(Date.yesterday) do
-        Task.all.each{|t| t.prepare!}
+        Task.all.each(&:prepare!)
       end
     end
 
