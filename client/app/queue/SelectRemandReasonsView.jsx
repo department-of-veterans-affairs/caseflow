@@ -88,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === 'Remanded')
+    issues: _.filter(issues, (issue) => issue.disposition === 'remanded')
   };
 };
 

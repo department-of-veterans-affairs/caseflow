@@ -256,7 +256,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === 'Remanded'),
+    issues: _.filter(issues, (issue) => issue.disposition === 'remanded'),
     issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
