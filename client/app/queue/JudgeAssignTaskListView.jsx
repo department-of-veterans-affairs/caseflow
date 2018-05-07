@@ -15,6 +15,7 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { NavLink } from 'react-router-dom';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
@@ -108,6 +109,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
+    const attrsUnassigned = {};
     return <AppSegment filledBackground>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
@@ -128,11 +130,17 @@ class JudgeAssignTaskListView extends React.PureComponent {
             }}>
             <ul className="usa-sidenav-list">
               <li>
-                <a className="usa-current" disabled>Unassigned Cases ({this.unassignedTasksWithAppeals().length})</a>
+                <NavLink to={`/queue/${this.props.userId}/assign`} activeClassName="usa-current" exact>
+                  Unassigned Cases ({this.unassignedTasksWithAppeals().length})
+                </NavLink>
               </li>
               {this.props.attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
-                  <Link to={`/queue/${this.props.userId}/assign/${attorney.id}`}>{attorney.full_name}{attorney.id in this.props.tasksOfAttorney ? ` (${Object.keys(this.props.tasksOfAttorney[attorney.id].data).length})` : ''}</Link>
+                  <NavLink to={`/queue/${this.props.userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                    {attorney.full_name}{attorney.id in this.props.tasksOfAttorney ?
+                      ` (${Object.keys(this.props.tasksOfAttorney[attorney.id].data).length})` :
+                      ''}
+                  </NavLink>
                 </li>)}
             </ul>
           </LoadingDataDisplay>
