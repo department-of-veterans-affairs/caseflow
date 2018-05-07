@@ -53,17 +53,17 @@ export class HearingWorksheetContainer extends React.Component {
 
     const { worksheetServerError } = this.props;
 
-    if (worksheetServerError && worksheetServerError.status === 404) {
-      return <StatusMessage
-        title="Unable to load the worksheet">
-          It looks like Caseflow was unable to load the worksheet.<br />
-          Please <a href="">refresh the page</a> and try again.
-      </StatusMessage>;
-    } else if (worksheetServerError && worksheetServerError.status === 400) {
+    if (worksheetServerError && worksheetServerError.status === 400) {
       return <StatusMessage
         title="No hearing held">
           The Veteran was scheduled for a hearing, however, their case was<br />
           removed from the Daily Docket before the hearing date.
+      </StatusMessage>
+    } else if (worksheetServerError) {
+      return <StatusMessage
+        title="Unable to load the worksheet">
+          It looks like Caseflow was unable to load the worksheet.<br />
+          Please <a href="">refresh the page</a> and try again.
       </StatusMessage>;
     }
 
