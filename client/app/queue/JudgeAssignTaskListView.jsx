@@ -122,7 +122,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             }}>
             <ul className="usa-sidenav-list">
               <li>
-                <a className="usa-current" disabled>Unassigned Cases ({Object.keys(this.props.tasks).length})</a>
+                <a className="usa-current" disabled>Unassigned Cases ({this.unassignedTasksWithAppeals().length})</a>
               </li>
               {this.props.attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
