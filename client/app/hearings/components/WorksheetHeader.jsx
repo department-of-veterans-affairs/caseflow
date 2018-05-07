@@ -46,7 +46,7 @@ const firstColumnStyling = css({
 });
 
 const secondColumnStyling = css({
-  width: '70%'
+  width: '60%'
 });
 
 class WorksheetHeader extends React.PureComponent {
@@ -140,28 +140,23 @@ class WorksheetHeader extends React.PureComponent {
       </div>
 
       <div {...firstColumnStyling} className="cf-push-left">
-        <TextField
+        <WorksheetFormEntry
           name="Representative Name"
-          id="appellant-vet-rep-name"
-          aria-label="Representative Name"
           value={worksheet.representative_name || ''}
           onChange={this.props.onRepNameChange}
-          maxLength={30}
-          fixedInput={this.props.print}
-          inline
-          strongLabel
+          id="appellant-vet-rep-name"
+          minRows={1}
+          print={this.props.print}
         />
       </div>
       <div {...secondColumnStyling} className="cf-push-right">
-        <TextField
+        <WorksheetFormEntry
           name="Witness (W)/Observer (O) and Additional Details"
-          id="appellant-vet-witness"
-          aria-label="Witness Observer"
-          value={worksheet.witness || ''}
+          value={worksheet.witness}
           onChange={this.props.onWitnessChange}
-          maxLength={120}
-          inline
-          strongLabel
+          id="appellant-vet-witness"
+          minRows={1}
+          print={this.props.print}
         />
       </div>
       <div>
