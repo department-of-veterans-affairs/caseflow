@@ -1888,7 +1888,7 @@ describe Appeal do
       end
     end
 
-    context "when issues and viewed attributes are provided", focus: true do
+    context "when issues and viewed attributes are provided" do
       subject { appeal.to_hash(viewed: true, issues: issues) }
 
       let!(:appeal) do
@@ -1943,8 +1943,7 @@ describe Appeal do
       ]
     end
 
-    it "returns filtered appeals with events only for veteran sorted by latest event date", focus: true do
-      binding.pry
+    it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end

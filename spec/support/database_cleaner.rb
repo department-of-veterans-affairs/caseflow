@@ -17,18 +17,15 @@ RSpec.configure do |config|
       MSG
     end
     #ActiveRecord::Base.logger = Logger.new($stdout)
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
+    DatabaseCleaner.clean_with(:truncation, { :except => %w[vftypes issref] })
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].strategy = :transaction
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :transaction
+    DatabaseCleaner.strategy = :transaction
   end
 
   config.before(:each, db_clean: :truncation) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
+    DatabaseCleaner.strategy = :truncation, { :except => %w[vftypes issref] }
   end
 
   config.before(:each, type: :feature) do
@@ -40,25 +37,23 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
-      DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :truncation, { :except => %w[vftypes issref] }
+      DatabaseCleaner.strategy = :truncation, { :except => %w[vftypes issref] }
     end
 
   end
 
   config.before(:each) do
-    # ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].start
-    # ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].start
+    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
+    DatabaseCleaner.start
+    ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
+    DatabaseCleaner.start
   end
 
   config.append_after(:each) do
-    binding.pry
-    # ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}".to_sym }].clean
-    # ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].clean
+    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
+    DatabaseCleaner.clean
+    ActiveRecord::Base.establish_connection "#{Rails.env}".to_sym
+    DatabaseCleaner.clean
     reset_application!
   end
 end
