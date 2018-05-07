@@ -288,6 +288,10 @@ class Appeal < ApplicationRecord
     compensation_issues.count == issues.count
   end
 
+  def prior_bva_decision_date
+    (type == "Post Remand") ? prior_decision_date : decision_date
+  end
+
   def ramp_election
     RampElection.find_by(veteran_file_number: veteran_file_number)
   end
@@ -309,7 +313,7 @@ class Appeal < ApplicationRecord
       "nod_date" => nod_date,
       "soc_date" => soc_date,
       "certification_date" => certification_date,
-      "prior_decision_date" => prior_decision_date,
+      "prior_bva_decision_date" => prior_bva_decision_date,
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
