@@ -114,14 +114,6 @@ export class HearingWorksheet extends React.PureComponent {
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
-          name="Periods and circumstances of service"
-          value={worksheet.military_service}
-          onChange={this.onMilitaryServiceChange}
-          id="worksheet-military-service"
-          minRows={1}
-          print={this.props.print}
-        />
-        <WorksheetFormEntry
           name="Contentions"
           value={worksheet.contentions}
           onChange={this.onContentionsChange}

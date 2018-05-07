@@ -42,11 +42,13 @@ const copyButtonStyling = css({
 });
 
 const firstColumnStyling = css({
-  width: '35%'
+  width: '30%',
+  marginBottom: '20px'
 });
 
 const secondColumnStyling = css({
-  width: '60%'
+  width: '65%',
+  marginBottom: '20px'
 });
 
 class WorksheetHeader extends React.PureComponent {
@@ -139,27 +141,27 @@ class WorksheetHeader extends React.PureComponent {
         </div>
       </div>
 
-      <div {...firstColumnStyling} className="cf-push-left">
-        <WorksheetFormEntry
-          name="Representative Name"
-          value={worksheet.representative_name || ''}
-          onChange={this.props.onRepNameChange}
-          id="appellant-vet-rep-name"
-          minRows={1}
-          print={this.props.print}
-        />
-      </div>
-      <div {...secondColumnStyling} className="cf-push-right">
-        <WorksheetFormEntry
-          name="Witness (W)/Observer (O) and Additional Details"
-          value={worksheet.witness}
-          onChange={this.props.onWitnessChange}
-          id="appellant-vet-witness"
-          minRows={1}
-          print={this.props.print}
-        />
-      </div>
-      <div>
+      <form className="cf-hearings-worksheet-form">
+        <div {...firstColumnStyling} className="cf-push-left">
+          <WorksheetFormEntry
+            name="Representative Name"
+            value={worksheet.representative_name}
+            onChange={this.props.onRepNameChange}
+            id="appellant-vet-rep-name"
+            minRows={1}
+            print={this.props.print}
+          />
+        </div>
+        <div {...secondColumnStyling} className="cf-push-right">
+          <WorksheetFormEntry
+            name="Witness (W)/Observer (O) and Additional Details"
+            value={worksheet.witness}
+            onChange={this.props.onWitnessChange}
+            id="appellant-vet-witness"
+            minRows={1}
+            print={this.props.print}
+          />
+        </div>
         <WorksheetFormEntry
           name="Periods and circumstances of service"
           value={worksheet.military_service}
@@ -168,7 +170,7 @@ class WorksheetHeader extends React.PureComponent {
           minRows={1}
           print={this.props.print}
         />
-      </div>
+      </form>
     </div>;
   }
 }
