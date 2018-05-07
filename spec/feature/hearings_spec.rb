@@ -141,7 +141,7 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2023-11-06"
 
-      fill_in "3.notes", with: "This is a note about the hearing!"
+      fill_in "3.comments", with: "This is a comment about the hearing!"
       find(".cf-hearings-prepped").find(".cf-form-checkbox").click
       find(".dropdown-3-disposition").click
       find("#react-select-2--option-1").click
@@ -151,7 +151,7 @@ RSpec.feature "Hearings" do
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
       visit "/hearings/dockets/2023-11-06"
-      expect(page).to have_content("This is a note about the hearing!")
+      expect(page).to have_content("This is a comment about the hearing!")
       expect(page).to have_content("No Show")
       expect(page).to have_content("60 days")
       expect(page).to have_content("None")
