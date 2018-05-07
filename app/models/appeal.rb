@@ -10,6 +10,8 @@ class Appeal < ApplicationRecord
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
+  before_save: save_to_legacy_appeals
+
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -591,6 +593,10 @@ class Appeal < ApplicationRecord
   end
 
   private
+
+  def save_to_legacy_appeals
+    LegacyAppeal.create!(self.attributes.except("id"))
+  end
 
   def create_new_document!(document, ids)
     document.save!
