@@ -117,12 +117,10 @@ RSpec.feature "Reader" do
     FeatureToggle.disable!(:fakes_off)
   end
 
-  let(:vacols_record) { :remand_decided }
-
   let(:documents) { [] }
 
   let!(:appeal) do
-    Generators::Appeal_v2.create(vacols_record: vacols_record, documents: documents)
+    Generators::Appeal_v2.create(documents: documents)
   end
 
   let!(:current_user) do
@@ -238,7 +236,6 @@ RSpec.feature "Reader" do
 
       let!(:appeal) do
         Generators::Appeal_v2.build(
-          vacols_record: vacols_record,
           documents: documents,
           manifest_vbms_fetched_at: vbms_fetched_ts,
           manifest_vva_fetched_at: vva_fetched_ts,
@@ -283,23 +280,22 @@ RSpec.feature "Reader" do
 
     context "Welcome gate page" do
       let!(:appeal2) do
-        Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents)
+        Generators::Appeal_v2.build(documents: documents)
       end
 
       let!(:appeal3) do
         Generators::Appeal_v2.build(
           vbms_id: "123456789S",
-          vacols_record: vacols_record,
           documents: documents
         )
       end
 
       let!(:appeal4) do
-        Generators::Appeal_v2.build(vacols_record: vacols_record, documents: documents, vbms_id: appeal3.vbms_id)
+        Generators::Appeal_v2.build(documents: documents, vbms_id: appeal3.vbms_id)
       end
 
       let!(:appeal5) do
-        Generators::Appeal_v2.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
+        Generators::Appeal_v2.build(vbms_id: "1234C", documents: documents)
       end
 
       let!(:hearing) do
