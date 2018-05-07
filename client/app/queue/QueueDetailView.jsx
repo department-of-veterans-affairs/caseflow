@@ -1,34 +1,21 @@
 import { css } from 'glamor';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
-import SearchableDropdown from '../components/SearchableDropdown';
+import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import TabWindow from '../components/TabWindow';
-import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
+import { fullWidth, CATEGORIES } from './constants';
 import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
 import { clearActiveCaseAndTask } from './CaseDetail/CaseDetailActions';
-import {
-  setCaseReviewActionType,
-  stageAppeal,
-  checkoutStagedAppeal,
-  resetDecisionOptions
-} from './QueueActions';
-import {
-  fullWidth,
-  CATEGORIES
-} from './constants';
-import { DateString } from '../util/DateUtil';
-import { resetBreadcrumbs } from './uiReducer/uiActions';
+import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -58,15 +45,6 @@ class QueueDetailView extends React.PureComponent {
     }
   }
 
-  changeRoute = (props) => {
-    const {
-      appeal: { attributes: { veteran_full_name: vetName } },
-      vacolsId
-    } = this.props;
-
-    this.props.resetBreadcrumbs(vetName, vacolsId);
-  }
-
   tabs = () => {
     const appeal = this.props.appeal;
 
@@ -82,6 +60,16 @@ class QueueDetailView extends React.PureComponent {
   subHead = () => {
     if (this.props.task) {
       const task = this.props.task.attributes;
+
+      if (this.props.userRole === 'Judge') {
+        const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
+        const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
+
+        return <React.Fragment>
+          Prepared by {nameAbbrev}<br />
+          Document ID: {task.document_id}
+        </React.Fragment>;
+      }
 
       return <React.Fragment>
         Assigned to you {task.added_by_name ? `by ${task.added_by_name}` : ''} on&nbsp;
@@ -106,19 +94,13 @@ class QueueDetailView extends React.PureComponent {
       </h1>
       <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
       <ReaderLink
-        vacolsId={vacolsId}
+        vacolsId={this.props.vacolsId}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
         appeal={this.props.appeal}
         taskType="Draft Decision"
         longMessage />
-      {this.props.featureToggles.phase_two && this.props.task && <SearchableDropdown
-        name="Select an action"
-        placeholder="Select an action&hellip;"
-        options={draftDecisionOptions}
-        onChange={this.changeRoute}
-        hideLabel
-        dropdownStyling={dropdownStyling} />}
+      {this.props.featureToggles.phase_two && <SelectCheckoutFlowDropdown vacolsId={this.props.vacolsId} />}
       <TabWindow
         name="queue-tabwindow"
         tabs={this.tabs()} />
@@ -135,18 +117,13 @@ QueueDetailView.propTypes = {
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeCase,
   breadcrumbs: state.ui.breadcrumbs,
-  changedAppeals: _.keys(state.queue.stagedChanges.appeals),
   task: state.caseDetail.activeTask
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  checkoutStagedAppeal,
   clearActiveCaseAndTask,
   pushBreadcrumb,
-  resetBreadcrumbs,
-  resetDecisionOptions,
-  setCaseReviewActionType,
-  stageAppeal
+  resetBreadcrumbs
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);
