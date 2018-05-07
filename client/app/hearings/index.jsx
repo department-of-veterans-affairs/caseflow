@@ -6,7 +6,7 @@ import DocketsContainer from './containers/DocketsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import HearingWorksheetContainer from './containers//HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
-import ScrollToTop from './util/ScrollTop';
+import ScrollToTop from '../components/ScrollToTop';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';

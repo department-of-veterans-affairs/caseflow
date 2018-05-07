@@ -54,12 +54,6 @@ class AddEditIssueView extends React.Component {
     }
   };
 
-  getFooterButtons = () => [{
-    displayText: 'Go back to Select Dispositions'
-  }, {
-    displayText: 'Save'
-  }];
-
   updateIssue = (attributes) => {
     this.props.highlightInvalidFormItems(false);
     this.props.updateEditingAppealIssue(attributes);
