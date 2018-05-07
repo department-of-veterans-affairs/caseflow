@@ -6,6 +6,7 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
+import StringUtil from '../../util/StringUtil';
 import { COLORS, ERROR_FIELD_REQUIRED } from '../constants';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
@@ -33,13 +34,13 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
     return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
       <SearchableDropdown
         placeholder="Select Disposition"
-        value={issue.readable_disposition}
+        value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
         options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
           map((opt) => ({
             label: `${opt[0]} - ${opt[1]}`,
-            value: opt[1]
+            value: StringUtil.parameterize(opt[1])
           }))}
         onChange={({ value }) => this.props.updateIssue({
           disposition: value,

@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import StringUtil from '../util/StringUtil';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -75,7 +76,7 @@ export const SEARCH_ERROR_FOR = {
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
   ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [VACOLS_DISPOSITIONS_BY_ID[dispositionId].toLowerCase().replace(/ /g, '_')]: dispositionId
+    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
   }))
 );
 
