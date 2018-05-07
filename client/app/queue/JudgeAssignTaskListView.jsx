@@ -126,7 +126,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
               </li>
               {this.props.attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
-                  <Link to={`/queue/${this.props.userId}/assign/${attorney.id}`}>{attorney.full_name}</Link>
+                  <Link to={`/queue/${this.props.userId}/assign/${attorney.id}`}>{attorney.full_name}{attorney.id in this.props.tasksOfAttorney ? ` (${Object.keys(this.props.tasksOfAttorney[attorney.id].data).length})` : ''}</Link>
                 </li>)}
             </ul>
           </LoadingDataDisplay>
