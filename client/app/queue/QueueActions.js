@@ -146,3 +146,10 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
     dispatch(editAppeal(appealId, attributes));
   }
 };
+
+export const setAttorneysOfJudge = (attorneys) => ({
+  type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
+  payload: {
+    attorneys
+  }
+});
