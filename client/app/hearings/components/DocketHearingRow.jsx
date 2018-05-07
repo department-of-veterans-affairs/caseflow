@@ -202,7 +202,7 @@ export class DocketHearingRow extends React.PureComponent {
                 id={`${hearing.id}.comments`}
                 value={hearing.comments || ''}
                 name="Comments"
-                onChange={this.setComments}
+                onChange={this.props.setComments}
                 maxLength="100"
               />
             </div>
