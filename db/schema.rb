@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180504231033) do
+ActiveRecord::Schema.define(version: 20180507232459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -373,7 +373,7 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.boolean "foreign_claim_compensation_claims_dual_claims_appeals", default: false
     t.boolean "manlincon_compliance", default: false
     t.boolean "hearing_including_travel_board_video_conference", default: false
-    t.boolean "home_loan_guarantee", default: false
+    t.boolean "home_loan_guaranty", default: false
     t.boolean "insurance", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "spina_bifida", default: false
