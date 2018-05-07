@@ -41,19 +41,25 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   return tableContent;
 }
 
-const AssignedCasesPage = connect((state) => _.pick(state.queue, 'tasksOfAttorney', 'appealsOfAttorney'))((props) => {
-  const attorneyId = props.match.params.attorneyId;
-  if (!(attorneyId in props.tasksOfAttorney)) {
-    return 'Loading';
-  }
-  const tasks = props.tasksOfAttorney[attorneyId].data;
-  const appeals = props.appealsOfAttorney[attorneyId].data;
+const AssignedCasesPage = connect(
+  (state) => _.pick(state.queue, 'tasksOfAttorney', 'appealsOfAttorney', 'attorneysOfJudge'))(
+  (props) => {
+    const attorneyId = props.match.params.attorneyId;
+    if (!(attorneyId in props.tasksOfAttorney)) {
+      return 'Loading';
+    }
+    const attorneyName = props.attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
+    const tasks = props.tasksOfAttorney[attorneyId].data;
+    const appeals = props.appealsOfAttorney[attorneyId].data;
 
-  return <JudgeAssignTaskTable tasksAndAppeals={
-    sortTasks({ tasks, appeals }).
-      map((task) => ({ task, appeal: appeals[task.vacolsId] }))
-  } />
-})
+    return <React.Fragment>
+      <h2>{attorneyName}'s Cases</h2>
+      <JudgeAssignTaskTable tasksAndAppeals={
+        sortTasks({ tasks, appeals }).
+          map((task) => ({ task, appeal: appeals[task.vacolsId] }))
+      } />
+    </React.Fragment>
+  })
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
