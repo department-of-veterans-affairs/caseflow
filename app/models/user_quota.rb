@@ -49,7 +49,7 @@ class UserQuota < ApplicationRecord
     ClaimEstablishment
       .select(:decision_type)
       .where(
-        task_id: Task.where(user_id: user_id).where("completed_at >= ?", date)
+        task_id: Dispatch::Task.where(user_id: user_id).where("completed_at >= ?", date)
       ).group_by(&:decision_type)
   end
 
