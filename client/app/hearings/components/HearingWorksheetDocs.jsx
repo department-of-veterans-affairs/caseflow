@@ -57,7 +57,7 @@ class HearingWorksheetDocs extends Component {
                     columns={columns}
                     rowObjects={[
                       { name: <b>Prior BVA Decision</b>,
-                        value: formatDate(appeal.prior_decision_date) },
+                        value: formatDate(appeal.prior_bva_decision_date) },
                       { name: <b>NOD</b>,
                         value: formatDate(appeal.nod_date) },
                       { name: <b>SOC</b>,
