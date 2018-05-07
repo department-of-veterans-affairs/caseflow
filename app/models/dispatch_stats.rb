@@ -102,13 +102,11 @@ class DispatchStats < Caseflow::Stats
     end,
 
     time_to_establish_claim_full_grants: lambda do |range|
-      DispatchStats.percentile(:time_to_complete,
-                               EstablishClaim.where(completed_at: range).for_full_grant, 95)
+      DispatchStats.percentile(:time_to_complete, EstablishClaim.where(completed_at: range).for_full_grant, 95)
     end,
 
     median_time_to_establish_claim_full_grants: lambda do |range|
-      DispatchStats.percentile(:time_to_complete,
-                               EstablishClaim.where(completed_at: range).for_full_grant, 50)
+      DispatchStats.percentile(:time_to_complete, EstablishClaim.where(completed_at: range).for_full_grant, 50)
     end,
 
     time_to_establish_claim_partial_grants_remands: lambda do |range|
