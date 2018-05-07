@@ -58,7 +58,7 @@ export class HearingWorksheetContainer extends React.Component {
         title="No hearing held">
           The Veteran was scheduled for a hearing, however, their case was<br />
           removed from the Daily Docket before the hearing date.
-      </StatusMessage>
+      </StatusMessage>;
     } else if (worksheetServerError) {
       return <StatusMessage
         title="Unable to load the worksheet">

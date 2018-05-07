@@ -57,7 +57,7 @@ class HearingRepository
         set_vacols_values(hearing, vacols_record)
         true
       else
-        raise Caseflow::Error::VacolsRecordNotFound, "Vacols record not found."
+        fail Caseflow::Error::VacolsRecordNotFound, "Vacols record not found."
       end
     rescue ActiveRecord::RecordNotFound
       false
