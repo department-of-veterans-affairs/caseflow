@@ -1,13 +1,16 @@
-import React from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
-import { onReceiveQueue, onReceiveJudges } from './QueueActions';
-import ApiUtil from '../util/ApiUtil';
+import { bindActionCreators } from 'redux';
+
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
-import _ from 'lodash';
+
+import { setActiveCase } from './CaseDetail/CaseDetailActions';
+import { onReceiveQueue, onReceiveJudges } from './QueueActions';
 
 class QueueLoadingScreen extends React.PureComponent {
   loadJudges = () => {
@@ -21,6 +24,14 @@ class QueueLoadingScreen extends React.PureComponent {
 
       this.props.onReceiveJudges(judges);
     });
+  }
+
+  loadRelevantCases = () => {
+    if (this.props.vacolsId) {
+      return this.loadActiveCase();
+    }
+
+    return this.loadQueue();
   }
 
   loadQueue = () => {
@@ -42,8 +53,20 @@ class QueueLoadingScreen extends React.PureComponent {
     }));
   };
 
+  loadActiveCase = () => {
+    if (this.props.activeCase) {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/queue/appeals/${this.props.vacolsId}`).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setActiveCase(resp.appeal);
+    });
+  };
+
   createLoadPromise = () => Promise.all([
-    this.loadQueue(),
+    this.loadRelevantCases(),
     this.loadJudges()
   ]);
 
@@ -85,7 +108,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  onReceiveJudges
+  onReceiveJudges,
+  setActiveCase
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);

@@ -10,19 +10,15 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
-import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TabWindow from '../components/TabWindow';
 import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
-import { LOGO_COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import ApiUtil from '../util/ApiUtil';
 import { DateString } from '../util/DateUtil';
 
 import {
   clearActiveCaseAndTask,
-  setActiveCase,
-  setActiveTask,
   setDocumentCount
 } from './CaseDetail/CaseDetailActions';
 import {
@@ -71,30 +67,6 @@ class QueueDetailView extends React.PureComponent {
         path: '/'
       });
     }
-  }
-
-  loadCaseDetails = () => {
-    if (this.props.appeal) {
-      return Promise.resolve();
-    }
-
-    const loadedQueue = this.props.loadedQueue;
-
-    if (loadedQueue.appeals && loadedQueue.appeals[this.props.vacolsId]) {
-      this.props.setActiveCase(loadedQueue.appeals[this.props.vacolsId]);
-
-      if (loadedQueue.tasks && loadedQueue.tasks[this.props.vacolsId]) {
-        this.props.setActiveTask(loadedQueue.tasks[this.props.vacolsId]);
-      }
-
-      return Promise.resolve();
-    }
-
-    return ApiUtil.get(`/queue/appeals/${this.props.vacolsId}`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setActiveCase(resp.appeal);
-    });
   }
 
   populateActiveCaseDocumentCount = () => {
@@ -176,11 +148,7 @@ class QueueDetailView extends React.PureComponent {
     return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
   }
 
-  showCaseDetails = () => {
-    if (!this.props.appeal) {
-      return null;
-    }
-
+  render = () => {
     this.populateActiveCaseDocumentCount();
     this.setBreadcrumbs();
 
@@ -210,24 +178,6 @@ class QueueDetailView extends React.PureComponent {
         tabs={this.tabs()} />
     </AppSegment>;
   };
-
-  render = () => {
-    const failStatusMessageChildren = <div>
-      Caseflow was unable to load case details for this case.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
-    </div>;
-
-    return <LoadingDataDisplay
-      createLoadPromise={this.loadCaseDetails}
-      loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading case details...'
-      }}
-      failStatusMessageProps={{ title: 'Unable to load case details' }}
-      failStatusMessageChildren={failStatusMessageChildren}>
-      {this.showCaseDetails()}
-    </LoadingDataDisplay>;
-  }
 }
 
 QueueDetailView.propTypes = {
@@ -239,7 +189,6 @@ const mapStateToProps = (state) => ({
   breadcrumbs: state.ui.breadcrumbs,
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
   docCount: state.caseDetail.documentCount,
-  loadedQueue: state.queue.loadedQueue,
   task: state.caseDetail.activeTask
 });
 
@@ -249,8 +198,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   pushBreadcrumb,
   resetBreadcrumbs,
   resetDecisionOptions,
-  setActiveCase,
-  setActiveTask,
   setCaseReviewActionType,
   setDocumentCount,
   stageAppeal
