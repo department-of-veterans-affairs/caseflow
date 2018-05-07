@@ -73,16 +73,7 @@ module Fakes::Data::AppealData
 
   def self.dispatch_documents
     [
-      Generators::Document.build(vbms_document_id: 11, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 12, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 13, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 14, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 15, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 16, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 17, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 18, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 19, type: "BVA Decision"),
-      Generators::Document.build(vbms_document_id: 20, type: "BVA Decision")
+      Generators::Document.build(vbms_document_id: 11, type: "BVA Decision")
     ]
   end
 
