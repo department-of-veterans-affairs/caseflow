@@ -1,13 +1,12 @@
 import React from 'react';
 import moment from 'moment';
-import TextField from '../../components/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../actions/Dockets';
 import { css } from 'glamor';
 
 class WorksheetFormEntry extends React.PureComponent {
@@ -51,7 +50,16 @@ const secondColumnStyling = css({
   marginBottom: '20px'
 });
 
+const secondRowStyling = css({
+  width: '100%',
+  marginBottom: '20px'
+});
+
 class WorksheetHeader extends React.PureComponent {
+
+  onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
+  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
   render() {
     const {
@@ -146,7 +154,7 @@ class WorksheetHeader extends React.PureComponent {
           <WorksheetFormEntry
             name="Representative Name"
             value={worksheet.representative_name}
-            onChange={this.props.onRepNameChange}
+            onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"
             minRows={1}
             print={this.props.print}
@@ -156,20 +164,22 @@ class WorksheetHeader extends React.PureComponent {
           <WorksheetFormEntry
             name="Witness (W)/Observer (O) and Additional Details"
             value={worksheet.witness}
-            onChange={this.props.onWitnessChange}
+            onChange={this.onWitnessChange}
             id="appellant-vet-witness"
             minRows={1}
             print={this.props.print}
           />
         </div>
-        <WorksheetFormEntry
-          name="Periods and circumstances of service"
-          value={worksheet.military_service}
-          onChange={this.onMilitaryServiceChange}
-          id="worksheet-military-service"
-          minRows={1}
-          print={this.props.print}
-        />
+        <div {...secondRowStyling} className="cf-push-left">
+          <WorksheetFormEntry
+            name="Periods and circumstances of service"
+            value={worksheet.military_service}
+            onChange={this.onMilitaryServiceChange}
+            id="worksheet-military-service"
+            minRows={1}
+            print={this.props.print}
+          />
+        </div>
       </form>
     </div>;
   }
@@ -180,7 +190,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRepNameChange,
-  onWitnessChange
+  onWitnessChange,
+  onMilitaryServiceChange
 }, dispatch);
 
 export default connect(
