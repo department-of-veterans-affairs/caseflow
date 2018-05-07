@@ -285,7 +285,7 @@ describe RampElectionIntake do
         end
       end
 
-      context "intake is already in progress" do
+      context "intake is already in progress do
         it "should not create another intake" do
           RampElectionIntake.new(
             user: user,
@@ -293,7 +293,7 @@ describe RampElectionIntake do
           ).start!
 
           expect(intake).to_not be_nil
-          expect(subject).to eq(false)
+          expect(subject).to eq(nil)
         end
       end
     end

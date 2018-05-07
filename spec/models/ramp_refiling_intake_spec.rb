@@ -64,7 +64,7 @@ describe RampRefilingIntake do
         ).start!
 
         expect(intake).to_not be_nil
-        expect(subject).to eq(false)
+        expect(subject).to eq(nil)
       end
     end
   end
