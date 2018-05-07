@@ -90,6 +90,7 @@ namespace :local do
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)
+      setup_dispatch
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -160,6 +161,13 @@ namespace :local do
     end
 
     private
+
+    def setup_dispatch
+      CreateEstablishClaimTasksJob.perform_now
+      Timecop.freeze(Date.yesterday) do
+        Task.all.each{|t| t.prepare!}
+      end
+    end
 
     def vbms_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "vbms_setup.csv"), "wb") do |csv|
