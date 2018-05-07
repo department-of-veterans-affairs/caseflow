@@ -73,7 +73,7 @@ export class DocketHearingRow extends React.PureComponent {
   setTranscriptRequested = (value) =>
     this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
-  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
+  setComments = (event) => this.props.setComments(this.props.index, event.target.value, this.props.hearingDate);
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
