@@ -285,7 +285,7 @@ describe RampElectionIntake do
         end
       end
 
-      context "intake is already in progress do
+      context "intake is already in progress" do
         it "should not create another intake" do
           RampElectionIntake.new(
             user: user,
