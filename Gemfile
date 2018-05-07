@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "1728de8d71ac9d7b3948aa8b6e2fa4e165b16810"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
 
 gem "redis-rails", "~> 5.0.2"
 
