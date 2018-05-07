@@ -6,7 +6,7 @@ class Dispatch::TasksController < ApplicationController
   before_action :verify_admin_access, only: [:index]
 
   TASK_CLASSES = {
-    EstablishClaim: Dispatch::EstablishClaim
+    EstablishClaim: EstablishClaim
   }.freeze
 
   # API for returning task information

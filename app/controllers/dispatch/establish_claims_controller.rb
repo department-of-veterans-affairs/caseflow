@@ -48,7 +48,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     # If we've already created the EP, no-op and send the user to the note page
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
-  rescue Dispatch::EstablishClaim::InvalidEndProductError
+  rescue EstablishClaim::InvalidEndProductError
     render json: { error_code: "end_product_invalid" }, status: 422
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
     render json: { error_code: e.error_code }, status: 422
@@ -87,13 +87,13 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
 
   # Index of all tasks that are unprepared at least 1 day
   def unprepared_tasks
-    @unprepared_tasks = Dispatch::EstablishClaim.unprepared.oldest_first.select do |task|
+    @unprepared_tasks = EstablishClaim.unprepared.oldest_first.select do |task|
       (Time.zone.now - task.created_at).to_i / 1.day > 0
     end
   end
 
   def canceled_tasks
-    @canceled_tasks = Dispatch::EstablishClaim.past_weeks(5).canceled.newest_first
+    @canceled_tasks = EstablishClaim.past_weeks(5).canceled.newest_first
   end
 
   private
@@ -119,7 +119,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   helper_method :start_text
 
   def tasks
-    Dispatch::EstablishClaim
+    EstablishClaim
   end
   helper_method :tasks
 
