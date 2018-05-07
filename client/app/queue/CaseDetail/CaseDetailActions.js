@@ -13,9 +13,3 @@ export const setActiveTask = (taskObj) => ({
   type: Constants.SET_ACTIVE_TASK,
   payload: { taskObj }
 });
-
-export const setDocumentCount = (docCount) => ({
-  type: Constants.SET_ACTIVE_CASE_DOCUMENT_COUNT,
-  payload: { docCount }
-});
-

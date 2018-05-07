@@ -20,6 +20,7 @@ export const initialState = {
     loadedUserId: null
   },
   editingIssue: {},
+  docCountForAppeal: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -78,17 +79,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
-  case ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          [action.payload.appealId]: {
-            attributes: {
-              docCount: {
-                $set: action.payload.docCount
-              }
-            }
-          }
+      docCountForAppeal: {
+        [action.payload.appealId]: {
+          $set: action.payload.docCount
         }
       }
     });

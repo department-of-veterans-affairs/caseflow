@@ -14,13 +14,9 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TabWindow from '../components/TabWindow';
 import { fullWidth, CATEGORIES, DECISION_TYPES } from './constants';
 import ReaderLink from './ReaderLink';
-import ApiUtil from '../util/ApiUtil';
 import { DateString } from '../util/DateUtil';
 
-import {
-  clearActiveCaseAndTask,
-  setDocumentCount
-} from './CaseDetail/CaseDetailActions';
+import { clearActiveCaseAndTask } from './CaseDetail/CaseDetailActions';
 import {
   setCaseReviewActionType,
   stageAppeal,
@@ -67,32 +63,6 @@ class QueueDetailView extends React.PureComponent {
         path: '/'
       });
     }
-  }
-
-  populateActiveCaseDocumentCount = () => {
-    if (!this.props.appeal || this.props.docCount) {
-      return;
-    }
-
-    const appeal = this.props.appeal.attributes;
-
-    if (appeal.docCount) {
-      this.props.setDocumentCount(appeal.docCount);
-
-      return;
-    }
-
-    const requestOptions = {
-      withCredentials: true,
-      timeout: true,
-      headers: { 'FILE-NUMBER': appeal.vbms_id }
-    };
-
-    ApiUtil.get(appeal.number_of_documents_url, requestOptions).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setDocumentCount(resp.data.attributes.documents.length);
-    });
   }
 
   changeRoute = (props) => {
@@ -149,7 +119,6 @@ class QueueDetailView extends React.PureComponent {
   }
 
   render = () => {
-    this.populateActiveCaseDocumentCount();
     this.setBreadcrumbs();
 
     const appeal = this.props.appeal.attributes;
@@ -163,7 +132,7 @@ class QueueDetailView extends React.PureComponent {
         vacolsId={this.props.vacolsId}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
-        docCount={this.props.docCount}
+        appeal={this.props.appeal}
         taskType="Draft Decision"
         longMessage />
       {this.props.featureToggles.phase_two && this.props.task && <SearchableDropdown
@@ -188,7 +157,6 @@ const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeCase,
   breadcrumbs: state.ui.breadcrumbs,
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
-  docCount: state.caseDetail.documentCount,
   task: state.caseDetail.activeTask
 });
 
@@ -199,7 +167,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetBreadcrumbs,
   resetDecisionOptions,
   setCaseReviewActionType,
-  setDocumentCount,
   stageAppeal
 }, dispatch);
 
