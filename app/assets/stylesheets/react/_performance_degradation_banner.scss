@@ -1,4 +1,5 @@
-$color-gold-lightest: #fff1d2;
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
 
 .usa-banner {
   background-color: $color-gold-lightest;
