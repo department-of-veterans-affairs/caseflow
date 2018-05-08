@@ -50,20 +50,24 @@ class Generators::AppealV2
       # appeal code picks up the persisted data.
       vacols_case = setup_vacols_data(attrs)
 
-      appeal = Appeal.find_or_initialize_by(vacols_id: vacols_case[:bfkey])
-
-      inaccessible = attrs.delete(:inaccessible)
-      veteran = attrs.delete(:veteran)
-
       setup_vbms_documents(attrs)
+      setup_bgs_data(attrs)
 
-      add_inaccessible_appeal(appeal) if inaccessible
-      veteran || Generators::Veteran.build(file_number: attrs[:vbms_id])
-
-      appeal
+      Appeal.find_or_initialize_by(vacols_id: vacols_case[:bfkey])
     end
 
     private
+
+    def setup_bgs_data(attrs)
+      attrs.delete(:veteran) || Generators::Veteran.build(file_number: attrs[:vbms_id])
+
+      add_inaccessible_appeal(attrs[:vbms_id]) if attrs.delete(:inaccessible)
+    end
+
+    def add_inaccessible_appeal(vbms_id)
+      Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
+      Fakes::BGSService.inaccessible_appeal_vbms_ids << vbms_id
+    end
 
     def setup_vacols_data(attrs)
       Generators::Vacols::Case.create(
@@ -82,11 +86,6 @@ class Generators::AppealV2
 
       Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
       Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
-    end
-
-    def add_inaccessible_appeal(appeal)
-      Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
-      Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.sanitized_vbms_id
     end
   end
 end
