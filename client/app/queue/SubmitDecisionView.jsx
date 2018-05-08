@@ -69,12 +69,6 @@ class SubmitDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.vacolsId}/submit`
   });
 
-  goToPrevStep = () => {
-    this.props.resetDecisionOptions();
-
-    return true;
-  };
-
   validateForm = () => {
     const {
       type: decisionType,
@@ -182,10 +176,10 @@ class SubmitDecisionView extends React.PureComponent {
 
   render = () => {
     const omoTypes = [{
-      displayText: 'VHA - OMO',
+      displayText: 'OMO - VHA',
       value: 'OMO - VHA'
     }, {
-      displayText: 'VHA - IME',
+      displayText: 'OMO - IME',
       value: 'OMO - IME'
     }];
     const {
@@ -240,7 +234,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.notes}
+        value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
