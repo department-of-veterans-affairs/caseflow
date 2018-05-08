@@ -384,7 +384,7 @@ ActiveRecord::Schema.define(version: 20180507232459) do
     t.boolean "mustard_gas", default: false
     t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
     t.boolean "foreign_pension_dic_all_other_foreign_countries", default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_american_caribb", default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.string "dispatched_to_station"

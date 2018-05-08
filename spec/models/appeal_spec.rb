@@ -2083,4 +2083,15 @@ describe Appeal do
       end
     end
   end
+
+  context "#save_to_legacy_appeals" do
+    it "" do
+      appeal = Appeal.create!(
+        vacols_id: "1234"
+      )
+      legacy_appeal = LegacyAppeal.find(appeal.id)
+      expect(legacy_appeal).to_not be_nil
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
 end
