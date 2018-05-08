@@ -606,10 +606,6 @@ class Appeal < ApplicationRecord
     LegacyAppeal.find(attributes["id"]).destroy!
   end
 
-  def delete_legacy_appeal
-    LegacyAppeal.find(attributes["id"]).delete
-  end
-
   def create_new_document!(document, ids)
     document.save!
 
