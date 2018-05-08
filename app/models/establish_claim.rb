@@ -1,4 +1,4 @@
-class EstablishClaim < Task
+class EstablishClaim < Dispatch::Task
   include CachedAttributes
 
   ADMIN_FUNCTION = "Manage Claim Establishment".freeze
