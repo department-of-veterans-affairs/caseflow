@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setFormType } from '../actions/common';
+import { setFormType, clearSearchErrors } from '../actions/common';
 import { FORM_TYPES, PAGE_PATHS } from '../constants';
 import _ from 'lodash';
 
@@ -68,6 +68,7 @@ export default connect(
 
 class SelectFormButtonUnconnected extends React.PureComponent {
   handleClick = () => {
+    this.props.clearSearchErrors();
     this.props.history.push('/search');
   }
 
@@ -83,13 +84,8 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ intake }) => ({
-    formType: intake.formType,
-    searchErrorCode: null,
-    searchErrorData: {
-      duplicateReceiptDate: null,
-      duplicateProcessedBy: null,
-      veteranMissingFields: null
-    }
-   }),
+  ({ intake }) => ({ formType: intake.formType }),
+  (dispatch) => bindActionCreators({
+    clearSearchErrors
+  }, dispatch)
 )(SelectFormButtonUnconnected);

@@ -70,6 +70,26 @@ RSpec.feature "Intake" do
       expect(page).to have_content("Welcome to the Intake Help page!")
     end
 
+    scenario "Search errors clear after returning to select form" do
+      visit "/intake"
+
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Selection (VA Form 21-4138)").click
+      end
+      safe_click ".cf-submit.usa-button"
+
+      fill_in "Search small", with: "5678"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("Veteran ID not found")
+
+      safe_click "#page-title"
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to_not have_content("Veteran ID not found")
+    end
+
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
 
