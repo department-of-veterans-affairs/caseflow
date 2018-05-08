@@ -1,4 +1,4 @@
-class Generators::Appeal_v2
+class Generators::AppealV2
   extend Generators::Base
 
   # Experimental class to replace existing generators with ones that
@@ -48,7 +48,7 @@ class Generators::Appeal_v2
 
       # Setting up vacols data must come prior to creating appeal so
       # appeal code picks up the persisted data.
-      vacols_case = set_vacols_data(attrs)
+      vacols_case = setup_vacols_data(attrs)
 
       appeal = Appeal.find_or_initialize_by(vacols_id: vacols_case[:bfkey])
 
@@ -65,7 +65,7 @@ class Generators::Appeal_v2
 
     private
 
-    def set_vacols_data(attrs)
+    def setup_vacols_data(attrs)
       Generators::Vacols::Case.create(
         attrs.merge(
           case_attrs: {
