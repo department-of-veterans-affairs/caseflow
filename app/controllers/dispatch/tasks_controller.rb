@@ -1,7 +1,4 @@
-# Some generic task helper methods.
-# TODO: When second type of task is added, see what other logic
-#       from EstablishClaimsController can be abstracted out
-class TasksController < ApplicationController
+class Dispatch::TasksController < ApplicationController
   class InvalidTaskClassError < StandardError; end
   class InvalidTaskStateError < StandardError; end
 
@@ -47,7 +44,7 @@ class TasksController < ApplicationController
   end
 
   def task
-    @task ||= Task.find(task_id)
+    @task ||= Dispatch::Task.find(task_id)
   end
   helper_method :task
 
