@@ -2109,13 +2109,14 @@ describe Appeal do
   context "#destroy_legacy_appeal" do
     let :appeal do
       Appeal.create!(
+        id: 1,
         vacols_id: "1234"
       )
     end
 
     it "Destroys a legacy_appeal when an appeal is destroyed" do
       appeal.destroy!
-      expect(LegacyAppeal.where(id: appeal["id"])).to_not exist
+      expect(LegacyAppeal.where(id: appeal.id)).to_not exist
     end
   end
 end
