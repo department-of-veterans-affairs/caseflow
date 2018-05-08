@@ -182,10 +182,10 @@ class SubmitDecisionView extends React.PureComponent {
 
   render = () => {
     const omoTypes = [{
-      displayText: 'VHA - OMO',
+      displayText: 'OMO - VHA',
       value: 'OMO - VHA'
     }, {
-      displayText: 'VHA - IME',
+      displayText: 'OMO - IME',
       value: 'OMO - IME'
     }];
     const {
