@@ -64,6 +64,11 @@ const StringUtil = {
   },
   html5CompliantId(str) {
     return str.replace(/[^A-Za-z0-9-]/g, '-').replace(/-+/g, '-');
+  },
+
+  // convert (Capitalized) Words to lowercase, snake_case, remove punctuation
+  parameterize(str) {
+    return str.toLowerCase().replace(/\W+/g, '_');
   }
 };
 

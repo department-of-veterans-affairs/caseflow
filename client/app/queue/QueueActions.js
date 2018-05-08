@@ -69,18 +69,12 @@ export const editStagedAppeal = (appealId, attributes) => ({
   }
 });
 
-export const stageAppeal = (appealId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.STAGE_APPEAL,
-    payload: {
-      appealId
-    }
-  });
-
-  if (attributes) {
-    dispatch(editStagedAppeal(appealId, attributes));
+export const stageAppeal = (appealId) => ({
+  type: ACTIONS.STAGE_APPEAL,
+  payload: {
+    appealId
   }
-};
+});
 
 export const checkoutStagedAppeal = (appealId) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
