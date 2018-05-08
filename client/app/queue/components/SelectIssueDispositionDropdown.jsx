@@ -6,7 +6,8 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import { COLORS, ERROR_FIELD_REQUIRED } from '../constants';
+import StringUtil from '../../util/StringUtil';
+import { COLORS, ERROR_FIELD_REQUIRED, ISSUE_DISPOSITIONS } from '../constants';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
@@ -39,7 +40,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
           map((opt) => ({
             label: `${opt[0]} - ${opt[1]}`,
-            value: opt[1]
+            value: StringUtil.parameterize(opt[1])
           }))}
         onChange={({ value }) => this.props.updateIssue({
           disposition: value,
@@ -47,7 +48,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           remand_reasons: []
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
-      {issue.disposition === 'Vacated' && <Checkbox
+      {issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
