@@ -26,7 +26,7 @@ class CaseListTable extends React.PureComponent {
     {
       header: 'Docket Number',
       valueFunction: (appeal) => <span>
-        <Link to={`/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveAppeal(appeal)}>
+        <Link to={`/queue/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveAppeal(appeal)}>
           {appeal.attributes.docket_number}
         </Link>
       </span>
