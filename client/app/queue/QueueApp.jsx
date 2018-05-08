@@ -31,6 +31,12 @@ import { DECISION_TYPES } from './constants';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
+  componentDidMount = () => this.unlisten = this.router.history.listen(() => window.scrollTo(0, 0));
+
+  componentWillUnmount = () => this.unlisten();
+
+  getRouterRef = (ref) => this.router = ref;
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
@@ -84,7 +90,7 @@ class QueueApp extends React.PureComponent {
     nextStep={`/queue/tasks/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
-  render = () => <BrowserRouter>
+  render = () => <BrowserRouter ref={this.getRouterRef}>
     <NavigationBar
       wideApp
       defaultUrl="/queue"
@@ -96,7 +102,6 @@ class QueueApp extends React.PureComponent {
       }}
       appName="">
       <AppFrame wideApp>
-        <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
