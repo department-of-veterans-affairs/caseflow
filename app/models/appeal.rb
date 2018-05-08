@@ -597,9 +597,6 @@ class Appeal < ApplicationRecord
 
   def save_to_legacy_appeals
     legacy_appeal = LegacyAppeal.find(attributes["id"])
-    # if Appeal.find(attributes["id"]) == false
-    #   legacy_appeal.destroy!
-    # end
     legacy_appeal.update!(attributes)
   rescue ActiveRecord::RecordNotFound
     LegacyAppeal.create!(attributes)
@@ -607,6 +604,10 @@ class Appeal < ApplicationRecord
 
   def destroy_legacy_appeal
     LegacyAppeal.find(attributes["id"]).destroy!
+  end
+
+  def delete_legacy_appeal
+    LegacyAppeal.find(attributes["id"]).delete
   end
 
   def create_new_document!(document, ids)
