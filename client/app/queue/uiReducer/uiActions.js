@@ -59,25 +59,44 @@ export const popBreadcrumb = (crumbsToDrop = 1) => ({
   }
 });
 
-export const resetBreadcrumbs = () => ({
-  type: ACTIONS.RESET_BREADCRUMBS
-});
+export const resetBreadcrumbs = (vetName, vacolsId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_BREADCRUMBS
+  });
 
-export const saveSuccess = (message) => (dispatch) => {
+  dispatch(pushBreadcrumb({
+    breadcrumb: 'Your Queue',
+    path: '/queue'
+  }, {
+    breadcrumb: vetName,
+    path: `/queue/tasks/${vacolsId}`
+  }));
+};
+
+export const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
-  return Promise.resolve();
+  return Promise.resolve(response);
 };
 
 export const saveFailure = (resp) => (dispatch) => {
   const { response } = resp;
-  const errors = response.text ? JSON.parse(response.text).errors : [response.statusText];
+  let responseObject = {
+    errors: [{
+      title: 'Error',
+      detail: 'There was an error processing your request.'
+    }]
+  };
 
-  dispatch(showErrorMessage(errors[0]));
+  try {
+    responseObject = JSON.parse(response.text);
+  } catch (ex) { /* pass */ }
+
+  dispatch(showErrorMessage(responseObject.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 
-  return Promise.reject(errors[0]);
+  return Promise.reject(responseObject.errors[0]);
 };
 
 export const requestSave = (url, params, successMessage, verb = 'post') => (dispatch) => {
@@ -86,7 +105,7 @@ export const requestSave = (url, params, successMessage, verb = 'post') => (disp
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
   return ApiUtil[verb](url, params).then(
-    () => dispatch(saveSuccess(successMessage)),
+    (resp) => dispatch(saveSuccess(successMessage, resp)),
     (resp) => dispatch(saveFailure(resp))
   );
 };

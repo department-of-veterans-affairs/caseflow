@@ -2,18 +2,18 @@ class Fakes::Initializer
   class << self
     def load!(rails_env: nil)
       User.authentication_service = Fakes::AuthenticationService
-      PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      if (!rails_env || !rails_env.local?)
-        User.appeal_repository = Fakes::AppealRepository
-        WorkQueue.repository = Fakes::QueueRepository
+      if !rails_env || !rails_env.local?
+        Appeal.repository = Fakes::AppealRepository
+        AttorneyCaseReview.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
         HearingDocket.repository = Fakes::HearingRepository
-        Appeal.repository = Fakes::AppealRepository
         Issue.repository = Fakes::IssueRepository
         Judge.repository = Fakes::JudgeRepository
+        PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
+        User.appeal_repository = Fakes::AppealRepository
         User.user_repository = Fakes::UserRepository
-        AttorneyCaseReview.repository = Fakes::QueueRepository
+        WorkQueue.repository = Fakes::QueueRepository
       end
     end
 

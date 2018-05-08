@@ -6,7 +6,7 @@ import IssueListItem from './IssueListItem';
 import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
 
 const tableContainerStyling = (fluid) => css({
-  width: fluid ? '100%' : '55rem',
+  width: fluid ? '100%' : '75rem',
   '> table': {
     marginTop: fluid ? '0rem' : '1rem',
     marginBottom: '1rem',
@@ -42,7 +42,7 @@ export default class IssueList extends React.PureComponent {
     }</React.Fragment>;
   };
 
-  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.appeal.issues.length === 1)}>
+  render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.stretchToFullWidth)}>
     <table>
       <tbody>
         {this.getIssues()}
@@ -56,9 +56,11 @@ IssueList.propTypes = {
     issues: PropTypes.array
   }).isRequired,
   issuesOnly: PropTypes.bool,
-  idxToDisplay: PropTypes.number
+  idxToDisplay: PropTypes.number,
+  stretchToFullWidth: PropTypes.bool
 };
 
 IssueList.defaultProps = {
-  issuesOnly: false
+  issuesOnly: false,
+  stretchToFullWidth: false
 };

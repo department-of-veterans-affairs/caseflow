@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope path: "/dispatch" do
+  namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'admin', to: 'establish_claims#admin'
@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update
+    resources :tasks, only: [:index]
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -64,9 +65,6 @@ Rails.application.routes.draw do
     end
   end
 
-
-  resources :tasks, only: [:index]
-
   resources :document, only: [:update] do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
@@ -83,7 +81,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [:index] do
+  resources :appeals, only: [:index, :show] do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -129,8 +127,11 @@ Rails.application.routes.draw do
     get '/tasks/:vacols_id/*all', to: redirect('/queue/tasks/%{vacols_id}')
     get '/docs_for_dev', to: 'queue#dev_document_count'
     get '/:user_id', to: 'queue#tasks'
+    get '/:user_id/review', to: 'queue#tasks'
+    get '/:user_id/assign', to: 'queue#tasks'
     post '/tasks/:task_id/complete', to: 'queue#complete'
     post '/tasks', to: 'queue#create'
+    patch '/tasks/:task_id', to: 'queue#update'
   end
 
   get "health-check", to: "health_checks#show"

@@ -376,10 +376,10 @@ RSpec.feature "Reader" do
         expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
         expect(appeal_options[1]).to have_content("Issues")
         expect(appeal_options[1].find_all("li").count).to eq(appeal4.issues.count)
-        expect(find("button", text: "Okay")).to be_disabled
+        expect(find("button", text: "Open Claims Folder")).to be_disabled
 
         appeal_options[0].click
-        click_on "Okay"
+        click_on "Open Claims Folder"
         expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
       end
 
@@ -406,7 +406,7 @@ RSpec.feature "Reader" do
 
           click_button("Select-claims-folder-button-id-close")
           fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-          expect(find("button", text: "Okay")).to be_disabled
+          expect(find("button", text: "Open Claims Folder")).to be_disabled
         end
       end
 

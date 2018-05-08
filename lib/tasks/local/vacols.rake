@@ -85,8 +85,8 @@ namespace :local do
         User.find_or_create_by(
           css_id: s.sdomainid
         ) do |user|
-          user.station_id = "283"
-          user.full_name = "#{s.snamef} + #{s.snamel}"
+          user.station_id = "101"
+          user.full_name = "#{s.snamef} #{s.snamel}"
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)
@@ -207,7 +207,7 @@ namespace :local do
       CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
-        rows.to_a.flatten.each do |row|
+        rows.to_a.flatten.select { |e| e }.sort.each do |row|
           next if row.nil?
           sanitizer.sanitize(klass, row)
           attributes = row.attributes.select { |k, _v| names.include?(k) }

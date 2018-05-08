@@ -4,6 +4,7 @@ class AttorneyCaseReview < ApplicationRecord
 
   validates :attorney, :type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
+  validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
 
   attr_accessor :issues
 
@@ -25,7 +26,8 @@ class AttorneyCaseReview < ApplicationRecord
         document_id: document_id,
         overtime: overtime,
         note: note,
-        modifying_user: attorney.vacols_uniq_id
+        modifying_user: attorney.vacols_uniq_id,
+        reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
   end

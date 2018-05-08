@@ -3,8 +3,8 @@ class Fakes::UserRepository
     true
   end
 
-  def self.vacols_role(_css_id)
-    "Attorney"
+  def self.vacols_role(css_id)
+    css_id.eql?("BVAAABSHIRE") ? "Judge" : "Attorney"
   end
 
   def self.vacols_attorney_id(_css_id)
@@ -17,5 +17,9 @@ class Fakes::UserRepository
 
   def self.vacols_uniq_id(css_id)
     css_id
+  end
+
+  def self.vacols_full_name(_css_id)
+    %w[George John Thomas].sample + " " + %w[Washington King Jefferson].sample
   end
 end

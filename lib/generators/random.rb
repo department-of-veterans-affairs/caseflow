@@ -1,4 +1,6 @@
 class Generators::Random
+  @unique_ssns = {}
+
   class << self
     def whitespace(len = 16)
       from_set([" ", "\n", "\r", "\t"], len)
@@ -12,6 +14,17 @@ class Generators::Random
     # Generate a random combination of elements from set between 1 and len characters long.
     def from_set(set, len)
       (Array.new(Random.rand(len) + 1) { set.sample }).join
+    end
+
+    def ssn
+      100_000_000 + SecureRandom.random_number(899_999_999)
+    end
+
+    def unique_ssn
+      my_ssn = ssn
+      return unique_ssn if @unique_ssns[my_ssn]
+      @unique_ssns[my_ssn] = 1
+      my_ssn
     end
   end
 end

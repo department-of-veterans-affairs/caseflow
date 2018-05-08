@@ -11,7 +11,6 @@ class QueueController < ApplicationController
   end
 
   ROLES = %w[Judge Attorney].freeze
-  APPEAL_TYPES = %w[Legacy Ama].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -31,26 +30,33 @@ class QueueController < ApplicationController
   end
 
   def create
-    return invalid_appeal_type unless APPEAL_TYPES.include?(create_params[:appeal_type])
-
     return invalid_role_error if current_user.vacols_role != "Judge"
-
-    JudgeCaseAssignment.assign_to_attorney!(create_params)
+    JudgeCaseAssignment.new(task_params).assign_to_attorney!
     render json: {}, status: :created
   end
 
+  def update
+    return invalid_role_error if current_user.vacols_role != "Judge"
+    JudgeCaseAssignment.new(task_params.merge(task_id: params[:task_id])).reassign_to_attorney!
+    render json: {}, status: 200
+  end
+
   def tasks
-    MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                          name: "QueueController.tasks") do
-
-      return invalid_role_error unless ROLES.include?(user.vacols_role)
-
-      tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
-
-      render json: {
-        tasks: json_tasks(tasks),
-        appeals: json_appeals(appeals)
-      }
+    return invalid_role_error unless ROLES.include?(user.vacols_role)
+    respond_to do |format|
+      format.html do
+        render "queue/show"
+      end
+      format.json do
+        MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
+                              name: "QueueController.tasks") do
+          tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+          render json: {
+            tasks: json_tasks(tasks),
+            appeals: json_appeals(appeals)
+          }
+        end
+      end
     end
   end
 
@@ -76,6 +82,7 @@ class QueueController < ApplicationController
   def user
     @user ||= User.find(params[:user_id])
   end
+  helper_method :user
 
   def verify_queue_phase_three
     # :nocov:
@@ -91,15 +98,6 @@ class QueueController < ApplicationController
       "errors": [
         "title": "Role is Invalid",
         "detail": "User is not allowed to perform this action"
-      ]
-    }, status: 400
-  end
-
-  def invalid_appeal_type
-    render json: {
-      "errors": [
-        "title": "Appeal Type is Invalid",
-        "detail": "Appeal type should be one of the following: #{APPEAL_TYPES.join(', ')}"
       ]
     }, status: 400
   end
@@ -124,9 +122,9 @@ class QueueController < ApplicationController
                                             remand_reasons: [:code, :after_certification]])
   end
 
-  def create_params
+  def task_params
     params.require("queue")
-      .permit(:appeal_id, :appeal_type)
+      .permit(:appeal_type, :appeal_id)
       .merge(assigned_to: User.find(params[:queue][:attorney_id]))
       .merge(assigned_by: current_user)
   end

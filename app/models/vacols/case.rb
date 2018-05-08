@@ -26,32 +26,6 @@ class VACOLS::Case < VACOLS::Record
     "9" => "Clear and Unmistakable Error"
   }.freeze
 
-  DISPOSITIONS = {
-    "1" => "Allowed",
-    "3" => "Remanded",
-    "4" => "Denied",
-    "5" => "Vacated",
-    "6" => "Dismissed, Other",
-    "8" => "Dismissed, Death",
-    "9" => "Withdrawn",
-    "A" => "Advance Allowed in Field",
-    "B" => "Benefits Granted by AOJ",
-    "D" => "Designation of Record",
-    "E" => "Advance Withdrawn Death of Veteran",
-    "F" => "Advance Withdrawn by Appellant/Rep",
-    "G" => "Advance Failure to Respond",
-    "L" => "Manlincon Remand",
-    "M" => "Merged Appeal",
-    "P" => "RAMP Opt-in",
-    "Q" => "Recon Motion Withdrawn",
-    "R" => "Reconsideration by Letter",
-    "S" => "Stay",
-    "U" => "Motion to Vacate Denied",
-    "V" => "Motion to Vacate Withdrawn",
-    "W" => "Withdrawn from Remand",
-    "X" => "Remand Failure to Respond"
-  }.freeze
-
   STATUS = {
     "ACT" => "Active", # Case currently at BVA
     "ADV" => "Advance", # NOD Filed. Case currently at RO
@@ -272,6 +246,31 @@ class VACOLS::Case < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def previous_location
+    conn = self.class.connection
+
+    case_id = conn.quote(bfkey)
+
+    result = MetricsService.record("VACOLS: previous_location #{bfkey}",
+                                   service: :vacols,
+                                   name: "previous_location") do
+      conn.select_all(<<-SQL)
+        SELECT LOCSTTO
+        FROM PRIORLOC
+        JOIN (
+          SELECT LOCKEY, LOCDOUT
+          FROM PRIORLOC
+          WHERE LOCKEY = #{case_id}
+            AND LOCDIN IS NULL
+        ) T
+          ON T.LOCKEY = PRIORLOC.LOCKEY
+          AND T.LOCDOUT = PRIORLOC.LOCDIN
+      SQL
+    end
+
+    result.first["locstto"]
+  end
 
   ##
   # This method takes an array of vacols ids and fetches their aod status.

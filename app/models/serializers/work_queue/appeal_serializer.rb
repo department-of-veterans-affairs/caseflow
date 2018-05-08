@@ -1,19 +1,10 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
     object.issues.map do |issue|
-      {
-        vacols_sequence_id: issue.vacols_sequence_id,
-        levels: issue.levels,
-        program: issue.codes[0],
-        type: issue.codes[1],
-        disposition: issue.disposition,
-        close_date: issue.close_date,
-        note: issue.note,
-        id: issue.id,
-        labels: issue.labels,
-        codes: issue.codes[2..-1],
-        description: issue.description
-      }
+      ActiveModelSerializers::SerializableResource.new(
+        issue,
+        serializer: ::WorkQueue::IssueSerializer
+      ).as_json[:data][:attributes]
     end
   end
 
@@ -45,6 +36,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_relationship
+  attribute :location_code
   attribute :veteran_full_name
   attribute :veteran_date_of_birth
   attribute :veteran_gender
@@ -56,6 +48,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :aod
   attribute :docket_number
   attribute :number_of_documents_url
+  attribute :status
+  attribute :decision_date
   attribute :certification_date
 
   attribute :power_of_attorney do

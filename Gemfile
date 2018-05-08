@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "aedd9ddfee4018a26b8b9ad77b519eb61ad03382"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "e6291950ddac59add73b9fb52ddb3b06c7e028d7"
 
 gem "moment_timezone-rails"
 
@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e30db7fdf6f5c28c09d6081d062cad80820240a0"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "07a398fb0102ad93684f5423e73be68ba97c74d2"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "783200ca61b57fc75f818334838181993535229a"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
 
 gem "redis-rails", "~> 5.0.2"
 

@@ -1,5 +1,5 @@
 class Reader::DocumentsController < Reader::ApplicationController
-  EXCEPTIONS = [Caseflow::Error::DocumentRetrievalError, Caseflow::Error::EfolderAccessForbidden].freeze
+  EXCEPTIONS = [Caseflow::Error::EfolderError].freeze
 
   # rubocop:disable Metrics/MethodLength
   def index

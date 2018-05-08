@@ -37,6 +37,12 @@ module IssueMapper
 
     def validate!(issue_attrs)
       return if (issue_attrs.keys & [:issprog, :isscode, :isslev1, :isslev2, :isslev3]).empty?
+
+      if issue_attrs.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3).size != 5
+        msg = "All keys must be present: program, issue, level_1, level_2, level_3"
+        fail Caseflow::Error::IssueRepositoryError, msg
+      end
+
       if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
                                               issue: issue_attrs[:isscode],
                                               level_1: issue_attrs[:isslev1],
@@ -57,7 +63,9 @@ module IssueMapper
     end
 
     def disposition_to_vacols_format(disposition)
-      code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      inverted_dispositions = Constants::VACOLS_DISPOSITIONS_BY_ID.map { |k, v| [v.parameterize.underscore, k] }.to_h
+      code = inverted_dispositions[disposition]
+
       unless ALLOWED_DISPOSITION_CODES.include? code
         fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{disposition}"
       end

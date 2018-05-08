@@ -84,19 +84,19 @@ describe RampElection do
 
     context "when option_selected is nil" do
       it "raises error" do
-        expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
       end
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number).load_bgs_record! }
+      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
         let(:receipt_date) { nil }
 
         it "raises error" do
-          expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+          expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
         end
       end
 
@@ -228,8 +228,8 @@ describe RampElection do
     end
   end
 
-  context "#active?" do
-    subject { ramp_election.active? }
+  context "#end_product_active?" do
+    subject { ramp_election.end_product_active? }
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
@@ -319,6 +319,33 @@ describe RampElection do
     end
   end
 
+  context "#end_product_canceled?" do
+    subject { ramp_election.end_product_canceled? }
+
+    let(:end_product_reference_id) { "9" }
+    let!(:established_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: ramp_election.veteran_file_number,
+        bgs_attrs: {
+          benefit_claim_id: end_product_reference_id,
+          status_type_code: ep_status
+        }
+      )
+    end
+
+    context "when end product is canceled" do
+      let(:ep_status) { "CAN" }
+
+      it { is_expected.to be true }
+    end
+
+    context "when end product is not canceled" do
+      let(:ep_status) { "PEND" }
+
+      it { is_expected.to be false }
+    end
+  end
+
   context "#control_time" do
     subject { ramp_election.control_time }
 
@@ -359,7 +386,7 @@ describe RampElection do
         end
 
         context "when it is nil" do
-          it "adds error to receipt_date" do
+          it "adds error to option_selected" do
             is_expected.to be false
             expect(ramp_election.errors[:option_selected]).to include("blank")
           end
@@ -452,6 +479,47 @@ describe RampElection do
 
     it "returns the last successful intake" do
       expect(ramp_election.successful_intake).to eq(last_successful_intake)
+    end
+  end
+
+  context "#rollback!" do
+    subject { ramp_election.rollback! }
+
+    let!(:ramp_election) do
+      RampElection.create!(
+        veteran_file_number: "44444444",
+        notice_date: 31.days.ago,
+        option_selected: "higher_level_review",
+        receipt_date: 5.days.ago,
+        end_product_reference_id: "1234",
+        established_at: 3.days.ago,
+        end_product_status: "CAN",
+        end_product_status_last_synced_at: Time.zone.now
+      )
+    end
+
+    let!(:ramp_closed_appeals) do
+      %w[12345 23456].map do |vacols_id|
+        ramp_election.ramp_closed_appeals.create!(vacols_id: vacols_id)
+      end
+    end
+
+    it "clears out all fields associated with establishment and deletes closed appeals" do
+      subject
+
+      expect(ramp_election.reload).to have_attributes(
+        veteran_file_number: "44444444",
+        notice_date: 31.days.ago.to_date,
+        option_selected: nil,
+        receipt_date: nil,
+        end_product_reference_id: nil,
+        established_at: nil,
+        end_product_status: nil,
+        end_product_status_last_synced_at: nil
+      )
+
+      expect(ramp_closed_appeals.first).to_not be_persisted
+      expect(ramp_closed_appeals.last).to_not be_persisted
     end
   end
 end

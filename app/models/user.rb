@@ -1,9 +1,11 @@
 class User < ApplicationRecord
-  has_many :tasks
+  has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+
+  BOARD_STATION_ID = "101".freeze
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
@@ -50,6 +52,12 @@ class User < ApplicationRecord
     @vacols_group_id ||= self.class.user_repository.vacols_group_id(css_id)
   end
 
+  def vacols_full_name
+    @vacols_full_name ||= self.class.user_repository.vacols_full_name(css_id)
+  rescue Caseflow::Error::UserRepositoryError
+    nil
+  end
+
   def access_to_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end
@@ -60,6 +68,16 @@ class User < ApplicationRecord
 
   def timezone
     (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+  end
+
+  # If user has never logged in, we might not have their full name in Caseflow DB.
+  # So if we do not yet have the full name saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
+  def full_name
+    super || begin
+      update(full_name: vacols_full_name) if persisted?
+      super
+    end
   end
 
   def display_name
@@ -110,7 +128,7 @@ class User < ApplicationRecord
   end
 
   def current_task(task_type)
-    tasks.to_complete.find_by(type: task_type.to_s)
+    dispatch_tasks.to_complete.find_by(type: task_type.to_s)
   end
 
   def to_hash

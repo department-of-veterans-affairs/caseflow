@@ -1,22 +1,24 @@
 import { createSelector } from 'reselect';
-import { RAMP_INTAKE_STATES } from './constants';
+import { INTAKE_STATES } from './constants';
 import _ from 'lodash';
 
 const getIntakeDetailStatus = (intakeDetail) => {
   if (intakeDetail.isComplete) {
-    return RAMP_INTAKE_STATES.COMPLETED;
+    return INTAKE_STATES.COMPLETED;
   } else if (intakeDetail.isReviewed) {
-    return RAMP_INTAKE_STATES.REVIEWED;
+    return INTAKE_STATES.REVIEWED;
   } else if (intakeDetail.isStarted) {
-    return RAMP_INTAKE_STATES.STARTED;
+    return INTAKE_STATES.STARTED;
   }
 
   return null;
 };
 
-const getIntakeStatusSelector = ({ rampElection, rampRefiling }) => ({
+const getIntakeStatusSelector = ({ rampElection, rampRefiling, supplementalClaim, higherLevelReview }) => ({
   rampElection: _.pick(rampElection, ['isStarted', 'isReviewed', 'isComplete']),
-  rampRefiling: _.pick(rampRefiling, ['isStarted', 'isReviewed', 'isComplete'])
+  rampRefiling: _.pick(rampRefiling, ['isStarted', 'isReviewed', 'isComplete']),
+  supplementalClaim: _.pick(supplementalClaim, ['isStarted', 'isReviewed', 'isComplete']),
+  higherLevelReview: _.pick(higherLevelReview, ['isStarted', 'isReviewed', 'isComplete'])
 });
 
 export const getIntakeStatus = createSelector(
@@ -28,6 +30,6 @@ export const getIntakeStatus = createSelector(
       result || getIntakeDetailStatus(intakeDetail)
     ), null);
 
-    return status || RAMP_INTAKE_STATES.NONE;
+    return status || INTAKE_STATES.NONE;
   }
 );
