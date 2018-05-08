@@ -83,5 +83,13 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ intake }) => ({ formType: intake.formType }),
+  ({ intake }) => ({
+    formType: intake.formType,
+    searchErrorCode: null,
+    searchErrorData: {
+      duplicateReceiptDate: null,
+      duplicateProcessedBy: null,
+      veteranMissingFields: null
+    }
+   }),
 )(SelectFormButtonUnconnected);
