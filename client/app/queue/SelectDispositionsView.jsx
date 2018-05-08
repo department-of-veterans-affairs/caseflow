@@ -57,7 +57,7 @@ class SelectDispositionsView extends React.PureComponent {
       }
     } = this.props;
 
-    return _.map(issues, 'disposition').includes('Remanded') ?
+    return _.map(issues, 'disposition').includes('remanded') ?
       `/queue/tasks/${vacolsId}/remands` : nextStep;
   }
 
