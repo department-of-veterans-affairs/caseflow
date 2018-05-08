@@ -11,7 +11,7 @@ class Appeal < ApplicationRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   after_save :save_to_legacy_appeals
-  after_destroy :destroy_legacy_appeal
+  before_destroy :destroy_legacy_appeal
 
   class UnknownLocationError < StandardError; end
 
