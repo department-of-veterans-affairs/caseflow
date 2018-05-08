@@ -25,14 +25,6 @@ export const setAppealDocCount = (appealId, docCount) => ({
   }
 });
 
-export const loadAppealDocCountFail = (appealId) => ({
-  type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
-  payload: {
-    appealId,
-    docCount: null
-  }
-});
-
 export const setCaseReviewActionType = (type) => ({
   type: ACTIONS.SET_REVIEW_ACTION_TYPE,
   payload: {
