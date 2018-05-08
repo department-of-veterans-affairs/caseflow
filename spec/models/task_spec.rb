@@ -1,7 +1,7 @@
 require "rails_helper"
 require "ostruct"
 
-class FakeTask < Task
+class FakeTask < Dispatch::Task
   before_create do
     # Automatically set appeal to make test data setup easier
     self.appeal ||= Generators::Appeal.create
@@ -12,7 +12,7 @@ class FakeTask < Task
   end
 end
 
-describe Task do
+describe Dispatch::Task do
   before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
   let(:appeal) { Generators::Appeal.create }
@@ -22,7 +22,7 @@ describe Task do
   let(:assigned_user) { nil }
 
   context ".newest_first" do
-    subject { Task.newest_first.all }
+    subject { Dispatch::Task.newest_first.all }
 
     let!(:newest_task) { FakeTask.create(created_at: 1.second.ago) }
     let!(:oldest_task) { FakeTask.create(created_at: 2.seconds.ago) }
@@ -31,7 +31,7 @@ describe Task do
   end
 
   context ".oldest_first" do
-    subject { Task.oldest_first.all }
+    subject { Dispatch::Task.oldest_first.all }
 
     let!(:newest_task) { FakeTask.create(created_at: 1.second.ago) }
     let!(:oldest_task) { FakeTask.create(created_at: 2.seconds.ago) }
@@ -40,7 +40,7 @@ describe Task do
   end
 
   context ".prepared_before_today" do
-    subject { Task.prepared_before_today }
+    subject { Dispatch::Task.prepared_before_today }
     let!(:task_prepared_yesterday) { FakeTask.create!(aasm_state: :unassigned, prepared_at: Date.yesterday) }
     let!(:task_prepared_today) { FakeTask.create!(aasm_state: :unassigned) }
 
@@ -48,7 +48,7 @@ describe Task do
   end
 
   context ".to_complete" do
-    subject { Task.to_complete }
+    subject { Dispatch::Task.to_complete }
 
     let!(:unprepared_task) { FakeTask.create!(aasm_state: :unprepared) }
     let!(:completed_task) { FakeTask.create!(aasm_state: :completed) }
@@ -81,7 +81,7 @@ describe Task do
   end
 
   context ".completed_success" do
-    subject { Task.completed_success }
+    subject { Dispatch::Task.completed_success }
 
     let!(:successful_task) { FakeTask.create!(completion_status: :routed_to_arc) }
     let!(:canceled_task) { FakeTask.create!(completion_status: :canceled) }
@@ -92,7 +92,7 @@ describe Task do
   end
 
   context "#assigned_not_completed" do
-    subject { Task.assigned_not_completed }
+    subject { Dispatch::Task.assigned_not_completed }
 
     let!(:unassigned_task) { FakeTask.create!(prepared_at: Date.yesterday) }
     let!(:assigned_task) do
@@ -471,7 +471,7 @@ describe Task do
         context "when there is a race condition in assigning a task" do
           before do
             allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
-              Task.find(next_assignable_task.id)
+              Dispatch::Task.find(next_assignable_task.id)
                 .update!(comment: "force lock_version to increment")
             end
           end

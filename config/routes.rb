@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope path: "/dispatch" do
+  namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'admin', to: 'establish_claims#admin'
@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update
+    resources :tasks, only: [:index]
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -63,9 +64,6 @@ Rails.application.routes.draw do
       put 'update-appeal', on: :member
     end
   end
-
-
-  resources :tasks, only: [:index]
 
   resources :document, only: [:update] do
     get :pdf, on: :member
