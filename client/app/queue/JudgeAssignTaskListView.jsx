@@ -20,7 +20,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney } from './QueueActions';
+import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney, fetchTasksAndAppealsOfAttorney } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
 import PageRoute from '../components/PageRoute';
 import { associateTasksWithAppeals } from './utils';
@@ -91,18 +91,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
       then(
         (response) => {
+          try {
           const resp = JSON.parse(response.text);
 
           this.props.setAttorneysOfJudge(resp.attorneys);
           for (const attorney of resp.attorneys) {
-            ApiUtil.get(`/queue/${attorney.id}`, requestOptions).then(
-              (resp) => {
-                this.props.setTasksAndAppealsOfAttorney(
-                  {attorneyId: attorney.id, ...associateTasksWithAppeals(JSON.parse(resp.text))});
-              },
-              (resp) => {
-              }
-            );
+            this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+          }
+          } catch (e) {
+            console.log(e);
           }
         });
   }
@@ -181,7 +178,8 @@ const mapDispatchToProps = (dispatch) => (
     resetSuccessMessages,
     resetSaveState,
     setAttorneysOfJudge,
-    setTasksAndAppealsOfAttorney
+    setTasksAndAppealsOfAttorney,
+    fetchTasksAndAppealsOfAttorney
   }, dispatch)
 );
 
