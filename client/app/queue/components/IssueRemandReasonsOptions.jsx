@@ -23,6 +23,7 @@ import {
 import {
   fullWidth,
   REMAND_REASONS,
+  ISSUE_DISPOSITIONS,
   redText,
   boldText
 } from '../constants';
@@ -256,7 +257,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === 'remanded'),
+    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
     issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
