@@ -68,7 +68,7 @@ const StringUtil = {
 
   // convert (Capitalized) Words to lowercase, snake_case, remove punctuation
   parameterize(str) {
-    return str.toLowerCase().replace(/\W+/g, '_')
+    return str.toLowerCase().replace(/\W+/g, '_');
   }
 };
 
