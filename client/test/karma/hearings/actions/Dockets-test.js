@@ -4,13 +4,13 @@ import * as Actions from '../../../../app/hearings/actions/Dockets';
 import * as Constants from '../../../../app/hearings/constants/constants';
 import { CATEGORIES, ACTIONS, debounceMs } from '../../../../app/hearings/analytics';
 
-describe('.setNotes', () => {
-  it('sets notes', () => {
+describe('.setComments', () => {
+  it('sets comments', () => {
     const hearingIndex = 0;
     const notes = 'this is my note.';
     const date = new Date();
     const expectedAction = {
-      type: Constants.SET_NOTES,
+      type: Constants.SET_COMMENTS,
       payload: {
         hearingIndex,
         notes,
@@ -24,7 +24,7 @@ describe('.setNotes', () => {
       }
     };
 
-    expect(Actions.setNotes(hearingIndex, notes, date)).to.deep.equal(expectedAction);
+    expect(Actions.setComments(hearingIndex, notes, date)).to.deep.equal(expectedAction);
   });
 });
 
