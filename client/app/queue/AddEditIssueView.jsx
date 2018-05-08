@@ -105,7 +105,7 @@ class AddEditIssueView extends React.Component {
           level_1: _.get(issue.codes, 0, null),
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
-          ..._.omit(issue, 'type', 'codes')
+          ..._.omit(issue, 'type', 'codes', 'disposition')
         }
       }
     };
@@ -122,9 +122,21 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) =>
-      this.props.saveEditedAppealIssue(this.props.vacolsId, JSON.parse(resp.text))
-    );
+    requestPromise.then((resp) => {
+      const response = JSON.parse(resp.text);
+      const { appeal: { attributes: appeal } } = this.props;
+
+      const issues = _.map(response.issues, (issue) => {
+        const disposition = _.get(
+          _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+          'disposition'
+        );
+
+        return _.defaults({ disposition }, issue);
+      })
+
+      this.props.saveEditedAppealIssue(this.props.vacolsId, { issues })
+    });
   };
 
   deleteIssue = () => {
