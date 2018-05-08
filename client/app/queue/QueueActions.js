@@ -17,10 +17,10 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (vacolsId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
+    vacolsId,
     docCount
   }
 });
