@@ -14,14 +14,14 @@ import { fullWidth, CATEGORIES } from './constants';
 import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
-import { clearActiveCaseAndTask } from './CaseDetail/CaseDetailActions';
+import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
 
 class QueueDetailView extends React.PureComponent {
-  componentWillUnmount = () => this.props.clearActiveCaseAndTask();
+  componentWillUnmount = () => this.props.clearActiveAppealAndTask();
 
   componentDidMount = () => this.props.resetBreadcrumbs();
 
@@ -121,7 +121,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearActiveCaseAndTask,
+  clearActiveAppealAndTask,
   pushBreadcrumb,
   resetBreadcrumbs
 }, dispatch);

@@ -9,7 +9,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { setActiveCase } from './CaseDetail/CaseDetailActions';
+import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
 
 class QueueLoadingScreen extends React.PureComponent {
@@ -61,7 +61,7 @@ class QueueLoadingScreen extends React.PureComponent {
     return ApiUtil.get(`/appeals/${this.props.vacolsId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
-      this.props.setActiveCase(resp.appeal);
+      this.props.setActiveAppeal(resp.appeal);
     });
   };
 
@@ -109,7 +109,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   onReceiveJudges,
-  setActiveCase
+  setActiveAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);

@@ -1,12 +1,12 @@
 import * as Constants from './actionTypes';
 
-export const clearActiveCaseAndTask = () => ({
-  type: Constants.CLEAR_ACTIVE_CASE_AND_TASK
+export const clearActiveAppealAndTask = () => ({
+  type: Constants.CLEAR_ACTIVE_APPEAL_AND_TASK
 });
 
-export const setActiveCase = (caseObj) => ({
-  type: Constants.SET_ACTIVE_CASE,
-  payload: { caseObj }
+export const setActiveAppeal = (appeal) => ({
+  type: Constants.SET_ACTIVE_APPEAL,
+  payload: { appeal }
 });
 
 export const setActiveTask = (taskObj) => ({

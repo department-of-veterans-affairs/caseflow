@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { setActiveCase, setActiveTask } from './CaseDetail/CaseDetailActions';
+import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 
 const subHeadStyle = css({
   fontSize: 'small',
@@ -16,8 +16,8 @@ const subHeadStyle = css({
 });
 
 class CaseDetailsLink extends React.PureComponent {
-  setActiveCaseAndTask = () => {
-    this.props.setActiveCase(this.props.appeal);
+  setActiveAppealAndTask = () => {
+    this.props.setActiveAppeal(this.props.appeal);
     this.props.setActiveTask(this.props.task);
   }
 
@@ -26,7 +26,7 @@ class CaseDetailsLink extends React.PureComponent {
       <Link
         to={`/queue/appeals/${this.props.task.vacolsId}`}
         disabled={!this.props.task.attributes.task_id}
-        onClick={this.setActiveCaseAndTask}
+        onClick={this.setActiveAppealAndTask}
       >
         {this.props.appeal.attributes.veteran_full_name} ({this.props.appeal.attributes.vbms_id})
       </Link>
@@ -44,7 +44,7 @@ CaseDetailsLink.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveCase,
+  setActiveAppeal,
   setActiveTask
 }, dispatch);
 

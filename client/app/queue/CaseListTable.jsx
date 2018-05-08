@@ -9,7 +9,7 @@ import Table from '../components/Table';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 
-import { setActiveCase } from './CaseDetail/CaseDetailActions';
+import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -26,7 +26,7 @@ class CaseListTable extends React.PureComponent {
     {
       header: 'Docket Number',
       valueFunction: (appeal) => <span>
-        <Link to={`/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveCase(appeal)}>
+        <Link to={`/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveAppeal(appeal)}>
           {appeal.attributes.docket_number}
         </Link>
       </span>
@@ -68,7 +68,7 @@ CaseListTable.propTypes = {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ setActiveCase }, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setActiveAppeal }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
 
