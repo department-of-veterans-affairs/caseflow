@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
