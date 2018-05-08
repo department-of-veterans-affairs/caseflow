@@ -595,6 +595,9 @@ class Appeal < ApplicationRecord
   private
 
   def save_to_legacy_appeals
+    legacy_appeal = LegacyAppeal.find(attributes["id"])
+    legacy_appeal.update!(attributes)
+  rescue ActiveRecord::RecordNotFound
     LegacyAppeal.create!(attributes)
   end
 

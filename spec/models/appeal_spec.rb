@@ -2085,12 +2085,23 @@ describe Appeal do
   end
 
   context "#save_to_legacy_appeals" do
-    it "" do
-      appeal = Appeal.create!(
+    let :appeal do
+      Appeal.create!(
         vacols_id: "1234"
       )
-      legacy_appeal = LegacyAppeal.find(appeal.id)
+    end
+
+    let :legacy_appeal do
+      LegacyAppeal.find(appeal.id)
+    end
+
+    it "Creates a legacy_appeal when an appeal is created" do
       expect(legacy_appeal).to_not be_nil
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+
+    it "Updates a legacy_appeal when an appeal is updated" do
+      appeal.update!(rice_compliance: TRUE)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end
