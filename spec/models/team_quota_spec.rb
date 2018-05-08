@@ -1,9 +1,9 @@
 require "rails_helper"
 
-class FakeTask < Task
+class FakeTask < Dispatch::Task
 end
 
-class OtherFakeTask < Task
+class OtherFakeTask < Dispatch::Task
   def self.completed_on(_)
     []
   end
