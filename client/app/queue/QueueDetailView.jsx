@@ -74,7 +74,7 @@ class QueueDetailView extends React.PureComponent {
         vacolsId={vacolsId}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
-        docCount={appeal.docCount}
+        appeal={this.props.appeal}
         taskType="Draft Decision"
         longMessage />
       {this.props.featureToggles.phase_two && <SelectCheckoutFlowDropdown vacolsId={vacolsId} />}
