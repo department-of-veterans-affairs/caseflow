@@ -15,33 +15,20 @@ import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
-import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
+import { pushBreadcrumb, resetBreadcrumbs, setBreadcrumbs } from './uiReducer/uiActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
 
 class QueueDetailView extends React.PureComponent {
-  componentWillUnmount = () => this.props.clearActiveAppealAndTask();
+  componentWillUnmount = () => {
+    this.props.clearActiveAppealAndTask();
+    this.props.setBreadcrumbs();
+  }
 
-  componentDidMount = () => this.props.resetBreadcrumbs();
-
-  setBreadcrumbs = () => {
-    if (this.props.breadcrumbs.length) {
-      return;
-    }
-    if (this.props.task) {
-      this.props.pushBreadcrumb({
-        breadcrumb: 'Your Queue',
-        path: '/'
-      }, {
-        breadcrumb: this.props.appeal.attributes.veteran_full_name,
-        path: `/appeals/${this.props.vacolsId}`
-      });
-    } else if (this.props.appeal) {
-      this.props.pushBreadcrumb({
-        breadcrumb: `< Back to ${this.props.appeal.attributes.veteran_full_name}'s case list`,
-        path: '/'
-      });
+  componentDidMount = () => {
+    if (!this.props.breadcrumbs.length) {
+      this.props.resetBreadcrumbs(this.props.appeal.attributes.veteran_full_name, this.props.vacolsId);
     }
   }
 
@@ -84,8 +71,6 @@ class QueueDetailView extends React.PureComponent {
   }
 
   render = () => {
-    this.setBreadcrumbs();
-
     const appeal = this.props.appeal.attributes;
 
     return <AppSegment filledBackground>
@@ -123,7 +108,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveAppealAndTask,
   pushBreadcrumb,
-  resetBreadcrumbs
+  resetBreadcrumbs,
+  setBreadcrumbs
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);
