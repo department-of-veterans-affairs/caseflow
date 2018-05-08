@@ -24,7 +24,7 @@ class CaseDetailsLink extends React.PureComponent {
   render() {
     return <React.Fragment>
       <Link
-        to={`/appeals/${this.props.task.vacolsId}`}
+        to={`/queue/ppeals/${this.props.task.vacolsId}`}
         disabled={!this.props.task.attributes.task_id}
         onClick={this.setActiveCaseAndTask}
       >
@@ -43,11 +43,9 @@ CaseDetailsLink.propTypes = {
   appeal: PropTypes.object.isRequired
 };
 
-const mapStateToProps = () => ({});
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveCase,
   setActiveTask
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLink);
+export default connect(null, mapDispatchToProps)(CaseDetailsLink);

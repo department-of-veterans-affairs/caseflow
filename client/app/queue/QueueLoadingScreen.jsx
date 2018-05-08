@@ -58,7 +58,7 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/queue/appeals/${this.props.vacolsId}`).then((response) => {
+    return ApiUtil.get(`/appeals/${this.props.vacolsId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveCase(resp.appeal);
