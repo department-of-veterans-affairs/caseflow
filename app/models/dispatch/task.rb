@@ -1,4 +1,4 @@
-class Task < ApplicationRecord
+class Dispatch::Task < ApplicationRecord
   include RetryHelper
   include AASM
 
@@ -224,7 +224,7 @@ class Task < ApplicationRecord
   end
 
   def assign_user(user)
-    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
+    fail(UserAlreadyHasTaskError) if user.dispatch_tasks.to_complete.where(type: type).count > 0
 
     assign_attributes(
       user: user,

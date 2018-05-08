@@ -1,4 +1,4 @@
-class UserQuotasController < ApplicationController
+class Dispatch::UserQuotasController < ApplicationController
   before_action :verify_manager_access
 
   def update
