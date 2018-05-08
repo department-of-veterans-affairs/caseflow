@@ -235,6 +235,16 @@ const workQueueReducer = (state = initialState, action = {}) => {
         $set: action.payload.attorneys
       }
     });
+  case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADING'
+          }
+        }
+      }
+    });
   case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
     return update(state, {
       tasksAndAppealsOfAttorney: {

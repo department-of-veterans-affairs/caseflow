@@ -20,7 +20,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, setTasksAndAppealsOfAttorney, fetchTasksAndAppealsOfAttorney } from './QueueActions';
+import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
 import PageRoute from '../components/PageRoute';
 import { associateTasksWithAppeals } from './utils';
@@ -42,15 +42,20 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   return tableContent;
 }
 
+const areAttorneyTasksLoaded = ({attorneyId, tasksAndAppealsOfAttorney}) =>
+  attorneyId in tasksAndAppealsOfAttorney && tasksAndAppealsOfAttorney[attorneyId].state !== 'LOADING';
+
 const AssignedCasesPage = connect(
   (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
   (props) => {
-    const attorneyId = props.match.params.attorneyId;
-    if (!(attorneyId in props.tasksAndAppealsOfAttorney)) {
+    const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
+    const attorneyId = match.params.attorneyId;
+    if (!areAttorneyTasksLoaded({attorneyId, tasksAndAppealsOfAttorney})) {
+      console.log(tasksAndAppealsOfAttorney);
       return 'Loading';
     }
-    const attorneyName = props.attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
-    const { tasks, appeals } = props.tasksAndAppealsOfAttorney[attorneyId].data;
+    const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
+    const { tasks, appeals } = tasksAndAppealsOfAttorney[attorneyId].data;
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
@@ -105,7 +110,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
-    const attrsUnassigned = {};
+    const { userId, attorneysOfJudge, tasksAndAppealsOfAttorney, match } = this.props;
+
     return <AppSegment filledBackground>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
@@ -126,15 +132,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
             }}>
             <ul className="usa-sidenav-list">
               <li>
-                <NavLink to={`/queue/${this.props.userId}/assign`} activeClassName="usa-current" exact>
+                <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
                   Unassigned Cases ({this.unassignedTasksWithAppeals().length})
                 </NavLink>
               </li>
-              {this.props.attorneysOfJudge.
+              {attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
-                  <NavLink to={`/queue/${this.props.userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name}{attorney.id in this.props.tasksAndAppealsOfAttorney ?
-                      ` (${Object.keys(this.props.tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
+                  <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                    {attorney.full_name}{areAttorneyTasksLoaded({attorneyId: attorney.id, tasksAndAppealsOfAttorney}) ?
+                      ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
                       ''}
                   </NavLink>
                 </li>)}
@@ -144,12 +150,12 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <div className="usa-width-three-fourths">
           <PageRoute
             exact
-            path={this.props.match.url}
+            path={match.url}
             title="Unassigned Cases | Caseflow"
             render={() => <UnassignedCasesPage tasksWithAppeals={this.unassignedTasksWithAppeals()} />}
             />
           <PageRoute
-            path={this.props.match.url + '/:attorneyId'}
+            path={match.url + '/:attorneyId'}
             title="Assigned Cases | Caseflow"
             component={AssignedCasesPage}
             />
@@ -178,7 +184,6 @@ const mapDispatchToProps = (dispatch) => (
     resetSuccessMessages,
     resetSaveState,
     setAttorneysOfJudge,
-    setTasksAndAppealsOfAttorney,
     fetchTasksAndAppealsOfAttorney
   }, dispatch)
 );

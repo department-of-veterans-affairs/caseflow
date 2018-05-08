@@ -156,7 +156,7 @@ export const setAttorneysOfJudge = (attorneys) => ({
   }
 });
 
-export const setTasksAndAppealsOfAttorney = ({attorneyId, tasks, appeals}) => ({
+const receiveTasksAndAppealsOfAttorney = ({attorneyId, tasks, appeals}) => ({
   type: ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY,
   payload: {
     attorneyId,
@@ -165,15 +165,22 @@ export const setTasksAndAppealsOfAttorney = ({attorneyId, tasks, appeals}) => ({
   }
 });
 
+const requestTasksAndAppealsOfAttorney = (attorneyId) => ({
+  type: ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId
+  }
+});
+
 export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   const requestOptions = {
     timeout: true
   };
-  // dispatch request tasks and appeals
+  dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
 
   return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
     (resp) => dispatch(
-      setTasksAndAppealsOfAttorney(
+      receiveTasksAndAppealsOfAttorney(
         {attorneyId, ...associateTasksWithAppeals(JSON.parse(resp.text))}))
   );
 }
