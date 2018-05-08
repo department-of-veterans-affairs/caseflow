@@ -55,7 +55,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           marginTop: '1rem'
         })}
         onChange={(readjudication) => this.props.updateIssue({ readjudication })}
-        value={issue.readjudication || false}
+        value={issue.readjudication}
         label="Automatically create vacated issue for readjudication." />}
     </div>;
   };
