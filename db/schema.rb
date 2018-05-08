@@ -537,7 +537,6 @@ ActiveRecord::Schema.define(version: 20180507232459) do
     t.string "file_number", null: false
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
-    t.index ["participant_id"], name: "index_veterans_on_participant_id", unique: true
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
