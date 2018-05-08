@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20180508195838) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -173,6 +172,23 @@ ActiveRecord::Schema.define(version: 20180508195838) do
     t.integer "appeal_id"
     t.string "query"
     t.datetime "created_at"
+  end
+
+  create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "type", null: false
+    t.integer "user_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer "completion_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lock_version"
+    t.string "comment"
+    t.string "outgoing_reference_id"
+    t.string "aasm_state"
+    t.datetime "prepared_at"
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -477,23 +493,6 @@ ActiveRecord::Schema.define(version: 20180508195838) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
-  end
-
-  create_table "tasks", id: :serial, force: :cascade do |t|
-    t.integer "appeal_id", null: false
-    t.string "type", null: false
-    t.integer "user_id"
-    t.datetime "assigned_at"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.integer "completion_status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "lock_version"
-    t.string "comment"
-    t.string "outgoing_reference_id"
-    t.string "aasm_state"
-    t.datetime "prepared_at"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
