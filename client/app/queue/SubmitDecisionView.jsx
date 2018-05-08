@@ -69,12 +69,6 @@ class SubmitDecisionView extends React.PureComponent {
     path: `/queue/tasks/${this.props.vacolsId}/submit`
   });
 
-  goToPrevStep = () => {
-    this.props.resetDecisionOptions();
-
-    return true;
-  };
-
   validateForm = () => {
     const {
       type: decisionType,
@@ -240,7 +234,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.notes}
+        value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
