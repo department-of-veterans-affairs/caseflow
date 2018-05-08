@@ -115,7 +115,7 @@ QueueDetailView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  appeal: state.caseDetail.activeCase,
+  appeal: state.caseDetail.activeAppeal,
   breadcrumbs: state.ui.breadcrumbs,
   task: state.caseDetail.activeTask
 });

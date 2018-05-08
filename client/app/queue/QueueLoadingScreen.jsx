@@ -54,7 +54,7 @@ class QueueLoadingScreen extends React.PureComponent {
   };
 
   loadActiveCase = () => {
-    if (this.props.activeCase) {
+    if (this.props.activeAppeal) {
       return Promise.resolve();
     }
 
