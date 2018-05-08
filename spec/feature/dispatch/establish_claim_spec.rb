@@ -415,7 +415,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
       expect(page).to have_content("Claim Processing Discontinued")
       expect(task.reload).to be_completed
-      expect(task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
+      expect(task.appeal.dispatch_tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(task.comment).to eq("Test")
 
       # Validate special issue isn't saved on cancel
