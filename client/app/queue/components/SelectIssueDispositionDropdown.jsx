@@ -7,7 +7,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
 import StringUtil from '../../util/StringUtil';
-import { COLORS, ERROR_FIELD_REQUIRED } from '../constants';
+import { COLORS, ERROR_FIELD_REQUIRED, ISSUE_DISPOSITIONS } from '../constants';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
@@ -48,7 +48,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           remand_reasons: []
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
-      {issue.disposition === 'Vacated' && <Checkbox
+      {issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
