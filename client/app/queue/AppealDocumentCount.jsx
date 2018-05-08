@@ -11,7 +11,7 @@ class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const appeal = this.props.appeal.attributes;
 
-    if (!this.props.docCountForAppeal[appeal.vacols_id]) {
+    if (!this.props.docCountForAppeal) {
       const requestOptions = {
         withCredentials: true,
         timeout: true,
@@ -26,15 +26,15 @@ class AppealDocumentCount extends React.PureComponent {
     }
   }
 
-  render = () => this.props.docCountForAppeal[this.props.appeal.attributes.vacols_id] || null;
+  render = () => this.props.docCountForAppeal;
 }
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  docCountForAppeal: state.queue.docCountForAppeal
+const mapStateToProps = (state, ownProps) => ({
+  docCountForAppeal: state.queue.docCountForAppeal[ownProps.appeal.attributes.vacols_id] || null
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

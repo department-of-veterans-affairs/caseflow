@@ -82,7 +82,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
-        [action.payload.appealId]: {
+        [action.payload.vacolsId]: {
           $set: action.payload.docCount
         }
       }

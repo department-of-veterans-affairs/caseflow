@@ -30,7 +30,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     const decisionType = props.value;
     const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
-    this.stageAppeal(decisionType);
+    this.stageAppeal();
 
     this.props.resetDecisionOptions();
     this.props.setCaseReviewActionType(decisionType);
@@ -40,23 +40,14 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     history.replace(`/queue/appeals/${vacolsId}/${route}`);
   };
 
-  stageAppeal = (decisionType) => {
-    const {
-      vacolsId,
-      appeal: { attributes: { issues } }
-    } = this.props;
+  stageAppeal = () => {
+    const { vacolsId } = this.props;
 
     if (this.props.changedAppeals.includes(vacolsId)) {
       this.props.checkoutStagedAppeal(vacolsId);
     }
 
-    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      this.props.stageAppeal(vacolsId, {
-        issues: _.map(issues, (issue) => _.set(issue, 'disposition', null))
-      });
-    } else {
-      this.props.stageAppeal(vacolsId);
-    }
+    this.props.stageAppeal(vacolsId);
   }
 
   render = () => <SearchableDropdown
