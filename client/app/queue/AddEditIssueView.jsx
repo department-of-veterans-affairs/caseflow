@@ -136,7 +136,7 @@ class AddEditIssueView extends React.Component {
         'disposition'
       );
 
-      return _.defaults({ disposition }, issue);
+      return { ...issue, disposition };
     });
 
     this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
