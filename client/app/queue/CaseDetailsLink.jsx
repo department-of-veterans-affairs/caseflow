@@ -24,7 +24,7 @@ class CaseDetailsLink extends React.PureComponent {
   render() {
     return <React.Fragment>
       <Link
-        to={`/queue/ppeals/${this.props.task.vacolsId}`}
+        to={`/queue/appeals/${this.props.task.vacolsId}`}
         disabled={!this.props.task.attributes.task_id}
         onClick={this.setActiveCaseAndTask}
       >

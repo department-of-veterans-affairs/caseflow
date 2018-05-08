@@ -37,7 +37,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     this.props.resetBreadcrumbs(vetName, vacolsId);
 
     history.push('');
-    history.replace(`/queue/tasks/${vacolsId}/${route}`);
+    history.replace(`/queue/appeals/${vacolsId}/${route}`);
   };
 
   stageAppeal = (decisionType) => {
