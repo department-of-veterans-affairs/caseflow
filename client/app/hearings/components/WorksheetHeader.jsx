@@ -22,7 +22,8 @@ class WorksheetFormEntry extends React.PureComponent {
           'name',
           'onChange',
           'id',
-          'minRows'
+          'minRows',
+          'maxLength'
         ]
       )
     };
@@ -158,6 +159,7 @@ class WorksheetHeader extends React.PureComponent {
             onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"
             minRows={1}
+            maxLength="30"
             print={this.props.print}
           />
         </div>
@@ -168,6 +170,7 @@ class WorksheetHeader extends React.PureComponent {
             onChange={this.onWitnessChange}
             id="appellant-vet-witness"
             minRows={1}
+            maxLength="120"
             print={this.props.print}
           />
         </div>
@@ -178,6 +181,7 @@ class WorksheetHeader extends React.PureComponent {
             onChange={this.onMilitaryServiceChange}
             id="worksheet-military-service"
             minRows={1}
+            maxLength="1000"
             print={this.props.print}
           />
         </div>
