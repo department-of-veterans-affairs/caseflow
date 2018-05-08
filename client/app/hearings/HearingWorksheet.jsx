@@ -1,8 +1,8 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
@@ -15,6 +15,8 @@ import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
 import LoadingScreen from '../components/LoadingScreen';
+import CFRichTextEditor from '../components/CFRichTextEditor';
+import DOMPurify from 'dompurify';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -33,33 +35,70 @@ import {
 
 import { saveIssues } from './actions/Issue';
 
+const toolbar = {
+  options: ['inline', 'fontSize', 'list', 'colorPicker', 'link'],
+  inline: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['bold', 'italic', 'underline']
+  },
+  fontSize: {
+    options: [8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36, 48, 60, 72, 96],
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+  },
+  list: {
+    inDropdown: false,
+    className: undefined,
+    component: undefined,
+    dropdownClassName: undefined,
+    options: ['unordered', 'ordered'],
+    title: undefined,
+  },
+  colorPicker: {
+    className: undefined,
+    component: undefined,
+    popupClassName: undefined,
+    options: ['Text'],
+    colors: ['rgb(0,0,0)', 'rgb(0,0,255)', 'rgb(255,0,0)'],
+  }
+};
+
+const DEFAULT_NOTES_VALUE = '<p><strong>Contentions</strong></p> <p></p> <p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><span style=\"color: rgb(50,58,69);background-color: rgb(255,255,255);font-size: 17.85;font-family: Source Sans Pro\", \"Helvetica Neue\", Helvetica, Roboto, Arial, sans-serif;\"><strong>Comments and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
+
 class WorksheetFormEntry extends React.PureComponent {
+
   render() {
     const textAreaProps = {
       minRows: 3,
       maxRows: 5000,
       value: this.props.value || '',
+      toolbar,
       ..._.pick(
         this.props,
         [
           'name',
           'onChange',
           'id',
-          'minRows'
+          'label'
         ]
       )
     };
 
     return <div className="cf-hearings-worksheet-data">
-      <label htmlFor={this.props.id}>{this.props.name}</label>
       {this.props.print ?
-        <p>{this.props.value}</p> :
-        <Textarea {...textAreaProps} />}
+        <React.Fragment>
+          <label htmlFor={this.props.id}>{this.props.name}</label>
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} />
+        </React.Fragment> : 
+        <CFRichTextEditor {...textAreaProps} />}
     </div>;
   }
 }
 export class HearingWorksheet extends React.PureComponent {
-
   componentDidMount() {
     document.title = this.getWorksheetTitle();
   }
@@ -84,10 +123,10 @@ export class HearingWorksheet extends React.PureComponent {
     });
   };
 
-  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
-  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
-  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
+  onContentionsChange = (value) => this.props.onContentionsChange(value);
+  onMilitaryServiceChange = (value) => this.props.onMilitaryServiceChange(value);
+  onEvidenceChange = (value) => this.props.onEvidenceChange(value);
+  onCommentsForAttorneyChange = (value) => this.props.onCommentsForAttorneyChange(value);
 
   render() {
     let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
@@ -114,32 +153,11 @@ export class HearingWorksheet extends React.PureComponent {
 
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
-          name="Periods and circumstances of service"
-          value={worksheet.military_service}
+          name="Hearing Notes"
+          value={worksheet.notes || DEFAULT_NOTES_VALUE}
           onChange={this.onMilitaryServiceChange}
           id="worksheet-military-service"
           minRows={1}
-          print={this.props.print}
-        />
-        <WorksheetFormEntry
-          name="Contentions"
-          value={worksheet.contentions}
-          onChange={this.onContentionsChange}
-          id="worksheet-contentions"
-          print={this.props.print}
-        />
-        <WorksheetFormEntry
-          name="Evidence"
-          value={worksheet.evidence}
-          onChange={this.onEvidenceChange}
-          id="worksheet-evidence"
-          print={this.props.print}
-        />
-        <WorksheetFormEntry
-          name="Comments and special instructions to attorneys"
-          value={worksheet.comments_for_attorney}
-          id="worksheet-comments-for-attorney"
-          onChange={this.onCommentsForAttorneyChange}
           print={this.props.print}
         />
       </form>
