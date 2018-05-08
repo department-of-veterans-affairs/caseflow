@@ -30,8 +30,7 @@ class DropdownFilter extends React.PureComponent {
 
     const style = {
       top: '25px',
-      right: 0,
-      whiteSpace: 'nowrap'
+      right: 0
     };
 
     const rel = {
