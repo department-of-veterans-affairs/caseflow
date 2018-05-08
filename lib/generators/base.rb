@@ -14,7 +14,7 @@
 # get the `create(attrs)` method for free by extending Generators::Base
 module Generators::Base
   def generate_external_id
-    SecureRandom.random_number(1000000).to_s
+    SecureRandom.random_number(1_000_000).to_s
   end
 
   def generate_first_name
