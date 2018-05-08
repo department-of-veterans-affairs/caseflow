@@ -28,18 +28,15 @@ class DropdownFilter extends React.PureComponent {
   render() {
     const { children, name } = this.props;
 
-    let style;
+    const style = {
+      top: '25px',
+      right: 0,
+      whiteSpace: 'nowrap'
+    };
 
-    if (this.state.rootElemWidth) {
-      style = {
-        top: '25px',
-        right: '5px'
-      };
-    } else {
-      style = { left: '-99999px' };
-    }
-
-    const rel = { position: 'relative' };
+    const rel = {
+      position: 'relative'
+    };
 
     return <div style={rel}>
       <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
@@ -63,12 +60,6 @@ class DropdownFilter extends React.PureComponent {
 
   componentDidMount() {
     document.addEventListener('click', this.onGlobalClick, true);
-
-    if (this.rootElem) {
-      this.setState({
-        rootElemWidth: this.rootElem.clientWidth
-      });
-    }
   }
 
   componentWillUnmount() {
