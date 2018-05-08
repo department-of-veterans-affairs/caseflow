@@ -88,7 +88,7 @@ class WorksheetHeader extends React.PureComponent {
     return <div>
       <div className="cf-hearings-worksheet-data">
         <div className="title">
-          <h1>{appellant}'s Hearing Worksheet</h1>
+          <h1>{worksheet.veteran_mi_formatted}'s Hearing Worksheet</h1>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VLJ</h5>
