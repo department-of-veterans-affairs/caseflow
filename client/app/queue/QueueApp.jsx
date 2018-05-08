@@ -17,7 +17,6 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
-import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -52,11 +51,7 @@ class QueueApp extends React.PureComponent {
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
-  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <CaseDetailView vacolsId={props.match.params.vacolsId} />
-  </QueueLoadingScreen>;
-
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
+  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
     <QueueDetailView {...this.props}
       vacolsId={props.match.params.vacolsId} />
@@ -71,17 +66,17 @@ class QueueApp extends React.PureComponent {
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      prevStep={`/queue/tasks/${vacolsId}`}
-      nextStep={`/queue/tasks/${vacolsId}/submit`} />;
+      prevStep={`/queue/appeals/${vacolsId}`}
+      nextStep={`/queue/appeals/${vacolsId}/submit`} />;
   };
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/tasks/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/queue/tasks/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/queue/tasks/${props.match.params.appealId}/submit`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
   render = () => <BrowserRouter>
@@ -120,12 +115,12 @@ class QueueApp extends React.PureComponent {
             render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
-            path="/queue/tasks/:vacolsId"
-            title="Draft Decision | Caseflow"
+            path="/queue/appeals/:vacolsId"
+            title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/tasks/:vacolsId/submit"
+            path="/queue/appeals/:vacolsId/submit"
             title={() => {
               const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
                 'OMO' : 'Draft Decision';
@@ -135,24 +130,19 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/queue/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/queue/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/queue/tasks/:appealId/remands"
+            path="/queue/appeals/:appealId/remands"
             title="Draft Decision | Select Issue Remand Reasons"
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/queue/tasks/:vacolsId/dispositions"
+            path="/queue/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
-          <PageRoute
-            exact
-            path="/appeals/:vacolsId"
-            title="Case Details | Caseflow"
-            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
