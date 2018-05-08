@@ -16,7 +16,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import ApiUtil from '../util/ApiUtil';
 
-import { clearActiveCase, setActiveCase, setDocumentCount } from './CaseDetail/CaseDetailActions';
+import { clearActiveCase, setActiveCase } from './CaseDetail/CaseDetailActions';
 
 const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
@@ -40,31 +40,10 @@ class CaseDetailView extends React.PureComponent {
     });
   }
 
-  populateActiveCaseDocumentCount = () => {
-    if (!this.props.appeal || this.props.docCount) {
-      return;
-    }
-
-    const appeal = this.props.appeal.attributes;
-    const requestOptions = {
-      withCredentials: true,
-      timeout: true,
-      headers: { 'FILE-NUMBER': appeal.vbms_id }
-    };
-
-    ApiUtil.get(appeal.number_of_documents_url, requestOptions).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setDocumentCount(resp.data.attributes.documents.length);
-    });
-  }
-
   showCaseDetails = () => {
     if (!this.props.appeal) {
       return null;
     }
-
-    this.populateActiveCaseDocumentCount();
 
     const appeal = this.props.appeal.attributes;
 
@@ -94,7 +73,7 @@ class CaseDetailView extends React.PureComponent {
           analyticsSource={CATEGORIES.CASE_DETAIL}
           redirectUrl={window.location.pathname}
           taskType="Draft Decision"
-          docCount={this.props.docCount}
+          appeal={this.props.appeal}
           longMessage />
         <TabWindow
           name="casedetail-tabwindow"
@@ -123,14 +102,12 @@ class CaseDetailView extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  appeal: state.caseDetail.activeCase,
-  docCount: state.caseDetail.documentCount
+  appeal: state.caseDetail.activeCase
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveCase,
-  setActiveCase,
-  setDocumentCount
+  setActiveCase
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CaseDetailView));
