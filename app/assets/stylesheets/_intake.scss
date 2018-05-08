@@ -15,6 +15,7 @@
 
 .cf-manage-intakes-header {
   display: grid;
+  grid-column-gap: 10px;
   grid-template-columns: auto auto;
 }
 
@@ -22,6 +23,10 @@
   border: 1px solid $color-gray-lighter;
   max-width: 500px;
   min-width: 500px;
+}
+
+.cf-intake-ratings label {
+  max-width: 100%;
 }
 
 [id=button-begin-next-intake] {

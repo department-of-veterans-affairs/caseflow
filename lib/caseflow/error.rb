@@ -2,6 +2,7 @@ module Caseflow::Error
   class EfolderError < StandardError; end
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
+  class ClientRequestError < EfolderError; end
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end

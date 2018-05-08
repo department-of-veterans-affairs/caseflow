@@ -16,6 +16,7 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
     in_future:
       'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
+    before_ama: 'Receipt Date cannot be earlier than the AMA pilot start date.',
     before_ramp_receipt_date: 'Receipt date cannot be earlier than the original ' +
       `RAMP election receipt date of ${state.electionReceiptDate}`
   }[_.get(responseErrorCodes.receipt_date, 0)]
@@ -25,3 +26,11 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
   hasInvalidOption && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
+
+export const formatRatings = (ratings) => {
+  return _.keyBy(_.map(ratings, (rating) => {
+    return _.assign(rating,
+      { issues: _.keyBy(rating.issues, 'reference_id') }
+    );
+  }), 'profile_date');
+};

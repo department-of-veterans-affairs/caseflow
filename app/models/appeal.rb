@@ -5,10 +5,13 @@ class Appeal < ApplicationRecord
   include CachedAttributes
 
   belongs_to :appeal_series
-  has_many :tasks
+  has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :appeal_views
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
+
+  after_save :save_to_legacy_appeals
+  before_destroy :destroy_legacy_appeal
 
   class UnknownLocationError < StandardError; end
 
@@ -49,10 +52,15 @@ class Appeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at
+                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
+                :assigned_by_first_name, :assigned_by_last_name
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :dic do
+    issues.map(&:dic).include?(true)
   end
 
   cache_attribute :remand_return_date do
@@ -181,15 +189,15 @@ class Appeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
-  # Eventually we'd like to reference methods on the veteran with data from VACOLS
-  # and only "lazy load" data from BGS when necessary
   def veteran
-    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   delegate :age, to: :veteran, prefix: true
   delegate :sex, to: :veteran, prefix: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products, to: :veteran
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -198,7 +206,7 @@ class Appeal < ApplicationRecord
   end
 
   def power_of_attorney(load_bgs_record: true)
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
 
     load_bgs_record ? @poa.load_bgs_record! : @poa
   end
@@ -250,8 +258,9 @@ class Appeal < ApplicationRecord
     end
   end
 
+  # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
-    self.class.bgs.can_access?(sanitized_vbms_id)
+    self.class.bgs.can_access?(veteran_file_number)
   end
 
   def task_header
@@ -282,8 +291,12 @@ class Appeal < ApplicationRecord
     compensation_issues.count == issues.count
   end
 
+  def prior_bva_decision_date
+    (type == "Post Remand") ? prior_decision_date : decision_date
+  end
+
   def ramp_election
-    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
+    RampElection.find_by(veteran_file_number: veteran_file_number)
   end
 
   def in_location?(location)
@@ -303,11 +316,12 @@ class Appeal < ApplicationRecord
       "nod_date" => nod_date,
       "soc_date" => soc_date,
       "certification_date" => certification_date,
-      "prior_decision_date" => prior_decision_date,
+      "prior_bva_decision_date" => prior_bva_decision_date,
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
       "contested_claim" => contested_claim,
+      "dic" => dic,
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
@@ -525,6 +539,11 @@ class Appeal < ApplicationRecord
     end
   end
 
+  # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
+  def veteran_file_number
+    sanitized_vbms_id
+  end
+
   def pending_eps
     end_products.select(&:dispatch_conflict?)
   end
@@ -576,6 +595,17 @@ class Appeal < ApplicationRecord
 
   private
 
+  def save_to_legacy_appeals
+    legacy_appeal = LegacyAppeal.find(attributes["id"])
+    legacy_appeal.update!(attributes)
+  rescue ActiveRecord::RecordNotFound
+    LegacyAppeal.create!(attributes)
+  end
+
+  def destroy_legacy_appeal
+    LegacyAppeal.find(attributes["id"]).destroy!
+  end
+
   def create_new_document!(document, ids)
     document.save!
 
@@ -610,12 +640,6 @@ class Appeal < ApplicationRecord
     documents.reject do |doc|
       excluding_ids.include?(doc.vbms_document_id) || doc.received_at.nil?
     end.sort_by(&:received_at)
-  end
-
-  # List of all end products for the appeal's veteran.
-  # NOTE: we cannot currently match end products to a specific appeal.
-  def end_products
-    @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
   def fetch_documents_from_service!
@@ -657,10 +681,6 @@ class Appeal < ApplicationRecord
 
       appeal.save
       appeal
-    end
-
-    def fetch_end_products(vbms_id)
-      bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
     def for_api(vbms_id:)
@@ -785,7 +805,7 @@ class Appeal < ApplicationRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -806,7 +826,7 @@ class Appeal < ApplicationRecord
     end
 
     def reopen_single(appeal:, user:, disposition:)
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       # If the appeal was decided at the board, then it was a remand which means

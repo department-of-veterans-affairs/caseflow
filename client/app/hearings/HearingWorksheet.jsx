@@ -14,13 +14,13 @@ import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteran
 import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
+import LoadingScreen from '../components/LoadingScreen';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
 import {
   onContentionsChange,
-  onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
@@ -84,12 +84,11 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
-    let { worksheet, worksheetIssues } = this.props;
+    let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
@@ -112,14 +111,6 @@ export class HearingWorksheet extends React.PureComponent {
     const secondWorksheetPage = <div className="cf-hearings-second-page">
 
       <form className="cf-hearings-worksheet-form">
-        <WorksheetFormEntry
-          name="Periods and circumstances of service"
-          value={worksheet.military_service}
-          onChange={this.onMilitaryServiceChange}
-          id="worksheet-military-service"
-          minRows={1}
-          print={this.props.print}
-        />
         <WorksheetFormEntry
           name="Contentions"
           value={worksheet.contentions}
@@ -174,11 +165,13 @@ export class HearingWorksheet extends React.PureComponent {
               save={this.save(worksheet, worksheetIssues)}
             />
           </div>
-          <div className={wrapperClassNames}>
-            {firstWorksheetPage}
-            <PrintPageBreak />
-            {secondWorksheetPage}
-          </div>
+          {fetchingWorksheet ?
+            <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
+            <div className={wrapperClassNames}>
+              {firstWorksheetPage}
+              <PrintPageBreak />
+              {secondWorksheetPage}
+            </div>}
         </div>
       }
       {this.props.print &&
@@ -207,12 +200,12 @@ const mapStateToProps = (state) => ({
   worksheetIssues: state.worksheetIssues,
   saveWorksheetFailed: state.saveWorksheetFailed,
   worksheetIsSaving: state.worksheetIsSaving,
-  worksheetTimeSaved: state.worksheetTimeSaved
+  worksheetTimeSaved: state.worksheetTimeSaved,
+  fetchingWorksheet: state.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
-  onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,

@@ -3,9 +3,10 @@ import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  DECISION_TYPES,
-  ISSUE_INFO
+  DECISION_TYPES
 } from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -83,5 +84,15 @@ export const getIssueTypeDescription = (issue) => {
     type
   } = issue;
 
-  return _.get(ISSUE_INFO[program].issue, `${type}.description`);
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
+};
+
+export const getIssueDiagnosticCodeLabel = (code) => {
+  const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+
+  if (!readableLabel) {
+    return false;
+  }
+
+  return `${code} - ${readableLabel.staff_description}`;
 };

@@ -17,19 +17,11 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (vacolsId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
+    vacolsId,
     docCount
-  }
-});
-
-export const loadAppealDocCountFail = (appealId) => ({
-  type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
-  payload: {
-    appealId,
-    docCount: null
   }
 });
 
@@ -69,21 +61,23 @@ export const deleteAppeal = (appealId) => ({
   }
 });
 
-export const startEditingAppeal = (appealId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.START_EDITING_APPEAL,
-    payload: {
-      appealId
-    }
-  });
-
-  if (attributes) {
-    dispatch(editAppeal(appealId, attributes));
+export const editStagedAppeal = (appealId, attributes) => ({
+  type: ACTIONS.EDIT_STAGED_APPEAL,
+  payload: {
+    appealId,
+    attributes
   }
-};
+});
 
-export const cancelEditingAppeal = (appealId) => ({
-  type: ACTIONS.CANCEL_EDITING_APPEAL,
+export const stageAppeal = (appealId) => ({
+  type: ACTIONS.STAGE_APPEAL,
+  payload: {
+    appealId
+  }
+});
+
+export const checkoutStagedAppeal = (appealId) => ({
+  type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
@@ -110,21 +104,38 @@ export const startEditingAppealIssue = (appealId, issueId, attributes) => (dispa
   }
 };
 
-export const deleteAppealIssue = (appealId, issueId) => ({
-  type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
-  payload: {
-    appealId,
-    issueId
-  }
-});
+export const deleteEditingAppealIssue = (appealId, issueId, attributes) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
+    payload: {
+      appealId,
+      issueId
+    }
+  });
+  dispatch(editAppeal(appealId, attributes));
+};
 
 export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
 });
 
-export const saveEditedAppealIssue = (appealId) => ({
-  type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
+export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
+    payload: {
+      appealId
+    }
+  });
+
+  if (attributes) {
+    dispatch(editStagedAppeal(appealId, attributes));
+    dispatch(editAppeal(appealId, attributes));
+  }
+};
+
+export const setAttorneysOfJudge = (attorneys) => ({
+  type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
   payload: {
-    appealId
+    attorneys
   }
 });

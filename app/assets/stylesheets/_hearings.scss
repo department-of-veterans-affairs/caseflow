@@ -14,6 +14,11 @@
   }
 }
 
+
+.cf-hearings-column {
+  width: 45%;
+}
+
 .hearings {
   thead > tr {
     display: inline-table;
@@ -21,6 +26,10 @@
 
     th:nth-child(3) {
       min-width: 75px;
+    }
+
+    th:nth-child(1) {
+      padding-left: 36px;
     }
 
     th {
@@ -35,6 +44,10 @@
 
     td:nth-child(3) {
       min-width: 75px;
+    }
+
+    td:nth-child(1) {
+      padding-left: 36px;
     }
 
     td {
@@ -286,7 +299,6 @@
     border: 1px solid $color-gray-dark;
   }
 
-  //TODO: Candidate for caseflow-commons
   .cf-copy-to-clipboard {
     border: 1px solid $color-gray-dark;
     box-shadow: inset 0 0 0 1px $color-gray-lightest;
@@ -320,10 +332,6 @@
       min-width: 100%;
     }
   }
-
-  table {
-    margin: .5em 0 0;
-  }
 }
 
 .cf-hearings-worksheet-data {
@@ -342,7 +350,6 @@
 
   h4 {
     font-weight: normal;
-    margin-top: 27px;
     font-size: 17px;
   }
 
@@ -367,26 +374,8 @@
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
-    margin-top: 1em;
     vertical-align: top;
     padding-left: .2em;
-
-    &.column-1 {
-      padding-left: 0;
-    }
-
-    &.column-2 {
-      width: 18%;
-    }
-
-    &.column-4 {
-      width: 21%;
-    }
-
-    &.column-5 {
-      width: 21%;
-    }
-
   }
 
   .cf-appeal-stream-label {
@@ -405,8 +394,14 @@
 }
 
 .cf-hearings-worksheet-issues {
-  margin: 0;
   white-space: pre-line;
+  margin: .5em 0 1.5em;
+
+  tr:last-child {
+    .cf-form-textarea {
+      margin-bottom: 0;
+    }
+  }
 
   .cf-form-textarea {
     min-height: 48px;
@@ -660,15 +655,6 @@
   .cf-tab-window-body-full-screen {
     margin-top: -35px;
  }
-
-  .cf-hearings-worksheet-data .cf-hearings-worksheet-data-first-cell {
-    margin-top: .2em;
-    height: 40px;
- }
-
-  .cf-hearings-worksheet-data .cf-hearings-worksheet-data-second-cell {
-    margin-top: 0;
-}
 
   .cf-title-meta-right {
     margin-bottom: 2px;

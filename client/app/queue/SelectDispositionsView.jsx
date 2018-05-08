@@ -18,10 +18,7 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import {
-  highlightInvalidFormItems,
-  hideSuccessMessage
-} from './uiReducer/uiActions';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -48,7 +45,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
-    path: `/tasks/${this.props.vacolsId}/dispositions`
+    path: `/queue/tasks/${this.props.vacolsId}/dispositions`
   });
 
   getNextStepUrl = () => {
@@ -60,8 +57,8 @@ class SelectDispositionsView extends React.PureComponent {
       }
     } = this.props;
 
-    return _.map(issues, 'disposition').includes('Remanded') ?
-      `/tasks/${vacolsId}/remands` : nextStep;
+    return _.map(issues, 'disposition').includes('remanded') ?
+      `/queue/tasks/${vacolsId}/remands` : nextStep;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -81,28 +78,6 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId,
-          issues
-        }
-      }
-    } = this.props;
-
-    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
-      'Select remand reasons' : 'Finish dispositions';
-
-    return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
-    }, {
-      displayText: nextStepText,
-      id: 'finish-dispositions'
-    }];
-  };
-
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
@@ -113,8 +88,9 @@ class SelectDispositionsView extends React.PureComponent {
       stretchToFullWidth />
   }, {
     header: 'Actions',
-    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
-      Edit Issue
+    valueFunction: (issue) => <Link
+      to={`/queue/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+        Edit Issue
     </Link>
   }, {
     header: 'Dispositions',
@@ -125,7 +101,11 @@ class SelectDispositionsView extends React.PureComponent {
   }];
 
   render = () => {
-    const { saveResult } = this.props;
+    const {
+      saveResult,
+      vacolsId,
+      appeal: { attributes: { issues } }
+    } = this.props;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -138,13 +118,13 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={this.props.appeal.attributes.issues}
+        rowObjects={issues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
       <div {...marginLeft(1.5)}>
-        <Link>Add Issue</Link>
+        <Link to={`/queue/tasks/${vacolsId}/dispositions/add`}>Add Issue</Link>
       </div>
     </React.Fragment>;
   };
@@ -157,13 +137,12 @@ SelectDispositionsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   saveResult: state.ui.messages.success
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,
-  highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue,

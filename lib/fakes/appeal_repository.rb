@@ -68,7 +68,7 @@ class Fakes::AppealRepository
 
   def self.load_vacols_data(appeal)
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record("load appeal #{appeal.vacols_id}", service: :vacols) do
       records[appeal.vacols_id]
     end
 
@@ -87,7 +87,8 @@ class Fakes::AppealRepository
   def self.appeals_ready_for_hearing(vbms_id)
     Rails.logger.info("Load faked appeals ready for hearing for vbms id: #{vbms_id}")
 
-    return_records = MetricsService.record "load appeals ready for hearing for vbms_id #{vbms_id}" do
+    return_records = MetricsService.record("load appeals ready for hearing for vbms_id #{vbms_id}",
+                                           service: :vacols) do
       records.select do |_, r|
         (r[:vbms_id] == vbms_id &&
         (r[:decision_date].nil? || r[:disposition] == "Remanded")) # &&
@@ -118,7 +119,7 @@ class Fakes::AppealRepository
     fail Caseflow::Error::MultipleAppealsByVBMSID if RAISE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record("load appeal #{appeal.vacols_id}", service: :vacols) do
       # TODO(jd): create a more dynamic setup
       records.find { |_, r| r[:vbms_id] == appeal.vbms_id }
     end
@@ -135,7 +136,8 @@ class Fakes::AppealRepository
   def self.appeals_by_vbms_id(vbms_id)
     Rails.logger.info("Load faked VACOLS appeals data for vbms id: #{vbms_id}")
 
-    return_records = MetricsService.record "load appeals for vbms_id #{vbms_id}" do
+    return_records = MetricsService.record("load appeals for vbms_id #{vbms_id}",
+                                           service: :vacols) do
       records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
@@ -339,6 +341,7 @@ class Fakes::AppealRepository
   # 14555555 has no compensation issues
   # 16555555 throws a sensitivity error
   # 19555555 throws a sex error
+  # 23232323 is valid for AMA intake
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.seed_intake_data!
@@ -418,6 +421,12 @@ class Fakes::AppealRepository
       vbms_id: "19555555C",
       veteran: veteran,
       issues: (1..3).map { Generators::Issue.build }
+    )
+
+    # Rating data from BGS
+    veteran = Generators::Veteran.build(file_number: "23232323")
+    Generators::Rating.build(
+      participant_id: veteran.participant_id
     )
   end
   # rubocop:enable Metrics/MethodLength

@@ -46,6 +46,31 @@ module Fakes::Data::AppealData
     end
   end
 
+  def self.certification_ready_to_certify
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010, 10, 13)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 2, 3)),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 6, 27))
+    ]
+  end
+
+  def self.certification_fuzzy_match_documents
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 9, 30)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 3, 19)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 3, 29))
+    ]
+  end
+
+  def self.certification_mismatched_documents
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 4, 9)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2016, 7, 24))
+    ]
+  end
+
   READER_REDACTED_DOCS = [
     "VA 8 Certification of Appeal",
     "Supplemental Statement of the Case",
@@ -78,6 +103,9 @@ module Fakes::Data::AppealData
 
   def self.document_mapping
     {
+      "ready_documents" => certification_ready_to_certify,
+      "fuzzy_match_documents" => certification_fuzzy_match_documents,
+      "mismatched_documents" => certification_mismatched_documents,
       "static_documents" => static_reader_documents,
       "no_categories" => reader_docs_no_categories,
       "random_documents" => random_reader_documents(1000),
@@ -254,27 +282,27 @@ module Fakes::Data::AppealData
         regional_office_key: "RO63",
         representative: "No Representative",
         issues: [
-          { disposition: :remanded,
+          { disposition: nil,
             vacols_sequence_id: 1,
             codes: %w[01 12 04 8599],
             labels: ["Compensation", "Service connection", "Schedular", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
-          { disposition: :remanded,
+          { disposition: nil,
             vacols_sequence_id: 2,
             codes: %w[06 12 04 8599],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
-          { disposition: :remanded,
+          { disposition: nil,
             vacols_sequence_id: 3,
             codes: %w[08 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
-          { disposition: :remanded,
+          { disposition: nil,
             vacols_sequence_id: 4,
             codes: %w[11 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
-          { disposition: :allowed,
+          { disposition: nil,
             vacols_sequence_id: 5,
             codes: %w[05 15 04 7101],
             labels: ["Compensation",

@@ -66,7 +66,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/tasks/${this.props.vacolsId}/submit`
+    path: `/queue/tasks/${this.props.vacolsId}/submit`
   });
 
   goToPrevStep = () => {
@@ -121,28 +121,11 @@ class SubmitDecisionView extends React.PureComponent {
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's 
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
-  };
-
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId
-        }
-      }
-    } = this.props;
-
-    return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
-    }, {
-      displayText: 'Submit'
-    }];
   };
 
   getJudgeSelectComponent = () => {
@@ -271,9 +254,9 @@ SubmitDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.pendingChanges.taskDecision,
+  decision: state.queue.stagedChanges.taskDecision,
   judges: state.queue.judges,
   error: state.ui.messages.error,
   ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')

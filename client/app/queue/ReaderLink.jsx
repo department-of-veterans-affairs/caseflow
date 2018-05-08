@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import _ from 'lodash';
 import querystring from 'querystring';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
+import AppealDocumentCount from './AppealDocumentCount';
 
-class ReaderLink extends React.PureComponent {
+export default class ReaderLink extends React.PureComponent {
 
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
@@ -16,31 +15,29 @@ class ReaderLink extends React.PureComponent {
 
   getLinkText = () => {
     const {
-      message,
-      docCount
+      appeal,
+      longMessage,
+      message
     } = this.props;
 
-    let linkText = 'View in Reader';
-
     if (message) {
-      linkText = message;
-    } else if (_.isNumber(docCount)) {
-      linkText = `View ${docCount.toLocaleString()} in Reader`;
+      return message;
     }
 
-    return linkText;
+    return longMessage ?
+      <React.Fragment>Open <AppealDocumentCount appeal={appeal} /> documents in Caseflow Reader</React.Fragment> :
+      <React.Fragment>View <AppealDocumentCount appeal={appeal} /> in Reader</React.Fragment>;
   };
 
   render = () => {
     const {
       redirectUrl,
       taskType,
-      task_id: taskId,
-      vacols_id: vacolsId
+      vacolsId
     } = this.props;
     const linkProps = {};
 
-    if (taskId) {
+    if (redirectUrl) {
       const queryParams = {
         queue_redirect_url: redirectUrl
       };
@@ -63,14 +60,13 @@ class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
+  appeal: PropTypes.object.isRequired,
+  longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   vacolsId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  ..._.pick(state.queue.loadedQueue.tasks[ownProps.vacolsId].attributes, 'task_id'),
-  ..._.pick(state.queue.loadedQueue.appeals[ownProps.vacolsId].attributes, 'docCount', 'vacols_id')
-});
-
-export default connect(mapStateToProps)(ReaderLink);
+ReaderLink.defaultProps = {
+  longMessage: false
+};

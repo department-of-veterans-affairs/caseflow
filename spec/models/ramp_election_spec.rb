@@ -84,19 +84,19 @@ describe RampElection do
 
     context "when option_selected is nil" do
       it "raises error" do
-        expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
       end
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number).load_bgs_record! }
+      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
         let(:receipt_date) { nil }
 
         it "raises error" do
-          expect { subject }.to raise_error(RampElection::InvalidEndProductError)
+          expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
         end
       end
 
@@ -228,8 +228,8 @@ describe RampElection do
     end
   end
 
-  context "#active?" do
-    subject { ramp_election.active? }
+  context "#end_product_active?" do
+    subject { ramp_election.end_product_active? }
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
@@ -386,7 +386,7 @@ describe RampElection do
         end
 
         context "when it is nil" do
-          it "adds error to receipt_date" do
+          it "adds error to option_selected" do
             is_expected.to be false
             expect(ramp_election.errors[:option_selected]).to include("blank")
           end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180411152656) do
+ActiveRecord::Schema.define(version: 20180507232459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -330,6 +330,18 @@ ActiveRecord::Schema.define(version: 20180411152656) do
     t.boolean "prepped"
   end
 
+  create_table "higher_level_reviews", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.boolean "informal_conference"
+    t.boolean "same_office"
+    t.datetime "established_at"
+    t.string "end_product_reference_id"
+    t.string "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
+    t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
+  end
+
   create_table "intakes", id: :serial, force: :cascade do |t|
     t.integer "detail_id"
     t.string "detail_type"
@@ -347,11 +359,45 @@ ActiveRecord::Schema.define(version: 20180411152656) do
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
+  create_table "legacy_appeals", force: :cascade do |t|
+    t.string "vacols_id", null: false
+    t.string "vbms_id"
+    t.boolean "rice_compliance", default: false
+    t.boolean "private_attorney_or_agent", default: false
+    t.boolean "waiver_of_overpayment", default: false
+    t.boolean "pension_united_states", default: false
+    t.boolean "vamc", default: false
+    t.boolean "incarcerated_veterans", default: false
+    t.boolean "dic_death_or_accrued_benefits_united_states", default: false
+    t.boolean "vocational_rehab", default: false
+    t.boolean "foreign_claim_compensation_claims_dual_claims_appeals", default: false
+    t.boolean "manlincon_compliance", default: false
+    t.boolean "hearing_including_travel_board_video_conference", default: false
+    t.boolean "home_loan_guaranty", default: false
+    t.boolean "insurance", default: false
+    t.boolean "national_cemetery_administration", default: false
+    t.boolean "spina_bifida", default: false
+    t.boolean "radiation", default: false
+    t.boolean "nonrating_issue", default: false
+    t.boolean "us_territory_claim_philippines", default: false
+    t.boolean "contaminated_water_at_camp_lejeune", default: false
+    t.boolean "mustard_gas", default: false
+    t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
+    t.boolean "foreign_pension_dic_all_other_foreign_countries", default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
+    t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
+    t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
+    t.string "dispatched_to_station"
+    t.boolean "issues_pulled"
+    t.bigint "appeal_series_id"
+    t.index ["appeal_series_id"], name: "index_legacy_appeals_on_appeal_series_id"
+    t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
-    t.index ["ramp_election_id"], name: "index_ramp_closed_appeals_on_ramp_election_id"
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
@@ -403,6 +449,26 @@ ActiveRecord::Schema.define(version: 20180411152656) do
     t.datetime "documents_fetched_at"
     t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
+  end
+
+  create_table "request_issues", force: :cascade do |t|
+    t.string "review_request_type", null: false
+    t.bigint "review_request_id", null: false
+    t.string "rating_issue_reference_id", null: false
+    t.date "rating_issue_profile_date", null: false
+    t.string "contention_reference_id"
+    t.string "description", null: false
+    t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
+  end
+
+  create_table "supplemental_claims", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.datetime "established_at"
+    t.string "end_product_reference_id"
+    t.string "end_product_status"
+    t.datetime "end_product_status_last_synced_at"
+    t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -467,6 +533,12 @@ ActiveRecord::Schema.define(version: 20180411152656) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  create_table "veterans", force: :cascade do |t|
+    t.string "file_number", null: false
+    t.string "participant_id"
+    t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+  end
+
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "vacols_sequence_id"
@@ -488,5 +560,6 @@ ActiveRecord::Schema.define(version: 20180411152656) do
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
+  add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
 end
