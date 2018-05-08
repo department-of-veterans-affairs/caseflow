@@ -43,15 +43,14 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
 }
 
 const AssignedCasesPage = connect(
-  (state) => _.pick(state.queue, 'tasksOfAttorney', 'appealsOfAttorney', 'attorneysOfJudge'))(
+  (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
   (props) => {
     const attorneyId = props.match.params.attorneyId;
-    if (!(attorneyId in props.tasksOfAttorney)) {
+    if (!(attorneyId in props.tasksAndAppealsOfAttorney)) {
       return 'Loading';
     }
     const attorneyName = props.attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
-    const tasks = props.tasksOfAttorney[attorneyId].data;
-    const appeals = props.appealsOfAttorney[attorneyId].data;
+    const { tasks, appeals } = props.tasksAndAppealsOfAttorney[attorneyId].data;
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
@@ -137,8 +136,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
               {this.props.attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${this.props.userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name}{attorney.id in this.props.tasksOfAttorney ?
-                      ` (${Object.keys(this.props.tasksOfAttorney[attorney.id].data).length})` :
+                    {attorney.full_name}{attorney.id in this.props.tasksAndAppealsOfAttorney ?
+                      ` (${Object.keys(this.props.tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
                       ''}
                   </NavLink>
                 </li>)}
@@ -167,12 +166,11 @@ JudgeAssignTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
-  tasksOfAttorney: PropTypes.object.isRequired,
-  appealsOfAttorney: PropTypes.object.isRequired
+  tasksAndAppealsOfAttorney: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksOfAttorney', 'appealsOfAttorney'),
+  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney'),
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
 });
 
