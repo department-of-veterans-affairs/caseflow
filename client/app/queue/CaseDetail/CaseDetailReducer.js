@@ -2,8 +2,7 @@ import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
 export const initialState = {
-  activeCase: null,
-  documentCount: null
+  activeCase: null
 };
 
 export const caseDetailReducer = (state = initialState, action = {}) => {
@@ -13,10 +12,6 @@ export const caseDetailReducer = (state = initialState, action = {}) => {
   case Constants.SET_ACTIVE_CASE:
     return update(state, {
       activeCase: { $set: action.payload.caseObj }
-    });
-  case Constants.SET_ACTIVE_CASE_DOCUMENT_COUNT:
-    return update(state, {
-      documentCount: { $set: action.payload.docCount }
     });
   default:
     return state;
