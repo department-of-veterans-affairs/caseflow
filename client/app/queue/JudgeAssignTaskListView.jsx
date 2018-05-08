@@ -51,9 +51,9 @@ const AssignedCasesPage = connect(
     const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
     const attorneyId = match.params.attorneyId;
     if (!areAttorneyTasksLoaded({attorneyId, tasksAndAppealsOfAttorney})) {
-      console.log(tasksAndAppealsOfAttorney);
-      return 'Loading';
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
     }
+
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
     const { tasks, appeals } = tasksAndAppealsOfAttorney[attorneyId].data;
 
