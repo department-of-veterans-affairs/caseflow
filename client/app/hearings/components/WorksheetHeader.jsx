@@ -1,16 +1,67 @@
 import React from 'react';
 import moment from 'moment';
-import TextField from '../../components/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../actions/Dockets';
+import { css } from 'glamor';
+import _ from 'lodash';
+
+class WorksheetFormEntry extends React.PureComponent {
+  render() {
+    const textAreaProps = {
+      minRows: 3,
+      maxRows: 5000,
+      value: this.props.value || '',
+      ..._.pick(
+        this.props,
+        [
+          'name',
+          'onChange',
+          'id',
+          'minRows',
+          'maxLength'
+        ]
+      )
+    };
+
+    return <div className="cf-hearings-worksheet-data">
+      <label htmlFor={this.props.id}>{this.props.name}</label>
+      {this.props.print ?
+        <p>{this.props.value}</p> :
+        <Textarea {...textAreaProps} />}
+    </div>;
+  }
+}
+
+const copyButtonStyling = css({
+  marginTop: '-18px',
+  marginBottom: '10px'
+});
+
+const firstColumnStyling = css({
+  width: '30%',
+  marginBottom: '20px'
+});
+
+const secondColumnStyling = css({
+  width: '65%',
+  marginBottom: '20px'
+});
+
+const secondRowStyling = css({
+  width: '100%',
+  marginBottom: '20px'
+});
 
 class WorksheetHeader extends React.PureComponent {
+
+  onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
   render() {
     const {
@@ -35,104 +86,106 @@ class WorksheetHeader extends React.PureComponent {
     };
 
     return <div>
-      <div className="cf-title-meta-right">
-        <div className="title cf-hearings-title-and-judge">
-          {!this.props.print &&
-          <h1>Hearing Worksheet</h1>
-          }
-          {this.props.print &&
-          <h1 className="cf-hearings-print-worksheet-header">Hearing Worksheet</h1>
-          }
-          <span>VLJ: {worksheet.user ? worksheet.user.full_name : ''}</span>
+      <div className="cf-hearings-worksheet-data">
+        <div className="title">
+          <h1>{worksheet.veteran_mi_formatted}'s Hearing Worksheet</h1>
         </div>
-        <div className="meta">
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>VLJ</h5>
+          <div>{worksheet.user ? worksheet.user.full_name : ''}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>HEARING TYPE</h5>
+          <div>{worksheet.request_type}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>REGIONAL OFFICE</h5>
+          <div>{worksheet.regional_office_name}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>DATE</h5>
           <div>{moment(worksheet.date).format('ddd l')}</div>
-          <div>Hearing Type: {worksheet.request_type}</div>
         </div>
       </div>
 
       <div className="cf-hearings-worksheet-data">
-        {!this.props.print &&
         <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-        }
-        {this.props.print &&
-         <h2 className="cf-hearings-print-worksheet-header">Appellant/Veteran Information</h2>
-        }
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-first-cell column-1">
-          <div>Appellant Name:</div>
-          <div><b>{appellant}</b></div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>VETERAN NAME</h5>
+          <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-first-cell column-2">
-          <div>City/State:</div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>VETERAN ID</h5>
+          <div {...copyButtonStyling}>
+            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+              <button
+                name="Copy Veteran ID"
+                className={['usa-button-outline cf-copy-to-clipboard']}>
+                {worksheet.sanitized_vbms_id}
+                <ClipboardIcon />
+              </button>
+            </CopyToClipboard>
+          </div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>AGE</h5>
+          <div className={veteranClassNames}>{worksheet.veteran_age}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>GENDER</h5>
+          <div>{getVeteranGender(worksheet.veteran_sex)}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell" />
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>APPELLANT NAME</h5>
+          <div>{appellant}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>CITY/STATE</h5>
           <div>{worksheet.appellant_city && worksheet.appellant_state ?
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-first-cell column-3">
-          <div>Regional Office:</div>
-          <div>{worksheet.regional_office_name}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-first-cell column-4">
-          <div>Representative Org:</div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>REPRESENTATIVE ORG.</h5>
           <div>{worksheet.representative}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-first-cell column-5">
-          <TextField
-            name="Rep. Name:"
+      </div>
+
+      <form className="cf-hearings-worksheet-form">
+        <div {...firstColumnStyling} className="cf-push-left">
+          <WorksheetFormEntry
+            name="Representative Name"
+            value={worksheet.representative_name}
+            onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"
-            aria-label="Representative Name"
-            value={worksheet.representative_name || ''}
-            onChange={this.props.onRepNameChange}
-            maxLength={30}
-            fixedInput={this.props.print}
+            minRows={1}
+            maxLength="30"
+            print={this.props.print}
           />
         </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-second-cell column-1">
-          <div>Veteran Name:</div>
-          <div><b>{worksheet.veteran_mi_formatted}</b></div>
+        <div {...secondColumnStyling} className="cf-push-right">
+          <WorksheetFormEntry
+            name="Witness (W)/Observer (O) and Additional Details"
+            value={worksheet.witness}
+            onChange={this.onWitnessChange}
+            id="appellant-vet-witness"
+            minRows={1}
+            maxLength="120"
+            print={this.props.print}
+          />
         </div>
-
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-second-cell column-2">
-          <div>Veteran ID:</div>
-          <div>
-            {!this.props.print &&
-              <CopyToClipboard text={worksheet.sanitized_vbms_id}>
-                <button
-                  name="Copy Veteran ID"
-                  className={['usa-button-outline cf-copy-to-clipboard']}>
-                  {worksheet.sanitized_vbms_id}
-                  <ClipboardIcon />
-                </button>
-              </CopyToClipboard>
-            }
-            {this.props.print &&
-              <div><b>{worksheet.sanitized_vbms_id}</b></div>
-            }
-          </div>
+        <div {...secondRowStyling} className="cf-push-left">
+          <WorksheetFormEntry
+            name="Periods and circumstances of service"
+            value={worksheet.military_service}
+            onChange={this.onMilitaryServiceChange}
+            id="worksheet-military-service"
+            minRows={1}
+            maxLength="1000"
+            print={this.props.print}
+          />
         </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-second-cell column-3">
-          <div>Veteran's Age:</div>
-          <div className={veteranClassNames}>{worksheet.veteran_age}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-data-second-cell column-4">
-          <div>Gender:</div>
-          <div>{getVeteranGender(worksheet.veteran_sex)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell
-        cf-hearings-worksheet-data-second-cell column-5">
-          <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-          {this.props.print ?
-            <p>{worksheet.witness}</p> :
-            <Textarea
-              name="Witness (W)/Observer (O):"
-              id="appellant-vet-witness"
-              aria-label="Witness Observer"
-              value={worksheet.witness || ''}
-              onChange={this.onWitnessChange}
-              maxLength={120}
-            />
-          }
-        </div>
-      </div>
+      </form>
     </div>;
   }
 }
@@ -142,7 +195,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRepNameChange,
-  onWitnessChange
+  onWitnessChange,
+  onMilitaryServiceChange
 }, dispatch);
 
 export default connect(

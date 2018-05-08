@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180504231033) do
+ActiveRecord::Schema.define(version: 20180507224351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -537,7 +537,6 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.string "file_number", null: false
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
-    t.index ["participant_id"], name: "index_veterans_on_participant_id", unique: true
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
