@@ -450,7 +450,7 @@ RSpec.feature "Queue" do
         safe_click(".Select-control")
         safe_click("div[id$='--option-1']")
 
-        expect(page).to have_link("Your Queue", href: "/queue/")
+        expect(page).to have_link("Your Queue", href: "/queue")
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/appeals/#{appeal.vacols_id}")
         expect(page).to have_link("Submit OMO", href: "/queue/appeals/#{appeal.vacols_id}/submit")
 
