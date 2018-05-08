@@ -11,6 +11,7 @@ class Appeal < ApplicationRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   after_save :save_to_legacy_appeals
+  after_destroy :destroy_legacy_appeal
 
   class UnknownLocationError < StandardError; end
 
@@ -596,9 +597,16 @@ class Appeal < ApplicationRecord
 
   def save_to_legacy_appeals
     legacy_appeal = LegacyAppeal.find(attributes["id"])
+    # if Appeal.find(attributes["id"]) == false
+    #   legacy_appeal.destroy!
+    # end
     legacy_appeal.update!(attributes)
   rescue ActiveRecord::RecordNotFound
     LegacyAppeal.create!(attributes)
+  end
+
+  def destroy_legacy_appeal
+    LegacyAppeal.find(attributes["id"]).destroy!
   end
 
   def create_new_document!(document, ids)
