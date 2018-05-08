@@ -2,6 +2,7 @@
 # EP known to Intake
 class SyncIntakeJob < ApplicationJob
   queue_as :low_priority
+  application_attr :intake
 
   def perform
     # Set user to system_user to avoid sensitivity errors
