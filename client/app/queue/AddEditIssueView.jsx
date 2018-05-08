@@ -122,22 +122,25 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) => {
-      const response = JSON.parse(resp.text);
-      const { appeal: { attributes: appeal } } = this.props;
-
-      const issues = _.map(response.issues, (issue) => {
-        const disposition = _.get(
-          _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
-          'disposition'
-        );
-
-        return _.defaults({ disposition }, issue);
-      })
-
-      this.props.saveEditedAppealIssue(this.props.vacolsId, { issues })
-    });
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
   };
+
+  updateIssuesFromServer = (response) => {
+    const { appeal: { attributes: appeal } } = this.props;
+    const serverIssues = response.issues;
+
+    const issues = _.map(serverIssues, (issue) => {
+      // preserve locally-updated dispositions
+      const disposition = _.get(
+        _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+        'disposition'
+      );
+
+      return _.defaults({ disposition }, issue);
+    });
+
+    this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
+  }
 
   deleteIssue = () => {
     const {
@@ -155,7 +158,7 @@ class AddEditIssueView extends React.Component {
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
     ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
-  }
+  };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
     label: getIssueDiagnosticCodeLabel(value),
@@ -186,7 +189,7 @@ class AddEditIssueView extends React.Component {
     }
 
     return false;
-  }
+  };
 
   render = () => {
     const {
