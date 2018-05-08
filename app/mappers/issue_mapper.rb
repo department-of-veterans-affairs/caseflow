@@ -63,7 +63,9 @@ module IssueMapper
     end
 
     def disposition_to_vacols_format(disposition)
-      code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
+      inverted_dispositions = Constants::VACOLS_DISPOSITIONS_BY_ID.map { |k, v| [v.parameterize.underscore, k] }.to_h
+      code = inverted_dispositions[disposition]
+
       unless ALLOWED_DISPOSITION_CODES.include? code
         fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{disposition}"
       end
