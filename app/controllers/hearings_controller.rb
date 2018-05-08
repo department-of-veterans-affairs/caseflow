@@ -43,7 +43,7 @@ class HearingsController < ApplicationController
   end
 
   def update_params
-    params.require("hearing").permit(:notes,
+    params.require("hearing").permit(:comments,
                                      :disposition,
                                      :hold_open,
                                      :aod,

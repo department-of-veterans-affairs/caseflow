@@ -174,8 +174,8 @@ describe HearingMapper do
       let(:info) do
         { notes: 77 }
       end
-      it "raises InvalidNotesError error" do
-        expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      it "raises InvalidCommentsError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidCommentsError)
       end
     end
 
@@ -183,7 +183,7 @@ describe HearingMapper do
       let(:info) do
         { representative_name: 77 }
       end
-      it "raises InvalidNotesError error" do
+      it "raises InvalidCommentsError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidRepresentativeNameError)
       end
     end
@@ -192,7 +192,7 @@ describe HearingMapper do
       let(:info) do
         { add_on: :foo }
       end
-      it "raises InvalidNotesError error" do
+      it "raises InvalidCommentsError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidAddOnError)
       end
     end
