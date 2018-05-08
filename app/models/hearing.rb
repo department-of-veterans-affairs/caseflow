@@ -204,6 +204,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
+      HearingRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= HearingRepository
     end
 
