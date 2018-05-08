@@ -234,7 +234,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.notes}
+        value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
