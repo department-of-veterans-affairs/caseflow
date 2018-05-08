@@ -8,6 +8,7 @@ import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../actions/Dockets';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
