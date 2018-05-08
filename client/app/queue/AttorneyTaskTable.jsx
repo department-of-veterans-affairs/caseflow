@@ -1,23 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
 
 import Table from '../components/Table';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import SmallLoader from '../components/SmallLoader';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
-import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import ApiUtil from '../util/ApiUtil';
-import { LOGO_COLORS } from '../constants/AppConstants';
 import { CATEGORIES, redText } from './constants';
 
 class AttorneyTaskTable extends React.PureComponent {
@@ -68,31 +61,11 @@ class AttorneyTaskTable extends React.PureComponent {
         if (!task.attributes.task_id) {
           return null;
         }
-        const redirectUrl = encodeURIComponent(window.location.pathname);
-        const href = `/reader/appeal/${task.vacolsId}/documents?queue_redirect_url=${redirectUrl}`;
-        const docCount = this.props.appeals[task.vacolsId].attributes.docCount;
 
-        return <LoadingDataDisplay
-          createLoadPromise={this.createLoadPromise(task)}
-          errorComponent="span"
-          failStatusMessageChildren={<ReaderLink vacolsId={task.vacolsId}
-            analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname}
-            docCount={docCount} />}
-          loadingComponent={SmallLoader}
-          loadingComponentProps={{
-            message: 'Loading...',
-            spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-            component: Link,
-            componentProps: {
-              href
-            }
-          }}>
-          <ReaderLink vacolsId={task.vacolsId}
-            analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname}
-            docCount={docCount} />
-        </LoadingDataDisplay>;
+        return <ReaderLink vacolsId={task.vacolsId}
+          analyticsSource={CATEGORIES.QUEUE_TABLE}
+          redirectUrl={window.location.pathname}
+          appeal={this.props.appeals[task.vacolsId]} />;
       }
     }];
 
@@ -105,31 +78,6 @@ class AttorneyTaskTable extends React.PureComponent {
     }
 
     return columns;
-  };
-
-  createLoadPromise = (task) => () => {
-    if (!_.isUndefined(this.getAppealForTask(task, 'docCount'))) {
-      return Promise.resolve();
-    }
-
-    const url = this.getAppealForTask(task, 'number_of_documents_url');
-    const vbmsId = this.getAppealForTask(task, 'vbms_id');
-    const requestOptions = {
-      withCredentials: true,
-      timeout: true,
-      headers: { 'FILE-NUMBER': vbmsId }
-    };
-
-    return ApiUtil.get(url, requestOptions).
-      then((response) => {
-        const resp = JSON.parse(response.text);
-        const docCount = resp.data.attributes.documents.length;
-
-        this.props.setAppealDocCount(
-          task.vacolsId,
-          docCount
-        );
-      }, () => this.props.loadAppealDocCountFail(task.vacolsId));
   };
 
   render = () => <Table
@@ -149,9 +97,4 @@ AttorneyTaskTable.propTypes = {
 
 const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount,
-  loadAppealDocCountFail
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskTable);
+export default connect(mapStateToProps)(AttorneyTaskTable);

@@ -21,7 +21,6 @@ import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
 import {
   onContentionsChange,
-  onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
@@ -85,7 +84,6 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
@@ -113,14 +111,6 @@ export class HearingWorksheet extends React.PureComponent {
     const secondWorksheetPage = <div className="cf-hearings-second-page">
 
       <form className="cf-hearings-worksheet-form">
-        <WorksheetFormEntry
-          name="Periods and circumstances of service"
-          value={worksheet.military_service}
-          onChange={this.onMilitaryServiceChange}
-          id="worksheet-military-service"
-          minRows={1}
-          print={this.props.print}
-        />
         <WorksheetFormEntry
           name="Contentions"
           value={worksheet.contentions}
@@ -216,7 +206,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
-  onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
