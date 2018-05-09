@@ -104,8 +104,7 @@ Rails.application.routes.draw do
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
 
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
+  root 'root#index'
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'

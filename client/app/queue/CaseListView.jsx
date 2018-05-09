@@ -1,11 +1,13 @@
 import { css } from 'glamor';
 import pluralize from 'pluralize';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
@@ -18,11 +20,23 @@ const backLinkStyling = css({
   marginTop: '-3rem'
 });
 
+const horizontalRuleStyling = css({
+  border: 0,
+  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+  marginTop: '5rem',
+  marginBottom: '5rem'
+});
+
 class CaseListView extends React.PureComponent {
   render() {
     const body = {
-      heading: null,
-      component: null
+      heading: 'Veteran Case Search',
+      component: <React.Fragment>
+        <p>Enter a 9-digit Veteran ID to search for all available cases for a Veteran</p>
+        <CaseListSearch elementId="searchBarEmptyList" />
+        <hr {...horizontalRuleStyling} />
+        <p><Link to="/help">Caseflow Help</Link></p>
+      </React.Fragment>
     };
 
     const appealsCount = this.props.caseList.receivedAppeals.length;
@@ -60,9 +74,11 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
-      </div>
+      { this.props.showBreadcrumbs &&
+        <div {...backLinkStyling}>
+          <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
+        </div>
+      }
       <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>{body.heading}</h1>
@@ -72,6 +88,14 @@ class CaseListView extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+CaseListView.propTypes = {
+  showBreadcrumbs: PropTypes.bool
+};
+
+CaseListView.defaultProps = {
+  showBreadcrumbs: true
+};
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,

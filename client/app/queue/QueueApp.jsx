@@ -17,6 +17,7 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
+import CaseListView from './CaseListView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -30,6 +31,10 @@ import { DECISION_TYPES } from './constants';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
+  routedSearchHome = () => <QueueLoadingScreen {...this.props}>
+    <CaseListView showBreadcrumbs={false} {...this.props} />
+  </QueueLoadingScreen>;
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
@@ -93,6 +98,11 @@ class QueueApp extends React.PureComponent {
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
+          <PageRoute
+            exact
+            path="/"
+            title="Caseflow"
+            render={this.routedSearchHome} />
           <PageRoute
             exact
             path="/queue"
