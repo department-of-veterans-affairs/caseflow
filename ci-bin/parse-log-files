@@ -6,9 +6,9 @@
 # For use with capture-log, hopefully located in same dir.
 # Usage: curl $circle_artifacts_endpoint | parse-log-files
 
-require 'json'
+require "json"
 
-json = ''
+json = ""
 
 ARGF.each_line do |e|
   json += e
@@ -17,11 +17,11 @@ end
 artifacts = JSON.parse(json)
 
 log_file_urls = artifacts.map do |artifact|
-  if artifact["path"].match(/home\/circleci\/logs\/\d/)
+  if artifact["path"] =~ /home\/circleci\/logs\/\d/
     artifact["url"]
   end
 end.compact
 
-log_file_urls.sort! { |a,b| a.split('/')[-1] <=> b.split('/')[-1] }
+log_file_urls.sort! { |a, b| a.split("/")[-1] <=> b.split("/")[-1] }
 
 puts log_file_urls
