@@ -76,7 +76,7 @@ describe RampElectionRollback do
     end
 
     it "reopens appeals and rolls back ramp election" do
-      expect(Appeal).to receive(:reopen).with(
+      expect(LegacyAppeal).to receive(:reopen).with(
         appeals: appeals_to_reopen,
         user: user,
         disposition: "RAMP Opt-in"

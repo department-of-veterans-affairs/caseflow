@@ -180,7 +180,7 @@ RSpec.feature "Queue" do
 
     context "when backend encounters an error" do
       before do
-        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/queue"
         fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"

@@ -37,7 +37,7 @@ describe WorkQueue do
 
       it "returns appeals" do
         expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(Appeal)
+        expect(subject[1][0].class).to eq(LegacyAppeal)
       end
     end
 
@@ -51,7 +51,7 @@ describe WorkQueue do
 
       it "returns appeals" do
         expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(Appeal)
+        expect(subject[1][0].class).to eq(LegacyAppeal)
       end
     end
   end

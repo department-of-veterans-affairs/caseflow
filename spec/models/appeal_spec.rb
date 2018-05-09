@@ -672,7 +672,7 @@ describe Appeal do
         end
 
         it "loads document content from the efolder service and sets fetched_at attributes" do
-          expect(Appeal).not_to receive(:vbms)
+          expect(LegacyAppeal).not_to receive(:vbms)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
 
@@ -716,7 +716,7 @@ describe Appeal do
         end
 
         it "loads document content from the efolder service" do
-          expect(Appeal).not_to receive(:vbms)
+          expect(LegacyAppeal).not_to receive(:vbms)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
         end
@@ -841,17 +841,17 @@ describe Appeal do
 
     context "sets the vacols_id" do
       before do
-        allow_any_instance_of(Appeal).to receive(:save) {}
+        allow_any_instance_of(LegacyAppeal).to receive(:save) {}
       end
 
       it do
-        is_expected.to be_an_instance_of(Appeal)
+        is_expected.to be_an_instance_of(LegacyAppeal)
         expect(subject.vacols_id).to eq("123C")
       end
     end
 
     it "persists in database" do
-      expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(Appeal)
+      expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppeal)
     end
   end
 

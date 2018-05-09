@@ -56,13 +56,13 @@ describe AppealRepository do
 
   context ".build_appeal" do
     before do
-      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+      allow_any_instance_of(LegacyAppeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     end
 
     subject { AppealRepository.build_appeal(case_record) }
 
     it "returns a new appeal" do
-      is_expected.to be_an_instance_of(Appeal)
+      is_expected.to be_an_instance_of(LegacyAppeal)
     end
   end
 
@@ -93,7 +93,7 @@ describe AppealRepository do
   context ".set_vacols_values" do
     before do
       Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+      allow_any_instance_of(LegacyAppeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     end
 
     subject do

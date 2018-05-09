@@ -181,7 +181,7 @@ RSpec.feature "RAMP Election Intake" do
       click_label "confirm-finish"
 
       ## Validate error message when complete intake fails
-      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
       safe_click "button#button-submit-review"
       expect(page).to have_content("Something went wrong")
 
