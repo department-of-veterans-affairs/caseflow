@@ -45,7 +45,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
-    path: `/queue/tasks/${this.props.vacolsId}/dispositions`
+    path: `/queue/appeals/${this.props.vacolsId}/dispositions`
   });
 
   getNextStepUrl = () => {
@@ -57,8 +57,8 @@ class SelectDispositionsView extends React.PureComponent {
       }
     } = this.props;
 
-    return _.map(issues, 'disposition').includes('Remanded') ?
-      `/queue/tasks/${vacolsId}/remands` : nextStep;
+    return _.map(issues, 'disposition').includes('remanded') ?
+      `/queue/appeals/${vacolsId}/remands` : nextStep;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -78,28 +78,6 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => {
-    const {
-      appeal: {
-        attributes: {
-          veteran_full_name: vetName,
-          vbms_id: vbmsId,
-          issues
-        }
-      }
-    } = this.props;
-
-    const nextStepText = _.map(issues, 'disposition').includes('Remanded') ?
-      'Select remand reasons' : 'Finish dispositions';
-
-    return [{
-      displayText: `Go back to ${vetName} (${vbmsId})`
-    }, {
-      displayText: nextStepText,
-      id: 'finish-dispositions'
-    }];
-  };
-
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
@@ -111,8 +89,9 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link
-      to={`/queue/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
-        Edit Issue
+      to={`/queue/appeals/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}
+    >
+      Edit Issue
     </Link>
   }, {
     header: 'Dispositions',
@@ -146,7 +125,7 @@ class SelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       <div {...marginLeft(1.5)}>
-        <Link to={`/queue/tasks/${vacolsId}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${vacolsId}/dispositions/add`}>Add Issue</Link>
       </div>
     </React.Fragment>;
   };

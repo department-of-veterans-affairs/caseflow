@@ -4,11 +4,8 @@
 @import 'uswds/all';
 @import 'uswds_rails_overrides/all';
 @import 'global/fonts';
+@import 'variables';
 
-$cf-background: #f9f9f9;
-$cf-link: #0872b9;
-$cf-drop-shadow-color: rgba(91, 97, 107, 0.5);
-$cf-drop-shadow: 1px 1px 5px 0 $cf-drop-shadow-color;
 
 html,
 body {
@@ -803,7 +800,6 @@ form {
 
   &:hover,
   &.button-hover {
-    background-color: $color-white;
     color: $color-primary-darker;
     text-decoration: underline;
   }

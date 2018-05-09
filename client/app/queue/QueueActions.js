@@ -19,19 +19,11 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (vacolsId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
+    vacolsId,
     docCount
-  }
-});
-
-export const loadAppealDocCountFail = (appealId) => ({
-  type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
-  payload: {
-    appealId,
-    docCount: null
   }
 });
 
@@ -79,18 +71,12 @@ export const editStagedAppeal = (appealId, attributes) => ({
   }
 });
 
-export const stageAppeal = (appealId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.STAGE_APPEAL,
-    payload: {
-      appealId
-    }
-  });
-
-  if (attributes) {
-    dispatch(editStagedAppeal(appealId, attributes));
+export const stageAppeal = (appealId) => ({
+  type: ACTIONS.STAGE_APPEAL,
+  payload: {
+    appealId
   }
-};
+});
 
 export const checkoutStagedAppeal = (appealId) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,

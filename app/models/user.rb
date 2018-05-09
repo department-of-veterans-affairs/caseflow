@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_many :tasks
+  has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
   has_many :appeal_views
   has_many :hearing_views
@@ -128,7 +128,7 @@ class User < ApplicationRecord
   end
 
   def current_task(task_type)
-    tasks.to_complete.find_by(type: task_type.to_s)
+    dispatch_tasks.to_complete.find_by(type: task_type.to_s)
   end
 
   def to_hash
@@ -179,11 +179,7 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    # return only the hearings viewed by the judge assigned to the hearings.
-    Hearing.includes(:hearing_views).where(appeal_id: appeal_ids).select do |hearing|
-      hearing_viewed_by_judge = hearing.hearing_views.any? { |hearing_view| hearing_view.user_id == hearing.user.id }
-      hearing_viewed_by_judge ? hearing : nil
-    end
+    Hearing.where(appeal_id: appeal_ids)
   end
 
   class << self

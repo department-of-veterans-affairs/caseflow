@@ -54,12 +54,6 @@ class AddEditIssueView extends React.Component {
     }
   };
 
-  getFooterButtons = () => [{
-    displayText: 'Go back to Select Dispositions'
-  }, {
-    displayText: 'Save'
-  }];
-
   updateIssue = (attributes) => {
     this.props.highlightInvalidFormItems(false);
     this.props.updateEditingAppealIssue(attributes);
@@ -111,7 +105,7 @@ class AddEditIssueView extends React.Component {
           level_1: _.get(issue.codes, 0, null),
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
-          ..._.omit(issue, 'type', 'codes')
+          ..._.pick(issue, 'note', 'program')
         }
       }
     };
@@ -128,10 +122,28 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) =>
-      this.props.saveEditedAppealIssue(this.props.vacolsId, JSON.parse(resp.text))
-    );
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
   };
+
+  updateIssuesFromServer = (response) => {
+    const { appeal: { attributes: appeal } } = this.props;
+    const serverIssues = response.issues;
+
+    const issues = _.map(serverIssues, (issue) => {
+      // preserve locally-updated dispositions
+      const disposition = _.get(
+        _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+        'disposition'
+      );
+
+      return {
+        ...issue,
+        disposition
+      };
+    });
+
+    this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
+  }
 
   deleteIssue = () => {
     const {
@@ -149,7 +161,7 @@ class AddEditIssueView extends React.Component {
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
     ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
-  }
+  };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
     label: getIssueDiagnosticCodeLabel(value),
@@ -180,7 +192,7 @@ class AddEditIssueView extends React.Component {
     }
 
     return false;
-  }
+  };
 
   render = () => {
     const {
@@ -232,6 +244,7 @@ class AddEditIssueView extends React.Component {
       <Button
         willNeverBeLoading
         linkStyling
+        disabled={!issue.vacols_sequence_id}
         styling={noLeftPadding}
         onClick={this.props.showModal}>
         Delete Issue

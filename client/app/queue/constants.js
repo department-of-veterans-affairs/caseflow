@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import StringUtil from '../util/StringUtil';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -17,7 +18,6 @@ export const ACTIONS = {
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
-  LOAD_APPEAL_DOC_COUNT_FAILURE: 'LOAD_APPEAL_DOC_COUNT_FAILURE',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
   SET_DECISION_OPTIONS: 'SET_DECISION_OPTIONS',
   RESET_DECISION_OPTIONS: 'RESET_DECISION_OPTIONS',
@@ -41,6 +41,7 @@ export const ACTIONS = {
 export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
+export const dropdownStyling = css({ minHeight: 0 });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
@@ -61,6 +62,14 @@ export const DECISION_TYPES = {
   DRAFT_DECISION: 'DraftDecision'
 };
 
+export const DRAFT_DECISION_OPTIONS = [{
+  label: 'Decision Ready for Review',
+  value: DECISION_TYPES.DRAFT_DECISION
+}, {
+  label: 'OMO Ready for Review',
+  value: DECISION_TYPES.OMO_REQUEST
+}];
+
 export const SEARCH_ERROR_FOR = {
   INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
   NO_APPEALS: 'NO_APPEALS',
@@ -69,7 +78,7 @@ export const SEARCH_ERROR_FOR = {
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
   ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [VACOLS_DISPOSITIONS_BY_ID[dispositionId].toLowerCase().replace(/ /g, '_')]: dispositionId
+    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
   }))
 );
 
@@ -81,3 +90,11 @@ export const REMAND_REASONS = Object.assign({},
     }))
   }))
 );
+
+const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
+  map((val) => StringUtil.parameterize(val));
+
+export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+  _.invokeMap(parameterizedDispositions, 'toUpperCase'),
+  parameterizedDispositions
+));

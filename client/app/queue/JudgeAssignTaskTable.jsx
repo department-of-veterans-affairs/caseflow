@@ -1,49 +1,19 @@
-import ApiUtil from '../util/ApiUtil';
 import CaseDetailsLink from './CaseDetailsLink';
-import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
-import SmallLoader from '../components/SmallLoader';
 import Table from '../components/Table';
 import _ from 'lodash';
 import moment from 'moment';
-import { LOGO_COLORS } from '../constants/AppConstants';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
-import { renderAppealType } from './utils';
+import { sortTasks, renderAppealType } from './utils';
+import AppealDocumentCount from './AppealDocumentCount';
 
 class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
 
   getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
-  createLoadPromise = ({ task, appeal }) => () => {
-    if (!_.isUndefined(_.get(appeal.attributes, 'docCount'))) {
-      return Promise.resolve();
-    }
-
-    const url = _.get(appeal.attributes, 'number_of_documents_url');
-    const vbmsId = _.get(appeal.attributes, 'vbms_id');
-    const requestOptions = {
-      withCredentials: true,
-      timeout: true,
-      headers: { 'FILE-NUMBER': vbmsId }
-    };
-
-    return ApiUtil.get(url, requestOptions).
-      then(
-        (response) => {
-          const resp = JSON.parse(response.text);
-          const docCount = resp.data.attributes.documents.length;
-
-          this.props.setAppealDocCount(
-            task.vacolsId,
-            docCount
-          );
-        },
-        () => this.props.loadAppealDocCountFail(task.vacolsId));
-  };
+  getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
   getQueueColumns = () => [
     {
@@ -65,20 +35,8 @@ class JudgeAssignTaskTable extends React.PureComponent {
     {
       header: 'Docs in Claims Folder',
       valueFunction: ({ task, appeal }) => {
-        return <LoadingDataDisplay
-          createLoadPromise={this.createLoadPromise({ task,
-            appeal })}
-          errorComponent="span"
-          failStatusMessageProps={{ title: 'Unknown failure' }}
-          failStatusMessageChildren={<span>?</span>}
-          loadingComponent={SmallLoader}
-          loadingComponentProps={{
-            message: 'Loading...',
-            spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-            component: 'span'
-          }}>
-          {_.get(appeal.attributes, 'docCount')}
-        </LoadingDataDisplay>;
+        console.log(appeal);
+        return <AppealDocumentCount appeal={appeal} />;
       }
     },
     {
@@ -105,9 +63,4 @@ JudgeAssignTaskTable.propTypes = {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount,
-  loadAppealDocCountFail
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeAssignTaskTable);
+export default connect(mapStateToProps)(JudgeAssignTaskTable);
