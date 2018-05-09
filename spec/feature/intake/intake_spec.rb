@@ -83,6 +83,12 @@ RSpec.feature "Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
+
+      # Test that search errors clear when re-starting intake
+      safe_click "#page-title"
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to_not have_content("Veteran ID not found")
     end
 
     scenario "Search for a veteran but search throws an unhandled exception" do

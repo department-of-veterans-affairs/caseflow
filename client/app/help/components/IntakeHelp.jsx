@@ -100,7 +100,7 @@ class IntakeHelp extends React.Component {
       </p>
 
       <h2 id="still-need-help">9. What if I still need help?</h2>
-      <p>If you require further assistance after reviewing the <a href="#faq">FAQs</a>, <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a>, please contact the Caseflow Product Support Team by phone(1-844-876-5548) or email <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+      <p>If you require further assistance after reviewing the <a href="#faq">FAQs</a>, <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a>, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>
 
     </div>;
