@@ -46,7 +46,7 @@ const AssignedCasesPage = connect(
   (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
   (props) => {
     const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
-    const attorneyId = match.params.attorneyId;
+    const { attorneyId } = match.params;
 
     if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
       return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
