@@ -42,9 +42,6 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   return tableContent;
 };
 
-const areAttorneyTasksLoaded = ({ attorneyId, tasksAndAppealsOfAttorney }) =>
-  attorneyId in tasksAndAppealsOfAttorney && tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED';
-
 const AssignedCasesPage = connect(
   (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
   (props) => {
@@ -146,8 +143,9 @@ class JudgeAssignTaskListView extends React.PureComponent {
               {attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name}{areAttorneyTasksLoaded({ attorneyId: attorney.id,
-                      tasksAndAppealsOfAttorney }) ?
+                    {attorney.full_name}{
+                      attorneyId in tasksAndAppealsOfAttorney &&
+                          tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED' ?
                       ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
                       ''}
                   </NavLink>
