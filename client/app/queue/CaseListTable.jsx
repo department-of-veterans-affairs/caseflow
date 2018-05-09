@@ -27,7 +27,7 @@ class CaseListTable extends React.PureComponent {
     this.props.setActiveAppeal(appeal);
     this.props.setBreadcrumbs({
       breadcrumb: `< Back to ${appeal.attributes.veteran_full_name}'s case list`,
-      path: '/queue'
+      path: window.location.pathname
     });
   }
 
