@@ -113,6 +113,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
         });
   }
 
+  caseCountOfAttorney = (attorneyId) => {
+    const { tasksAndAppealsOfAttorney } = this.props;
+
+    return attorneyId in tasksAndAppealsOfAttorney &&
+        tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED' ?
+      Object.keys(tasksAndAppealsOfAttorney[attorneyId].data.tasks).length.toString() :
+      '?';
+  }
+
   render = () => {
     const { userId, attorneysOfJudge, tasksAndAppealsOfAttorney, match } = this.props;
 
@@ -143,11 +152,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
               {attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name}{
-                      attorney.id in tasksAndAppealsOfAttorney &&
-                          tasksAndAppealsOfAttorney[attorney.id].state === 'LOADED' ?
-                        ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
-                        ''}
+                    {attorney.full_name} ({this.caseCountOfAttorney(attorney.id)})
                   </NavLink>
                 </li>)}
             </ul>
