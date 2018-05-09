@@ -7,6 +7,7 @@ import { getWorksheet } from '../actions/Dockets';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import { SERVER_ERROR_CODES } from '../constants/constants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
 import { getQueryParams } from '../../util/QueryParamsUtil';
@@ -56,7 +57,7 @@ export class HearingWorksheetContainer extends React.Component {
     /* handling 404 error messages */
     if (worksheetServerError.errors &&
         worksheetServerError.errors[0] &&
-        worksheetServerError.errors[0].code === 1001) {
+        worksheetServerError.errors[0].code === SERVER_ERROR_CODES.VACOLS_RECORD_DOES_NOT_EXIST) {
       return <StatusMessage
         title="No hearing held">
           The Veteran was scheduled for a hearing, however, their case was<br />
