@@ -23,11 +23,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :appeals, only: :index
+      resources :appeals, class_name: "LegacyAppeal", only: :index
       resources :jobs, only: :create
     end
     namespace :v2 do
-      resources :appeals, only: :index
+      resources :appeals, class_name: "LegacyAppeal", only: :index
     end
   end
 
@@ -75,20 +75,20 @@ Rails.application.routes.draw do
   namespace :reader do
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
       constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
-    resources :appeal, only: [:show, :index] do
+    resources :appeal, class_name: "LegacyAppeal", only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
     end
   end
 
-  resources :appeals, only: [:index, :show] do
+  resources :appeals, class_name: "LegacyAppeal", only: [:index, :show] do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
-    resources :appeals, only: [:update], param: :appeal_id
+    resources :appeals, class_name: "LegacyAppeal", only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
