@@ -49,6 +49,10 @@ class Hearing < ApplicationRecord
     hold_open && hold_open > 0
   end
 
+  def disposition 
+    (disposition == :no_show) ? 'No show' : ''
+  end
+
   def hold_release_date
     return unless held_open?
     date.to_date + hold_open.days

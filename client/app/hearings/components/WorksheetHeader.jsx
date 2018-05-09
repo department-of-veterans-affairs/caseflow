@@ -85,6 +85,7 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
+
     return <div>
       <div className="cf-hearings-worksheet-data">
         <div className="title">
@@ -105,6 +106,10 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell">
           <h5>DATE</h5>
           <div>{moment(worksheet.date).format('ddd l')}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>HEARING DISPOSTION</h5>
+          <div>{worksheet.dispostion}</div>
         </div>
       </div>
 
