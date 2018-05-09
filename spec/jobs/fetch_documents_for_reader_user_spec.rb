@@ -36,14 +36,14 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     let!(:appeal_with_doc1) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: expected_doc1.vbms_document_id,
         vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
     end
 
     let!(:appeal_with_doc2) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: expected_doc2.vbms_document_id,
         vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
@@ -54,7 +54,7 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     let!(:appeal_with_doc_for_non_reader) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: unexpected_document.vbms_document_id,
         vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
@@ -185,7 +185,7 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when efolder returns 403 response for one of many appeals" do
-      let(:appeals) { [Generators::Appeal.create, Generators::Appeal.create, Generators::Appeal.create] }
+      let(:appeals) { [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create] }
       let(:expected_log_msg) do
         "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
           "Retrieved #{appeal_cnt_successful} / #{appeal_cnt_total} appeals"
@@ -207,7 +207,7 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when efolder returns 400 response for one of many appeals" do
-      let(:appeals) { [Generators::Appeal.create, Generators::Appeal.create, Generators::Appeal.create] }
+      let(:appeals) { [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create] }
       let(:expected_log_msg) do
         "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
           "Retrieved #{appeal_cnt_successful} / #{appeal_cnt_total} appeals"

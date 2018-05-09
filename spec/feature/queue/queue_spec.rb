@@ -45,8 +45,8 @@ RSpec.feature "Queue" do
   let(:vacols_record) { :remand_decided }
   let(:appeals) do
     [
-      Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents),
-      Generators::Appeal.build(vbms_id: "115555555S", vacols_record: vacols_record, documents: documents, issues: [])
+      Generators::LegacyAppeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents),
+      Generators::LegacyAppeal.build(vbms_id: "115555555S", vacols_record: vacols_record, documents: documents, issues: [])
     ]
   end
   let!(:issues) { [Generators::Issue.build] }

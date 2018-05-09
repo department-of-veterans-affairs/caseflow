@@ -71,7 +71,7 @@ describe RampElectionRollback do
     let!(:appeals_to_reopen) do
       %w[12345 23456].map do |vacols_id|
         ramp_election.ramp_closed_appeals.create!(vacols_id: vacols_id)
-        Generators::Appeal.create(vacols_record: :ramp_closed, vacols_id: vacols_id)
+        Generators::LegacyAppeal.create(vacols_record: :ramp_closed, vacols_id: vacols_id)
       end
     end
 
