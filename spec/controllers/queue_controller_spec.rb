@@ -31,7 +31,7 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
-  describe "POST queue/tasks" do
+  describe "POST queue/appeals" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
     let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
@@ -116,7 +116,7 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
-  describe "PATCH queue/tasks" do
+  describe "PATCH queue/appeals" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
     let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
@@ -183,7 +183,7 @@ RSpec.describe QueueController, type: :controller do
     end
   end
 
-  describe "POST queue/tasks/:task_id/complete" do
+  describe "POST queue/appeals/:task_id/complete" do
     let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
 
     before do
