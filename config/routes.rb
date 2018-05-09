@@ -135,8 +135,7 @@ Rails.application.routes.draw do
     get '/tasks/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
 
     post '/tasks/:task_id/complete', to: 'tasks#complete'
-    post '/tasks', to: 'tasks#create'
-    patch '/tasks/:task_id', to: 'tasks#update'
+    resources :tasks, only: [:create, :update]
   end
 
   get "health-check", to: "health_checks#show"
