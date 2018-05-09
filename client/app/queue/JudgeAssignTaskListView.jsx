@@ -43,15 +43,22 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
 }
 
 const areAttorneyTasksLoaded = ({attorneyId, tasksAndAppealsOfAttorney}) =>
-  attorneyId in tasksAndAppealsOfAttorney && tasksAndAppealsOfAttorney[attorneyId].state !== 'LOADING';
+  attorneyId in tasksAndAppealsOfAttorney && tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED';
 
 const AssignedCasesPage = connect(
   (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
   (props) => {
     const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
     const attorneyId = match.params.attorneyId;
-    if (!areAttorneyTasksLoaded({attorneyId, tasksAndAppealsOfAttorney})) {
+    if (tasksAndAppealsOfAttorney[attorneyId])
+
+    if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
       return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+    }
+
+    if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
+      const { error } = tasksAndAppealsOfAttorney[attorneyId];
+      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
@@ -96,15 +103,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
       then(
         (response) => {
-          try {
           const resp = JSON.parse(response.text);
 
           this.props.setAttorneysOfJudge(resp.attorneys);
           for (const attorney of resp.attorneys) {
             this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
-          }
-          } catch (e) {
-            console.log(e);
           }
         });
   }

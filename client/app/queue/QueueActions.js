@@ -172,15 +172,25 @@ const requestTasksAndAppealsOfAttorney = (attorneyId) => ({
   }
 });
 
+const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
+  type: ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    error
+  }
+});
+
 export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   const requestOptions = {
     timeout: true
   };
+
   dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
 
   return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
     (resp) => dispatch(
       receiveTasksAndAppealsOfAttorney(
-        {attorneyId, ...associateTasksWithAppeals(JSON.parse(resp.text))}))
+        {attorneyId, ...associateTasksWithAppeals(JSON.parse(resp.text))})),
+    (error) => dispatch(errorTasksAndAppealsOfAttorney({attorneyId, error}))
   );
 }

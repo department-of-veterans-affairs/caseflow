@@ -256,6 +256,17 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'FAILED',
+            error: action.payload.error
+          }
+        }
+      }
+    });
   default:
     return state;
   }
