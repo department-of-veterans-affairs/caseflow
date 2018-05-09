@@ -63,6 +63,13 @@ class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
+  getDisposition = () => {
+    const { worksheet } = this.props;
+
+    debugger;
+    return worksheet.disposition;
+  }
+
   render() {
     const {
       appellant,
@@ -84,7 +91,6 @@ class WorksheetHeader extends React.PureComponent {
 
       return gender;
     };
-
 
     return <div>
       <div className="cf-hearings-worksheet-data">
@@ -109,7 +115,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>HEARING DISPOSTION</h5>
-          <div>{worksheet.dispostion}</div>
+          <div>{this.getDisposition()}</div>
         </div>
       </div>
 
