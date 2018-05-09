@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { sortTasks, renderAppealType } from './utils';
+import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
 
 class JudgeAssignTaskTable extends React.PureComponent {
@@ -34,10 +34,7 @@ class JudgeAssignTaskTable extends React.PureComponent {
     },
     {
       header: 'Docs in Claims Folder',
-      valueFunction: ({ task, appeal }) => {
-        console.log(appeal);
-        return <AppealDocumentCount appeal={appeal} />;
-      }
+      valueFunction: ({ appeal }) => <AppealDocumentCount appeal={appeal} />
     },
     {
       header: 'Days Waiting',

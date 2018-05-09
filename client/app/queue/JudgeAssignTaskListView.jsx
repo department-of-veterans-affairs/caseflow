@@ -64,8 +64,10 @@ const AssignedCasesPage = connect(
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
       <JudgeAssignTaskTable tasksAndAppeals={
-        sortTasks({ tasks,
-          appeals }).
+        sortTasks({
+          tasks,
+          appeals
+        }).
           map((task) => ({ task,
             appeal: appeals[task.vacolsId] }))
       } />
@@ -142,10 +144,10 @@ class JudgeAssignTaskListView extends React.PureComponent {
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
                     {attorney.full_name}{
-                      attorneyId in tasksAndAppealsOfAttorney &&
-                          tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED' ?
-                      ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
-                      ''}
+                      attorney.id in tasksAndAppealsOfAttorney &&
+                          tasksAndAppealsOfAttorney[attorney.id].state === 'LOADED' ?
+                        ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
+                        ''}
                   </NavLink>
                 </li>)}
             </ul>
