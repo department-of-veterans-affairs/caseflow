@@ -12,7 +12,7 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
-  belongs_to :appeal
+  belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views
   has_many :appeal_stream_snapshots
