@@ -237,7 +237,7 @@ class Hearing < ApplicationRecord
         # who it's assigned to in the db.
         if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
           hearing.update(
-            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
             user: User.find_by(css_id: vacols_record.css_id)
           )
         end

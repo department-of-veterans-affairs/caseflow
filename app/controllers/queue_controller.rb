@@ -11,11 +11,11 @@ class QueueController < ApplicationController
   end
 
   def dev_document_count
-    # only used for local dev. see Appeal.number_of_documents_url
+    # only used for local dev. see LegacyAppeal.number_of_documents_url
     appeal =
-      Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"] + "S") ||
-      Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"] + "C") ||
-      Appeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"])
+      LegacyAppeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"] + "S") ||
+      LegacyAppeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"] + "C") ||
+      LegacyAppeal.find_by(vbms_id: request.headers["HTTP_FILE_NUMBER"])
     render json: {
       data: {
         attributes: {
