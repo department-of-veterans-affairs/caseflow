@@ -293,6 +293,11 @@ dd {
       fill: $color-white;
     }
   }
+
+  svg {
+    margin-left: .25rem;
+    vertical-align: -1px;
+  }
 }
 
 .cf-icon-appeal-id {
