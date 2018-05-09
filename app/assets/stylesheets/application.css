@@ -21,7 +21,6 @@
  *= require react/_react_styles_root.scss
  *= require reader/_reviewer.scss
  *= require dispatch/_dispatch.scss
- *= require _certification_v2.scss
  *= require _hearings.scss
  *= require _intake.scss
  */

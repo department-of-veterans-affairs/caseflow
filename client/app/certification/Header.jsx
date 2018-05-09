@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ClipboardIcon } from '../components/RenderFunctions';
+import { css } from 'glamor';
 
 export class Header extends React.Component {
   render() {
@@ -9,6 +10,11 @@ export class Header extends React.Component {
       vbmsId,
       serverError
     } = this.props;
+
+    const copyIcon = css({ display: 'inline-block',
+      marginLeft: '.25rem',
+      verticalAlign: '-1px'
+    });
 
     return <div>
       { !serverError && <div id="certifications-header" className="cf-app-segment">
@@ -24,7 +30,7 @@ export class Header extends React.Component {
             className="cf-apppeal-id"
             data-clipboard-text={vbmsId}>
             {vbmsId}
-            <ClipboardIcon className="cf-icon-appeal-id" />
+            <ClipboardIcon className="cf-icon-appeal-id" {...copyIcon} />
           </button>
         </div>
       </div>}
@@ -42,3 +48,4 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps
 )(Header);
+
