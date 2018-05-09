@@ -62,7 +62,6 @@ class TasksController < ApplicationController
   end
   helper_method :user
 
-
   def invalid_role_error
     render json: {
       "errors": [
