@@ -153,8 +153,8 @@ jobs:
       - deploy:
           name: Concatenate all logs
           command: |
-            ~/project/ci-bin/capture-log --concatenate
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
 
       - store_artifacts:
           name: Store concatenated logs
-          path: ~/concatenated_log
+          path: ~/all_logs.log

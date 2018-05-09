@@ -2,20 +2,9 @@
 # capture-log
 # Usage: capture-log "cmd"
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 log_location="${HOME}/logs/"
+mkdir -p "${log_location}"
 
-if [[ $1 == "--concatenate" ]]; then
-  concatenated_log=~/concatenated_log
-  artifacts_url="https://circleci.com/api/v1.1/project/github/department-of-veterans-affairs/caseflow/$CIRCLE_BUILD_NUM/artifacts"
-  log_files=$(curl $artifacts_url | $DIR/parse-log-files)
-  for log_file in $log_files; do
-    curl $log_file >> $concatenated_log
-  done
-else
-  run_cmd="$@"
-  logfile="${log_location}$(date +%s%N)"
-  mkdir -p "${log_location}"
-  set -o pipefail && eval ${run_cmd} 2>&1 | tee ${logfile}
-fi
+run_cmd="$@"
+logfile="${log_location}$(date +%s%N).log"
+set -o pipefail && eval ${run_cmd} 2>&1 | tee ${logfile}
