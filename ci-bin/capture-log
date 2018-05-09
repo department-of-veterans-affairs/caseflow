@@ -2,18 +2,14 @@
 # capture-log
 # Usage: capture-log "cmd"
 
-set -x
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 log_location="${HOME}/logs/"
 
 if [[ $1 == "--concatenate" ]]; then
   concatenated_log=~/concatenated_log
   artifacts_url="https://circleci.com/api/v1.1/project/github/department-of-veterans-affairs/caseflow/$CIRCLE_BUILD_NUM/artifacts"
-  log_files=$(curl $artifacts_url \
-    | grep -E "url\".*home/circleci/logs/" \
-    | awk '{print $3}' \
-    | tr -d "\"" \
-    | sort -t/ -k7)
+  log_files=$(curl $artifacts_url | $DIR/parse-log-files)
   for log_file in $log_files; do
     curl $log_file >> $concatenated_log
   done

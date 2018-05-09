@@ -1,0 +1,24 @@
+#! /usr/bin/env ruby
+# parse-log-files
+# reads some JSON on STDIN and parses log files out of it
+# for use with capture-log, hopefully located in same dir
+
+require 'json'
+
+json = ''
+
+ARGF.each_line do |e|
+  json += e
+end
+
+artifacts = JSON.parse(json)
+
+log_file_urls = artifacts.map do |artifact|
+  if artifact["path"].match(/home\/circleci\/logs\/\d/)
+    artifact["url"]
+  end
+end.compact
+
+log_file_urls.sort! { |a,b| a.split('/')[-1] <=> b.split('/')[-1] }
+
+puts log_file_urls
