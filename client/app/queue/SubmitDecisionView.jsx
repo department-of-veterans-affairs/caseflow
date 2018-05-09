@@ -66,7 +66,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/tasks/${this.props.vacolsId}/submit`
+    path: `/queue/appeals/${this.props.vacolsId}/submit`
   });
 
   validateForm = () => {
@@ -118,7 +118,7 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/queue/appeals/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
