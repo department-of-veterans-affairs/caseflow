@@ -771,7 +771,7 @@ describe Appeal do
       let(:location) { :never_never_land }
 
       it "raises error" do
-        expect { subject }.to raise_error(Appeal::UnknownLocationError)
+        expect { subject }.to raise_error(LegacyAppeal::UnknownLocationError)
       end
     end
 

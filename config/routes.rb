@@ -23,11 +23,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :appeals only: :index
+      resources :appeals, only: :index
       resources :jobs, only: :create
     end
     namespace :v2 do
-      resources :appeals only: :index
+      resources :appeals, only: :index
     end
   end
 
@@ -81,14 +81,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals only: [:index, :show] do
+  resources :appeals, only: [:index, :show] do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
-    resources :appeals only: [:update], param: :appeal_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
