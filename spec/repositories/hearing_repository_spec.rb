@@ -35,7 +35,7 @@ describe HearingRepository do
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil
       expect(subject.hold_open).to eq 90
-      expect(subject.comments).to eq "test notes"
+      expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
       expect(subject.representative).to eq "Jewish War Veterans"
       expect(subject.regional_office_key).to eq "SO62"

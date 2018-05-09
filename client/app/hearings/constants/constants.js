@@ -9,7 +9,7 @@ export const POPULATE_DAILY_DOCKET = 'POPULATE_DAILY_DOCKET';
 export const SET_REPNAME = 'SET_REPNAME';
 export const SET_WITNESS = 'SET_WITNESS';
 
-export const SET_COMMENTS = 'SET_COMMENTS';
+export const SET_NOTES = 'SET_NOTES';
 export const SET_DISPOSITION = 'SET_DISPOSITION';
 export const SET_HOLD_OPEN = 'SET_HOLD_OPEN';
 export const SET_AOD = 'SET_AOD';

@@ -7,7 +7,7 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
-  vacols_attr_accessor :aod, :hold_open, :transcript_requested, :comments, :add_on
+  vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
@@ -86,7 +86,7 @@ class Hearing < ApplicationRecord
       hold_open: hold_open,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
-      comments: comments,
+      notes: notes,
       add_on: add_on,
       representative: representative,
       representative_name: representative_name,
@@ -131,7 +131,7 @@ class Hearing < ApplicationRecord
         :aod,
         :transcript_requested,
         :hold_open,
-        :comments,
+        :notes,
         :add_on,
         :master_record,
         :representative,
@@ -168,7 +168,6 @@ class Hearing < ApplicationRecord
                 :appellant_city,
                 :appellant_state,
                 :military_service,
-                :notes,
                 :appellant_mi_formatted,
                 :veteran_mi_formatted,
                 :veteran_fi_last_formatted,

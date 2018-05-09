@@ -165,8 +165,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       comments_for_attorney: { $set: action.payload.commentsForAttorney }
     });
 
-  case Constants.SET_COMMENTS:
-    return newHearingState(state, action, { comments: { $set: action.payload.comments } });
+  case Constants.SET_NOTES:
+    return newHearingState(state, action, { notes: { $set: action.payload.notes } });
 
   case Constants.SET_DISPOSITION:
     return newHearingState(state, action, { disposition: { $set: action.payload.disposition } });

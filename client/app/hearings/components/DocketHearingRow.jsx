@@ -7,7 +7,7 @@ import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  setComments, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
+  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
   setHearingPrepped
 } from '../actions/Dockets';
 import moment from 'moment';
@@ -73,7 +73,7 @@ export class DocketHearingRow extends React.PureComponent {
   setTranscriptRequested = (value) =>
     this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
-  setComments = (event) => this.props.setComments(this.props.index, event.target.value, this.props.hearingDate);
+  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
@@ -194,15 +194,15 @@ export class DocketHearingRow extends React.PureComponent {
         <td></td>
         <td></td>
         <td></td>
-        <td colSpan="2" className="cf-hearings-docket-comments">
+        <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
-            <label htmlFor={`${hearing.id}.comments`}>Comments</label>
+            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
             <div {...textareaStyling}>
               <Textarea
-                id={`${hearing.id}.comments`}
-                value={hearing.comments || ''}
-                name="Comments"
-                onChange={this.setComments}
+                id={`${hearing.id}.notes`}
+                value={hearing.notes || ''}
+                name="Notes"
+                onChange={this.setNotes}
                 maxLength="100"
               />
             </div>
@@ -214,7 +214,7 @@ export class DocketHearingRow extends React.PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setComments,
+  setNotes,
   setDisposition,
   setHoldOpen,
   setAod,

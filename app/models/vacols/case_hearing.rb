@@ -32,7 +32,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   }.freeze
 
   COLUMN_NAMES = {
-    comments: :notes1,
+    notes: :notes1,
     disposition: :hearing_disp,
     hold_open: :holddays,
     aod: :aod,

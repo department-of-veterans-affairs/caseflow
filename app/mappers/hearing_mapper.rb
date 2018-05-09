@@ -3,14 +3,14 @@ module HearingMapper
   class InvalidAodError < StandardError; end
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
-  class InvalidCommentsError < StandardError; end
+  class InvalidNotesError < StandardError; end
   class InvalidAddOnError < StandardError; end
   class InvalidRepresentativeNameError < StandardError; end
 
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
-        comments: comments_to_vacols_format(hearing_info[:comments]),
+        notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
         aod: aod_to_vacols_format(hearing_info[:aod]),
@@ -64,9 +64,9 @@ module HearingMapper
       value[0, 25]
     end
 
-    def comments_to_vacols_format(value)
+    def notes_to_vacols_format(value)
       return if value.nil?
-      fail(InvalidCommentsError) if !value.is_a?(String)
+      fail(InvalidNotesError) if !value.is_a?(String)
       value[0, 100]
     end
 

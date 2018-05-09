@@ -84,11 +84,11 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const setComments = (hearingIndex, comments, date) => ({
-  type: Constants.SET_COMMENTS,
+export const setNotes = (hearingIndex, notes, date) => ({
+  type: Constants.SET_NOTES,
   payload: {
     hearingIndex,
-    comments,
+    notes,
     date
   },
   meta: {

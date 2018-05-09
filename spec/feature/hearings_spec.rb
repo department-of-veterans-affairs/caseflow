@@ -141,7 +141,7 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2023-11-06"
 
-      fill_in "3.comments", with: "This is a comment about the hearing!"
+      fill_in "3.notes", with: "This is a note about the hearing!"
       find(".cf-hearings-prepped").find(".cf-form-checkbox").click
       find(".dropdown-3-disposition").click
       find("#react-select-2--option-1").click
@@ -151,7 +151,7 @@ RSpec.feature "Hearings" do
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
       visit "/hearings/dockets/2023-11-06"
-      expect(page).to have_content("This is a comment about the hearing!")
+      expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
       expect(page).to have_content("60 days")
       expect(page).to have_content("None")
@@ -188,7 +188,7 @@ RSpec.feature "Hearings" do
 
     scenario "Hearing worksheet page displays worksheet information" do
       visit "/hearings/1/worksheet"
-      expect(page).to have_content("Hearing Type: Video")
+      expect(page).to have_content("HEARING TYPE Video")
       expect(page).to have_content("Docket #4198")
       expect(page).to have_content("Form 9 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
@@ -229,14 +229,14 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
-      fill_in "Rep. Name:", with: "This is a rep name"
+      fill_in "appellant-vet-rep-name", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-contentions", with: "These are contentions"
       fill_in "worksheet-military-service", with: "This is military service"
       fill_in "worksheet-evidence", with: "This is evidence"
       fill_in "worksheet-comments-for-attorney", with: "These are comments"
       visit "/hearings/1/worksheet"
-      expect(find_field("Rep. Name:").value).to eq "This is a rep name"
+      expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are contentions")
       expect(page).to have_content("This is military service")

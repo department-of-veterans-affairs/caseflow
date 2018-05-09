@@ -209,7 +209,7 @@
       }
     }
 
-    .cf-hearings-docket-comments {
+    .cf-hearings-docket-notes {
       padding-top: 0;
 
       .cf-form-textarea {
@@ -233,7 +233,7 @@
         height: 4em;
         min-height: 4em;
         resize: vertical;
-        margin-left: 5em;
+        margin-left: 3em;
         width: 84%;
       }
     }
@@ -350,7 +350,6 @@
 
   h4 {
     font-weight: normal;
-    margin-top: 27px;
     font-size: 17px;
   }
 
@@ -375,26 +374,8 @@
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
-    margin-top: 1em;
     vertical-align: top;
     padding-left: .2em;
-
-    &.column-1 {
-      padding-left: 0;
-    }
-
-    &.column-2 {
-      width: 18%;
-    }
-
-    &.column-4 {
-      width: 21%;
-    }
-
-    &.column-5 {
-      width: 21%;
-    }
-
   }
 
   .cf-appeal-stream-label {
@@ -674,15 +655,6 @@
   .cf-tab-window-body-full-screen {
     margin-top: -35px;
  }
-
-  .cf-hearings-worksheet-data .cf-hearings-worksheet-data-first-cell {
-    margin-top: .2em;
-    height: 40px;
- }
-
-  .cf-hearings-worksheet-data .cf-hearings-worksheet-data-second-cell {
-    margin-top: 0;
-}
 
   .cf-title-meta-right {
     margin-bottom: 2px;

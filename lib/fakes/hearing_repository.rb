@@ -137,7 +137,7 @@ class Fakes::HearingRepository
       date: Time.now.in_time_zone("EST").beginning_of_day +
         ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][rand(0..5)].hours + 30.minutes,
       vacols_id: 950_330_575 + (i * 1465),
-      # notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
+      notes: Prime.prime?(i) ? "The veteran is running 2 hours late." : nil,
       regional_office_key: %w[RO11 RO10 RO42 RO43 RO28 RO44][i % 6]
     }
   end
