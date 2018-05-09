@@ -2033,7 +2033,7 @@ describe Appeal do
     end
     let(:appeal) do
       LegacyAppeal.find_or_initialize_by(vacols_id: saved_appeal.vacols_id,
-                                   signed_date: date)
+                                         signed_date: date)
     end
 
     it "creates an appeals object with attributes" do

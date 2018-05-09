@@ -185,7 +185,9 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when efolder returns 403 response for one of many appeals" do
-      let(:appeals) { [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create] }
+      let(:appeals) do
+        [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create]
+      end
       let(:expected_log_msg) do
         "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
           "Retrieved #{appeal_cnt_successful} / #{appeal_cnt_total} appeals"
@@ -207,7 +209,9 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when efolder returns 400 response for one of many appeals" do
-      let(:appeals) { [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create] }
+      let(:appeals) do
+        [Generators::LegacyAppeal.create, Generators::LegacyAppeal.create, Generators::LegacyAppeal.create]
+      end
       let(:expected_log_msg) do
         "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
           "Retrieved #{appeal_cnt_successful} / #{appeal_cnt_total} appeals"
