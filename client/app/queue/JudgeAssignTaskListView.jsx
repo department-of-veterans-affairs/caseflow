@@ -48,10 +48,8 @@ const AssignedCasesPage = connect(
     const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
     const attorneyId = match.params.attorneyId;
 
-    if (tasksAndAppealsOfAttorney[attorneyId]) {
-      if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
-        return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
-      }
+    if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
     }
 
     if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
