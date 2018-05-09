@@ -4,7 +4,6 @@ import React from 'react';
 import Table from '../components/Table';
 import _ from 'lodash';
 import moment from 'moment';
-import { connect } from 'react-redux';
 import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
 

@@ -123,7 +123,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, attorneysOfJudge, tasksAndAppealsOfAttorney, match } = this.props;
+    const { userId, attorneysOfJudge, match } = this.props;
 
     return <AppSegment filledBackground>
       <div>
