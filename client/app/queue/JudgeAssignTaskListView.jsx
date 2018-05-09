@@ -98,7 +98,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   createLoadPromise = () => {
     const requestOptions = {
-      withCredentials: true,
       timeout: true
     };
 
