@@ -5,12 +5,10 @@ import NotFoundIcon from '../../components/NotFoundIcon';
 import Table from '../../components/Table';
 import { css } from 'glamor';
 
-const form9Viewer = css({ height: '500px' });
-
 const errorStatus = css({
   color: '#e31c3d',
   fontWeight: '700'
-})
+});
 
 const found = <div><FoundIcon /><span>&emsp;Found in VBMS</span></div>;
 
