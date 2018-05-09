@@ -11,7 +11,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setAppealDocCount, loadAppealDocCountFail } from './QueueActions';
-import { sortTasks, renderAppealType } from './utils';
+import { renderAppealType } from './utils';
 
 class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
@@ -66,7 +66,8 @@ class JudgeAssignTaskTable extends React.PureComponent {
       header: 'Docs in Claims Folder',
       valueFunction: ({ task, appeal }) => {
         return <LoadingDataDisplay
-          createLoadPromise={this.createLoadPromise({task, appeal})}
+          createLoadPromise={this.createLoadPromise({ task,
+            appeal })}
           errorComponent="span"
           failStatusMessageProps={{ title: 'Unknown failure' }}
           failStatusMessageChildren={<span>?</span>}
@@ -102,7 +103,7 @@ JudgeAssignTaskTable.propTypes = {
   tasksAndAppeals: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealDocCount,

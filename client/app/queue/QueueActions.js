@@ -156,7 +156,7 @@ export const setAttorneysOfJudge = (attorneys) => ({
   }
 });
 
-const receiveTasksAndAppealsOfAttorney = ({attorneyId, tasks, appeals}) => ({
+const receiveTasksAndAppealsOfAttorney = ({ attorneyId, tasks, appeals }) => ({
   type: ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY,
   payload: {
     attorneyId,
@@ -190,7 +190,9 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
     (resp) => dispatch(
       receiveTasksAndAppealsOfAttorney(
-        {attorneyId, ...associateTasksWithAppeals(JSON.parse(resp.text))})),
-    (error) => dispatch(errorTasksAndAppealsOfAttorney({attorneyId, error}))
+        { attorneyId,
+          ...associateTasksWithAppeals(JSON.parse(resp.text)) })),
+    (error) => dispatch(errorTasksAndAppealsOfAttorney({ attorneyId,
+      error }))
   );
-}
+};

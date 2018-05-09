@@ -21,9 +21,8 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney } from './QueueActions';
-import { sortTasks, renderAppealType } from './utils';
+import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
-import { associateTasksWithAppeals } from './utils';
 
 const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   const reviewableCount = tasksWithAppeals.length;
@@ -39,10 +38,11 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
       <JudgeAssignTaskTable tasksAndAppeals={tasksWithAppeals} />
     </React.Fragment>;
   }
-  return tableContent;
-}
 
-const areAttorneyTasksLoaded = ({attorneyId, tasksAndAppealsOfAttorney}) =>
+  return tableContent;
+};
+
+const areAttorneyTasksLoaded = ({ attorneyId, tasksAndAppealsOfAttorney }) =>
   attorneyId in tasksAndAppealsOfAttorney && tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED';
 
 const AssignedCasesPage = connect(
@@ -50,15 +50,17 @@ const AssignedCasesPage = connect(
   (props) => {
     const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
     const attorneyId = match.params.attorneyId;
-    if (tasksAndAppealsOfAttorney[attorneyId])
 
-    if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
-      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+    if (tasksAndAppealsOfAttorney[attorneyId]) {
+      if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
+        return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
+      }
     }
 
     if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
       const { error } = tasksAndAppealsOfAttorney[attorneyId];
-      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>
+
+      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>;
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
@@ -67,11 +69,13 @@ const AssignedCasesPage = connect(
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
       <JudgeAssignTaskTable tasksAndAppeals={
-        sortTasks({ tasks, appeals }).
-          map((task) => ({ task, appeal: appeals[task.vacolsId] }))
+        sortTasks({ tasks,
+          appeals }).
+          map((task) => ({ task,
+            appeal: appeals[task.vacolsId] }))
       } />
-    </React.Fragment>
-  })
+    </React.Fragment>;
+  });
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -142,7 +146,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
               {attorneysOfJudge.
                 map((attorney) => <li key={attorney.id}>
                   <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name}{areAttorneyTasksLoaded({attorneyId: attorney.id, tasksAndAppealsOfAttorney}) ?
+                    {attorney.full_name}{areAttorneyTasksLoaded({ attorneyId: attorney.id,
+                      tasksAndAppealsOfAttorney }) ?
                       ` (${Object.keys(tasksAndAppealsOfAttorney[attorney.id].data.tasks).length})` :
                       ''}
                   </NavLink>
@@ -156,12 +161,12 @@ class JudgeAssignTaskListView extends React.PureComponent {
             path={match.url}
             title="Unassigned Cases | Caseflow"
             render={() => <UnassignedCasesPage tasksWithAppeals={this.unassignedTasksWithAppeals()} />}
-            />
+          />
           <PageRoute
-            path={match.url + '/:attorneyId'}
+            path={`${match.url}/:attorneyId`}
             title="Assigned Cases | Caseflow"
             component={AssignedCasesPage}
-            />
+          />
         </div>
       </div>
     </AppSegment>;
