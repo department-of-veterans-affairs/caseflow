@@ -74,9 +74,9 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      { this.props.showBreadcrumbs &&
+      { (this.props.errorType || appealsCount > 0) &&
         <div {...backLinkStyling}>
-          <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
+          <Link to={this.props.backLinkTarget} onClick={this.props.clearCaseListSearch}>{this.props.backLinkText}</Link>
         </div>
       }
       <AppSegment filledBackground>
@@ -90,11 +90,13 @@ class CaseListView extends React.PureComponent {
 }
 
 CaseListView.propTypes = {
-  showBreadcrumbs: PropTypes.bool
+  backLinkTarget: PropTypes.string,
+  backLinkText: PropTypes.string
 };
 
 CaseListView.defaultProps = {
-  showBreadcrumbs: true
+  backLinkTarget: '/queue',
+  backLinkText: '< Back to Your Queue'
 };
 
 const mapStateToProps = (state) => ({

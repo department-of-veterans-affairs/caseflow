@@ -32,7 +32,10 @@ const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
   routedSearchHome = () => <QueueLoadingScreen {...this.props}>
-    <CaseListView showBreadcrumbs={false} {...this.props} />
+    <CaseListView
+      backLinkTarget="/"
+      backLinkText="< Back to Case Search"
+      {...this.props} />
   </QueueLoadingScreen>;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
