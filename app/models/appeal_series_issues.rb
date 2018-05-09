@@ -3,7 +3,7 @@ class AppealSeriesIssues
 
   attr_accessor :appeal_series
 
-  delegate :appeals, to: :appeal_series
+  delegate :appeals, class_name: "LegacyAppeal", to: :appeal_series
 
   ELIGIBLE_TYPES = ["Original", "Post Remand", "Court Remand"].freeze
 
