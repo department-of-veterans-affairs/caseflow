@@ -118,7 +118,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
       worksheetServerError: {
-        errors: { $set: action.payload.err.response.body.errors },
+        // this else condition is needed for 500s
+        errors: { $set: action.payload.err.response.body ? action.payload.err.response.body.errors :
+          action.payload.err },
         status: { $set: action.payload.err.response.status }
       },
       fetchingWorksheet: { $set: false }
