@@ -1,7 +1,10 @@
 #! /usr/bin/env ruby
 # parse-log-files
-# reads some JSON on STDIN and parses log files out of it
-# for use with capture-log, hopefully located in same dir
+# Reads the JSON returned by the CircleCI artifacts
+# endpoint on STDIN, parses log files out of it, and prints
+# them to STDOUT.
+# For use with capture-log, hopefully located in same dir.
+# Usage: curl $circle_artifacts_endpoint | parse-log-files
 
 require 'json'
 
