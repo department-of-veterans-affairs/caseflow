@@ -20,7 +20,7 @@ class Hearing < ApplicationRecord
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
-  has_many :appeals, through: :appeal_stream_snapshots
+  has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
   def venue
     self.class.venues[venue_key]
