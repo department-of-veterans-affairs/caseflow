@@ -68,7 +68,8 @@ const AssignedCasesPage = connect(
           tasks,
           appeals
         }).
-          map((task) => ({ task,
+          map((task) => ({
+            task,
             appeal: appeals[task.vacolsId] }))
       } />
     </React.Fragment>;
