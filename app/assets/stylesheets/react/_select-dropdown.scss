@@ -10,6 +10,7 @@
 */
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
+@import 'variables';
 
 .Select {
   position: relative;
@@ -50,10 +51,10 @@
 }
 
 .Select-control {
-  background-color: #fff;
+  background-color: $color-white;
   color: $color-gray;
   border: 1px solid $color-gray;
-  color: #333;
+  color: $color-gray-dark;
   cursor: default;
   display: table;
   border-spacing: 0;
@@ -82,7 +83,7 @@
 .is-open > .Select-control {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  background: #fff;
+  background: $color-white;
   border-color: $color-gray-light $color-gray-lighter $color-gray-lighter;
 }
 
@@ -197,7 +198,7 @@
   box-sizing: border-box;
   border-radius: 50%;
   border: 2px solid $color-gray-lighter;
-  border-right-color: #333;
+  border-right-color: $color-gray-dark;
   display: inline-block;
   position: relative;
   vertical-align: middle;
@@ -217,7 +218,7 @@
 }
 
 .Select-clear-zone:hover {
-  color: #D0021B;
+  color: $color-secondary;
 }
 
 .Select-clear {
@@ -277,10 +278,10 @@
 }
 
 .Select-menu-outer {
-  background-color: white;
+  background-color: $color-white;
   border: 1px solid $color-gray-lighter;
-  border-top-color:  white;
-  border-bottom-color: #e6e6e6;
+  border-top-color:  $color-white;
+  border-bottom-color: $color-gray-lighter;
   box-sizing: border-box;
   max-height: 200px;
   min-height: 180px;
@@ -301,7 +302,7 @@
 
 .Select-option {
   box-sizing: border-box;
-  background-color: white;
+  background-color: $color-white;
   color: $color-gray;
   cursor: pointer;
   display: block;
@@ -315,10 +316,8 @@
 }
 
 .Select-option.is-focused {
-  background-color: #ebf5ff;
-  /* Fallback color for IE 8 */
   background-color: $color-gray;
-  color: white;
+  color: $color-white;
 }
 
 .Select-option.is-disabled {
@@ -373,7 +372,7 @@
 }
 
 .Select--multi a.Select-value-label {
-  color: #007eff;
+  color: $color-primary;
   cursor: pointer;
   text-decoration: none;
 }
@@ -394,15 +393,15 @@
 }
 
 .Select--multi .Select-value-icon:active {
-  background-color: #c2e0ff;
+  background-color: $color-primary-alt-lightest;
   /* Fallback color for IE 8 */
   background-color: rgba(0, 126, 255, 0.24);
 }
 
 .Select--multi.is-disabled .Select-value {
-  background-color: #fcfcfc;
+  background-color: $cf-background;
   border: 1px solid #e3e3e3;
-  color: #333;
+  color: $color-gray-dark;
 }
 
 .Select--multi.is-disabled .Select-value-icon {
@@ -413,7 +412,7 @@
 .Select--multi.is-disabled .Select-value-icon:hover,
 .Select--multi.is-disabled .Select-value-icon:focus,
 .Select--multi.is-disabled .Select-value-icon:active {
-  background-color: #fcfcfc;
+  background-color: $cf-background;
 }
 
 @keyframes Select-animation-spin {

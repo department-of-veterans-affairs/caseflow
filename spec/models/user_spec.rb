@@ -267,8 +267,8 @@ describe User do
   end
 
   context ".current_task" do
-    class FakeTask < Task; end
-    class AnotherFakeTask < Task; end
+    class FakeTask < Dispatch::Task; end
+    class AnotherFakeTask < Dispatch::Task; end
 
     subject { user.current_task(FakeTask) }
 

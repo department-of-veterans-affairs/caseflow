@@ -7,7 +7,7 @@ import { css } from 'glamor';
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
-import { fullWidth } from './constants';
+import { fullWidth, ISSUE_DISPOSITIONS } from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -23,7 +23,7 @@ class SelectRemandReasonsView extends React.Component {
 
   getBreadcrumb = () => ({
     breadcrumb: 'Select Remand Reasons',
-    path: `/queue/tasks/${this.props.appealId}/remands`
+    path: `/queue/appeals/${this.props.appealId}/remands`
   });
 
   goToNextStep = () => {
@@ -88,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === 'Remanded')
+    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED)
   };
 };
 

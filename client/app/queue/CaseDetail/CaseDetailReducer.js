@@ -2,21 +2,21 @@ import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
 export const initialState = {
-  activeCase: null,
-  documentCount: null
+  activeAppeal: null,
+  activeTask: null
 };
 
 export const caseDetailReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case Constants.CLEAR_ACTIVE_CASE:
+  case Constants.CLEAR_ACTIVE_APPEAL_AND_TASK:
     return initialState;
-  case Constants.SET_ACTIVE_CASE:
+  case Constants.SET_ACTIVE_APPEAL:
     return update(state, {
-      activeCase: { $set: action.payload.caseObj }
+      activeAppeal: { $set: action.payload.appeal }
     });
-  case Constants.SET_ACTIVE_CASE_DOCUMENT_COUNT:
+  case Constants.SET_ACTIVE_TASK:
     return update(state, {
-      documentCount: { $set: action.payload.docCount }
+      activeTask: { $set: action.payload.taskObj }
     });
   default:
     return state;
