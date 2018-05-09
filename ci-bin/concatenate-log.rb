@@ -4,7 +4,9 @@
 require "json"
 require "open-uri"
 
-artifacts_url = "https://circleci.com/api/v1.1/project/github/department-of-veterans-affairs/caseflow/#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
+artifacts_url = "https://circleci.com/api/v1.1/project"\
+                "/github/department-of-veterans-affairs"\
+                "/caseflow/#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
 artifacts = JSON.parse(open(artifacts_url).read)
 
 log_file_urls = artifacts.map do |artifact|
