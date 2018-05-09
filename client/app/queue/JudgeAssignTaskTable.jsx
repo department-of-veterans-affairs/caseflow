@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
 
-class JudgeAssignTaskTable extends React.PureComponent {
+export default class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
 
   getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
@@ -55,7 +55,3 @@ class JudgeAssignTaskTable extends React.PureComponent {
 JudgeAssignTaskTable.propTypes = {
   tasksAndAppeals: PropTypes.array.isRequired
 };
-
-const mapStateToProps = () => ({});
-
-export default connect(mapStateToProps)(JudgeAssignTaskTable);
