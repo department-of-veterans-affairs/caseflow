@@ -112,7 +112,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedJudgeQueueList('Review')} />
           <PageRoute
             path="/queue/:userId/assign"
-            title="Assign Cases | Caseflow"
+            title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
