@@ -1,4 +1,4 @@
-class EstablishClaimsController < TasksController
+class Dispatch::EstablishClaimsController < Dispatch::TasksController
   before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform, :update_appeal, :cancel]
@@ -77,7 +77,7 @@ class EstablishClaimsController < TasksController
   end
 
   def cancel
-    Task.transaction do
+    Dispatch::Task.transaction do
       task.appeal.update!(special_issues_params) if params[:special_issues]
       task.cancel!(cancel_feedback)
     end
@@ -136,7 +136,7 @@ class EstablishClaimsController < TasksController
   end
 
   def logo_path
-    establish_claims_path
+    dispatch_establish_claims_path
   end
 
   def set_application

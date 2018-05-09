@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import querystring from 'querystring';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
+import AppealDocumentCount from './AppealDocumentCount';
 
 export default class ReaderLink extends React.PureComponent {
 
@@ -15,7 +15,7 @@ export default class ReaderLink extends React.PureComponent {
 
   getLinkText = () => {
     const {
-      docCount,
+      appeal,
       longMessage,
       message
     } = this.props;
@@ -24,13 +24,9 @@ export default class ReaderLink extends React.PureComponent {
       return message;
     }
 
-    if (_.isNumber(docCount)) {
-      const cnt = docCount.toLocaleString();
-
-      return longMessage ? `Open ${cnt} documents in Caseflow Reader` : `View ${cnt} in Reader`;
-    }
-
-    return longMessage ? 'Open documents in Caseflow Reader' : 'View in Reader';
+    return longMessage ?
+      <React.Fragment>Open <AppealDocumentCount appeal={appeal} /> documents in Caseflow Reader</React.Fragment> :
+      <React.Fragment>View <AppealDocumentCount appeal={appeal} /> in Reader</React.Fragment>;
   };
 
   render = () => {
@@ -64,7 +60,7 @@ export default class ReaderLink extends React.PureComponent {
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
-  docCount: PropTypes.number,
+  appeal: PropTypes.object.isRequired,
   longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,

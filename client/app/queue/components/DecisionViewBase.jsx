@@ -72,7 +72,6 @@ export default function decisionViewBase(ComponentToWrap) {
         name: 'next-button',
         displayText: 'Continue',
         loadingText: 'Submitting...',
-        willNeverBeLoading: true,
         styling: css({ marginLeft: '1rem' })
       };
       const backButton = {
