@@ -13,8 +13,6 @@ class JudgeAssignTaskTable extends React.PureComponent {
 
   getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
-  getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
-
   getQueueColumns = () => [
     {
       header: 'Case Details',
