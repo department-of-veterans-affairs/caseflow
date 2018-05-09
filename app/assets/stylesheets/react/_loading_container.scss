@@ -23,8 +23,10 @@
   position: relative;
   z-index: 1;
 
-  .cf-doc-embed {
-    display: block;
+  iframe {
+    //display:block;
+    width: 100%;
+    height: 80vh;
   }
 }
 
