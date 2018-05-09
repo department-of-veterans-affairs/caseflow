@@ -53,6 +53,7 @@ export class HearingWorksheetContainer extends React.Component {
 
     const { worksheetServerError } = this.props;
 
+    /* handling 404 error messages */
     if (worksheetServerError.errors && worksheetServerError.errors[0].code === 1001) {
       return <StatusMessage
         title="No hearing held">
