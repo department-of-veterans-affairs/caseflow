@@ -88,6 +88,8 @@ class WorksheetHeader extends React.PureComponent {
     const getDisposition = (dispositionSymbol) => {
       let disposition = '';
 
+      // let dispositionRed = worksheet.disposition === 'no_show' || worksheet.disposition === 'postponed';
+
       if (dispositionSymbol === 'held') {
         disposition = 'Held';
       } else if ( dispositionSymbol === 'no_show') {
@@ -95,7 +97,7 @@ class WorksheetHeader extends React.PureComponent {
       }else if ( dispositionSymbol === 'postponed') {
         disposition = 'Postponed';
       }else if ( dispositionSymbol === 'cancelled') {
-        disposition = 'cancelled';
+        disposition = 'Cancelled';
       }
       return disposition;
     };
