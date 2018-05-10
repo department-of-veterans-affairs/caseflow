@@ -95,7 +95,8 @@ module Fakes::Data::AppealData
     "Correspondence",
     "VA 21-4142 Authorization to Disclose Information to VA",
     "VA 21-4138 Statement in Support of Claim",
-    "VA Memo"
+    "VA Memo",
+    "RAMP Opt-in Election"
   ].freeze
 
   def self.redacted_reader_documents

@@ -126,9 +126,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/docs_for_dev', to: 'queue#dev_document_count'
-    get '/:user_id', to: 'queue#tasks'
-    get '/:user_id/review', to: 'queue#tasks'
-    get '/:user_id/assign', to: 'queue#tasks'
+    get '/:user_id(*rest)', to: 'queue#tasks'
     post '/appeals/:task_id/complete', to: 'queue#complete'
     post '/appeals', to: 'queue#create'
     patch '/appeals/:task_id', to: 'queue#update'
