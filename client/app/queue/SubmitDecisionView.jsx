@@ -66,14 +66,8 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/tasks/${this.props.vacolsId}/submit`
+    path: `/queue/appeals/${this.props.vacolsId}/submit`
   });
-
-  goToPrevStep = () => {
-    this.props.resetDecisionOptions();
-
-    return true;
-  };
 
   validateForm = () => {
     const {
@@ -124,7 +118,7 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/queue/appeals/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
@@ -182,10 +176,10 @@ class SubmitDecisionView extends React.PureComponent {
 
   render = () => {
     const omoTypes = [{
-      displayText: 'VHA - OMO',
+      displayText: 'OMO - VHA',
       value: 'OMO - VHA'
     }, {
-      displayText: 'VHA - IME',
+      displayText: 'OMO - IME',
       value: 'OMO - IME'
     }];
     const {
@@ -240,7 +234,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.notes}
+        value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />
