@@ -82,6 +82,7 @@ Rails.application.routes.draw do
   end
 
   resources :appeals, only: [:index, :show] do
+    get :document_count
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
