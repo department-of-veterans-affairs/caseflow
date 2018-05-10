@@ -8,7 +8,7 @@ class WorksheetIssue < ApplicationRecord
 
   scope :issues_for_appeals, ->(appeal_ids) { where(appeal: appeal_ids) }
 
-  validates :legacy_appeal, :vacols_sequence_id, presence: true
+  validates :appeal, :vacols_sequence_id, presence: true
 
   class << self
     def create_from_issue(appeal, issue)

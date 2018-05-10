@@ -7,7 +7,7 @@ class LegacyAppeal < ApplicationRecord
   belongs_to :appeal_series
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :appeal_views
-  has_many :worksheet_issues
+  has_many :worksheet_issues, foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   after_save :save_to_appeals
