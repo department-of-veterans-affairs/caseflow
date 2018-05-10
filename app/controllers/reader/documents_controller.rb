@@ -68,8 +68,8 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = DocumentFetcherService.new(appeal: appeal, use_efolder: true).
-      find_or_create_documents!.map do |document|
+    @documents = DocumentFetcherService.new(appeal: appeal, use_efolder: true)
+      .find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags
