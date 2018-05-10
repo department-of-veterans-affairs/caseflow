@@ -9,7 +9,8 @@ import Table from '../components/Table';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 
-import { setActiveCase } from './CaseDetail/CaseDetailActions';
+import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
+import { setBreadcrumbs } from './uiReducer/uiActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -22,11 +23,22 @@ const labelForLocation = (locationCode) => {
 class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
+  setActiveAppealAndBreadcrumbs = (appeal) => {
+    this.props.setActiveAppeal(appeal);
+    this.props.setBreadcrumbs({
+      breadcrumb: `< Back to ${appeal.attributes.veteran_full_name}'s case list`,
+      path: '/queue'
+    });
+  }
+
   getColumns = () => [
     {
       header: 'Docket Number',
       valueFunction: (appeal) => <span>
-        <Link to={`/appeals/${appeal.attributes.vacols_id}`} onClick={() => this.props.setActiveCase(appeal)}>
+        <Link
+          to={`/queue/appeals/${appeal.attributes.vacols_id}`}
+          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)}
+        >
           {appeal.attributes.docket_number}
         </Link>
       </span>
@@ -68,7 +80,10 @@ CaseListTable.propTypes = {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ setActiveCase }, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setActiveAppeal,
+  setBreadcrumbs
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
 
