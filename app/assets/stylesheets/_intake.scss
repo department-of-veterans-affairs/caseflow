@@ -19,6 +19,12 @@
   grid-template-columns: auto auto;
 }
 
+.cf-selected-issues {
+  > span { font-weight: bold; }
+  display: block;
+  padding: 0.5em;
+}
+
 .cf-table-selections {
   border: 1px solid $color-gray-lighter;
   max-width: 500px;

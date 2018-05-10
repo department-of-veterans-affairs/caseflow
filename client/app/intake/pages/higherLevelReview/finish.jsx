@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Button from '../../../components/Button';
 import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
+import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
@@ -81,7 +82,7 @@ class FinishNextButton extends React.PureComponent {
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
     >
-      Establish claim
+      Establish EP
     </Button>;
 }
 
@@ -96,11 +97,18 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
+const RatedIssueCounterConnected = connect(
+  ({ higherLevelReview }) => ({
+    selectedRatingCount: higherLevelReview.selectedRatingCount
+  })
+)(RatedIssueCounter);
+
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
+      <RatedIssueCounterConnected />
     </div>
 }
 
