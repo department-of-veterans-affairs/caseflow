@@ -108,7 +108,8 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { attributes: { issues } }
     } = this.props;
 
-    // filter already-decided issues from attorney checkout flow
+    // filter already-decided issues from attorney checkout flow. undecided disposition
+    // ids are all numerical (1-9), decided ids are alphabetical (A-X)
     const filteredIssues = _.filter(issues, (issue) =>
       !issue.disposition || Number(DISPOSITION_ID_BY_PARAMETERIZED[issue.disposition])
     );
