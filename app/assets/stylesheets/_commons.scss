@@ -313,7 +313,17 @@ dd {
   position: relative;
 
   a {
-    color: inherit;
+    color: $color-gray-dark;
+
+    &:hover {
+      color: $color-gray-dark;
+    }
+  }
+
+  li {
+    a:hover {
+      color: $color-white;
+    }
   }
 }
 
@@ -322,9 +332,8 @@ dd {
   background-color: $color-white;
 
   &::after {
-    // CG: This image doesn't appear to exist in any repo (9/20/16)
     background: image-url('arrow-down.svg') 50% 100% no-repeat;
-    background-size: 100% 100%;
+    background-size: .75em;
     content: ' ';
     display: inline-block;
     height: 1rem;

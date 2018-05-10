@@ -57,24 +57,6 @@ body {
   color: $color-gray-dark !important;
 }
 
-.cf-dropdown {
-  a {
-    color: $color-gray-dark;
-
-    &:hover {
-      color: $color-gray-dark;
-    }
-  }
-
-  li {
-    a:hover {
-      color: $color-white;
-    }
-  }
-}
-
-
-
 .cf-content-inside {
   padding-bottom: 12.353em;
 
@@ -110,10 +92,6 @@ body {
     padding: $cf-30px 0;
     height: auto;
   }
-}
-
-.cf-dropdown-trigger::after {
-  background-size: .75em;
 }
 
 .cf-actions {
