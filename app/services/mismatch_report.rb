@@ -115,7 +115,7 @@ class MismatchReport < Report
     return "" if appeal.nod.matching?
 
     # Do we have a document on the NOD date marked as something else?
-    appeal.documents
+    appeal.document_fetcher_service.documents
       .map do |doc|
       doc.type if
         appeal.nod_date.to_date == doc.received_at.to_date &&
@@ -129,7 +129,7 @@ class MismatchReport < Report
     return "" if appeal.form9.matching?
 
     # Do we have a document on the Form 9 date marked as something else?
-    appeal.documents
+    appeal.document_fetcher_service.documents
       .map do |doc|
       doc.type if
         appeal.form9_date.to_date == doc.received_at.to_date &&

@@ -124,18 +124,13 @@ class Appeal < ApplicationRecord
     @ssoc_dates ||= []
   end
 
-  attr_writer :documents
-  def documents
-    @documents ||= document_fetcher_service.documents
-  end
-
   def document_fetcher_service
-    @document_fetcher_service ||= DocumentService.new(
-      self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
+    @document_fetcher_service ||= DocumentFetcherService.new(
+      appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
     )
   end
 
-  delegate :number_of_documents, to: :document_service
+  delegate :number_of_documents, to: :document_fetcher_service
 
   def number_of_documents_url
     if document_service == ExternalApi::EfolderService

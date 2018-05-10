@@ -48,13 +48,15 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
   def manifest_vva_fetched_at
-    appeal.document_fetcher_service.manifest_vva_fetched_at.strftime(fetched_at_format)
-      if appeal.document_fetcher_service.manifest_vva_fetched_at
+    if appeal.document_fetcher_service.manifest_vva_fetched_at
+      appeal.document_fetcher_service.manifest_vva_fetched_at.strftime(fetched_at_format)
+    end
   end
 
   def manifest_vbms_fetched_at
-    appeal.document_fetcher_service.manifest_vbms_fetched_at.strftime(fetched_at_format)
-      if appeal.document_fetcher_service.manifest_vbms_fetched_at
+    if appeal.document_fetcher_service.manifest_vbms_fetched_at
+      appeal.document_fetcher_service.manifest_vbms_fetched_at.strftime(fetched_at_format)
+    end
   end
 
   def documents
@@ -66,7 +68,8 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = DocumentService.new(appeal, use_efolder: true).find_or_create_documents!.map do |document|
+    @documents = DocumentFetcherService.new(appeal: appeal, use_efolder: true).
+      find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags
