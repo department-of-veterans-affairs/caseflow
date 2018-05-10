@@ -265,7 +265,9 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
       end
@@ -275,7 +277,9 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
+        # rubocop:enable Style/FormatStringToken
 
         expect(page).to have_content("Assigned to you on #{assigned_date}")
       end
@@ -335,7 +339,9 @@ RSpec.feature "Queue" do
         expect(page).to have_content("The veteran is the appellant.")
 
         expect(page).to have_content("She/Her")
+        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        # rubocop:enable Style/FormatStringToken
         expect(page).to have_content("The veteran is the appellant.")
       end
 
