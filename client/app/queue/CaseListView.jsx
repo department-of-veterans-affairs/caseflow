@@ -45,14 +45,14 @@ class CaseListView extends React.PureComponent {
 
       switch (this.props.errorType) {
       case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
-        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_INVALID_ID_HEADING ,this.props.queryResultingInError);
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_INVALID_ID_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.NO_APPEALS:
-        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING ,this.props.queryResultingInError);
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
       default:
-        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING ,this.props.queryResultingInError);
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, this.props.queryResultingInError);
         errorMessage = COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE;
       }
 
@@ -64,7 +64,7 @@ class CaseListView extends React.PureComponent {
 
     return <React.Fragment>
       <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
+        <Link to="/queue" onClick={this.props.clearCaseListSearch}>{COPY.BACK_TO_PERSONAL_QUEUE_LINK_LABEL}</Link>
       </div>
       <AppSegment filledBackground>
         <div>

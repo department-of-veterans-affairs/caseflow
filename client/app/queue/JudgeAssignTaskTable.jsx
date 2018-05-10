@@ -6,6 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
+import COPY from '../../../COPY.json';
 
 export default class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
@@ -14,27 +15,27 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
 
   getQueueColumns = () => [
     {
-      header: 'Case Details',
+      header: COPY.JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: this.getCaseDetailsLink
     },
     {
-      header: 'Type(s)',
+      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: ({ appeal }) => renderAppealType(appeal)
     },
     {
-      header: 'Docket Number',
+      header: COPY.JUDGE_QUEUE_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: ({ appeal }) => _.get(appeal.attributes, 'docket_number')
     },
     {
-      header: 'Issues',
+      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
       valueFunction: ({ appeal }) => _.get(appeal.attributes, 'issues.length')
     },
     {
-      header: 'Docs in Claims Folder',
+      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       valueFunction: ({ appeal }) => <AppealDocumentCount appeal={appeal} />
     },
     {
-      header: 'Days Waiting',
+      header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       valueFunction: ({ task }) => (
         moment().
           startOf('day').
