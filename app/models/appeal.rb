@@ -126,11 +126,15 @@ class Appeal < ApplicationRecord
 
   attr_writer :documents
   def documents
-    @documents ||= fetched_documents
+    @documents ||= document_service.documents
+  end
+
+  def document_service
+    @document_service ||= DocumentService.new(self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
   end
 
   def number_of_documents
-    documents.size
+    document_service.number_of_documents
   end
 
   def number_of_documents_url
@@ -558,30 +562,6 @@ class Appeal < ApplicationRecord
     documents.reject do |doc|
       excluding_ids.include?(doc.vbms_document_id) || doc.received_at.nil?
     end.sort_by(&:received_at)
-  end
-
-  def fetch_documents_from_service!
-    return if @fetched_documents
-
-    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
-
-    @fetched_documents = doc_struct[:documents]
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
-    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
-  end
-
-  def fetched_documents
-    fetch_documents_from_service!
-    @fetched_documents
-  end
-
-  def document_service
-    @document_service ||=
-      if %w[reader queue hearings].include?(RequestStore.store[:application])
-        EFolderService
-      else
-        VBMSService
-      end
   end
 
   # Used for serialization
