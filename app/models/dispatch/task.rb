@@ -1,6 +1,4 @@
 class Dispatch::Task < ApplicationRecord
-  self.table_name = "dispatch_tasks"
-
   include RetryHelper
   include AASM
 
