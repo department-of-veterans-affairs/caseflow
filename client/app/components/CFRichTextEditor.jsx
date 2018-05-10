@@ -55,7 +55,7 @@ export default class CFRichTextEditor extends React.PureComponent {
       required,
       toolbar
     } = this.props;
-    
+
     return <div>
       <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
         {label || name} {required && <span className="cf-required">Required</span>}

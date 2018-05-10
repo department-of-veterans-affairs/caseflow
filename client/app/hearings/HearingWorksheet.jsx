@@ -45,11 +45,11 @@ const toolbarOptions = {
   },
   list: {
     inDropdown: false,
-    options: ['unordered', 'ordered'],
+    options: ['unordered', 'ordered']
   },
   colorPicker: {
     options: ['Text'],
-    colors: ['rgb(0,0,0)', 'rgb(0,0,255)', 'rgb(255,0,0)'],
+    colors: ['rgb(0,0,0)', 'rgb(0,0,255)', 'rgb(255,0,0)']
   }
 };
 
@@ -81,7 +81,7 @@ class WorksheetFormEntry extends React.PureComponent {
         <React.Fragment>
           <label htmlFor={this.props.id}>{this.props.name}</label>
           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} />
-        </React.Fragment> : 
+        </React.Fragment> :
         <CFRichTextEditor {...textAreaProps} />}
     </div>;
   }
