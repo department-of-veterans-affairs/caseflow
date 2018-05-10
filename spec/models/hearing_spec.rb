@@ -42,8 +42,7 @@ describe Hearing do
   context "update_summary_field" do
     subject { hearing2 }
 
-    it 'updates summary field after contentions is updated' do
-
+    it "updates summary field after contentions is updated" do
       expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
       "CS denied in 3/68 DX of C-spine issue</p><p></p><p><strong>Evidence</strong></p>"\
       " <p></p><p></p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
@@ -54,8 +53,7 @@ describe Hearing do
       expect(subject.summary).to eq expected_string
     end
 
-    it 'updates summary field after evidence and comments updated' do
-
+    it "updates summary field after evidence and comments updated" do
       expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
       "</p><p></p><p><strong>Evidence</strong></p>"\
       " <p>evidence</p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
