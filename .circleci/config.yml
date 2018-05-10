@@ -154,6 +154,7 @@ jobs:
           name: Concatenate all logs
           command: |
             ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
 
       - store_artifacts:
           name: Store concatenated logs
