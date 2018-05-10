@@ -188,10 +188,11 @@ RSpec.feature "Hearings" do
 
     scenario "Hearing worksheet page displays worksheet information" do
       visit "/hearings/1/worksheet"
-      expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Docket Number: 4198")
-      expect(page).to have_content("Form 9: 12/21/2016")
+      expect(page).to have_content("HEARING TYPE Video")
+      expect(page).to have_content("Docket #4198")
+      expect(page).to have_content("Form 9 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      expect(page).to have_content("CC")
       expect(page.title).to eq "V. Veteran Last Name1's Hearing Worksheet"
     end
 
@@ -228,14 +229,14 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
-      fill_in "Rep. Name:", with: "This is a rep name"
+      fill_in "appellant-vet-rep-name", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-contentions", with: "These are contentions"
       fill_in "worksheet-military-service", with: "This is military service"
       fill_in "worksheet-evidence", with: "This is evidence"
       fill_in "worksheet-comments-for-attorney", with: "These are comments"
       visit "/hearings/1/worksheet"
-      expect(find_field("Rep. Name:").value).to eq "This is a rep name"
+      expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are contentions")
       expect(page).to have_content("This is military service")

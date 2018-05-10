@@ -8,6 +8,7 @@ describe IssueMapper do
       {
         program: "02",
         issue: "18",
+        level_1: "01",
         level_2: "03",
         level_3: nil,
         note: "another one",
@@ -24,6 +25,7 @@ describe IssueMapper do
         {
           issprog: "02",
           isscode: "18",
+          isslev1: "01",
           isslev2: "03",
           isslev3: nil,
           issdesc: "another one",
@@ -54,6 +56,7 @@ describe IssueMapper do
         {
           issprog: "02",
           isscode: "18",
+          isslev1: "01",
           isslev2: "03",
           isslev3: nil,
           issdesc: "another one",
@@ -92,6 +95,23 @@ describe IssueMapper do
         end
       end
 
+      context "when codes are not complete" do
+        let(:issue_attrs) do
+          {
+            note: "another one",
+            vacols_user_id: "TEST1",
+            program: "02",
+            issue: "01",
+            level_1: "03"
+          }
+        end
+
+        it "raises Caseflow::Error::IssueRepositoryError" do
+          expect(IssueRepository).to_not receive(:find_issue_reference)
+          expect { subject }.to raise_error(Caseflow::Error::IssueRepositoryError)
+        end
+      end
+
       context "when empty" do
         let(:action) { :update }
         let(:issue_attrs) { {} }
@@ -105,7 +125,7 @@ describe IssueMapper do
         context "when valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "Withdrawn",
+              disposition: "withdrawn",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }

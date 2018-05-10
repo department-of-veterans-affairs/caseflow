@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
-import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
+import { boldText, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import StringUtil from '../util/StringUtil';
@@ -55,7 +55,9 @@ export default class AppealDetail extends React.PureComponent {
       label: 'Hearing date',
       value: <React.Fragment>
         <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-        <Link target="_blank" href={`/hearings/${hearing.id}/worksheet`}>View Hearing Worksheet</Link>
+        <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print`}>
+          View Hearing Worksheet
+        </Link>
       </React.Fragment>
     }, {
       label: 'Judge at hearing',
@@ -93,8 +95,8 @@ export default class AppealDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
   };
 
-  componentDidMount() {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  componentDidMount = () => {
+    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.VIEW_APPEAL_INFO);
   }
 
   render = () => <div>
@@ -108,5 +110,6 @@ export default class AppealDetail extends React.PureComponent {
 }
 
 AppealDetail.propTypes = {
+  analyticsSource: PropTypes.string.isRequired,
   appeal: PropTypes.object.isRequired
 };

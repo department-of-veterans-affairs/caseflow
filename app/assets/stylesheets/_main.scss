@@ -1,6 +1,7 @@
 // Add scss includes explicitly here.
-@import 'caseflow_main';
-
+@import 'global/fonts';
+@import 'uswds_rails_overrides/core/defaults';
+@import 'uswds/all';
 // variables here should eventually find their way into commons
 @import 'variables';
 
@@ -53,15 +54,15 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
-  color: $color-gray-medium !important;
+  color: $color-gray-dark !important;
 }
 
 .cf-dropdown {
   a {
-    color: $color-gray-medium;
+    color: $color-gray-dark;
 
     &:hover {
-      color: $color-gray-medium;
+      color: $color-gray-dark;
     }
   }
 
@@ -113,12 +114,6 @@ body {
 
 .cf-dropdown-trigger::after {
   background-size: .75em;
-}
-
-.cf-dropdown-menu {
-  top: 3em;
-  width: auto;
-  min-width: 13em;
 }
 
 .cf-actions {
@@ -278,12 +273,6 @@ body {
 
 .cf-loading-button-symbol {
   display: inline-block;
-}
-
-//TODO(marian): add to style guide
-.cf-button-aligned-with-textfield {
-  padding-left: 10px;
-  padding-top: 2px;
 }
 
 .cf-button-associated-text {
@@ -473,6 +462,15 @@ select {
     margin-bottom: 1.5em;
   }
 
+  &.fixed {
+    position: fixed;
+    top: 0;
+    margin-top: 0;
+    z-index: 999;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
   &.no-title {
     background-position: 1rem 1.5rem;
 
@@ -598,36 +596,6 @@ select {
 
 .vbms-id {
   color: $color-gray;
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-button {
-  background-image: url(asset-path('minus.svg'));
-
-  &[aria-expanded=false] {
-    background-image: url(asset-path('plus.svg'));
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered-outline {
-  .usa-accordion-button {
-    border: 1px solid $color-gray-light;
-  }
-}
-
-//move to commons if/when accordions are used for any non-React apps
-.usa-accordion-bordered,
-.usa-accordion,
-.usa-accordion-bordered-outline {
-  margin-bottom: 20px;
-
-  .usa-accordion-button {
-    &,
-    i {
-      color: $color-gray-dark;
-    }
-  }
 }
 
 .cf-work-assignments {

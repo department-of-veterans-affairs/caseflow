@@ -14,10 +14,6 @@ class RampRefiling < RampReview
     hearing: "hearing"
   }
 
-  def self.established
-    where.not(established_at: nil)
-  end
-
   def create_issues!(source_issue_ids:)
     issues.destroy_all unless issues.empty?
 
@@ -31,7 +27,11 @@ class RampRefiling < RampReview
     # If there are no contentions to create, don't create the end product either
     return nil if contention_descriptions_to_create.empty?
 
-    create_end_product!
+    # TODO: consider using create_or_connect_end_product! instead to make this atomic
+    # however this has further implications here if there are already contentions on
+    # the end product being connected.
+    establish_end_product!
+
     create_contentions_on_new_end_product!
   end
 

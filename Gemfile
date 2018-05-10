@@ -1,12 +1,12 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "5e6830534124f578f43c619c8620c0560365aa55"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb"
 
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "4.2.7.1"
+gem "rails", "5.1.6"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e30db7fdf6f5c28c09d6081d062cad80820240a0"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "07a398fb0102ad93684f5423e73be68ba97c74d2"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,12 +71,9 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
 
 gem "redis-rails", "~> 5.0.2"
-
-# remove when upgrading to rails 5
-gem "where-or"
 
 gem "prometheus-client", "~> 0.7.1"
 
@@ -92,7 +89,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging, :ssh_forwarding, :local do
+group :production, :staging, :ssh_forwarding, :local, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -147,7 +144,7 @@ group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
-  gem "web-console", "~> 2.0", platforms: :ruby
+  gem "web-console", "~> 3.0", platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby

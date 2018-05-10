@@ -10,6 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Table from '../components/Table';
+import Alert from '../components/Alert';
 
 import {
   updateEditingAppealIssue,
@@ -17,7 +18,7 @@ import {
   startEditingAppealIssue,
   saveEditedAppealIssue
 } from './QueueActions';
-import { highlightInvalidFormItems } from './uiReducer/uiActions';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { fullWidth } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
@@ -39,22 +40,36 @@ const tbodyStyling = css({
     }
   }
 });
+const smallTopMargin = css({ marginTop: '1rem' });
 
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
-    path: `/tasks/${this.props.vacolsId}/dispositions`
+    path: `/queue/appeals/${this.props.vacolsId}/dispositions`
   });
 
+  getNextStepUrl = () => {
+    const {
+      vacolsId,
+      nextStep,
+      appeal: {
+        attributes: { issues }
+      }
+    } = this.props;
+
+    return _.map(issues, 'disposition').includes('remanded') ?
+      `/queue/appeals/${vacolsId}/remands` : nextStep;
+  }
+
+  componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
 
   updateIssue = (issueId, attributes) => {
     const { vacolsId } = this.props;
 
-    this.props.startEditingAppealIssue(vacolsId, issueId);
-    this.props.updateEditingAppealIssue(attributes);
+    this.props.startEditingAppealIssue(vacolsId, issueId, attributes);
     this.props.saveEditedAppealIssue(vacolsId);
-  }
+  };
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
@@ -63,20 +78,19 @@ class SelectDispositionsView extends React.PureComponent {
     return !issuesWithoutDisposition.length;
   };
 
-  getFooterButtons = () => [{
-    displayText: `< Go back to ${this.props.appeal.attributes.veteran_full_name} (${this.props.vbmsId})`
-  }, {
-    displayText: 'Finish dispositions',
-    id: 'finish-dispositions'
-  }];
-
   getKeyForRow = (rowNumber) => rowNumber;
   getColumns = () => [{
     header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList appeal={{ issues: [issue] }} idxToDisplay={idx + 1} />
+    valueFunction: (issue, idx) => <IssueList
+      appeal={{ issues: [issue] }}
+      idxToDisplay={idx + 1}
+      showDisposition={false}
+      stretchToFullWidth />
   }, {
     header: 'Actions',
-    valueFunction: (issue) => <Link to={`/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+    valueFunction: (issue) => <Link
+      to={`/queue/appeals/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}
+    >
       Edit Issue
     </Link>
   }, {
@@ -87,44 +101,53 @@ class SelectDispositionsView extends React.PureComponent {
       vacolsId={this.props.vacolsId} />
   }];
 
-  render = () => <React.Fragment>
-    <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-      Select Dispositions
-    </h1>
-    <p className="cf-lead-paragraph" {...marginBottom(2)}>
-      Review each issue and assign the appropriate dispositions.
-    </p>
-    <hr />
-    <Table
-      columns={this.getColumns}
-      rowObjects={this.props.appeal.attributes.issues}
-      getKeyForRow={this.getKeyForRow}
-      styling={tableStyling}
-      bodyStyling={tbodyStyling}
-    />
-    <div {...marginLeft(1.5)}>
-      <Link>Add Issue</Link>
-    </div>
-  </React.Fragment>;
+  render = () => {
+    const {
+      saveResult,
+      vacolsId,
+      appeal: { attributes: { issues } }
+    } = this.props;
+
+    return <React.Fragment>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
+        Select Dispositions
+      </h1>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
+        Review each issue and assign the appropriate dispositions.
+      </p>
+      {saveResult && <Alert type="success" title={saveResult} styling={smallTopMargin} />}
+      <hr />
+      <Table
+        columns={this.getColumns}
+        rowObjects={issues}
+        getKeyForRow={this.getKeyForRow}
+        styling={tableStyling}
+        bodyStyling={tbodyStyling}
+      />
+      <div {...marginLeft(1.5)}>
+        <Link to={`/queue/appeals/${vacolsId}/dispositions/add`}>Add Issue</Link>
+      </div>
+    </React.Fragment>;
+  };
 }
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  vbmsId: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.pendingChanges.appeals[ownProps.vacolsId]
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
+  saveResult: state.ui.messages.success
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,
-  highlightInvalidFormItems,
   setDecisionOptions,
   startEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  hideSuccessMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

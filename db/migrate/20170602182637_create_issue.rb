@@ -1,4 +1,4 @@
-class CreateIssue < ActiveRecord::Migration
+class CreateIssue < ActiveRecord::Migration[5.1]
   def change
     create_table :issues do |t|
       t.belongs_to :appeal

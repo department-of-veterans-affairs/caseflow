@@ -9,11 +9,27 @@ def scroll_position(id: nil, class_name: nil)
   EOS
 end
 
-def scroll_to(id: nil, class_name: nil, value: 0)
+def scroll_to(id: nil, class_name: nil, value: 0, index: 0)
   page.driver.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')['#{index}'];
       elem.scrollTop=#{value};
+    }();
+  EOS
+end
+
+def scrolled_amount(child_class_name)
+  page.evaluate_script <<-EOS
+    function() {
+      var list = document.getElementsByClassName('#{child_class_name}');
+
+      for (elem of list) {
+        if (elem.style.visibility == "visible") {
+          return elem.parentElement.scrollTop;
+        }
+      }
+
+      return 0;
     }();
   EOS
 end
@@ -369,10 +385,10 @@ RSpec.feature "Reader" do
         expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
         expect(appeal_options[1]).to have_content("Issues")
         expect(appeal_options[1].find_all("li").count).to eq(appeal4.issues.count)
-        expect(find("button", text: "Okay")).to be_disabled
+        expect(find("button", text: "Open Claims Folder")).to be_disabled
 
         appeal_options[0].click
-        click_on "Okay"
+        click_on "Open Claims Folder"
         expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
       end
 
@@ -399,7 +415,7 @@ RSpec.feature "Reader" do
 
           click_button("Select-claims-folder-button-id-close")
           fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-          expect(find("button", text: "Okay")).to be_disabled
+          expect(find("button", text: "Open Claims Folder")).to be_disabled
         end
       end
 
@@ -520,7 +536,8 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       expect(page).to have_content("Caseflow Reader")
 
-      add_comment("comment text")
+      add_comment(text: "comment text")
+
       expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
@@ -868,12 +885,12 @@ RSpec.feature "Reader" do
 
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
-        element_class = "ReactVirtualized__Grid"
-        original_scroll = scroll_position(class_name: element_class)
+        element_class = "ReactVirtualized__Grid__innerScrollContainer"
+        original_scroll = scrolled_amount(element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
         find("#comment4").click
-        after_click_scroll = scroll_position(class_name: element_class)
+        after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
 
@@ -894,7 +911,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_css(".page")
         expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000)
+        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000, index: 1)
         expect(find_field("page-progress-indicator-input").value).to_not eq "1"
       end
 
@@ -1402,28 +1419,25 @@ RSpec.feature "Reader" do
     end
 
     scenario "Navigating Search Results scrolls page" do
-      def scroll_top
-        page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
-      end
-
       open_search_bar
-      expect(scroll_top).to be(0)
+      elem_name = "ReactVirtualized__Grid__innerScrollContainer"
+      expect(scrolled_amount(elem_name)).to be(0)
 
       fill_in "search-ahead", with: "just"
 
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
-      first_match_scroll_top = scroll_top
+      first_match_scroll_top = scrolled_amount(elem_name)
 
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click
-      expect(scroll_top).to be > first_match_scroll_top
+      expect(scrolled_amount(elem_name)).to be > first_match_scroll_top
 
       # this doc has 3 matches for "decision", search index wraps around
       find(".cf-next-match").click
       find(".cf-next-match").click
-      expect(scroll_top).to eq(first_match_scroll_top)
+      expect(scrolled_amount(elem_name)).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do

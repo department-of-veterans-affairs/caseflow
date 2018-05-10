@@ -858,10 +858,11 @@ describe Appeal do
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:issues) { [] }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
+    let(:election_receipt_date) { 2.days.ago }
 
     context "when called with both appeal and appeals" do
       let(:vacols_record) { :ready_to_certify }
@@ -873,14 +874,19 @@ describe Appeal do
             appeals: [appeal, another_appeal],
             user: user,
             closed_on: 4.days.ago,
-            disposition: disposition
+            disposition: disposition,
+            election_receipt_date: election_receipt_date
           )
         end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
     context "when multiple appeals" do
-      it "closes each appeal" do
+      let(:appeal_with_nod_after_election_received) do
+        Generators::Appeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+      end
+
+      it "closes each appeal with nod_date before election received_date" do
         expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
           appeal: appeal,
           user: user,
@@ -893,19 +899,32 @@ describe Appeal do
           closed_on: 4.days.ago,
           disposition_code: "P"
         )
-
-        Appeal.close(
-          appeals: [appeal, another_appeal],
+        expect(Fakes::AppealRepository).to_not receive(:close_undecided_appeal!).with(
+          appeal: appeal_with_nod_after_election_received,
           user: user,
           closed_on: 4.days.ago,
-          disposition: disposition
+          disposition_code: "P"
+        )
+
+        Appeal.close(
+          appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition,
+          election_receipt_date: election_receipt_date
         )
       end
     end
 
     context "when just one appeal" do
       subject do
-        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+        Appeal.close(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition,
+          election_receipt_date: election_receipt_date
+        )
       end
 
       context "when disposition is not valid" do
@@ -959,6 +978,52 @@ describe Appeal do
             subject
           end
         end
+      end
+    end
+  end
+
+  context ".reopen" do
+    subject do
+      Appeal.reopen(
+        appeals: [appeal, another_appeal],
+        user: user,
+        disposition: disposition
+      )
+    end
+
+    let(:appeal) { Generators::Appeal.build(vacols_record: :ramp_closed) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_completed) }
+    let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
+
+    it "reopens each appeal according to it's type" do
+      expect(Fakes::AppealRepository).to receive(:reopen_undecided_appeal!).with(
+        appeal: appeal,
+        user: user
+      )
+
+      expect(Fakes::AppealRepository).to receive(:reopen_remand!).with(
+        appeal: another_appeal,
+        user: user,
+        disposition_code: "P"
+      )
+
+      subject
+    end
+
+    context "disposition doesn't exist" do
+      let(:disposition) { "I'm not a disposition" }
+
+      it "should raise error" do
+        expect { subject }.to raise_error(/Disposition/)
+      end
+    end
+
+    context "one of the non-remand appeals is active" do
+      let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+
+      it "should raise error" do
+        expect { subject }.to raise_error("Only closed appeals can be reopened")
       end
     end
   end
@@ -1221,6 +1286,34 @@ describe Appeal do
         end
 
         it { is_expected.to be true }
+      end
+    end
+  end
+
+  context "#decided_by_bva?" do
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, disposition: disposition)
+    end
+
+    subject { appeal.decided_by_bva? }
+
+    let(:disposition) { "Remanded" }
+
+    context "when status is not Complete" do
+      let(:status) { "Remand" }
+      it { is_expected.to be false }
+    end
+
+    context "when status is Complete" do
+      let(:status) { "Complete" }
+
+      context "when disposition is a BVA disposition" do
+        it { is_expected.to be true }
+      end
+
+      context "when disposition is not a BVA disposition" do
+        let(:disposition) { "Advance Allowed in Field" }
+        it { is_expected.to be false }
       end
     end
   end
@@ -1749,7 +1842,7 @@ describe Appeal do
       let(:appeals_hash) do
         { worksheet_issues_attributes: [{
           remand: true,
-          vha: true,
+          omo: true,
           description: "Cabbage\nPickle",
           notes: "Donkey\nCow",
           from_vacols: true,
@@ -1767,7 +1860,7 @@ describe Appeal do
         expect(issue.allow).to eq false
         expect(issue.deny).to eq false
         expect(issue.dismiss).to eq false
-        expect(issue.vha).to eq true
+        expect(issue.omo).to eq true
         expect(issue.description).to eq "Cabbage\nPickle"
         expect(issue.notes).to eq "Donkey\nCow"
 
@@ -1988,6 +2081,42 @@ describe Appeal do
           expect(no_vbms_id_appeal).to_not be_persisted
         end
       end
+    end
+  end
+
+  context "#save_to_legacy_appeals" do
+    let :appeal do
+      Appeal.create!(
+        vacols_id: "1234"
+      )
+    end
+
+    let :legacy_appeal do
+      LegacyAppeal.find(appeal.id)
+    end
+
+    it "Creates a legacy_appeal when an appeal is created" do
+      expect(legacy_appeal).to_not be_nil
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+
+    it "Updates a legacy_appeal when an appeal is updated" do
+      appeal.update!(rice_compliance: TRUE)
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
+
+  context "#destroy_legacy_appeal" do
+    let :appeal do
+      Appeal.create!(
+        id: 1,
+        vacols_id: "1234"
+      )
+    end
+
+    it "Destroys a legacy_appeal when an appeal is destroyed" do
+      appeal.destroy!
+      expect(LegacyAppeal.where(id: appeal.id)).to_not exist
     end
   end
 end

@@ -79,6 +79,44 @@ export const setFormType = (formType) => ({
   }
 });
 
+export const clearSearchErrors = () => ({
+  type: ACTIONS.CLEAR_SEARCH_ERRORS,
+  meta: { analytics }
+});
+
+export const setReceiptDate = (receiptDate) => ({
+  type: ACTIONS.SET_RECEIPT_DATE,
+  payload: {
+    receiptDate
+  }
+});
+
+export const setOptionSelected = (optionSelected) => ({
+  type: ACTIONS.SET_OPTION_SELECTED,
+  payload: {
+    optionSelected
+  },
+  meta: {
+    analytics: {
+      label: optionSelected
+    }
+  }
+});
+
+export const setIssueSelected = (profileDate, issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    profileDate,
+    issueId,
+    isSelected
+  },
+  meta: {
+    analytics: {
+      label: isSelected ? 'selected' : 'de-selected'
+    }
+  }
+});
+
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
   meta: {
@@ -88,13 +126,13 @@ export const toggleCancelModal = () => ({
   }
 });
 
-export const submitCancel = (intakeId) => (dispatch) => {
+export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,
     meta: { analytics }
   });
 
-  return ApiUtil.delete(`/intake/${intakeId}`, {}, ENDPOINT_NAMES.CANCEL_INTAKE).
+  return ApiUtil.delete(`/intake/${data.id}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,

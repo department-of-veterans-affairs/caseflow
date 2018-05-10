@@ -77,6 +77,34 @@ describe EndProduct do
     end
   end
 
+  context "#matches?" do
+    subject { end_product.matches?(other_ep) }
+
+    let(:other_ep) { Generators::EndProduct.build }
+    let(:claim_date) { other_ep.claim_date }
+    let(:modifier) { other_ep.modifier }
+    let(:claim_type_code) { other_ep.claim_type_code }
+
+    context "when claim dates don't match" do
+      let(:claim_date) { other_ep.claim_date + 1.day }
+      it { is_expected.to be false }
+    end
+
+    context "when modifiers don't match" do
+      let(:modifier) { "12345" }
+      it { is_expected.to be false }
+    end
+
+    context "when claim type codes don't match" do
+      let(:claim_type_code) { "123SHANE" }
+      it { is_expected.to be false }
+    end
+
+    context "when dates, type codes and modifiers match" do
+      it { is_expected.to be true }
+    end
+  end
+
   context "#potential_match?" do
     let(:appeal) { Appeal.new(decision_date: Time.zone.now) }
     subject { end_product.potential_match?(appeal) }

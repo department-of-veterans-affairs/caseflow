@@ -1,6 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
-import { redText } from './constants';
+import StringUtil from '../util/StringUtil';
+import {
+  redText,
+  DECISION_TYPES
+} from './constants';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -54,4 +60,39 @@ export const renderAppealType = (appeal) => {
     {aod && <span><span {...redText}>AOD</span>, </span>}
     {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
   </React.Fragment>;
+};
+
+export const getDecisionTypeDisplay = (decision = {}) => {
+  const {
+    type: decisionType
+  } = decision;
+
+  switch (decisionType) {
+  case DECISION_TYPES.OMO_REQUEST:
+    return 'OMO';
+  case DECISION_TYPES.DRAFT_DECISION:
+    return 'Draft Decision';
+  default:
+    return StringUtil.titleCase(decisionType);
+  }
+};
+
+export const getIssueProgramDescription = (issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueTypeDescription = (issue) => {
+  const {
+    program,
+    type
+  } = issue;
+
+  return _.get(ISSUE_INFO[program].levels, `${type}.description`);
+};
+
+export const getIssueDiagnosticCodeLabel = (code) => {
+  const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
+
+  if (!readableLabel) {
+    return false;
+  }
+
+  return `${code} - ${readableLabel.staff_description}`;
 };

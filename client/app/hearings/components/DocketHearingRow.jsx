@@ -14,6 +14,7 @@ import moment from 'moment';
 import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 const textareaStyling = css({
   '@media only screen and (max-width : 1024px)': {
@@ -42,15 +43,17 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [
-  { value: 0,
-    label: '0 days' },
-  { value: 30,
-    label: '30 days' },
-  { value: 60,
-    label: '60 days' },
-  { value: 90,
-    label: '90 days' }];
+const holdOption = (days, hearingDate) => ({
+  value: days,
+  label: `${days} days - ${moment(hearingDate).add(days, 'days').
+    format('MM/DD')}`
+});
+
+const holdOptions = (hearingDate) => [
+  holdOption(0, hearingDate),
+  holdOption(30, hearingDate),
+  holdOption(60, hearingDate),
+  holdOption(90, hearingDate)];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },
@@ -74,7 +77,12 @@ export class DocketHearingRow extends React.PureComponent {
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
-  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.hearing.id, value, this.props.hearingDate);
+  preppedOnChange = (value) => this.props.setHearingPrepped({
+    hearingId: this.props.hearing.id,
+    prepped: value,
+    date: this.props.hearingDate,
+    setEdited: true
+  });
 
   render() {
     const {
@@ -90,14 +98,12 @@ export class DocketHearingRow extends React.PureComponent {
         replace(/(\w)(DT|ST)/g, '$1T');
     };
 
-    // Appellant differs Veteran
-    let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
-
     const appellantDisplay = <div>
-      { differsVeteran ?
+      { _.isEmpty(hearing.appellant_mi_formatted) ||
+        hearing.appellant_mi_formatted === hearing.veteran_mi_formatted ?
+        (<b>{hearing.veteran_mi_formatted}</b>) :
         (<span><b>{hearing.appellant_mi_formatted}</b>
-          {hearing.veteran_mi_formatted} (Veteran)</span>) :
-        (<b>{hearing.veteran_mi_formatted}</b>)
+          {hearing.veteran_mi_formatted} (Veteran)</span>)
       }
     </div>;
 
@@ -140,7 +146,7 @@ export class DocketHearingRow extends React.PureComponent {
             {hearing.vbms_id}
           </ViewableItemLink>
           <span {...issueCountStyling}>
-            {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
+            {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
           </span>
         </td>
         <td className="cf-hearings-docket-rep">
@@ -161,7 +167,7 @@ export class DocketHearingRow extends React.PureComponent {
           <SearchableDropdown
             label="Hold Open"
             name={`${hearing.id}-hold_open`}
-            options={holdOptions}
+            options={holdOptions(this.props.hearingDate)}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
             searchable={false}

@@ -2,16 +2,14 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran
-  include ActiveModel::Model
-  include ActiveModel::Validations
+class Veteran < ApplicationRecord
+  include AssociatedBgsRecord
+  include CachedAttributes
 
-  BGS_ATTRIBUTES = [
-    :file_number, :sex, :first_name, :last_name, :ssn,
-    :address_line1, :address_line2, :address_line3, :city,
-    :state, :country, :zip_code, :military_postal_type_code,
-    :military_post_office_type_code, :service, :date_of_birth
-  ].freeze
+  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
+                    :address_line1, :address_line2, :address_line3, :city,
+                    :state, :country, :zip_code, :military_postal_type_code,
+                    :military_post_office_type_code, :service, :date_of_birth
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -24,13 +22,16 @@ class Veteran
     "DIS" => "Discharge"
   }.freeze
 
-  attr_accessor(*BGS_ATTRIBUTES)
-
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
-  validates :zip_code, presence: true, if: "country_requires_zip?"
-  validates :state, presence: true, if: "country_requires_state?"
+  validates :ssn, :sex, :first_name, :last_name, :city,
+            :address_line1, :country, presence: true, on: :bgs
+  validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
+  validates :state, presence: true, if: :country_requires_state?, on: :bgs
+
+  cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
+    timely_ratings.map(&:ui_hash)
+  end
 
   # TODO: get middle initial from BGS
   def name
@@ -50,11 +51,6 @@ class Veteran
     military_address? ? military_address_vbms_hash : base_vbms_hash
   end
 
-  def load_bgs_record!
-    set_attrs_from_bgs_record if found?
-    self
-  end
-
   def end_products
     @end_products ||= fetch_end_products
   end
@@ -67,10 +63,6 @@ class Veteran
     end
   end
 
-  def self.bgs
-    BGSService.new
-  end
-
   def age
     return unless date_of_birth
     dob = Time.strptime(date_of_birth, "%m/%d/%Y")
@@ -79,13 +71,29 @@ class Veteran
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def found?
-    @accessible == false || (bgs_record != :not_found && bgs_record[:file_number])
+  def self.bgs
+    BGSService.new
+  end
+
+  def fetch_bgs_record
+    result = self.class.bgs.fetch_veteran_info(file_number)
+
+    # If the result is nil, the veteran wasn't found.
+    # If the file number is nil, that's another way of saying the veteran wasn't found.
+    result && result[:file_number] && result
+  rescue BGS::ShareError => error
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    Raven.capture_exception(error)
+
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    raise error unless error.message =~ /Sensitive File/
+
+    @accessible = false
   end
 
   def accessible?
-    @accessible = self.class.bgs.can_access?(file_number) if @accessible.nil?
-    @accessible
+    self.class.bgs.can_access?(file_number)
   end
 
   # Postal code might be stored in address line 3 for international addresses
@@ -93,16 +101,38 @@ class Veteran
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
 
-  private
+  def timely_ratings
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
+  end
 
-  def set_attrs_from_bgs_record
-    BGS_ATTRIBUTES.each do |bgs_attribute|
-      instance_variable_set(
-        "@#{bgs_attribute}".to_sym,
-        bgs_record[bgs_attribute]
-      )
+  def participant_id
+    super || ptcpnt_id
+  end
+
+  class << self
+    def find_or_create_by_file_number(file_number)
+      find_by(file_number: file_number) || create_by_file_number(file_number)
+    end
+
+    private
+
+    def create_by_file_number(file_number)
+      veteran = Veteran.new(file_number: file_number)
+
+      return nil unless veteran.found?
+
+      before_create_veteran_by_file_number # Used to simulate race conditions
+      veteran.tap { |v| v.update!(participant_id: v.ptcpnt_id) }
+    rescue ActiveRecord::RecordNotUnique
+      find_by(file_number: file_number)
+    end
+
+    def before_create_veteran_by_file_number
+      # noop - used to simulate race conditions
     end
   end
+
+  private
 
   def fetch_end_products
     self.class.bgs.get_end_products(file_number).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
@@ -133,21 +163,10 @@ class Veteran
     "" # Empty string means the address doesn't have a special type
   end
 
-  def bgs_record
-    @bgs_record ||= (fetch_bgs_record || :not_found)
-  end
-
-  def fetch_bgs_record
-    self.class.bgs.fetch_veteran_info(file_number)
-  rescue BGS::ShareError => error
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message =~ /Sensitive File/
-
-    @accessible = false
-  end
-
   def vbms_attributes
-    BGS_ATTRIBUTES - [:military_postal_type_code, :military_post_office_type_code] + [:address_type]
+    self.class.bgs_attributes \
+      - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
+      + [:file_number, :address_type]
   end
 
   def military_address?

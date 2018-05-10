@@ -1,4 +1,4 @@
-class CreateRampIssues < ActiveRecord::Migration
+class CreateRampIssues < ActiveRecord::Migration[5.1]
   safety_assured
 
   def change

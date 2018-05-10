@@ -1,7 +1,6 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
-
-$color-tab-text-hover: #1f5593;
+@import 'variables';
 
 .cf-sg-layout {
   padding-top: 30px;
@@ -60,11 +59,6 @@ $color-tab-text-hover: #1f5593;
 
 .usa-accordion-button {
   text-align: left;
-}
-
-.cf-code-sample {
-  font-family: Consolas, serif;
-  color: $color-secondary-darkest;
 }
 
 .cf-modal.active {
@@ -136,7 +130,7 @@ pre {
     div {
       width: 110px;
       height: 110px;
-      box-shadow: 1px 1px 5px $color-gray-medium;
+      box-shadow: 1px 1px 5px $color-gray-dark;
       margin-top: 10px;
       margin-bottom: 15px;
       position: relative;

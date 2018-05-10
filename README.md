@@ -15,6 +15,7 @@ Install dependencies via Homebrew:
 Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
 - Run `mkdir ~/.nvm`
 - Add the following to your shell login script:
+
         export NVM_DIR="$HOME/.nvm"
         . "/usr/local/opt/nvm/nvm.sh"
 
@@ -150,6 +151,15 @@ To seed the VACOLS container with data you'll need to generate the data for the 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
 2) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
 3) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
+
+## Certification Test Scenarios
+
+| BFKEY/VACOLS_ID | Case | 
+| ----- | ---------------- | 
+| 2367429 | Ready to certify with all dates matching |
+| 2774535 | Ready to certify with fuzzy-matched dates |
+| 2771149 | Mismatched documents |
+| 3242524 | Already certified |
 
 Review the [FACOLS documentation](docs/FACOLS.md) for information on adding new data.
 

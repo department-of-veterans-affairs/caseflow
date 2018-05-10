@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../components/Checkbox';
 import FoundIcon from '../../components/FoundIcon';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,7 +12,9 @@ import { populateDailyDocket, getDailyDocket,
   setPrepped } from '../actions/Dockets';
 import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
+import { CATEGORIES, ACTIONS } from '../analytics';
 import moment from 'moment';
 
 const headerSelectionStyling = css({
@@ -42,6 +45,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   }
 
   onDropdownChange = (value) => {
+    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.SELECT_VETERAN_FROM_DROPDOWN);
     if (value) {
       this.props.save();
       this.props.history.push(`/hearings/${value.value}/worksheet`);
@@ -50,7 +54,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   getOptionLabel = (hearing) => (
     <div>
-      {hearing.veteran_fi_last_formatted}  ({hearing.issue_count} {hearing.issue_count === 1 ?
+      {hearing.veteran_fi_last_formatted}  ({hearing.current_issue_count} {hearing.current_issue_count === 1 ?
         'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>
   );
@@ -68,6 +72,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   preppedOnChange = (value) => this.savePrepped(this.props.worksheet.id, value);
 
+  onClickReviewClaimsFolder = () =>
+    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_REVIEW_CLAIMS_FOLDER);
+
   render() {
 
     const { worksheet, worksheetIssues, dailyDocket } = this.props;
@@ -84,7 +91,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder=""
+            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+              message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.id}
@@ -103,6 +111,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="review-claims-folder"
+          onClick={this.onClickReviewClaimsFolder}
           href={`${getReaderLink(worksheet.appeal_vacols_id)}?category=case_summary`}
           button="primary"
           target="_blank">

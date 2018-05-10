@@ -184,13 +184,6 @@ export class PdfFile extends React.PureComponent {
     this.grid = grid;
 
     if (this.grid) {
-      // eslint-disable-next-line react/no-find-dom-node
-      const domNode = ReactDOM.findDOMNode(this.grid);
-
-      // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
-      // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
-      // might be deprecated at some point in the future, but until then this seems like the best we can do.
-      domNode.focus();
       this.grid.recomputeGridSize();
     }
   }
@@ -295,6 +288,16 @@ export class PdfFile extends React.PureComponent {
 
   componentDidUpdate = (prevProps) => {
     if (this.grid && this.props.isVisible) {
+      if (!prevProps.isVisible) {
+        // eslint-disable-next-line react/no-find-dom-node
+        const domNode = ReactDOM.findDOMNode(this.grid);
+
+        // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
+        // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
+        // might be deprecated at some point in the future, but until then this seems like the best we can do.
+        domNode.focus();
+      }
+
       this.grid.recomputeGridSize();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
@@ -433,7 +436,7 @@ export class PdfFile extends React.PureComponent {
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -447,9 +450,12 @@ export class PdfFile extends React.PureComponent {
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
             this.props.pdfDocument.pdfInfo.numPages);
 
+          let visibility = this.props.isVisible ? 'visible' : 'hidden';
+
           return <Grid
             ref={this.getGrid}
             containerStyle={{
+              visibility: `${visibility}`,
               margin: '0 auto',
               marginBottom: `-${PAGE_MARGIN}px`
             }}

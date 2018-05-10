@@ -8,9 +8,8 @@ import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
-import Modal from '../components/Modal';
+import CancelIntakeModal from './components/CancelIntakeModal';
 import Alert from '../components/Alert';
-import Button from '../components/Button';
 import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
@@ -26,9 +25,6 @@ const textAlignRightStyling = css({
 });
 
 class IntakeFrame extends React.PureComponent {
-  handleSubmitCancel = () => (
-    this.props.submitCancel(this.props.intakeId)
-  )
 
   render() {
     const appName = 'Intake';
@@ -38,27 +34,11 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.veteran.fileNumber ?
       `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
-    let cancelButton, confirmButton;
-
-    if (this.props.cancelModalVisible) {
-      confirmButton = <Button dangerStyling onClick={this.handleSubmitCancel}>Cancel Intake</Button>;
-      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
-    }
-
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
-        { this.props.cancelModalVisible &&
-          <Modal
-            title="Cancel Intake?"
-            closeHandler={this.props.toggleCancelModal}
-            confirmButton={confirmButton}
-            cancelButton={cancelButton}
-          >
-            <p>
-              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS,
-              Caseflow will have no record of this work.
-            </p>
-          </Modal>
+        { this.props.cancelModalVisible && <CancelIntakeModal
+          intakeId={this.props.intakeId}
+          closeHandler={this.props.toggleCancelModal} />
         }
         <NavigationBar
           appName={appName}
@@ -89,7 +69,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.BEGIN}
                   title="Select Form | Caseflow Intake"
-                  component={SelectFormPage} />
+                  render={() => <SelectFormPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.SEARCH}

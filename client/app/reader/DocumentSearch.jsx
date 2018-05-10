@@ -22,14 +22,22 @@ export class DocumentSearch extends React.PureComponent {
     this.sentAction = {};
   }
 
-  onChange = (value) => {
-    this.searchTerm = value;
-
-    if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
+  getText = () => {
+    if (this.props.pdfDocument &&
+        !this.props.pdfDocument.transport.destroyed &&
+        !this.sentAction[this.props.file] &&
+        !_.isEmpty(this.searchTerm) &&
+        _.isEmpty(this.props.pdfText)) {
       this.props.setSearchIsLoading(true);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
     }
+  }
+
+  onChange = (value) => {
+    this.searchTerm = value;
+
+    this.getText();
 
     // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
     this.props.searchText(this.searchTerm);
@@ -88,7 +96,15 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
-    this.props.setSearchIsLoading(!this.props.pdfText.length && this.searchTerm.length > 0);
+    const searchIsLoading = !this.props.pdfText.length && this.searchTerm.length > 0;
+
+    if (this.props.searchIsLoading !== searchIsLoading) {
+      this.props.setSearchIsLoading(searchIsLoading);
+    }
+
+    if (prevProps.pdfDocument !== this.props.pdfDocument) {
+      this.getText();
+    }
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)

@@ -1,4 +1,4 @@
-class AddTypeIndexOnIntakes < ActiveRecord::Migration
+class AddTypeIndexOnIntakes < ActiveRecord::Migration[5.1]
   disable_ddl_transaction!
 
   def change

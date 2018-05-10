@@ -142,12 +142,32 @@
           </div>
         </div>
 
+        <div class="cf-stat-panel data-chart" data-key="total_issues_elected_into_ramp">
+          <h4 class="cf-stat-title">
+            Total Issues
+          </h4>
+          <div class="cf-stat-figure data-value" data-key="total_issues_elected_into_ramp">
+            <%= @stats[0].values[:total_issues_elected_into_ramp] %>
+          </div>
+        </div>
+
         <div class="cf-stat-panel data-chart" data-key="average_election_response_time">
           <h4 class="cf-stat-title">
             Average Response Time
           </h4>
           <div class="cf-stat-figure data-time" data-key="average_election_response_time">
             <%= format_time_duration_stat(@stats[0].values[:average_election_response_time]) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-stats-section -activity">
+        <div class="cf-stat-panel data-chart" data-key="average_election_nod_to_established_time">
+          <h4 class="cf-stat-title">
+            Average Time since Notice of Disagreement
+          </h4>
+          <div class="cf-stat-figure data-time" data-key="average_election_nod_to_established_time">
+            <%= format_time_duration_stat(@stats[0].values[:average_election_nod_to_established_time]) %>
           </div>
         </div>
 
