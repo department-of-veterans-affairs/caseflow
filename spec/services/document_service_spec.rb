@@ -1,5 +1,4 @@
 describe AppealRepository do
-
   let(:appeal) { Generators::Appeal.build }
   let(:document_service) { DocumentService.new(appeal, use_efolder: true) }
   let(:series_id) { "TEST_SERIES_ID" }
@@ -76,7 +75,6 @@ describe AppealRepository do
     end
 
     context "when there is no existing document" do
-
       it "saves retrieved documents" do
         returned_documents = document_service.find_or_create_documents!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))

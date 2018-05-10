@@ -130,12 +130,12 @@ class Appeal < ApplicationRecord
   end
 
   def document_service
-    @document_service ||= DocumentService.new(self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
+    @document_service ||= DocumentService.new(
+      self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
+    )
   end
 
-  def number_of_documents
-    document_service.number_of_documents
-  end
+  delegate :number_of_documents, to: :document_service
 
   def number_of_documents_url
     if document_service == ExternalApi::EfolderService
