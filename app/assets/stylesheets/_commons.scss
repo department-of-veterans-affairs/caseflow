@@ -353,11 +353,11 @@ dd {
   cursor: pointer;
   display: none;
   text-align: left;
-  top: 2em;
-  width: 18rem;
-  min-width: 215px;
+  width: auto;
+  min-width: 13em;
   padding-top: 5px;
   padding-bottom: 5px;
+  top: 3em;
 
   &.active {
     display: block;
