@@ -41,7 +41,7 @@ class CaseListView extends React.PureComponent {
     }
 
     if (this.props.errorType) {
-      let errorMessage = COPY.CASE_SEARCH_ERROR_INPUT_INSTRUCTION;
+      let errorMessage = COPY.CASE_SEARCH_INPUT_INSTRUCTION;
 
       switch (this.props.errorType) {
       case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
