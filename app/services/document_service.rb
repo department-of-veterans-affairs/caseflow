@@ -20,41 +20,17 @@ class DocumentService
 
   def manifest_vva_fetched_at
     fetch_documents_from_service!
-    @manifest_vbms_fetched_at
+    @manifest_vva_fetched_at
   end
 
-  def find_or_create!
+  def find_or_create_documents!
     @created_documents ||= save!
   end
 
   private
 
   def save!
-    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
-                                                                  user: RequestStore.store[:current_user])
-    ids = documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          document.save!
-          document
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
-  def save_v2!
-    AddSeriesIdToDocumentsJob.perform_now(self)
+    AddSeriesIdToDocumentsJob.perform_now(@appeal)
 
     ids = documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
@@ -74,6 +50,20 @@ class DocumentService
         Document.find_by_vbms_document_id(document.vbms_document_id)
       end
     end
+  end
+
+  def create_new_document!(document, ids)
+    document.save!
+
+    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+    previous_documents = Document.where(series_id: document.series_id).order(:id)
+      .where.not(vbms_document_id: ids)
+
+    if previous_documents.count > 0
+      document.copy_metadata_from_document(previous_documents.last)
+    end
+
+    document
   end
 
   def fetch_documents_from_service!
