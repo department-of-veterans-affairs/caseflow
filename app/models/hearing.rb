@@ -206,10 +206,10 @@ class Hearing < ApplicationRecord
   def update_summary_field
     get_paragraph = ->(data) { data.blank? ? "<p></p><p></p><p></p>" : "<p>#{data}</p><p></p>" }
 
-    self.summary = "<p><strong>Contentions</strong></p>#{get_paragraph.call(self.contentions)}"\
-    "<p><strong>Evidence</strong></p> #{get_paragraph.call(self.evidence)}"\
+    self.summary = "<p><strong>Contentions</strong></p>#{get_paragraph.call(contentions)}"\
+    "<p><strong>Evidence</strong></p> #{get_paragraph.call(evidence)}"\
     "<p><strong>Comments and special instructions to attorneys</strong></p>"\
-    "#{get_paragraph.call(self.comments_for_attorney)}"
+    "#{get_paragraph.call(comments_for_attorney)}"
   end
 
   class << self

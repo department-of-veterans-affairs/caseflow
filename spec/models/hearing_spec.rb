@@ -12,6 +12,16 @@ describe Hearing do
     )
   end
 
+  let(:hearing2) do
+    Generators::Hearing.build(
+      date: date,
+      disposition: disposition,
+      hold_open: hold_open,
+      type: type,
+      contentions: "no treatment after service private or VA\n"
+    )
+  end
+
   let(:date) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
@@ -26,6 +36,34 @@ describe Hearing do
       let(:type) { :central_office }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
+    end
+  end
+
+  context "update_summary_field" do
+    subject { hearing2 }
+
+    it 'updates summary field after contentions is updated' do
+
+      extected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
+      "CS denied in 3/68 DX of C-spine issue</p><p></p><p><strong>Evidence</strong></p>"\
+      " <p></p><p></p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
+      "</p><p></p><p></p><p></p>"
+      subject.contentions = "no treatment after service private or VA\n"\
+      "CS denied in 3/68 DX of C-spine issue"
+      subject.save
+      expect(subject.summary).to eq extected_string
+    end
+
+    it 'updates summary field after evidence and comments updated' do
+
+      extected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
+      "</p><p></p><p><strong>Evidence</strong></p>"\
+      " <p>evidence</p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
+      "</p><p>here are the list of comments here</p><p></p>"
+      evidence = "evidence"
+      comments_for_attorney = "here are the list of comments here"
+      subject.update!(evidence: evidence, comments_for_attorney: comments_for_attorney)
+      expect(subject.summary).to eq extected_string
     end
   end
 
