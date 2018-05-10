@@ -48,7 +48,8 @@ class Document < ApplicationRecord
     "VA 21-527EZ, Fully Developed Claim (Pension)",
     "VA 21-22 Appointment of Veterans Serv. Org. as Claimant Rep",
     "Power of Attorney (incl. VA 21-22, VA 22a)",
-    "Hearing Transcript"
+    "Hearing Transcript",
+    "RAMP Opt-in Election"
   ].freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze

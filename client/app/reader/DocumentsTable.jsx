@@ -45,38 +45,12 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 };
 
 class DocumentsTable extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      filterPositions: {
-        tag: {},
-        category: {}
-      }
-    };
-  }
-
   componentDidMount() {
     this.hasSetScrollPosition = false;
-    this.setFilterIconPositions();
-    window.addEventListener('resize', this.setFilterIconPositions);
   }
 
   componentWillUnmount() {
     this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
-    window.removeEventListener('resize', this.setFilterIconPositions);
-  }
-
-  setFilterIconPositions = () => {
-    this.setCategoryFilterIconPosition();
-    this.setTagFilterIconPosition();
-  }
-
-  setCategoryFilterIconPosition = () => {
-    this.setFilterIconPosition('category', this.categoryFilterIcon);
-  }
-
-  setTagFilterIconPosition = () => {
-    this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
   getTbodyRef = (elem) => this.tbodyElem = elem
@@ -88,22 +62,6 @@ class DocumentsTable extends React.Component {
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
-  }
-
-  setFilterIconPosition = (filterType, icon) => {
-    const boundingClientRect = {
-      bottom: icon.getBoundingClientRect().bottom + window.scrollY,
-      right: icon.getBoundingClientRect().right
-    };
-
-    if (this.state.filterPositions[filterType].bottom !== boundingClientRect.bottom ||
-      this.state.filterPositions[filterType].right !== boundingClientRect.right) {
-      this.setState({
-        filterPositions: _.merge(this.state.filterPositions, {
-          [filterType]: _.merge({}, boundingClientRect)
-        })
-      });
-    }
   }
 
   componentDidUpdate() {
@@ -128,7 +86,6 @@ class DocumentsTable extends React.Component {
 
       this.hasSetScrollPosition = true;
     }
-    this.setFilterIconPositions();
   }
 
   // eslint-disable-next-line max-statements
@@ -196,7 +153,7 @@ class DocumentsTable extends React.Component {
             handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
 
           {isCategoryDropdownFilterOpen &&
-            <DropdownFilter baseCoordinates={this.state.filterPositions.category}
+            <DropdownFilter
               clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
@@ -248,7 +205,7 @@ class DocumentsTable extends React.Component {
             handleActivate={this.toggleTagDropdownFilterVisiblity}
           />
           {isTagDropdownFilterOpen &&
-            <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
+            <DropdownFilter
               clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
