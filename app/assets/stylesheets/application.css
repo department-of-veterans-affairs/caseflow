@@ -19,7 +19,6 @@
  *= require reader/_reader_styles_root.scss
  *= require _style_guide.scss
  *= require react/_react_styles_root.scss
- *= require reader/_reviewer.scss
  *= require dispatch/_dispatch.scss
  *= require _hearings.scss
  *= require _intake.scss
