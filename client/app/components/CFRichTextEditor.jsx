@@ -9,7 +9,6 @@ import { css } from 'glamor';
 
 const styles = css({
   border: '1px solid #323a45',
-  // overflow: 'auto',
   resize: 'vertical'
 });
 

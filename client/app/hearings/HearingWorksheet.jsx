@@ -66,7 +66,10 @@ const toolbar = {
   }
 };
 
-const DEFAULT_NOTES_VALUE = '<p><strong>Contentions</strong></p> <p></p> <p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><span style=\"color: rgb(50,58,69);background-color: rgb(255,255,255);font-size: 17.85;font-family: Source Sans Pro\", \"Helvetica Neue\", Helvetica, Roboto, Arial, sans-serif;\"><strong>Comments and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
+const DEFAULT_SUMMARY_VALUE = '<p><strong>Contentions</strong></p> <p></p>' +
+  '<p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><strong>Comments' +
+  'and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
+
 class WorksheetFormEntry extends React.PureComponent {
 
   render() {
@@ -151,7 +154,7 @@ export class HearingWorksheet extends React.PureComponent {
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Hearing Summary"
-          value={worksheet.summary || DEFAULT_NOTES_VALUE}
+          value={worksheet.summary || DEFAULT_SUMMARY_VALUE}
           onChange={this.onMilitaryServiceChange}
           id="worksheet-hearing-summary"
           minRows={1}
