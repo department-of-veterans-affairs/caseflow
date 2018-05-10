@@ -5,8 +5,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
 
   belongs_to :appeal_series
-  has_many :dispatch_tasks, class_name: "Dispatch::Task"
-  has_many :appeal_views
+  has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
