@@ -126,11 +126,11 @@ class Appeal < ApplicationRecord
 
   attr_writer :documents
   def documents
-    @documents ||= document_service.documents
+    @documents ||= document_fetcher_service.documents
   end
 
-  def document_service
-    @document_service ||= DocumentService.new(
+  def document_fetcher_service
+    @document_fetcher_service ||= DocumentService.new(
       self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
     )
   end

@@ -1,4 +1,4 @@
-describe AppealRepository do
+describe DocumentFetcherService do
   let(:appeal) { Generators::Appeal.build }
   let(:document_service) { DocumentService.new(appeal, use_efolder: true) }
   let(:series_id) { "TEST_SERIES_ID" }

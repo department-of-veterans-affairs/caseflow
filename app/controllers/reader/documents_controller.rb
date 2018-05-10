@@ -39,7 +39,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   helper_method :appeal
 
   def annotations
-    DocumentService.new(appeal, use_efolder: true).find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
+    appeal.document_fetcher_service.find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
   end
 
   def fetched_at_format
@@ -48,19 +48,17 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
   def manifest_vva_fetched_at
-    document_service.manifest_vva_fetched_at.strftime(fetched_at_format) if document_service.manifest_vva_fetched_at
+    appeal.document_fetcher_service.manifest_vva_fetched_at.strftime(fetched_at_format)
+      if appeal.document_fetcher_service.manifest_vva_fetched_at
   end
 
   def manifest_vbms_fetched_at
-    document_service.manifest_vbms_fetched_at.strftime(fetched_at_format) if document_service.manifest_vbms_fetched_at
-  end
-
-  def document_service
-    @document_service ||= DocumentService.new(appeal, use_efolder: true)
+    appeal.document_fetcher_service.manifest_vbms_fetched_at.strftime(fetched_at_format)
+      if appeal.document_fetcher_service.manifest_vbms_fetched_at
   end
 
   def documents
-    document_ids = document_service.find_or_create_documents!.map(&:id)
+    document_ids = appeal.document_fetcher_service.find_or_create_documents!.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)

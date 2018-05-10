@@ -1,4 +1,4 @@
-class DocumentService
+class DocumentFetcherService
   def initialize(appeal, use_efolder: false)
     @appeal = appeal
     @use_efolder = use_efolder
