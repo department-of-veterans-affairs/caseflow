@@ -4,20 +4,13 @@ import React from 'react';
 import Table from '../components/Table';
 import _ from 'lodash';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { sortTasks, renderAppealType } from './utils';
+import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
 
-class JudgeAssignTaskTable extends React.PureComponent {
+export default class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
 
-  getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.vacolsId];
-
-    return attr ? _.get(appeal.attributes, attr) : appeal;
-  };
-
-  getCaseDetailsLink = ({ task }) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} />;
+  getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
   getQueueColumns = () => [
     {
@@ -26,21 +19,19 @@ class JudgeAssignTaskTable extends React.PureComponent {
     },
     {
       header: 'Type(s)',
-      valueFunction: ({ task }) => renderAppealType(this.getAppealForTask(task))
+      valueFunction: ({ appeal }) => renderAppealType(appeal)
     },
     {
       header: 'Docket Number',
-      valueFunction: ({ task }) => this.getAppealForTask(task, 'docket_number')
+      valueFunction: ({ appeal }) => _.get(appeal.attributes, 'docket_number')
     },
     {
       header: 'Issues',
-      valueFunction: ({ task }) => this.getAppealForTask(task, 'issues.length')
+      valueFunction: ({ appeal }) => _.get(appeal.attributes, 'issues.length')
     },
     {
       header: 'Docs in Claims Folder',
-      valueFunction: ({ task }) => {
-        return <AppealDocumentCount appeal={this.getAppealForTask(task)} />;
-      }
+      valueFunction: ({ appeal }) => <AppealDocumentCount appeal={appeal} />
     },
     {
       header: 'Days Waiting',
@@ -54,25 +45,12 @@ class JudgeAssignTaskTable extends React.PureComponent {
   render = () => {
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={
-        sortTasks(
-          _.pick(this.props, 'tasks', 'appeals')).
-          filter(
-            (task) => task.attributes.task_type === 'Assign').
-          map((task) => ({
-            task,
-            appeal: this.getAppealForTask(task) }))
-      }
+      rowObjects={this.props.tasksAndAppeals}
       getKeyForRow={this.getKeyForRow}
     />;
   }
 }
 
 JudgeAssignTaskTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  tasksAndAppeals: PropTypes.array.isRequired
 };
-
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
-
-export default connect(mapStateToProps)(JudgeAssignTaskTable);

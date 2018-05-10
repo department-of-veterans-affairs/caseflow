@@ -48,6 +48,7 @@ const docCategoryPickerStyle = css(
     listStyleType: 'none',
     paddingLeft: 0,
     paddingBottom: 0,
+    width: '193px',
     '& li':
     {
       marginBottom: 0,
