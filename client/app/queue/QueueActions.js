@@ -1,5 +1,7 @@
+import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
+import ApiUtil from '../util/ApiUtil';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -17,19 +19,11 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (vacolsId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
+    vacolsId,
     docCount
-  }
-});
-
-export const loadAppealDocCountFail = (appealId) => ({
-  type: ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE,
-  payload: {
-    appealId,
-    docCount: null
   }
 });
 
@@ -77,18 +71,12 @@ export const editStagedAppeal = (appealId, attributes) => ({
   }
 });
 
-export const stageAppeal = (appealId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.STAGE_APPEAL,
-    payload: {
-      appealId
-    }
-  });
-
-  if (attributes) {
-    dispatch(editStagedAppeal(appealId, attributes));
+export const stageAppeal = (appealId) => ({
+  type: ACTIONS.STAGE_APPEAL,
+  payload: {
+    appealId
   }
-};
+});
 
 export const checkoutStagedAppeal = (appealId) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
@@ -142,6 +130,55 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   });
 
   if (attributes) {
+    dispatch(editStagedAppeal(appealId, attributes));
     dispatch(editAppeal(appealId, attributes));
   }
+};
+
+export const setAttorneysOfJudge = (attorneys) => ({
+  type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
+  payload: {
+    attorneys
+  }
+});
+
+const receiveTasksAndAppealsOfAttorney = ({ attorneyId, tasks, appeals }) => ({
+  type: ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    tasks,
+    appeals
+  }
+});
+
+const requestTasksAndAppealsOfAttorney = (attorneyId) => ({
+  type: ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId
+  }
+});
+
+const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
+  type: ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    error
+  }
+});
+
+export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
+  const requestOptions = {
+    timeout: true
+  };
+
+  dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
+
+  return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
+    (resp) => dispatch(
+      receiveTasksAndAppealsOfAttorney(
+        { attorneyId,
+          ...associateTasksWithAppeals(JSON.parse(resp.text)) })),
+    (error) => dispatch(errorTasksAndAppealsOfAttorney({ attorneyId,
+      error }))
+  );
 };

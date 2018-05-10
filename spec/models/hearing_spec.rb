@@ -262,12 +262,14 @@ describe Hearing do
 
       it "updates vacols hearing" do
         expect(hearing.notes).to eq nil
+        expect(hearing.summary).to eq nil
         expect(hearing.aod).to eq nil
         expect(hearing.transcript_requested).to eq nil
         expect(hearing.disposition).to eq nil
         expect(hearing.hold_open).to eq nil
         subject
         expect(hearing.notes).to eq "test notes"
+        expect(hearing.summary).to eq nil
         expect(hearing.aod).to eq :granted
         expect(hearing.transcript_requested).to eq false
         expect(hearing.disposition).to eq :postponed

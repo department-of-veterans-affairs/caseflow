@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
+import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -14,8 +15,8 @@ import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
-import CaseDetailView from './CaseDetailView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -40,65 +41,85 @@ class QueueApp extends React.PureComponent {
     </SearchEnabledView>
   </QueueLoadingScreen>;
 
-  routedCaseDetail = (props) => <QueueLoadingScreen {...this.props}>
-    <CaseDetailView vacolsId={props.match.params.vacolsId} />
+  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
+    <SearchEnabledView
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
+      {taskType === 'Assign' ?
+        <JudgeAssignTaskListView {...this.props} match={match} /> :
+        <JudgeReviewTaskListView {...this.props} />}
+    </SearchEnabledView>
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props}>
+  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView
-      vacolsId={props.match.params.vacolsId}
-      featureToggles={this.props.featureToggles} />
+    <QueueDetailView {...this.props}
+      vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     vacolsId={props.match.params.vacolsId}
-    nextStep="/" />;
+    nextStep="/queue" />;
 
   routedSelectDispositions = (props) => {
     const { vacolsId } = props.match.params;
 
     return <SelectDispositionsView
       vacolsId={vacolsId}
-      prevStep={`/tasks/${vacolsId}`}
-      nextStep={`/tasks/${vacolsId}/submit`} />;
+      prevStep={`/queue/appeals/${vacolsId}`}
+      nextStep={`/queue/appeals/${vacolsId}/submit`} />;
   };
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/tasks/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/tasks/${props.match.params.appealId}/submit`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
-  render = () => <BrowserRouter basename="/queue">
+  render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl="/"
+      defaultUrl="/queue"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
-      appName="Queue">
+      appName="">
       <AppFrame wideApp>
+        <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
-            path="/"
-            title="Your Queue | Caseflow Queue"
+            path="/queue"
+            title="Your Queue | Caseflow"
             render={this.routedQueueList} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId"
-            title="Draft Decision | Caseflow Queue"
+            path="/queue/:userId"
+            title="Queue | Caseflow"
+            render={this.routedQueueList} />
+          <PageRoute
+            exact
+            path="/queue/:userId/review"
+            title="Review Queue | Caseflow"
+            render={this.routedJudgeQueueList('Review')} />
+          <PageRoute
+            path="/queue/:userId/assign"
+            title="Assign Queue | Caseflow"
+            render={this.routedJudgeQueueList('Assign')} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:vacolsId"
+            title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/submit"
+            path="/queue/appeals/:vacolsId/submit"
             title={() => {
               const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
                 'OMO' : 'Draft Decision';
@@ -108,29 +129,24 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/queue/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/tasks/:appealId/remands"
+            path="/queue/appeals/:appealId/remands"
             title="Draft Decision | Select Issue Remand Reasons"
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/tasks/:vacolsId/dispositions"
+            path="/queue/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
-          <PageRoute
-            exact
-            path="/appeals/:vacolsId"
-            title="Case Details | Caseflow"
-            render={this.routedCaseDetail} />
         </div>
       </AppFrame>
       <Footer
         wideApp
-        appName="Queue"
+        appName=""
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />
     </NavigationBar>
@@ -142,6 +158,7 @@ QueueApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
   userRole: PropTypes.string.isRequired,
+  userCssId: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string
 };

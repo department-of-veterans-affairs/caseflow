@@ -32,7 +32,7 @@ const tagListStyling = css({
   margin: 0,
   maxHeight: '345px',
   wordBreak: 'break-word',
-  maxWidth: '218px',
+  width: '218px',
   overflowY: 'auto',
   listStyleType: 'none',
   paddingLeft: 0

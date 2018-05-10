@@ -9,5 +9,5 @@ class WorkQueue::IssueSerializer < ActiveModel::Serializer
   attribute :id
   attribute :vacols_sequence_id
   attribute :labels
-  attribute :description
+  attribute(:readjudication) { false }
 end

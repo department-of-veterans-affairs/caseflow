@@ -341,6 +341,7 @@ class Fakes::AppealRepository
   # 14555555 has no compensation issues
   # 16555555 throws a sensitivity error
   # 19555555 throws a sex error
+  # 23232323 is valid for AMA intake
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.seed_intake_data!

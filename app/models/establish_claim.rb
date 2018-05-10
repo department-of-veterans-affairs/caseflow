@@ -1,4 +1,4 @@
-class EstablishClaim < Task
+class EstablishClaim < Dispatch::Task
   include CachedAttributes
 
   ADMIN_FUNCTION = "Manage Claim Establishment".freeze
@@ -142,7 +142,7 @@ class EstablishClaim < Task
   end
 
   def bgs_info_valid?
-    appeal.veteran.valid?
+    appeal.veteran.valid?(:bgs)
   end
 
   def should_invalidate?
