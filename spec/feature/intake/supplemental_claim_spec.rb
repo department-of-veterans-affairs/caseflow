@@ -82,6 +82,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Finish processing")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
+    expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 rated issues")
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")

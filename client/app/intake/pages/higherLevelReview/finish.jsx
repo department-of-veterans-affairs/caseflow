@@ -81,6 +81,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={!this.props.higherLevelReview.selectedRatingCount}
     >
       Establish EP
     </Button>;
