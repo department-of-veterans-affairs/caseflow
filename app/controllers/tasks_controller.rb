@@ -81,7 +81,7 @@ class TasksController < ApplicationController
   end
 
   def complete_params
-    params.require("queue").permit(:type,
+    params.require("tasks").permit(:type,
                                    :reviewing_judge_id,
                                    :document_id,
                                    :work_product,
@@ -94,7 +94,7 @@ class TasksController < ApplicationController
   def task_params
     params.require("tasks")
       .permit(:appeal_type, :appeal_id)
-      .merge(assigned_to: User.find(params[:queue][:attorney_id]))
+      .merge(assigned_to: User.find(params[:tasks][:attorney_id]))
       .merge(assigned_by: current_user)
   end
 

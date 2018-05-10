@@ -1,4 +1,4 @@
-RSpec.describe QueueController, type: :controller do
+RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_welcome_gate)
@@ -9,29 +9,29 @@ RSpec.describe QueueController, type: :controller do
     FeatureToggle.disable!(:queue_welcome_gate)
   end
 
-  describe "GET queue/:user_id" do
+  describe "GET tasks?user_id=xxx" do
     let(:user) { User.create(css_id: "TEST1", station_id: 101) }
 
     it "when user is an attorney, it should process the request succesfully" do
       allow(UserRepository).to receive(:vacols_role).and_return("Attorney")
-      get :tasks, params: { user_id: user.id }
+      get :index, params: { user_id: user.id }
       expect(response.status).to eq 200
     end
 
     it "when user is an judge, it should process the request succesfully" do
       allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-      get :tasks, params: { user_id: user.id }
+      get :index, params: { user_id: user.id }
       expect(response.status).to eq 200
     end
 
     it "when user is neither, it should not process the request succesfully" do
       allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Cat")
-      get :tasks, params: { user_id: user.id }
+      get :index, params: { user_id: user.id }
       expect(response.status).to eq 400
     end
   end
 
-  describe "POST queue/appeals" do
+  describe "POST /tasks" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
     let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
@@ -54,7 +54,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        post :create, params: { queue: params }
+        post :create, params: { tasks: params }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
@@ -78,7 +78,7 @@ RSpec.describe QueueController, type: :controller do
           vacols_id: appeal.vacols_id
         ).and_return(true)
 
-        post :create, params: { queue: params }
+        post :create, params: { tasks: params }
         expect(response.status).to eq 201
       end
 
@@ -93,7 +93,7 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          post :create, params: { queue: params }
+          post :create, params: { tasks: params }
           expect(response.status).to eq 404
         end
       end
@@ -109,14 +109,14 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          post :create, params: { queue: params }
+          post :create, params: { tasks: params }
           expect(response.status).to eq 404
         end
       end
     end
   end
 
-  describe "PATCH queue/appeals" do
+  describe "PATCH tasks/:task_id" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
     let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
@@ -138,7 +138,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
@@ -162,7 +162,7 @@ RSpec.describe QueueController, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -176,14 +176,14 @@ RSpec.describe QueueController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          patch :update, params: { queue: params, task_id: "3615398-2018-04-18" }
+          patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
           expect(response.status).to eq 404
         end
       end
     end
   end
 
-  describe "POST queue/appeals/:task_id/complete" do
+  describe "POST tasks/:task_id/complete" do
     let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
 
     before do
@@ -207,7 +207,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should be successful" do
-        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
+        post :complete, params: { task_id: "1234567-2016-11-05", tasks: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
@@ -234,7 +234,7 @@ RSpec.describe QueueController, type: :controller do
       it "should be successful" do
         allow(Fakes::IssueRepository).to receive(:update_vacols_issue!)
         User.authenticate!(roles: ["System Admin"])
-        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
+        post :complete, params: { task_id: "1234567-2016-11-05", tasks: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorney_case_review"]["document_id"]).to eq "123456789.1234"
@@ -256,7 +256,7 @@ RSpec.describe QueueController, type: :controller do
       end
 
       it "should not be successful" do
-        post :complete, params: { task_id: "1234567-2016-11-05", queue: params }
+        post :complete, params: { task_id: "1234567-2016-11-05", tasks: params }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "ActiveRecord::RecordInvalid"
