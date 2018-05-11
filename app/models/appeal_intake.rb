@@ -11,7 +11,8 @@ class AppealIntake < Intake
   end
 
   def review!(request_params)
-    detail.update(request_params.permit(:receipt_date, :docket_type), context: :intake_review)
+    detail.assign_attributes(request_params.permit(:receipt_date, :docket_type))
+    detail.save(context: :intake_review)
   end
 
   def review_errors

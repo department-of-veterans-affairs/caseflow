@@ -1,4 +1,6 @@
 class CreateTemporaryAppeals < ActiveRecord::Migration[5.1]
+  safety_assured
+
   def change
     create_table :temporary_appeals do |t|
       t.string     :veteran_file_number, null: false
