@@ -41,13 +41,13 @@ export class HearingWorksheetContainer extends React.Component {
     }
   }
 
-  afterPrint = () => {
-    const params = getQueryParams(window.location.search);
-
-    if (params.keep_open !== 'true') {
-      window.close();
-    }
-  }
+  // afterPrint = () => {
+  //   const params = getQueryParams(window.location.search);
+  //
+  //   if (params.keep_open !== 'true') {
+  //     window.close();
+  //   }
+  // }
 
   render() {
 
