@@ -24,7 +24,7 @@ RSpec.feature "Intake" do
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,

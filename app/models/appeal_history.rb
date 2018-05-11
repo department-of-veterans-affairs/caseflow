@@ -16,7 +16,7 @@ class AppealHistory
   private
 
   def fetch_appeals
-    Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+    LegacyAppeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
       .reject { |appeal| INVALID_TYPES.include? appeal.type }
   end
 

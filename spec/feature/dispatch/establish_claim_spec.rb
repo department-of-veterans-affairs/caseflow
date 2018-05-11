@@ -15,15 +15,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
   end
 
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
+    Generators::LegacyAppeal.create(vacols_record: vacols_record, documents: documents)
   end
 
   let(:appeal_full_grant) do
-    Generators::Appeal.create(vacols_record: :full_grant_decided, documents: documents)
+    Generators::LegacyAppeal.create(vacols_record: :full_grant_decided, documents: documents)
   end
 
   let(:appeal_partial_grant) do
-    Generators::Appeal.create(vacols_record: :partial_grant_decided, documents: documents)
+    Generators::LegacyAppeal.create(vacols_record: :partial_grant_decided, documents: documents)
   end
 
   let(:documents) do
@@ -250,14 +250,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     let(:invalid_appeal) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vacols_record: { template: :remand_decided, decision_date: nil },
         documents: documents
       )
     end
 
     let(:inaccessible_appeal) do
-      Generators::Appeal.create(vacols_record: vacols_record, inaccessible: true)
+      Generators::LegacyAppeal.create(vacols_record: vacols_record, inaccessible: true)
     end
 
     let(:ep_already_exists_error) do

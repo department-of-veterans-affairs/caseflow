@@ -4,7 +4,7 @@ describe AppealEvents do
   end
 
   let(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "999887777S",
       status: status,
       notification_date: notification_date,

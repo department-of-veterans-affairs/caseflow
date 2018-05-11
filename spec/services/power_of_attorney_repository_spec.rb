@@ -100,7 +100,7 @@ describe PowerOfAttorneyRepository do
     context "when representative is not a person" do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
-          appeal: Appeal.new(vacols_id: "123C"),
+          appeal: LegacyAppeal.new(vacols_id: "123C"),
           representative_name: "This is not a name!",
           address: {
             address_line_1: "122 Mullberry St.",
@@ -138,7 +138,7 @@ describe PowerOfAttorneyRepository do
     context "when representative is a person" do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
-          appeal: Appeal.new(vacols_id: "123C"),
+          appeal: LegacyAppeal.new(vacols_id: "123C"),
           representative_name: "Jane M Smith",
           address: {
             address_line_1: "122 Mullberry St.",

@@ -17,7 +17,7 @@ class Fakes::HearingRepository
   end
 
   def self.hearings_for_appeal(appeal_vacols_id)
-    appeal = Appeal.find_by(vacols_id: appeal_vacols_id)
+    appeal = LegacyAppeal.find_by(vacols_id: appeal_vacols_id)
     return [] unless appeal
     (hearing_records || []).select { |h| h.appeal_id == appeal.id }
   end
@@ -90,7 +90,7 @@ class Fakes::HearingRepository
 
   def self.create_appeal_stream(hearing, i)
     3.times.each do |k|
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vbms_id: hearing.vbms_id,
         vacols_id: 950_330_575 + ((i + k) * 1276),
         vacols_record: { template: :remand_decided }
