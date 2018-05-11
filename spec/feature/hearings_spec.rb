@@ -229,27 +229,22 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
+      page.find(".public-DraftEditor-content").set("These are the notes being take here")
       fill_in "appellant-vet-rep-name", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
-      fill_in "worksheet-contentions", with: "These are contentions"
       fill_in "worksheet-military-service", with: "This is military service"
-      fill_in "worksheet-evidence", with: "This is evidence"
-      fill_in "worksheet-comments-for-attorney", with: "These are comments"
+
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are contentions")
+      expect(page).to have_content("These are the notes being take here")
       expect(page).to have_content("This is military service")
-      expect(page).to have_content("This is evidence")
-      expect(page).to have_content("These are comments")
 
       visit "/hearings/1/worksheet/print?do_not_open_print_prompt=1"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are contentions")
+      expect(page).to have_content("These are the notes being take here")
       expect(page).to have_content("This is military service")
-      expect(page).to have_content("This is evidence")
-      expect(page).to have_content("These are comments")
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do

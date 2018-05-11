@@ -121,27 +121,6 @@ describe('.setTranscriptRequested', () => {
   });
 });
 
-describe('.onContentionsChange', () => {
-  it('sets contention text', () => {
-
-    const contentions = 'this is a worksheet contention text';
-    const expectedAction = {
-      type: Constants.SET_CONTENTIONS,
-      payload: {
-        contentions
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
-      }
-    };
-
-    expect(Actions.onContentionsChange(contentions)).to.deep.equal(expectedAction);
-  });
-});
-
 describe('.onMilitaryServiceChange', () => {
   it('sets military service text', () => {
 
@@ -163,12 +142,12 @@ describe('.onMilitaryServiceChange', () => {
   });
 });
 
-describe('.onEvidenceChange', () => {
+describe('.onSummaryChange', () => {
   it('sets evidence text', () => {
 
-    const evidence = 'this is a worksheet evidence text';
+    const evidence = 'this is a worksheet summary text';
     const expectedAction = {
-      type: Constants.SET_EVIDENCE,
+      type: Constants.SET_SUMMARY,
       payload: {
         evidence
       },
@@ -180,27 +159,6 @@ describe('.onEvidenceChange', () => {
       }
     };
 
-    expect(Actions.onEvidenceChange(evidence)).to.deep.equal(expectedAction);
-  });
-});
-
-describe('.onCommentsForAttorneyChange', () => {
-  it('sets comment text', () => {
-
-    const commentsForAttorney = 'this is a comment for attorney';
-    const expectedAction = {
-      type: Constants.SET_COMMENTS_FOR_ATTORNEY,
-      payload: {
-        commentsForAttorney
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
-      }
-    };
-
-    expect(Actions.onCommentsForAttorneyChange(commentsForAttorney)).to.deep.equal(expectedAction);
+    expect(Actions.onSummaryChange(evidence)).to.deep.equal(expectedAction);
   });
 });

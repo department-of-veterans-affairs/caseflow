@@ -109,9 +109,6 @@ export class HearingWorksheet extends React.PureComponent {
     });
   };
 
-  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onSummaryChange = (event) => this.props.onEvidenceChange(event.target.value);
-  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
   onSummaryChange = (value) => this.props.onSummaryChange(value);
 
   render() {

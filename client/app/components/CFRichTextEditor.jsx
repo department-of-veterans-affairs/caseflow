@@ -67,6 +67,7 @@ export default class CFRichTextEditor extends React.PureComponent {
           editorState={this.state.editorState}
           editorClassName="demo-editor"
           toolbar={toolbar}
+          wrapperId={id}
         />
       </div>
     </div>;
