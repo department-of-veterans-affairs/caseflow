@@ -11,7 +11,7 @@ namespace :data do
 
     test_appeal_vacols_id = "2765748"
 
-    test_appeal = LegacyAppeal.find_or_create_by_vacols_id(test_appeal_vacols_id)
+    test_appeal = Appeal.find_or_create_by_vacols_id(test_appeal_vacols_id)
     AppealRepository.uncertify(test_appeal)
   end
 end

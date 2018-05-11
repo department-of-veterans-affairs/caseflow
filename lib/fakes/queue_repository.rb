@@ -28,7 +28,7 @@ class Fakes::QueueRepository
         assigned_by_first_name: "Joe",
         assigned_by_last_name: "Snuffy"
       }
-      LegacyAppeal.new(task_attrs)
+      Appeal.new(task_attrs)
     end
   end
   # rubocop:enable Metrics/MethodLength

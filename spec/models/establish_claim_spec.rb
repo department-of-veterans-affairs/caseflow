@@ -6,7 +6,7 @@ describe EstablishClaim do
   end
 
   let(:appeal) do
-    Generators::LegacyAppeal.build(
+    Generators::Appeal.build(
       vacols_record: vacols_record,
       dispatched_to_station: dispatched_to_station,
       vamc: special_issues[:vamc],
@@ -62,7 +62,7 @@ describe EstablishClaim do
     context "appeal not found in VACOLS" do
       # We cannot use the appeal generator, since when we use it we necessarily
       # need a record in our fake VACOLS
-      let(:appeal) { LegacyAppeal.new(vacols_id: "MISSING VACOLS ID") }
+      let(:appeal) { Appeal.new(vacols_id: "MISSING VACOLS ID") }
 
       it { is_expected.to be_truthy }
     end
@@ -78,7 +78,7 @@ describe EstablishClaim do
     subject { establish_claim.prepare_with_decision! }
 
     let(:appeal) do
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vacols_record: { template: :partial_grant_decided, decision_date: decision_date },
         documents: documents
       )
@@ -309,7 +309,7 @@ describe EstablishClaim do
 
     context "when VACOLS raises exception" do
       before do
-        allow(LegacyAppeal.repository).to receive(:update_vacols_after_dispatch!).and_raise("VACOLS Error")
+        allow(Appeal.repository).to receive(:update_vacols_after_dispatch!).and_raise("VACOLS Error")
       end
 
       it "rolls back DB changes" do
@@ -411,7 +411,7 @@ describe EstablishClaim do
 
     context "when VACOLS update raises error" do
       before do
-        allow(LegacyAppeal.repository).to receive(:update_location_after_dispatch!).and_raise("VACOLS Error")
+        allow(Appeal.repository).to receive(:update_location_after_dispatch!).and_raise("VACOLS Error")
       end
 
       it "rolls back DB changes" do

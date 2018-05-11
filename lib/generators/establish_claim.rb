@@ -3,7 +3,7 @@ class Generators::EstablishClaim
 
   class << self
     def create(attrs = {})
-      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::LegacyAppeal.create.id
+      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::Appeal.create.id
       attrs[:user_id] ||= attrs[:user].try(:id)
 
       EstablishClaim.create(attrs)

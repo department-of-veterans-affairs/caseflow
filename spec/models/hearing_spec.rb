@@ -113,16 +113,16 @@ describe Hearing do
     subject { hearing.active_appeal_streams }
 
     let(:appeal1) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
     end
     let!(:appeal2) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
     end
     let!(:appeal3) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
     end
     let!(:appeal4) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
     end
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
 
@@ -142,12 +142,12 @@ describe Hearing do
     subject { hearing.to_hash_for_worksheet(nil) }
 
     let(:appeal) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing },
-                                      vbms_id: "123C",
-                                      documents: documents)
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing },
+                                vbms_id: "123C",
+                                documents: documents)
     end
     let!(:additional_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
     let(:documents) do
@@ -189,7 +189,7 @@ describe Hearing do
       end
 
       context "when appeal is set" do
-        let(:appeal) { Generators::LegacyAppeal.create(vacols_id: "1234", vbms_id: "1234567") }
+        let(:appeal) { Generators::Appeal.create(vacols_id: "1234", vbms_id: "1234567") }
 
         it "should load military service from appeal" do
           hearing.update(appeal: appeal)
@@ -200,7 +200,7 @@ describe Hearing do
 
     context "when military service is set" do
       let(:military_service) { "Test" }
-      let(:appeal) { LegacyAppeal.create(vacols_id: "1234") }
+      let(:appeal) { Appeal.create(vacols_id: "1234") }
 
       it "should load military service from appeal" do
         hearing.update(appeal: appeal)
@@ -211,8 +211,8 @@ describe Hearing do
 
   context ".current_issue_count" do
     subject { hearing.current_issue_count }
-    let(:appeal1) { Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
-    let!(:appeal2) { Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let(:appeal1) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let!(:appeal2) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
     it "should return the current hearing count from all active appeals" do
       expect(subject).to eq 2
@@ -224,7 +224,7 @@ describe Hearing do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
-    let!(:appeal) { Generators::LegacyAppeal.build(vacols_id: "5678") }
+    let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
 
     context "create vacols record" do
       subject { Hearing.assign_or_create_from_vacols_record(vacols_record) }

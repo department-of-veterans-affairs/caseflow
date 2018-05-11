@@ -4,7 +4,7 @@ class Fakes::Initializer
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       if !rails_env || !rails_env.local?
-        LegacyAppeal.repository = Fakes::AppealRepository
+        Appeal.repository = Fakes::AppealRepository
         AttorneyCaseReview.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
         HearingDocket.repository = Fakes::HearingRepository

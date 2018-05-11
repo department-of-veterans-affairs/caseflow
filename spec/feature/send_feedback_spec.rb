@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Send feedback" do
   let!(:current_user) { User.authenticate! }
-  let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+  let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
   scenario "Sending feedback about Caseflow Certification" do
     visit "certifications/new/#{appeal.vacols_id}"

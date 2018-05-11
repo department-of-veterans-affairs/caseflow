@@ -9,6 +9,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../actions/Dockets';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { DISPOSITION_OPTIONS } from '../constants/constants';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -85,6 +86,13 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
+    let dispositionOptions = worksheet.disposition === 'no_show' || worksheet.disposition === 'postponed' ||
+  worksheet.disposition === 'cancelled';
+
+    let dispositionRed = classNames({ 'cf-red-text': dispositionOptions });
+
+    const getDisposition = (dispositionSymbol) => _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol }).label;
+
     return <div>
       <div className="cf-hearings-worksheet-data">
         <div className="title">
@@ -105,6 +113,10 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell">
           <h5>DATE</h5>
           <div>{moment(worksheet.date).format('ddd l')}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>HEARING DISPOSTION</h5>
+          <div className={dispositionRed}>{getDisposition(worksheet.disposition)}</div>
         </div>
       </div>
 

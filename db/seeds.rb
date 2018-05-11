@@ -15,7 +15,7 @@ class SeedDB
 
   def create_appeals(number)
     appeals = number.times.map do |i|
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
         vacols_record: {
@@ -24,7 +24,7 @@ class SeedDB
     end
 
     @appeals.push(*appeals)
-    @appeals.push(LegacyAppeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
+    @appeals.push(Appeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
   end
 
   def create_users(number, deterministic = true)

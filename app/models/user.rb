@@ -147,7 +147,7 @@ class User < ApplicationRecord
     appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
-    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
+    appeal_streams = Appeal.fetch_appeal_streams(appeals)
     appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
 
     appeals.map do |appeal|

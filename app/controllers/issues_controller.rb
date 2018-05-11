@@ -53,7 +53,7 @@ class IssuesController < ApplicationController
   end
 
   def appeal
-    @appeal ||= LegacyAppeal.find(params[:appeal_id])
+    @appeal ||= Appeal.find(params[:appeal_id])
   end
 
   def issue_params

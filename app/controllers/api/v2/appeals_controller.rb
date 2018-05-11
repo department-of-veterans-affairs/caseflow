@@ -37,7 +37,7 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def fetch_vbms_id
     fail Caseflow::Error::InvalidSSN if !ssn || ssn.length != 9 || ssn.scan(/\D/).any?
-    LegacyAppeal.vbms_id_for_ssn(ssn)
+    Appeal.vbms_id_for_ssn(ssn)
   end
 
   # Cache can't be busted in prod

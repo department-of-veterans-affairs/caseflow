@@ -12,7 +12,7 @@ class JudgeCaseAssignment
     validate!
     case appeal_type
     when "Legacy"
-      vacols_id = LegacyAppeal.find(appeal_id).vacols_id
+      vacols_id = Appeal.find(appeal_id).vacols_id
       MetricsService.record("VACOLS: assign_case_to_attorney #{vacols_id}",
                             service: :vacols,
                             name: "assign_case_to_attorney") do

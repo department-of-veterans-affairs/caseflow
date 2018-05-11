@@ -9,7 +9,7 @@ RSpec.describe IssuesController, type: :controller do
     FeatureToggle.disable!(:queue_phase_two)
   end
 
-  let(:appeal) { LegacyAppeal.create(vacols_id: "354672") }
+  let(:appeal) { Appeal.create(vacols_id: "354672") }
 
   describe "POST appeals/:appeal_id/issues" do
     context "when all parameters are present" do

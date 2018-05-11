@@ -11,7 +11,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:original) do
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_id: "1234567",
         vacols_record: {
@@ -36,7 +36,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:post_remand) do
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_id: "7654321",
         vacols_record: {
@@ -65,7 +65,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:another_original) do
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
@@ -96,7 +96,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:another_veteran_appeal) do
-      Generators::LegacyAppeal.create(vbms_id: "333222333S")
+      Generators::Appeal.create(vbms_id: "333222333S")
     end
 
     let!(:held_hearing) do
@@ -168,7 +168,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # Make a new appeal and check that it isn't returned because of the cache
-      Generators::LegacyAppeal.create(
+      Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_record: { template: :remand_decided }
       )

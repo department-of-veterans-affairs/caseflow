@@ -28,7 +28,7 @@ RSpec.feature "Save Certification" do
   end
 
   let(:appeal) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: [nod, soc, form9])
+    Generators::Appeal.build(vacols_record: vacols_record, documents: [nod, soc, form9])
   end
 
   context "As an authorized user" do
@@ -237,7 +237,7 @@ RSpec.feature "Save Certification" do
         expect(page).to have_content "Something went wrong"
         expect(page).to_not have_content "Check Documents"
 
-        allow(LegacyAppeal.repository).to receive(:certify).and_raise(generic_error)
+        allow(Appeal.repository).to receive(:certify).and_raise(generic_error)
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
