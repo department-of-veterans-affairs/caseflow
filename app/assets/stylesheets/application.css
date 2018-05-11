@@ -15,6 +15,7 @@
  *= require _commons.scss
  *= require _tabs.scss
  *= require reader/_reader_styles_root.scss
+ *= require _pdf_viewer.css
  *= require _style_guide.scss
  *= require react/_react_styles_root.scss
  *= require dispatch/_dispatch.scss
