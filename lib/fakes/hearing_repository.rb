@@ -7,7 +7,7 @@ class Fakes::HearingRepository
     attr_accessor :master_records
   end
 
-  def self.fetch_hearings_for_judge(css_id)
+  def self.fetch_hearings_for_judge(css_id, is_fetching_issues = false)
     user = User.find_by_css_id(css_id)
     records.select { |h| h.user_id == user.id }
   end
