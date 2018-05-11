@@ -130,7 +130,7 @@ class Appeal < ApplicationRecord
     )
   end
 
-  delegate :number_of_documents, to: :document_fetcher_service
+  delegate :documents, :number_of_documents, to: :document_fetcher_service
 
   def number_of_documents_url
     if document_service == ExternalApi::EfolderService

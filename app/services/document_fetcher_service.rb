@@ -1,6 +1,8 @@
 class DocumentFetcherService
   include ActiveModel::Model
 
+  attr_accessor :appeal, :use_efolder
+
   def documents
     fetch_documents_from_service!
     @documents
@@ -20,7 +22,7 @@ class DocumentFetcherService
     @manifest_vva_fetched_at
   end
 
-  def find_or_create_documents!
+  def fetch_or_create_documents!
     @created_documents ||= save!
   end
 

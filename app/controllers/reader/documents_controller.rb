@@ -39,7 +39,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   helper_method :appeal
 
   def annotations
-    appeal.document_fetcher_service.find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
+    appeal.document_fetcher_service.fetch_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
   end
 
   def fetched_at_format
@@ -60,7 +60,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def documents
-    document_ids = appeal.document_fetcher_service.find_or_create_documents!.map(&:id)
+    document_ids = appeal.document_fetcher_service.fetch_or_create_documents!.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
@@ -68,8 +68,7 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = DocumentFetcherService.new(appeal: appeal, use_efolder: true)
-      .find_or_create_documents!.map do |document|
+    @documents = appeal.document_fetcher_service.fetch_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags

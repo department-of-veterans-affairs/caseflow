@@ -77,12 +77,12 @@ describe Appeal do
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     before do
-      appeal.documents += [
+      allow(appeal).to receive(:documents).and_return([
         Document.new(type: "NOD", received_at: 7.days.ago),
         Document.new(type: "BVA Decision", received_at: 7.days.ago),
         Document.new(type: "BVA Decision", received_at: 6.days.ago),
         Document.new(type: "SSOC", received_at: 6.days.ago)
-      ]
+      ])
     end
 
     context "when 1 type is passed" do
@@ -232,19 +232,29 @@ describe Appeal do
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
     let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
-    let(:documents) { [nod_document, soc_document, form9_document] }
+    let(:base_documents) { [nod_document, soc_document, form9_document] }
 
     subject { appeal.documents_match? }
+    before do
+      allow(appeal).to receive(:documents).and_return(documents)
+    end
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
-      it { is_expected.to be_truthy }
+      context "when there are no ssocs" do
+        let(:documents) { base_documents }
+
+        it { is_expected.to be_truthy }
+      end
 
       context "when ssoc dates don't match" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
         end
 
@@ -252,11 +262,14 @@ describe Appeal do
       end
 
       context "when received_at is nil" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago]
         end
 
@@ -264,13 +277,15 @@ describe Appeal do
       end
 
       context "and ssoc dates match" do
-        before do
-          # vbms documents
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
           ]
+        end
+
+        before do
           # vacols dates
           appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
         end
@@ -296,10 +311,10 @@ describe Appeal do
 
     context "when at least one ssoc doesn't match" do
       before do
-        appeal.documents += [
+        allow(appeal).to receive(:documents).and_return([
           Document.new(type: "SSOC", received_at: 6.days.ago),
           Document.new(type: "SSOC", received_at: 7.days.ago)
-        ]
+        ])
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
       end
@@ -1136,7 +1151,7 @@ describe Appeal do
 
     context "when only one decision" do
       before do
-        appeal.documents = [decision]
+        allow(appeal).to receive(:documents).and_return([decision])
         appeal.decision_date = Time.current
       end
 
@@ -1145,7 +1160,7 @@ describe Appeal do
 
     context "when only one recent decision" do
       before do
-        appeal.documents = [decision, old_decision]
+        allow(appeal).to receive(:documents).and_return([decision, old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1154,7 +1169,7 @@ describe Appeal do
 
     context "when no recent decision" do
       before do
-        appeal.documents = [old_decision]
+        allow(appeal).to receive(:documents).and_return([old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1173,7 +1188,7 @@ describe Appeal do
       let(:documents) { [decision, decision.clone] }
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
@@ -1189,7 +1204,7 @@ describe Appeal do
       end
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
