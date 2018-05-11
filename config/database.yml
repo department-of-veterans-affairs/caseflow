@@ -12,6 +12,7 @@ default: &default
   variables:
     statement_timeout: 30_000 # 30 seconds
   host: <%= ENV['POSTGRES_HOST'] %>
+  port: 5433
   username: <%= ENV['POSTGRES_USER'] || `whoami` %>
   # If we set the value to nil when the variable isn't present,
   # the k8s Jenkins environment won't connect
@@ -33,7 +34,7 @@ ssh_forwarding:
 
 local:
   <<: *default
-  database: caseflow_certification_local
+  database: caseflow_certification
 
 staging:
   <<: *default
@@ -55,10 +56,10 @@ development_vacols:
 local_vacols:
  adapter: oracle_enhanced
  host: localhost
- port: 1521
+ port: 1526
  username: VACOLS
  password: VACOLS
- database: BVAP.localdomain
+ database: BVAP
 
 demo_vacols:
   adapter: sqlite3
