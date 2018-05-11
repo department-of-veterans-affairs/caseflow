@@ -1,4 +1,5 @@
 require "rails_helper"
+# rubocop:disable Style/FormatString
 
 RSpec.feature "Queue" do
   before do
@@ -107,7 +108,7 @@ RSpec.feature "Queue" do
       click_on "Open Claims Folder"
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
-      expect(page).to have_link("Back to Your Queue", href: "/queue")
+      expect(page).to have_link(COPY::BACK_TO_PERSONAL_QUEUE_LINK_LABEL, href: "/queue")
     end
   end
 
@@ -126,7 +127,7 @@ RSpec.feature "Queue" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -139,12 +140,12 @@ RSpec.feature "Queue" do
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -156,7 +157,9 @@ RSpec.feature "Queue" do
       end
 
       it "page displays no cases found message" do
-        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals)
+        )
       end
 
       it "search bar moves from top right to main page body" do
@@ -169,12 +172,12 @@ RSpec.feature "Queue" do
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -187,7 +190,7 @@ RSpec.feature "Queue" do
       end
 
       it "displays error message" do
-        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -199,12 +202,12 @@ RSpec.feature "Queue" do
         fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
         click_on "Search"
 
-        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -217,7 +220,7 @@ RSpec.feature "Queue" do
 
       it "page displays table of results" do
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "search bar stays in top right" do
@@ -227,7 +230,7 @@ RSpec.feature "Queue" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -241,7 +244,7 @@ RSpec.feature "Queue" do
     scenario "table renders row per task" do
       visit "/queue"
 
-      expect(page).to have_content("Your Queue")
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
@@ -271,7 +274,6 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
-        # TODO: these false positives are fixed in rubocop 0.53.0 (#5496)
         # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
         # rubocop:enable Style/FormatStringToken
@@ -778,3 +780,5 @@ RSpec.feature "Queue" do
     end
   end
 end
+
+# rubocop:enable Style/FormatString
