@@ -1,6 +1,6 @@
-describe DocumentFetcherService do
+describe DocumentFetcher do
   let(:appeal) { Generators::LegacyAppeal.build }
-  let(:document_service) { DocumentFetcherService.new(appeal: appeal, use_efolder: true) }
+  let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
   let(:series_id) { "TEST_SERIES_ID" }
 
   let!(:documents) do
@@ -13,6 +13,7 @@ describe DocumentFetcherService do
   let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55) }
   let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1) }
 
+  let(:fetched_at_format) { "%D %l:%M%P %Z" }
   let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
   let(:doc_struct) do
     {
@@ -55,7 +56,7 @@ describe DocumentFetcherService do
     subject { document_service.manifest_vbms_fetched_at }
 
     it "returns the correct timestamp" do
-      expect(subject).to eq(service_manifest_vbms_fetched_at)
+      expect(subject).to eq(service_manifest_vbms_fetched_at.strftime(fetched_at_format))
     end
   end
 
@@ -63,7 +64,7 @@ describe DocumentFetcherService do
     subject { document_service.manifest_vva_fetched_at }
 
     it "returns the correct timestamp" do
-      expect(subject).to eq(service_manifest_vva_fetched_at)
+      expect(subject).to eq(service_manifest_vva_fetched_at.strftime(fetched_at_format))
     end
   end
 

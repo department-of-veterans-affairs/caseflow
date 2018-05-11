@@ -123,13 +123,13 @@ class LegacyAppeal < ApplicationRecord
     @ssoc_dates ||= []
   end
 
-  def document_fetcher_service
-    @document_fetcher_service ||= DocumentFetcherService.new(
+  def document_fetcher
+    @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
     )
   end
 
-  delegate :documents, :number_of_documents, to: :document_fetcher_service
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_url
     if document_service == ExternalApi::EfolderService
