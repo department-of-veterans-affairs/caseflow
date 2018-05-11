@@ -24,7 +24,6 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
@@ -166,7 +165,7 @@ class SubmitDecisionView extends React.PureComponent {
     }
 
     return <div className={fieldClasses}>
-      <label>Submit to judge: <RequiredIndicator /></label>
+      <label>Submit to judge:</label>
       {shouldDisplayError && <span className="usa-input-error-message">
         {ERROR_FIELD_REQUIRED}
       </span>}
@@ -210,7 +209,6 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
-        required
         options={omoTypes}
         styling={radioFieldStyling}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
@@ -225,7 +223,6 @@ class SubmitDecisionView extends React.PureComponent {
       <TextField
         label="Document ID:"
         name="document_id"
-        required
         errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
