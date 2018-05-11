@@ -25,7 +25,7 @@ development:
 
 demo:
   <<: *default
-  database: caseflow_certification_demo
+  url: <%= ENV["POSTGRES_URL"] %>
 
 ssh_forwarding:
   <<: *default
@@ -61,10 +61,13 @@ local_vacols:
  database: BVAP.localdomain
 
 demo_vacols:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/demo-vacols.sqlite3
+  adapter: oracle_enhanced
+  username: <%= ENV["VACOLS_USERNAME"] %>
+  password: <%= ENV["VACOLS_PASSWORD"] %>
+  host: <%= ENV["VACOLS_HOST"] %>
+  port: <%= ENV["VACOLS_PORT"] %>
+  database: <%= ENV["VACOLS_DATABASE"] %>
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
 
 ssh_forwarding_vacols:
   adapter: oracle_enhanced
