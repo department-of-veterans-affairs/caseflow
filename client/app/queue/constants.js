@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import StringUtil from '../util/StringUtil';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -17,7 +18,6 @@ export const ACTIONS = {
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
-  LOAD_APPEAL_DOC_COUNT_FAILURE: 'LOAD_APPEAL_DOC_COUNT_FAILURE',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
   SET_DECISION_OPTIONS: 'SET_DECISION_OPTIONS',
   RESET_DECISION_OPTIONS: 'RESET_DECISION_OPTIONS',
@@ -31,7 +31,10 @@ export const ACTIONS = {
   SAVE_EDITED_APPEAL_ISSUE: 'SAVE_EDITED_APPEAL_ISSUE',
   UPDATE_EDITING_APPEAL_ISSUE: 'UPDATE_EDITING_APPEAL_ISSUE',
   DELETE_EDITING_APPEAL_ISSUE: 'DELETE_EDITING_APPEAL_ISSUE',
-  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE'
+  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE',
+  SET_TASKS_AND_APPEALS_OF_ATTORNEY: 'SET_TASKS_AND_APPEALS_OF_ATTORNEY',
+  REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY: 'REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY',
+  ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -75,7 +78,7 @@ export const SEARCH_ERROR_FOR = {
 
 export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
   ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [VACOLS_DISPOSITIONS_BY_ID[dispositionId].toLowerCase().replace(/ /g, '_')]: dispositionId
+    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
   }))
 );
 
@@ -87,3 +90,11 @@ export const REMAND_REASONS = Object.assign({},
     }))
   }))
 );
+
+const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
+  map((val) => StringUtil.parameterize(val));
+
+export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+  _.invokeMap(parameterizedDispositions, 'toUpperCase'),
+  parameterizedDispositions
+));

@@ -12,6 +12,16 @@ describe Hearing do
     )
   end
 
+  let(:hearing2) do
+    Generators::Hearing.build(
+      date: date,
+      disposition: disposition,
+      hold_open: hold_open,
+      type: type,
+      contentions: "no treatment after service private or VA\n"
+    )
+  end
+
   let(:date) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
@@ -26,6 +36,32 @@ describe Hearing do
       let(:type) { :central_office }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
+    end
+  end
+
+  context "update_summary_field" do
+    subject { hearing2 }
+
+    it "updates summary field after contentions is updated" do
+      expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
+      "CS denied in 3/68 DX of C-spine issue</p><p></p><p><strong>Evidence</strong></p>"\
+      " <p></p><p></p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
+      "</p><p></p><p></p><p></p>"
+      subject.contentions = "no treatment after service private or VA\n"\
+      "CS denied in 3/68 DX of C-spine issue"
+      subject.save
+      expect(subject.summary).to eq expected_string
+    end
+
+    it "updates summary field after evidence and comments updated" do
+      expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
+      "</p><p></p><p><strong>Evidence</strong></p>"\
+      " <p>evidence</p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
+      "</p><p>here are the list of comments here</p><p></p>"
+      evidence = "evidence"
+      comments_for_attorney = "here are the list of comments here"
+      subject.update!(evidence: evidence, comments_for_attorney: comments_for_attorney)
+      expect(subject.summary).to eq expected_string
     end
   end
 
@@ -77,16 +113,16 @@ describe Hearing do
     subject { hearing.active_appeal_streams }
 
     let(:appeal1) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
     end
     let!(:appeal2) do
-      Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
     end
     let!(:appeal3) do
-      Generators::Appeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :full_grant_decided }, vbms_id: "123C")
     end
     let!(:appeal4) do
-      Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
     end
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
 
@@ -106,12 +142,12 @@ describe Hearing do
     subject { hearing.to_hash_for_worksheet(nil) }
 
     let(:appeal) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing },
-                                vbms_id: "123C",
-                                documents: documents)
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing },
+                                      vbms_id: "123C",
+                                      documents: documents)
     end
     let!(:additional_appeal) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
     let(:documents) do
@@ -153,7 +189,7 @@ describe Hearing do
       end
 
       context "when appeal is set" do
-        let(:appeal) { Generators::Appeal.create(vacols_id: "1234", vbms_id: "1234567") }
+        let(:appeal) { Generators::LegacyAppeal.create(vacols_id: "1234", vbms_id: "1234567") }
 
         it "should load military service from appeal" do
           hearing.update(appeal: appeal)
@@ -164,7 +200,7 @@ describe Hearing do
 
     context "when military service is set" do
       let(:military_service) { "Test" }
-      let(:appeal) { Appeal.create(vacols_id: "1234") }
+      let(:appeal) { LegacyAppeal.create(vacols_id: "1234") }
 
       it "should load military service from appeal" do
         hearing.update(appeal: appeal)
@@ -175,8 +211,8 @@ describe Hearing do
 
   context ".current_issue_count" do
     subject { hearing.current_issue_count }
-    let(:appeal1) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
-    let!(:appeal2) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let(:appeal1) { Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let!(:appeal2) { Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
     let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
     it "should return the current hearing count from all active appeals" do
       expect(subject).to eq 2
@@ -188,7 +224,7 @@ describe Hearing do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
-    let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
+    let!(:appeal) { Generators::LegacyAppeal.build(vacols_id: "5678") }
 
     context "create vacols record" do
       subject { Hearing.assign_or_create_from_vacols_record(vacols_record) }
@@ -262,12 +298,14 @@ describe Hearing do
 
       it "updates vacols hearing" do
         expect(hearing.notes).to eq nil
+        expect(hearing.summary).to eq nil
         expect(hearing.aod).to eq nil
         expect(hearing.transcript_requested).to eq nil
         expect(hearing.disposition).to eq nil
         expect(hearing.hold_open).to eq nil
         subject
         expect(hearing.notes).to eq "test notes"
+        expect(hearing.summary).to eq nil
         expect(hearing.aod).to eq :granted
         expect(hearing.transcript_requested).to eq false
         expect(hearing.disposition).to eq :postponed

@@ -157,18 +157,18 @@ class Generators::Appeal
     # Examples
     #
     # # Sets vacols_record to the :remand_decided template + defaults
-    # Generators::Appeal.build(vacols_record: :remand_decided)
+    # Generators::LegacyAppeal.build(vacols_record: :remand_decided)
     #
     # # Sets vacols_record with a custom first name + the defaults
-    # Generators::Appeal.build({veteran_first_name: "Marky"})
+    # Generators::LegacyAppeal.build({veteran_first_name: "Marky"})
     #
     # # Sets vacols_record with a custom decision_date + :remand_decided template + defaults
-    # Generators::Appeal.build(vacols_record: {template: :remand_decided, decision_date: 1.day.ago})
+    # Generators::LegacyAppeal.build(vacols_record: {template: :remand_decided, decision_date: 1.day.ago})
     #
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
       vacols_record = extract_vacols_record(attrs)
-      appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
+      appeal = LegacyAppeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       inaccessible = attrs.delete(:inaccessible)
       veteran = attrs.delete(:veteran)
 
@@ -177,11 +177,11 @@ class Generators::Appeal
       set_vacols_issues(appeal: appeal, vacols_record: vacols_record, attrs: attrs)
 
       vacols_record[:vbms_id] = attrs[:vbms_id]
-      vacols_record = vacols_record.merge(attrs.select { |attr| Appeal.vacols_field?(attr) })
+      vacols_record = vacols_record.merge(attrs.select { |attr| LegacyAppeal.vacols_field?(attr) })
 
       set_vacols_record(appeal: appeal, vacols_record: vacols_record)
 
-      non_vacols_attrs = attrs.reject { |attr| Appeal.vacols_field?(attr) }
+      non_vacols_attrs = attrs.reject { |attr| LegacyAppeal.vacols_field?(attr) }
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible

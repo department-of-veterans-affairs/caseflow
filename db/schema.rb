@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180504231033) do
+ActiveRecord::Schema.define(version: 20180510171815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -175,6 +175,23 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.datetime "created_at"
   end
 
+  create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "type", null: false
+    t.integer "user_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer "completion_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lock_version"
+    t.string "comment"
+    t.string "outgoing_reference_id"
+    t.string "aasm_state"
+    t.datetime "prepared_at"
+  end
+
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.integer "docket_count"
     t.date "latest_docket_month"
@@ -328,6 +345,7 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.string "military_service"
     t.string "comments_for_attorney"
     t.boolean "prepped"
+    t.text "summary"
   end
 
   create_table "higher_level_reviews", force: :cascade do |t|
@@ -373,7 +391,7 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.boolean "foreign_claim_compensation_claims_dual_claims_appeals", default: false
     t.boolean "manlincon_compliance", default: false
     t.boolean "hearing_including_travel_board_video_conference", default: false
-    t.boolean "home_loan_guarantee", default: false
+    t.boolean "home_loan_guaranty", default: false
     t.boolean "insurance", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "spina_bifida", default: false
@@ -384,7 +402,7 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.boolean "mustard_gas", default: false
     t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
     t.boolean "foreign_pension_dic_all_other_foreign_countries", default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_american_caribb", default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.string "dispatched_to_station"
@@ -478,23 +496,6 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "tasks", id: :serial, force: :cascade do |t|
-    t.integer "appeal_id", null: false
-    t.string "type", null: false
-    t.integer "user_id"
-    t.datetime "assigned_at"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.integer "completion_status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "lock_version"
-    t.string "comment"
-    t.string "outgoing_reference_id"
-    t.string "aasm_state"
-    t.datetime "prepared_at"
-  end
-
   create_table "team_quotas", id: :serial, force: :cascade do |t|
     t.date "date", null: false
     t.string "task_type", null: false
@@ -537,7 +538,6 @@ ActiveRecord::Schema.define(version: 20180504231033) do
     t.string "file_number", null: false
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
-    t.index ["participant_id"], name: "index_veterans_on_participant_id", unique: true
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|

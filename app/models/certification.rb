@@ -99,7 +99,7 @@ class Certification < ApplicationRecord
 
   # VACOLS attributes
   def appeal
-    @appeal ||= Appeal.find_or_create_by_vacols_id(vacols_id)
+    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def form8

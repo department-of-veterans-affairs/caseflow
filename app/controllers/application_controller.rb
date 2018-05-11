@@ -105,6 +105,15 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
   end
 
+  def verify_queue_phase_three
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_three)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
