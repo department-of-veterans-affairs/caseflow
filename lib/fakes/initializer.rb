@@ -4,7 +4,7 @@ class Fakes::Initializer
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       if !rails_env || !rails_env.local?
-        Appeal.repository = Fakes::AppealRepository
+        LegacyAppeal.repository = Fakes::AppealRepository
         AttorneyCaseReview.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
         HearingDocket.repository = Fakes::HearingRepository
@@ -68,6 +68,9 @@ class Fakes::Initializer
         "email" => "america@example.com",
         "name" => "Cave Johnson"
       }
+
+      # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
+      Fakes::BGSService.create_veteran_records if rails_env.local?
 
       return if rails_env.local?
       Functions.grant!("Global Admin", users: ["System Admin"])

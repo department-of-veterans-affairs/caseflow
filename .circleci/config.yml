@@ -35,7 +35,7 @@ jobs:
 
       - run:
           name: Setup testfiles directory
-          command: mkdir -p ~/project/tmp/testfiles
+          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
       - restore_cache:
           keys:
@@ -56,7 +56,7 @@ jobs:
 
       - run:
           name: yarn install
-          command: cd client && yarn install --frozen-lockfile
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
           key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
@@ -66,28 +66,28 @@ jobs:
       - run:
           name: Database setup
           command: |
-            bundle exec rake db:create
-            bundle exec rake db:schema:load
+            ~/project/ci-bin/capture-log "bundle exec rake db:create"
+            ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
 
       - run:
           name: Danger
           command: |
-            bundle exec danger
+            ~/project/ci-bin/capture-log "bundle exec danger"
 
       - run:
           name: Lint
           command: |
-            bundle exec rake lint
+            ~/project/ci-bin/capture-log "bundle exec rake lint"
 
       - run:
           name: Security
           command: |
-            bundle exec rake security_caseflow
+            ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
 
       - run:
           name: Wait for FACOLS to be ready
           command: |
-            bundle exec rake local:vacols:wait_for_connection
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: Mocha
@@ -96,7 +96,7 @@ jobs:
             pushd client
             testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
             echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
-            node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}
+            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
 
       - run:
           name: RSpec
@@ -104,7 +104,7 @@ jobs:
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-            bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}
+            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 
       - store_test_results:
           name: Store test results as summary
@@ -126,6 +126,10 @@ jobs:
           name: Store testfile ordering
           path: ~/project/tmp/testfiles
 
+      - store_artifacts:
+          name: Store run logs
+          path: ~/logs
+
       # Karma JavaScript tests are a deploy step because currently they are not
       # able to be run in parallel.
       - deploy:
@@ -133,7 +137,7 @@ jobs:
           command: |
             mkdir -p ~/karma-test-results/karma
             pushd client
-            node_modules/.bin/karma start --reporters junit
+            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
 
       # Karma gets its own test results directory because otherwise
       # we would upload the test results directory twice, doubling
@@ -144,4 +148,14 @@ jobs:
       - deploy:
           name: Verify code coverage
           command: |
-            bundle exec rake ci:circleci_verify_code_coverage
+            ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log

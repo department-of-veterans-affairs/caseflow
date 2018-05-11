@@ -179,7 +179,7 @@ def current_user
 end
 
 # Setup fakes
-Appeal.repository = Fakes::AppealRepository
+LegacyAppeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
 HearingDocket.repository = Fakes::HearingRepository

@@ -106,7 +106,7 @@ describe EndProduct do
   end
 
   context "#potential_match?" do
-    let(:appeal) { Appeal.new(decision_date: Time.zone.now) }
+    let(:appeal) { LegacyAppeal.new(decision_date: Time.zone.now) }
     subject { end_product.potential_match?(appeal) }
 
     context "when it has a dispatch code" do
