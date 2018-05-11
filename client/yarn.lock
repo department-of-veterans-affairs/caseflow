@@ -54,7 +54,7 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.5.6":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@department-of-veterans-affairs/caseflow-frontend-toolkit.git/mdbenjam-add-sentry-webpack":
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.5.6.tgz#cc97d2b8b4e78e6a2612737f41d2bbf21c4b44a8"
   dependencies:
