@@ -1,4 +1,4 @@
-class Generators::Appeal
+class Generators::LegacyAppeal
   extend Generators::Base
 
   class << self

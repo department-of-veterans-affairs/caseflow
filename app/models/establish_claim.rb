@@ -88,7 +88,7 @@ class EstablishClaim < Dispatch::Task
     transaction do
       update_claim_establishment!
       complete!(status: completion_status_after_review)
-      Appeal.repository.update_vacols_after_dispatch!(appeal: appeal, vacols_note: vacols_note)
+      LegacyAppeal.repository.update_vacols_after_dispatch!(appeal: appeal, vacols_note: vacols_note)
     end
   end
 
@@ -103,7 +103,7 @@ class EstablishClaim < Dispatch::Task
     transaction do
       update_claim_establishment!
       complete!(status: :assigned_existing_ep, outgoing_reference_id: end_product_id)
-      Appeal.repository.update_location_after_dispatch!(appeal: appeal)
+      LegacyAppeal.repository.update_location_after_dispatch!(appeal: appeal)
     end
   end
 

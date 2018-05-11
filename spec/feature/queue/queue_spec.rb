@@ -45,8 +45,17 @@ RSpec.feature "Queue" do
   let(:vacols_record) { :remand_decided }
   let(:appeals) do
     [
-      Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents),
-      Generators::Appeal.build(vbms_id: "115555555S", vacols_record: vacols_record, documents: documents, issues: [])
+      Generators::LegacyAppeal.build(
+        vbms_id: "123456789S",
+        vacols_record: vacols_record,
+        documents: documents
+      ),
+      Generators::LegacyAppeal.build(
+        vbms_id: "115555555S",
+        vacols_record: vacols_record,
+        documents: documents,
+        issues: []
+      )
     ]
   end
   let!(:issues) { [Generators::Issue.build] }
@@ -171,7 +180,7 @@ RSpec.feature "Queue" do
 
     context "when backend encounters an error" do
       before do
-        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/queue"
         fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
