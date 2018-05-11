@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "department-of-veterans-affairs/caseflow-frontend-toolkit.git/mdbenjam-add-sentry-webpack",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#mdbenjam-add-sentry-webpack",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -78,6 +78,7 @@
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.2",
+    "@sentry/webpack-plugin": "^1.5.2",
     "babel-eslint": "^8.0.2",
     "babel-node-modules": "^0.0.1",
     "chai": "^3.5.0",
