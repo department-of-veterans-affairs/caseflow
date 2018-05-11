@@ -69,6 +69,9 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
+      # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
+      Fakes::BGSService.create_veteran_records if rails_env.local?
+
       return if rails_env.local?
       Functions.grant!("Global Admin", users: ["System Admin"])
 
