@@ -77,12 +77,14 @@ describe Appeal do
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     before do
-      allow(appeal).to receive(:documents).and_return([
-        Document.new(type: "NOD", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 6.days.ago),
-        Document.new(type: "SSOC", received_at: 6.days.ago)
-      ])
+      allow(appeal).to receive(:documents).and_return(
+        [
+          Document.new(type: "NOD", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 6.days.ago)
+        ]
+      )
     end
 
     context "when 1 type is passed" do
@@ -311,10 +313,12 @@ describe Appeal do
 
     context "when at least one ssoc doesn't match" do
       before do
-        allow(appeal).to receive(:documents).and_return([
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
-        ])
+        allow(appeal).to receive(:documents).and_return(
+          [
+            Document.new(type: "SSOC", received_at: 6.days.ago),
+            Document.new(type: "SSOC", received_at: 7.days.ago)
+          ]
+        )
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
       end
