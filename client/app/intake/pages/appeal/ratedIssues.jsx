@@ -11,11 +11,9 @@ class RatedIssues extends React.PureComponent {
 
   render() {
 
-    const { higherLevelReview } = this.props;
+    const { appeal } = this.props;
 
-    console.log(higherLevelReview.ratings);
-
-    const ratedIssuesSections = _.map(higherLevelReview.ratings, (rating) => {
+    const ratedIssuesSections = _.map(appeal.ratings, (rating) => {
       const ratedIssueCheckboxes = _.map(rating.issues, (issue) => {
         return (
           <Checkbox
@@ -46,9 +44,9 @@ class RatedIssues extends React.PureComponent {
 }
 
 const RatedIssuesConnected = connect(
-  ({ higherLevelReview, intake }) => ({
+  ({ appeal, intake }) => ({
     intakeId: intake.id,
-    higherLevelReview
+    appeal
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
