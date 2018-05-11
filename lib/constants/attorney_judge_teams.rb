@@ -17,7 +17,7 @@ module Constants::AttorneyJudgeTeams
       "BVABDANIEL" => { attorneys: %w[BVAAMACGYVER2 BVAMZEMLAK BVAEKOEPP] },
       "BVAFWINTHEIS" => { attorneys: %w[BVAKFEEST2 BVAKTRANTOW BVACUPTON1] }
     },
-    local: {
+    development: {
       "BVARZIEMANN1" => { attorneys: %w[BVACFRANECKI1 BVAEDUBUQUE BVAKSIMONIS] },
       "BVABDANIEL" => { attorneys: %w[BVAAMACGYVER2 BVAMZEMLAK BVAEKOEPP] },
       "BVAFWINTHEIS" => { attorneys: %w[BVAKFEEST2 BVAKTRANTOW BVACUPTON1] },
