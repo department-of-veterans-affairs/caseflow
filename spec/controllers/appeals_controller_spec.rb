@@ -44,7 +44,7 @@ RSpec.describe AppealsController, type: :controller do
           Document.new(type: "SSOC", received_at: 7.days.ago)
         ]
       end
-      let(:appeal) { Generators::Appeal.create(vacols_id: "654321", documents: documents) }
+      let(:appeal) { Generators::LegacyAppeal.create(vacols_id: "654321", documents: documents) }
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }

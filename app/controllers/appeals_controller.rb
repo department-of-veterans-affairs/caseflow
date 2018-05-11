@@ -59,7 +59,7 @@ class AppealsController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_or_create_by_vacols_id(params[:appeal_id])
+    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 
   def veteran_id_not_found_error
