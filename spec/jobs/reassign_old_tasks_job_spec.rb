@@ -1,8 +1,8 @@
 require "rails_helper"
 
 describe ReassignOldTasksJob do
-  let!(:appeal1) { Appeal.create(vacols_id: "1") }
-  let!(:appeal2) { Appeal.create(vacols_id: "2") }
+  let!(:appeal1) { LegacyAppeal.create(vacols_id: "1") }
+  let!(:appeal2) { LegacyAppeal.create(vacols_id: "2") }
   let!(:user1) { User.create(station_id: "123", css_id: "abc") }
   let!(:user2) { User.create(station_id: "123", css_id: "def") }
   let!(:unfinished_task) do
