@@ -75,10 +75,10 @@ export default class CFRichTextEditor extends React.PureComponent {
 }
 
 CFRichTextEditor.propTypes = {
-  sections: PropTypes.arrayOf(
-    PropTypes.shape({
-      activated: PropTypes.boolean,
-      title: PropTypes.string
-    })
-  )
+  errorMessage: PropTypes.string,
+  hideLabel: PropTypes.bool,
+  id: PropTypes.string,
+  label: PropTypes.string,
+  name: PropTypes.string,
+  required: PropTypes.bool
 };
