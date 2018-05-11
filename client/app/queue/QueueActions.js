@@ -1,5 +1,7 @@
+import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
+import ApiUtil from '../util/ApiUtil';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -139,3 +141,44 @@ export const setAttorneysOfJudge = (attorneys) => ({
     attorneys
   }
 });
+
+const receiveTasksAndAppealsOfAttorney = ({ attorneyId, tasks, appeals }) => ({
+  type: ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    tasks,
+    appeals
+  }
+});
+
+const requestTasksAndAppealsOfAttorney = (attorneyId) => ({
+  type: ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId
+  }
+});
+
+const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
+  type: ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY,
+  payload: {
+    attorneyId,
+    error
+  }
+});
+
+export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
+  const requestOptions = {
+    timeout: true
+  };
+
+  dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
+
+  return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
+    (resp) => dispatch(
+      receiveTasksAndAppealsOfAttorney(
+        { attorneyId,
+          ...associateTasksWithAppeals(JSON.parse(resp.text)) })),
+    (error) => dispatch(errorTasksAndAppealsOfAttorney({ attorneyId,
+      error }))
+  );
+};

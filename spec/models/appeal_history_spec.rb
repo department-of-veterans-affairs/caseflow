@@ -1,6 +1,6 @@
 describe AppealHistory do
   let(:original) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "1234567",
       vbms_id: vbms_id,
       type: "Original",
@@ -14,7 +14,7 @@ describe AppealHistory do
   end
 
   let(:another_original) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: vbms_id,
       type: "Original",
       decision_date: 365.days.ago.to_date,
@@ -25,7 +25,7 @@ describe AppealHistory do
   end
 
   let(:merged) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "7654321",
       vbms_id: vbms_id,
       type: "Original",
@@ -35,7 +35,7 @@ describe AppealHistory do
   end
 
   let(:another_merged) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "7654320",
       vbms_id: vbms_id,
       type: "Original",
@@ -83,7 +83,7 @@ describe AppealHistory do
 
     context "matching on folder number for post-remand field dispositions" do
       let(:post_remand) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vacols_id: vacols_id,
           vbms_id: vbms_id,
           type: "Post Remand",
@@ -116,7 +116,7 @@ describe AppealHistory do
 
     context "matching on prior decision date" do
       let(:post_remand) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: vbms_id,
           type: "Post Remand",
           prior_decision_date: prior_decision_date
@@ -148,7 +148,7 @@ describe AppealHistory do
 
     context "matching on issues" do
       let(:post_remand) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: vbms_id,
           type: "Post Remand",
           prior_decision_date: 365.days.ago.to_date,
@@ -204,7 +204,7 @@ describe AppealHistory do
 
     context "merging appeals" do
       let(:merge_target) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: vbms_id,
           type: "Original",
           issues: [
@@ -277,8 +277,8 @@ describe AppealHistory do
 
     let!(:veteran_appeals) do
       [
-        Generators::Appeal.build(vbms_id: "999887777S"),
-        Generators::Appeal.build(vbms_id: "999887777S")
+        Generators::LegacyAppeal.build(vbms_id: "999887777S"),
+        Generators::LegacyAppeal.build(vbms_id: "999887777S")
       ]
     end
 

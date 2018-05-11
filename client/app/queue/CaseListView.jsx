@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -14,6 +15,8 @@ import CaseListTable from './CaseListTable';
 import { fullWidth, SEARCH_ERROR_FOR } from './constants';
 
 import { clearCaseListSearch } from './CaseList/CaseListActions';
+
+import COPY from '../../../COPY.json';
 
 const backLinkStyling = css({
   float: 'left',
@@ -54,19 +57,19 @@ class CaseListView extends React.PureComponent {
     }
 
     if (this.props.errorType) {
-      let errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
+      let errorMessage = COPY.CASE_SEARCH_INPUT_INSTRUCTION;
 
       switch (this.props.errorType) {
       case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
-        body.heading = `Invalid Veteran ID “${this.props.queryResultingInError}”`;
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_INVALID_ID_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.NO_APPEALS:
-        body.heading = `No cases found for “${this.props.queryResultingInError}”`;
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
       default:
-        body.heading = `Server encountered an error searching for “${this.props.queryResultingInError}”`;
-        errorMessage = 'Please retry your search and contact support if errors persist.';
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, this.props.queryResultingInError);
+        errorMessage = COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE;
       }
 
       body.component = <React.Fragment>
@@ -98,7 +101,7 @@ CaseListView.propTypes = {
 
 CaseListView.defaultProps = {
   backLinkTarget: '/queue',
-  backLinkText: '< Back to Your Queue'
+  backLinkText: COPY.BACK_TO_PERSONAL_QUEUE_LINK_LABEL
 };
 
 const mapStateToProps = (state) => ({
