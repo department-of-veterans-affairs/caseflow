@@ -33,7 +33,7 @@ describe Form8 do
 
   context "#update_from_appeal" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
     it "populates _initial_ fields with the same values as their counterparts" do
       form8.assign_attributes_from_appeal(appeal)
@@ -48,7 +48,7 @@ describe Form8 do
 
   context "#attributes" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
     it "does not return initial attributes" do
       form8.assign_attributes_from_appeal(appeal)
@@ -270,7 +270,7 @@ describe Form8 do
     end
 
     let(:appeal) do
-      Appeal.new(
+      LegacyAppeal.new(
         vacols_id: "VACOLS-ID",
         vbms_id: "VBMS-ID",
         appellant_first_name: "Micah",

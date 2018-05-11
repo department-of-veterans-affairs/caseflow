@@ -70,6 +70,7 @@
     "redux-perf-middleware": "^1.2.2",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.0",
+    "sprintf-js": "^1.1.1",
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "uuid": "^3.0.1",
