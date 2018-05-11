@@ -12,6 +12,6 @@ class RootController < ApplicationController
       end
     end
 
-    render("help/index")
+    redirect_to("/help")
   end
 end
