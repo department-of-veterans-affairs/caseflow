@@ -82,6 +82,7 @@ Rails.application.routes.draw do
   end
 
   resources :appeals, only: [:index, :show] do
+    get :document_count
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -125,7 +126,6 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/docs_for_dev', to: 'queue#dev_document_count'
     get '/:user_id', to: 'tasks#index'
 
     post '/appeals/:task_id/complete', to: 'tasks#complete'
