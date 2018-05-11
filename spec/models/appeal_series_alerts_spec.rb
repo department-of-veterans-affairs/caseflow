@@ -5,7 +5,7 @@ describe AppealSeriesAlerts do
   end
   let(:series) { AppealSeries.create(appeals: [appeal]) }
   let(:appeal) do
-    Generators::LegacyAppeal.build(
+    Generators::Appeal.build(
       vbms_id: "999887777S",
       status: status,
       location_code: location_code,

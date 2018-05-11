@@ -4,7 +4,7 @@ require "ostruct"
 class FakeTask < Dispatch::Task
   before_create do
     # Automatically set appeal to make test data setup easier
-    self.appeal ||= Generators::LegacyAppeal.create
+    self.appeal ||= Generators::Appeal.create
   end
 
   def should_invalidate?
@@ -15,7 +15,7 @@ end
 describe Dispatch::Task do
   before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
-  let(:appeal) { Generators::LegacyAppeal.create }
+  let(:appeal) { Generators::Appeal.create }
   let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state, user: assigned_user) }
   let(:user) { Generators::User.create(full_name: "Robert Smith") }
   let(:aasm_state) { :unassigned }
@@ -312,7 +312,7 @@ describe Dispatch::Task do
     it { is_expected.to be_truthy }
 
     context "if task is invalid" do
-      let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "INVALID") }
+      let(:appeal) { Generators::Appeal.create(vbms_id: "INVALID") }
 
       it "invalidates the task and returns false" do
         is_expected.to be_falsey
@@ -321,7 +321,7 @@ describe Dispatch::Task do
     end
 
     context "if task isn't accessible by the logged in user" do
-      let(:appeal) { Generators::LegacyAppeal.create(inaccessible: true) }
+      let(:appeal) { Generators::Appeal.create(inaccessible: true) }
       it { is_expected.to be_falsey }
     end
   end
@@ -335,7 +335,7 @@ describe Dispatch::Task do
           aasm_state: :started,
           user: user,
           prepared_at: Date.yesterday,
-          appeal: Generators::LegacyAppeal.create
+          appeal: Generators::Appeal.create
         )
       end
 
@@ -344,7 +344,7 @@ describe Dispatch::Task do
 
     context "when there are assignable tasks" do
       let!(:next_assignable_task) do
-        FakeTask.create!(aasm_state: :unassigned, appeal: Generators::LegacyAppeal.create)
+        FakeTask.create!(aasm_state: :unassigned, appeal: Generators::Appeal.create)
       end
 
       it { is_expected.to eq(true) }
@@ -352,7 +352,7 @@ describe Dispatch::Task do
 
     context "when there are no assignable tasks" do
       let!(:completed_task) do
-        FakeTask.create!(aasm_state: :completed, appeal: Generators::LegacyAppeal.create)
+        FakeTask.create!(aasm_state: :completed, appeal: Generators::Appeal.create)
       end
 
       it { is_expected.to eq(false) }
@@ -361,7 +361,7 @@ describe Dispatch::Task do
     context "when there is an invalid task" do
       let!(:invalid_task) do
         FakeTask.create!(
-          appeal: Generators::LegacyAppeal.create(vbms_id: "INVALID"),
+          appeal: Generators::Appeal.create(vbms_id: "INVALID"),
           aasm_state: :unassigned
         )
       end
@@ -388,7 +388,7 @@ describe Dispatch::Task do
           prepared_at: Date.yesterday,
           created_at: 40.seconds.ago,
           user: user,
-          appeal: Generators::LegacyAppeal.create
+          appeal: Generators::Appeal.create
         )
       end
 
@@ -397,7 +397,7 @@ describe Dispatch::Task do
           aasm_state: :unassigned,
           created_at: 39.seconds.ago,
           prepared_at: Date.yesterday,
-          appeal: Generators::LegacyAppeal.create
+          appeal: Generators::Appeal.create
         )
       end
 
@@ -416,7 +416,7 @@ describe Dispatch::Task do
         FakeTask.create!(
           aasm_state: :unassigned,
           created_at: 35.seconds.ago,
-          appeal: Generators::LegacyAppeal.create(inaccessible: true)
+          appeal: Generators::Appeal.create(inaccessible: true)
         )
       end
 
@@ -424,7 +424,7 @@ describe Dispatch::Task do
         FakeTask.create!(
           aasm_state: :completed,
           created_at: 34.seconds.ago,
-          appeal: Generators::LegacyAppeal.create
+          appeal: Generators::Appeal.create
         )
       end
 
@@ -432,7 +432,7 @@ describe Dispatch::Task do
         FakeTask.create!(
           aasm_state: :unprepared,
           created_at: 33.seconds.ago,
-          appeal: Generators::LegacyAppeal.create
+          appeal: Generators::Appeal.create
         )
       end
 
@@ -441,7 +441,7 @@ describe Dispatch::Task do
           FakeTask.create!(
             aasm_state: :unassigned,
             created_at: 31.seconds.ago,
-            appeal: Generators::LegacyAppeal.create
+            appeal: Generators::Appeal.create
           )
         end
 
@@ -449,7 +449,7 @@ describe Dispatch::Task do
           FakeTask.create!(
             aasm_state: :unassigned,
             created_at: 32.seconds.ago,
-            appeal: Generators::LegacyAppeal.create
+            appeal: Generators::Appeal.create
           )
         end
 
@@ -497,7 +497,7 @@ describe Dispatch::Task do
           let!(:invalid_task) do
             FakeTask.create!(
               created_at: 40.seconds.ago,
-              appeal: Generators::LegacyAppeal.create(vbms_id: "INVALID"),
+              appeal: Generators::Appeal.create(vbms_id: "INVALID"),
               aasm_state: :unassigned
             )
           end

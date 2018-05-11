@@ -9,7 +9,7 @@ class AppealsController < ApplicationController
                           name: "AppealsController.index") do
 
       begin
-        appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran_id)
+        appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
       rescue ActiveRecord::RecordNotFound
         appeals = []
       end
@@ -35,7 +35,7 @@ class AppealsController < ApplicationController
         MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+          appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end

@@ -57,11 +57,11 @@ class CreateEstablishClaim
   end
 
   def load_vacols_data_for(appeal)
-    LegacyAppeal.repository.load_vacols_data_by_vbms_id(appeal: appeal, decision_type: decision_type)
+    Appeal.repository.load_vacols_data_by_vbms_id(appeal: appeal, decision_type: decision_type)
   end
 
   def create_appeal
-    appeal = LegacyAppeal.find_or_initialize_by(vbms_id: vbms_id)
+    appeal = Appeal.find_or_initialize_by(vbms_id: vbms_id)
 
     fail ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
     appeal.save!

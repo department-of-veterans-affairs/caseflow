@@ -21,14 +21,14 @@ class RampElectionRollback < ApplicationRecord
   end
 
   def reopen_vacols_appeals!
-    LegacyAppeal.reopen(appeals: appeals_to_reopen, user: user, disposition: "RAMP Opt-in")
+    Appeal.reopen(appeals: appeals_to_reopen, user: user, disposition: "RAMP Opt-in")
 
     self.reopened_vacols_ids = ramp_election_vacols_ids
   end
 
   def appeals_to_reopen
     ramp_election_vacols_ids.map do |vacols_id|
-      LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+      Appeal.find_or_create_by_vacols_id(vacols_id)
     end
   end
 

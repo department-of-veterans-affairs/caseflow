@@ -34,7 +34,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   private
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(appeal_id)
+    @appeal ||= Appeal.find_or_create_by_vacols_id(appeal_id)
   end
   helper_method :appeal
 

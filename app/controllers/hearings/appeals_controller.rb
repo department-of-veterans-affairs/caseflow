@@ -7,7 +7,7 @@ class Hearings::AppealsController < HearingsController
   private
 
   def appeal
-    LegacyAppeal.find(params[:appeal_id])
+    Appeal.find(params[:appeal_id])
   end
   helper_method :appeal
 

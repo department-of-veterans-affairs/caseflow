@@ -33,7 +33,7 @@ RSpec.describe TasksController, type: :controller do
 
   describe "POST /tasks" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
-    let(:appeal) { LegacyAppeal.create(vacols_id: "1234C") }
+    let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
     before do
@@ -118,7 +118,7 @@ RSpec.describe TasksController, type: :controller do
 
   describe "PATCH tasks/:task_id" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
-    let(:appeal) { LegacyAppeal.create(vacols_id: "1234C") }
+    let(:appeal) { Appeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
     before do

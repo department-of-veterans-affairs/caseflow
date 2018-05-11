@@ -3,7 +3,7 @@
 class WorksheetIssue < ApplicationRecord
   acts_as_paranoid
 
-  belongs_to :appeal, class_name: "LegacyAppeal"
+  belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
 
   scope :issues_for_appeals, ->(appeal_ids) { where(appeal: appeal_ids) }

@@ -5,7 +5,7 @@ class Dispatch::Task < ApplicationRecord
   include AASM
 
   belongs_to :user
-  belongs_to :appeal, class_name: "LegacyAppeal"
+  belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
 

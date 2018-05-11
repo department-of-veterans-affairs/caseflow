@@ -18,7 +18,7 @@ describe Certification do
   end
 
   let(:appeal) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
+    Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
   end
 
   let(:certification_completed_at) { nil }

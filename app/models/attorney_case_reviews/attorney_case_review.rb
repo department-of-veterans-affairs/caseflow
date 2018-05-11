@@ -12,7 +12,7 @@ class AttorneyCaseReview < ApplicationRecord
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+    @appeal ||= Appeal.find_or_create_by(vacols_id: vacols_id)
   end
 
   def reassign_case_to_judge_in_vacols!
