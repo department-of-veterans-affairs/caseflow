@@ -70,18 +70,14 @@ class QueueDetailView extends React.PureComponent {
   }
 
   getCheckoutFlowDropdown = () => {
-    if (!this.props.featureToggles.phase_two) {
-      return null;
-    }
-
     const {
       appeal,
-      userCssId,
-      vacolsId
+      vacolsId,
+      featureToggles,
+      loadedQueueAppeals
     } = this.props;
 
-    // userCssId is like "BVASCASPER1", location_code is like "SCASPER1"
-    if (userCssId.includes(appeal.attributes.location_code)) {
+    if (featureToggles.phase_two && loadedQueueAppeals.includes(appeal.attributes.vacols_id)) {
       return <SelectCheckoutFlowDropdown vacolsId={vacolsId} />;
     }
 
@@ -120,7 +116,8 @@ QueueDetailView.propTypes = {
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
   breadcrumbs: state.ui.breadcrumbs,
-  task: state.caseDetail.activeTask
+  task: state.caseDetail.activeTask,
+  loadedQueueAppeals: Object.keys(state.queue.loadedQueue.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
