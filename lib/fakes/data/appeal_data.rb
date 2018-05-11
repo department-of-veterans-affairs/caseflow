@@ -71,6 +71,12 @@ module Fakes::Data::AppealData
     ]
   end
 
+  def self.dispatch_documents
+    [
+      Generators::Document.build(vbms_document_id: 11, type: "BVA Decision")
+    ]
+  end
+
   READER_REDACTED_DOCS = [
     "VA 8 Certification of Appeal",
     "Supplemental Statement of the Case",
@@ -110,13 +116,15 @@ module Fakes::Data::AppealData
       "static_documents" => static_reader_documents,
       "no_categories" => reader_docs_no_categories,
       "random_documents" => random_reader_documents(1000),
-      "redacted_documents" => redacted_reader_documents
+      "redacted_documents" => redacted_reader_documents,
+      "amc_full_grants" => dispatch_documents,
+      "remands_ready_for_claims_establishment" => dispatch_documents
     }
   end
 
   def self.default_records
     [
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Court Remand",
         vacols_id: "111111",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -146,7 +154,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Remand",
         vacols_id: "222222",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -176,7 +184,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(1000)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Remand",
         vacols_id: "333333",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -211,7 +219,7 @@ module Fakes::Data::AppealData
 
   def self.default_queue_records
     [
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Original",
         vacols_id: "111112",
@@ -253,7 +261,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(7)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Post Remand",
         vacols_id: "222221",
@@ -313,7 +321,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Court Remand",
         vacols_id: "333334",
@@ -358,7 +366,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Original",
         vacols_id: "533333",
         assigned_to_attorney_date: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -404,7 +412,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Reconsideration",
         vacols_id: "333336",
@@ -440,7 +448,7 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ]
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Remand",
         vacols_id: "333338",
@@ -485,7 +493,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(25)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Clear and Unmistakable Error",
         vacols_id: "883335",

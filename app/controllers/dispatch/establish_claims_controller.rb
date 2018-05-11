@@ -168,7 +168,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   end
 
   def special_issues_params
-    params.require(:special_issues).permit(*Appeal::SPECIAL_ISSUES.keys)
+    params.require(:special_issues).permit(*LegacyAppeal::SPECIAL_ISSUES.keys)
   end
 
   def cancel_feedback
