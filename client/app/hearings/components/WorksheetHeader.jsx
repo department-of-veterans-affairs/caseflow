@@ -85,20 +85,24 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
+    let dispositionOptions = worksheet.disposition === 'no_show' || worksheet.disposition === 'postponed' ||
+  worksheet.disposition === 'cancelled';
+
+    let dispositionRed = classNames({ 'cf-red-text': dispositionOptions });
+
     const getDisposition = (dispositionSymbol) => {
       let disposition = '';
 
-      // let dispositionRed = worksheet.disposition === 'no_show' || worksheet.disposition === 'postponed';
-
       if (dispositionSymbol === 'held') {
         disposition = 'Held';
-      } else if ( dispositionSymbol === 'no_show') {
-        disposition = 'No show';
-      }else if ( dispositionSymbol === 'postponed') {
+      } else if (dispositionSymbol === 'no_show') {
+        disposition = 'No Show';
+      } else if (dispositionSymbol === 'postponed') {
         disposition = 'Postponed';
-      }else if ( dispositionSymbol === 'cancelled') {
+      } else if (dispositionSymbol === 'cancelled') {
         disposition = 'Cancelled';
       }
+
       return disposition;
     };
 
@@ -125,7 +129,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>HEARING DISPOSTION</h5>
-          <div>{getDisposition(worksheet.disposition)}</div>
+          <div className={dispositionRed}>{getDisposition(worksheet.disposition)}</div>
         </div>
       </div>
 
