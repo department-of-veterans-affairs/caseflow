@@ -28,6 +28,8 @@ const horizontalRuleStyling = css({
 });
 
 class CaseListView extends React.PureComponent {
+  shouldShowBreadcrumbs = () => this.props.caseList.receivedAppeals.length > 0 || this.props.errorType;
+
   render() {
     const body = {
       heading: 'Veteran Case Search',
@@ -74,7 +76,7 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      { (this.props.errorType || appealsCount > 0) &&
+      { this.shouldShowBreadcrumbs() &&
         <div {...backLinkStyling}>
           <Link to={this.props.backLinkTarget} onClick={this.props.clearCaseListSearch}>{this.props.backLinkText}</Link>
         </div>
