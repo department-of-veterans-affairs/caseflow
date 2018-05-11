@@ -139,14 +139,6 @@ class LegacyAppeal < ApplicationRecord
     documents.size
   end
 
-  def number_of_documents_url
-    if document_service == ExternalApi::EfolderService
-      ExternalApi::EfolderService.efolder_files_url
-    else
-      "/queue/docs_for_dev"
-    end
-  end
-
   def number_of_documents_after_certification
     return 0 unless certification_date
     documents.count { |d| d.received_at && d.received_at > certification_date }
