@@ -8,18 +8,10 @@ class DocumentFetcher
     fetch_documents_from_service!
   end
 
-  attr_reader :documents
+  attr_reader :documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at
 
   def number_of_documents
     documents.size
-  end
-
-  def manifest_vbms_fetched_at
-    @manifest_vbms_fetched_at
-  end
-
-  def manifest_vva_fetched_at
-    @manifest_vva_fetched_at
   end
 
   def find_or_create_documents!
