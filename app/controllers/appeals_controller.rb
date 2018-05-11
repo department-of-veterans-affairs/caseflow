@@ -20,6 +20,10 @@ class AppealsController < ApplicationController
     end
   end
 
+  def document_count
+    render json: { document_count: appeal.number_of_documents }
+  end
+
   def show
     # :nocov:
     no_cache
@@ -52,6 +56,10 @@ class AppealsController < ApplicationController
 
   def veteran_id
     request.headers["HTTP_VETERAN_ID"]
+  end
+
+  def appeal
+    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 
   def veteran_id_not_found_error
