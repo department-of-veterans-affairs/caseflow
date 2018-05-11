@@ -30,6 +30,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     const decisionType = props.value;
     const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
+    console.log('staging appeal')
     this.stageAppeal();
 
     this.props.resetDecisionOptions();
