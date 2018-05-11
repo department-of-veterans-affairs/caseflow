@@ -130,8 +130,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
 
-  case Constants.SET_CONTENTIONS:
-    return newHearingWorksheetState(state, action, { contentions: { $set: action.payload.contentions } });
+  case Constants.SET_SUMMARY:
+    return newHearingWorksheetState(state, action, { summary: { $set: action.payload.summary } });
 
   case Constants.SET_MILITARY_SERVICE:
     return newHearingWorksheetState(state, action, {
@@ -155,15 +155,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_HEARING_PREPPED:
     return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } },
       action.payload.setEdited);
-  case Constants.SET_EVIDENCE:
-    return newHearingWorksheetState(state, action, {
-      evidence: { $set: action.payload.evidence }
-    });
-
-  case Constants.SET_COMMENTS_FOR_ATTORNEY:
-    return newHearingWorksheetState(state, action, {
-      comments_for_attorney: { $set: action.payload.commentsForAttorney }
-    });
 
   case Constants.SET_NOTES:
     return newHearingState(state, action, { notes: { $set: action.payload.notes } });

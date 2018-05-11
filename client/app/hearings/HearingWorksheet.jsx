@@ -22,9 +22,7 @@ import DOMPurify from 'dompurify';
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
 import {
-  onContentionsChange,
-  onEvidenceChange,
-  onCommentsForAttorneyChange,
+  onSummaryChange,
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
@@ -112,8 +110,9 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
-  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
+  onSummaryChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
+  onSummaryChange = (value) => this.props.onSummaryChange(value);
 
   render() {
     let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
@@ -142,7 +141,7 @@ export class HearingWorksheet extends React.PureComponent {
         <WorksheetFormEntry
           name="Hearing Summary"
           value={worksheet.summary || DEFAULT_SUMMARY_VALUE}
-          onChange={this.onMilitaryServiceChange}
+          onChange={this.onSummaryChange}
           id="worksheet-hearing-summary"
           minRows={1}
           print={this.props.print}
@@ -220,9 +219,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onContentionsChange,
-  onEvidenceChange,
-  onCommentsForAttorneyChange,
+  onSummaryChange,
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   saveWorksheet,
