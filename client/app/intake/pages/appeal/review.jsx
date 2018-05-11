@@ -31,9 +31,12 @@ class Review extends React.PureComponent {
     }
 
     const docketTypeRadioOptions = [
-      { value: 'direct_review', displayText: 'Direct Review' },
-      { value: 'evidence_submission', displayText: 'Evidence Submission' },
-      { value: 'hearing', displayText: 'Hearing' }
+      { value: 'direct_review',
+        displayText: 'Direct Review' },
+      { value: 'evidence_submission',
+        displayText: 'Evidence Submission' },
+      { value: 'hearing',
+        displayText: 'Hearing' }
     ];
 
     return <div>
@@ -106,7 +109,7 @@ export default connect(
     receiptDate: state.appeal.receiptDate,
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
-    docketTypeError: state.appeal.docketTypeError,
+    docketTypeError: state.appeal.docketTypeError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,

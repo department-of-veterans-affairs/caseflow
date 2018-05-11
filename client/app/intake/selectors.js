@@ -14,7 +14,7 @@ const getIntakeDetailStatus = (intakeDetail) => {
   return null;
 };
 
-const getIntakeStatusSelector = ({ rampElection, rampRefiling, supplementalClaim, higherLevelReview, appeal}) => ({
+const getIntakeStatusSelector = ({ rampElection, rampRefiling, supplementalClaim, higherLevelReview, appeal }) => ({
   rampElection: _.pick(rampElection, ['isStarted', 'isReviewed', 'isComplete']),
   rampRefiling: _.pick(rampRefiling, ['isStarted', 'isReviewed', 'isComplete']),
   supplementalClaim: _.pick(supplementalClaim, ['isStarted', 'isReviewed', 'isComplete']),
