@@ -131,14 +131,6 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
-  def number_of_documents_url
-    if document_service == ExternalApi::EfolderService
-      ExternalApi::EfolderService.efolder_files_url
-    else
-      "/queue/docs_for_dev"
-    end
-  end
-
   def number_of_documents_after_certification
     return 0 unless certification_date
     documents.count { |d| d.received_at && d.received_at > certification_date }
