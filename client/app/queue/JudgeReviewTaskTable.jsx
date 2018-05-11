@@ -8,6 +8,7 @@ import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
 
 import { sortTasks, renderAppealType } from './utils';
+import COPY from '../../../COPY.json';
 
 class JudgeReviewTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -22,11 +23,11 @@ class JudgeReviewTaskTable extends React.PureComponent {
 
   getQueueColumns = () => [
     {
-      header: 'Case Details',
+      header: COPY.JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: this.getCaseDetailsLink
     },
     {
-      header: 'Document ID',
+      header: COPY.JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE,
       valueFunction: (task) => {
         const firstInitial = String.fromCodePoint(task.attributes.assigned_by_first_name.codePointAt(0));
         const nameAbbrev = `${firstInitial}. ${task.attributes.assigned_by_last_name}`;
@@ -37,19 +38,19 @@ class JudgeReviewTaskTable extends React.PureComponent {
       }
     },
     {
-      header: 'Type(s)',
+      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: (task) => renderAppealType(this.getAppealForTask(task))
     },
     {
-      header: 'Docket Number',
+      header: COPY.JUDGE_QUEUE_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (task) => this.getAppealForTask(task, 'docket_number')
     },
     {
-      header: 'Issues',
+      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
       valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
     },
     {
-      header: 'Days Waiting',
+      header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       valueFunction: (task) => (
         moment().
           startOf('day').

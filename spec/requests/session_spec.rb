@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Session", type: :request do
-  let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+  let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
   before do
     Fakes::AuthenticationService.user_session = {

@@ -9,7 +9,7 @@ class AppealsController < ApplicationController
                           name: "AppealsController.index") do
 
       begin
-        appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
+        appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran_id)
       rescue ActiveRecord::RecordNotFound
         appeals = []
       end
@@ -18,6 +18,10 @@ class AppealsController < ApplicationController
         appeals: json_appeals(appeals)[:data]
       }
     end
+  end
+
+  def document_count
+    render json: { document_count: appeal.number_of_documents }
   end
 
   def show
@@ -31,7 +35,7 @@ class AppealsController < ApplicationController
         MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
@@ -52,6 +56,10 @@ class AppealsController < ApplicationController
 
   def veteran_id
     request.headers["HTTP_VETERAN_ID"]
+  end
+
+  def appeal
+    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 
   def veteran_id_not_found_error
