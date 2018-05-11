@@ -1,7 +1,7 @@
 describe JudgeCaseAssignment do
   let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-  let(:appeal) { Appeal.create(vacols_id: "123456") }
+  let(:appeal) { LegacyAppeal.create(vacols_id: "123456") }
 
   context "#assign_to_attorney!" do
     let(:record) do

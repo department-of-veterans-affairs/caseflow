@@ -3,7 +3,7 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { Generators::Appeal.create(vbms_id: "#{ssn}S") }
+    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
     let(:veteran_id) { appeal.vbms_id }
 
     context "when request header does not contain Veteran ID" do

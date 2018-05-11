@@ -8,7 +8,7 @@ RSpec.feature "Hearings" do
   end
 
   let(:appeal) do
-    Generators::Appeal.create
+    Generators::LegacyAppeal.create
   end
 
   context "Hearings Prep" do
@@ -276,7 +276,7 @@ RSpec.feature "Hearings" do
     context "Multiple appeal streams" do
       before do
         vbms_id = Hearing.find(1).appeal.vbms_id
-        Generators::Appeal.create(vbms_id: vbms_id, vacols_record: { template: :pending_hearing })
+        Generators::LegacyAppeal.create(vbms_id: vbms_id, vacols_record: { template: :pending_hearing })
       end
 
       scenario "Numbering is consistent" do
