@@ -82,7 +82,7 @@ class QueueDetailView extends React.PureComponent {
 
     // userCssId is like "BVASCASPER1", location_code is like "SCASPER1"
     if (userCssId.includes(appeal.attributes.location_code)) {
-      return <SelectCheckoutFlowDropdown vacolsId={vacolsId} />
+      return <SelectCheckoutFlowDropdown vacolsId={vacolsId} />;
     }
 
     return null;
