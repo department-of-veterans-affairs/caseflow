@@ -13,9 +13,6 @@ import RadioField from '../components/RadioField';
 import * as AppConstants from '../constants/AppConstants';
 import Header from './Header';
 import CertificationProgressBar from './CertificationProgressBar';
-import { css } from 'glamor';
-
-const form9Viewer = css({ height: '500px' });
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -316,7 +313,7 @@ export class ConfirmHearing extends React.Component {
               also, we should stop using rails pdf viewer */
             <LoadingContainer color={AppConstants.LOGO_COLORS.CERTIFICATION.ACCENT}>
               <iframe
-                className="cf-iframe-with-loading" {...form9Viewer}
+                className="form9Viewer"
                 title="Form8 PDF"
                 src={form9PdfPath}>
               </iframe>
