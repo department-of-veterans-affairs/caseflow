@@ -505,6 +505,14 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
   end
 
+  create_table "temporary_appeals", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.string "docket_type"
+    t.datetime "established_at"
+    t.index ["veteran_file_number"], name: "index_temporary_appeals_on_veteran_file_number"
+  end
+
   create_table "user_quotas", id: :serial, force: :cascade do |t|
     t.integer "team_quota_id", null: false
     t.integer "user_id", null: false
