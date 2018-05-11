@@ -8,7 +8,8 @@ class DocumentFetcher
     fetch_documents_from_service!
   end
 
-  attr_reader :documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at
+  attr_accessor :documents
+  attr_reader :manifest_vbms_fetched_at, :manifest_vva_fetched_at
 
   def number_of_documents
     documents.size
@@ -77,8 +78,7 @@ class DocumentFetcher
   def fetch_documents_from_service!
     doc_struct = document_service.fetch_documents_for(appeal, RequestStore.store[:current_user])
 
-    @documents = doc_struct[:documents]
-
+    self.documents = doc_struct[:documents]
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
   end
