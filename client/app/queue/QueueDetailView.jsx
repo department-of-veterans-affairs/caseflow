@@ -69,6 +69,25 @@ class QueueDetailView extends React.PureComponent {
     return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
   }
 
+  getCheckoutFlowDropdown = () => {
+    if (!this.props.featureToggles.phase_two) {
+      return null;
+    }
+
+    const {
+      appeal,
+      userCssId,
+      vacolsId
+    } = this.props;
+
+    // userCssId is like "BVASCASPER1", location_code is like "SCASPER1"
+    if (userCssId.includes(appeal.attributes.location_code)) {
+      return <SelectCheckoutFlowDropdown vacolsId={vacolsId} />
+    }
+
+    return null;
+  }
+
   render = () => {
     const appeal = this.props.appeal.attributes;
 
@@ -84,7 +103,7 @@ class QueueDetailView extends React.PureComponent {
         appeal={this.props.appeal}
         taskType="Draft Decision"
         longMessage />
-      {this.props.featureToggles.phase_two && <SelectCheckoutFlowDropdown vacolsId={this.props.vacolsId} />}
+      {this.getCheckoutFlowDropdown()}
       <TabWindow
         name="queue-tabwindow"
         tabs={this.tabs()} />
