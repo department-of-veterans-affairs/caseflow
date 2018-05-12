@@ -6,7 +6,6 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
@@ -14,7 +13,6 @@ class Finish extends React.PureComponent {
   render() {
     const {
       appeal,
-      requestState,
       veteranName
     } = this.props;
 
