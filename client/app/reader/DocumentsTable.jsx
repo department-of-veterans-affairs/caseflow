@@ -46,26 +46,7 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 
 class DocumentsTable extends React.Component {
   componentDidMount() {
-    this.hasSetScrollPosition = false;
-  }
-
-  componentWillUnmount() {
-    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
-  }
-
-  getTbodyRef = (elem) => this.tbodyElem = elem
-  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
-  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
-  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
-  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
-  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
-
-  getKeyForRow = (index, { isComment, id }) => {
-    return isComment ? `${id}-comment` : id;
-  }
-
-  componentDidUpdate() {
-    if (!this.hasSetScrollPosition) {
+    if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
       if (this.lastReadIndicatorElem) {
@@ -83,9 +64,22 @@ class DocumentsTable extends React.Component {
           this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
         }
       }
-
-      this.hasSetScrollPosition = true;
     }
+  }
+
+  componentWillUnmount() {
+    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
+  }
+
+  getTbodyRef = (elem) => this.tbodyElem = elem
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
+
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
   }
 
   // eslint-disable-next-line max-statements

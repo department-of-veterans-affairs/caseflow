@@ -12,6 +12,6 @@ class Reader::ClaimsFolderSearchesController < Reader::ApplicationController
   private
 
   def appeal
-    Appeal.find_or_create_by_vacols_id(params[:appeal_id])
+    LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 end

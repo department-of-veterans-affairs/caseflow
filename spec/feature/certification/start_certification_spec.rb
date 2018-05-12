@@ -53,7 +53,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:appeal_ready_exact_match) do
-    Generators::Appeal.build(vacols_record: vacols_record_exact_match, documents: documents)
+    Generators::LegacyAppeal.build(vacols_record: vacols_record_exact_match, documents: documents)
   end
 
   let(:vacols_record_with_ssocs) do
@@ -61,20 +61,20 @@ RSpec.feature "Start Certification" do
   end
 
   let(:appeal_ready) do
-    Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
   end
 
   let(:appeal_mismatched_documents) do
-    Generators::Appeal.build(vacols_record: vacols_record_with_ssocs, documents: mismatched_documents)
+    Generators::LegacyAppeal.build(vacols_record: vacols_record_with_ssocs, documents: mismatched_documents)
   end
 
   let(:appeal_not_ready) do
-    Generators::Appeal.build(vacols_record: :not_ready_to_certify, documents: documents)
+    Generators::LegacyAppeal.build(vacols_record: :not_ready_to_certify, documents: documents)
   end
 
   # Fakes::AppealRepository is stubbed to raise an error with this id
   let(:appeal_vbms_error) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: Fakes::AppealRepository::RAISE_VBMS_ERROR_ID,
       vacols_record: vacols_record,
       documents: documents
@@ -82,7 +82,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:appeal_already_certified) do
-    Generators::Appeal.build(vacols_record: :certified, documents: documents)
+    Generators::LegacyAppeal.build(vacols_record: :certified, documents: documents)
   end
 
   context "As a user who's not logged in" do

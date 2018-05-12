@@ -79,6 +79,8 @@ class QueueApp extends React.PureComponent {
     nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
+  queueName = () => this.props.userRole === 'Attorney' ? 'Your Queue' : 'Review Cases';
+
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
@@ -96,21 +98,21 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/queue"
-            title="Your Queue | Caseflow"
+            title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
           <PageRoute
             exact
             path="/queue/:userId"
-            title="Queue | Caseflow"
+            title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
           <PageRoute
             exact
             path="/queue/:userId/review"
-            title="Review Queue | Caseflow"
+            title="Review Cases | Caseflow"
             render={this.routedJudgeQueueList('Review')} />
           <PageRoute
             path="/queue/:userId/assign"
-            title="Assign Queue | Caseflow"
+            title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
