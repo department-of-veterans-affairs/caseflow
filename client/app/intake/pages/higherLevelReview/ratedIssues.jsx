@@ -13,8 +13,6 @@ class RatedIssues extends React.PureComponent {
 
     const { higherLevelReview } = this.props;
 
-    console.log(higherLevelReview.ratings);
-
     const ratedIssuesSections = _.map(higherLevelReview.ratings, (rating) => {
       const ratedIssueCheckboxes = _.map(rating.issues, (issue) => {
         return (
