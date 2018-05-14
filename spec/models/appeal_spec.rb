@@ -77,12 +77,14 @@ describe Appeal do
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     before do
-      appeal.documents += [
-        Document.new(type: "NOD", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 6.days.ago),
-        Document.new(type: "SSOC", received_at: 6.days.ago)
-      ]
+      allow(appeal).to receive(:documents).and_return(
+        [
+          Document.new(type: "NOD", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 6.days.ago)
+        ]
+      )
     end
 
     context "when 1 type is passed" do
@@ -232,19 +234,29 @@ describe Appeal do
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
     let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
-    let(:documents) { [nod_document, soc_document, form9_document] }
+    let(:base_documents) { [nod_document, soc_document, form9_document] }
 
     subject { appeal.documents_match? }
+    before do
+      allow(appeal).to receive(:documents).and_return(documents)
+    end
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
-      it { is_expected.to be_truthy }
+      context "when there are no ssocs" do
+        let(:documents) { base_documents }
+
+        it { is_expected.to be_truthy }
+      end
 
       context "when ssoc dates don't match" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
         end
 
@@ -252,11 +264,14 @@ describe Appeal do
       end
 
       context "when received_at is nil" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago]
         end
 
@@ -264,13 +279,15 @@ describe Appeal do
       end
 
       context "and ssoc dates match" do
-        before do
-          # vbms documents
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
           ]
+        end
+
+        before do
           # vacols dates
           appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
         end
@@ -296,10 +313,12 @@ describe Appeal do
 
     context "when at least one ssoc doesn't match" do
       before do
-        appeal.documents += [
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
-        ]
+        allow(appeal).to receive(:documents).and_return(
+          [
+            Document.new(type: "SSOC", received_at: 6.days.ago),
+            Document.new(type: "SSOC", received_at: 7.days.ago)
+          ]
+        )
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
       end
@@ -369,397 +388,6 @@ describe Appeal do
       let(:certification_date) { 2.days.ago }
 
       it { is_expected.to eq 1 }
-    end
-  end
-
-  context "#find_or_create_documents_v2!" do
-    before do
-      FeatureToggle.enable!(:efolder_docs_api)
-      FeatureToggle.enable!(:efolder_api_v2)
-      RequestStore.store[:application] = "reader"
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_docs_api)
-      FeatureToggle.disable!(:efolder_api_v2)
-    end
-    let(:series_id) { "TEST_SERIES_ID" }
-
-    let(:documents) do
-      [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
-    end
-
-    context "when there is no existing document" do
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "saves retrieved documents" do
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
-        expect(Document.first.received_at).to eq(documents[0].received_at)
-      end
-    end
-
-    context "when there are documents with same series_id" do
-      let!(:saved_documents) do
-        [
-          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
-          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
-        ]
-      end
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "adds new retrieved documents" do
-        expect(Document.count).to eq(2)
-        expect(Document.first.type).to eq(saved_documents[0].type)
-
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(4)
-        expect(Document.first.type).to eq("Form 9")
-        expect(Document.second.type).to eq("NOD")
-      end
-
-      context "when existing document has comments, tags, and categories" do
-        let(:older_comment) { "OLD_TEST_COMMENT" }
-        let(:comment) { "TEST_COMMENT" }
-        let(:tag) { "TEST_TAG" }
-        let!(:existing_annotations) do
-          [
-            Generators::Annotation.create(
-              comment: older_comment,
-              x: 1,
-              y: 2,
-              document_id: saved_documents[0].id
-            ),
-            Generators::Annotation.create(
-              comment: comment,
-              x: 1,
-              y: 2,
-              document_id: saved_documents[1].id
-            )
-          ]
-        end
-        let!(:document_tag) do
-          [
-            DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: "NOT USED TAG").id,
-              document_id: saved_documents[0].id
-            ),
-            DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: tag).id,
-              document_id: saved_documents[1].id
-            )
-          ]
-        end
-
-        it "copies metdata to new document" do
-          expect(Annotation.count).to eq(2)
-          expect(Annotation.second.comment).to eq(comment)
-          expect(DocumentsTag.count).to eq(2)
-
-          appeal.find_or_create_documents_v2!
-
-          expect(Annotation.count).to eq(3)
-          expect(Document.second.annotations.first.comment).to eq(comment)
-          expect(Document.third.annotations.first.comment).to eq(comment)
-
-          expect(DocumentsTag.count).to eq(3)
-          expect(Document.second.documents_tags.first.tag.text).to eq(tag)
-          expect(Document.third.documents_tags.first.tag.text).to eq(tag)
-
-          expect(Document.second.category_medical).to eq(true)
-          expect(Document.third.category_medical).to eq(true)
-        end
-
-        context "when the API returns two documents with the same series_id" do
-          let(:documents) do
-            [
-              Generators::Document.build(type: "NOD", series_id: series_id),
-              Generators::Document.build(type: "SOC"),
-              saved_documents[1]
-            ]
-          end
-
-          it "copies metadata from the most recently saved document not returned by the API" do
-            appeal.find_or_create_documents_v2!
-
-            expect(Document.third.annotations.first.comment).to eq(older_comment)
-          end
-        end
-      end
-
-      context "when API returns doc that is already saved" do
-        let!(:saved_documents) do
-          Generators::Document.create(
-            type: "Form 9",
-            series_id: series_id,
-            vbms_document_id: documents[0].vbms_document_id
-          )
-        end
-        it "updates existing document" do
-          expect(Document.count).to eq(1)
-          expect(Document.first.type).to eq(saved_documents.type)
-
-          returned_documents = appeal.find_or_create_documents_v2!
-          expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-          expect(Document.count).to eq(2)
-          expect(Document.first.type).to eq("NOD")
-        end
-      end
-    end
-
-    context "when there is a document with no series_id" do
-      let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-      let!(:saved_document) do
-        Generators::Document.create(
-          type: "Form 9",
-          vbms_document_id: vbms_document_id,
-          series_id: nil,
-          file_number: appeal.sanitized_vbms_id
-        )
-      end
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
-          [[
-            OpenStruct.new(
-              vbms_filename: "test_file",
-              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
-              document_id: vbms_document_id,
-              version_id: vbms_document_id,
-              series_id: series_id,
-              version: 0,
-              mime_type: "application/pdf",
-              received_at: rand(100).days.ago,
-              downloaded_from: "VBMS"
-            ),
-            OpenStruct.new(
-              vbms_filename: "test_file",
-              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
-              document_id: "DIFFERENT_ID",
-              version_id: "DIFFERENT_ID",
-              series_id: series_id,
-              version: 1,
-              mime_type: "application/pdf",
-              received_at: rand(100).days.ago,
-              downloaded_from: "VBMS"
-            )
-          ]]
-        )
-      end
-
-      it "adds series_id" do
-        expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_document.type)
-        expect(Document.first.series_id).to eq(nil)
-
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        # Adds series id to existing document
-        expect(Document.first.series_id).to eq(series_id)
-        expect(Document.count).to eq(3)
-      end
-    end
-  end
-
-  context "#find_or_create_documents!" do
-    before do
-      FeatureToggle.enable!(:efolder_docs_api)
-      RequestStore.store[:application] = "reader"
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_docs_api)
-    end
-    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-
-    let(:documents) do
-      [
-        Generators::Document.build(
-          type: "NOD",
-          vbms_document_id: vbms_document_id
-        ),
-        Generators::Document.build(type: "SOC")
-      ]
-    end
-
-    context "when there is no existing document" do
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "saves retrieved documents" do
-        returned_documents = appeal.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
-        expect(Document.first.received_at).to eq(documents[0].received_at)
-      end
-    end
-
-    context "when there is a document with same vbms_document_id" do
-      let!(:saved_document) { Generators::Document.create(type: "Form 9", vbms_document_id: vbms_document_id) }
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "updates retrieved documents" do
-        expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_document.type)
-
-        returned_documents = appeal.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq("NOD")
-      end
-    end
-  end
-
-  context "#fetch_documents!" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-
-    let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents)
-    end
-
-    let(:result) { appeal.fetch_documents!(save: save) }
-
-    context "when save is false" do
-      let(:save) { false }
-      it "should return documents not saved in the database" do
-        expect(result.first).to_not be_persisted
-      end
-
-      context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(result).to eq(documents)
-        end
-
-        context "when application is reader" do
-          before { RequestStore.store[:application] = "reader" }
-
-          it "loads document content from the VBMS service" do
-            expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-            expect(EFolderService).not_to receive(:fetch_documents_for)
-            expect(appeal.fetch_documents!(save: save)).to eq(documents)
-          end
-        end
-      end
-
-      context "when efolder_docs_api is enabled and application is reader" do
-        before do
-          FeatureToggle.enable!(:efolder_docs_api)
-          RequestStore.store[:application] = "reader"
-        end
-
-        it "loads document content from the efolder service and sets fetched_at attributes" do
-          expect(LegacyAppeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(appeal.fetch_documents!(save: save)).to eq(documents)
-
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
-          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
-        end
-
-        after do
-          FeatureToggle.disable!(:efolder_docs_api)
-        end
-      end
-    end
-
-    context "when save is true" do
-      let(:save) { true }
-
-      context "when document exists in the database" do
-        let!(:existing_document) do
-          Generators::Document.create(vbms_document_id: documents[0].vbms_document_id)
-        end
-
-        it "should return existing document" do
-          p "result: #{result}"
-          expect(result.first.id).to eq(existing_document.id)
-        end
-      end
-
-      context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(result).to eq(documents)
-        end
-      end
-
-      context "when efolder_docs_api is enabled and application is reader" do
-        before do
-          FeatureToggle.enable!(:efolder_docs_api)
-          RequestStore.store[:application] = "reader"
-        end
-
-        it "loads document content from the efolder service" do
-          expect(LegacyAppeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(appeal.fetch_documents!(save: save)).to eq(documents)
-        end
-
-        after do
-          FeatureToggle.disable!(:efolder_docs_api)
-        end
-      end
-
-      context "when document doesn't exist in the database" do
-        it "should return documents saved in the database" do
-          expect(result.first).to be_persisted
-        end
-      end
-    end
-  end
-
-  context "#manifest_vva_fetched_at" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-    context "instance variables for appeal not yet set" do
-      it "returns own attribute and sets manifest_vbms_fetched_at when called" do
-        expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
-
-        expect(EFolderService).not_to receive(:fetch_documents_for)
-        expect(VBMSService).not_to receive(:fetch_documents_for)
-        expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-      end
-    end
-  end
-
-  context "#manifest_vbms_fetched_at" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-
-    it "returns own attribute and sets manifest_vva_fetched_at when called" do
-      expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-
-      expect(EFolderService).not_to receive(:fetch_documents_for)
-      expect(VBMSService).not_to receive(:fetch_documents_for)
-      expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
     end
   end
 
@@ -1527,7 +1155,7 @@ describe Appeal do
 
     context "when only one decision" do
       before do
-        appeal.documents = [decision]
+        allow(appeal).to receive(:documents).and_return([decision])
         appeal.decision_date = Time.current
       end
 
@@ -1536,7 +1164,7 @@ describe Appeal do
 
     context "when only one recent decision" do
       before do
-        appeal.documents = [decision, old_decision]
+        allow(appeal).to receive(:documents).and_return([decision, old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1545,7 +1173,7 @@ describe Appeal do
 
     context "when no recent decision" do
       before do
-        appeal.documents = [old_decision]
+        allow(appeal).to receive(:documents).and_return([old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1564,7 +1192,7 @@ describe Appeal do
       let(:documents) { [decision, decision.clone] }
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
@@ -1580,7 +1208,7 @@ describe Appeal do
       end
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
