@@ -263,14 +263,14 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Select an action")
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
-        expect(page).to have_content("Hearing preference: #{hearing_preference}")
+        expect(page).to have_content("Type: #{hearing_preference}")
 
         if hearing.disposition.eql? :cancelled
-          expect(page).not_to have_content("Hearing date")
-          expect(page).not_to have_content("Judge at hearing")
+          expect(page).not_to have_content("Date")
+          expect(page).not_to have_content("Judge")
         else
-          expect(page).to have_content("Hearing date: #{hearing.date.strftime('%-m/%-e/%y')}")
-          expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+          expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
+          expect(page).to have_content("Judge: #{hearing.user.full_name}")
 
           worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
           expect(worksheet_link.text).to eq("View Hearing Worksheet")
@@ -288,7 +288,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing preference")
 
-        expect(page).to have_content("Type: CAVC")
+        expect(page).to have_content("Type(s): CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
