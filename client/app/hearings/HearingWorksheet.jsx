@@ -106,8 +106,9 @@ export class HearingWorksheet extends React.PureComponent {
           veteranName={this.props.worksheet.veteran_fi_last_formatted}
         />
       }
+      </div>;
 
-      <PrintPageBreak />
+      const secondWorksheetPage = <div className="cf-hearings-second-page">
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Contentions"
@@ -131,6 +132,19 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
       </form>
+      {this.props.print &&
+          <WorksheetFooter
+            veteranName={this.props.worksheet.veteran_fi_last_formatted}
+          />
+        }
+    </div>;
+
+    const thirdWorksheetPage = <div className="cf-hearings-third-page">
+    {this.props.print &&
+        <WorksheetFooter
+          veteranName={this.props.worksheet.veteran_fi_last_formatted}
+        />
+      }
     </div>;
 
     const wrapperClassNames = classNames('cf-hearings-worksheet', {
@@ -162,12 +176,20 @@ export class HearingWorksheet extends React.PureComponent {
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
             <div className={wrapperClassNames}>
               {firstWorksheetPage}
+              <PrintPageBreak />
+              {secondWorksheetPage}
+              <PrintPageBreak />
+              {thirdWorksheetPage}
             </div>}
         </div>
       }
       {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
+      <PrintPageBreak />
+      {secondWorksheetPage}
+      <PrintPageBreak />
+      {thirdWorksheetPage}
     </div>
       }
       {!this.props.print &&

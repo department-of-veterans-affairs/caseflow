@@ -691,6 +691,11 @@
      }
   }
 
+  .cf-hearings-third-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 11in;
+  }
 
   .cf-hearings-worksheet {
     margin-bottom: 0;
