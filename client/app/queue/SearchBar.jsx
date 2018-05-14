@@ -25,7 +25,7 @@ class SearchBar extends React.PureComponent {
   render() {
     if (this.props.shouldUseQueueCaseSearch) {
       if (this.props.errorType) {
-        return;
+        return null;
       }
 
       return <div className="section-search" {...searchStyling(this.props.isRequestingAppealsUsingVeteranId)}>

@@ -35,9 +35,9 @@ class CaseListView extends React.PureComponent {
 
   render() {
     const body = {
-      heading: 'Veteran Case Search',
+      heading: COPY.CASE_SEARCH_HOME_PAGE_HEADING,
       component: <React.Fragment>
-        <p>Enter a 9-digit Veteran ID to search for all available cases for a Veteran</p>
+        <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
         <CaseListSearch elementId="searchBarEmptyList" />
         <hr {...horizontalRuleStyling} />
         <p><Link to="/help">Caseflow Help</Link></p>

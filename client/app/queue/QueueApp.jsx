@@ -28,11 +28,12 @@ import SearchBar from './SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
+import COPY from '../../../COPY.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  routedSearchHome = () => <QueueLoadingScreen {...this.props}>
+  routedSearchHome = () => <React.Fragment>
     { this.props.searchedAppeals.length > 0 &&
       <SearchBar
         feedbackUrl={this.props.feedbackUrl}
@@ -40,9 +41,9 @@ class QueueApp extends React.PureComponent {
     }
     <CaseListView
       backLinkTarget="/"
-      backLinkText="< Back to Case Search"
+      backLinkText={COPY.BACK_TO_SEARCH_START_LINK_LABEL}
       {...this.props} />
-  </QueueLoadingScreen>;
+  </React.Fragment>;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
