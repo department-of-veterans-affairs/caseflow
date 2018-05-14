@@ -33,7 +33,7 @@ import {
 import { saveIssues } from './actions/Issue';
 
 const toolbarOptions = {
-  options: ['inline', 'fontSize', 'list', 'colorPicker'],
+  options: ['inline', 'fontSize', 'list', 'colorPicker', 'link'],
   inline: {
     inDropdown: false,
     options: ['bold', 'italic', 'underline']
