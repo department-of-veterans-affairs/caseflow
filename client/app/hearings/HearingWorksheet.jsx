@@ -97,7 +97,7 @@ export class HearingWorksheet extends React.PureComponent {
       appellant={appellant}
     />;
 
-    const firstWorksheetPage = <div>
+    const firstWorksheetPage = <div className="cf-hearings-first-page">
       {worksheetHeader}
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
@@ -106,11 +106,8 @@ export class HearingWorksheet extends React.PureComponent {
           veteranName={this.props.worksheet.veteran_fi_last_formatted}
         />
       }
-    </div>;
 
-
-    const secondWorksheetPage = <div>
-
+      <PrintPageBreak />
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Contentions"
@@ -134,11 +131,6 @@ export class HearingWorksheet extends React.PureComponent {
           print={this.props.print}
         />
       </form>
-      {this.props.print &&
-        <WorksheetFooter
-          veteranName={this.props.worksheet.veteran_fi_last_formatted}
-        />
-      }
     </div>;
 
     const wrapperClassNames = classNames('cf-hearings-worksheet', {
@@ -170,14 +162,12 @@ export class HearingWorksheet extends React.PureComponent {
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
             <div className={wrapperClassNames}>
               {firstWorksheetPage}
-              {secondWorksheetPage}
             </div>}
         </div>
       }
       {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
-      {secondWorksheetPage}
     </div>
       }
       {!this.props.print &&
