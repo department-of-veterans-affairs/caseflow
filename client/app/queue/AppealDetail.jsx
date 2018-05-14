@@ -18,7 +18,11 @@ const appealSummaryUlStyling = css({
 });
 const marginRight = css({ marginRight: '1rem' });
 const marginLeft = css({ marginLeft: '2rem' });
-const noTopMargin = css({ marginTop: 0 });
+const noTopBottomMargin = css({
+  marginTop: 0,
+  marginBottom: 0,
+  paddingBottom: '1rem'
+});
 
 export default class AppealDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
@@ -70,7 +74,7 @@ export default class AppealDetail extends React.PureComponent {
     const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
       <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
-        listStyle={css(marginLeft, noTopMargin)}
+        listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
         items={this.getHearingAttrs(hearing).map(this.getDetailField)} />
     </div>);
@@ -111,7 +115,15 @@ export default class AppealDetail extends React.PureComponent {
       });
     }
 
-    return <BareList ListElementComponent="ul" items={listElements.map(this.getDetailField)} />;
+    return <BareList
+      ListElementComponent="ul"
+      items={listElements.map(this.getDetailField)}
+      listStyle={css({
+        '> li': {
+          paddingBottom: '2rem',
+          borderBottom: '1px solid grey'
+        }
+      })} />;
   };
 
   componentDidMount = () => {
