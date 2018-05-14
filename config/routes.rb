@@ -82,6 +82,7 @@ Rails.application.routes.draw do
   end
 
   resources :appeals, only: [:index, :show] do
+    get :document_count
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -125,21 +126,16 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/docs_for_dev', to: 'queue#dev_document_count'
-    get '/:user_id(*rest)', to: 'queue#tasks'
-    post '/appeals/:task_id/complete', to: 'queue#complete'
-    post '/appeals', to: 'queue#create'
-    patch '/appeals/:task_id', to: 'queue#update'
+    get '/:user_id', to: 'tasks#index'
 
-    # Our single page app requires us to keep the old routes around for a while since we are not guaranteed that
-    # everybody who uses our app will have the latest version of the app. Remove these legacy routes after PR related
-    # to caseflow issue #5309 is deployed.
-    get '/tasks/:vacols_id', to: 'queue#index'
-    get '/tasks/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    post '/tasks/:task_id/complete', to: 'queue#complete'
-    post '/tasks', to: 'queue#create'
-    patch '/tasks/:task_id', to: 'queue#update'
+    # Remove this route
+    post '/appeals/:task_id/complete', to: 'tasks#complete'
   end
+
+  resources :tasks, only: [:create, :update] do
+    post :complete
+  end
+
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

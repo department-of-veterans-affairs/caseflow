@@ -175,6 +175,23 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.datetime "created_at"
   end
 
+  create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "type", null: false
+    t.integer "user_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer "completion_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lock_version"
+    t.string "comment"
+    t.string "outgoing_reference_id"
+    t.string "aasm_state"
+    t.datetime "prepared_at"
+  end
+
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.integer "docket_count"
     t.date "latest_docket_month"
@@ -479,23 +496,6 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "tasks", id: :serial, force: :cascade do |t|
-    t.integer "appeal_id", null: false
-    t.string "type", null: false
-    t.integer "user_id"
-    t.datetime "assigned_at"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.integer "completion_status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "lock_version"
-    t.string "comment"
-    t.string "outgoing_reference_id"
-    t.string "aasm_state"
-    t.datetime "prepared_at"
-  end
-
   create_table "team_quotas", id: :serial, force: :cascade do |t|
     t.date "date", null: false
     t.string "task_type", null: false
@@ -503,6 +503,14 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
+  end
+
+  create_table "temporary_appeals", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.string "docket_type"
+    t.datetime "established_at"
+    t.index ["veteran_file_number"], name: "index_temporary_appeals_on_veteran_file_number"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|

@@ -59,10 +59,13 @@ Rails.application.configure do
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
-  # for now disable using local for sqs. This should be enabled when everyone
-  # has a docker setup
-  config.sqs_create_queues = false
-  config.sqs_endpoint = nil
+  # set to true to create queues and override the sqs endpiont
+  config.sqs_create_queues = true
+  config.sqs_endpoint = "http://localhost:4576"
+
+  # since we mock aws using localstack, provide dummy creds to the aws gem
+  ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
+  ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
@@ -79,10 +82,6 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
-
-  # Use an evented file watcher to asynchronously detect changes in source code,
-  # routes, locales, etc. This feature depends on the listen gem.
-  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # configure pry
   silence_warnings do
