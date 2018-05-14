@@ -67,51 +67,6 @@ RSpec.feature "Queue" do
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
-  context "reader-style search for appeals using veteran id" do
-    scenario "appeal not found" do
-      visit "/queue"
-      fill_in "searchBar", with: "obviouslyfakecaseid"
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID not found")
-    end
-
-    scenario "vet found, has no appeal" do
-      appeal = appeals.second
-
-      visit "/queue"
-      fill_in "searchBar", with: appeal.vbms_id
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID #{appeal.vbms_id} does not have any appeals.")
-    end
-
-    scenario "one appeal found" do
-      appeal = appeals.first
-
-      visit "/queue"
-      fill_in "searchBar", with: (appeal.vbms_id + "\n")
-
-      expect(page).to have_content("Select claims folder")
-      expect(page).to have_content("Not seeing what you expected? Please send us feedback.")
-      appeal_options = find_all(".cf-form-radio-option")
-      expect(appeal_options.count).to eq(1)
-
-      expect(appeal_options[0]).to have_content("Veteran #{appeal.veteran_full_name}")
-      expect(appeal_options[0]).to have_content("Veteran ID #{appeal.vbms_id}")
-      expect(appeal_options[0]).to have_content("Issues")
-      expect(appeal_options[0].find_all("li").count).to eq(appeal.issues.size)
-
-      appeal_options[0].click
-      click_on "Open Claims Folder"
-
-      expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
-      expect(page).to have_link(COPY::BACK_TO_PERSONAL_QUEUE_LINK_LABEL, href: "/queue")
-    end
-  end
-
   context "queue case search for appeals using veteran id" do
     let(:appeal) { appeals.first }
     let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
@@ -236,6 +191,8 @@ RSpec.feature "Queue" do
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).not_to have_content "Select an action"
       end
     end
   end
@@ -451,6 +408,8 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+
+        expect(page).to have_content("Select an action")
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Hearing preference: #{hearing_preference}")
