@@ -57,7 +57,7 @@ export default class AppealDetail extends React.PureComponent {
   }
 
   getHearingInfo = () => {
-    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'desc');
+    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'asc');
     const hearingElementsStyle = css({
       '&:first-of-type': {
         marginTop: '1rem'
