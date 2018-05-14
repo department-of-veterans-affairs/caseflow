@@ -24,7 +24,7 @@ RSpec.feature "RAMP Election Intake" do
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,
@@ -35,14 +35,14 @@ RSpec.feature "RAMP Election Intake" do
   end
 
   let!(:inactive_appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "77776666C",
       vacols_record: :full_grant_decided
     )
   end
 
   let!(:ineligible_appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "77778888C",
       vacols_record: :activated,
       issues: issues
@@ -181,7 +181,7 @@ RSpec.feature "RAMP Election Intake" do
       click_label "confirm-finish"
 
       ## Validate error message when complete intake fails
-      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
       safe_click "button#button-submit-review"
       expect(page).to have_content("Something went wrong")
 
@@ -239,7 +239,7 @@ RSpec.feature "RAMP Election Intake" do
       expect(page).to have_content("Finish processing Higher-Level Review election")
 
       expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
+        appeal: LegacyAppeal.find_or_create_by_vacols_id(appeal.vacols_id),
         user: current_user,
         closed_on: Time.zone.today,
         disposition_code: "P"

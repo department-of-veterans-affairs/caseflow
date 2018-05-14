@@ -8,7 +8,7 @@ describe AppealSeriesIssues do
   let(:appeals) { [original, post_remand] }
 
   let(:original) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: vacols_id,
       decision_date: 6.months.ago,
       disposition: "Remanded",
@@ -17,7 +17,7 @@ describe AppealSeriesIssues do
   end
 
   let(:post_remand) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       type: "Post Remand",
       prior_decision_date: 6.months.ago,
       disposition: "Remanded",
@@ -113,7 +113,7 @@ describe AppealSeriesIssues do
     context "when an appeal was merged" do
       let(:appeals) { [original, merged_appeal] }
       let(:merged_appeal) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           type: "Post Remand",
           prior_decision_date: 6.months.ago,
           decision_date: 3.months.ago,
