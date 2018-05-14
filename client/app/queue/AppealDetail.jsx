@@ -17,24 +17,15 @@ const appealSummaryUlStyling = css({
   listStyle: 'none'
 });
 const marginRight = css({ marginRight: '1rem' });
+const marginLeft = css({ marginLeft: '2rem' });
+const noTopMargin = css({ marginTop: 0 });
 
 export default class AppealDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
 
-  getLastHearing = () => {
-    const hearings = this.getAppealAttr('hearings');
-
-    if (!hearings.length) {
-      return {};
-    }
-
-    return _.orderBy(hearings, 'date', 'desc')[0];
-  };
-
-  getHearingInfo = () => {
-    const hearing = this.getLastHearing();
+  getHearingAttrs = (hearing) => {
     const listElements = [{
-      label: 'Hearing preference',
+      label: 'Type',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
     }];
 
@@ -43,8 +34,13 @@ export default class AppealDetail extends React.PureComponent {
     }
 
     listElements.splice(1, 0, {
-      label: 'Hearing disposition',
-      value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
+      label: 'Disposition',
+      value: <React.Fragment>
+        {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
+        <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print`}>
+          View Hearing Worksheet
+        </Link>
+      </React.Fragment>
     });
 
     if (hearing.disposition === 'cancelled') {
@@ -52,22 +48,40 @@ export default class AppealDetail extends React.PureComponent {
     }
 
     return listElements.concat([{
-      label: 'Hearing date',
-      value: <React.Fragment>
-        <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-        <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print`}>
-          View Hearing Worksheet
-        </Link>
-      </React.Fragment>
+      label: 'Date',
+      value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
     }, {
-      label: 'Judge at hearing',
+      label: 'Judge',
       value: hearing.held_by
     }]);
-  };
+    // todo: add RO/Team row
+  }
+
+  getHearingInfo = () => {
+    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'desc');
+    const leftPadding = orderedHearings.length > 1 ? marginLeft : {};
+
+    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...leftPadding}>
+      <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+      <BareList compact
+        listStyle={css(marginLeft, noTopMargin)}
+        ListElementComponent="ul"
+        items={this.getHearingAttrs(hearing).map(this.getDetailField)} />
+    </div>);
+
+    return <React.Fragment>
+      {orderedHearings.length > 1 && <br />}
+      {hearingElements}
+    </React.Fragment>;
+  }
+
+  getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
+    {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
+  </React.Fragment>;
 
   getListElements = () => {
     const listElements = [{
-      label: 'Type',
+      label: 'Type(s)',
       value: renderAppealType(this.props.appeal)
     }, {
       label: 'Power of Attorney',
@@ -85,14 +99,14 @@ export default class AppealDetail extends React.PureComponent {
     }];
 
     if (this.getAppealAttr('hearings').length) {
-      listElements.splice(2, 0, ...this.getHearingInfo());
+      // todo: regional office goes before or after hearings?
+      listElements.splice(2, 0, {
+        label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
+        valueFunction: this.getHearingInfo
+      });
     }
 
-    const getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
-      <span {...boldText}>{label}:</span> {value || valueFunction()}
-    </React.Fragment>;
-
-    return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
+    return <BareList ListElementComponent="ul" items={listElements.map(this.getDetailField)} />;
   };
 
   componentDidMount = () => {
