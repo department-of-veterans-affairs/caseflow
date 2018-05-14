@@ -82,7 +82,6 @@ RSpec.feature "Queue" do
       end
 
       it "page displays invalid Veteran ID message" do
-        # byebug
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
