@@ -67,6 +67,7 @@ export default class AppealDetail extends React.PureComponent {
         marginTop: '1rem'
       }
     });
+
     if (orderedHearings.length > 1) {
       _.extend(hearingElementsStyle, marginLeft);
     }
