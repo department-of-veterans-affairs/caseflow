@@ -25,10 +25,10 @@ export default class CFRichTextEditor extends React.PureComponent {
     const { value } = this.props;
     const contentBlock = htmlToDraft(value);
 
-    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-    const editorState = EditorState.createWithContent(contentState);
+    if (contentBlock) {
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+      const editorState = EditorState.createWithContent(contentState);
 
-    if (value) {
       this.setState({ editorState });
     }
   };
@@ -52,7 +52,7 @@ export default class CFRichTextEditor extends React.PureComponent {
       label,
       name,
       required,
-      toolbar
+      toolbarOptions
     } = this.props;
 
     return <div>
@@ -65,7 +65,7 @@ export default class CFRichTextEditor extends React.PureComponent {
           onEditorStateChange={this.onChange}
           editorState={this.state.editorState}
           editorClassName="demo-editor"
-          toolbar={toolbar}
+          toolbar={toolbarOptions}
           wrapperId={id}
         />
       </div>
@@ -79,5 +79,6 @@ CFRichTextEditor.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
   name: PropTypes.string,
-  required: PropTypes.bool
+  required: PropTypes.bool,
+  toolbarOptions: PropTypes.object.isRequired
 };
