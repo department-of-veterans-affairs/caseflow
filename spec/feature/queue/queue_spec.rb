@@ -624,7 +624,7 @@ RSpec.feature "Queue" do
       end
 
       scenario "edits issue information" do
-        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -658,7 +658,7 @@ RSpec.feature "Queue" do
       end
 
       scenario "shows/hides diagnostic code option" do
-        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -866,10 +866,11 @@ RSpec.feature "Queue" do
 
   context "pop breadcrumb" do
     scenario "goes back from submit decision view" do
-      appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+      appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
       visit "/queue"
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+      sleep 1
       safe_click(".Select-control")
       safe_click("div[id$='--option-0']")
 
