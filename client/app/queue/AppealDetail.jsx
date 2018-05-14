@@ -58,9 +58,16 @@ export default class AppealDetail extends React.PureComponent {
 
   getHearingInfo = () => {
     const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'desc');
-    const leftPadding = orderedHearings.length > 1 ? marginLeft : {};
+    const hearingElementsStyle = css({
+      '&:first-of-type': {
+        marginTop: '1rem'
+      }
+    });
+    if (orderedHearings.length > 1) {
+      _.extend(hearingElementsStyle, marginLeft);
+    }
 
-    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...leftPadding}>
+    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
       <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopMargin)}
