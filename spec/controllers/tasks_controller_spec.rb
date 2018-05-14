@@ -116,7 +116,7 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
-  describe "PATCH tasks/:task_id" do
+  describe "PATCH tasks/:id" do
     let(:attorney) { User.create(css_id: "CFS123", station_id: "101") }
     let(:appeal) { LegacyAppeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
@@ -138,7 +138,7 @@ RSpec.describe TasksController, type: :controller do
       end
 
       it "should not be successful" do
-        patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
         expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
@@ -162,7 +162,7 @@ RSpec.describe TasksController, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -176,7 +176,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-          patch :update, params: { tasks: params, task_id: "3615398-2018-04-18" }
+          patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
           expect(response.status).to eq 404
         end
       end
