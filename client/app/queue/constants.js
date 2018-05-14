@@ -31,7 +31,10 @@ export const ACTIONS = {
   SAVE_EDITED_APPEAL_ISSUE: 'SAVE_EDITED_APPEAL_ISSUE',
   UPDATE_EDITING_APPEAL_ISSUE: 'UPDATE_EDITING_APPEAL_ISSUE',
   DELETE_EDITING_APPEAL_ISSUE: 'DELETE_EDITING_APPEAL_ISSUE',
-  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE'
+  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE',
+  SET_TASKS_AND_APPEALS_OF_ATTORNEY: 'SET_TASKS_AND_APPEALS_OF_ATTORNEY',
+  REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY: 'REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY',
+  ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -89,9 +92,14 @@ export const REMAND_REASONS = Object.assign({},
 );
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
-  map((val) => StringUtil.parameterize(val));
+  map(StringUtil.parameterize);
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   parameterizedDispositions
+));
+
+export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
+  parameterizedDispositions,
+  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));

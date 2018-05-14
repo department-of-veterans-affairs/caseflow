@@ -8,7 +8,7 @@ RSpec.feature "Cancel certification" do
   let(:form9) { Generators::Document.build(type: "Form 9") }
 
   let(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -20,7 +20,7 @@ RSpec.feature "Cancel certification" do
   end
 
   let(:appeal_mismatched_docs) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
