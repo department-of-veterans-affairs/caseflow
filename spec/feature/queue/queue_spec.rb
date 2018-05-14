@@ -68,26 +68,6 @@ RSpec.feature "Queue" do
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
 
   context "reader-style search for appeals using veteran id" do
-    skip "appeal not found" do
-      visit "/queue"
-      fill_in "searchBar", with: "obviouslyfakecaseid"
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID not found")
-    end
-
-    skip "vet found, has no appeal" do
-      appeal = appeals.second
-
-      visit "/queue"
-      fill_in "searchBar", with: appeal.vbms_id
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID #{appeal.vbms_id} does not have any appeals.")
-    end
-
     scenario "one appeal found" do
       appeal = appeals.first
 
