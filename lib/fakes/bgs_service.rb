@@ -21,9 +21,7 @@ class Fakes::BGSService
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      if %w[veteran_exists].include?(row_hash["bgs_key"])
-        Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
-      end
+      Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
     end
   end
 
