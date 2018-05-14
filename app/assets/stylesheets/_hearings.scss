@@ -682,6 +682,7 @@
   .cf-hearings-first-page {
     display: flex;
     flex-direction: column;
+    min-height: 11in;
 
     .cf-print-footer {
       position: absolute;
