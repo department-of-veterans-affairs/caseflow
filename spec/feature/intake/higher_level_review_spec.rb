@@ -20,12 +20,6 @@ RSpec.feature "Higher Level Review Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
-  end
-
   let(:inaccessible) { false }
 
   let!(:current_user) do

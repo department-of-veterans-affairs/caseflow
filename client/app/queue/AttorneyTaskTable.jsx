@@ -12,6 +12,7 @@ import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown'
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
+import COPY from '../../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -34,28 +35,28 @@ class AttorneyTaskTable extends React.PureComponent {
 
   getQueueColumns = () => {
     const columns = [{
-      header: 'Case Details',
+      header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: this.getCaseDetailsLink
     }, {
-      header: 'Type(s)',
+      header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: (task) => task.attributes.task_id ?
         renderAppealType(this.getAppealForTask(task)) :
         <span {...redText}>Please ask your judge to assign this case to you in DAS</span>,
       span: (task) => task.attributes.task_id ? 1 : 5
     }, {
-      header: 'Docket Number',
+      header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
       span: this.collapseColumnIfNoDASRecord
     }, {
-      header: 'Issues',
+      header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
       valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
       span: this.collapseColumnIfNoDASRecord
     }, {
-      header: 'Due Date',
+      header: COPY.CASE_LIST_TABLE_DUE_DATE_COLUMN_TITLE,
       valueFunction: (task) => task.attributes.task_id ? <DateString date={task.attributes.due_on} /> : null,
       span: this.collapseColumnIfNoDASRecord
     }, {
-      header: 'Reader Documents',
+      header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
         if (!task.attributes.task_id) {
@@ -71,7 +72,7 @@ class AttorneyTaskTable extends React.PureComponent {
 
     if (this.props.featureToggles.phase_two) {
       columns.push({
-        header: 'Action',
+        header: COPY.CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE,
         span: this.collapseColumnIfNoDASRecord,
         valueFunction: (task) => <SelectCheckoutFlowDropdown vacolsId={task.vacolsId} />
       });
