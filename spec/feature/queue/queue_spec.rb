@@ -77,7 +77,7 @@ RSpec.feature "Queue" do
       expect(page).to have_content("Veteran ID not found")
     end
 
-    scenario "vet found, has no appeal" do
+    skip "vet found, has no appeal" do
       appeal = appeals.second
 
       visit "/queue"
