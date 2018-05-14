@@ -51,7 +51,7 @@ class TasksController < ApplicationController
 
   def update
     return invalid_role_error if current_user.vacols_role != "Judge"
-    JudgeCaseAssignment.new(task_params.merge(task_id: params[:task_id])).reassign_to_attorney!
+    JudgeCaseAssignment.new(task_params.merge(task_id: params[:id])).reassign_to_attorney!
     render json: {}, status: 200
   end
 

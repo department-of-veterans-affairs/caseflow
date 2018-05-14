@@ -123,29 +123,13 @@ class LegacyAppeal < ApplicationRecord
     @ssoc_dates ||= []
   end
 
-  attr_writer :documents
-  def documents
-    @documents ||= fetch_documents!(save: false)
+  def document_fetcher
+    @document_fetcher ||= DocumentFetcher.new(
+      appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
+    )
   end
 
-  # This method fetches documents and saves their metadata
-  # in the database
-  attr_writer :saved_documents
-  def saved_documents
-    @saved_documents ||= fetch_documents!(save: true)
-  end
-
-  def number_of_documents
-    documents.size
-  end
-
-  def number_of_documents_url
-    if document_service == ExternalApi::EfolderService
-      ExternalApi::EfolderService.efolder_files_url
-    else
-      "/queue/docs_for_dev"
-    end
-  end
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -379,57 +363,6 @@ class LegacyAppeal < ApplicationRecord
     LegacyAppeal.certify(self)
   end
 
-  def fetch_documents!(save:)
-    save ? find_or_create_documents! : fetched_documents
-  end
-
-  def find_or_create_documents_v2!
-    AddSeriesIdToDocumentsJob.perform_now(self)
-
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          create_new_document!(document, ids)
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
-  def find_or_create_documents!
-    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
-                                                                  user: RequestStore.store[:current_user])
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          document.save!
-          document
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
   # These three methods are used to decide whether the appeal is processed
   # as a partial grant, remand, or full grant when dispatching it.
   def partial_grant_on_dispatch?
@@ -582,16 +515,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def manifest_vbms_fetched_at
-    fetch_documents_from_service!
-    @manifest_vbms_fetched_at
-  end
-
-  def manifest_vva_fetched_at
-    fetch_documents_from_service!
-    @manifest_vva_fetched_at
-  end
-
   private
 
   def save_to_appeals
@@ -603,20 +526,6 @@ class LegacyAppeal < ApplicationRecord
 
   def destroy_appeal
     Appeal.find(attributes["id"]).destroy!
-  end
-
-  def create_new_document!(document, ids)
-    document.save!
-
-    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
-    previous_documents = Document.where(series_id: document.series_id).order(:id)
-      .where.not(vbms_document_id: ids)
-
-    if previous_documents.count > 0
-      document.copy_metadata_from_document(previous_documents.last)
-    end
-
-    document
   end
 
   def matched_document(type, vacols_datetime)
@@ -639,30 +548,6 @@ class LegacyAppeal < ApplicationRecord
     documents.reject do |doc|
       excluding_ids.include?(doc.vbms_document_id) || doc.received_at.nil?
     end.sort_by(&:received_at)
-  end
-
-  def fetch_documents_from_service!
-    return if @fetched_documents
-
-    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
-
-    @fetched_documents = doc_struct[:documents]
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
-    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
-  end
-
-  def fetched_documents
-    fetch_documents_from_service!
-    @fetched_documents
-  end
-
-  def document_service
-    @document_service ||=
-      if %w[reader queue hearings].include?(RequestStore.store[:application])
-        EFolderService
-      else
-        VBMSService
-      end
   end
 
   # Used for serialization
