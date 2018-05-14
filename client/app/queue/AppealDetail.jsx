@@ -54,7 +54,6 @@ export default class AppealDetail extends React.PureComponent {
       label: 'Judge',
       value: hearing.held_by
     }]);
-    // todo: add RO/Team row
   }
 
   getHearingInfo = () => {
@@ -99,7 +98,6 @@ export default class AppealDetail extends React.PureComponent {
     }];
 
     if (this.getAppealAttr('hearings').length) {
-      // todo: regional office goes before or after hearings?
       listElements.splice(2, 0, {
         label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
         valueFunction: this.getHearingInfo
