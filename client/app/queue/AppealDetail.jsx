@@ -119,9 +119,10 @@ export default class AppealDetail extends React.PureComponent {
     return <BareList
       ListElementComponent="ul"
       items={listElements.map(this.getDetailField)}
-      listStyle={css({
+      listStyle={css(appealSummaryUlStyling, {
         '> li': {
-          paddingBottom: '2rem',
+          paddingBottom: '1.5rem',
+          paddingTop: '1rem',
           borderBottom: '1px solid grey'
         }
       })} />;
@@ -132,10 +133,8 @@ export default class AppealDetail extends React.PureComponent {
   }
 
   render = () => <div>
-    <h2>Appeal Summary</h2>
-    <ul {...appealSummaryUlStyling}>
-      {this.getListElements()}
-    </ul>
+    <h2 {...css({ marginBottom: '1rem' })}>Appeal Summary</h2>
+    {this.getListElements()}
     <h2>Issues</h2>
     <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
   </div>;
