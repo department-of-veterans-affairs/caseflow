@@ -86,8 +86,7 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
-    let negativeDispositions = worksheet.disposition === 'no_show' || worksheet.disposition === 'postponed' ||
-  worksheet.disposition === 'cancelled';
+    let negativeDispositions = 'worksheet.disposition in %w{no_show,postponed,cancelled}';
 
     let dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
