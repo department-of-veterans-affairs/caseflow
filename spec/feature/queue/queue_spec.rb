@@ -236,6 +236,8 @@ RSpec.feature "Queue" do
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).not_to have_content "Select an action"
       end
     end
   end
@@ -302,6 +304,8 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+
+        expect(page).to have_content("Select an action")
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Hearing preference: #{hearing_preference}")
