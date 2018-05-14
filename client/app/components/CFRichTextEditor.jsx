@@ -35,13 +35,12 @@ export default class CFRichTextEditor extends React.PureComponent {
 
   onChange = (value) => {
     this.setState({
-      value,
       editorState: value
     });
 
     if (this.props.onChange) {
       // Send the changes up to the parent component as an HTML string.
-      this.props.onChange(draftToHtml(convertToRaw(this.state.editorState.getCurrentContent())));
+      this.props.onChange(draftToHtml(convertToRaw(value.getCurrentContent())));
     }
   };
 
