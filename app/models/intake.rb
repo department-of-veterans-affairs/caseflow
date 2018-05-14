@@ -133,6 +133,12 @@ class Intake < ApplicationRecord
     )
   end
 
+  def clear_completion_status!
+    update_attributes!(
+      completion_status: nil
+    )
+  end
+
   def complete_with_status!(status)
     update_attributes!(
       completed_at: Time.zone.now,

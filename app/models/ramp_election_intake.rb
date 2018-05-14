@@ -50,6 +50,10 @@ class RampElectionIntake < Intake
         )
       end
     end
+
+    if pending?
+      clear_completion_status!
+    end
   end
 
   def cancel_detail!
