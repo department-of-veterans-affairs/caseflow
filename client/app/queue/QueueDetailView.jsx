@@ -69,6 +69,21 @@ class QueueDetailView extends React.PureComponent {
     return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
   }
 
+  getCheckoutFlowDropdown = () => {
+    const {
+      appeal,
+      vacolsId,
+      featureToggles,
+      loadedQueueAppealIds
+    } = this.props;
+
+    if (featureToggles.phase_two && loadedQueueAppealIds.includes(appeal.attributes.vacols_id)) {
+      return <SelectCheckoutFlowDropdown vacolsId={vacolsId} />;
+    }
+
+    return null;
+  }
+
   render = () => {
     const appeal = this.props.appeal.attributes;
 
@@ -84,7 +99,7 @@ class QueueDetailView extends React.PureComponent {
         appeal={this.props.appeal}
         taskType="Draft Decision"
         longMessage />
-      {this.props.featureToggles.phase_two && <SelectCheckoutFlowDropdown vacolsId={this.props.vacolsId} />}
+      {this.getCheckoutFlowDropdown()}
       <TabWindow
         name="queue-tabwindow"
         tabs={this.tabs()} />
@@ -101,7 +116,8 @@ QueueDetailView.propTypes = {
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
   breadcrumbs: state.ui.breadcrumbs,
-  task: state.caseDetail.activeTask
+  task: state.caseDetail.activeTask,
+  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
