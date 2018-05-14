@@ -70,7 +70,7 @@ class SeedDB
     tasks[2].review!
     tasks[2].complete!(status: :routed_to_arc)
 
-    # assigning and moving the task to complete for 
+    # assigning and moving the task to complete for
     # user at index 3
     5.times do |index|
       task = EstablishClaim.assign_next_to!(@users[3])
@@ -81,7 +81,7 @@ class SeedDB
 
     task = EstablishClaim.assign_next_to!(@users[4])
 
-    # assigning and moving the task to complete for 
+    # assigning and moving the task to complete for
     # user at index 5
     3.times do |index|
       task = EstablishClaim.assign_next_to!(@users[5])
@@ -159,12 +159,12 @@ class SeedDB
 
   def seed
     clean_db
-    # Annotations and tags don't come from VACOLS, so our seeding should 
+    # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
     create_annotations
     create_tags
 
-    return if Rails.env.local? 
+    return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
     # a VACOLS copy locally.

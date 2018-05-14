@@ -39,24 +39,13 @@ class Reader::DocumentsController < Reader::ApplicationController
   helper_method :appeal
 
   def annotations
-    appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
+    appeal.document_fetcher.find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
   end
 
-  def fetched_at_format
-    "%D %l:%M%P %Z"
-  end
-
-  # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
-  def manifest_vva_fetched_at
-    appeal.manifest_vva_fetched_at.strftime(fetched_at_format) if appeal.manifest_vva_fetched_at
-  end
-
-  def manifest_vbms_fetched_at
-    appeal.manifest_vbms_fetched_at.strftime(fetched_at_format) if appeal.manifest_vbms_fetched_at
-  end
+  delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
 
   def documents
-    document_ids = appeal.saved_documents.map(&:id)
+    document_ids = appeal.document_fetcher.find_or_create_documents!.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
@@ -64,7 +53,7 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = appeal.saved_documents.map do |document|
+    @documents = appeal.document_fetcher.find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags

@@ -19,7 +19,7 @@ import {
   saveEditedAppealIssue
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
-import { fullWidth } from './constants';
+import { fullWidth, DISPOSITION_ID_BY_PARAMETERIZED } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
@@ -108,6 +108,12 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { attributes: { issues } }
     } = this.props;
 
+    // filter already-decided issues from attorney checkout flow. undecided disposition
+    // ids are all numerical (1-9), decided ids are alphabetical (A-X)
+    const filteredIssues = _.filter(issues, (issue) =>
+      !issue.disposition || Number(DISPOSITION_ID_BY_PARAMETERIZED[issue.disposition])
+    );
+
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Select Dispositions
@@ -119,7 +125,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={issues}
+        rowObjects={filteredIssues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}

@@ -130,7 +130,7 @@ jobs:
         - rm -rf node_modules && mv node_modules_bak node_modules
 
 
-bundler_args: "--deployment --without development staging production ssh_forwarding local"
+bundler_args: "--deployment --without stubbed development staging production ssh_forwarding"
 cache:
   directories:
     - vendor/bundle
