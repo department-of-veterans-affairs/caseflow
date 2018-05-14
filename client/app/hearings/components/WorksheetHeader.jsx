@@ -114,10 +114,12 @@ class WorksheetHeader extends React.PureComponent {
           <h5>DATE</h5>
           <div>{moment(worksheet.date).format('ddd l')}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h5>HEARING DISPOSTION</h5>
-          <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
-        </div>
+        {worksheet.date && worksheet.date < new Date() &&
+            <div className="cf-hearings-worksheet-data-cell">
+              <h5>HEARING DISPOSTION</h5>
+              <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
+            </div>
+        }
       </div>
 
       <div className="cf-hearings-worksheet-data">
