@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
@@ -106,9 +105,9 @@ export class HearingWorksheet extends React.PureComponent {
           veteranName={this.props.worksheet.veteran_fi_last_formatted}
         />
       }
-      </div>;
+    </div>;
 
-      const secondWorksheetPage = <div className="cf-hearings-second-page">
+    const secondWorksheetPage = <div className="cf-hearings-second-page">
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Contentions"
@@ -136,14 +135,6 @@ export class HearingWorksheet extends React.PureComponent {
           <WorksheetFooter
             veteranName={this.props.worksheet.veteran_fi_last_formatted}
           />
-        }
-    </div>;
-
-    const thirdWorksheetPage = <div className="cf-hearings-third-page">
-    {this.props.print &&
-        <WorksheetFooter
-          veteranName={this.props.worksheet.veteran_fi_last_formatted}
-        />
       }
     </div>;
 
@@ -176,20 +167,14 @@ export class HearingWorksheet extends React.PureComponent {
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
             <div className={wrapperClassNames}>
               {firstWorksheetPage}
-              <PrintPageBreak />
               {secondWorksheetPage}
-              <PrintPageBreak />
-              {thirdWorksheetPage}
             </div>}
         </div>
       }
       {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
-      <PrintPageBreak />
       {secondWorksheetPage}
-      <PrintPageBreak />
-      {thirdWorksheetPage}
     </div>
       }
       {!this.props.print &&
