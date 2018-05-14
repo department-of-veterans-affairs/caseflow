@@ -3,11 +3,17 @@ import PropTypes from 'prop-types';
 import FoundIcon from '../../components/FoundIcon';
 import NotFoundIcon from '../../components/NotFoundIcon';
 import Table from '../../components/Table';
+import { css } from 'glamor';
+
+const errorStatus = css({
+  color: '#e31c3d',
+  fontWeight: '700'
+});
 
 const found = <div><FoundIcon /><span>&emsp;Found in VBMS</span></div>;
 
 const notFound = <div><NotFoundIcon />
-  <span className="error-status">&emsp;Not found in VBMS</span>
+  <span {...errorStatus}>&emsp;Not found in VBMS</span>
 </div>;
 
 const documentIcon = (doc) => {

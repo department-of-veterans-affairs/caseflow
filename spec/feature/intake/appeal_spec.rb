@@ -70,5 +70,9 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(appeal.docket_type).to eq("evidence_submission")
+
+    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Decision date: 04/25/2018")
+    expect(page).to have_content("Left knee granted")
   end
 end
