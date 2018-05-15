@@ -2,10 +2,7 @@
 @import 'uswds/core/variables';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
-
-$caseflow-background: #f9f9f9;
-$caseflow-text-select-without-transparency: #6392ff;
-$caseflow-text-select: transparentize($caseflow-text-select-without-transparency, 0.7);
+@import 'variables';
 
 @mixin focus {
   &:focus {
