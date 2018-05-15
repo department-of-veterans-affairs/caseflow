@@ -44,41 +44,6 @@ describe TemporaryAppeal do
           expect(appeal.errors[:receipt_date]).to include("before_ama")
         end
       end
-
-      context "when saving receipt" do
-        before { appeal.save(context: :intake_review) }
-
-        context "when it is nil" do
-          let(:receipt_date) { nil }
-
-          it "adds error to receipt_date" do
-            is_expected.to be false
-            expect(appeal.errors[:receipt_date]).to include("blank")
-          end
-        end
-      end
-    end
-
-    context "docket_type" do
-      context "during review" do
-        before { appeal.save(context: :intake_review) }
-
-        context "when it is set" do
-          let(:docket_type) { "hearing" }
-
-          it "is valid" do
-            is_expected.to be true
-          end
-        end
-
-        context "when it is nil" do
-          let(:docket_type) { nil }
-          it "adds errors to docket_type" do
-            is_expected.to be false
-            expect(appeal.errors[:docket_type]).to include("blank")
-          end
-        end
-      end
     end
   end
 
