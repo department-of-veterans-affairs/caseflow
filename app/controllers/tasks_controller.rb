@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_queue_phase_two, only: :complete
-  before_action :verify_queue_phase_three, only: [:create, :update]
+  before_action :verify_judge_assignment_access, only: [:create, :update]
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "TasksController failed: #{e.message}"
@@ -16,7 +16,7 @@ class TasksController < ApplicationController
   end
 
   def index
-    return invalid_role_error unless ROLES.include?(user.vacols_role)
+    return [] unless ROLES.include?(user.vacols_role) 
     respond_to do |format|
       format.html do
         render "queue/show"
