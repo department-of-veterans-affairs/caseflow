@@ -16,7 +16,8 @@ class Intake < ApplicationRecord
     veteran_not_found: "veteran_not_found",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
-    duplicate_intake_in_progress: "duplicate_intake_in_progress"
+    duplicate_intake_in_progress: "duplicate_intake_in_progress",
+    duplicate_intake_in_progress_by_current_user: "duplicate_intake_in_progress_by_current_user"
   }.freeze
 
   FORM_TYPES = {
@@ -70,9 +71,8 @@ class Intake < ApplicationRecord
   end
 
   def start!
-    if duplicate_intake_in_progress
-      self.error_code = :duplicate_intake_in_progress
-      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+    if duplicate_intake_in_progress_by_current_user
+      self.error_code = :duplicate_intake_in_progress_by_current_user
       return false
     end
 
@@ -161,6 +161,10 @@ class Intake < ApplicationRecord
       errors = veteran.errors.messages.map { |(key, _value)| key }
       @error_data = { veteran_missing_fields: errors }
 
+    elsif duplicate_intake_in_progress
+      self.error_code = :duplicate_intake_in_progress
+      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+
     else
       validate_detail_on_start
 
@@ -172,6 +176,11 @@ class Intake < ApplicationRecord
   def duplicate_intake_in_progress
     @duplicate_intake_in_progress ||=
       Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number)
+  end
+
+  def duplicate_intake_in_progress_by_current_user
+    @duplicate_intake_in_progress_by_current_user ||=
+      Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number, user: user)
   end
 
   def veteran
