@@ -4,11 +4,11 @@
     userId: current_user.id,
     userRole: current_user.vacols_role,
     userCssId: current_user.css_id,
+    userCanAccessQueue: current_user_can_access_queue?,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      case_search_home_page: FeatureToggle.enabled?(:case_search_home_page, user: current_user),
       phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
       queue_case_search: FeatureToggle.enabled?(:queue_case_search, user: current_user)
     }

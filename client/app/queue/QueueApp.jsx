@@ -99,7 +99,7 @@ class QueueApp extends React.PureComponent {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.featureToggles.case_search_home_page ? '/' : '/queue'}
+      defaultUrl={this.props.userCanAccessQueue ? '/queue' : '/'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{

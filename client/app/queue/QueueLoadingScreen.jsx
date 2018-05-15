@@ -73,10 +73,9 @@ class QueueLoadingScreen extends React.PureComponent {
   reload = () => window.location.reload();
 
   render = () => {
-    // We expect users with the case_search_home_page feature toggle to be able to access the queue detail view (which
-    // is wrapped by this component) even though they will not have queues. Return early to avoid making the request
-    // for queues that would happen as a result of createLoadPromise().
-    if (this.props.featureToggles.case_search_home_page) {
+    // If the current user cannot access queue return early to avoid making the request for queues that would happen
+    // as a result of createLoadPromise().
+    if (!this.props.userCanAccessQueue) {
       return this.props.children;
     }
 

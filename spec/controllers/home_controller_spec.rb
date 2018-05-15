@@ -49,7 +49,8 @@ RSpec.describe HomeController, type: :controller do
         FeatureToggle.enable!(:queue_welcome_gate, users: [current_user.css_id])
         FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
         get :index
-        expect(response.status).to eq 200
+        expect(response.status).to eq 302
+        expect(URI.parse(response.location).path).to eq("/queue")
       end
     end
   end

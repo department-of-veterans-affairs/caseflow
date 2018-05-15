@@ -87,7 +87,7 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def user_can_access_queue?
+  def current_user_can_access_queue?
     # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
     code = Rails.cache.read(:queue_access_code)
@@ -97,7 +97,7 @@ class ApplicationController < ApplicationBaseController
 
   def verify_queue_access
     # :nocov:
-    redirect_to "/unauthorized" unless user_can_access_queue?
+    redirect_to "/unauthorized" unless current_user_can_access_queue?
     # :nocov:
   end
 
