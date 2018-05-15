@@ -86,11 +86,11 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
-    let dispostionOptions = ['no_show', 'postponed', 'cancelled'];
+    let negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
 
-    const negativeDispositionOptions = dispostionOptions.includes(worksheet.disposition);
+    const negativeDispositions = negativeDispositionOptions.includes(worksheet.disposition);
 
-    const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositionOptions});
+    const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
     const getDisposition = (dispositionSymbol) => _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol }).label;
 
