@@ -8,6 +8,12 @@ class TemporaryAppeal < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def create_issues!(request_issues_data:)
+    request_issues.destroy_all unless request_issues.empty?
+
+    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
+  end
+
   private
 
   def validate_receipt_date_within_range
