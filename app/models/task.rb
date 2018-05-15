@@ -9,13 +9,14 @@ class Task < ApplicationRecord
   before_create :set_assigned_at, :set_assigned_to
 
   # TODO: add more co-located types
+  # TODO: move it to the contants file
   ACTION_TYPES = {
     co_located: {
       ihp: "IHP",
       waiver_of_aoj_letter: "Waiver of AOJ Letter",
       arneson_letter: "Arneson Letter"
     }
-  }
+  }.freeze
 
   enum status: {
     assigned: 0,
@@ -35,9 +36,11 @@ class Task < ApplicationRecord
   end
 
   def set_assigned_to
-    self.assigned_to = User.find_or_create_by(
-      css_id: Constants::CoLocatedTeams::USERS[Rails.current_env].sample,
-      station_id: User::BOARD_STATION_ID
-    ) if co_located?
+    if co_located?
+      self.assigned_to = User.find_or_create_by(
+        css_id: Constants::CoLocatedTeams::USERS[Rails.current_env].sample,
+        station_id: User::BOARD_STATION_ID
+      )
+    end
   end
 end

@@ -99,7 +99,7 @@ class TasksController < ApplicationController
     task_params = params.require("tasks")
       .permit(:appeal_type, :appeal_id, :action_type, :instructions)
       .merge(assigned_by: current_user)
-    task_params.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id])
+    task_params.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id]
   end
 
   def json_appeals(appeals)
