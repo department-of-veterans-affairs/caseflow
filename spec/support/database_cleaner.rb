@@ -23,8 +23,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-      :transaction
+    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :transaction
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :transaction
   end
 
@@ -43,7 +42,8 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :truncation
+      DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
+        :truncation, { except: %w[vftypes issref] }
       DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
     end
   end
