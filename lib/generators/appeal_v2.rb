@@ -23,26 +23,32 @@ class Generators::AppealV2
 
     # rubocop:enable Metrics/MethodLength
 
-    # Build an appeal and set up the correct faked data in AppealRepository
-    # @attrs - the hash of arguments passed into `Appeal#new` with a few exceptions:
-    #   - :vacols_record [Hash or Symbol] -
-    #       Hash of the parsed values returned from AppealRepository from VACOLS or
-    #       a symbol identifying the template used.
+    # Build an appeal with the corresponding data in VACOLS
+    # @attrs - Different attributes to pass to the various data generators associated with an appeal.
+    #   - :vacols_id [String] - Value to assign to the bfkey column. Defaults to a random id.
+    #   - :vbms_id [String] - Value to assign to the bfcorlid column. Also used to associate
+    #       VBMS test data with the VACOLS record. Defaults to a random id.
     #   - :documents [Array] - Array of `Document` objects returned from AppealsRepository from VBMS
     #   - :inaccessible [Boolean] - pass true and BGS will return that this appeal is
     #       not accessible by the current user
-    #
-    # Examples
-    #
-    # # Sets vacols_record to the :remand_decided template + defaults
-    # Generators::Appeal.build(vacols_record: :remand_decided)
-    #
-    # # Sets vacols_record with a custom first name + the defaults
-    # Generators::Appeal.build({veteran_first_name: "Marky"})
-    #
-    # # Sets vacols_record with a custom decision_date + :remand_decided template + defaults
-    # Generators::Appeal.build(vacols_record: {template: :remand_decided, decision_date: 1.day.ago})
-    #
+    #   - :case_attrs [Hash] - The hash of arguments passed into the VACOLS/case generator.
+    #       Look at the generator for options.
+    #   - :folder_attrs [Hash] - The hash of arguments passed into the VACOLS/folder generator.
+    #       Look at the generator for options.
+    #   - :representative_attrs [Hash] - The hash of arguments passed into the VACOLS/representative generator.
+    #       Look at the generator for options.
+    #   - :correspondent_attrs [Hash] - The hash of arguments passed into the VACOLS/correspondent generator.
+    #       Look at the generator for options.
+    #   - :note_attrs [Hash] - The hash of arguments passed into the VACOLS/note generator.
+    #       Look at the generator for options.
+    #   - :decass_attrs [Hash] - The hash of arguments passed into the VACOLS/decass generator.
+    #       Look at the generator for options.
+    #   - :case_issue_attrs [Array of Hashes] - The hash of arguments passed into the VACOLS/case_issue generator.
+    #       Look at the generator for options.
+    #   - :case_hearing_attrs [Array of Hashes] - The hash of arguments passed into the VACOLS/case_hearing generator.
+    #       Look at the generator for options.
+    #   - :staff_attrs [Hash] - The hash of arguments passed into the VACOLS/staff generator.
+    #       Look at the generator for options.
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
 

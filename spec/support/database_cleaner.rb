@@ -49,17 +49,13 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    # ActiveRecord::Base.establish_connection Rails.env.to_s.to_sym
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].start
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].start
-    # ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
   end
 
   config.append_after(:each) do
-    # ActiveRecord::Base.establish_connection Rails.env.to_s.to_sym
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].clean
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
-    # ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
 
     reset_application!
   end
