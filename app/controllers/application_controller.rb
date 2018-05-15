@@ -89,9 +89,9 @@ class ApplicationController < ApplicationBaseController
 
   def verify_queue_access
     # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
+    role = current_user.vacols_role
+    return true if role == "Attorney"
+    return true if role == "Judge" && feature_enabled?(:judge_queue_release_one)
     redirect_to "/unauthorized"
     # :nocov:
   end
@@ -99,17 +99,13 @@ class ApplicationController < ApplicationBaseController
   def verify_queue_phase_two
     # :nocov:
     return true if feature_enabled?(:queue_phase_two)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
     redirect_to "/unauthorized"
     # :nocov:
   end
 
-  def verify_queue_phase_three
+  def verify_judge_queue_access
     # :nocov:
-    return true if feature_enabled?(:queue_phase_three)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
+    return true if feature_enabled?(:judge_queue_release_one)
     redirect_to "/unauthorized"
     # :nocov:
   end
