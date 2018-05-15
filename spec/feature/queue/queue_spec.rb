@@ -194,6 +194,15 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content "Select an action"
       end
+
+      scenario "found appeal is paper case" do
+        visit "/queue"
+        fill_in "searchBar", with: "384920173S"
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for “Polly A Carter (384920173)”")
+        expect(page).to have_content("This is a paper case")
+      end
     end
   end
 
@@ -362,18 +371,20 @@ RSpec.feature "Queue" do
 
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
-    end
 
-    scenario "indicate if veteran is not appellant" do
-      appeal = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
+      vet_not_appellant = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
+      vna_appeal_row = find("tbody").find("#table-row-#{vet_not_appellant.vacols_id}")
+      first_cell = vna_appeal_row.find_all("td").first
 
-      visit "/queue"
-
-      appeal_row = find("tbody").find("#table-row-#{appeal.vacols_id}")
-      first_cell = appeal_row.find_all("td").first
-
-      expect(first_cell).to have_content("#{appeal.veteran_full_name} (#{appeal.vbms_id})")
+      expect(first_cell).to have_content("#{vet_not_appellant.veteran_full_name} (#{vet_not_appellant.vbms_id})")
       expect(first_cell).to have_content("Veteran is not the appellant")
+
+      paper_case = vacols_appeals.select { |a| a.file_type.eql? "Paper" }.first
+      pc_appeal_row = find("tbody").find("#table-row-#{paper_case.vacols_id}")
+      first_cell = pc_appeal_row.find_all("td").first
+
+      expect(first_cell).to have_content("#{paper_case.veteran_full_name} (#{paper_case.vbms_id.gsub("S", "")})")
+      expect(first_cell).to have_content("This is a paper case")
     end
   end
 
