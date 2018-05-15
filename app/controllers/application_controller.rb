@@ -94,6 +94,7 @@ class ApplicationController < ApplicationBaseController
     return true if params[:code] && code && params[:code] == code
     # :nocov:
   end
+  helper_method :current_user_can_access_queue?
 
   def verify_queue_access
     # :nocov:
