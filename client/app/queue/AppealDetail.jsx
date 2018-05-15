@@ -36,7 +36,7 @@ export default class AppealDetail extends React.PureComponent {
       return listElements;
     }
 
-    listElements.splice(1, 0, {
+    listElements.push({
       label: 'Disposition',
       value: <React.Fragment>
         {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
