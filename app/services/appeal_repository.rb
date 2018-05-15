@@ -110,7 +110,7 @@ class AppealRepository
 
   # TODO: consider persisting these records
   def self.build_appeal(case_record, persist = false)
-    appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+    appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
     appeal.save! if persist
     set_vacols_values(appeal: appeal, case_record: case_record)
   end
@@ -530,7 +530,7 @@ class AppealRepository
 
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id
-        appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
+        appeal = LegacyAppeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
         attribute_copy = assignment.attributes
         attribute_copy["type"] = VACOLS::Case::TYPES[attribute_copy.delete("bfac")]
         appeal.attributes = attribute_copy

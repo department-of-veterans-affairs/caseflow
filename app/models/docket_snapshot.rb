@@ -14,19 +14,19 @@ class DocketSnapshot < ApplicationRecord
   private
 
   def set_docket_count
-    self.docket_count = Appeal.repository.regular_non_aod_docket_count
+    self.docket_count = LegacyAppeal.repository.regular_non_aod_docket_count
   end
 
   def set_latest_docket_month
     # The latest docket month is updated every Friday
     self.latest_docket_month =
       self.class.find_by("created_at >= ?", friday).try(:latest_docket_month) ||
-      Appeal.repository.latest_docket_month
+      LegacyAppeal.repository.latest_docket_month
   end
 
   def create_tracers
     docket_tracers.create(
-      Appeal.repository.docket_counts_by_month.map do |row|
+      LegacyAppeal.repository.docket_counts_by_month.map do |row|
         {
           month: Date.new(row["year"], row["month"], 1),
           ahead_count: row["cumsum_n"],
