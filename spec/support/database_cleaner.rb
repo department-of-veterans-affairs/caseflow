@@ -44,14 +44,14 @@ RSpec.configure do |config|
   config.before(:each) do
     ActiveRecord::Base.establish_connection
     DatabaseCleaner.start
-    VACOLS::Record.establish_connection
+    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
     DatabaseCleaner.start
   end
 
   config.append_after(:each) do
     ActiveRecord::Base.establish_connection
     DatabaseCleaner.clean
-    VACOLS::Record.establish_connection
+    ActiveRecord::Base.establish_connection "#{Rails.env}_vacols".to_sym
     DatabaseCleaner.clean
     reset_application!
   end
