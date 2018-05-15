@@ -16,7 +16,7 @@ class TasksController < ApplicationController
   end
 
   def index
-    return [] unless ROLES.include?(user.vacols_role) 
+    return invalid_role_error unless ROLES.include?(user.vacols_role) 
     respond_to do |format|
       format.html do
         render "queue/show"
