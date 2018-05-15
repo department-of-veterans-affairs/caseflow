@@ -280,7 +280,7 @@ describe Hearing do
     end
   end
 
-  context "#create", focus: true do
+  context "#create" do
     let(:hearing_hash) do
       { vacols_id: "8897878",
         hold_open: 60,
