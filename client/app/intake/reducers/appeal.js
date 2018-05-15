@@ -28,6 +28,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
+    },
+    isComplete: {
+      $set: Boolean(serverIntake.completed_at)
     }
   });
 };
@@ -40,7 +43,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     docketTypeError: null,
     isStarted: false,
     isReviewed: false,
-    endProductDescription: null,
+    isComplete: false,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -112,6 +115,39 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });
