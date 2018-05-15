@@ -91,21 +91,22 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
     role = current_user.vacols_role
     return true if role == "Attorney"
-    return true if role == "Judge" && feature_enabled?(:judge_queue_release_one)
+    return true if role == "Judge" && feature_enabled?(:judge_queue)
     redirect_to "/unauthorized"
     # :nocov:
   end
 
   def verify_queue_phase_two
     # :nocov:
+    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
     return true if feature_enabled?(:queue_phase_two)
     redirect_to "/unauthorized"
     # :nocov:
   end
 
-  def verify_judge_queue_access
+  def verify_judge_assignment_access
     # :nocov:
-    return true if feature_enabled?(:judge_queue_release_one)
+    return true if current_user.vacols_role == "Judge" && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
   end
