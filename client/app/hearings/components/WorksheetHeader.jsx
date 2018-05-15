@@ -86,9 +86,11 @@ class WorksheetHeader extends React.PureComponent {
       return gender;
     };
 
-    let negativeDispositions = 'worksheet.disposition in %w{no_show,postponed,cancelled}';
+    let dispostionOptions = ['no_show', 'postponed', 'cancelled'];
 
-    let dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
+    const negativeDispositions = dispostionOptions.includes(worksheet.disposition);
+
+    const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
     const getDisposition = (dispositionSymbol) => _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol }).label;
 
@@ -113,11 +115,11 @@ class WorksheetHeader extends React.PureComponent {
           <h5>DATE</h5>
           <div>{moment(worksheet.date).format('ddd l')}</div>
         </div>
-        {worksheet.date && worksheet.date < new Date() &&
-            <div className="cf-hearings-worksheet-data-cell">
-              <h5>HEARING DISPOSTION</h5>
-              <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
-            </div>
+        {worksheet.date && new Date(worksheet.date) < new Date() &&
+          <div className="cf-hearings-worksheet-data-cell">
+            <h5>HEARING DISPOSTION</h5>
+            <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
+          </div>
         }
       </div>
 
