@@ -7,6 +7,7 @@ RSpec.describe HomeController, type: :controller do
 
   describe "GET /" do
     context "when visitor is not logged in" do
+      let!(:current_user) { nil }
       it "should redirect to /help" do
         get :index
         expect(response.status).to eq 302
