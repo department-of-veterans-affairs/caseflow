@@ -120,7 +120,7 @@ RSpec.feature "Reader" do
   let(:documents) { [] }
 
   let!(:appeal) do
-    Generators::AppealV2.create(documents: documents)
+    Generators::LegacyAppealV2.create(documents: documents)
   end
 
   let!(:current_user) do
@@ -235,7 +235,7 @@ RSpec.feature "Reader" do
       let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
 
       let!(:appeal) do
-        Generators::AppealV2.build(
+        Generators::LegacyAppealV2.build(
           documents: documents,
           manifest_vbms_fetched_at: vbms_fetched_ts,
           manifest_vva_fetched_at: vva_fetched_ts,
@@ -280,22 +280,22 @@ RSpec.feature "Reader" do
 
     context "Welcome gate page" do
       let!(:appeal2) do
-        Generators::AppealV2.build(documents: documents)
+        Generators::LegacyAppealV2.build(documents: documents)
       end
 
       let!(:appeal3) do
-        Generators::AppealV2.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "123456789S",
           documents: documents
         )
       end
 
       let!(:appeal4) do
-        Generators::AppealV2.build(documents: documents, vbms_id: appeal3.vbms_id)
+        Generators::LegacyAppealV2.build(documents: documents, vbms_id: appeal3.vbms_id)
       end
 
       let!(:appeal5) do
-        Generators::AppealV2.build(vbms_id: "1234C", documents: documents)
+        Generators::LegacyAppealV2.build(vbms_id: "1234C", documents: documents)
       end
 
       let!(:hearing) do
@@ -1528,7 +1528,7 @@ RSpec.feature "Reader" do
       end
     end
     let!(:appeal) do
-      Generators::AppealV2.create
+      Generators::LegacyAppealV2.create
     end
 
     before do

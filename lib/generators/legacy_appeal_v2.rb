@@ -1,4 +1,4 @@
-class Generators::AppealV2
+class Generators::LegacyAppealV2
   extend Generators::Base
 
   # Experimental class to replace existing generators with ones that
