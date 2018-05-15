@@ -1,4 +1,4 @@
-class RootController < ApplicationController
+class HomeController < ApplicationController
   skip_before_action :verify_authentication
 
   # rubocop:disable Metrics/CyclomaticComplexity

@@ -105,7 +105,7 @@ Rails.application.routes.draw do
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
 
-  root 'root#index'
+  root 'home#index'
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
