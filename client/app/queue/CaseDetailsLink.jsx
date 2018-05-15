@@ -22,17 +22,25 @@ class CaseDetailsLink extends React.PureComponent {
   }
 
   render() {
+    const {
+      appeal: { attributes: appeal },
+      task: { attributes: task }
+    } = this.props;
+
     return <React.Fragment>
       <Link
         to={`/queue/appeals/${this.props.task.vacolsId}`}
-        disabled={!this.props.task.attributes.task_id}
-        onClick={this.setActiveAppealAndTask}
-      >
-        {this.props.appeal.attributes.veteran_full_name} ({this.props.appeal.attributes.vbms_id})
+        disabled={!task.task_id || appeal.paper_case}
+        onClick={this.setActiveAppealAndTask}>
+        {appeal.veteran_full_name} ({appeal.vbms_id})
       </Link>
-      {!_.isNull(_.get(this.props.appeal.attributes, 'appellant_full_name')) && <React.Fragment>
+      {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
         <br />
         <span {...subHeadStyle}>Veteran is not the appellant</span>
+      </React.Fragment>}
+      {appeal.paper_case && <React.Fragment>
+        <br />
+        <span {...subHeadStyle}>This is a paper case</span>
       </React.Fragment>}
     </React.Fragment>;
   }
