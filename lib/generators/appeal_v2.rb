@@ -53,7 +53,7 @@ class Generators::AppealV2
       setup_vbms_documents(attrs)
       setup_bgs_data(attrs)
 
-      Appeal.find_or_initialize_by(vacols_id: vacols_case[:bfkey])
+      LegacyAppeal.find_or_initialize_by(vacols_id: vacols_case[:bfkey])
     end
 
     private
