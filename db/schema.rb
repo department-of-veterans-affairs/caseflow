@@ -469,6 +469,20 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
+  create_table "tasks", force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.integer "status", default: 0
+    t.text "action_type"
+    t.text "instructions"
+    t.integer "assigned_to_id"
+    t.integer "assigned_by_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "team_quotas", id: :serial, force: :cascade do |t|
     t.date "date", null: false
     t.string "task_type", null: false

@@ -44,9 +44,13 @@ class TasksController < ApplicationController
   end
 
   def create
-    return invalid_role_error if current_user.vacols_role != "Judge"
-    JudgeCaseAssignment.new(task_params).assign_to_attorney!
-    render json: {}, status: :created
+    task_handler = TaskHandler.new(current_role)
+    task = task_handler.create(task_params)
+
+    if task_handler.errors.present?
+      return render json: { "errors": task_handler.errors }, status: 400
+    end
+    render json: { task: task }, status: :created
   end
 
   def update
@@ -92,10 +96,10 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.require("tasks")
-      .permit(:appeal_type, :appeal_id)
-      .merge(assigned_to: User.find(params[:tasks][:attorney_id]))
+    task_params = params.require("tasks")
+      .permit(:appeal_type, :appeal_id, :action_type, :instructions)
       .merge(assigned_by: current_user)
+    task_params.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id])
   end
 
   def json_appeals(appeals)
