@@ -15,6 +15,10 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
 
   getQueueColumns = () => [
     {
+      header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
+      valueFunction: () => 'Box'
+    },
+    {
       header: COPY.JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: this.getCaseDetailsLink
     },

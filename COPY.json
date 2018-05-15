@@ -29,6 +29,7 @@
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
 
+  "JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE": "Select",
   "JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",

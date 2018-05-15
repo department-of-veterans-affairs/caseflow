@@ -125,7 +125,7 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id', to: 'tasks#index'
+    get '/:user_id(*rest)', to: 'tasks#index'
 
     post '/appeals/:id/complete', to: 'tasks#complete'
   end
