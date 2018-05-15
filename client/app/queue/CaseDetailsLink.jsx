@@ -1,19 +1,13 @@
-import { css } from 'glamor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
-
-const subHeadStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
-});
 
 class CaseDetailsLink extends React.PureComponent {
   setActiveAppealAndTask = () => {
@@ -31,16 +25,17 @@ class CaseDetailsLink extends React.PureComponent {
       <Link
         to={`/queue/appeals/${this.props.task.vacolsId}`}
         disabled={!task.task_id || appeal.paper_case}
-        onClick={this.setActiveAppealAndTask}>
+        onClick={this.setActiveAppealAndTask}
+      >
         {appeal.veteran_full_name} ({appeal.vbms_id})
       </Link>
       {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
         <br />
-        <span {...subHeadStyle}>Veteran is not the appellant</span>
+        <span {...subHeadTextStyle}>Veteran is not the appellant</span>
       </React.Fragment>}
       {appeal.paper_case && <React.Fragment>
         <br />
-        <span {...subHeadStyle}>This is a paper case</span>
+        <span {...subHeadTextStyle}>This is a paper case</span>
       </React.Fragment>}
     </React.Fragment>;
   }

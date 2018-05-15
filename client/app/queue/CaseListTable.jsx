@@ -10,6 +10,7 @@ import Table from '../components/Table';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../../COPY.json';
+import { subHeadTextStyle } from './constants';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { setBreadcrumbs } from './uiReducer/uiActions';
@@ -40,9 +41,14 @@ class CaseListTable extends React.PureComponent {
         <Link
           to={`/queue/appeals/${appeal.attributes.vacols_id}`}
           onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)}
+          disabled={appeal.attributes.paper_case}
         >
           {appeal.attributes.docket_number}
         </Link>
+        {appeal.attributes.paper_case && <React.Fragment>
+          <br />
+          <span {...subHeadTextStyle}>This is a paper case</span>
+        </React.Fragment>}
       </span>
     },
     {
