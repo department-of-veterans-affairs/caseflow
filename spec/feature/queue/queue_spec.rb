@@ -836,6 +836,7 @@ RSpec.feature "Queue" do
 
         click_on "Continue"
         expect(page).to have_content("Select Remand Reasons")
+        expect(page).to have_content(appeal.issues.first.note)
 
         page.execute_script("return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')")
           .sample(4)
