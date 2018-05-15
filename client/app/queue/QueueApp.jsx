@@ -17,19 +17,34 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
+import CaseListView from './CaseListView';
 import QueueDetailView from './QueueDetailView';
 import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
+import SearchBar from './SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
+import COPY from '../../../COPY.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
+  routedSearchHome = () => <React.Fragment>
+    { this.props.searchedAppeals.length > 0 &&
+      <SearchBar
+        feedbackUrl={this.props.feedbackUrl}
+        shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    }
+    <CaseListView
+      backLinkTarget="/"
+      backLinkText={COPY.BACK_TO_SEARCH_START_LINK_LABEL}
+      {...this.props} />
+  </React.Fragment>;
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchEnabledView
       feedbackUrl={this.props.feedbackUrl}
@@ -84,7 +99,7 @@ class QueueApp extends React.PureComponent {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl="/queue"
+      defaultUrl={this.props.userCanAccessQueue ? '/queue' : '/'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -95,6 +110,11 @@ class QueueApp extends React.PureComponent {
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app" {...appStyling}>
+          <PageRoute
+            exact
+            path="/"
+            title="Caseflow"
+            render={this.routedSearchHome} />
           <PageRoute
             exact
             path="/queue"
@@ -168,7 +188,8 @@ QueueApp.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
   ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.stagedChanges.taskDecision.type
+  reviewActionType: state.queue.stagedChanges.taskDecision.type,
+  searchedAppeals: state.caseList.receivedAppeals
 });
 
 export default connect(mapStateToProps)(QueueApp);
