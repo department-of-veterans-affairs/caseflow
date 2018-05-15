@@ -40,7 +40,7 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      <h1>Review { veteranName }'s Higher-Level Review (VA Form 20-0988)</h1>
+      <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
 
       <DateSelector
         name="receipt-date"

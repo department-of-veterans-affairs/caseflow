@@ -19,4 +19,13 @@ class AppealIntake < Intake
   def review_errors
     detail.errors.messages
   end
+
+  def complete!(request_params)
+    return if complete? || pending?
+    start_complete!
+
+    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
+
+    complete_with_status!(:success)
+  end
 end
