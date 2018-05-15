@@ -1,0 +1,42 @@
+{
+  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
+  "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
+  "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
+  "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",
+  "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
+
+  "BACK_TO_PERSONAL_QUEUE_LINK_LABEL": "< Back to Your Queue",
+  "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
+
+  "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
+  "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
+  "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
+  "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
+  "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
+  "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
+  "CASE_LIST_TABLE_DUE_DATE_COLUMN_TITLE": "Due Date",
+  "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
+  "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
+  "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Reader Documents",
+  "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
+
+  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Tasks not found",
+  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
+  "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
+  "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake please email your judge to resolve the issue.",
+  "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
+  "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
+
+  "JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
+  "JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
+  "JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
+  "JUDGE_QUEUE_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
+  "JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
+  "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Docs in Claims Folder",
+  "JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
+
+  "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
+  "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
+  "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
+  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases"
+}

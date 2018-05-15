@@ -34,7 +34,7 @@ describe ExternalApi::EfolderService do
 
   context "#fetch_documents_for" do
     let(:user) { Generators::User.build }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
 
     context "when efolder v2 is not enabled" do
       subject { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
@@ -65,7 +65,7 @@ describe ExternalApi::EfolderService do
 
   context "#efolder_v2_api" do
     let(:user) { Generators::User.create }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
     let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
@@ -355,7 +355,7 @@ describe ExternalApi::EfolderService do
 
   context "#efolder_v1_api" do
     let(:user) { Generators::User.build }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }

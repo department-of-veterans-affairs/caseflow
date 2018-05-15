@@ -92,9 +92,14 @@ export const REMAND_REASONS = Object.assign({},
 );
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
-  map((val) => StringUtil.parameterize(val));
+  map(StringUtil.parameterize);
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   parameterizedDispositions
+));
+
+export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
+  parameterizedDispositions,
+  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));

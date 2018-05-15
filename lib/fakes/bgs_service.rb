@@ -16,6 +16,15 @@ class Fakes::BGSService
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
 
+  def self.create_veteran_records
+    file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
+
+    CSV.foreach(file_path, headers: true) do |row|
+      row_hash = row.to_h
+      Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+    end
+  end
+
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
