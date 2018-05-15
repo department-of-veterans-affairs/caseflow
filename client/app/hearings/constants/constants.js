@@ -62,3 +62,7 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
   label: 'Cancelled' },
 { value: 'postponed',
   label: 'Postponed' }];
+
+export const SERVER_ERROR_CODES = {
+  VACOLS_RECORD_DOES_NOT_EXIST: 1001
+};
