@@ -8,6 +8,11 @@ class HearingsController < ApplicationController
     render json: hearing.to_hash(current_user.id)
   end
 
+  def create
+    Hearing.create(create_params)
+    render json: hearing.to_hash(current_user.id)
+  end
+
   def logo_name
     "Hearing Prep"
   end

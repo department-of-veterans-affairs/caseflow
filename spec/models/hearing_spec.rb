@@ -279,4 +279,26 @@ describe Hearing do
       end
     end
   end
+
+  context "#create", focus: true do
+    let(:hearing_hash) do
+      {vacols_id: '8897878',
+       hold_open: 60,
+       date: 1.day.ago
+      }
+    end
+
+    let(:hearing) { Hearing.create(hearing_hash) }
+
+    context "add a hearing with minimal data" do
+
+      it "creates hearing with minimal data" do
+        expect(hearing.vacols_id).to eq '8897878'
+        expect(hearing.type).to eq :video
+        expect(hearing.date).to eq 1.day.ago
+        expect(hearing.disposition).to eq nil
+        expect(hearing.hold_open).to eq 60
+      end
+    end
+  end
 end

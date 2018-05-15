@@ -114,6 +114,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  def create_hearing!(hearing_info)
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+    MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
+                          service: :vacols,
+                          name: "update_hearing") do
+      create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+    end
+  end
+
   private
 
   def update_hearing_action

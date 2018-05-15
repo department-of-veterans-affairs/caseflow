@@ -92,6 +92,7 @@ Rails.application.routes.draw do
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  post '/hearings', to: 'hearings#create'
 
   resources :hearings, only: [:update]
 
