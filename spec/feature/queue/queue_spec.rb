@@ -266,14 +266,15 @@ RSpec.feature "Queue" do
         expect(page).to have_content("Type: #{hearing_preference}")
 
         if hearing.disposition.eql? :cancelled
-          expect(page).not_to have_content("Date")
-          expect(page).not_to have_content("Judge")
+          expect(page).to have_content("Disposition: Cancelled")
         else
           expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
           expect(page).to have_content("Judge: #{hearing.user.full_name}")
 
-          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
-          expect(worksheet_link.text).to eq("View Hearing Worksheet")
+          if hearing.user.present? && !hearing.hearing_views.empty?
+            worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
+            expect(worksheet_link.text).to eq("View Hearing Worksheet")
+          end
         end
       end
 
