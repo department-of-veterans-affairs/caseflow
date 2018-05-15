@@ -66,7 +66,7 @@ namespace :local do
 
     desc "Seeds local VACOLS"
     task seed: :environment do
-      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
+      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
 
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
@@ -90,6 +90,7 @@ namespace :local do
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)
+      setup_dispatch
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -154,6 +155,7 @@ namespace :local do
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
+      bgs_record_from_case(cases, case_descriptors)
       sanitizer.errors.each do |error|
         puts Rainbow(error).red
       end
@@ -161,18 +163,44 @@ namespace :local do
 
     private
 
+    def setup_dispatch
+      CreateEstablishClaimTasksJob.perform_now
+      Timecop.freeze(Date.yesterday) do
+        # Tasks prepared on today's date will not be picked up
+        Dispatch::Task.all.each(&:prepare!)
+        # Appeal decisions (decision dates) for partial grants have to be within 3 days
+        CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+          row_hash = row.to_h
+          if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
+            VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)
+          end
+        end
+      end
+    rescue AASM::InvalidTransition
+      Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
+    end
+
+    def bgs_record_from_case(cases, case_descriptors)
+      CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|
+        csv << %w[vbms_id bgs_key]
+        cases.each_with_index do |c, i|
+          csv << [c.bfcorlid, case_descriptors[i]["bgs_key"]]
+        end
+      end
+    end
+
     def vbms_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "vbms_setup.csv"), "wb") do |csv|
         csv << %w[vbms_id documents]
         cases.each_with_index do |c, i|
-          csv << [c.bfcorlid, case_descriptors[i]["vbms_id"]]
+          csv << [c.bfcorlid, case_descriptors[i]["vbms_key"]]
         end
       end
     end
 
     def dateshift_field(items, date_shift, k)
       items.map! do |item|
-        item[k] = item[k] + date_shift if item[k]
+        item[k] = item[k] + date_shift.seconds if item[k]
         item
       end
     end
@@ -192,8 +220,9 @@ namespace :local do
         h = row.to_h
         items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
       end
+
       klass.columns_hash.each do |k, v|
-        if v.type == :datetime
+        if v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)

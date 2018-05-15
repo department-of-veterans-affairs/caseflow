@@ -4,11 +4,8 @@
 @import 'uswds/all';
 @import 'uswds_rails_overrides/all';
 @import 'global/fonts';
+@import 'variables';
 
-$cf-background: #f9f9f9;
-$cf-link: #0872b9;
-$cf-drop-shadow-color: rgba(91, 97, 107, 0.5);
-$cf-drop-shadow: 1px 1px 5px 0 $cf-drop-shadow-color;
 
 html,
 body {
@@ -106,12 +103,6 @@ p {
 
 .cf-font-light {
   font-weight: 300;
-}
-
-.cf-doc-embed {
-
-  width: 100%;
-  height: 80vh;
 }
 
 .cf-notice {
@@ -302,6 +293,11 @@ dd {
       fill: $color-white;
     }
   }
+
+  svg {
+    margin-left: .25rem;
+    vertical-align: -1px;
+  }
 }
 
 .cf-icon-appeal-id {
@@ -317,7 +313,17 @@ dd {
   position: relative;
 
   a {
-    color: inherit;
+    color: $color-gray-dark;
+
+    &:hover {
+      color: $color-gray-dark;
+    }
+  }
+
+  li {
+    a:hover {
+      color: $color-white;
+    }
   }
 }
 
@@ -326,9 +332,8 @@ dd {
   background-color: $color-white;
 
   &::after {
-    // CG: This image doesn't appear to exist in any repo (9/20/16)
     background: image-url('arrow-down.svg') 50% 100% no-repeat;
-    background-size: 100% 100%;
+    background-size: .75em;
     content: ' ';
     display: inline-block;
     height: 1rem;
@@ -357,11 +362,11 @@ dd {
   cursor: pointer;
   display: none;
   text-align: left;
-  top: 2em;
-  width: 18rem;
-  min-width: 215px;
+  width: auto;
+  min-width: 13em;
   padding-top: 5px;
   padding-bottom: 5px;
+  top: 3em;
 
   &.active {
     display: block;

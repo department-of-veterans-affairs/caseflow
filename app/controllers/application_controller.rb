@@ -87,18 +87,33 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def verify_queue_access
+  def can_access_queue?
     # :nocov:
     return true if feature_enabled?(:queue_welcome_gate)
     code = Rails.cache.read(:queue_access_code)
     return true if params[:code] && code && params[:code] == code
-    redirect_to "/unauthorized"
+    # :nocov:
+  end
+  helper_method :can_access_queue?
+
+  def verify_queue_access
+    # :nocov:
+    redirect_to "/unauthorized" unless can_access_queue?
     # :nocov:
   end
 
   def verify_queue_phase_two
     # :nocov:
     return true if feature_enabled?(:queue_phase_two)
+    code = Rails.cache.read(:queue_access_code)
+    return true if params[:code] && code && params[:code] == code
+    redirect_to "/unauthorized"
+    # :nocov:
+  end
+
+  def verify_queue_phase_three
+    # :nocov:
+    return true if feature_enabled?(:queue_phase_three)
     code = Rails.cache.read(:queue_access_code)
     return true if params[:code] && code && params[:code] == code
     redirect_to "/unauthorized"
@@ -224,11 +239,11 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? ||
+      Rails.env.stubbed? ||
         Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
-        Rails.env.local?
+        Rails.env.development?
     end
   end
 end

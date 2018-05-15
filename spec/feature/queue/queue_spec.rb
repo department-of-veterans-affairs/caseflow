@@ -1,4 +1,5 @@
 require "rails_helper"
+# rubocop:disable Style/FormatString
 
 RSpec.feature "Queue" do
   before do
@@ -45,8 +46,17 @@ RSpec.feature "Queue" do
   let(:vacols_record) { :remand_decided }
   let(:appeals) do
     [
-      Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record, documents: documents),
-      Generators::Appeal.build(vbms_id: "115555555S", vacols_record: vacols_record, documents: documents, issues: [])
+      Generators::LegacyAppeal.build(
+        vbms_id: "123456789S",
+        vacols_record: vacols_record,
+        documents: documents
+      ),
+      Generators::LegacyAppeal.build(
+        vbms_id: "115555555S",
+        vacols_record: vacols_record,
+        documents: documents,
+        issues: []
+      )
     ]
   end
   let!(:issues) { [Generators::Issue.build] }
@@ -56,51 +66,6 @@ RSpec.feature "Queue" do
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
-
-  context "reader-style search for appeals using veteran id" do
-    scenario "appeal not found" do
-      visit "/queue"
-      fill_in "searchBar", with: "obviouslyfakecaseid"
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID not found")
-    end
-
-    scenario "vet found, has no appeal" do
-      appeal = appeals.second
-
-      visit "/queue"
-      fill_in "searchBar", with: appeal.vbms_id
-
-      click_on "Search"
-
-      expect(page).to have_content("Veteran ID #{appeal.vbms_id} does not have any appeals.")
-    end
-
-    scenario "one appeal found" do
-      appeal = appeals.first
-
-      visit "/queue"
-      fill_in "searchBar", with: (appeal.vbms_id + "\n")
-
-      expect(page).to have_content("Select claims folder")
-      expect(page).to have_content("Not seeing what you expected? Please send us feedback.")
-      appeal_options = find_all(".cf-form-radio-option")
-      expect(appeal_options.count).to eq(1)
-
-      expect(appeal_options[0]).to have_content("Veteran #{appeal.veteran_full_name}")
-      expect(appeal_options[0]).to have_content("Veteran ID #{appeal.vbms_id}")
-      expect(appeal_options[0]).to have_content("Issues")
-      expect(appeal_options[0].find_all("li").count).to eq(appeal.issues.size)
-
-      appeal_options[0].click
-      click_on "Open Claims Folder"
-
-      expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
-      expect(page).to have_link("Back to Your Queue", href: "/queue")
-    end
-  end
 
   context "queue case search for appeals using veteran id" do
     let(:appeal) { appeals.first }
@@ -117,7 +82,7 @@ RSpec.feature "Queue" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content("Invalid Veteran ID “#{invalid_veteran_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -130,12 +95,12 @@ RSpec.feature "Queue" do
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -147,7 +112,9 @@ RSpec.feature "Queue" do
       end
 
       it "page displays no cases found message" do
-        expect(page).to have_content("No cases found for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals)
+        )
       end
 
       it "search bar moves from top right to main page body" do
@@ -160,25 +127,25 @@ RSpec.feature "Queue" do
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
     context "when backend encounters an error" do
       before do
-        allow(Appeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/queue"
         fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
       it "displays error message" do
-        expect(page).to have_content("Server encountered an error searching for “#{appeal.sanitized_vbms_id}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "search bar moves from top right to main page body" do
@@ -190,12 +157,12 @@ RSpec.feature "Queue" do
         fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
         click_on "Search"
 
-        expect(page).to have_content("Server encountered an error searching for “#{veteran_id_with_no_appeals}”")
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -208,7 +175,7 @@ RSpec.feature "Queue" do
 
       it "page displays table of results" do
         expect(page).to have_content("1 case found for")
-        expect(page).to have_content("Docket Number")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
       it "search bar stays in top right" do
@@ -218,12 +185,173 @@ RSpec.feature "Queue" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content("Your Queue")
+        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
 
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
-        expect(page.current_path).to eq("/appeals/#{appeal.vacols_id}")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).not_to have_content "Select an action"
+      end
+    end
+  end
+
+  context "case search from home page" do
+    let(:appeal) { appeals.first }
+    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
+    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+    let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
+    let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
+    before do
+      FeatureToggle.enable!(:queue_case_search)
+      FeatureToggle.enable!(:case_search_home_page)
+      FeatureToggle.disable!(:queue_welcome_gate)
+      FeatureToggle.disable!(:queue_phase_two)
+    end
+    after do
+      FeatureToggle.enable!(:queue_phase_two)
+      FeatureToggle.enable!(:queue_welcome_gate)
+      FeatureToggle.disable!(:case_search_home_page)
+      FeatureToggle.disable!(:queue_case_search)
+    end
+
+    scenario "logo links to / instead of /queue" do
+      visit "/"
+      have_link("Caseflow", href: "/")
+    end
+
+    context "when invalid Veteran ID input" do
+      before do
+        visit "/"
+        fill_in "searchBarEmptyList", with: invalid_veteran_id
+        click_on "Search"
+      end
+
+      it "page displays invalid Veteran ID message" do
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
+      end
+
+      it "search bar does not appear in top right of page" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content(search_homepage_title)
+        expect(page).to have_content(search_homepage_subtitle)
+      end
+    end
+
+    context "when no appeals found" do
+      before do
+        visit "/"
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        click_on "Search"
+      end
+
+      it "page displays no cases found message" do
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals)
+        )
+      end
+
+      it "search bar does not appear in top right of page" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content(search_homepage_title)
+        expect(page).to have_content(search_homepage_subtitle)
+      end
+    end
+
+    context "when backend encounters an error" do
+      before do
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+        visit "/"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "displays error message" do
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+      end
+
+      it "search bar does not appear in top right of page" do
+        expect(page).to_not have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
+      end
+
+      it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        click_on "Search"
+        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
+      end
+
+      it "clicking on the x in the search bar returns browser to queue list page" do
+        click_on "button-clear-search"
+        expect(page).to have_content(search_homepage_title)
+        expect(page).to have_content(search_homepage_subtitle)
+      end
+    end
+
+    context "when one appeal found" do
+      before do
+        visit "/"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "page displays table of results" do
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+      end
+
+      it "search bar displayed in top right of page" do
+        expect(page).to have_selector("#searchBar")
+        expect(page).to_not have_selector("#searchBarEmptyList")
+      end
+
+      it "clicking on docket number sends us to the case details page" do
+        click_on appeal.docket_number
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+      end
+
+      it "clicking on back breadcrumb from detail view sends us to search results page" do
+        click_on appeal.docket_number
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
+
+        click_on sprintf(COPY::BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.veteran_full_name)
+        expect(page).to have_content("1 case found for")
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+        expect(page.current_path).to eq("/")
+      end
+
+      it "clicking on back breadcrumb sends us to empty search home page" do
+        click_on COPY::BACK_TO_SEARCH_START_LINK_LABEL
+        expect(page).to have_content(search_homepage_title)
+        expect(page).to have_content(search_homepage_subtitle)
+        expect(page.current_path).to eq("/")
       end
     end
   end
@@ -232,7 +360,7 @@ RSpec.feature "Queue" do
     scenario "table renders row per task" do
       visit "/queue"
 
-      expect(page).to have_content("Your Queue")
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
@@ -262,7 +390,6 @@ RSpec.feature "Queue" do
           appeal.added_by_middle_name,
           appeal.added_by_last_name
         ).formatted(:readable_full)
-        # TODO: these false positives are fixed in rubocop 0.53.0 (#5496)
         # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
         # rubocop:enable Style/FormatStringToken
@@ -292,18 +419,21 @@ RSpec.feature "Queue" do
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
+        expect(page).to have_content("Select an action")
+
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
-        expect(page).to have_content("Hearing preference: #{hearing_preference}")
+        expect(page).to have_content("Type: #{hearing_preference}")
 
         if hearing.disposition.eql? :cancelled
-          expect(page).not_to have_content("Hearing date")
-          expect(page).not_to have_content("Judge at hearing")
+          expect(page).to have_content("Disposition: Cancelled")
         else
-          expect(page).to have_content("Hearing date: #{hearing.date.strftime('%-m/%-e/%y')}")
-          expect(page).to have_content("Judge at hearing: #{hearing.user.full_name}")
+          expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
+          expect(page).to have_content("Judge: #{hearing.user.full_name}")
 
-          worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
-          expect(worksheet_link.text).to eq("View Hearing Worksheet")
+          unless hearing.hearing_views.empty?
+            worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
+            expect(worksheet_link.text).to eq("View Hearing Worksheet")
+          end
         end
       end
 
@@ -318,7 +448,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing preference")
 
-        expect(page).to have_content("Type: CAVC")
+        expect(page).to have_content("Type(s): CAVC")
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
@@ -370,7 +500,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
-        click_on "Open #{number_with_delimiter(appeal.documents.length)} documents in Caseflow Reader"
+        click_on "documents in Caseflow Reader"
 
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
       end
@@ -451,8 +581,8 @@ RSpec.feature "Queue" do
         safe_click("div[id$='--option-1']")
 
         expect(page).to have_link("Your Queue", href: "/queue")
-        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/tasks/#{appeal.vacols_id}")
-        expect(page).to have_link("Submit OMO", href: "/queue/tasks/#{appeal.vacols_id}/submit")
+        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/appeals/#{appeal.vacols_id}")
+        expect(page).to have_link("Submit OMO", href: "/queue/appeals/#{appeal.vacols_id}/submit")
 
         expect(page).to have_content "Back"
 
@@ -496,11 +626,11 @@ RSpec.feature "Queue" do
 
         click_on "Continue"
 
-        expect(page.current_path).to eq("/queue/tasks/#{appeal.vacols_id}/submit")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}/submit")
       end
 
       scenario "edits issue information" do
-        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -509,7 +639,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Select Dispositions")
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
@@ -534,7 +664,7 @@ RSpec.feature "Queue" do
       end
 
       scenario "shows/hides diagnostic code option" do
-        appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+        appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -549,7 +679,7 @@ RSpec.feature "Queue" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          safe_click "a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']"
+          safe_click "a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']"
           expect(page).to have_content "Edit Issue"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
@@ -636,7 +766,7 @@ RSpec.feature "Queue" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
 
-        safe_click("a[href='/queue/tasks/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }
@@ -707,6 +837,7 @@ RSpec.feature "Queue" do
 
         click_on "Continue"
         expect(page).to have_content("Select Remand Reasons")
+        expect(page).to have_content(appeal.issues.first.note)
 
         page.execute_script("return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')")
           .sample(4)
@@ -742,10 +873,11 @@ RSpec.feature "Queue" do
 
   context "pop breadcrumb" do
     scenario "goes back from submit decision view" do
-      appeal = vacols_appeals.reject { |a| a.issues.empty? }.first
+      appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
       visit "/queue"
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+      sleep 1
       safe_click(".Select-control")
       safe_click("div[id$='--option-0']")
 
@@ -769,3 +901,5 @@ RSpec.feature "Queue" do
     end
   end
 end
+
+# rubocop:enable Style/FormatString

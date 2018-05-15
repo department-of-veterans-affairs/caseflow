@@ -1,7 +1,7 @@
 class HearingRepository
   class << self
     # :nocov:
-    def fetch_hearings_for_judge(css_id)
+    def fetch_hearings_for_judge(css_id, is_fetching_issues = false)
       records = MetricsService.record("VACOLS: HearingRepository.fetch_hearings_for_judge: #{css_id}",
                                       service: :vacols,
                                       name: "fetch_hearings_for_judge") do
@@ -11,7 +11,7 @@ class HearingRepository
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
 
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      load_issues(hearings)
+      load_issues(hearings) if is_fetching_issues
       hearings
     end
 
@@ -52,8 +52,13 @@ class HearingRepository
                                             name: "load_vacols_data") do
         VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
-      set_vacols_values(hearing, vacols_record)
-      true
+
+      if vacols_record
+        set_vacols_values(hearing, vacols_record)
+        true
+      else
+        fail Caseflow::Error::VacolsRecordNotFound, "Hearing record with vacols id #{hearing.vacols_id} not found."
+      end
     rescue ActiveRecord::RecordNotFound
       false
     end

@@ -24,7 +24,6 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
@@ -66,14 +65,8 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/tasks/${this.props.vacolsId}/submit`
+    path: `/queue/appeals/${this.props.vacolsId}/submit`
   });
-
-  goToPrevStep = () => {
-    this.props.resetDecisionOptions();
-
-    return true;
-  };
 
   validateForm = () => {
     const {
@@ -106,7 +99,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
     const params = {
       data: {
-        queue: {
+        tasks: {
           type: decision.type,
           issues: _.map(issues, (issue) => _.pick(issue,
             ['disposition', 'vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']
@@ -124,7 +117,7 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/queue/tasks/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/tasks/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
@@ -172,7 +165,7 @@ class SubmitDecisionView extends React.PureComponent {
     }
 
     return <div className={fieldClasses}>
-      <label>Submit to judge: <RequiredIndicator /></label>
+      <label>Submit to judge:</label>
       {shouldDisplayError && <span className="usa-input-error-message">
         {ERROR_FIELD_REQUIRED}
       </span>}
@@ -182,10 +175,10 @@ class SubmitDecisionView extends React.PureComponent {
 
   render = () => {
     const omoTypes = [{
-      displayText: 'VHA - OMO',
+      displayText: 'OMO - VHA',
       value: 'OMO - VHA'
     }, {
-      displayText: 'VHA - IME',
+      displayText: 'OMO - IME',
       value: 'OMO - IME'
     }];
     const {
@@ -216,7 +209,6 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
-        required
         options={omoTypes}
         styling={radioFieldStyling}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
@@ -231,7 +223,6 @@ class SubmitDecisionView extends React.PureComponent {
       <TextField
         label="Document ID:"
         name="document_id"
-        required
         errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
@@ -240,7 +231,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.notes}
+        value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={textAreaStyling}
       />

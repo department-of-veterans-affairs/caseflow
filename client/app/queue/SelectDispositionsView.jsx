@@ -19,7 +19,7 @@ import {
   saveEditedAppealIssue
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
-import { fullWidth } from './constants';
+import { fullWidth, DISPOSITION_ID_BY_PARAMETERIZED } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
@@ -45,7 +45,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getBreadcrumb = () => ({
     breadcrumb: 'Select Dispositions',
-    path: `/queue/tasks/${this.props.vacolsId}/dispositions`
+    path: `/queue/appeals/${this.props.vacolsId}/dispositions`
   });
 
   getNextStepUrl = () => {
@@ -57,8 +57,8 @@ class SelectDispositionsView extends React.PureComponent {
       }
     } = this.props;
 
-    return _.map(issues, 'disposition').includes('Remanded') ?
-      `/queue/tasks/${vacolsId}/remands` : nextStep;
+    return _.map(issues, 'disposition').includes('remanded') ?
+      `/queue/appeals/${vacolsId}/remands` : nextStep;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -89,8 +89,9 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link
-      to={`/queue/tasks/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}>
-        Edit Issue
+      to={`/queue/appeals/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}
+    >
+      Edit Issue
     </Link>
   }, {
     header: 'Dispositions',
@@ -107,6 +108,12 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { attributes: { issues } }
     } = this.props;
 
+    // filter already-decided issues from attorney checkout flow. undecided disposition
+    // ids are all numerical (1-9), decided ids are alphabetical (A-X)
+    const filteredIssues = _.filter(issues, (issue) =>
+      !issue.disposition || Number(DISPOSITION_ID_BY_PARAMETERIZED[issue.disposition])
+    );
+
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Select Dispositions
@@ -118,13 +125,13 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={issues}
+        rowObjects={filteredIssues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
       <div {...marginLeft(1.5)}>
-        <Link to={`/queue/tasks/${vacolsId}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${vacolsId}/dispositions/add`}>Add Issue</Link>
       </div>
     </React.Fragment>;
   };

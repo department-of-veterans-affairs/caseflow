@@ -21,6 +21,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
     },
+    selectedRatingCount: {
+      $set: state.selectedRatingCount
+    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
@@ -38,6 +41,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
+    selectedRatingCount: 0,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -145,6 +149,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
             }
           }
         }
+      },
+      selectedRatingCount: {
+        $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
       }
     });
   default:

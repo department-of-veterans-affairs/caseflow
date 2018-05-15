@@ -22,7 +22,7 @@ describe RampElectionIntake do
   end
 
   let(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "64205555C",
       vacols_record: appeal_vacols_record,
       veteran: veteran,
@@ -183,7 +183,7 @@ describe RampElectionIntake do
 
     let!(:appeals) do
       [
-        Generators::Appeal.create(
+        Generators::LegacyAppeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(note: "Broken thigh"),
@@ -197,7 +197,7 @@ describe RampElectionIntake do
                                     note: "Broken knee")
           ]
         ),
-        Generators::Appeal.create(
+        Generators::LegacyAppeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(codes: %w[02 15],

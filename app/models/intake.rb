@@ -23,7 +23,8 @@ class Intake < ApplicationRecord
     ramp_election: "RampElectionIntake",
     ramp_refiling: "RampRefilingIntake",
     supplemental_claim: "SupplementalClaimIntake",
-    higher_level_review: "HigherLevelReviewIntake"
+    higher_level_review: "HigherLevelReviewIntake",
+    appeal: "AppealIntake"
   }.freeze
 
   attr_reader :error_data

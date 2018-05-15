@@ -60,7 +60,7 @@ export default function decisionViewBase(ComponentToWrap) {
     getFooterButtons = () => {
       const cancelButton = {
         classNames: ['cf-btn-link'],
-        callback: this.props.showModal,
+        callback: () => this.props.showModal('cancelCheckout'),
         name: 'cancel-button',
         displayText: 'Cancel',
         willNeverBeLoading: true
@@ -72,7 +72,6 @@ export default function decisionViewBase(ComponentToWrap) {
         name: 'next-button',
         displayText: 'Continue',
         loadingText: 'Submitting...',
-        willNeverBeLoading: true,
         styling: css({ marginLeft: '1rem' })
       };
       const backButton = {
@@ -92,7 +91,7 @@ export default function decisionViewBase(ComponentToWrap) {
         stagedAppeals
       } = this.props;
 
-      this.props.hideModal();
+      this.props.hideModal('cancelCheckout');
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
@@ -164,19 +163,19 @@ export default function decisionViewBase(ComponentToWrap) {
 
     render = () => <React.Fragment>
       <Breadcrumbs />
-      {this.props.modal && <div className="cf-modal-scroll">
+      {this.props.cancelCheckoutModal && <div className="cf-modal-scroll">
         <Modal
           title="Are you sure you want to cancel?"
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Return to editing',
-            onClick: this.props.hideModal
+            onClick: () => this.props.hideModal('cancelCheckout')
           }, {
             classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
             name: 'Yes, cancel',
             onClick: this.cancelCheckoutFlow
           }]}
-          closeHandler={this.props.hideModal}>
+          closeHandler={() => this.props.hideModal('cancelCheckout')}>
           All changes made to this page will be lost, except for the adding,
           editing, and deleting of issues.
         </Modal>
@@ -191,7 +190,8 @@ export default function decisionViewBase(ComponentToWrap) {
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
   const mapStateToProps = (state) => ({
-    ..._.pick(state.ui, 'breadcrumbs', 'modal'),
+    cancelCheckoutModal: state.ui.modal.cancelCheckout,
+    ..._.pick(state.ui, 'breadcrumbs'),
     ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful'),
     stagedAppeals: _.keys(state.queue.stagedChanges.appeals)
   });

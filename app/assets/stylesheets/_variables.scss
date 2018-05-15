@@ -1,2 +1,12 @@
 $cf-30px: 1.765em;
 $color-dropdown-shadow: rgba(102, 175, 233, 0.6);
+
+$caseflow-background: #f9f9f9;
+$caseflow-text-select-without-transparency: #6392ff;
+$caseflow-text-select: transparentize($caseflow-text-select-without-transparency, 0.7);
+
+$cf-background: #f9f9f9;
+$cf-link: #0872b9;
+$cf-drop-shadow-color: rgba(91, 97, 107, 0.5);
+$cf-drop-shadow: 1px 1px 5px 0 $cf-drop-shadow-color;
+
