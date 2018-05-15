@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError } from '../util';
+import { getReceiptDateError, formatRatings } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -25,6 +25,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
+    },
+    ratings: {
+      $set: state.ratings || formatRatings(serverIntake.ratings)
     }
   });
 };
@@ -53,7 +56,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   default:
   }
 
-  // The rest of the actions only should be processed if a HigherLevelReview intake is being processed
+  // The rest of the actions only should be processed if a Appeal intake is being processed
   if (!state.isStarted) {
     return state;
   }
@@ -109,6 +112,20 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      ratings: {
+        [action.payload.profileDate]: {
+          issues: {
+            [action.payload.issueId]: {
+              isSelected: {
+                $set: action.payload.isSelected
+              }
+            }
+          }
         }
       }
     });
