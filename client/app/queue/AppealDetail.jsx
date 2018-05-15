@@ -20,8 +20,7 @@ const marginRight = css({ marginRight: '1rem' });
 const marginLeft = css({ marginLeft: '2rem' });
 const noTopBottomMargin = css({
   marginTop: 0,
-  marginBottom: 0,
-  paddingBottom: '1rem'
+  marginBottom: '1rem'
 });
 
 export default class AppealDetail extends React.PureComponent {
