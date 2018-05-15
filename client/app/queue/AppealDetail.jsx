@@ -40,9 +40,10 @@ export default class AppealDetail extends React.PureComponent {
       label: 'Disposition',
       value: <React.Fragment>
         {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print`}>
+        {hearing.viewed_by_judge && <Link rel="noopener" target="_blank"
+          href={`/hearings/${hearing.id}/worksheet/print`}>
           View Hearing Worksheet
-        </Link>
+        </Link>}
       </React.Fragment>
     });
 
