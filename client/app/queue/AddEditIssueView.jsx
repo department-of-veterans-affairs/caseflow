@@ -155,7 +155,7 @@ class AddEditIssueView extends React.Component {
     } = this.props;
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
 
-    this.props.hideModal();
+    this.props.hideModal('deleteIssue');
 
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
@@ -223,13 +223,13 @@ class AddEditIssueView extends React.Component {
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Close',
-            onClick: this.props.hideModal
+            onClick: () => this.props.hideModal('deleteIssue')
           }, {
             classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Delete issue',
             onClick: this.deleteIssue
           }]}
-          closeHandler={this.props.hideModal}>
+          closeHandler={() => this.props.hideModal('deleteIssue')}>
           You are about to permanently delete this issue. To delete please
           click the <strong>"Delete issue"</strong> button or click&nbsp;
           <strong>"Close"</strong> to return to the previous screen.
@@ -246,7 +246,7 @@ class AddEditIssueView extends React.Component {
         linkStyling
         disabled={!issue.vacols_sequence_id}
         styling={noLeftPadding}
-        onClick={this.props.showModal}>
+        onClick={() => this.props.showModal('deleteIssue')}>
         Delete Issue
       </Button>
       <div {...dropdownMarginTop}>
@@ -341,7 +341,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  modal: state.ui.modal
+  modal: state.ui.modal.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

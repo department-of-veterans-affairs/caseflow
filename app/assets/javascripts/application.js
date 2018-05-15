@@ -1,7 +1,6 @@
-/* globals Clipboard */
+/* globals */
 
 //= require webpack-loader
-//= require clipboard
 //= require jquery
 //= require ./dropdown.js
 
@@ -19,9 +18,3 @@ window.onload = function () {
     });
   });
 };
-
-/* Copies appeals ID to clipboard */
-$(function () {
- "use strict";
- new Clipboard('[data-clipboard-text]');
-});
