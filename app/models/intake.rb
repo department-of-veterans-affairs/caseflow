@@ -73,7 +73,7 @@ class Intake < ApplicationRecord
     if duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
       @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
-      return
+      return false
     end
 
     preload_intake_data!
@@ -160,10 +160,6 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_valid
       errors = veteran.errors.messages.map { |(key, _value)| key }
       @error_data = { veteran_missing_fields: errors }
-
-    elsif duplicate_intake_in_progress
-      self.error_code = :duplicate_intake_in_progress
-      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
 
     else
       validate_detail_on_start
