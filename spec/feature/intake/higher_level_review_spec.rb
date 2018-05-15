@@ -20,12 +20,6 @@ RSpec.feature "Higher Level Review Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
-  end
-
   let(:inaccessible) { false }
 
   let!(:current_user) do
@@ -88,6 +82,8 @@ RSpec.feature "Higher Level Review Intake" do
     expect(page).to have_content("Finish processing")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
+    expect(page).to have_button("Establish EP", disabled: true)
+    expect(page).to have_content("0 rated issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
@@ -98,6 +94,12 @@ RSpec.feature "Higher Level Review Intake" do
     intake = Intake.find_by(veteran_file_number: "12341234")
 
     find("label", text: "PTSD denied").click
+    expect(page).to have_content("1 rated issue")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("2 rated issues")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("1 rated issue")
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")

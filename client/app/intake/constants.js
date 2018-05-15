@@ -19,6 +19,7 @@ export const ACTIONS = {
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
+  SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   SUBMIT_REVIEW_START: 'SUBMIT_REVIEW_START',
   SUBMIT_REVIEW_SUCCEED: 'SUBMIT_REVIEW_SUCCEED',
@@ -103,8 +104,8 @@ export const FORM_TYPES = {
     name: 'Supplemental Claim (VA Form 21-526b)',
     category: 'ama'
   },
-  NOTICE_OF_DISAGREEMENT: {
-    key: 'notice_of_disagreement',
+  APPEAL: {
+    key: 'appeal',
     name: 'Notice of Disagreement (VA Form 10182)',
     category: 'ama'
   }

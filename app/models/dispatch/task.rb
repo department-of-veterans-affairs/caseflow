@@ -1,9 +1,11 @@
 class Dispatch::Task < ApplicationRecord
+  self.table_name = "dispatch_tasks"
+
   include RetryHelper
   include AASM
 
   belongs_to :user
-  belongs_to :appeal
+  belongs_to :appeal, class_name: "LegacyAppeal"
 
   validate :no_open_tasks_for_appeal, on: :create
 
