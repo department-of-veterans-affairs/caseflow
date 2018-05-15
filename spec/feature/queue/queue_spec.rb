@@ -271,7 +271,7 @@ RSpec.feature "Queue" do
           expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
           expect(page).to have_content("Judge: #{hearing.user.full_name}")
 
-          if hearing.user.present? && !hearing.hearing_views.empty?
+          unless hearing.hearing_views.empty?
             worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
             expect(worksheet_link.text).to eq("View Hearing Worksheet")
           end
