@@ -1,4 +1,14 @@
 class Hearings::WorksheetsController < HearingsController
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    Rails.logger.debug "Worksheets Controller failed: #{e.message}"
+    render json: { "errors": ["message": e.message, code: 1000] }, status: 404
+  end
+
+  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
+    Rails.logger.debug "Worksheets Controller failed: #{e.message}"
+    render json: { "errors": ["message": e.message, code: 1001] }, status: 404
+  end
+
   def show
     HearingView.find_or_create_by(hearing_id: params[:hearing_id], user_id: current_user.id).touch
 
