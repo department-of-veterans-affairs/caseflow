@@ -29,7 +29,7 @@ class CaseListTable extends React.PureComponent {
     this.props.setActiveAppeal(appeal);
     this.props.setBreadcrumbs({
       breadcrumb: sprintf(COPY.BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.attributes.veteran_full_name),
-      path: '/queue'
+      path: window.location.pathname
     });
   }
 
