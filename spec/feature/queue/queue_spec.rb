@@ -383,7 +383,7 @@ RSpec.feature "Queue" do
       pc_appeal_row = find("tbody").find("#table-row-#{paper_case.vacols_id}")
       first_cell = pc_appeal_row.find_all("td").first
 
-      expect(first_cell).to have_content("#{paper_case.veteran_full_name} (#{paper_case.vbms_id.gsub("S", "")})")
+      expect(first_cell).to have_content("#{paper_case.veteran_full_name} (#{paper_case.vbms_id.delete('S')})")
       expect(first_cell).to have_content("This is a paper case")
     end
   end
