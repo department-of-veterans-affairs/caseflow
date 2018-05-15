@@ -6,7 +6,8 @@ class AppealIntake < Intake
   def ui_hash
     super.merge(
       receipt_date: detail.receipt_date,
-      docket_type: detail.docket_type
+      docket_type: detail.docket_type,
+      ratings: veteran.cached_serialized_timely_ratings
     )
   end
 
