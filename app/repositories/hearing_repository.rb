@@ -52,8 +52,13 @@ class HearingRepository
                                             name: "load_vacols_data") do
         VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
-      set_vacols_values(hearing, vacols_record)
-      true
+
+      if vacols_record
+        set_vacols_values(hearing, vacols_record)
+        true
+      else
+        fail Caseflow::Error::VacolsRecordNotFound, "Hearing record with vacols id #{hearing.vacols_id} not found."
+      end
     rescue ActiveRecord::RecordNotFound
       false
     end
