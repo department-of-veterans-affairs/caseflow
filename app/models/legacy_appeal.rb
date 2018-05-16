@@ -593,7 +593,6 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= AppealRepository
     end
 

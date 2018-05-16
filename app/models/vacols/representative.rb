@@ -1,5 +1,4 @@
 class VACOLS::Representative < VACOLS::Record
-  # :nocov:
   self.table_name = "vacols.rep"
   self.primary_key = "repkey"
 
@@ -79,5 +78,4 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/MethodLength
-  # :nocov:
 end
