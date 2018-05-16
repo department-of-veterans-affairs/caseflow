@@ -333,7 +333,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
 
   let apiRequests = [];
 
-  hearingsToSave.forEach((hearing) => {    
+  hearingsToSave.forEach((hearing) => {
     const promise = new Promise((resolve) => {
       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
         then(() => {

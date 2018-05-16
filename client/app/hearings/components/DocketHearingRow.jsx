@@ -58,13 +58,14 @@ const selectedValue = (selected) => selected ? selected.value : null;
 
 export class DocketHearingRow extends React.PureComponent {
 
-  setDisposition = (selected) => {
+  setDisposition = (selected) =>
     this.props.setDisposition(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
-  }
 
-  setHoldOpen = (selected) => this.props.setHoldOpen(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
+  setHoldOpen = (selected) =>
+    this.props.setHoldOpen(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
-  setAod = (selected) => this.props.setAod(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
+  setAod = (selected) =>
+    this.props.setAod(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
     this.props.setTranscriptRequested(this.props.hearing.id, value, this.props.hearingDate);
