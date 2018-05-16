@@ -74,7 +74,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  ENV["DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL"] ||= true
+  ENV["DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL"] ||= "true"
 
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
