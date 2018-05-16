@@ -33,17 +33,14 @@ import COPY from '../../../COPY.json';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  // TODO: Manually test that this route works.
   // TODO: Consider changing this into a component attribute (see efolder InitContainer).
   routedSearchHome = () => <CaseSearchSheet />;
 
-  // TODO: Pass props.match.params.caseflowVeteranId to CaseListView (maybe SearchBar?) so we can make the API call
-  // we need to in order to populate the table.
-  routedSearchResults = () => <React.Fragment>
+  routedSearchResults = (props) => <React.Fragment>
     <SearchBar
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
-    <CaseListView />
+    <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>

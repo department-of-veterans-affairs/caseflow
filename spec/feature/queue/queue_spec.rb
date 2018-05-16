@@ -348,7 +348,7 @@ RSpec.feature "Queue" do
       end
 
       it "clicking on back breadcrumb sends us to empty search home page" do
-        click_on COPY::BACK_TO_SEARCH_START_LINK_LABEL
+        page.find("h1").find("a").click
         expect(page).to have_content(search_homepage_title)
         expect(page).to have_content(search_homepage_subtitle)
         expect(page.current_path).to eq("/")

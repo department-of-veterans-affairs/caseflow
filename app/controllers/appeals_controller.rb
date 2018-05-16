@@ -2,17 +2,29 @@ class AppealsController < ApplicationController
   before_action :react_routed
 
   def index
-    # TODO: Add logic here to get the veteran_id from the caseflow_veteran_id so we can navigate directly to the case
-    # search results page.
+    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
+  end
 
-    return veteran_id_not_found_error unless veteran_id
+  def show_case_list
+    no_cache
 
-    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
+      end
+    end
+  end
+
+  def get_appeals_for_file_number(file_number)
+    return file_number_not_found_error unless file_number
+
+    MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
                           name: "AppealsController.index") do
 
       begin
-        appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran_id)
+        appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
       rescue ActiveRecord::RecordNotFound
         appeals = []
       end
@@ -57,15 +69,11 @@ class AppealsController < ApplicationController
     # :nocov:
   end
 
-  def veteran_id
-    request.headers["HTTP_VETERAN_ID"]
-  end
-
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 
-  def veteran_id_not_found_error
+  def file_number_not_found_error
     render json: {
       "errors": [
         "title": "Must include Veteran ID",
