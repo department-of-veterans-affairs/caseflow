@@ -107,7 +107,7 @@ class Search extends React.PureComponent {
          'complete this intake, then move on to the next mail item.'
       },
       duplicate_intake_in_progress_by_current_user: {
-        title: `Your form is being processed`,
+        title: 'Your form is being processed',
         body: 'You have already started processing this form.  Please try waiting for the system' +
           ' to finish processing and reloading the page.'
       },
