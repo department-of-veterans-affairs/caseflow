@@ -11,7 +11,7 @@
     featureToggles: {
       phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
       queue_case_search: FeatureToggle.enabled?(:queue_case_search, user: current_user),
-      judge_assignment: FeatureToggle.enabled?(:judge_assignment, user: current_user)
+      judge_assignment: FeatureToggle.enabled?(:queue_judge_assignment, user: current_user)
     }
   }) %>
 <% end %>
