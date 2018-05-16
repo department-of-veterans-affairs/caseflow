@@ -39,6 +39,26 @@ const tabBodyStyling = css({
   paddingTop: '0px'
 });
 
+/* 
+  Day Time for Travel Board
+  Monday 12:30pm
+  Tuesday 8:30am
+  Wednesday 8:30am
+  Thursday 8:30am
+  Friday 8:30am
+*/ 
+const TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME = {
+  hour: 12,
+  minutes: 30
+};
+
+const TRAVEL_BOARD_DEFAULT_WEEKDAY_START_TIME = {
+  hour: 8,
+  minutes: 30
+};
+
+const MONDAY_AS_DAY_OF_THE_WEEK = 1;
+
 export class Dockets extends React.Component {
 
   getType = (type) => {
@@ -57,6 +77,26 @@ export class Dockets extends React.Component {
       ACTIONS.OPEN_CURRENT_HEARING_DOCKET;
 
     window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, action);
+  }
+  
+  getDocketDateTime = (docket) => {
+    let convertedDate = moment(docket.date);
+
+    if (docket.type === 'travel') {
+      if (convertedDate.day() === MONDAY_AS_DAY_OF_THE_WEEK) {
+        convertedDate.set({
+          hour: TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME.hour,
+          minute: TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME.minutes
+        });
+      } else {
+        convertedDate.set({
+          hour: TRAVEL_BOARD_DEFAULT_WEEKDAY_START_TIME.hour,
+          minute: TRAVEL_BOARD_DEFAULT_WEEKDAY_START_TIME.minutes
+        });
+      }
+    }
+
+    return convertedDate;
   }
 
   linkToDailyDocket = (docket) => {
@@ -88,7 +128,7 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: getDateTime(docket.date),
+        start_time: getDateTime(this.getDocketDateTime(docket)),
         type: this.getType(docket.type),
         regional_office: this.getRegionalOffice(docket),
         slots: docket.slots,
