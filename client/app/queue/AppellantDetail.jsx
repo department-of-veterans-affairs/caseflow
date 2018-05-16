@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import BareList from '../components/BareList';
 import { boldText, TASK_ACTIONS } from './constants';
+import COPY from '../../../COPY.json';
 import { DateString } from '../util/DateUtil';
 
 const detailHeaderStyling = css({
@@ -92,7 +93,7 @@ export default class AppellantDetail extends React.PureComponent {
     if (this.veteranIsAppellant()) {
       appellantDetails = <React.Fragment>
         <h2 {...detailHeaderStyling}>Veteran Details</h2>
-        <span>The veteran is the appellant.</span>
+        <span>{COPY.CASE_SAME_VETERAN_AND_APPELLANT}</span>
         <ul {...detailListStyling}>
           {this.getDetails({
             nameField: 'veteran_full_name',
@@ -105,7 +106,7 @@ export default class AppellantDetail extends React.PureComponent {
     } else {
       appellantDetails = <React.Fragment>
         <h2 {...detailHeaderStyling}>Appellant Details</h2>
-        <span>The veteran is not the appellant.</span>
+        <span>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
         <ul {...detailListStyling}>
           {this.getDetails({
             nameField: 'appellant_full_name',
