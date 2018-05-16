@@ -48,7 +48,6 @@ class HearingDocket
     attr_writer :repository
 
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= HearingRepository
     end
 
