@@ -21,7 +21,7 @@ export const newHearingState = (state, action, spec) => {
   return update(state, {
     dailyDocket: {
       [action.payload.date]: {
-        [action.payload.hearingIndex]: spec
+        [action.payload.hearingId]: spec
       }
     }
   });
@@ -36,10 +36,8 @@ export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
     dailyDocket: {
       [action.payload.date]: {
         $apply: (hearings) => {
-          const changedHearingIndex = _.findIndex(hearings, { id: action.payload.hearingId });
-
           return update(hearings, {
-            [changedHearingIndex]: spec
+            [action.payload.hearingId]: spec
           });
         }
       }
@@ -69,12 +67,10 @@ const getDailyDocketKey = (state, action) => _.findKey(
   (hearings) => _.some(hearings, { id: action.payload.hearingId })
 );
 
-const getHearingIndex = (state, action, dailyDocketKey) =>
-  _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+const convertDailyDocketToHash = (dailyDocket) => _.mapValues(_.keyBy(dailyDocket, 'id'));
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   let dailyDocketKey;
-  let hearingIndex;
 
   switch (action.type) {
   case Constants.POPULATE_UPCOMING_HEARINGS:
@@ -85,7 +81,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.POPULATE_DAILY_DOCKET:
     return update(state, {
       dailyDocket: {
-        [action.payload.date]: { $set: _.sortBy(action.payload.dailyDocket, (hearing) => hearing.id) }
+        [action.payload.date]: { $set: convertDailyDocketToHash(action.payload.dailyDocket) }
       }
     });
 
@@ -147,12 +143,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_HEARING_VIEWED:
     dailyDocketKey = getDailyDocketKey(state, action);
-    hearingIndex = getHearingIndex(state, action, dailyDocketKey);
 
     return update(state, {
       dailyDocket: {
         [dailyDocketKey]: {
-          [hearingIndex]: {
+          [action.payload.hearingId]: {
             viewed_by_current_user: { $set: true }
           }
         }
@@ -257,7 +252,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, {
       dailyDocket: {
         [action.payload.date]: {
-          [action.payload.index]: { edited: { $set: false } }
+          [action.payload.hearingId]: { edited: { $set: false } }
         }
       }
     });

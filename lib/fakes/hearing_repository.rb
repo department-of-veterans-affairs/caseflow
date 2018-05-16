@@ -102,7 +102,7 @@ class Fakes::HearingRepository
     number_of_hearings.times.each do |i|
       hearing = Generators::Hearing.create(random_attrs(i).merge(user: user,
                                                                  date: 365.days.ago.beginning_of_day +
-      ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][i % 6].hours + 30.minutes))
+      ((i % 6) * 7).days + [8, 8, 10, 8, 9, 11][rand(0..5)].hours + 30.minutes,
       create_appeal_stream(hearing, i) if i % 5 == 0
     end
   end
