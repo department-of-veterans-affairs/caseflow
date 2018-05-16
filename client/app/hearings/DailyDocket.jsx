@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CATEGORIES, ACTIONS } from './analytics';
 import { orderTheDocket } from './util/index';
-import _ from 'lodash';
 
 export class DailyDocket extends React.PureComponent {
   onclickBackToHearingDays = () => {
