@@ -14,12 +14,14 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
   end
 
   describe "SHOW worksheet" do
-    it "returns data even when bgs is down" do
+    it "returns data with success" do
       get :show, params: { hearing_id: hearing.id }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
       expect(response_hearing[:veteran_sex]).to eq nil
       expect(response_hearing[:veteran_age]).to eq nil
+      expect(response_hearing["id"]).to eq hearing.id
+      expect(response_hearing["vacols_id"]).to eq hearing.vacols_id
     end
 
     it "should fail with 404 error message" do
