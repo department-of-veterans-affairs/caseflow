@@ -8,13 +8,25 @@ class Task < ApplicationRecord
 
   before_create :set_assigned_at, :set_assigned_to
 
-  # TODO: add more co-located types
-  # TODO: move it to the contants file
+  # TODO: missing: Waiver of AOJ letter and Hearing clarification letter
+  # TODO: move it to the constants file
   ACTION_TYPES = {
     co_located: {
       ihp: "IHP",
-      waiver_of_aoj_letter: "Waiver of AOJ Letter",
-      arneson_letter: "Arneson Letter"
+      poa_clarification: "POA clarification",
+      extension: "Extension",
+      missing_hearing_transcripts: "Missing hearing transcripts",
+      unaccredited_rep: "Unaccredited rep",
+      foia: "FOIA",
+      retired_vlj: "Retired VLJ",
+      arneson: "Arneson",
+      new_rep_arguments: "New rep arguments",
+      pending_scanning_vbms: "Pending scanning (VBMS)",
+      substituation_determination: "Substituation determination",
+      address_verification: "Address verification",
+      schedule_hearing: "Schedule hearing",
+      missing_records: "Missing records",
+      other: "Other"
     }
   }.freeze
 
