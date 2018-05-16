@@ -1,4 +1,5 @@
 {
+  "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
@@ -7,6 +8,7 @@
 
   "BACK_TO_PERSONAL_QUEUE_LINK_LABEL": "< Back to Your Queue",
   "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
+  "BACK_TO_SEARCH_START_LINK_LABEL": "< Back to Case Search",
 
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
@@ -38,5 +40,9 @@
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases"
+  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
+
+  "IS_PAPER_CASE": "This is a paper case",
+  "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
+  "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant."
 }

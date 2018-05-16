@@ -87,13 +87,16 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def verify_queue_access
-    # :nocov:
+  def can_access_queue?
     role = current_user.vacols_role
     return true if role == "Attorney"
     return true if role == "Judge" && feature_enabled?(:judge_queue)
-    redirect_to "/unauthorized"
-    # :nocov:
+  end
+
+  helper_method :can_access_queue?
+
+  def verify_queue_access
+    redirect_to "/unauthorized" unless can_access_queue?
   end
 
   def verify_queue_phase_two
