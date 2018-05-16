@@ -80,7 +80,7 @@ export class Dockets extends React.Component {
   getDocketDateTime = (docket) => {
     let convertedDate = moment(docket.date);
 
-    if (docket.type === 'travel') {
+    if (docket.type === 'travel' && docket.master_record) {
       if (convertedDate.day() === MONDAY_AS_DAY_OF_THE_WEEK) {
         convertedDate.set({
           hour: TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME.hour,
