@@ -29,7 +29,7 @@ describe HigherLevelReviewIntake do
         ).start!
 
         expect(intake).to_not be_nil
-        expect(subject).to eq(nil)
+        expect(subject).to eq(false)
       end
     end
   end

@@ -39,7 +39,10 @@ class Intake < ApplicationRecord
 
     fail FormTypeNotSupported unless intake_classname
 
-    intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
+    duplicate_intake_in_progress_by_current_user || intake_classname.constantize.new(
+      veteran_file_number: veteran_file_number,
+      user: user
+    )
   end
 
   def self.flagged_for_manager_review
