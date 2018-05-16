@@ -158,19 +158,15 @@ class Hearing < ApplicationRecord
   end
 
   def fetch_veteran_age
-    begin
-      veteran_age
-    rescue Module::DelegationError
-      nil
-    end
+    veteran_age
+  rescue Module::DelegationError
+    nil
   end
 
-  def fetch_veteran_gender
-    begin
-      veteran_gender
-    rescue Module::DelegationError
-      nil
-    end
+  def fetch_veteran_sex
+    veteran_sex
+  rescue Module::DelegationError
+    nil
   end
 
   def to_hash_for_worksheet(current_user_id)
@@ -190,7 +186,7 @@ class Hearing < ApplicationRecord
     ).merge(
       to_hash(current_user_id)
     ).merge(
-      veteran_name: fetch_veteran_name,
+      veteran_sex: fetch_veteran_sex,
       veteran_age: fetch_veteran_age
     )
   end
