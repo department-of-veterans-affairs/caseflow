@@ -92,7 +92,6 @@ class ApplicationController < ApplicationBaseController
     return true if role == "Attorney"
     return true if role == "Judge" && feature_enabled?(:judge_queue)
   end
-
   helper_method :can_access_queue?
 
   def verify_queue_access
