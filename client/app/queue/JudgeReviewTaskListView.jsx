@@ -24,8 +24,7 @@ const DISPLAYING_REVIEW_TASKS = {
   title: (reviewableCount) => <h1 {...fullWidth}>{sprintf(COPY.JUDGE_CASE_REVIEW_TABLE_TITLE, reviewableCount)}</h1>,
   switchLink: (that) => <Link to={`/queue/${that.props.userId}/assign`}>{COPY.SWITCH_TO_ASSIGN_MODE_LINK_LABEL}</Link>,
   visibleTasks: (tasks) => _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
-  noTasksMessage: () => COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE,
-  table: () => <JudgeReviewTaskTable />
+  noTasksMessage: () => COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE
 };
 
 class JudgeReviewTaskListView extends React.PureComponent {
@@ -61,7 +60,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
       tableContent = <div>
         {this.state.title(reviewableCount)}
         {this.state.switchLink(this)}
-        {this.state.table()}
+        <JudgeReviewTaskTable featureToggles={this.props.featureToggles} />
       </div>;
     }
 
