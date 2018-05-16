@@ -76,7 +76,7 @@ export class Dockets extends React.Component {
 
     window.analyticsEvent(CATEGORIES.HEARINGS_DAYS_PAGE, action);
   }
-  
+
   getDocketDateTime = (docket) => {
     let convertedDate = moment(docket.date);
 
