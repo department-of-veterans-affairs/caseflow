@@ -1,3 +1,4 @@
+import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
@@ -19,9 +20,20 @@ export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
 });
 
+export const emptyQuerySearchAttempt = () => ({
+  type: Constants.SEARCH_RESULTED_IN_ERROR,
+  payload: {
+    errorType: SEARCH_ERROR_FOR.EMPTY_SEARCH_TERM,
+    searchQuery: ''
+  }
+})
+
 export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
-  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID,
-  payload: { searchQuery }
+  type: Constants.SEARCH_RESULTED_IN_ERROR,
+  payload: {
+    errorType: SEARCH_ERROR_FOR.NO_APPEALS,
+    searchQuery: searchQuery
+  }
 });
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
@@ -30,13 +42,19 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
 });
 
 export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
-  type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_FAILURE,
-  payload: { searchQuery }
+  type: Constants.SEARCH_RESULTED_IN_ERROR,
+  payload: {
+    errorType: SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR,
+    searchQuery: searchQuery
+  }
 });
 
 export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
-  type: Constants.APPEALS_FETCH_FAILED_INVALID_VETERAN_ID,
-  payload: { searchQuery }
+  type: Constants.SEARCH_RESULTED_IN_ERROR,
+  payload: {
+    errorType: SEARCH_ERROR_FOR.INVALID_VETERAN_ID,
+    searchQuery: searchQuery
+  }
 });
 
 export const fetchAppealsUsingVeteranId = (searchQuery) =>

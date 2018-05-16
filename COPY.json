@@ -1,6 +1,7 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
+  "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",

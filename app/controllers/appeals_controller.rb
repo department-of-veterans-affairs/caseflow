@@ -2,6 +2,9 @@ class AppealsController < ApplicationController
   before_action :react_routed
 
   def index
+    # TODO: Add logic here to get the veteran_id from the caseflow_veteran_id so we can navigate directly to the case
+    # search results page.
+
     return veteran_id_not_found_error unless veteran_id
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
