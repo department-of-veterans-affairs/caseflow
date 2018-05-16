@@ -22,7 +22,7 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
       expect(response_hearing[:veteran_age]).to eq nil
     end
 
-    it "should be fail" do
+    it "should fail with 404 error message" do
       get :show, params: { hearing_id: "12121" }, format: "json"
       expect(response.status).to eq 404
       expect(response.body).to eq "{\"errors\":[{\"message\":\"Couldn't find Hearing with 'id'=12121\",\"code\":1000}]}"
