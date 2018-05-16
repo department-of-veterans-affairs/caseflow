@@ -17,6 +17,24 @@ import { selectDocketsPageTabIndex } from './actions/Dockets';
 const UPCOMING_TAB_INDEX = 0;
 const PAST_TAB_INDEX = 1;
 
+/* 
+  Day Time for Travel Board
+  Monday 12:30pm
+  Tuesday 8:30am
+  Wednesday 8:30am
+  Thursday 8:30am
+  Friday 8:30am
+*/ 
+const TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME = {
+  hour: 12,
+  minutes: 30
+};
+const TRAVEL_BOARD_DEFAULT_WEEKDAY_START_TIME = {
+  hour: 8,
+  minutes: 30
+};
+const MONDAY_AS_DAY_OF_THE_WEEK = 1;
+
 export const DOCKETS_TAB_INDEX_MAPPING = {
   [UPCOMING_TAB_INDEX]: 'Upcoming',
   [PAST_TAB_INDEX]: 'Past'
@@ -38,26 +56,6 @@ const tableBodyStyling = css({
 const tabBodyStyling = css({
   paddingTop: '0px'
 });
-
-/* 
-  Day Time for Travel Board
-  Monday 12:30pm
-  Tuesday 8:30am
-  Wednesday 8:30am
-  Thursday 8:30am
-  Friday 8:30am
-*/ 
-const TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME = {
-  hour: 12,
-  minutes: 30
-};
-
-const TRAVEL_BOARD_DEFAULT_WEEKDAY_START_TIME = {
-  hour: 8,
-  minutes: 30
-};
-
-const MONDAY_AS_DAY_OF_THE_WEEK = 1;
 
 export class Dockets extends React.Component {
 
