@@ -120,7 +120,7 @@ class AppealRepository
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
     outcoder_record = folder_record.outcoder
-
+    binding.pry
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],

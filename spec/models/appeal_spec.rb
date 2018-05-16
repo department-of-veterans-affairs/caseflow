@@ -1,10 +1,15 @@
 describe Appeal do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    FeatureToggle.enable!(:fakes_off)
+  end
+
+  after do
+    FeatureToggle.disable!(:fakes_off)
   end
 
   let(:appeal) do
-    Generators::LegacyAppeal.build(
+    Generators::LegacyAppealV2.build(
       notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
@@ -27,7 +32,7 @@ describe Appeal do
   end
 
   let(:appeal_no_appellant) do
-    Generators::LegacyAppeal.build(
+    Generators::LegacyAppealV2.build(
       nod_date: nod_date,
       soc_date: soc_date,
       form9_date: form9_date,
@@ -159,7 +164,8 @@ describe Appeal do
     context "when there are ssoc dates" do
       let(:ssoc_dates) { [Time.zone.today, (Time.zone.today - 5.days)] }
 
-      it "returns array of ssoc documents" do
+      it "returns array of ssoc documents", focus: true do
+        binding.pry
         expect(subject.first).to have_attributes(vacols_date: Time.zone.today - 5.days)
         expect(subject.last).to have_attributes(vacols_date: Time.zone.today)
       end
@@ -333,7 +339,7 @@ describe Appeal do
   end
 
   context "#serialized_decision_date" do
-    let(:appeal) { LegacyAppeal.new(decision_date: decision_date) }
+    let(:appeal) { LegacyAppealV2.new(decision_date: decision_date) }
     subject { appeal.serialized_decision_date }
 
     context "when decision date is nil" do
@@ -355,7 +361,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents)
+      Generators::LegacyAppealV2.build(documents: documents)
     end
 
     subject { appeal.number_of_documents }
@@ -373,7 +379,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents, certification_date: certification_date)
+      Generators::LegacyAppealV2.build(documents: documents, certification_date: certification_date)
     end
 
     subject { appeal.number_of_documents_after_certification }
@@ -399,7 +405,7 @@ describe Appeal do
       let(:location) { :never_never_land }
 
       it "raises error" do
-        expect { subject }.to raise_error(LegacyAppeal::UnknownLocationError)
+        expect { subject }.to raise_error(LegacyAppealV2::UnknownLocationError)
       end
     end
 
@@ -422,10 +428,10 @@ describe Appeal do
 
   context ".find_or_create_by_vacols_id" do
     let!(:vacols_appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "456VBMS")
+      Generators::LegacyAppealV2.build(vacols_id: "123C", vbms_id: "456VBMS")
     end
 
-    subject { LegacyAppeal.find_or_create_by_vacols_id("123C") }
+    subject { LegacyAppealV2.find_or_create_by_vacols_id("123C") }
 
     context "when no appeal exists for VACOLS id" do
       context "when no VACOLS data exists for that appeal" do
@@ -457,7 +463,7 @@ describe Appeal do
 
       context "when VACOLS data exists for that appeal" do
         let!(:updated_vacols_appeal) do
-          Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "789VBMS")
+          Generators::LegacyAppealV2.build(vacols_id: "123C", vbms_id: "789VBMS")
         end
 
         it "saves and returns that appeal with updated VACOLS data loaded" do
@@ -469,25 +475,25 @@ describe Appeal do
 
     context "sets the vacols_id" do
       before do
-        allow_any_instance_of(LegacyAppeal).to receive(:save) {}
+        allow_any_instance_of(LegacyAppealV2).to receive(:save) {}
       end
 
       it do
-        is_expected.to be_an_instance_of(LegacyAppeal)
+        is_expected.to be_an_instance_of(LegacyAppealV2)
         expect(subject.vacols_id).to eq("123C")
       end
     end
 
     it "persists in database" do
-      expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppeal)
+      expect(LegacyAppealV2.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppealV2)
     end
   end
 
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:issues) { [] }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
-    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
+    let(:appeal) { Generators::LegacyAppealV2.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
+    let(:another_appeal) { Generators::LegacyAppealV2.build(vacols_record: :remand_decided, nod_date: nod_date) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
     let(:election_receipt_date) { 2.days.ago }
@@ -497,7 +503,7 @@ describe Appeal do
 
       it "should raise error" do
         expect do
-          LegacyAppeal.close(
+          LegacyAppealV2.close(
             appeal: appeal,
             appeals: [appeal, another_appeal],
             user: user,
@@ -511,7 +517,7 @@ describe Appeal do
 
     context "when multiple appeals" do
       let(:appeal_with_nod_after_election_received) do
-        Generators::LegacyAppeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+        Generators::LegacyAppealV2.build(vacols_record: vacols_record, nod_date: 1.day.ago)
       end
 
       it "closes each appeal with nod_date before election received_date" do
@@ -534,7 +540,7 @@ describe Appeal do
           disposition_code: "P"
         )
 
-        LegacyAppeal.close(
+        LegacyAppealV2.close(
           appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
           user: user,
           closed_on: 4.days.ago,
@@ -546,7 +552,7 @@ describe Appeal do
 
     context "when just one appeal" do
       subject do
-        LegacyAppeal.close(
+        LegacyAppealV2.close(
           appeal: appeal,
           user: user,
           closed_on: 4.days.ago,
@@ -612,15 +618,15 @@ describe Appeal do
 
   context ".reopen" do
     subject do
-      LegacyAppeal.reopen(
+      LegacyAppealV2.reopen(
         appeals: [appeal, another_appeal],
         user: user,
         disposition: disposition
       )
     end
 
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ramp_closed) }
-    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_completed) }
+    let(:appeal) { Generators::LegacyAppealV2.build(vacols_record: :ramp_closed) }
+    let(:another_appeal) { Generators::LegacyAppealV2.build(vacols_record: :remand_completed) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
 
@@ -648,7 +654,7 @@ describe Appeal do
     end
 
     context "one of the non-remand appeals is active" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_record: :ready_to_certify) }
 
       it "should raise error" do
         expect { subject }.to raise_error("Only closed appeals can be reopened")
@@ -657,7 +663,7 @@ describe Appeal do
   end
 
   context "#certify!" do
-    let(:appeal) { LegacyAppeal.new(vacols_id: "765") }
+    let(:appeal) { LegacyAppealV2.new(vacols_id: "765") }
     subject { appeal.certify! }
 
     context "when form8 for appeal exists in the DB" do
@@ -706,7 +712,7 @@ describe Appeal do
   end
 
   context "#certified?" do
-    subject { LegacyAppeal.new(certification_date: 2.days.ago) }
+    subject { LegacyAppealV2.new(certification_date: 2.days.ago) }
 
     it "reads certification date off the appeal" do
       expect(subject.certified?).to be_truthy
@@ -716,7 +722,7 @@ describe Appeal do
   end
 
   context "#hearing_pending?" do
-    subject { LegacyAppeal.new(hearing_requested: false, hearing_held: false) }
+    subject { LegacyAppealV2.new(hearing_requested: false, hearing_held: false) }
 
     it "determines whether an appeal is awaiting a hearing" do
       expect(subject.hearing_pending?).to be_falsy
@@ -728,7 +734,7 @@ describe Appeal do
   end
 
   context "#sanitized_vbms_id" do
-    subject { LegacyAppeal.new(vbms_id: "123C") }
+    subject { LegacyAppealV2.new(vbms_id: "123C") }
 
     it "left-pads case-number ids" do
       expect(subject.sanitized_vbms_id).to eq("00000123")
@@ -746,9 +752,9 @@ describe Appeal do
   end
 
   context "#fetch_appeals_by_file_number" do
-    subject { LegacyAppeal.fetch_appeals_by_file_number(file_number) }
+    subject { LegacyAppealV2.fetch_appeals_by_file_number(file_number) }
     let!(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "123456789S")
+      Generators::LegacyAppealV2.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
@@ -780,7 +786,7 @@ describe Appeal do
   end
 
   context ".convert_file_number_to_vacols" do
-    subject { LegacyAppeal.convert_file_number_to_vacols(file_number) }
+    subject { LegacyAppealV2.convert_file_number_to_vacols(file_number) }
 
     context "for a file number with less than 9 digits" do
       context "with leading zeros" do
@@ -819,7 +825,7 @@ describe Appeal do
   end
 
   context "#partial_grant_on_dispatch?" do
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+    let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant_on_dispatch? }
 
     context "when no allowed issues" do
@@ -849,7 +855,7 @@ describe Appeal do
   context "#full_grant_on_dispatch?" do
     let(:issues) { [] }
     let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, issues: issues)
+      Generators::LegacyAppealV2.build(vacols_id: "123", status: status, issues: issues)
     end
     subject { appeal.full_grant_on_dispatch? }
 
@@ -887,12 +893,12 @@ describe Appeal do
     subject { appeal.remand_on_dispatch? }
 
     context "status is not remand" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete") }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Complete") }
       it { is_expected.to be false }
     end
 
     context "status is remand" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Remand", issues: issues) }
 
       context "contains at least one new-material allowed issue" do
         let(:issues) do
@@ -920,7 +926,7 @@ describe Appeal do
 
   context "#decided_by_bva?" do
     let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, disposition: disposition)
+      Generators::LegacyAppealV2.build(vacols_id: "123", status: status, disposition: disposition)
     end
 
     subject { appeal.decided_by_bva? }
@@ -949,7 +955,7 @@ describe Appeal do
   context "#compensation_issues" do
     subject { appeal.compensation_issues }
 
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppealV2.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
 
@@ -959,7 +965,7 @@ describe Appeal do
   context "#compensation?" do
     subject { appeal.compensation? }
 
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppealV2.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
@@ -977,7 +983,7 @@ describe Appeal do
   context "#fully_compensation?" do
     subject { appeal.fully_compensation? }
 
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppealV2.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
@@ -996,7 +1002,7 @@ describe Appeal do
     subject { appeal.eligible_for_ramp? }
 
     let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, location_code: location_code)
+      Generators::LegacyAppealV2.build(vacols_id: "123", status: status, location_code: location_code)
     end
 
     let(:location_code) { nil }
@@ -1035,7 +1041,7 @@ describe Appeal do
           Generators::Issue.build(disposition: :remanded)
         ]
       end
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
       it { is_expected.to eq("Remanded") }
     end
 
@@ -1046,12 +1052,12 @@ describe Appeal do
           Generators::Issue.build(disposition: :allowed)
         ]
       end
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
       it { is_expected.to eq("Allowed") }
     end
 
     context "when disposition is not allowed" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", issues: [], disposition: "Vacated") }
       it { is_expected.to eq("Vacated") }
     end
   end
@@ -1065,26 +1071,26 @@ describe Appeal do
           Generators::Issue.build(disposition: :remanded)
         ]
       end
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to eq("Partial Grant") }
     end
 
     context "when it has a non-new-material allowed issue" do
       let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete", issues: issues) }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Complete", issues: issues) }
       it { is_expected.to eq("Full Grant") }
     end
 
     context "when it has a remanded issue" do
       let(:issues) { [Generators::Issue.build(disposition: :remand)] }
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand") }
+      let(:appeal) { Generators::LegacyAppealV2.build(vacols_id: "123", status: "Remand") }
       it { is_expected.to eq("Remand") }
     end
   end
 
   context "#task_header" do
     let(:appeal) do
-      LegacyAppeal.new(
+      LegacyAppealV2.new(
         veteran_first_name: "Davy",
         veteran_middle_initial: "Q",
         veteran_last_name: "Crockett",
@@ -1101,7 +1107,7 @@ describe Appeal do
 
   context "#outcoded_by_name" do
     let(:appeal) do
-      LegacyAppeal.new(
+      LegacyAppealV2.new(
         outcoder_last_name: "King",
         outcoder_middle_initial: "Q",
         outcoder_first_name: "Andrew"
@@ -1117,7 +1123,7 @@ describe Appeal do
 
   context "#station_key" do
     let(:appeal) do
-      LegacyAppeal.new(
+      LegacyAppealV2.new(
         veteran_first_name: "Davy",
         veteran_middle_initial: "Q",
         veteran_last_name: "Crockett",
@@ -1151,7 +1157,7 @@ describe Appeal do
     let(:old_decision) do
       Document.new(received_at: 5.days.ago.to_date, type: "BVA Decision")
     end
-    let(:appeal) { LegacyAppeal.new(vbms_id: "123") }
+    let(:appeal) { LegacyAppealV2.new(vbms_id: "123") }
 
     context "when only one decision" do
       before do
@@ -1217,7 +1223,7 @@ describe Appeal do
   end
 
   context "#non_canceled_end_products_within_30_days" do
-    let(:appeal) { Generators::LegacyAppeal.build(decision_date: 1.day.ago) }
+    let(:appeal) { Generators::LegacyAppealV2.build(decision_date: 1.day.ago) }
     let(:result) { appeal.non_canceled_end_products_within_30_days }
 
     let!(:twenty_day_old_pending_ep) do
@@ -1274,7 +1280,7 @@ describe Appeal do
   end
 
   context "#special_issues?" do
-    let(:appeal) { LegacyAppeal.new(vacols_id: "123", us_territory_claim_philippines: true) }
+    let(:appeal) { LegacyAppealV2.new(vacols_id: "123", us_territory_claim_philippines: true) }
     subject { appeal.special_issues? }
 
     it "is true if any special issues exist" do
@@ -1288,7 +1294,7 @@ describe Appeal do
   end
 
   context "#pending_eps" do
-    let(:appeal) { Generators::LegacyAppeal.build(decision_date: 1.day.ago) }
+    let(:appeal) { Generators::LegacyAppealV2.build(decision_date: 1.day.ago) }
 
     let!(:pending_eps) do
       [
@@ -1354,13 +1360,13 @@ describe Appeal do
     end
 
     context "when one special issue is true" do
-      let(:appeal) { LegacyAppeal.new(dic_death_or_accrued_benefits_united_states: true) }
+      let(:appeal) { LegacyAppealV2.new(dic_death_or_accrued_benefits_united_states: true) }
       it { is_expected.to eq(["DIC - death, or accrued benefits - United States"]) }
     end
 
     context "when many special issues are true" do
       let(:appeal) do
-        LegacyAppeal.new(
+        LegacyAppealV2.new(
           foreign_claim_compensation_claims_dual_claims_appeals: true,
           vocational_rehab: true,
           education_gi_bill_dependents_educational_assistance_scholars: true,
@@ -1429,7 +1435,7 @@ describe Appeal do
     subject { appeal.issue_categories }
 
     let(:appeal) do
-      Generators::LegacyAppeal.build(issues: issues)
+      Generators::LegacyAppealV2.build(issues: issues)
     end
 
     let(:issues) do
@@ -1452,19 +1458,19 @@ describe Appeal do
     subject { appeal.worksheet_issues.size }
 
     context "when appeal does not have any Vacols issues" do
-      let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :ready_to_certify) }
+      let(:appeal) { Generators::LegacyAppealV2.create(vacols_record: :ready_to_certify) }
       it { is_expected.to eq 0 }
     end
 
     context "when appeal has Vacols issues" do
-      let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :remand_decided) }
+      let(:appeal) { Generators::LegacyAppealV2.create(vacols_record: :remand_decided) }
       it { is_expected.to eq 2 }
     end
   end
 
   context "#update" do
     subject { appeal.update(appeals_hash) }
-    let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :form9_not_submitted) }
+    let(:appeal) { Generators::LegacyAppealV2.create(vacols_record: :form9_not_submitted) }
 
     context "when Vacols does not need an update" do
       let(:appeals_hash) do
@@ -1563,7 +1569,7 @@ describe Appeal do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           docket_number: "13 11-265",
           regional_office_key: "RO13",
@@ -1594,7 +1600,7 @@ describe Appeal do
       subject { appeal.to_hash(viewed: true, issues: issues) }
 
       let!(:appeal) do
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           vacols_record: { soc_date: 4.days.ago },
           issues: issues
@@ -1622,23 +1628,23 @@ describe Appeal do
   end
 
   context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: "999887777S") }
+    subject { LegacyAppealV2.for_api(vbms_id: "999887777S") }
 
     let!(:veteran_appeals) do
       [
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           vacols_record: { soc_date: 4.days.ago }
         ),
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           vacols_record: { type: "Reconsideration" }
         ),
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
         ),
-        Generators::LegacyAppeal.build(
+        Generators::LegacyAppealV2.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: nil }
         )
@@ -1655,12 +1661,12 @@ describe Appeal do
           skip: "Disabled without_lazy_load for appeals for fixing Welcome Gate" do
     let(:date) { Time.zone.today }
     let(:saved_appeal) do
-      Generators::LegacyAppeal.build(
+      Generators::LegacyAppealV2.build(
         vacols_record: { veteran_first_name: "George" }
       )
     end
     let(:appeal) do
-      LegacyAppeal.find_or_initialize_by(vacols_id: saved_appeal.vacols_id,
+      LegacyAppealV2.find_or_initialize_by(vacols_id: saved_appeal.vacols_id,
                                          signed_date: date)
     end
 
@@ -1685,7 +1691,7 @@ describe Appeal do
     end
 
     context "when vbms_id is nil" do
-      let(:no_vbms_id_appeal) { LegacyAppeal.new(vacols_id: appeal.vacols_id) }
+      let(:no_vbms_id_appeal) { LegacyAppealV2.new(vacols_id: appeal.vacols_id) }
 
       context "when appeal is in the DB" do
         before { no_vbms_id_appeal.save! }
@@ -1714,13 +1720,13 @@ describe Appeal do
 
   context "#save_to_legacy_appeals" do
     let :appeal do
-      LegacyAppeal.create!(
+      LegacyAppealV2.create!(
         vacols_id: "1234"
       )
     end
 
     let :legacy_appeal do
-      LegacyAppeal.find(appeal.id)
+      LegacyAppealV2.find(appeal.id)
     end
 
     it "Creates a legacy_appeal when an appeal is created" do
@@ -1736,7 +1742,7 @@ describe Appeal do
 
   context "#destroy_legacy_appeal" do
     let :appeal do
-      LegacyAppeal.create!(
+      LegacyAppealV2.create!(
         id: 1,
         vacols_id: "1234"
       )
@@ -1744,7 +1750,7 @@ describe Appeal do
 
     it "Destroys a legacy_appeal when an appeal is destroyed" do
       appeal.destroy!
-      expect(LegacyAppeal.where(id: appeal.id)).to_not exist
+      expect(LegacyAppealV2.where(id: appeal.id)).to_not exist
     end
   end
 end
