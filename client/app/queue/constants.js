@@ -4,6 +4,7 @@ import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
+import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -42,6 +43,10 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
+export const subHeadTextStyle = css({
+  fontSize: 'small',
+  color: COMMON_COLORS.GREY_MEDIUM
+});
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
@@ -92,9 +97,14 @@ export const REMAND_REASONS = Object.assign({},
 );
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
-  map((val) => StringUtil.parameterize(val));
+  map(StringUtil.parameterize);
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   parameterizedDispositions
+));
+
+export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
+  parameterizedDispositions,
+  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));

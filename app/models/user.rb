@@ -147,7 +147,7 @@ class User < ApplicationRecord
     appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
-    appeal_streams = Appeal.fetch_appeal_streams(appeals)
+    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
     appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
 
     appeals.map do |appeal|
@@ -217,10 +217,12 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
+      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
       @appeal_repository ||= AppealRepository
     end
 
     def user_repository
+      return UserRepository if FeatureToggle.enabled?(:fakes_off)
       @user_repository ||= UserRepository
     end
   end

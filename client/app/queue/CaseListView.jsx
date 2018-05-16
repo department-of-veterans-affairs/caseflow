@@ -1,11 +1,14 @@
 import { css } from 'glamor';
 import pluralize from 'pluralize';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
@@ -13,16 +16,32 @@ import { fullWidth, SEARCH_ERROR_FOR } from './constants';
 
 import { clearCaseListSearch } from './CaseList/CaseListActions';
 
+import COPY from '../../../COPY.json';
+
 const backLinkStyling = css({
   float: 'left',
   marginTop: '-3rem'
 });
 
+const horizontalRuleStyling = css({
+  border: 0,
+  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+  marginTop: '5rem',
+  marginBottom: '5rem'
+});
+
 class CaseListView extends React.PureComponent {
+  shouldShowBreadcrumbs = () => this.props.caseList.receivedAppeals.length > 0 || this.props.errorType;
+
   render() {
     const body = {
-      heading: null,
-      component: null
+      heading: COPY.CASE_SEARCH_HOME_PAGE_HEADING,
+      component: <React.Fragment>
+        <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
+        <CaseListSearch elementId="searchBarEmptyList" />
+        <hr {...horizontalRuleStyling} />
+        <p><Link to="/help">Caseflow Help</Link></p>
+      </React.Fragment>
     };
 
     const appealsCount = this.props.caseList.receivedAppeals.length;
@@ -38,19 +57,19 @@ class CaseListView extends React.PureComponent {
     }
 
     if (this.props.errorType) {
-      let errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
+      let errorMessage = COPY.CASE_SEARCH_INPUT_INSTRUCTION;
 
       switch (this.props.errorType) {
       case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
-        body.heading = `Invalid Veteran ID “${this.props.queryResultingInError}”`;
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_INVALID_ID_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.NO_APPEALS:
-        body.heading = `No cases found for “${this.props.queryResultingInError}”`;
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, this.props.queryResultingInError);
         break;
       case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
       default:
-        body.heading = `Server encountered an error searching for “${this.props.queryResultingInError}”`;
-        errorMessage = 'Please retry your search and contact support if errors persist.';
+        body.heading = sprintf(COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, this.props.queryResultingInError);
+        errorMessage = COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE;
       }
 
       body.component = <React.Fragment>
@@ -60,9 +79,11 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
-      </div>
+      { this.shouldShowBreadcrumbs() &&
+        <div {...backLinkStyling}>
+          <Link to={this.props.backLinkTarget} onClick={this.props.clearCaseListSearch}>{this.props.backLinkText}</Link>
+        </div>
+      }
       <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>{body.heading}</h1>
@@ -72,6 +93,16 @@ class CaseListView extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+CaseListView.propTypes = {
+  backLinkTarget: PropTypes.string,
+  backLinkText: PropTypes.string
+};
+
+CaseListView.defaultProps = {
+  backLinkTarget: '/queue',
+  backLinkText: COPY.BACK_TO_PERSONAL_QUEUE_LINK_LABEL
+};
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,

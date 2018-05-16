@@ -12,14 +12,15 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
-  belongs_to :appeal
+  belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views
   has_many :appeal_stream_snapshots
+  before_save :update_summary_field, if: :data_fields_changed
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
-  has_many :appeals, through: :appeal_stream_snapshots
+  has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
   def venue
     self.class.venues[venue_key]
@@ -203,6 +204,21 @@ class Hearing < ApplicationRecord
     end
   end
 
+  private
+
+  def data_fields_changed
+    evidence_changed? || contentions_changed? || comments_for_attorney_changed?
+  end
+
+  def update_summary_field
+    get_paragraph = ->(data) { data.blank? ? "<p></p><p></p><p></p>" : "<p>#{data}</p><p></p>" }
+
+    self.summary = "<p><strong>Contentions</strong></p>#{get_paragraph.call(contentions)}"\
+    "<p><strong>Evidence</strong></p> #{get_paragraph.call(evidence)}"\
+    "<p><strong>Comments and special instructions to attorneys</strong></p>"\
+    "#{get_paragraph.call(comments_for_attorney)}"
+  end
+
   class << self
     attr_writer :repository
 
@@ -211,6 +227,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
+      return HearingRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= HearingRepository
     end
 
@@ -228,7 +245,7 @@ class Hearing < ApplicationRecord
         # who it's assigned to in the db.
         if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
           hearing.update(
-            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
             user: User.find_by(css_id: vacols_record.css_id)
           )
         end

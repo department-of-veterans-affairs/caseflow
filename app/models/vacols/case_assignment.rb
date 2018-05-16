@@ -1,4 +1,5 @@
 class VACOLS::CaseAssignment < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.brieff"
 
   has_one :staff, foreign_key: :slogid, primary_key: :bfcurloc
@@ -111,4 +112,5 @@ class VACOLS::CaseAssignment < VACOLS::Record
       end
     end
   end
+  # :nocov:
 end
