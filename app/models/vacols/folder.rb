@@ -1,5 +1,4 @@
 class VACOLS::Folder < VACOLS::Record
-  # :nocov:
   self.table_name = "vacols.folder"
   self.primary_key = "ticknum"
 
@@ -13,5 +12,4 @@ class VACOLS::Folder < VACOLS::Record
       :titoba, :tinosc, :ti38us, :tinnme, :tinwgr, :tipres, :titrtm, :tinoot
     )
   end
-  # :nocov:
 end
