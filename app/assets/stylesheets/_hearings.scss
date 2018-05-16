@@ -660,11 +660,11 @@
     margin-bottom: 2px;
  }
 
- .cf-app-segment {
+  .cf-app-segment {
     margin-top: -35px;
  }
 
- .cf-content-inside .cf-app-segment {
+  .cf-content-inside .cf-app-segment {
     margin-bottom: -19px;
 }
 
@@ -692,7 +692,6 @@
   .cf-hearings-first-page {
     display: flex;
     flex-direction: column;
-    min-height: 11in;
 
     .cf-print-footer {
       position: absolute;
@@ -716,9 +715,8 @@
    }
  }
 
-
     .cf-hearings-second-page {
-      min-height: 11in;
+      height: 50mm;
       display: flex;
       flex-direction: column;
       padding: 2em;
@@ -746,7 +744,6 @@
 }
 
 @page {
-  // size: 8.5in 11in;
-  size: 4in 6in auto;
+  size: 8.5in 11in;
   margin: 0;
 }
