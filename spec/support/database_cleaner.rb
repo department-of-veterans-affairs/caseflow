@@ -16,21 +16,15 @@ RSpec.configure do |config|
         uncommitted transaction data setup over the spec's database connection.
       MSG
     end
-    # ActiveRecord::Base.logger = Logger.new($stdout)
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }]
-      .clean_with(:truncation, except: %w[vftypes issref])
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean_with(:truncation)
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy = :transaction
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :transaction
+    DatabaseCleaner.strategy = :transaction
   end
 
   config.before(:each, db_clean: :truncation) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-      :truncation, { except: %w[vftypes issref] }
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each, type: :feature) do
@@ -42,21 +36,16 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-        :truncation, { except: %w[vftypes issref] }
-      DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
+      DatabaseCleaner.strategy = :truncation
     end
   end
 
   config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].start
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].start
+    DatabaseCleaner.start
   end
 
   config.append_after(:each) do
-    DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].clean
-    DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
-
+    DatabaseCleaner.clean
     reset_application!
   end
 end
