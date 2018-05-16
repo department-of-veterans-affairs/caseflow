@@ -4,6 +4,8 @@ import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
+import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import COPY from '../../../COPY.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -42,6 +44,10 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
+export const subHeadTextStyle = css({
+  fontSize: 'small',
+  color: COMMON_COLORS.GREY_MEDIUM
+});
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
@@ -63,10 +69,10 @@ export const DECISION_TYPES = {
 };
 
 export const DRAFT_DECISION_OPTIONS = [{
-  label: 'Decision Ready for Review',
+  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
   value: DECISION_TYPES.DRAFT_DECISION
 }, {
-  label: 'OMO Ready for Review',
+  label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
   value: DECISION_TYPES.OMO_REQUEST
 }];
 
