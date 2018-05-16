@@ -104,14 +104,14 @@ RSpec.feature "RAMP Election Intake" do
 
       RampElectionIntake.new(
         user: current_user,
-        veteran_file_number: "12341234"
+        veteran_file_number: "43214321"
       ).start!
 
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      expect(page).to have_current_path("/intake/search")
-      expect(page).to have_content("You have already started processing this form.  Please try waiting for the system")
+      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
     end
 
     scenario "Search for a veteran that has a RAMP election already processed" do

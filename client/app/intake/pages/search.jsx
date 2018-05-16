@@ -106,11 +106,6 @@ class Search extends React.PureComponent {
          'processing the same form for this Veteran in Caseflow. Please confirm they will ' +
          'complete this intake, then move on to the next mail item.'
       },
-      duplicate_intake_in_progress_by_current_user: {
-        title: 'Your form is being processed',
-        body: 'You have already started processing this form.  Please try waiting for the system' +
-          ' to finish processing and reloading the page.'
-      },
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',
         body: 'Caseflow does not currently support more than one Selection Form for a Veteran.' +

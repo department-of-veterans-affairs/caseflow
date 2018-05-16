@@ -16,8 +16,7 @@ class Intake < ApplicationRecord
     veteran_not_found: "veteran_not_found",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
-    duplicate_intake_in_progress: "duplicate_intake_in_progress",
-    duplicate_intake_in_progress_by_current_user: "duplicate_intake_in_progress_by_current_user"
+    duplicate_intake_in_progress: "duplicate_intake_in_progress"
   }.freeze
 
   FORM_TYPES = {
@@ -74,11 +73,6 @@ class Intake < ApplicationRecord
   end
 
   def start!
-    if duplicate_intake_in_progress_by_current_user
-      self.error_code = :duplicate_intake_in_progress_by_current_user
-      return false
-    end
-
     preload_intake_data!
 
     if validate_start
@@ -179,11 +173,6 @@ class Intake < ApplicationRecord
   def duplicate_intake_in_progress
     @duplicate_intake_in_progress ||=
       Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number)
-  end
-
-  def duplicate_intake_in_progress_by_current_user
-    @duplicate_intake_in_progress_by_current_user ||=
-      Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number, user: user)
   end
 
   def veteran
