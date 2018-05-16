@@ -44,5 +44,8 @@
 
   "IS_PAPER_CASE": "This is a paper case",
   "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
-  "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant."
+  "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
+
+  "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
 }
