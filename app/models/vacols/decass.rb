@@ -1,4 +1,5 @@
 class VACOLS::Decass < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.decass"
   self.primary_key = "defolder"
 
@@ -23,4 +24,5 @@ class VACOLS::Decass < VACOLS::Record
       with the same `defolder`. Instead use QueueRepository.update_decass_record
       that uses `defolder` and `deassign` to safely update one record"
   end
+  # :nocov:
 end
