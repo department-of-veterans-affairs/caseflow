@@ -21,7 +21,7 @@ describe HigherLevelReviewIntake do
   context "#start!" do
     subject { intake.start! }
 
-    context "intake is already in progress" do
+    context "intake is already in progress by same user" do
       it "should not create another intake" do
         HigherLevelReviewIntake.new(
           user: user,
