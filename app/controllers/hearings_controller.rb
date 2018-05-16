@@ -8,6 +8,7 @@ class HearingsController < ApplicationController
     render json: hearing.to_hash(current_user.id)
   end
 
+  # :nocov:
   def create
     Hearing.create(create_params)
     render json: hearing.to_hash(current_user.id)
