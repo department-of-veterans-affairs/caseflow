@@ -201,7 +201,7 @@ RSpec.feature "Queue" do
         click_on "Search"
 
         expect(page).to have_content("1 case found for “Polly A Carter (384920173)”")
-        expect(page).to have_content("This is a paper case")
+        expect(page).to have_content(COPY::IS_PAPER_CASE)
       end
     end
   end
@@ -377,14 +377,14 @@ RSpec.feature "Queue" do
       first_cell = vna_appeal_row.find_all("td").first
 
       expect(first_cell).to have_content("#{vet_not_appellant.veteran_full_name} (#{vet_not_appellant.vbms_id})")
-      expect(first_cell).to have_content("Veteran is not the appellant")
+      expect(first_cell).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
 
       paper_case = vacols_appeals.select { |a| a.file_type.eql? "Paper" }.first
       pc_appeal_row = find("tbody").find("#table-row-#{paper_case.vacols_id}")
       first_cell = pc_appeal_row.find_all("td").first
 
       expect(first_cell).to have_content("#{paper_case.veteran_full_name} (#{paper_case.vbms_id.delete('S')})")
-      expect(first_cell).to have_content("This is a paper case")
+      expect(first_cell).to have_content(COPY::IS_PAPER_CASE)
     end
   end
 
@@ -494,7 +494,7 @@ RSpec.feature "Queue" do
 
         expect(page).to have_content("Appellant Details")
         expect(page).to have_content("Veteran Details")
-        expect(page).to have_content("The veteran is not the appellant.")
+        expect(page).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
 
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)

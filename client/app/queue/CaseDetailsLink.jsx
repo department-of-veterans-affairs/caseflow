@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import COPY from '../../../COPY';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -31,11 +32,11 @@ class CaseDetailsLink extends React.PureComponent {
       </Link>
       {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
         <br />
-        <span {...subHeadTextStyle}>Veteran is not the appellant</span>
+        <span {...subHeadTextStyle}>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
       </React.Fragment>}
       {appeal.paper_case && <React.Fragment>
         <br />
-        <span {...subHeadTextStyle}>This is a paper case</span>
+        <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}
     </React.Fragment>;
   }

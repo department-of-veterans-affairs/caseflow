@@ -47,7 +47,7 @@ class CaseListTable extends React.PureComponent {
         </Link>
         {appeal.attributes.paper_case && <React.Fragment>
           <br />
-          <span {...subHeadTextStyle}>This is a paper case</span>
+          <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
         </React.Fragment>}
       </span>
     },
