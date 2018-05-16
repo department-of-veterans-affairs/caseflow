@@ -82,8 +82,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
     // getting the hearing information from the daily docket for the prepped field
     // in the header
-    const hearingIndex = _.findIndex(currentDocket, { id: worksheet.id });
-    const currentHearing = currentDocket[hearingIndex] || {};
+    const currentHearing = currentDocket[worksheet.id] || {};
 
     currentDocket = orderTheDocket(currentDocket);
 
