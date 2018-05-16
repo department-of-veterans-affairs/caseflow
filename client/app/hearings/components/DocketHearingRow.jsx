@@ -15,6 +15,7 @@ import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { DISPOSITION_OPTIONS } from '../constants/constants';
 
 const textareaStyling = css({
   '@media only screen and (max-width : 1024px)': {
@@ -33,15 +34,6 @@ const issueCountStyling = css({
   paddingTop: '5px',
   paddingBottom: '5px'
 });
-
-const dispositionOptions = [{ value: 'held',
-  label: 'Held' },
-{ value: 'no_show',
-  label: 'No Show' },
-{ value: 'cancelled',
-  label: 'Cancelled' },
-{ value: 'postponed',
-  label: 'Postponed' }];
 
 const holdOption = (days, hearingDate) => ({
   value: days,
@@ -159,7 +151,7 @@ export class DocketHearingRow extends React.PureComponent {
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}-disposition`}
-            options={dispositionOptions}
+            options={DISPOSITION_OPTIONS}
             onChange={this.setDisposition}
             value={hearing.disposition}
             searchable={false}
