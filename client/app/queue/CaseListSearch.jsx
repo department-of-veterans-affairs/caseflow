@@ -25,13 +25,16 @@ class CaseListSearch extends React.PureComponent {
   onSubmitSearch = (searchQuery) => {
     if (!searchQuery.length) {
       this.props.emptyQuerySearchAttempt();
+
       return;
     }
 
     // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
     const veteranId = searchQuery.replace(/\D/g, '');
+
     if (!veteranId.match(/\d{7,9}/)) {
       this.props.fetchAppealUsingInvalidVeteranIdFailed(searchQuery);
+
       return;
     }
 
@@ -41,6 +44,7 @@ class CaseListSearch extends React.PureComponent {
     }).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
+
         if (_.size(returnedObject.appeals) === 0) {
           this.props.fetchedNoAppealsUsingVeteranId(veteranId);
         } else {
@@ -48,6 +52,7 @@ class CaseListSearch extends React.PureComponent {
 
           // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
           const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
+
           this.props.history.push(`/cases/${caseflowVeteranId}`);
         }
       }, () => {

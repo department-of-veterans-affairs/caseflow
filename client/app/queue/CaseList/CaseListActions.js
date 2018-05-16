@@ -26,13 +26,13 @@ export const emptyQuerySearchAttempt = () => ({
     errorType: SEARCH_ERROR_FOR.EMPTY_SEARCH_TERM,
     searchQuery: ''
   }
-})
+});
 
 export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.NO_APPEALS,
-    searchQuery: searchQuery
+    searchQuery
   }
 });
 
@@ -45,7 +45,7 @@ export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR,
-    searchQuery: searchQuery
+    searchQuery
   }
 });
 
@@ -53,7 +53,7 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
     errorType: SEARCH_ERROR_FOR.INVALID_VETERAN_ID,
-    searchQuery: searchQuery
+    searchQuery
   }
 });
 

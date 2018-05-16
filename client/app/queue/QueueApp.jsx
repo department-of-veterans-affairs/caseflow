@@ -28,7 +28,6 @@ import SearchBar from './SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
-import COPY from '../../../COPY.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
