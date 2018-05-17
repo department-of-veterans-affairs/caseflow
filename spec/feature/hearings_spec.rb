@@ -229,7 +229,7 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
-      page.find(".public-DraftEditor-content").set("These are the notes being take here")
+      page.find(".public-DraftEditor-content").set("These are the notes being taken here")
       fill_in "appellant-vet-rep-name", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-military-service", with: "This is military service"
@@ -237,13 +237,13 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are the notes being take here")
+      expect(page).to have_content("These are the notes being taken here")
       expect(page).to have_content("This is military service")
 
       visit "/hearings/1/worksheet/print?do_not_open_print_prompt=1"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are the notes being take here")
+      expect(page).to have_content("These are the notes being taken here")
       expect(page).to have_content("This is military service")
     end
 
