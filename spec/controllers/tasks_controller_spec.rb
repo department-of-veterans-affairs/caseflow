@@ -49,13 +49,17 @@ RSpec.describe TasksController, type: :controller do
         {
           "appeal_id": appeal.id,
           "attorney_id": attorney.id,
-          "appeal_type": "Legacy"
+          "appeal_type": "Legacy",
+          "type": "JudgeCaseAssignment"
         }
       end
 
       it "should not be successful" do
         post :create, params: { tasks: params }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
+        response_body = JSON.parse(response.body)
+        expect(response_body["errors"].first["title"]).to eq "ActiveRecord::RecordInvalid"
+        expect(response_body["errors"].first["detail"]).to eq "Assigned by has to be a judge"
       end
     end
 
@@ -64,7 +68,8 @@ RSpec.describe TasksController, type: :controller do
         {
           "appeal_id": appeal.id,
           "attorney_id": attorney.id,
-          "appeal_type": "Legacy"
+          "appeal_type": "Legacy",
+          "type": "JudgeCaseAssignment"
         }
       end
 

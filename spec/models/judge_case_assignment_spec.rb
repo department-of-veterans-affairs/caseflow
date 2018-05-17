@@ -3,6 +3,10 @@ describe JudgeCaseAssignment do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let(:appeal) { LegacyAppeal.create(vacols_id: "123456") }
 
+  before do
+    allow_any_instance_of(User).to receive(:vacols_role).and_return("Judge")
+  end
+
   context "#assign_to_attorney!" do
     let(:record) do
       JudgeCaseAssignment.new(

@@ -11,6 +11,11 @@ class TasksController < ApplicationController
 
   ROLES = %w[Judge Attorney].freeze
 
+  TASK_CLASSES = {
+    CoLocatedAdminAction: CoLocatedAdminAction,
+    JudgeCaseAssignment: JudgeCaseAssignment
+  }.freeze
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -44,12 +49,8 @@ class TasksController < ApplicationController
   end
 
   def create
-    task_handler = TaskHandler.new(current_role)
-    task = task_handler.create(task_params)
-
-    if task_handler.errors.present?
-      return render json: { "errors": task_handler.errors }, status: 400
-    end
+    return invalid_type_error unless task_class
+    task = task_class.create!(task_params)
     render json: { task: task }, status: :created
   end
 
@@ -60,6 +61,10 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def task_class
+    TASK_CLASSES[task_params[:type].try(:to_sym)]
+  end
 
   def user
     @user ||= User.find(params[:user_id])
@@ -84,6 +89,15 @@ class TasksController < ApplicationController
     }, status: 400
   end
 
+  def invalid_type_error
+    render json: {
+      "errors": [
+        "title": "Invalid Task Type Error",
+        "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
+      ]
+    }, status: 400
+  end
+
   def complete_params
     params.require("tasks").permit(:type,
                                    :reviewing_judge_id,
@@ -97,7 +111,7 @@ class TasksController < ApplicationController
 
   def task_params
     task_params = params.require("tasks")
-      .permit(:appeal_type, :appeal_id, :action_type, :instructions)
+      .permit(:appeal_type, :appeal_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
     task_params.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id]
   end

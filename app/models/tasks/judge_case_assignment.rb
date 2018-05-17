@@ -1,12 +1,15 @@
+# TODO: inherit from Task
 class JudgeCaseAssignment
   include ActiveModel::Model
 
-  attr_accessor :task_id, :assigned_by, :assigned_to, :appeal_id, :appeal_type
+  attr_accessor :task_id, :assigned_by, :assigned_to, :appeal_id, :appeal_type, :type
 
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validates :appeal_type, inclusion: { in: %w[Legacy Ama] }
   validates :assigned_by, :assigned_to, presence: true
+
+  validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
     validate!
@@ -46,12 +49,20 @@ class JudgeCaseAssignment
 
   private
 
+  def assigned_by_role_is_valid
+    errors.add(:base, "Assigned by has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"
+  end
+
   def validate!
     fail ActiveRecord::RecordInvalid unless valid?
   end
 
   class << self
     attr_writer :repository
+
+    def create!(task_attrs)
+      JudgeCaseAssignment.new(task_attrs).assign_to_attorney!
+    end
 
     def repository
       @repository ||= QueueRepository
