@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
+import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
 
@@ -19,6 +20,7 @@ export const initialState = {
     loadedUserId: null
   },
   editingIssue: {},
+  docCountForAppeal: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -31,7 +33,9 @@ export const initialState = {
       type: '',
       opts: {}
     }
-  }
+  },
+  attorneysOfJudge: [],
+  tasksAndAppealsOfAttorney: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -77,17 +81,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
-  case ACTIONS.LOAD_APPEAL_DOC_COUNT_FAILURE:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          [action.payload.appealId]: {
-            attributes: {
-              docCount: {
-                $set: action.payload.docCount
-              }
-            }
-          }
+      docCountForAppeal: {
+        [action.payload.vacolsId]: {
+          $set: action.payload.docCount
         }
       }
     });
@@ -111,7 +108,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       stagedChanges: {
         taskDecision: {
-          $set: initialState.stagedChanges.taskDecision
+          opts: { $set: initialState.stagedChanges.taskDecision.opts }
         }
       }
     });
@@ -226,12 +223,51 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.SET_ATTORNEYS_OF_JUDGE:
+    return update(state, {
+      attorneysOfJudge: {
+        $set: action.payload.attorneys
+      }
+    });
+  case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADING'
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADED',
+            data: _.pick(action.payload, 'tasks', 'appeals')
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'FAILED',
+            error: action.payload.error
+          }
+        }
+      }
+    });
   default:
     return state;
   }
 };
 
 const rootReducer = combineReducers({
+  caseDetail: caseDetailReducer,
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,

@@ -18,8 +18,9 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
+import COPY from '../../../COPY.json';
 
-class AttorneyListView extends React.PureComponent {
+class AttorneyTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -32,10 +33,8 @@ class AttorneyListView extends React.PureComponent {
 
     if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
       this.props.showErrorMessage({
-        title: 'Some cases need preliminary DAS assignments',
-        detail: `Cases marked with exclamation points need to be assigned 
-        to you through DAS. Please contact your judge or senior counsel to 
-        create preliminary DAS assignments.`
+        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
+        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
       });
     }
   };
@@ -46,19 +45,19 @@ class AttorneyListView extends React.PureComponent {
     let tableContent;
 
     if (noTasks) {
-      tableContent = <StatusMessage title="Tasks not found">
-        Sorry! We couldn't find any tasks for you.
+      tableContent = <StatusMessage title={COPY.NO_TASKS_IN_ATTORNEY_QUEUE_TITLE}>
+        {COPY.NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE}
       </StatusMessage>;
     } else {
       tableContent = <div>
-        <h1 {...fullWidth}>Your Queue</h1>
+        <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
         {messages.error && <Alert type="error" title={messages.error.title}>
           {messages.error.detail}
         </Alert>}
         {messages.success && <Alert type="success" title={messages.success}>
-          If you made a mistake please email your judge to resolve the issue.
+          {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <AttorneyTaskTable />
+        <AttorneyTaskTable featureToggles={this.props.featureToggles} />
       </div>;
     }
 
@@ -68,7 +67,7 @@ class AttorneyListView extends React.PureComponent {
   };
 }
 
-AttorneyListView.propTypes = {
+AttorneyTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
@@ -90,4 +89,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AttorneyListView);
+export default connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView);

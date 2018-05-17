@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "aedd9ddfee4018a26b8b9ad77b519eb61ad03382"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb"
 
 gem "moment_timezone-rails"
 
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "783200ca61b57fc75f818334838181993535229a"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -89,7 +89,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging, :ssh_forwarding, :local, :test do
+group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :development, :test, :local do
+group :stubbed, :test, :development do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -140,7 +140,7 @@ group :development, :test, :local do
   gem "rspec_junit_formatter"
 end
 
-group :development do
+group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"

@@ -188,7 +188,7 @@ describe User do
   context "#current_case_assignments" do
     subject { user.current_case_assignments }
 
-    let(:appeal) { Generators::Appeal.create }
+    let(:appeal) { Generators::LegacyAppeal.create }
 
     before do
       User.appeal_repository = Fakes::AppealRepository
@@ -208,7 +208,7 @@ describe User do
   context "#current_case_assignments_with_views" do
     subject { user.current_case_assignments_with_views[0] }
 
-    let(:appeal) { Generators::Appeal.create }
+    let(:appeal) { Generators::LegacyAppeal.create }
 
     before do
       Fakes::AppealRepository.appeal_records = [appeal]
@@ -267,8 +267,8 @@ describe User do
   end
 
   context ".current_task" do
-    class FakeTask < Task; end
-    class AnotherFakeTask < Task; end
+    class FakeTask < Dispatch::Task; end
+    class AnotherFakeTask < Dispatch::Task; end
 
     subject { user.current_task(FakeTask) }
 
@@ -279,7 +279,7 @@ describe User do
         FakeTask.create!(
           user: another_user,
           aasm_state: :unassigned,
-          appeal: Generators::Appeal.create
+          appeal: Generators::LegacyAppeal.create
         )
       end
 
@@ -287,7 +287,7 @@ describe User do
         AnotherFakeTask.create!(
           user: user,
           aasm_state: :unassigned,
-          appeal: Generators::Appeal.create
+          appeal: Generators::LegacyAppeal.create
         )
       end
 
@@ -295,7 +295,7 @@ describe User do
         FakeTask.create!(
           user: user,
           aasm_state: :completed,
-          appeal: Generators::Appeal.create
+          appeal: Generators::LegacyAppeal.create
         )
       end
 
@@ -307,7 +307,7 @@ describe User do
         FakeTask.create!(
           user: user,
           aasm_state: :started,
-          appeal: Generators::Appeal.create,
+          appeal: Generators::LegacyAppeal.create,
           prepared_at: Date.yesterday
         )
       end

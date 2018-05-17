@@ -59,9 +59,23 @@ export const popBreadcrumb = (crumbsToDrop = 1) => ({
   }
 });
 
-export const resetBreadcrumbs = () => ({
-  type: ACTIONS.RESET_BREADCRUMBS
-});
+export const setBreadcrumbs = (...crumbs) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_BREADCRUMBS
+  });
+
+  dispatch(pushBreadcrumb(...crumbs));
+};
+
+export const resetBreadcrumbs = (vetName, vacolsId) => (dispatch) => {
+  dispatch(setBreadcrumbs({
+    breadcrumb: 'Your Queue',
+    path: '/queue'
+  }, {
+    breadcrumb: vetName,
+    path: `/queue/appeals/${vacolsId}`
+  }));
+};
 
 export const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
@@ -107,10 +121,12 @@ export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
 });
 
-export const showModal = () => ({
-  type: ACTIONS.SHOW_MODAL
+export const showModal = (modalType) => ({
+  type: ACTIONS.SHOW_MODAL,
+  payload: { modalType }
 });
 
-export const hideModal = () => ({
-  type: ACTIONS.HIDE_MODAL
+export const hideModal = (modalType) => ({
+  type: ACTIONS.HIDE_MODAL,
+  payload: { modalType }
 });

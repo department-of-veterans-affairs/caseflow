@@ -1,15 +1,99 @@
 require "rails_helper"
 
 describe Veteran do
-  let(:veteran) { Veteran.new({ file_number: "445566" }.merge(veteran_attrs)) }
-  let(:veteran_attrs) { {} }
+  let(:veteran) { Veteran.new(file_number: "44556677") }
 
-  context "#load_bgs_record!" do
-    subject { veteran.load_bgs_record! }
+  before do
+    Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
+
+    Fakes::BGSService.veteran_records = { "44556677" => veteran_record }
+  end
+
+  let(:veteran_record) do
+    {
+      file_number: "44556677",
+      ptcpnt_id: "123123",
+      sex: "M",
+      first_name: "June",
+      last_name: "Juniper",
+      ssn: "123456789",
+      address_line1: "122 Mullberry St.",
+      address_line2: "PO BOX 123",
+      address_line3: address_line3,
+      city: "San Francisco",
+      state: "CA",
+      country: country,
+      date_of_birth: date_of_birth,
+      zip_code: zip_code,
+      military_post_office_type_code: military_post_office_type_code,
+      military_postal_type_code: military_postal_type_code,
+      service: service
+    }
+  end
+
+  let(:military_post_office_type_code) { nil }
+  let(:military_postal_type_code) { nil }
+  let(:country) { "USA" }
+  let(:zip_code) { "94117" }
+  let(:address_line3) { "Daisies" }
+  let(:date_of_birth) { "21/12/1989" }
+  let(:service) { [{ branch_of_service: "army" }] }
+
+  context ".find_or_create_by_file_number" do
+    subject { Veteran.find_or_create_by_file_number(file_number) }
+
+    let(:file_number) { "444555666" }
+
+    context "when veteran exists in the DB" do
+      let!(:saved_veteran) do
+        Veteran.create!(file_number: file_number, participant_id: "123123")
+      end
+
+      it { is_expected.to eq(saved_veteran) }
+    end
+
+    context "when veteran doesn't exist in the DB" do
+      let(:file_number) { "44556677" }
+
+      context "when veteran is found in BGS" do
+        it "saves and returns veteran" do
+          expect(subject.participant_id).to eq("123123")
+
+          expect(subject.reload).to have_attributes(
+            file_number: "44556677",
+            participant_id: "123123"
+          )
+        end
+
+        context "when duplicate veteran is saved while fetching BGS data (race condition)" do
+          let(:saved_veteran) do
+            Veteran.new(file_number: file_number, participant_id: "123123")
+          end
+
+          before do
+            allow(Veteran).to receive(:before_create_veteran_by_file_number) do
+              saved_veteran.save!
+            end
+          end
+
+          it { is_expected.to eq(saved_veteran) }
+        end
+      end
+
+      context "when veteran isn't found in BGS" do
+        let(:file_number) { "88556677" }
+
+        it { is_expected.to be nil }
+      end
+    end
+  end
+
+  context "lazily loaded bgs attributes" do
+    subject { veteran }
 
     let(:veteran_record) do
       {
-        file_number: "445566",
+        file_number: "44556677",
         ptcpnt_id: "123123",
         sex: "M",
         first_name: "June",
@@ -31,10 +115,6 @@ describe Veteran do
       }
     end
 
-    before do
-      Fakes::BGSService.veteran_records = { "445566" => veteran_record }
-    end
-
     context "when veteran does not exist in BGS" do
       before do
         veteran.file_number = "DOESNOTEXIST"
@@ -53,7 +133,7 @@ describe Veteran do
 
     context "when veteran is inaccessible" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445566"]
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["44556677"]
       end
 
       it { is_expected.to be_found }
@@ -61,7 +141,7 @@ describe Veteran do
 
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
-        file_number: "445566",
+        file_number: "44556677",
         participant_id: "123123",
         sex: "M",
         first_name: "June",
@@ -84,35 +164,9 @@ describe Veteran do
   context "#to_vbms_hash" do
     subject { veteran.to_vbms_hash }
 
-    let(:veteran_attrs) do
-      {
-        sex: "M",
-        first_name: "June",
-        last_name: "Juniper",
-        ssn: "123456789",
-        address_line1: "122 Mullberry St.",
-        address_line2: "PO BOX 123",
-        address_line3: address_line3,
-        city: "San Francisco",
-        state: "CA",
-        country: country,
-        date_of_birth: "21/12/1989",
-        zip_code: zip_code,
-        military_post_office_type_code: military_post_office_type_code,
-        military_postal_type_code: military_postal_type_code,
-        service: [{ branch_of_service: "army" }]
-      }
-    end
-
-    let(:military_post_office_type_code) { nil }
-    let(:military_postal_type_code) { nil }
-    let(:country) { "USA" }
-    let(:zip_code) { "94117" }
-    let(:address_line3) { "Daisies" }
-
     it "returns the correct values" do
       is_expected.to eq(
-        file_number: "445566",
+        file_number: "44556677",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
@@ -172,7 +226,7 @@ describe Veteran do
 
     context "when veteran is too sensitive for user" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445566"]
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["44556677"]
       end
 
       it { is_expected.to eq(false) }
@@ -189,9 +243,6 @@ describe Veteran do
 
   context "#periods_of_service" do
     subject { veteran.periods_of_service }
-    let(:veteran) do
-      Veteran.new(service: service)
-    end
 
     context "when a veteran served in multiple places" do
       let(:service) do
@@ -263,13 +314,7 @@ describe Veteran do
   end
 
   context "#age" do
-    before do
-      Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
-    end
     subject { veteran.age }
-    let(:veteran) do
-      Veteran.new(date_of_birth: date_of_birth)
-    end
 
     context "when they're born in the 1900s" do
       let(:date_of_birth) { "2/2/1956" }

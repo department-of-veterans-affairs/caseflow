@@ -39,7 +39,7 @@ class Fakes::AppealRepository
     default_attrs = send(default_attrs_method_name)
     attrs = default_attrs.merge(overrides) # merge in overrides
 
-    appeal = Appeal.new(vacols_id: vacols_id)
+    appeal = LegacyAppeal.new(vacols_id: vacols_id)
     appeal.assign_from_vacols(attrs)
     appeal
   end
@@ -68,7 +68,7 @@ class Fakes::AppealRepository
 
   def self.load_vacols_data(appeal)
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record("load appeal #{appeal.vacols_id}", service: :vacols) do
       records[appeal.vacols_id]
     end
 
@@ -87,7 +87,8 @@ class Fakes::AppealRepository
   def self.appeals_ready_for_hearing(vbms_id)
     Rails.logger.info("Load faked appeals ready for hearing for vbms id: #{vbms_id}")
 
-    return_records = MetricsService.record "load appeals ready for hearing for vbms_id #{vbms_id}" do
+    return_records = MetricsService.record("load appeals ready for hearing for vbms_id #{vbms_id}",
+                                           service: :vacols) do
       records.select do |_, r|
         (r[:vbms_id] == vbms_id &&
         (r[:decision_date].nil? || r[:disposition] == "Remanded")) # &&
@@ -96,7 +97,7 @@ class Fakes::AppealRepository
     end
 
     return_records.map do |vacols_id, r|
-      Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
+      LegacyAppeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
         appeal.assign_from_vacols(r)
       end
     end
@@ -118,7 +119,7 @@ class Fakes::AppealRepository
     fail Caseflow::Error::MultipleAppealsByVBMSID if RAISE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record("load appeal #{appeal.vacols_id}", service: :vacols) do
       # TODO(jd): create a more dynamic setup
       records.find { |_, r| r[:vbms_id] == appeal.vbms_id }
     end
@@ -135,14 +136,15 @@ class Fakes::AppealRepository
   def self.appeals_by_vbms_id(vbms_id)
     Rails.logger.info("Load faked VACOLS appeals data for vbms id: #{vbms_id}")
 
-    return_records = MetricsService.record "load appeals for vbms_id #{vbms_id}" do
+    return_records = MetricsService.record("load appeals for vbms_id #{vbms_id}",
+                                           service: :vacols) do
       records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
     fail ActiveRecord::RecordNotFound if return_records.empty?
 
     return_records.map do |vacols_id, r|
-      Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
+      LegacyAppeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
         appeal.assign_from_vacols(r)
       end
     end
@@ -205,7 +207,7 @@ class Fakes::AppealRepository
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
     50.times.each do |i|
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
         vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
@@ -219,7 +221,7 @@ class Fakes::AppealRepository
 
     form9.vbms_document_id = "2"
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "123C",
       vbms_id: "111223333S",
       vacols_record: {
@@ -239,7 +241,7 @@ class Fakes::AppealRepository
 
     form9.vbms_document_id = "2"
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "125C",
       vbms_id: "111225555S",
       vacols_record: {
@@ -257,7 +259,7 @@ class Fakes::AppealRepository
   def self.seed_appeal_mismatched_documents!
     nod, soc, form9 = certification_documents
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "456C",
       vbms_id: "111224444S",
       vacols_record: {
@@ -272,7 +274,7 @@ class Fakes::AppealRepository
   end
 
   def self.seed_appeal_already_certified!
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "789C",
       vacols_record: :certified
     )
@@ -283,7 +285,7 @@ class Fakes::AppealRepository
 
     form9.vbms_document_id = "3"
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "124C",
       vbms_id: "1112",
       vacols_record: {
@@ -299,7 +301,7 @@ class Fakes::AppealRepository
   def self.seed_appeal_raises_vbms_error!
     nod, soc, form9 = certification_documents
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "000ERR",
       vbms_id: Fakes::AppealRepository::RAISE_VBMS_ERROR_ID,
       vacols_record: {
@@ -313,7 +315,7 @@ class Fakes::AppealRepository
   end
 
   def self.seed_appeal_not_ready!
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vacols_id: "001ERR",
       vacols_record: :not_ready_to_certify
     )
@@ -339,6 +341,7 @@ class Fakes::AppealRepository
   # 14555555 has no compensation issues
   # 16555555 throws a sensitivity error
   # 19555555 throws a sex error
+  # 23232323 is valid for AMA intake
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.seed_intake_data!
@@ -349,7 +352,7 @@ class Fakes::AppealRepository
       claim_id = "FAKEEP123#{i}"
 
       Generators::Veteran.build(file_number: file_number)
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vbms_id: "#{file_number}C",
         issues: (1..2).map { Generators::Issue.build },
         vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago }
@@ -383,38 +386,38 @@ class Fakes::AppealRepository
       Fakes::VBMSService.end_product_claim_ids_by_file_number[file_number] = claim_id
     end
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "11555555C",
       vacols_record: :activated
     )
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "12555555C",
       vacols_record: :full_grant_decided
     )
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "13555555C",
       vacols_record: :activated
     )
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "14555555C",
       issues: (1..2).map { Generators::Issue.build(template: :education) }
     )
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
     )
 
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "16555555C",
       inaccessible: true
     )
 
     veteran = Generators::Veteran.build(file_number: "19555555", sex: nil, ssn: nil)
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "19555555C",
       veteran: veteran,
       issues: (1..3).map { Generators::Issue.build }

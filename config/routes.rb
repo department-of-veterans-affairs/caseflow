@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope path: "/dispatch" do
+  namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'admin', to: 'establish_claims#admin'
@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update
+    resources :tasks, only: [:index]
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -64,9 +65,6 @@ Rails.application.routes.draw do
     end
   end
 
-
-  resources :tasks, only: [:index]
-
   resources :document, only: [:update] do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
@@ -83,7 +81,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [:index] do
+  resources :appeals, only: [:index, :show] do
+    get :document_count
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
@@ -106,8 +105,7 @@ Rails.application.routes.draw do
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
 
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
+  root 'home#index'
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
@@ -125,14 +123,17 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/tasks/:vacols_id', to: 'queue#index'
-    get '/tasks/:vacols_id/*all', to: redirect('/queue/tasks/%{vacols_id}')
-    get '/docs_for_dev', to: 'queue#dev_document_count'
-    get '/:user_id', to: 'queue#tasks'
-    post '/tasks/:task_id/complete', to: 'queue#complete'
-    post '/tasks', to: 'queue#create'
-    patch '/tasks/:task_id', to: 'queue#update'
+    get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
+    get '/:user_id', to: 'tasks#index'
+
+    post '/appeals/:id/complete', to: 'tasks#complete'
   end
+
+  resources :tasks, only: [:create, :update] do
+    post :complete
+  end
+
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

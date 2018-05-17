@@ -199,10 +199,10 @@ class Issue
     end
 
     if diagnostic_code
-      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      diagnostic_code_description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       return if diagnostic_code_description.nil?
       # Some description strings are templates. This is a no-op unless the description string contains %s.
-      issue_description = issue_description % diagnostic_code_description
+      issue_description = issue_description % diagnostic_code_description["status_description"]
     end
 
     issue_description
@@ -213,6 +213,7 @@ class Issue
     attr_writer :repository
 
     def repository
+      return IssueRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= IssueRepository
     end
 

@@ -4,7 +4,7 @@ describe Appeal do
   end
 
   let(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
@@ -27,7 +27,7 @@ describe Appeal do
   end
 
   let(:appeal_no_appellant) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       nod_date: nod_date,
       soc_date: soc_date,
       form9_date: form9_date,
@@ -77,12 +77,14 @@ describe Appeal do
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     before do
-      appeal.documents += [
-        Document.new(type: "NOD", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 7.days.ago),
-        Document.new(type: "BVA Decision", received_at: 6.days.ago),
-        Document.new(type: "SSOC", received_at: 6.days.ago)
-      ]
+      allow(appeal).to receive(:documents).and_return(
+        [
+          Document.new(type: "NOD", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 7.days.ago),
+          Document.new(type: "BVA Decision", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 6.days.ago)
+        ]
+      )
     end
 
     context "when 1 type is passed" do
@@ -232,19 +234,29 @@ describe Appeal do
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
     let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
-    let(:documents) { [nod_document, soc_document, form9_document] }
+    let(:base_documents) { [nod_document, soc_document, form9_document] }
 
     subject { appeal.documents_match? }
+    before do
+      allow(appeal).to receive(:documents).and_return(documents)
+    end
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
-      it { is_expected.to be_truthy }
+      context "when there are no ssocs" do
+        let(:documents) { base_documents }
+
+        it { is_expected.to be_truthy }
+      end
 
       context "when ssoc dates don't match" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
         end
 
@@ -252,11 +264,14 @@ describe Appeal do
       end
 
       context "when received_at is nil" do
-        before do
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
+        end
+
+        before do
           appeal.ssoc_dates = [2.days.ago, 7.days.ago]
         end
 
@@ -264,13 +279,15 @@ describe Appeal do
       end
 
       context "and ssoc dates match" do
-        before do
-          # vbms documents
-          appeal.documents += [
+        let(:documents) do
+          base_documents + [
             Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
             Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
             Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
           ]
+        end
+
+        before do
           # vacols dates
           appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
         end
@@ -296,10 +313,12 @@ describe Appeal do
 
     context "when at least one ssoc doesn't match" do
       before do
-        appeal.documents += [
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
-        ]
+        allow(appeal).to receive(:documents).and_return(
+          [
+            Document.new(type: "SSOC", received_at: 6.days.ago),
+            Document.new(type: "SSOC", received_at: 7.days.ago)
+          ]
+        )
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
       end
@@ -314,7 +333,7 @@ describe Appeal do
   end
 
   context "#serialized_decision_date" do
-    let(:appeal) { Appeal.new(decision_date: decision_date) }
+    let(:appeal) { LegacyAppeal.new(decision_date: decision_date) }
     subject { appeal.serialized_decision_date }
 
     context "when decision date is nil" do
@@ -336,7 +355,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      Generators::Appeal.build(documents: documents)
+      Generators::LegacyAppeal.build(documents: documents)
     end
 
     subject { appeal.number_of_documents }
@@ -354,7 +373,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      Generators::Appeal.build(documents: documents, certification_date: certification_date)
+      Generators::LegacyAppeal.build(documents: documents, certification_date: certification_date)
     end
 
     subject { appeal.number_of_documents_after_certification }
@@ -372,397 +391,6 @@ describe Appeal do
     end
   end
 
-  context "#find_or_create_documents_v2!" do
-    before do
-      FeatureToggle.enable!(:efolder_docs_api)
-      FeatureToggle.enable!(:efolder_api_v2)
-      RequestStore.store[:application] = "reader"
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_docs_api)
-      FeatureToggle.disable!(:efolder_api_v2)
-    end
-    let(:series_id) { "TEST_SERIES_ID" }
-
-    let(:documents) do
-      [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
-    end
-
-    context "when there is no existing document" do
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "saves retrieved documents" do
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
-        expect(Document.first.received_at).to eq(documents[0].received_at)
-      end
-    end
-
-    context "when there are documents with same series_id" do
-      let!(:saved_documents) do
-        [
-          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
-          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
-        ]
-      end
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "adds new retrieved documents" do
-        expect(Document.count).to eq(2)
-        expect(Document.first.type).to eq(saved_documents[0].type)
-
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(4)
-        expect(Document.first.type).to eq("Form 9")
-        expect(Document.second.type).to eq("NOD")
-      end
-
-      context "when existing document has comments, tags, and categories" do
-        let(:older_comment) { "OLD_TEST_COMMENT" }
-        let(:comment) { "TEST_COMMENT" }
-        let(:tag) { "TEST_TAG" }
-        let!(:existing_annotations) do
-          [
-            Generators::Annotation.create(
-              comment: older_comment,
-              x: 1,
-              y: 2,
-              document_id: saved_documents[0].id
-            ),
-            Generators::Annotation.create(
-              comment: comment,
-              x: 1,
-              y: 2,
-              document_id: saved_documents[1].id
-            )
-          ]
-        end
-        let!(:document_tag) do
-          [
-            DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: "NOT USED TAG").id,
-              document_id: saved_documents[0].id
-            ),
-            DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: tag).id,
-              document_id: saved_documents[1].id
-            )
-          ]
-        end
-
-        it "copies metdata to new document" do
-          expect(Annotation.count).to eq(2)
-          expect(Annotation.second.comment).to eq(comment)
-          expect(DocumentsTag.count).to eq(2)
-
-          appeal.find_or_create_documents_v2!
-
-          expect(Annotation.count).to eq(3)
-          expect(Document.second.annotations.first.comment).to eq(comment)
-          expect(Document.third.annotations.first.comment).to eq(comment)
-
-          expect(DocumentsTag.count).to eq(3)
-          expect(Document.second.documents_tags.first.tag.text).to eq(tag)
-          expect(Document.third.documents_tags.first.tag.text).to eq(tag)
-
-          expect(Document.second.category_medical).to eq(true)
-          expect(Document.third.category_medical).to eq(true)
-        end
-
-        context "when the API returns two documents with the same series_id" do
-          let(:documents) do
-            [
-              Generators::Document.build(type: "NOD", series_id: series_id),
-              Generators::Document.build(type: "SOC"),
-              saved_documents[1]
-            ]
-          end
-
-          it "copies metadata from the most recently saved document not returned by the API" do
-            appeal.find_or_create_documents_v2!
-
-            expect(Document.third.annotations.first.comment).to eq(older_comment)
-          end
-        end
-      end
-
-      context "when API returns doc that is already saved" do
-        let!(:saved_documents) do
-          Generators::Document.create(
-            type: "Form 9",
-            series_id: series_id,
-            vbms_document_id: documents[0].vbms_document_id
-          )
-        end
-        it "updates existing document" do
-          expect(Document.count).to eq(1)
-          expect(Document.first.type).to eq(saved_documents.type)
-
-          returned_documents = appeal.find_or_create_documents_v2!
-          expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-          expect(Document.count).to eq(2)
-          expect(Document.first.type).to eq("NOD")
-        end
-      end
-    end
-
-    context "when there is a document with no series_id" do
-      let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-      let!(:saved_document) do
-        Generators::Document.create(
-          type: "Form 9",
-          vbms_document_id: vbms_document_id,
-          series_id: nil,
-          file_number: appeal.sanitized_vbms_id
-        )
-      end
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
-          [[
-            OpenStruct.new(
-              vbms_filename: "test_file",
-              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
-              document_id: vbms_document_id,
-              version_id: vbms_document_id,
-              series_id: series_id,
-              version: 0,
-              mime_type: "application/pdf",
-              received_at: rand(100).days.ago,
-              downloaded_from: "VBMS"
-            ),
-            OpenStruct.new(
-              vbms_filename: "test_file",
-              type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
-              document_id: "DIFFERENT_ID",
-              version_id: "DIFFERENT_ID",
-              series_id: series_id,
-              version: 1,
-              mime_type: "application/pdf",
-              received_at: rand(100).days.ago,
-              downloaded_from: "VBMS"
-            )
-          ]]
-        )
-      end
-
-      it "adds series_id" do
-        expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_document.type)
-        expect(Document.first.series_id).to eq(nil)
-
-        returned_documents = appeal.find_or_create_documents_v2!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        # Adds series id to existing document
-        expect(Document.first.series_id).to eq(series_id)
-        expect(Document.count).to eq(3)
-      end
-    end
-  end
-
-  context "#find_or_create_documents!" do
-    before do
-      FeatureToggle.enable!(:efolder_docs_api)
-      RequestStore.store[:application] = "reader"
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_docs_api)
-    end
-    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
-
-    let(:documents) do
-      [
-        Generators::Document.build(
-          type: "NOD",
-          vbms_document_id: vbms_document_id
-        ),
-        Generators::Document.build(type: "SOC")
-      ]
-    end
-
-    context "when there is no existing document" do
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "saves retrieved documents" do
-        returned_documents = appeal.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq(documents[0].type)
-        expect(Document.first.received_at).to eq(documents[0].received_at)
-      end
-    end
-
-    context "when there is a document with same vbms_document_id" do
-      let!(:saved_document) { Generators::Document.create(type: "Form 9", vbms_document_id: vbms_document_id) }
-
-      before do
-        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-      end
-
-      it "updates retrieved documents" do
-        expect(Document.count).to eq(1)
-        expect(Document.first.type).to eq(saved_document.type)
-
-        returned_documents = appeal.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
-
-        expect(Document.count).to eq(documents.count)
-        expect(Document.first.type).to eq("NOD")
-      end
-    end
-  end
-
-  context "#fetch_documents!" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-
-    let(:appeal) do
-      Generators::Appeal.build(documents: documents)
-    end
-
-    let(:result) { appeal.fetch_documents!(save: save) }
-
-    context "when save is false" do
-      let(:save) { false }
-      it "should return documents not saved in the database" do
-        expect(result.first).to_not be_persisted
-      end
-
-      context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(result).to eq(documents)
-        end
-
-        context "when application is reader" do
-          before { RequestStore.store[:application] = "reader" }
-
-          it "loads document content from the VBMS service" do
-            expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-            expect(EFolderService).not_to receive(:fetch_documents_for)
-            expect(appeal.fetch_documents!(save: save)).to eq(documents)
-          end
-        end
-      end
-
-      context "when efolder_docs_api is enabled and application is reader" do
-        before do
-          FeatureToggle.enable!(:efolder_docs_api)
-          RequestStore.store[:application] = "reader"
-        end
-
-        it "loads document content from the efolder service and sets fetched_at attributes" do
-          expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(appeal.fetch_documents!(save: save)).to eq(documents)
-
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
-          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
-        end
-
-        after do
-          FeatureToggle.disable!(:efolder_docs_api)
-        end
-      end
-    end
-
-    context "when save is true" do
-      let(:save) { true }
-
-      context "when document exists in the database" do
-        let!(:existing_document) do
-          Generators::Document.create(vbms_document_id: documents[0].vbms_document_id)
-        end
-
-        it "should return existing document" do
-          p "result: #{result}"
-          expect(result.first.id).to eq(existing_document.id)
-        end
-      end
-
-      context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(result).to eq(documents)
-        end
-      end
-
-      context "when efolder_docs_api is enabled and application is reader" do
-        before do
-          FeatureToggle.enable!(:efolder_docs_api)
-          RequestStore.store[:application] = "reader"
-        end
-
-        it "loads document content from the efolder service" do
-          expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(appeal.fetch_documents!(save: save)).to eq(documents)
-        end
-
-        after do
-          FeatureToggle.disable!(:efolder_docs_api)
-        end
-      end
-
-      context "when document doesn't exist in the database" do
-        it "should return documents saved in the database" do
-          expect(result.first).to be_persisted
-        end
-      end
-    end
-  end
-
-  context "#manifest_vva_fetched_at" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-    context "instance variables for appeal not yet set" do
-      it "returns own attribute and sets manifest_vbms_fetched_at when called" do
-        expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
-
-        expect(EFolderService).not_to receive(:fetch_documents_for)
-        expect(VBMSService).not_to receive(:fetch_documents_for)
-        expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-      end
-    end
-  end
-
-  context "#manifest_vbms_fetched_at" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-
-    it "returns own attribute and sets manifest_vva_fetched_at when called" do
-      expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-
-      expect(EFolderService).not_to receive(:fetch_documents_for)
-      expect(VBMSService).not_to receive(:fetch_documents_for)
-      expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
-    end
-  end
-
   context "#in_location?" do
     subject { appeal.in_location?(location) }
     let(:location) { :remand_returned_to_bva }
@@ -771,7 +399,7 @@ describe Appeal do
       let(:location) { :never_never_land }
 
       it "raises error" do
-        expect { subject }.to raise_error(Appeal::UnknownLocationError)
+        expect { subject }.to raise_error(LegacyAppeal::UnknownLocationError)
       end
     end
 
@@ -794,10 +422,10 @@ describe Appeal do
 
   context ".find_or_create_by_vacols_id" do
     let!(:vacols_appeal) do
-      Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
+      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "456VBMS")
     end
 
-    subject { Appeal.find_or_create_by_vacols_id("123C") }
+    subject { LegacyAppeal.find_or_create_by_vacols_id("123C") }
 
     context "when no appeal exists for VACOLS id" do
       context "when no VACOLS data exists for that appeal" do
@@ -829,7 +457,7 @@ describe Appeal do
 
       context "when VACOLS data exists for that appeal" do
         let!(:updated_vacols_appeal) do
-          Generators::Appeal.build(vacols_id: "123C", vbms_id: "789VBMS")
+          Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "789VBMS")
         end
 
         it "saves and returns that appeal with updated VACOLS data loaded" do
@@ -841,25 +469,25 @@ describe Appeal do
 
     context "sets the vacols_id" do
       before do
-        allow_any_instance_of(Appeal).to receive(:save) {}
+        allow_any_instance_of(LegacyAppeal).to receive(:save) {}
       end
 
       it do
-        is_expected.to be_an_instance_of(Appeal)
+        is_expected.to be_an_instance_of(LegacyAppeal)
         expect(subject.vacols_id).to eq("123C")
       end
     end
 
     it "persists in database" do
-      expect(Appeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(Appeal)
+      expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppeal)
     end
   end
 
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:issues) { [] }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
+    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
     let(:election_receipt_date) { 2.days.ago }
@@ -869,7 +497,7 @@ describe Appeal do
 
       it "should raise error" do
         expect do
-          Appeal.close(
+          LegacyAppeal.close(
             appeal: appeal,
             appeals: [appeal, another_appeal],
             user: user,
@@ -883,7 +511,7 @@ describe Appeal do
 
     context "when multiple appeals" do
       let(:appeal_with_nod_after_election_received) do
-        Generators::Appeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+        Generators::LegacyAppeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
       end
 
       it "closes each appeal with nod_date before election received_date" do
@@ -906,7 +534,7 @@ describe Appeal do
           disposition_code: "P"
         )
 
-        Appeal.close(
+        LegacyAppeal.close(
           appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
           user: user,
           closed_on: 4.days.ago,
@@ -918,7 +546,7 @@ describe Appeal do
 
     context "when just one appeal" do
       subject do
-        Appeal.close(
+        LegacyAppeal.close(
           appeal: appeal,
           user: user,
           closed_on: 4.days.ago,
@@ -984,15 +612,15 @@ describe Appeal do
 
   context ".reopen" do
     subject do
-      Appeal.reopen(
+      LegacyAppeal.reopen(
         appeals: [appeal, another_appeal],
         user: user,
         disposition: disposition
       )
     end
 
-    let(:appeal) { Generators::Appeal.build(vacols_record: :ramp_closed) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_completed) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ramp_closed) }
+    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_completed) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
 
@@ -1020,7 +648,7 @@ describe Appeal do
     end
 
     context "one of the non-remand appeals is active" do
-      let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
       it "should raise error" do
         expect { subject }.to raise_error("Only closed appeals can be reopened")
@@ -1029,7 +657,7 @@ describe Appeal do
   end
 
   context "#certify!" do
-    let(:appeal) { Appeal.new(vacols_id: "765") }
+    let(:appeal) { LegacyAppeal.new(vacols_id: "765") }
     subject { appeal.certify! }
 
     context "when form8 for appeal exists in the DB" do
@@ -1078,7 +706,7 @@ describe Appeal do
   end
 
   context "#certified?" do
-    subject { Appeal.new(certification_date: 2.days.ago) }
+    subject { LegacyAppeal.new(certification_date: 2.days.ago) }
 
     it "reads certification date off the appeal" do
       expect(subject.certified?).to be_truthy
@@ -1088,7 +716,7 @@ describe Appeal do
   end
 
   context "#hearing_pending?" do
-    subject { Appeal.new(hearing_requested: false, hearing_held: false) }
+    subject { LegacyAppeal.new(hearing_requested: false, hearing_held: false) }
 
     it "determines whether an appeal is awaiting a hearing" do
       expect(subject.hearing_pending?).to be_falsy
@@ -1100,7 +728,7 @@ describe Appeal do
   end
 
   context "#sanitized_vbms_id" do
-    subject { Appeal.new(vbms_id: "123C") }
+    subject { LegacyAppeal.new(vbms_id: "123C") }
 
     it "left-pads case-number ids" do
       expect(subject.sanitized_vbms_id).to eq("00000123")
@@ -1118,9 +746,9 @@ describe Appeal do
   end
 
   context "#fetch_appeals_by_file_number" do
-    subject { Appeal.fetch_appeals_by_file_number(file_number) }
+    subject { LegacyAppeal.fetch_appeals_by_file_number(file_number) }
     let!(:appeal) do
-      Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
+      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
@@ -1152,7 +780,7 @@ describe Appeal do
   end
 
   context ".convert_file_number_to_vacols" do
-    subject { Appeal.convert_file_number_to_vacols(file_number) }
+    subject { LegacyAppeal.convert_file_number_to_vacols(file_number) }
 
     context "for a file number with less than 9 digits" do
       context "with leading zeros" do
@@ -1191,7 +819,7 @@ describe Appeal do
   end
 
   context "#partial_grant_on_dispatch?" do
-    let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant_on_dispatch? }
 
     context "when no allowed issues" do
@@ -1221,7 +849,7 @@ describe Appeal do
   context "#full_grant_on_dispatch?" do
     let(:issues) { [] }
     let(:appeal) do
-      Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
+      Generators::LegacyAppeal.build(vacols_id: "123", status: status, issues: issues)
     end
     subject { appeal.full_grant_on_dispatch? }
 
@@ -1259,12 +887,12 @@ describe Appeal do
     subject { appeal.remand_on_dispatch? }
 
     context "status is not remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete") }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete") }
       it { is_expected.to be false }
     end
 
     context "status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
 
       context "contains at least one new-material allowed issue" do
         let(:issues) do
@@ -1292,7 +920,7 @@ describe Appeal do
 
   context "#decided_by_bva?" do
     let(:appeal) do
-      Generators::Appeal.build(vacols_id: "123", status: status, disposition: disposition)
+      Generators::LegacyAppeal.build(vacols_id: "123", status: status, disposition: disposition)
     end
 
     subject { appeal.decided_by_bva? }
@@ -1321,7 +949,7 @@ describe Appeal do
   context "#compensation_issues" do
     subject { appeal.compensation_issues }
 
-    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
 
@@ -1331,7 +959,7 @@ describe Appeal do
   context "#compensation?" do
     subject { appeal.compensation? }
 
-    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
@@ -1349,7 +977,7 @@ describe Appeal do
   context "#fully_compensation?" do
     subject { appeal.fully_compensation? }
 
-    let(:appeal) { Generators::Appeal.build(issues: issues) }
+    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
     let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
@@ -1368,7 +996,7 @@ describe Appeal do
     subject { appeal.eligible_for_ramp? }
 
     let(:appeal) do
-      Generators::Appeal.build(vacols_id: "123", status: status, location_code: location_code)
+      Generators::LegacyAppeal.build(vacols_id: "123", status: status, location_code: location_code)
     end
 
     let(:location_code) { nil }
@@ -1407,7 +1035,7 @@ describe Appeal do
           Generators::Issue.build(disposition: :remanded)
         ]
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
       it { is_expected.to eq("Remanded") }
     end
 
@@ -1418,12 +1046,12 @@ describe Appeal do
           Generators::Issue.build(disposition: :allowed)
         ]
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
       it { is_expected.to eq("Allowed") }
     end
 
     context "when disposition is not allowed" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
       it { is_expected.to eq("Vacated") }
     end
   end
@@ -1437,26 +1065,26 @@ describe Appeal do
           Generators::Issue.build(disposition: :remanded)
         ]
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to eq("Partial Grant") }
     end
 
     context "when it has a non-new-material allowed issue" do
       let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete", issues: issues) }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete", issues: issues) }
       it { is_expected.to eq("Full Grant") }
     end
 
     context "when it has a remanded issue" do
       let(:issues) { [Generators::Issue.build(disposition: :remand)] }
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand") }
       it { is_expected.to eq("Remand") }
     end
   end
 
   context "#task_header" do
     let(:appeal) do
-      Appeal.new(
+      LegacyAppeal.new(
         veteran_first_name: "Davy",
         veteran_middle_initial: "Q",
         veteran_last_name: "Crockett",
@@ -1473,7 +1101,7 @@ describe Appeal do
 
   context "#outcoded_by_name" do
     let(:appeal) do
-      Appeal.new(
+      LegacyAppeal.new(
         outcoder_last_name: "King",
         outcoder_middle_initial: "Q",
         outcoder_first_name: "Andrew"
@@ -1489,7 +1117,7 @@ describe Appeal do
 
   context "#station_key" do
     let(:appeal) do
-      Appeal.new(
+      LegacyAppeal.new(
         veteran_first_name: "Davy",
         veteran_middle_initial: "Q",
         veteran_last_name: "Crockett",
@@ -1523,11 +1151,11 @@ describe Appeal do
     let(:old_decision) do
       Document.new(received_at: 5.days.ago.to_date, type: "BVA Decision")
     end
-    let(:appeal) { Appeal.new(vbms_id: "123") }
+    let(:appeal) { LegacyAppeal.new(vbms_id: "123") }
 
     context "when only one decision" do
       before do
-        appeal.documents = [decision]
+        allow(appeal).to receive(:documents).and_return([decision])
         appeal.decision_date = Time.current
       end
 
@@ -1536,7 +1164,7 @@ describe Appeal do
 
     context "when only one recent decision" do
       before do
-        appeal.documents = [decision, old_decision]
+        allow(appeal).to receive(:documents).and_return([decision, old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1545,7 +1173,7 @@ describe Appeal do
 
     context "when no recent decision" do
       before do
-        appeal.documents = [old_decision]
+        allow(appeal).to receive(:documents).and_return([old_decision])
         appeal.decision_date = Time.current
       end
 
@@ -1564,7 +1192,7 @@ describe Appeal do
       let(:documents) { [decision, decision.clone] }
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
@@ -1580,7 +1208,7 @@ describe Appeal do
       end
 
       before do
-        appeal.documents = documents
+        allow(appeal).to receive(:documents).and_return(documents)
         appeal.decision_date = Time.current
       end
 
@@ -1589,7 +1217,7 @@ describe Appeal do
   end
 
   context "#non_canceled_end_products_within_30_days" do
-    let(:appeal) { Generators::Appeal.build(decision_date: 1.day.ago) }
+    let(:appeal) { Generators::LegacyAppeal.build(decision_date: 1.day.ago) }
     let(:result) { appeal.non_canceled_end_products_within_30_days }
 
     let!(:twenty_day_old_pending_ep) do
@@ -1646,7 +1274,7 @@ describe Appeal do
   end
 
   context "#special_issues?" do
-    let(:appeal) { Appeal.new(vacols_id: "123", us_territory_claim_philippines: true) }
+    let(:appeal) { LegacyAppeal.new(vacols_id: "123", us_territory_claim_philippines: true) }
     subject { appeal.special_issues? }
 
     it "is true if any special issues exist" do
@@ -1660,7 +1288,7 @@ describe Appeal do
   end
 
   context "#pending_eps" do
-    let(:appeal) { Generators::Appeal.build(decision_date: 1.day.ago) }
+    let(:appeal) { Generators::LegacyAppeal.build(decision_date: 1.day.ago) }
 
     let!(:pending_eps) do
       [
@@ -1726,13 +1354,13 @@ describe Appeal do
     end
 
     context "when one special issue is true" do
-      let(:appeal) { Appeal.new(dic_death_or_accrued_benefits_united_states: true) }
+      let(:appeal) { LegacyAppeal.new(dic_death_or_accrued_benefits_united_states: true) }
       it { is_expected.to eq(["DIC - death, or accrued benefits - United States"]) }
     end
 
     context "when many special issues are true" do
       let(:appeal) do
-        Appeal.new(
+        LegacyAppeal.new(
           foreign_claim_compensation_claims_dual_claims_appeals: true,
           vocational_rehab: true,
           education_gi_bill_dependents_educational_assistance_scholars: true,
@@ -1766,7 +1394,7 @@ describe Appeal do
     subject { appeal.issue_categories }
 
     let(:appeal) do
-      Generators::Appeal.build(issues: issues)
+      Generators::LegacyAppeal.build(issues: issues)
     end
 
     let(:issues) do
@@ -1789,19 +1417,19 @@ describe Appeal do
     subject { appeal.worksheet_issues.size }
 
     context "when appeal does not have any Vacols issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
+      let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :ready_to_certify) }
       it { is_expected.to eq 0 }
     end
 
     context "when appeal has Vacols issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :remand_decided) }
+      let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :remand_decided) }
       it { is_expected.to eq 2 }
     end
   end
 
   context "#update" do
     subject { appeal.update(appeals_hash) }
-    let(:appeal) { Generators::Appeal.create(vacols_record: :form9_not_submitted) }
+    let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :form9_not_submitted) }
 
     context "when Vacols does not need an update" do
       let(:appeals_hash) do
@@ -1900,7 +1528,7 @@ describe Appeal do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           docket_number: "13 11-265",
           regional_office_key: "RO13",
@@ -1931,7 +1559,7 @@ describe Appeal do
       subject { appeal.to_hash(viewed: true, issues: issues) }
 
       let!(:appeal) do
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           vacols_record: { soc_date: 4.days.ago },
           issues: issues
@@ -1959,23 +1587,23 @@ describe Appeal do
   end
 
   context ".for_api" do
-    subject { Appeal.for_api(vbms_id: "999887777S") }
+    subject { LegacyAppeal.for_api(vbms_id: "999887777S") }
 
     let!(:veteran_appeals) do
       [
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           vacols_record: { soc_date: 4.days.ago }
         ),
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           vacols_record: { type: "Reconsideration" }
         ),
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
         ),
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: nil }
         )
@@ -1992,13 +1620,13 @@ describe Appeal do
           skip: "Disabled without_lazy_load for appeals for fixing Welcome Gate" do
     let(:date) { Time.zone.today }
     let(:saved_appeal) do
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: { veteran_first_name: "George" }
       )
     end
     let(:appeal) do
-      Appeal.find_or_initialize_by(vacols_id: saved_appeal.vacols_id,
-                                   signed_date: date)
+      LegacyAppeal.find_or_initialize_by(vacols_id: saved_appeal.vacols_id,
+                                         signed_date: date)
     end
 
     it "creates an appeals object with attributes" do
@@ -2022,7 +1650,7 @@ describe Appeal do
     end
 
     context "when vbms_id is nil" do
-      let(:no_vbms_id_appeal) { Appeal.new(vacols_id: appeal.vacols_id) }
+      let(:no_vbms_id_appeal) { LegacyAppeal.new(vacols_id: appeal.vacols_id) }
 
       context "when appeal is in the DB" do
         before { no_vbms_id_appeal.save! }
@@ -2046,6 +1674,42 @@ describe Appeal do
           expect(no_vbms_id_appeal).to_not be_persisted
         end
       end
+    end
+  end
+
+  context "#save_to_legacy_appeals" do
+    let :appeal do
+      LegacyAppeal.create!(
+        vacols_id: "1234"
+      )
+    end
+
+    let :legacy_appeal do
+      LegacyAppeal.find(appeal.id)
+    end
+
+    it "Creates a legacy_appeal when an appeal is created" do
+      expect(legacy_appeal).to_not be_nil
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+
+    it "Updates a legacy_appeal when an appeal is updated" do
+      appeal.update!(rice_compliance: TRUE)
+      expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
+
+  context "#destroy_legacy_appeal" do
+    let :appeal do
+      LegacyAppeal.create!(
+        id: 1,
+        vacols_id: "1234"
+      )
+    end
+
+    it "Destroys a legacy_appeal when an appeal is destroyed" do
+      appeal.destroy!
+      expect(LegacyAppeal.where(id: appeal.id)).to_not exist
     end
   end
 end

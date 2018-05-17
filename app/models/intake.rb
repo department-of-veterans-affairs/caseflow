@@ -5,6 +5,7 @@ class Intake < ApplicationRecord
   belongs_to :detail, polymorphic: true
 
   enum completion_status: {
+    pending: "pending",
     success: "success",
     canceled: "canceled",
     error: "error"
@@ -22,7 +23,8 @@ class Intake < ApplicationRecord
     ramp_election: "RampElectionIntake",
     ramp_refiling: "RampRefilingIntake",
     supplemental_claim: "SupplementalClaimIntake",
-    higher_level_review: "HigherLevelReviewIntake"
+    higher_level_review: "HigherLevelReviewIntake",
+    appeal: "AppealIntake"
   }.freeze
 
   attr_reader :error_data
@@ -94,7 +96,7 @@ class Intake < ApplicationRecord
   end
 
   def cancel!(reason:, other: nil)
-    return if complete?
+    return if complete? || pending?
 
     transaction do
       cancel_detail!
@@ -125,6 +127,12 @@ class Intake < ApplicationRecord
     nil
   end
 
+  def start_complete!
+    update_attributes!(
+      completion_status: "pending"
+    )
+  end
+
   def complete_with_status!(status)
     update_attributes!(
       completed_at: Time.zone.now,
@@ -136,13 +144,13 @@ class Intake < ApplicationRecord
     if !file_number_valid?
       self.error_code = :invalid_file_number
 
-    elsif !veteran.found?
+    elsif !veteran
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
       self.error_code = :veteran_not_accessible
 
-    elsif !veteran.valid?
+    elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
       errors = veteran.errors.messages.map { |(key, _value)| key }
       @error_data = { veteran_missing_fields: errors }
@@ -165,7 +173,7 @@ class Intake < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   def ui_hash
@@ -173,8 +181,8 @@ class Intake < ApplicationRecord
       id: id,
       form_type: form_type,
       veteran_file_number: veteran_file_number,
-      veteran_name: veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran.name.formatted(:form),
+      veteran_name: veteran && veteran.name.formatted(:readable_short),
+      veteran_form_name: veteran && veteran.name.formatted(:form),
       completed_at: completed_at
     }
   end

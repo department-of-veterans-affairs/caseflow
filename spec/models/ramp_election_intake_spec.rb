@@ -22,7 +22,7 @@ describe RampElectionIntake do
   end
 
   let(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "64205555C",
       vacols_record: appeal_vacols_record,
       veteran: veteran,
@@ -58,6 +58,23 @@ describe RampElectionIntake do
 
     context "when already complete" do
       let(:completed_at) { 2.seconds.ago }
+
+      it "returns and does nothing" do
+        expect(intake).to_not be_persisted
+        expect(intake).to_not be_canceled
+        expect(intake).to have_attributes(
+          cancel_reason: nil,
+          cancel_other: nil
+        )
+        expect(detail.reload).to have_attributes(
+          option_selected: "supplemental_claim",
+          receipt_date: 3.days.ago.to_date
+        )
+      end
+    end
+
+    context "when completion is pending" do
+      let(:completion_status) { "pending" }
 
       it "returns and does nothing" do
         expect(intake).to_not be_persisted
@@ -166,7 +183,7 @@ describe RampElectionIntake do
 
     let!(:appeals) do
       [
-        Generators::Appeal.create(
+        Generators::LegacyAppeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(note: "Broken thigh"),
@@ -180,7 +197,7 @@ describe RampElectionIntake do
                                     note: "Broken knee")
           ]
         ),
-        Generators::Appeal.create(
+        Generators::LegacyAppeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(codes: %w[02 15],

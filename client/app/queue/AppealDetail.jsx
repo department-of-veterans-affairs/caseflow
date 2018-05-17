@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
-import { boldText, CATEGORIES, TASK_ACTIONS } from './constants';
+import { boldText, TASK_ACTIONS } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import StringUtil from '../util/StringUtil';
@@ -17,24 +17,18 @@ const appealSummaryUlStyling = css({
   listStyle: 'none'
 });
 const marginRight = css({ marginRight: '1rem' });
+const marginLeft = css({ marginLeft: '2rem' });
+const noTopBottomMargin = css({
+  marginTop: 0,
+  marginBottom: '1rem'
+});
 
 export default class AppealDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
 
-  getLastHearing = () => {
-    const hearings = this.getAppealAttr('hearings');
-
-    if (!hearings.length) {
-      return {};
-    }
-
-    return _.orderBy(hearings, 'date', 'desc')[0];
-  };
-
-  getHearingInfo = () => {
-    const hearing = this.getLastHearing();
+  getHearingAttrs = (hearing) => {
     const listElements = [{
-      label: 'Hearing preference',
+      label: 'Type',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
     }];
 
@@ -42,9 +36,15 @@ export default class AppealDetail extends React.PureComponent {
       return listElements;
     }
 
-    listElements.splice(1, 0, {
-      label: 'Hearing disposition',
-      value: StringUtil.snakeCaseToCapitalized(hearing.disposition)
+    listElements.push({
+      label: 'Disposition',
+      value: <React.Fragment>
+        {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
+        {hearing.viewed_by_judge && <Link rel="noopener" target="_blank"
+          href={`/hearings/${hearing.id}/worksheet/print`}>
+          View Hearing Worksheet
+        </Link>}
+      </React.Fragment>
     });
 
     if (hearing.disposition === 'cancelled') {
@@ -52,23 +52,48 @@ export default class AppealDetail extends React.PureComponent {
     }
 
     return listElements.concat([{
-      label: 'Hearing date',
-      value: <React.Fragment>
-        <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-        <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print`}>
-          View Hearing Worksheet
-        </Link>
-      </React.Fragment>
+      label: 'Date',
+      value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
     }, {
-      label: 'Judge at hearing',
+      label: 'Judge',
       value: hearing.held_by
     }]);
-  };
+  }
+
+  getHearingInfo = () => {
+    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'asc');
+    const hearingElementsStyle = css({
+      '&:first-of-type': {
+        marginTop: '1rem'
+      }
+    });
+
+    if (orderedHearings.length > 1) {
+      _.extend(hearingElementsStyle, marginLeft);
+    }
+
+    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
+      <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+      <BareList compact
+        listStyle={css(marginLeft, noTopBottomMargin)}
+        ListElementComponent="ul"
+        items={this.getHearingAttrs(hearing).map(this.getDetailField)} />
+    </div>);
+
+    return <React.Fragment>
+      {orderedHearings.length > 1 && <br />}
+      {hearingElements}
+    </React.Fragment>;
+  }
+
+  getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
+    {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
+  </React.Fragment>;
 
   getListElements = () => {
     const poaAttr = this.getAppealAttr('power_of_attorney');
     const listElements = [{
-      label: 'Type',
+      label: 'Type(s)',
       value: renderAppealType(this.props.appeal)
     }, {
       label: 'Power of Attorney',
@@ -86,30 +111,37 @@ export default class AppealDetail extends React.PureComponent {
     }];
 
     if (this.getAppealAttr('hearings').length) {
-      listElements.splice(2, 0, ...this.getHearingInfo());
+      listElements.splice(2, 0, {
+        label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
+        valueFunction: this.getHearingInfo
+      });
     }
 
-    const getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
-      <span {...boldText}>{label}:</span> {value || valueFunction()}
-    </React.Fragment>;
-
-    return <BareList ListElementComponent="ul" items={listElements.map(getDetailField)} />;
+    return <BareList
+      ListElementComponent="ul"
+      items={listElements.map(this.getDetailField)}
+      listStyle={css(appealSummaryUlStyling, {
+        '> li': {
+          paddingBottom: '1.5rem',
+          paddingTop: '1rem',
+          borderBottom: '1px solid grey'
+        }
+      })} />;
   };
 
-  componentDidMount() {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  componentDidMount = () => {
+    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.VIEW_APPEAL_INFO);
   }
 
   render = () => <div>
-    <h2>Appeal Summary</h2>
-    <ul {...appealSummaryUlStyling}>
-      {this.getListElements()}
-    </ul>
+    <h2 {...css({ marginBottom: '1rem' })}>Appeal Summary</h2>
+    {this.getListElements()}
     <h2>Issues</h2>
     <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
   </div>;
 }
 
 AppealDetail.propTypes = {
+  analyticsSource: PropTypes.string.isRequired,
   appeal: PropTypes.object.isRequired
 };

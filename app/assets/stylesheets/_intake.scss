@@ -15,7 +15,14 @@
 
 .cf-manage-intakes-header {
   display: grid;
+  grid-column-gap: 10px;
   grid-template-columns: auto auto;
+}
+
+.cf-selected-issues {
+  > span { font-weight: bold; }
+  display: block;
+  padding: 0.5em;
 }
 
 .cf-table-selections {

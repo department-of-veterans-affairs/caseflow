@@ -53,3 +53,16 @@ export const SET_WORKSHEET_SAVE_FAILED_STATUS = 'SET_WORKSHEET_SAVE_FAILED_STATU
 
 export const SET_WORKSHEET_EDITED_FLAG_TO_FALSE = 'SET_WORKSHEET_EDITED_FLAG_TO_FALSE';
 export const SET_EDITED_FLAG_TO_FALSE = 'SET_EDITED_FLAG_TO_FALSE';
+
+export const DISPOSITION_OPTIONS = [{ value: 'held',
+  label: 'Held' },
+{ value: 'no_show',
+  label: 'No Show' },
+{ value: 'cancelled',
+  label: 'Cancelled' },
+{ value: 'postponed',
+  label: 'Postponed' }];
+
+export const SERVER_ERROR_CODES = {
+  VACOLS_RECORD_DOES_NOT_EXIST: 1001
+};

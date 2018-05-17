@@ -25,8 +25,8 @@ class Judge
     upcoming_hearings_on(date).count > 0
   end
 
-  def upcoming_hearings_on(date)
-    upcoming_hearings.select do |hearing|
+  def upcoming_hearings_on(date, is_fetching_issues = false)
+    upcoming_hearings(is_fetching_issues).select do |hearing|
       hearing.date.between?(date, date.end_of_day)
     end
   end
@@ -44,8 +44,8 @@ class Judge
     upcoming_hearings.group_by { |h| h.date.strftime("%F") }
   end
 
-  def upcoming_hearings
-    Hearing.repository.fetch_hearings_for_judge(user.css_id).sort_by(&:date)
+  def upcoming_hearings(is_fetching_issues = false)
+    Hearing.repository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
   end
 
   def get_dockets_slots(dockets)
@@ -56,6 +56,7 @@ class Judge
     attr_writer :repository
 
     def repository
+      return JudgeRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= JudgeRepository
     end
 
