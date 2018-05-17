@@ -91,7 +91,7 @@ class ApplicationController < ApplicationBaseController
     role = current_user.vacols_role
     return true if role == "Attorney"
     return true if role == "Judge" && feature_enabled?(:judge_queue)
-    return false
+    false
   end
   helper_method :can_access_queue?
 
