@@ -334,7 +334,7 @@ RSpec.feature "Queue" do
         click_on sprintf(COPY::BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.veteran_full_name)
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-        expect(page.current_path).to match /^\/cases\/\d+$/
+        expect(page.current_path).to match(/^\/cases\/\d+$/)
       end
 
       it "clicking on back breadcrumb sends us to empty search home page" do
