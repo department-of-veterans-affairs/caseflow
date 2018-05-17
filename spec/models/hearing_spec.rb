@@ -17,7 +17,7 @@ describe Hearing do
       date: date,
       disposition: disposition,
       hold_open: hold_open,
-      type: type,
+      type: type
     )
   end
 
