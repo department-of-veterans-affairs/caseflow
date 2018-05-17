@@ -514,6 +514,9 @@ RSpec.feature "Queue" do
         click_on "documents in Caseflow Reader"
 
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
+
+        click_on "> Reader"
+        expect(page.current_path).to eq "/queue"
       end
     end
 
