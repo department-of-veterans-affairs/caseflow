@@ -48,18 +48,18 @@ module Fakes::Data::AppealData
 
   def self.certification_ready_to_certify
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010, 10, 13)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 2, 3)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 6, 27))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 17)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 18)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 8)),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 11, 29))
     ]
   end
 
   def self.certification_fuzzy_match_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 9, 30)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 3, 19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 3, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2016, 3, 3)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 8, 19)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 8, 31))
     ]
   end
 

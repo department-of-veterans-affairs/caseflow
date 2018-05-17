@@ -1,2 +1,0 @@
-class Appeal < ApplicationRecord
-end
