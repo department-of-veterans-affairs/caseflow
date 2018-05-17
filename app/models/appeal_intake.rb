@@ -1,6 +1,6 @@
 class AppealIntake < Intake
   def find_or_build_initial_detail
-    TemporaryAppeal.new(veteran_file_number: veteran_file_number)
+    Appeal.new(veteran_file_number: veteran_file_number)
   end
 
   def ui_hash
