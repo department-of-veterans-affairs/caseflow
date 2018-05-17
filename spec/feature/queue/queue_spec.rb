@@ -213,12 +213,10 @@ RSpec.feature "Queue" do
     before do
       FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
-      FeatureToggle.disable!(:queue_welcome_gate)
       FeatureToggle.disable!(:queue_phase_two)
     end
     after do
       FeatureToggle.enable!(:queue_phase_two)
-      FeatureToggle.enable!(:queue_welcome_gate)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
     end
