@@ -143,13 +143,13 @@ describe('.onMilitaryServiceChange', () => {
 });
 
 describe('.onSummaryChange', () => {
-  it('sets evidence text', () => {
+  it('sets summary text', () => {
 
-    const evidence = 'this is a worksheet summary text';
+    const summary = 'this is a worksheet summary text';
     const expectedAction = {
       type: Constants.SET_SUMMARY,
       payload: {
-        evidence
+        summary
       },
       meta: {
         analytics: {
@@ -159,6 +159,6 @@ describe('.onSummaryChange', () => {
       }
     };
 
-    expect(Actions.onSummaryChange(evidence)).to.deep.equal(expectedAction);
+    expect(Actions.onSummaryChange(summary)).to.deep.equal(expectedAction);
   });
 });
