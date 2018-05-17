@@ -1,8 +1,11 @@
 require "rails_helper"
 
 RSpec.describe HomeController, type: :controller do
-  before :each do
+  before do
     User.user_repository = Fakes::UserRepository
+  end
+
+  before :each do
     FeatureToggle.redis.flushall
   end
 
