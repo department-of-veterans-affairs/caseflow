@@ -24,7 +24,7 @@ export default class CaseSearchSheet extends React.PureComponent {
       <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
       <CaseListSearch elementId="searchBarEmptyList" />
       <hr {...horizontalRuleStyling} />
-      <p><Link to="/help">Caseflow Help</Link></p>
+      <p><Link href="/help">Caseflow Help</Link></p>
     </div>
   </AppSegment>;
 }
