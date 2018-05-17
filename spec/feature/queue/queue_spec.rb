@@ -295,7 +295,7 @@ RSpec.feature "Queue" do
       end
     end
 
-    context "when backend encounters an error" do #fail
+    context "when backend encounters an error" do
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/"
