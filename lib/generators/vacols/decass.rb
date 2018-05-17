@@ -48,7 +48,7 @@ class Generators::Vacols::Decass
     def create(attrs = {})
       attrs = decass_attrs.merge(attrs)
 
-      VACOLS::Decass.create(attrs)
+      VACOLS::Decass.find_or_create_by(attrs)
     end
   end
 end

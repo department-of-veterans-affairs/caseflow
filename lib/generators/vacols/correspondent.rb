@@ -66,7 +66,7 @@ class Generators::Vacols::Correspondent
     def create(attrs = {})
       attrs = correspondent_attrs.merge(attrs)
 
-      VACOLS::Correspondent.create(attrs)
+      VACOLS::Correspondent.find_or_create_by(attrs)
     end
   end
 end

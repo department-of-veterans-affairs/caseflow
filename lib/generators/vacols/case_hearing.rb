@@ -47,9 +47,9 @@ class Generators::Vacols::CaseHearing
     # rubocop:enable Metrics/MethodLength
 
     def create(attrs = [{}])
-      attrs = attrs.map { |hearing| case_hearing_attrs.merge(hearing) }
-
-      VACOLS::CaseHearing.create(attrs)
+      attrs = attrs.map do |hearing|
+        VACOLS::CaseHearing.find_or_create_by(case_hearing_attrs.merge(hearing))
+      end
     end
   end
 end

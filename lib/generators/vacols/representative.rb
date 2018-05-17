@@ -4,7 +4,7 @@ class Generators::Vacols::Representative
     def representative_attrs
       {
         repkey: "877483",
-        repaddtime: "2017-10-13 06:51:24 UTC",
+        repaddtime: Time.now.utc,
         reptype: nil,
         repso: nil,
         replast: "Runte",
@@ -34,7 +34,7 @@ class Generators::Vacols::Representative
     def create(attrs = {})
       attrs = representative_attrs.merge(attrs)
 
-      VACOLS::Representative.create(attrs)
+      VACOLS::Representative.find_or_create_by(attrs)
     end
   end
 end

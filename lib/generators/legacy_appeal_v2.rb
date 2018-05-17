@@ -51,7 +51,7 @@ class Generators::LegacyAppealV2
     #       Look at the generator for options.
     def build(attrs = {})
       attrs = convert_old_generator_keys(attrs)
-      attrs = default_attrs.merge(attrs)
+      attrs = default_attrs.deep_merge(attrs)
 
       # Setting up vacols data must come prior to creating appeal so
       # appeal code picks up the persisted data.
@@ -68,6 +68,7 @@ class Generators::LegacyAppealV2
     def convert_old_generator_keys(attrs)
       case_record = {}
       correspondent_record = {}
+      folder_record = {}
 
       case_record[:bfac] = VACOLS::Case::TYPES.invert[attrs.delete(:type)]
       case_record[:bfpdnum] = attrs.delete(:insurance_loan_number)
@@ -79,7 +80,9 @@ class Generators::LegacyAppealV2
       case_record[:bfhr] = VACOLS::Case::HEARING_REQUEST_TYPES.invert[attrs.delete(:hearing_request_type)]
       case_record[:bfdocind] = "V" if attrs.delete(:video_hearing_requested)
       case_record[:bfhr] = "1" if attrs.delete(:hearing_requested)
-      case_record[:bfha] = "Y" if attrs.delete(:hearing_held)
+
+      binding.pry
+      case_record[:bfha] = attrs.delete(:hearing_held) ? "Y" : nil if attrs.has_key?(:hearing_held)
       case_record[:bfregoff] = attrs.delete(:regional_office_key)
       case_record[:bf41stat] = attrs.delete(:certification_date)
 
@@ -94,8 +97,11 @@ class Generators::LegacyAppealV2
 
       case_record[:reptype] = "C" if attrs.delete(:contested_claim)
 
-      attrs.delete(:ssoc_dates).each_with_index do |date, i|
-        case_record["bfssoc#{i+1}".to_sym] = date
+      ssoc_dates = attrs.delete(:ssoc_dates)
+      if ssoc_dates
+        (ssoc_dates + (5 - ssoc_dates.size).times.map { nil }).each_with_index do |date, i|
+          case_record["bfssoc#{i+1}".to_sym] = date
+        end
       end
 
       correspondent_record[:snamef] = attrs.delete(:veteran_first_name)
@@ -117,17 +123,22 @@ class Generators::LegacyAppealV2
       correspondent_record[:saddrcnty] = attrs.delete(:appellant_country)
       correspondent_record[:saddrzip] = attrs.delete(:appellant_zip)
 
-      return attrs.merge({
+      folder_record[:tidktime] = attrs.delete(:case_review_date)
+
+      old_generator_attrs = {
         case_attrs: case_record,
-        correspondent_attrs: correspondent_record
-      })
+        correspondent_attrs: correspondent_record,
+        folder_attrs: folder_record
+      }
+
+      return old_generator_attrs.deep_merge(attrs)
       # file_type: folder_type_from(folder_record),
       # representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
 
       # outcoder_first_name: outcoder_record.try(:snamef),
       # outcoder_last_name: outcoder_record.try(:snamel),
       # outcoder_middle_initial: outcoder_record.try(:snamemi),
-      # case_review_date: folder_record.tidktime,
+      # 
       # outcoding_date: normalize_vacols_date(folder_record.tioctime),
       
       # docket_number: folder_record.tinum
@@ -152,7 +163,7 @@ class Generators::LegacyAppealV2
       }
 
       Generators::Vacols::Case.create(
-        default_case_attrs.merge(
+        default_case_attrs.deep_merge(
           attrs
         )
       )

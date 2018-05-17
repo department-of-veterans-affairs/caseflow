@@ -135,7 +135,7 @@ class Generators::Vacols::Case
       staff_attrs[:slogid] = custom_case_attrs[:bfcurloc]
       Generators::Vacols::Staff.create(staff_attrs)
 
-      VACOLS::Case.create(custom_case_attrs)
+      VACOLS::Case.find_or_create_by(custom_case_attrs)
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/AbcSize
