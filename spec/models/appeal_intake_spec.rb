@@ -27,7 +27,7 @@ describe AppealIntake do
 
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
-    let(:detail) { TemporaryAppeal.new(veteran_file_number: veteran_file_number) }
+    let(:detail) { Appeal.new(veteran_file_number: veteran_file_number) }
 
     it "updates appeal with values" do
       expect(subject).to be_truthy
@@ -61,7 +61,7 @@ describe AppealIntake do
     end
 
     let(:detail) do
-      TemporaryAppeal.create!(
+      Appeal.create!(
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )

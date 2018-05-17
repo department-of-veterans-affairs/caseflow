@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.6",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.7",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -35,6 +35,9 @@
     "babel-runtime": "^6.6.1",
     "classnames": "^2.2.5",
     "detect-browser": "^2.4.0",
+    "dompurify": "^1.0.3",
+    "draft-js": "^0.10.5",
+    "draftjs-to-html": "^0.8.3",
     "enzyme-adapter-react-16": "^1.1.1",
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.3",
@@ -55,6 +58,7 @@
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.2.0",
+    "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-on-rails": "^8.0.6",
