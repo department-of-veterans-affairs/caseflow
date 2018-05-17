@@ -225,6 +225,13 @@ RSpec.feature "Hearings" do
         expect(page).to have_content("Veteran First Name A. Veteran Last Name1")
         expect(page.title).to eq "V. Veteran Last Name1's Hearing Worksheet"
       end
+
+      scenario "Hearing worksheet default summary shows up" do
+        visit "/hearings/1/worksheet"
+        expect(page).to have_content("Contentions")
+        expect(page).to have_content("Evidence")
+        expect(page).to have_content("Comments and special instructions to attorneys")
+      end
     end
 
     scenario "Worksheet saves on refresh" do
