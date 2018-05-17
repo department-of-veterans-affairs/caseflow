@@ -29,7 +29,6 @@ module EstablishesEndProduct
   end
 
   def establish_end_product!
-    raise VBMS::HTTPError.new("500", "Test error")
     fail InvalidEndProductError unless end_product_to_establish.valid?
 
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
@@ -39,7 +38,6 @@ module EstablishesEndProduct
       )
     end
   rescue VBMS::HTTPError => error
-    Intake.clear_completion_status!
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 

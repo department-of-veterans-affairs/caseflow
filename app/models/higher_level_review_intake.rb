@@ -26,7 +26,12 @@ class HigherLevelReviewIntake < Intake
 
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
-    detail.create_end_product_and_contentions!
+    begin
+      detail.create_end_product_and_contentions!
+    rescue StandardError
+      return clear_pending!
+    end
+
     complete_with_status!(:success)
   end
 end

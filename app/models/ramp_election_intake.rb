@@ -38,7 +38,7 @@ class RampElectionIntake < Intake
       if ramp_election.create_or_connect_end_product! == :connected
         update!(error_code: "connected_preexisting_ep")
       end
-    rescue
+    rescue StandardError
       return clear_pending!
     end
 
