@@ -28,6 +28,16 @@ const headerColumnsContainerStyle = css(fullWidth, {
 const hrStyling = css(marginTop(2), marginBottom(3));
 
 class EvaluateDecisionView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      caseComplexity: null,
+      caseQuality: null,
+      additionalFactors: ''
+    };
+  }
+
   render = () => {
     const {
       appeal: { attributes: appeal },
@@ -68,7 +78,8 @@ class EvaluateDecisionView extends React.PureComponent {
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
-        onChange={_.noop}
+        onChange={(caseComplexity) => this.setState({ caseComplexity })}
+        value={this.state.caseComplexity}
         options={[{
           value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
@@ -83,7 +94,8 @@ class EvaluateDecisionView extends React.PureComponent {
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
-        onChange={_.noop}
+        onChange={(caseQuality) => this.setState({ caseQuality })}
+        value={this.state.caseQuality}
         options={[{
           value: '5',
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
@@ -156,7 +168,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}
         hideLabel
-        onChange={_.noop} />
+        value={this.state.additionalFactors}
+        onChange={(additionalFactors) => this.setState({ additionalFactors })} />
     </React.Fragment>;
   };
 }
