@@ -535,6 +535,7 @@ RSpec.feature "Queue" do
     before do
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
+      FeatureToggle.enable!(:judge_queue)
     end
 
     after do
@@ -594,7 +595,7 @@ RSpec.feature "Queue" do
     end
 
     context "prepares/fails to submit decision" do
-      scenario "fails to submit omo decision" do
+      scenario "fails to submit omo decision", focus: true do
         appeal = vacols_appeals.first
         visit "/queue"
 
