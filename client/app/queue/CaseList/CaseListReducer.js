@@ -24,7 +24,11 @@ export const caseListReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.CLEAR_CASE_LIST_SEARCH:
-    return initialState;
+    return update(state, {
+      caseListCriteria: { $set: initialState.caseListCriteria },
+      isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
+      search: { $set: initialState.search }
+    });
   case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:
     return update(state, {
       receivedAppeals: { $set: initialState.receivedAppeals },

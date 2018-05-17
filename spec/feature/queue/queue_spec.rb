@@ -85,13 +85,8 @@ RSpec.feature "Queue" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -117,13 +112,8 @@ RSpec.feature "Queue" do
         )
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -170,12 +160,11 @@ RSpec.feature "Queue" do
 
       it "search bar stays in top right" do
         expect(page).to have_selector("#searchBar")
-        expect(page).to_not have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(find("#searchBar")).to have_content("")
       end
 
       it "clicking on docket number sends us to the case details page" do
