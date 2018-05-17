@@ -32,8 +32,8 @@ import {
 
 import { saveIssues } from './actions/Issue';
 
-const toolbarOptions = {
-  options: ['inline', 'fontSize', 'list', 'colorPicker', 'link'],
+const toolbar = {
+  options: ['inline', 'fontSize', 'list', 'colorPicker'],
   inline: {
     inDropdown: false,
     options: ['bold', 'italic', 'underline']
@@ -53,7 +53,7 @@ const toolbarOptions = {
 
 const DEFAULT_SUMMARY_VALUE = '<p><strong>Contentions</strong></p> <p></p>' +
   '<p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><strong>Comments' +
-  'and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
+  ' and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
 
 class WorksheetFormEntry extends React.PureComponent {
 
@@ -62,7 +62,7 @@ class WorksheetFormEntry extends React.PureComponent {
       minRows: 3,
       maxRows: 5000,
       value: this.props.value || '',
-      toolbarOptions,
+      toolbar,
       ..._.pick(
         this.props,
         [
@@ -137,7 +137,7 @@ export class HearingWorksheet extends React.PureComponent {
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Hearing Summary"
-          value={worksheet.summary || DEFAULT_SUMMARY_VALUE}
+          value={this.props.worksheet.summary || DEFAULT_SUMMARY_VALUE}
           onChange={this.onSummaryChange}
           id="worksheet-hearing-summary"
           minRows={1}

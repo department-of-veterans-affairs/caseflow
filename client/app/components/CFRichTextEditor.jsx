@@ -25,10 +25,10 @@ export default class CFRichTextEditor extends React.PureComponent {
     const { value } = this.props;
     const contentBlock = htmlToDraft(value);
 
-    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-    const editorState = EditorState.createWithContent(contentState);
+    if (contentBlock) {
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+      const editorState = EditorState.createWithContent(contentState);
 
-    if (value) {
       this.setState({ editorState });
     }
   };
@@ -79,5 +79,6 @@ CFRichTextEditor.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
   name: PropTypes.string,
-  required: PropTypes.bool
+  required: PropTypes.bool,
+  onChange: PropTypes.func
 };
