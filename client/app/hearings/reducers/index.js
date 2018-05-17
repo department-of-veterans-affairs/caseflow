@@ -10,7 +10,9 @@ import * as Constants from '../constants/constants';
 import _ from 'lodash';
 
 export const mapDataToInitialState = function(state = {}) {
-  return state;
+  return update(state, {
+    worksheetServerError: { $set: {} }
+  });
 };
 
 export const newHearingState = (state, action, spec) => {
@@ -115,7 +117,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
-      worksheetServerError: { $set: action.payload.err },
+      worksheetServerError: {
+        // this else condition is needed for 500s
+        errors: { $set: action.payload.err.response.body ? action.payload.err.response.body.errors :
+          action.payload.err },
+        status: { $set: action.payload.err.response.status }
+      },
       fetchingWorksheet: { $set: false }
     });
 

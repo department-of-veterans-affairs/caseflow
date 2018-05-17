@@ -157,6 +157,18 @@ class Hearing < ApplicationRecord
     )
   end
 
+  def fetch_veteran_age
+    veteran_age
+  rescue Module::DelegationError
+    nil
+  end
+
+  def fetch_veteran_sex
+    veteran_sex
+  rescue Module::DelegationError
+    nil
+  end
+
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
@@ -165,8 +177,6 @@ class Hearing < ApplicationRecord
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :veteran_age,
-                :veteran_sex,
                 :appellant_city,
                 :appellant_state,
                 :military_service,
@@ -174,7 +184,12 @@ class Hearing < ApplicationRecord
                 :veteran_mi_formatted,
                 :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
-    ).merge(to_hash(current_user_id))
+    ).merge(
+      to_hash(current_user_id)
+    ).merge(
+      veteran_sex: fetch_veteran_sex,
+      veteran_age: fetch_veteran_age
+    )
   end
 
   def appeals_ready_for_hearing
@@ -221,6 +236,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
+      return HearingRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= HearingRepository
     end
 

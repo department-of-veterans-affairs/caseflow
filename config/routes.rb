@@ -105,8 +105,7 @@ Rails.application.routes.draw do
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
 
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
+  root 'home#index'
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
@@ -128,8 +127,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id', to: 'tasks#index'
 
-    # Remove this route
-    post '/appeals/:task_id/complete', to: 'tasks#complete'
+    post '/appeals/:id/complete', to: 'tasks#complete'
   end
 
   resources :tasks, only: [:create, :update] do
