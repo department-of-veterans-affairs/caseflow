@@ -595,7 +595,7 @@ RSpec.feature "Queue" do
     end
 
     context "prepares/fails to submit decision" do
-      scenario "fails to submit omo decision", focus: true do
+      scenario "fails to submit omo decision" do
         appeal = vacols_appeals.first
         visit "/queue"
 
