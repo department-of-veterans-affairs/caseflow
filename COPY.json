@@ -41,5 +41,12 @@
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases"
+  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
+
+  "IS_PAPER_CASE": "This is a paper case",
+  "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
+  "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
+
+  "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
 }

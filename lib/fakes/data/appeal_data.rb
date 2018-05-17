@@ -48,18 +48,18 @@ module Fakes::Data::AppealData
 
   def self.certification_ready_to_certify
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010, 10, 13)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 2, 3)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 6, 27))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 17)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 18)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 8)),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 11, 29))
     ]
   end
 
   def self.certification_fuzzy_match_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 9, 30)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 3, 19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 3, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2016, 3, 3)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 8, 19)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 8, 31))
     ]
   end
 
@@ -561,6 +561,49 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ],
         documents: static_reader_documents
+      ),
+      Generators::LegacyAppeal.build(
+        vacols_record: :veteran_is_appellant,
+        file_type: "Paper",
+        type: "Original",
+        vacols_id: "555552",
+        assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
+        reassigned_to_judge_date: "2013-05-31 00:00:00 UTC".to_datetime,
+        assigned_to_location_date: "2013-01-17 00:00:00 UTC".to_datetime,
+        created_at: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_due: "2018-02-13 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        vbms_id: "384920173S",
+        veteran_first_name: "Polly",
+        veteran_middle_initial: "A",
+        veteran_last_name: "Carter",
+        veteran_date_of_birth: "1970-02-14 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
+        appellant_address_line_1: "303320 Rockwood Rd",
+        appellant_city: "Rennerchester",
+        appellant_state: "AZ",
+        appellant_zip: "71882",
+        appellant_country: "USA",
+        docket_number: "13 11-265",
+        added_by_first_name: "Enid",
+        added_by_middle_name: "Z",
+        added_by_last_name: "Rempel",
+        added_by_css_id: "EREMPEL",
+        docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
+        regional_office_key: "RO30",
+        representative: "Virginia Department of Veterans Affairs",
+        issues: [
+          {
+            vacols_sequence_id: 1,
+            codes: %w[02 15 03 7101],
+            labels: ["Compensation",
+                     "Service connection",
+                     "All Others",
+                     "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
+            note: "hypertension secondary to DMII."
+          }
+        ],
+        documents: random_reader_documents(3)
       )
     ].each(&:save)
   end
