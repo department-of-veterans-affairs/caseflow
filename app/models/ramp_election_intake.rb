@@ -34,8 +34,12 @@ class RampElectionIntake < Intake
     return if complete? || pending?
     start_complete!
 
-    if ramp_election.create_or_connect_end_product! == :connected
-      update!(error_code: "connected_preexisting_ep")
+    begin
+      if ramp_election.create_or_connect_end_product! == :connected
+        update!(error_code: "connected_preexisting_ep")
+      end
+    rescue
+      return clear_pending!
     end
 
     close_eligible_appeals!
@@ -49,10 +53,6 @@ class RampElectionIntake < Intake
           nod_date: appeal.nod_date
         )
       end
-    end
-
-    if pending?
-      clear_completion_status!
     end
   end
 

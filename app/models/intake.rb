@@ -133,7 +133,7 @@ class Intake < ApplicationRecord
     )
   end
 
-  def clear_completion_status!
+  def clear_pending!
     update_attributes!(
       completion_status: nil
     )
