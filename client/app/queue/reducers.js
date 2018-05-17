@@ -35,7 +35,8 @@ export const initialState = {
     }
   },
   attorneysOfJudge: [],
-  tasksAndAppealsOfAttorney: {}
+  tasksAndAppealsOfAttorney: {},
+  isVacolsIdAssignedToUserSelected: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -258,6 +259,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
             state: 'FAILED',
             error: action.payload.error
           }
+        }
+      }
+    });
+  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER:
+    return update(state, {
+      isVacolsIdAssignedToUserSelected: {
+        [action.payload.userId]: {
+          $set: update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
+            [action.payload.vacolsId]: {
+              $set: action.payload.selected
+            }
+          })
         }
       }
     });

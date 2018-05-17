@@ -20,12 +20,12 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney } from './QueueActions';
+import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 
-const UnassignedCasesPage = ({ tasksWithAppeals }) => {
-  const reviewableCount = tasksWithAppeals.length;
+const UnassignedCasesPage = (props) => {
+  const reviewableCount = props.tasksAndAppeals.length;
   let tableContent;
 
   if (reviewableCount === 0) {
@@ -35,7 +35,7 @@ const UnassignedCasesPage = ({ tasksWithAppeals }) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Unassigned Cases</h2>
-      <JudgeAssignTaskTable tasksAndAppeals={tasksWithAppeals} />
+      <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
 
@@ -122,6 +122,12 @@ class JudgeAssignTaskListView extends React.PureComponent {
       '?';
   }
 
+  handleToggleSelection = ({ userId, vacolsId, selected }) => {
+    console.log(userId, vacolsId, selected);
+    if (selected) {
+    }
+  }
+
   render = () => {
     const { userId, attorneysOfJudge, match } = this.props;
 
@@ -163,7 +169,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
             exact
             path={match.url}
             title="Unassigned Cases | Caseflow"
-            render={() => <UnassignedCasesPage tasksWithAppeals={this.unassignedTasksWithAppeals()} />}
+            render={
+              () => <UnassignedCasesPage
+                tasksAndAppeals={this.unassignedTasksWithAppeals()}
+                vacolsIdsOfSelectedTasks={{}}
+                onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId, ...args})} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -195,7 +205,8 @@ const mapDispatchToProps = (dispatch) => (
     resetSuccessMessages,
     resetSaveState,
     setAttorneysOfJudge,
-    fetchTasksAndAppealsOfAttorney
+    fetchTasksAndAppealsOfAttorney,
+    setSelectionOfTaskOfUser
   }, dispatch)
 );
 

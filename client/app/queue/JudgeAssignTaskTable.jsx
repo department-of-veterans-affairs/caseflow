@@ -7,6 +7,7 @@ import moment from 'moment';
 import { renderAppealType } from './utils';
 import AppealDocumentCount from './AppealDocumentCount';
 import COPY from '../../../COPY.json';
+import Checkbox from '../components/Checkbox';
 
 export default class JudgeAssignTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, { task }) => task.id;
@@ -16,7 +17,7 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
   getQueueColumns = () => [
     {
       header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
-      valueFunction: () => 'Box'
+      valueFunction: ({task}) => <Checkbox name="noo" label="&nbsp;" value={task.vacolsId in this.props.vacolsIdsOfSelectedTasks} onChange={(checked) => this.props.onToggleSelectionOfTaskWithVacolsId({vacolsId: task.vacolsId, selected: checked})} />
     },
     {
       header: COPY.JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE,
@@ -57,5 +58,6 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
 }
 
 JudgeAssignTaskTable.propTypes = {
-  tasksAndAppeals: PropTypes.array.isRequired
+  tasksAndAppeals: PropTypes.array.isRequired,
+  vacolsIdsOfSelectedTasks: PropTypes.object.isRequired
 };
