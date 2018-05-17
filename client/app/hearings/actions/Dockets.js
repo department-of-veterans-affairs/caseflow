@@ -170,19 +170,6 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const onContentionsChange = (contentions) => ({
-  type: Constants.SET_CONTENTIONS,
-  payload: {
-    contentions
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
-  }
-});
-
 export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
@@ -196,23 +183,10 @@ export const onMilitaryServiceChange = (militaryService) => ({
   }
 });
 
-export const onEvidenceChange = (evidence) => ({
-  type: Constants.SET_EVIDENCE,
+export const onSummaryChange = (summary) => ({
+  type: Constants.SET_SUMMARY,
   payload: {
-    evidence
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
-  }
-});
-
-export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
-  type: Constants.SET_COMMENTS_FOR_ATTORNEY,
-  payload: {
-    commentsForAttorney
+    summary
   },
   meta: {
     analytics: {

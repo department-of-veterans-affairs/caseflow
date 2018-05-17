@@ -2,7 +2,7 @@ class Reader::AppealController < Reader::ApplicationController
   def index
     respond_to do |format|
       format.html do
-        return redirect_to "/queue" if feature_enabled?(:queue_welcome_gate)
+        return redirect_to "/queue" if can_access_queue?
         render(:index)
       end
       format.json do

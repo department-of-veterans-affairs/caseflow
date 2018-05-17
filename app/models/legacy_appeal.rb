@@ -9,9 +9,6 @@ class LegacyAppeal < ApplicationRecord
   has_many :worksheet_issues, foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
-  after_save :save_to_appeals
-  before_destroy :destroy_appeal
-
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -516,17 +513,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
-
-  def save_to_appeals
-    appeal = Appeal.find(attributes["id"])
-    appeal.update!(attributes)
-  rescue ActiveRecord::RecordNotFound
-    Appeal.create!(attributes)
-  end
-
-  def destroy_appeal
-    Appeal.find(attributes["id"]).destroy!
-  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
