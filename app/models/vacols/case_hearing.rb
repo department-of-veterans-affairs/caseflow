@@ -1,6 +1,7 @@
 class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"
+  self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
 
@@ -73,6 +74,16 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
+    def create_hearing!(hearing_info)
+      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+      MetricsService.record("VACOLS: create_hearing!",
+                            service: :vacols,
+                            name: "create_hearing") do
+        binding.pry
+        create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+      end
+    end
+
     private
 
     def select_hearings
@@ -111,15 +122,6 @@ class VACOLS::CaseHearing < VACOLS::Record
                           service: :vacols,
                           name: "update_hearing") do
       update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
-    end
-  end
-
-  def create_hearing!(hearing_info)
-    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-    MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
-                          service: :vacols,
-                          name: "update_hearing") do
-      create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 

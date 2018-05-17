@@ -48,7 +48,7 @@ class HearingRepository
 
     def create_vacols_hearing!(hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
-      vacols_record.create_hearing!(hearing_hash) if hearing_hash.present?
+      VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
     end
 
     def load_vacols_data(hearing)
