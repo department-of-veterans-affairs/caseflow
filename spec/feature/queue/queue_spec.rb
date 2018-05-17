@@ -59,7 +59,7 @@ RSpec.feature "Queue" do
   end
   let!(:issues) { [Generators::Issue.build] }
   let! :attorney_user do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(css_id: "BVAAABSHIRE", roles: ["System Admin"])
   end
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
@@ -290,7 +290,7 @@ RSpec.feature "Queue" do
       end
     end
 
-    context "when backend encounters an error" do
+    context "when backend encounters an error" do #fail
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/"
