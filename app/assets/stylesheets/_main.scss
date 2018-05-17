@@ -57,24 +57,6 @@ body {
   color: $color-gray-dark !important;
 }
 
-.cf-dropdown {
-  a {
-    color: $color-gray-dark;
-
-    &:hover {
-      color: $color-gray-dark;
-    }
-  }
-
-  li {
-    a:hover {
-      color: $color-white;
-    }
-  }
-}
-
-
-
 .cf-content-inside {
   padding-bottom: 12.353em;
 
@@ -110,10 +92,6 @@ body {
     padding: $cf-30px 0;
     height: auto;
   }
-}
-
-.cf-dropdown-trigger::after {
-  background-size: .75em;
 }
 
 .cf-actions {
@@ -201,30 +179,6 @@ body {
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
-}
-
-.cf-stats {
-  margin-top: 0;
-
-  .cf-tab-navigation {
-    margin: 0;
-    margin-bottom: 2em;
-  }
-}
-
-.cf-stats-section {
-  &.-activity,
-  &.-certification {
-    .bar { fill: $color-primary-alt; }
-  }
-
-  &.-timing {
-    .bar { fill: $color-green-light; }
-  }
-
-  &.-missing {
-    .bar { fill: $color-secondary; }
-  }
 }
 
 .cf-associated-header {
@@ -621,18 +575,6 @@ select {
   .cf-empty-cell-header {
     min-width: 90px;
   }
-}
-
-.cf-work-assignments-user-index {
-  display: block;
-  float: left;
-  width: 1.5em;
-}
-
-.cf-work-assignments-user {
-  display: block;
-  padding-left: 1.6em;
-  white-space: nowrap;
 }
 
 .cf-form-textinput,
