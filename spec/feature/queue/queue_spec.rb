@@ -226,7 +226,7 @@ RSpec.feature "Queue" do
       FeatureToggle.disable!(:queue_case_search)
     end
 
-    scenario "logo links to / instead of /queue"
+    scenario "logo links to / instead of /queue" do
       visit "/"
       have_link("Caseflow", href: "/")
     end
