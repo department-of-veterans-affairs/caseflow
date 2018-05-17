@@ -23,23 +23,23 @@ FactoryBot.define do
     factory :case_with_nod do
       bfdnod { 1.year.ago }
       transient do
-        nod_document { [Document.new(type: "NOD", received_at: 1.year.ago)] }
+        nod_document { [create(:document, type: "NOD", received_at: 1.year.ago)] }
       end
 
       factory :case_with_soc do
         bfdsoc { 6.months.ago }
         transient do
-          soc_document { [Document.new(type: "SOC", received_at: 6.months.ago)] }
+          soc_document { [create(:document, type: "SOC", received_at: 6.months.ago)] }
         end
 
-        factory :case_with_form_9 do
-          bfd19 { 3.months.ago }
-          transient do
-            form9_document { [Document.new(type: "Form9", received_at: 6.months.ago)] }
-          end
+        factory :case_with_notification_date do
+          bfdrodec { 75.days.ago}
 
-          factory :case_with_notification_date do
-            bfdrodec { 75.days.ago}
+          factory :case_with_form_9 do
+            bfd19 { 3.months.ago }
+            transient do
+              form9_document { [create(:document, type: "Form 9", received_at: 3.months.ago)] }
+            end
 
             factory :case_with_ssoc do
               transient do
@@ -48,11 +48,11 @@ FactoryBot.define do
               transient do
                 ssoc_documents do
                   [
-                    Document.new(type: "SSOC", received_at: 2.months.ago),
-                    Document.new(type: "SSOC", received_at: 1.months.ago),
-                    Document.new(type: "SSOC", received_at: 10.day.ago),
-                    Document.new(type: "SSOC", received_at: 5.days.ago),
-                    Document.new(type: "SSOC", received_at: 2.days.ago)
+                    create(:document, type: "SSOC", received_at: 2.months.ago),
+                    create(:document, type: "SSOC", received_at: 1.month.ago),
+                    create(:document, type: "SSOC", received_at: 10.day.ago),
+                    create(:document, type: "SSOC", received_at: 5.days.ago),
+                    create(:document, type: "SSOC", received_at: 2.days.ago)
                   ]
                 end
               end
@@ -67,7 +67,7 @@ FactoryBot.define do
                 bfddec { 1.day.ago}
 
                 transient do
-                  decision_document { [Document.new(type: "BVA Decision", received_at: 1.day.ago)] }
+                  decision_document { [create(:document, type: "BVA Decision", received_at: 1.day.ago)] }
                 end
               end
             end
@@ -83,6 +83,17 @@ FactoryBot.define do
     trait :reconsideration do
       bfac 4
     end
+
+    trait :certified do
+      transient do
+        certification_date 1.day.ago
+      end
+
+      bfdcertool { certification_date }
+      bf41stat { certification_date }
+    end
+
+
     
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}

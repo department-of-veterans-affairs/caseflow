@@ -95,10 +95,10 @@ describe Appeal do
     before do
       allow(appeal).to receive(:documents).and_return(
         [
-          Document.new(type: "NOD", received_at: 7.days.ago),
-          Document.new(type: "BVA Decision", received_at: 7.days.ago),
-          Document.new(type: "BVA Decision", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 6.days.ago)
+          FactoryBot.build(:document, type: "NOD", received_at: 7.days.ago),
+          FactoryBot.build(:document, type: "BVA Decision", received_at: 7.days.ago),
+          FactoryBot.build(:document, type: "BVA Decision", received_at: 6.days.ago),
+          FactoryBot.build(:document, type: "SSOC", received_at: 6.days.ago)
         ]
       )
     end
@@ -272,6 +272,7 @@ describe Appeal do
       let(:vacols_case) do
         FactoryBot.create(:case)
       end
+
       it { is_expected.to eq(nil) }
     end
 
@@ -279,11 +280,16 @@ describe Appeal do
       let(:vacols_case) do
         FactoryBot.create(:case_with_decision, bfddec: 30.days.ago)
       end
+
       it { is_expected.to eq(90.days.from_now.to_date) }
     end
   end
 
   context "#events" do
+    let(:vacols_case) do
+      FactoryBot.create(:case_with_form_9)
+    end
+
     subject { appeal.events }
 
     it "returns list of events" do
@@ -296,66 +302,42 @@ describe Appeal do
   end
 
   context "#documents_match?" do
-    let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
-    let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
-    let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
-
-    let(:base_documents) { [nod_document, soc_document, form9_document] }
-
     subject { appeal.documents_match? }
-    before do
-      allow(appeal).to receive(:documents).and_return(documents)
-    end
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
       context "when there are no ssocs" do
-        let(:documents) { base_documents }
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_form_9)
+        end
 
         it { is_expected.to be_truthy }
       end
 
       context "when ssoc dates don't match" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
-          ]
-        end
-
-        before do
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, bfssoc1: 2.days.ago, bfssoc2: 2.days.ago)
         end
 
         it { is_expected.to be_falsy }
       end
 
       context "when received_at is nil" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
+        let(:ssoc_documents) do
+          [
+            FactoryBot.build(:document, type: "SSOC", received_at: nil),
+            FactoryBot.build(:document, type: "SSOC", received_at: 1.months.ago)
           ]
         end
-
-        before do
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, ssoc_documents: ssoc_documents)
         end
 
         it { is_expected.to be_falsy }
       end
 
       context "and ssoc dates match" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
-          ]
-        end
-
-        before do
-          # vacols dates
-          appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc)
         end
 
         it { is_expected.to be_truthy }
@@ -363,37 +345,54 @@ describe Appeal do
     end
 
     context "when the nod date is mismatched" do
-      before { nod_document.received_at = 5.days.ago }
+      let(:nod_document) do
+        [ FactoryBot.build(:document, type: "NOD", received_at: 1.day.ago) ]
+      end
+
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_ssoc, nod_document: nod_document)
+      end
+
       it { is_expected.to be_falsy }
     end
 
     context "when the soc date is mismatched" do
-      before { soc_document.received_at = 6.days.ago }
+      let(:soc_document) do
+        [ FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago) ]
+      end
+
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_ssoc, soc_document: soc_document)
+      end
+      
       it { is_expected.to be_falsy }
     end
 
     context "when the form9 date is mismatched" do
-      before { form9_document.received_at = 5.days.ago }
+      let(:form9_document) do
+        [ FactoryBot.build(:document, type: "Form9", received_at: 1.day.ago) ]
+      end
+
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_ssoc, form9_document: form9_document)
+      end
+      
       it { is_expected.to be_falsy }
     end
 
     context "when at least one ssoc doesn't match" do
-      before do
-        allow(appeal).to receive(:documents).and_return(
-          [
-            Document.new(type: "SSOC", received_at: 6.days.ago),
-            Document.new(type: "SSOC", received_at: 7.days.ago)
-          ]
-        )
-
-        appeal.ssoc_dates = [6.days.ago, 9.days.ago]
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_ssoc, bfssoc1: 2.days.ago)
       end
 
       it { is_expected.to be_falsy }
     end
 
     context "when one of the dates is missing" do
-      before { appeal.nod_date = nil }
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_ssoc, bfdnod: nil)
+      end
+
       it { is_expected.to be_falsy }
     end
   end
@@ -415,13 +414,13 @@ describe Appeal do
 
   context "#number_of_documents" do
     let(:documents) do
-      [Generators::Document.build(type: "NOD"),
-       Generators::Document.build(type: "SOC"),
-       Generators::Document.build(type: "SSOC")]
+      [FactoryBot.build(:document, type: "NOD"),
+       FactoryBot.build(:document, type: "SOC"),
+       FactoryBot.build(:document, type: "SSOC")]
     end
 
-    let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents)
+    let(:vacols_case) do
+      FactoryBot.build(:case, documents: documents)
     end
 
     subject { appeal.number_of_documents }
@@ -431,15 +430,15 @@ describe Appeal do
     end
   end
 
-  context "#number_of_documents_after_certification" do
+  context "#number_of_documents_after_certification", focus: true do
     let(:documents) do
-      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
-       Generators::Document.build(type: "SOC", received_at: 1.day.ago),
-       Generators::Document.build(type: "SSOC", received_at: 5.days.ago)]
+      [FactoryBot.build(:document, type: "NOD", received_at: 4.days.ago),
+       FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago),
+       FactoryBot.build(:document, type: "SSOC", received_at: 5.days.ago)]
     end
 
-    let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents, certification_date: certification_date)
+    let(:vacols_case) do
+      FactoryBot.build(:case, :certified, documents: documents, certification_date: certification_date)
     end
 
     subject { appeal.number_of_documents_after_certification }
@@ -453,7 +452,7 @@ describe Appeal do
     context "when certification_date is set" do
       let(:certification_date) { 2.days.ago }
 
-      it { is_expected.to eq 1 }
+      it { binding.pry; is_expected.to eq 1 }
     end
   end
 
