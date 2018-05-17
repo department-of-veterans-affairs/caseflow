@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { sortTasks, renderAppealType } from './utils';
 import COPY from '../../../COPY.json';
@@ -55,6 +56,13 @@ class JudgeReviewTaskTable extends React.PureComponent {
         moment().
           startOf('day').
           diff(moment(task.attributes.assigned_on), 'days'))
+    },
+    {
+      // todo: replace
+      header: 'asdf',
+      valueFunction: (task) => <Link to={`/queue/appeals/${task.vacolsId}/evaluate`}>
+        Evaluate Decision
+      </Link>
     }
   ];
 

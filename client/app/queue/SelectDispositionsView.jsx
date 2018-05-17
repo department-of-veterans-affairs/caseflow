@@ -19,10 +19,13 @@ import {
   saveEditedAppealIssue
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
-import { fullWidth, DISPOSITION_ID_BY_PARAMETERIZED } from './constants';
+import {
+  fullWidth,
+  marginBottom,
+  marginLeft,
+  DISPOSITION_ID_BY_PARAMETERIZED
+} from './constants';
 
-const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
-const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
 const tableStyling = css({
   '& tr': {
     borderBottom: 'none'

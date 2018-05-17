@@ -16,6 +16,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
+import EvaluateDecisionView from './EvaluateDecisionView';
 
 import CaseListView from './CaseListView';
 import QueueDetailView from './QueueDetailView';
@@ -94,6 +95,10 @@ class QueueApp extends React.PureComponent {
     nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
+  routedEvaluateDecision = (props) => <EvaluateDecisionView
+    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
+    {...props.match.params} />;
+
   queueName = () => this.props.userRole === 'Attorney' ? 'Your Queue' : 'Review Cases';
 
   render = () => <BrowserRouter>
@@ -164,6 +169,12 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/evaluate"
+            title="Evaluate Decision"
+            render={this.routedEvaluateDecision}
+          />
         </div>
       </AppFrame>
       <Footer

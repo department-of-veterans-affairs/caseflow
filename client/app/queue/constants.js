@@ -48,6 +48,10 @@ export const subHeadTextStyle = css({
   fontSize: 'small',
   color: COMMON_COLORS.GREY_MEDIUM
 });
+export const marginTop = (margin) => css({ marginTop: `${margin}rem` });
+export const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
+export const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
