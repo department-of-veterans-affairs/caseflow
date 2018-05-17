@@ -16,7 +16,8 @@ RSpec.describe HomeController, type: :controller do
     end
 
     context "when visitor is logged in, does not have a personal queue, nor case search access" do
-      let!(:current_user) { User.authenticate! }
+      # fakes/user_repository returns "Judge" for role for "BVAAABSHIRE"
+      let!(:current_user) { User.authenticate!(css_id: "BVAAABSHIRE") }
       it "should redirect to /help" do
         get :index
         expect(response.status).to eq 302
@@ -25,7 +26,7 @@ RSpec.describe HomeController, type: :controller do
     end
 
     context "when visitor is logged in, does not have a personal queue but does have case search access" do
-      let!(:current_user) { User.authenticate! }
+      let!(:current_user) { User.authenticate!(css_id: "BVAAABSHIRE") }
       it "should land at /" do
         FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
         get :index
@@ -34,7 +35,7 @@ RSpec.describe HomeController, type: :controller do
     end
 
     context "when visitor is logged in, has a personal queue but does not have case search access" do
-      let!(:current_user) { User.authenticate! }
+      let!(:current_user) { User.authenticate!(css_id: "BVAAABSHIRE") }
       it "should redirect to /queue" do
         FeatureToggle.enable!(:queue_welcome_gate, users: [current_user.css_id])
         get :index
@@ -44,9 +45,10 @@ RSpec.describe HomeController, type: :controller do
     end
 
     context "when visitor is logged in, has a personal queue and case search access" do
+      # fakes/user_repository returns "Attorney" for the role by default
+      # TODO: refactor to choose a user who has access to queue
       let!(:current_user) { User.authenticate! }
       it "should redirect to /queue" do
-        FeatureToggle.enable!(:queue_welcome_gate, users: [current_user.css_id])
         FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
         get :index
         expect(response.status).to eq 302
