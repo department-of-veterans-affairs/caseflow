@@ -3,7 +3,7 @@ require "rails_helper"
 
 RSpec.feature "Queue" do
   before do
-    User.user_repository = Fakes::UserRepository
+    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
   end
 
@@ -219,8 +219,6 @@ RSpec.feature "Queue" do
       FeatureToggle.disable!(:queue_phase_two)
     end
     after do
-      User.unauthenticate!
-      User.authenticate!
       FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
@@ -390,6 +388,11 @@ RSpec.feature "Queue" do
   end
 
   context "loads attorney task detail views" do
+    before do
+      User.unauthenticate!
+      User.authenticate!(roles: ["System Admin"])
+    end
+
     context "displays who assigned task" do
       scenario "appeal has assigner" do
         appeal = vacols_appeals.select(&:added_by_first_name).first
