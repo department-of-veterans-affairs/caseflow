@@ -110,7 +110,7 @@ export class DocketHearingRow extends React.PureComponent {
               id={`${hearing.id}-prep`}
               onChange={this.preppedOnChange}
               key={index}
-              value={hearing.prepped}
+              value={hearing.prepped || false}
               name={`${hearing.id}-prep`}
               hideLabel
               {...preppedCheckboxStyling}
