@@ -111,6 +111,14 @@ RSpec.feature "Reader" do
     FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:fakes_off)
     Time.zone = "America/New_York"
+
+    RequestStore[:current_user] = OpenStruct.new(
+      ip_address: "127.0.0.1",
+      station_id: "397",
+      css_id: "AMCDLUCA",
+      roles: ["User", "Manage Claims Establishme", "Establish Claim"],
+      regional_office: nil
+    )
   end
 
   after do
