@@ -53,7 +53,7 @@ FactoryBot.define do
                     create(:document, type: "SSOC", received_at: 10.day.ago),
                     create(:document, type: "SSOC", received_at: 5.days.ago),
                     create(:document, type: "SSOC", received_at: 2.days.ago)
-                  ]
+                  ][0..number_of_ssoc]
                 end
               end
 
