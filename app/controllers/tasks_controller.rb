@@ -120,7 +120,7 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    task_params = params.require("tasks")
+    params.require("tasks")
       .permit(:appeal_type, :appeal_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
