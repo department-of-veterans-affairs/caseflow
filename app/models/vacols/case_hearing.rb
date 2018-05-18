@@ -132,6 +132,12 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  private_class_method
+
+  def self.current_user_css_id
+    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  end
+
   private
 
   def update_hearing_action
@@ -141,10 +147,6 @@ class VACOLS::CaseHearing < VACOLS::Record
   def create_or_update_diaries
     create_or_update_abeyance_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
-  end
-
-  def self.current_user_css_id
-    @css_id ||= RequestStore.store[:current_user].css_id.upcase
   end
 
   def case_id
