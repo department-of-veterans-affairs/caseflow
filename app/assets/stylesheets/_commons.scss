@@ -1002,9 +1002,9 @@ fieldset {
   margin-top: rem(20px);
   margin-bottom: rem(40px);
 
-    .usa-grid-full {
-      margin-bottom: 0;
-    }
+  .usa-grid-full {
+    margin-bottom: 0;
+  }
 }
 
 .cf-form-checkbox {
@@ -1028,6 +1028,8 @@ fieldset {
 //========================
 // Status Message
 //==========================*/
+
+// TODO Remove selector also
 .cf-app-msg-screen {
   color: $color-gray;
 }
@@ -1039,6 +1041,7 @@ fieldset {
 }
 
 // "deck" is newspaper speak for "subhead"
+// TODO Refactor, text should inherit styleguide font heads
 .cf-msg-screen-deck {
   text-align: center;
   font-size: rem(20px);
