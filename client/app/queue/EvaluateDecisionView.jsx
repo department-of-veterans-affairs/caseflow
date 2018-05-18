@@ -44,7 +44,8 @@ class EvaluateDecisionView extends React.PureComponent {
       task: { attributes: task },
       docCount
     } = this.props;
-    const daysWorked = moment().startOf('day').diff(moment(task.assigned_on), 'days');
+    const dateAssigned = moment(task.assigned_on)
+    const daysWorked = moment().startOf('day').diff(dateAssigned, 'days');
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -63,7 +64,7 @@ class EvaluateDecisionView extends React.PureComponent {
         </div>
         <div {...headerColumnStyle}>
           <h3>Timeliness</h3>
-          Date assigned: {}<br />
+          Date assigned: {dateAssigned.format('M/D/YY')}<br />
           Decision submitted: {}<br />
           Calendar days worked: {daysWorked}<br />
         </div>
@@ -114,7 +115,7 @@ class EvaluateDecisionView extends React.PureComponent {
         }]} />
 
       <div className="cf-push-left" {...marginRight(2)}>
-        <h4>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h4>
+        <h3>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h3>
         <CheckboxGroup
           hideLabel vertical
           name={COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}
@@ -140,7 +141,7 @@ class EvaluateDecisionView extends React.PureComponent {
           }]} />
       </div>
       <div className="cf-push-left">
-        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h4>
+        <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
         <CheckboxGroup
           hideLabel vertical
           name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
@@ -163,7 +164,7 @@ class EvaluateDecisionView extends React.PureComponent {
           }]} />
       </div>
 
-      <h4>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h4>
+      <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h3>
       <TextareaField
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}
