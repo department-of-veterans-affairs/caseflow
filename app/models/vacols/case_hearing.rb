@@ -40,7 +40,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     transcript_requested: :tranreq,
     add_on: :addon,
     representative_name: :repname,
-    staff_id: :mduser
+    staff_id: :mduser,
+    room: :room,
+    hearing_date: :hearing_date,
+    hearing_type: :hearing_type
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -76,11 +79,15 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+      attrs.except!(nil)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
-        binding.pry
-        create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+        create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone,
+                           mduser: current_user_css_id,
+                           addtime: VacolsHelper.local_time_with_utc_timezone,
+                           adduser: current_user_css_id,
+                           folder_nr: "VIDEO #{hearing_info[:representative]}"))
       end
     end
 
@@ -121,7 +128,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: current_user_css_id, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
@@ -136,7 +143,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     create_or_update_aod_diary if aod_changed?
   end
 
-  def current_user_css_id
+  def self.current_user_css_id
     @css_id ||= RequestStore.store[:current_user].css_id.upcase
   end
 

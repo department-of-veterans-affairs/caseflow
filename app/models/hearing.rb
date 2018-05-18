@@ -71,10 +71,9 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def self.create(hearing_hash)
+  def self.create_unassigned_hearing(hearing_hash)
     transaction do
       repository.create_vacols_hearing!(hearing_hash)
-      super
     end
   end
 

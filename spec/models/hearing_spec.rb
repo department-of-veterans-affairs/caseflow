@@ -318,20 +318,28 @@ describe Hearing do
 
   context "#create" do
     let(:hearing_hash) do
-      { vacols_id: "8897878",
-        hold_open: 60,
-        date: 1.day.ago }
+      { hearing_type: "C",
+        hearing_date: 1.day.ago,
+        representative: "RO89",
+        representative_name: "General Counsel" }
     end
 
-    let(:hearing) { Hearing.create(hearing_hash) }
+    RequestStore[:current_user] = OpenStruct.new(
+      ip_address: "127.0.0.1",
+      station_id: "397",
+      css_id: "AMCDLUCA",
+      roles: ["User", "Manage Claims Establishme", "Establish Claim"],
+      regional_office: nil
+    )
+
+    let(:hearing) { Hearing.create_unassigned_hearing(hearing_hash) }
 
     context "add a hearing with minimal data" do
       it "creates hearing with minimal data" do
-        expect(hearing.vacols_id).to eq "8897878"
-        expect(hearing.type).to eq :video
-        expect(hearing.date).to eq 1.day.ago
-        expect(hearing.disposition).to eq nil
-        expect(hearing.hold_open).to eq 60
+        expect(hearing.hearing_type).to eq "C"
+        expect(hearing.hearing_date).to eq 1.day.ago
+        expect(hearing.folder_nr).to eq "VIDEO RO89"
+        expect(hearing.repname).to eq "General Counsel"
       end
     end
   end
