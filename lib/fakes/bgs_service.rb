@@ -296,6 +296,7 @@ class Fakes::BGSService
     { rating_issues: rating_issues }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def find_all_relationships(_participant_id:)
     [
       {
@@ -356,6 +357,7 @@ class Fakes::BGSService
       }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
