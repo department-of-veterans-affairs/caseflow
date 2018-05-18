@@ -296,7 +296,7 @@ class Fakes::BGSService
     { rating_issues: rating_issues }
   end
 
-  def find_all_relationships(participant_id:)
+  def find_all_relationships(_participant_id:)
     [
       {
         authzn_change_clmant_addrs_ind: nil,
