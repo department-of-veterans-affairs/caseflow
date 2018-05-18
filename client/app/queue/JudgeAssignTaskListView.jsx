@@ -122,14 +122,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
       '?';
   }
 
-  handleToggleSelection = ({ userId, vacolsId, selected }) => {
-    console.log(userId, vacolsId, selected);
-    if (selected) {
-    }
-  }
-
   render = () => {
-    const { userId, attorneysOfJudge, match } = this.props;
+    const { userId, attorneysOfJudge, match, isVacolsIdAssignedToUserSelected } = this.props;
 
     return <AppSegment filledBackground>
       <div>
@@ -172,7 +166,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                vacolsIdsOfSelectedTasks={{}}
+                isVacolsIdSelected={{}}
                 onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId, ...args})} />}
           />
           <PageRoute
@@ -194,7 +188,7 @@ JudgeAssignTaskListView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney'),
+  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney', 'isVacolsIdAssignedToUserSelected'),
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
 });
 
