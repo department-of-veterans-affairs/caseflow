@@ -92,30 +92,6 @@ describe JudgeCaseAssignment do
       end
     end
 
-    context "when task id is not valid" do
-      let(:task_id) { 1234 }
-      let(:assigned_by) { judge }
-      let(:assigned_to) { attorney }
-      let(:appeal_type) { "Legacy" }
-
-      it "raises ActiveRecord::RecordInvalid" do
-        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context "when task id is missing" do
-      let(:task_id) { nil }
-      let(:assigned_by) { judge }
-      let(:assigned_to) { attorney }
-      let(:appeal_type) { "Legacy" }
-
-      it "raises ActiveRecord::RecordInvalid" do
-        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
     context "when appeal type is not valid" do
       let(:task_id) { "3615398-2018-04-18" }
       let(:assigned_by) { judge }

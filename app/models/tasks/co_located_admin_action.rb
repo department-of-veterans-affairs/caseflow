@@ -1,6 +1,6 @@
 class CoLocatedAdminAction < Task
   before_create :set_assigned_at, :set_assigned_to
-  #validates :title, inclusion: { in: TITLES.keys }
+  # validates :title, inclusion: { in: TITLES.keys }
   validate :assigned_by_role_is_valid
 
   # TODO: move it to the constants file
@@ -8,7 +8,7 @@ class CoLocatedAdminAction < Task
     ihp: "IHP",
     poa_clarification: "POA clarification",
     hearing_clarification: "Hearing clarification",
-    waiver_of_aoj_leter: "Waiver of AOJ letter",
+    aoj: "AOJ",
     extension: "Extension",
     missing_hearing_transcripts: "Missing hearing transcripts",
     unaccredited_rep: "Unaccredited rep",

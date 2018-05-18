@@ -55,10 +55,11 @@ RSpec.describe TasksController, type: :controller do
       end
 
       it "should not be successful" do
+        allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
         post :create, params: { tasks: params }
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "ActiveRecord::RecordInvalid"
+        expect(response_body["errors"].first["title"]).to eq "Record is invalid"
         expect(response_body["errors"].first["detail"]).to eq "Assigned by has to be a judge"
       end
     end
@@ -90,7 +91,8 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": 4_646_464,
             "attorney_id": attorney.id,
-            "appeal_type": "Legacy"
+            "appeal_type": "Legacy",
+            "type": "JudgeCaseAssignment"
           }
         end
 
@@ -106,7 +108,8 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "attorney_id": 7_777_777_777,
-            "appeal_type": "Legacy"
+            "appeal_type": "Legacy",
+            "type": "JudgeCaseAssignment"
           }
         end
 

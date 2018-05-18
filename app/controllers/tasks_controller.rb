@@ -50,7 +50,9 @@ class TasksController < ApplicationController
 
   def create
     return invalid_type_error unless task_class
-    task = task_class.create!(task_params)
+    task = task_class.create(task_params)
+
+    return invalid_record_error(task) unless task.valid?
     render json: { task: task }, status: :created
   end
 
@@ -70,6 +72,12 @@ class TasksController < ApplicationController
     @user ||= User.find(params[:user_id])
   end
   helper_method :user
+
+  def invalid_record_error(task)
+    render json:  {
+      "errors": ["title": "Record is invalid", "detail": task.errors.full_messages.join(" ,")]
+    }, status: 400
+  end
 
   def invalid_role_error
     render json: {
@@ -110,10 +118,10 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    task_params = params.require("tasks")
+    result = params.require("tasks")
       .permit(:appeal_type, :appeal_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
-    task_params.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id]
+    result.merge(assigned_to: User.find(params[:tasks][:attorney_id])) if params[:tasks][:attorney_id]
   end
 
   def json_appeals(appeals)

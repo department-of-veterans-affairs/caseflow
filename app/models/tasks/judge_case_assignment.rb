@@ -12,7 +12,6 @@ class JudgeCaseAssignment
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
-    validate!
     case appeal_type
     when "Legacy"
       vacols_id = LegacyAppeal.find(appeal_id).vacols_id
@@ -29,8 +28,6 @@ class JudgeCaseAssignment
   end
 
   def reassign_to_attorney!
-    fail ActiveRecord::RecordInvalid unless task_id
-    validate!
     case appeal_type
     when "Legacy"
       vacols_id = task_id.split("-", 2).first
@@ -50,18 +47,17 @@ class JudgeCaseAssignment
   private
 
   def assigned_by_role_is_valid
-    errors.add(:base, "Assigned by has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"
-  end
-
-  def validate!
-    fail ActiveRecord::RecordInvalid unless valid?
+    errors.add(:assigned_by, "has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"
   end
 
   class << self
     attr_writer :repository
 
-    def create!(task_attrs)
-      JudgeCaseAssignment.new(task_attrs).assign_to_attorney!
+    def create(task_attrs)
+      task = JudgeCaseAssignment.new(task_attrs)
+      return task unless task.valid?
+      task.assign_to_attorney!
+      task
     end
 
     def repository
