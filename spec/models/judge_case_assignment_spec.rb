@@ -31,7 +31,7 @@ describe JudgeCaseAssignment do
       end
     end
 
-    context "when appeal id is not valid" do
+    context "when appeal id is not found" do
       let(:appeal_id) { 1234 }
       let(:assigned_by) { judge }
       let(:assigned_to) { attorney }
@@ -49,9 +49,10 @@ describe JudgeCaseAssignment do
       let(:assigned_to) { attorney }
       let(:appeal_type) { "Unknown" }
 
-      it "raises ActiveRecord::RecordInvalid" do
+      it "does not assign case to attorney" do
         expect(QueueRepository).to_not receive(:assign_case_to_attorney!)
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(record.valid?).to eq false
+        expect(record.errors.full_messages).to eq ["Appeal type is not included in the list"]
       end
     end
 
@@ -61,9 +62,10 @@ describe JudgeCaseAssignment do
       let(:assigned_to) { attorney }
       let(:appeal_type) { "Legacy" }
 
-      it "raises ActiveRecord::RecordInvalid" do
+      it "does not assign case to attorney" do
         expect(QueueRepository).to_not receive(:assign_case_to_attorney!)
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(record.valid?).to eq false
+        expect(record.errors.full_messages).to eq ["Assigned by can't be blank"]
       end
     end
   end
@@ -89,6 +91,30 @@ describe JudgeCaseAssignment do
       it "it is successful" do
         expect(QueueRepository).to receive(:reassign_case_to_attorney!).once
         subject
+      end
+    end
+
+    context "when task id is not valid" do
+      let(:task_id) { 1234 }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+      let(:appeal_type) { "Legacy" }
+
+      it "raises ActiveRecord::RecordInvalid" do
+        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context "when task id is missing" do
+      let(:task_id) { nil }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+      let(:appeal_type) { "Legacy" }
+
+      it "raises ActiveRecord::RecordInvalid" do
+        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
