@@ -12,9 +12,10 @@ class Test::UsersController < ApplicationController
     {
       name: "Certification",
       links: {
-        new: "/certifications/new/123C",
-        missing_docs: "/certifications/new/456C",
-        already_certified: "/certifications/new/789C",
+        matching_dates: "/certifications/new/2367429",
+        fuzzy_matching_dates: "/certifications/new/2774535",
+        missing_docs: "/certifications/new/2771149",
+        already_certified: "/certifications/new/3242524",
         vbms_error: "/certifications/new/000ERR",
         unable_to_certify: "/certifications/new/001ERR"
       }
