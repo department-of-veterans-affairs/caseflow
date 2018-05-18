@@ -471,7 +471,7 @@ ActiveRecord::Schema.define(version: 20180517204321) do
 
   create_table "tasks", force: :cascade do |t|
     t.integer "appeal_id", null: false
-    t.integer "status", default: 0
+    t.string "status", default: "assigned"
     t.string "type"
     t.text "title"
     t.text "instructions"

@@ -1,8 +1,4 @@
 class CoLocatedAdminAction < Task
-  before_create :set_assigned_at, :set_assigned_to
-  # validates :title, inclusion: { in: TITLES.keys }
-  validate :assigned_by_role_is_valid
-
   # TODO: move it to the constants file
   TITLES = {
     ihp: "IHP",
@@ -24,14 +20,14 @@ class CoLocatedAdminAction < Task
     other: "Other"
   }.freeze
 
+  before_create :set_assigned_to
+  validates :title, inclusion: { in: TITLES.keys.map(&:to_s) }
+  validate :assigned_by_role_is_valid
+
   private
 
   def assigned_by_role_is_valid
-    errors.add(:base, "Assigned by has to be an attorney") if assigned_by && assigned_by.vacols_role != "Attorney"
-  end
-
-  def set_assigned_at
-    self.assigned_at = created_at
+    errors.add(:assigned_by, "has to be an attorney") if assigned_by && assigned_by.vacols_role != "Attorney"
   end
 
   def set_assigned_to

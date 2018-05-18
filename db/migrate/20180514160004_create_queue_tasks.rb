@@ -2,7 +2,7 @@ class CreateQueueTasks < ActiveRecord::Migration[5.1]
   def change
     create_table :tasks do |t|
       t.integer "appeal_id", null: false
-      t.integer  "status",  default: 0
+      t.string  "status",  default: "assigned"
       t.string "type"
       t.text "title"
       t.text "instructions"
