@@ -296,7 +296,7 @@ describe Appeal do
           let(:ssoc_documents) do
             [
               FactoryBot.build(:document, type: "SSOC", received_at: nil),
-              FactoryBot.build(:document, type: "SSOC", received_at: 1.months.ago)
+              FactoryBot.build(:document, type: "SSOC", received_at: 1.month.ago)
             ]
           end
           let(:vacols_case) do
@@ -317,7 +317,7 @@ describe Appeal do
 
       context "when the nod date is mismatched" do
         let(:nod_document) do
-          [ FactoryBot.build(:document, type: "NOD", received_at: 1.day.ago) ]
+          [FactoryBot.build(:document, type: "NOD", received_at: 1.day.ago)]
         end
 
         let(:vacols_case) do
@@ -329,25 +329,25 @@ describe Appeal do
 
       context "when the soc date is mismatched" do
         let(:soc_document) do
-          [ FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago) ]
+          [FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago)]
         end
 
         let(:vacols_case) do
           FactoryBot.create(:case_with_ssoc, soc_document: soc_document)
         end
-        
+
         it { is_expected.to be_falsy }
       end
 
       context "when the form9 date is mismatched" do
         let(:form9_document) do
-          [ FactoryBot.build(:document, type: "Form9", received_at: 1.day.ago) ]
+          [FactoryBot.build(:document, type: "Form9", received_at: 1.day.ago)]
         end
 
         let(:vacols_case) do
           FactoryBot.create(:case_with_ssoc, form9_document: form9_document)
         end
-        
+
         it { is_expected.to be_falsy }
       end
 

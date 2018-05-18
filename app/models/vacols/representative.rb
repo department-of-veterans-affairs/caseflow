@@ -3,7 +3,7 @@ class VACOLS::Representative < VACOLS::Record
   self.table_name = "vacols.rep"
   self.primary_key = "repkey"
 
-  belongs_to    :case,  foreign_key: :bfkey
+  belongs_to :case, foreign_key: :bfkey
 
   class InvalidRepTypeError < StandardError; end
 
