@@ -139,13 +139,17 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "attorney_id": attorney.id,
-          "appeal_type": "Legacy"
+          "appeal_type": "Legacy",
+          "type": "JudgeCaseAssignment"
         }
       end
 
       it "should not be successful" do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
+        response_body = JSON.parse(response.body)
+        expect(response_body["errors"].first["title"]).to eq "Record is invalid"
+        expect(response_body["errors"].first["detail"]).to eq "Assigned by has to be a judge"
       end
     end
 
@@ -153,7 +157,8 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "attorney_id": attorney.id,
-          "appeal_type": "Legacy"
+          "appeal_type": "Legacy",
+          "type": "JudgeCaseAssignment"
         }
       end
 
@@ -174,7 +179,8 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           {
             "attorney_id": 7_777_777_777,
-            "appeal_type": "Legacy"
+            "appeal_type": "Legacy",
+            "type": "JudgeCaseAssignment"
           }
         end
 
