@@ -43,9 +43,12 @@ const UnassignedCasesPage = (props) => {
 };
 
 const AssignedCasesPage = connect(
-  (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'))(
+  (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge', 'isVacolsIdAssignedToUserSelected'),
+  (dispatch) => (bindActionCreators({setSelectionOfTaskOfUser}, dispatch)))(
   (props) => {
-    const { match, attorneysOfJudge, tasksAndAppealsOfAttorney } = props;
+    const {
+      match, attorneysOfJudge, tasksAndAppealsOfAttorney, isVacolsIdAssignedToUserSelected, setSelectionOfTaskOfUser
+    } = props;
     const { attorneyId } = match.params;
 
     if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
@@ -63,15 +66,18 @@ const AssignedCasesPage = connect(
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
-      <JudgeAssignTaskTable tasksAndAppeals={
-        sortTasks({
-          tasks,
-          appeals
-        }).
-          map((task) => ({
-            task,
-            appeal: appeals[task.vacolsId] }))
-      } />
+      <JudgeAssignTaskTable
+        tasksAndAppeals={
+          sortTasks({
+            tasks,
+            appeals
+          }).
+            map((task) => ({
+              task,
+              appeal: appeals[task.vacolsId] }))
+        }
+        isVacolsIdSelected={isVacolsIdAssignedToUserSelected[attorneyId]}
+        onToggleSelectionOfTaskWithVacolsId={(args) => setSelectionOfTaskOfUser({userId: attorneyId, ...args})} />
     </React.Fragment>;
   });
 
@@ -167,7 +173,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
                 isVacolsIdSelected={{}}
-                onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId, ...args})} />}
+                onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId.toString(), ...args})} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}

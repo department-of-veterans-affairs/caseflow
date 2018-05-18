@@ -65,5 +65,5 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
 
 JudgeAssignTaskTable.propTypes = {
   tasksAndAppeals: PropTypes.array.isRequired,
-  isVacolsIdSelected: PropTypes.object.isRequired
+  isVacolsIdSelected: PropTypes.object
 };
