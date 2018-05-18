@@ -18,7 +18,7 @@ class JudgeCaseAssignment
                             name: "assign_case_to_attorney") do
         self.class.repository.assign_case_to_attorney!(
           judge: assigned_by,
-          attorney: User.find(assigned_to_id),
+          attorney: attorney,
           vacols_id: vacols_id
         )
       end
@@ -33,7 +33,7 @@ class JudgeCaseAssignment
                             name: "reassign_case_to_attorney") do
         self.class.repository.reassign_case_to_attorney!(
           judge: assigned_by,
-          attorney: User.find(assigned_to_id),
+          attorney: attorney,
           vacols_id: vacols_id,
           created_in_vacols_date: created_in_vacols_date
         )
@@ -42,6 +42,10 @@ class JudgeCaseAssignment
   end
 
   private
+
+  def attorney
+    User.find(assigned_to_id)
+  end
 
   def vacols_id
     task_id ? task_id.split("-", 2).first : LegacyAppeal.find(appeal_id).vacols_id
