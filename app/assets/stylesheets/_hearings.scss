@@ -557,7 +557,9 @@
       border: none;
       font-size: 11px;
       padding: 0;
+      // scss-lint:disable ImportantRule
       resize: none !important;
+      // scss-lint:enable ImportantRule
       overflow: auto;
       height: 0;
   }
@@ -704,7 +706,9 @@
 
     .cf-form-textarea {
       textarea {
+        // scss-lint:disable ImportantRule
         height: 28px !important;
+        // scss-lint:enable ImportantRule
    }
  }
 

@@ -53,7 +53,9 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
+  // scss-lint:disable ImportantRule
   color: $color-gray-dark !important;
+  // scss-lint:enable ImportantRule
 }
 
 .cf-content-inside {
@@ -189,9 +191,11 @@ body {
 }
 
 .cf-form-textinput[readonly] {
+  // scss-lint:disable ImportantRule
   background: $color-gray-lightest !important;
-  color: $color-gray-dark;
   opacity: 1 !important;
+   // scss-lint:enable ImportantRule
+  color: $color-gray-dark;
 }
 
 .cf-button-associated-text {
@@ -232,7 +236,9 @@ body {
 }
 
 .cf-msg-screen-deck {
+  // scss-lint:disable ImportantRule
   margin-bottom: 4rem !important;
+  // scss-lint:enable ImportantRule
 
   &.cf-success-emoji-text {
     width: auto;
