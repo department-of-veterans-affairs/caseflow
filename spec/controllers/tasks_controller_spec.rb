@@ -36,57 +36,82 @@ RSpec.describe TasksController, type: :controller do
     let(:appeal) { LegacyAppeal.create(vacols_id: "1234C") }
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
-    before do
-      FeatureToggle.enable!(:judge_assignment)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment)
-    end
-
-    context "when current user is an attorney" do
-      let(:params) do
-        {
-          "appeal_id": appeal.id,
-          "assigned_to_id": attorney.id,
-          "appeal_type": "Legacy",
-          "type": "JudgeCaseAssignment"
-        }
+    context "Co-located admin action" do
+      before do
+        FeatureToggle.enable!(:attorney_assignment)
       end
 
-      it "should not be successful" do
-        allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
-        post :create, params: { tasks: params }
-        expect(response.status).to eq 302
-      end
-    end
-
-    context "when current user is a judge" do
-      let(:params) do
-        {
-          "appeal_id": appeal.id,
-          "assigned_to_id": attorney.id,
-          "appeal_type": "Legacy",
-          "type": "JudgeCaseAssignment"
-        }
+      after do
+        FeatureToggle.disable!(:attorney_assignment)
       end
 
-      it "should be successful" do
-        allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
-        allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
-          judge: current_user,
-          attorney: attorney,
-          vacols_id: appeal.vacols_id
-        ).and_return(true)
-
-        post :create, params: { tasks: params }
-        expect(response.status).to eq 201
-      end
-
-      context "when appeal is not found" do
+      context "when current user is a judge" do
         let(:params) do
           {
-            "appeal_id": 4_646_464,
+            "appeal_id": appeal.id,
+            "type": "CoLocatedAdminAction"
+          }
+        end
+
+        it "should not be successful" do
+          allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 302
+        end
+      end
+
+      context "when current user is an attorney" do
+        let(:params) do
+          {
+            "appeal_id": appeal.id,
+            "type": "CoLocatedAdminAction",
+            "title": "address_verification",
+            "instructions": "do this"
+          }
+        end
+
+        it "should be successful" do
+          allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 201
+          response_body = JSON.parse(response.body)
+          expect(response_body["task"]["status"]).to eq "assigned"
+          expect(response_body["task"]["appeal_id"]).to eq appeal.id
+        end
+
+        context "when appeal is not found" do
+          let(:params) do
+            {
+              "appeal_id": 4_646_464,
+              "type": "CoLocatedAdminAction",
+              "title": "address_verification"
+            }
+          end
+
+          it "should not be successful" do
+            allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 400
+            response_body = JSON.parse(response.body)
+            expect(response_body["errors"].first["detail"]).to eq "Appeal can't be blank"
+          end
+        end
+      end
+    end
+
+    context "Judge case assignment" do
+      before do
+        FeatureToggle.enable!(:judge_assignment)
+      end
+
+      after do
+        FeatureToggle.disable!(:judge_assignment)
+      end
+
+      context "when current user is an attorney" do
+        let(:params) do
+          {
+            "appeal_id": appeal.id,
             "assigned_to_id": attorney.id,
             "appeal_type": "Legacy",
             "type": "JudgeCaseAssignment"
@@ -94,28 +119,68 @@ RSpec.describe TasksController, type: :controller do
         end
 
         it "should not be successful" do
-          allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+          allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
           post :create, params: { tasks: params }
-          expect(response.status).to eq 404
+          expect(response.status).to eq 302
         end
       end
 
-      context "when attorney is not found" do
+      context "when current user is a judge" do
         let(:params) do
           {
             "appeal_id": appeal.id,
-            "assigned_to_id": 7_777_777_777,
+            "assigned_to_id": attorney.id,
             "appeal_type": "Legacy",
             "type": "JudgeCaseAssignment"
           }
         end
 
-        it "should not be successful" do
+        it "should be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+          allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+            judge: current_user,
+            attorney: attorney,
+            vacols_id: appeal.vacols_id
+          ).and_return(true)
+
           post :create, params: { tasks: params }
-          expect(response.status).to eq 400
-          response_body = JSON.parse(response.body)
-          expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"
+          expect(response.status).to eq 201
+        end
+
+        context "when appeal is not found" do
+          let(:params) do
+            {
+              "appeal_id": 4_646_464,
+              "assigned_to_id": attorney.id,
+              "appeal_type": "Legacy",
+              "type": "JudgeCaseAssignment"
+            }
+          end
+
+          it "should not be successful" do
+            allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 404
+          end
+        end
+
+        context "when attorney is not found" do
+          let(:params) do
+            {
+              "appeal_id": appeal.id,
+              "assigned_to_id": 7_777_777_777,
+              "appeal_type": "Legacy",
+              "type": "JudgeCaseAssignment"
+            }
+          end
+
+          it "should not be successful" do
+            allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 400
+            response_body = JSON.parse(response.body)
+            expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"
+          end
         end
       end
     end
