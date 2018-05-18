@@ -48,18 +48,14 @@
 
     &.cf-search-with-internal-text {
       border-right: 0;
-      // scss-lint:disable ImportantRule
-      -webkit-appearance: none !important;
-      // scss-lint:enable ImportantRule
+      -webkit-appearance: searchfield;
       outline: none;
       width: 245px;
     }
   }
 
   .cf-search-internal-text {
-    // scss-lint:disable ImportantRule
-    -webkit-appearance: none !important;
-    // scss-lint:enable ImportantRule
+    -webkit-appearance: searchfield;
     text-align: right;
     width: 9rem;
     border: 1px solid $color-gray-dark;
