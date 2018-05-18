@@ -14,7 +14,8 @@ class AppealSeries < ApplicationRecord
   delegate :vacols_id,
            :active?,
            :type_code,
-           :representative,
+           :representative_name,
+           :representative_type,
            :aod,
            :ramp_election,
            :eligible_for_ramp?,
@@ -245,7 +246,7 @@ class AppealSeries < ApplicationRecord
     when :pending_soc
       { soc_timeliness: SOC_TIMELINESS.dup }
     when :at_vso
-      { vso_name: representative }
+      { vso_name: representative_name }
     when :decision_in_progress
       { decision_timeliness: DECISION_TIMELINESS.dup }
     when :remand
