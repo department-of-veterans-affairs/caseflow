@@ -6,6 +6,7 @@ class AppealsController < ApplicationController
   end
 
   def show_case_list
+    # :nocov:
     no_cache
 
     respond_to do |format|
@@ -14,9 +15,11 @@ class AppealsController < ApplicationController
         return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
       end
     end
+    # :nocov:
   end
 
   def get_appeals_for_file_number(file_number)
+    # :nocov:
     return file_number_not_found_error unless file_number
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
@@ -33,6 +36,7 @@ class AppealsController < ApplicationController
         appeals: json_appeals(appeals)[:data]
       }
     end
+    # :nocov:
   end
 
   def document_count
