@@ -74,7 +74,8 @@ class Helpers::Sanitizers
 
   def switch_slogid(record)
     record.attributes.each do |k, v|
-      record[k] = staff_id_hash[v][:login] if staff_id_hash[v]
+      next if !staff_id_hash[v] || RO_REGEX =~ v || LOCATION_REGEX =~ v || CO_LOCATED_TEAM_REGEX =~ v
+      record[k] = staff_id_hash[v][:login]
     end
   end
 
@@ -100,6 +101,7 @@ class Helpers::Sanitizers
 
   RO_REGEX = /^RO\d\d?$/
   LOCATION_REGEX = /^\d+$/
+  CO_LOCATED_TEAM_REGEX = /^A1|A2$/
 
   def generate_staff_mapping(staff, record_index)
     if RO_REGEX.match(staff.stafkey) || LOCATION_REGEX.match(staff.stafkey)
@@ -133,7 +135,6 @@ class Helpers::Sanitizers
 
   def sanitize_staff(staff, exist_hash)
     row_hash = staff_id_hash[staff.stafkey]
-    # binding.pry if row_hash.nil?
     staff.assign_attributes(
       snamef: row_hash[:first_name],
       snamemi: row_hash[:middle_initial],

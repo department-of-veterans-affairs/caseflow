@@ -2,10 +2,6 @@ RSpec.describe UsersController, type: :controller do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])
-    FeatureToggle.enable!(:queue_welcome_gate)
-  end
-  after do
-    FeatureToggle.disable!(:queue_welcome_gate)
   end
 
   describe "GET /users?role=Judge" do
