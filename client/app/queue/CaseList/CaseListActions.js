@@ -11,10 +11,17 @@ export const clearCaseListSearchResults = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH_RESULTS
 });
 
-export const setCaseListSearch = (searchQuery) => ({
+export const setSearchTerm = (searchQuery) => ({
   type: Constants.SET_CASE_LIST_SEARCH,
   payload: { searchQuery }
 });
+
+export const setCaseListSearch = (searchQuery) => (dispatch) => {
+  dispatch(setSearchTerm(searchQuery));
+  if (!searchQuery) {
+    dispatch(clearCaseListSearch());
+  }
+};
 
 export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
