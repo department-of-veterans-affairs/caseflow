@@ -10,6 +10,7 @@ import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../ac
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
+import ReactTooltip from 'react-tooltip';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -59,6 +60,12 @@ const secondRowStyling = css({
 });
 
 class WorksheetHeader extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      copied: false,
+    };
+  }
 
   onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
@@ -129,11 +136,15 @@ class WorksheetHeader extends React.PureComponent {
           <h5>VETERAN NAME</h5>
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
+
+        <ReactTooltip place="top" type="dark" effect="float" id='test'/>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           <div {...copyButtonStyling}>
-            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+            <CopyToClipboard text={worksheet.sanitized_vbms_id} onCopy={() => this.setState({copied:true})}>
               <button
+                data-for="test"
+                data-tip={this.state.copied ? "Veteran ID copied to clipboard" : "Copy To clipboard"}
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
                 {worksheet.sanitized_vbms_id}
