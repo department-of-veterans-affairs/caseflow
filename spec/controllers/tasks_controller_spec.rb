@@ -1,12 +1,12 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:queue_welcome_gate)
+    FeatureToggle.enable!(:judge_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
-    FeatureToggle.disable!(:queue_welcome_gate)
+    FeatureToggle.disable!(:judge_queue)
   end
 
   describe "GET tasks?user_id=xxx" do
@@ -27,7 +27,7 @@ RSpec.describe TasksController, type: :controller do
     it "when user is neither, it should not process the request succesfully" do
       allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Cat")
       get :index, params: { user_id: user.id }
-      expect(response.status).to eq 400
+      expect(response.status).to eq 302
     end
   end
 
@@ -37,11 +37,11 @@ RSpec.describe TasksController, type: :controller do
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
     before do
-      FeatureToggle.enable!(:queue_phase_three)
+      FeatureToggle.enable!(:judge_assignment)
     end
 
     after do
-      FeatureToggle.disable!(:queue_phase_three)
+      FeatureToggle.disable!(:judge_assignment)
     end
 
     context "when current user is an attorney" do
@@ -55,9 +55,7 @@ RSpec.describe TasksController, type: :controller do
 
       it "should not be successful" do
         post :create, params: { tasks: params }
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
+        expect(response.status).to eq 302
       end
     end
 
@@ -122,11 +120,11 @@ RSpec.describe TasksController, type: :controller do
     let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
     before do
-      FeatureToggle.enable!(:queue_phase_three)
+      FeatureToggle.enable!(:judge_assignment)
     end
 
     after do
-      FeatureToggle.disable!(:queue_phase_three)
+      FeatureToggle.disable!(:judge_assignment)
     end
 
     context "when current user is an attorney" do
@@ -139,9 +137,7 @@ RSpec.describe TasksController, type: :controller do
 
       it "should not be successful" do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "Role is Invalid"
+        expect(response.status).to eq 302
       end
     end
 

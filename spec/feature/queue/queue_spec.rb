@@ -4,12 +4,10 @@ require "rails_helper"
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:queue_welcome_gate)
     FeatureToggle.enable!(:queue_phase_two)
   end
 
   after do
-    FeatureToggle.disable!(:queue_welcome_gate)
     FeatureToggle.disable!(:queue_phase_two)
   end
 
@@ -191,15 +189,16 @@ RSpec.feature "Queue" do
     let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
+
     before do
+      User.unauthenticate!
+      User.authenticate!(css_id: "BVAAABSHIRE")
       FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
-      FeatureToggle.disable!(:queue_welcome_gate)
       FeatureToggle.disable!(:queue_phase_two)
     end
     after do
       FeatureToggle.enable!(:queue_phase_two)
-      FeatureToggle.enable!(:queue_welcome_gate)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
     end
@@ -368,6 +367,11 @@ RSpec.feature "Queue" do
   end
 
   context "loads attorney task detail views" do
+    before do
+      User.unauthenticate!
+      User.authenticate!(roles: ["System Admin"])
+    end
+
     context "displays who assigned task" do
       scenario "appeal has assigner" do
         appeal = vacols_appeals.select(&:added_by_first_name).first
@@ -510,10 +514,18 @@ RSpec.feature "Queue" do
   end
 
   context "loads judge task detail views" do
-    scenario "displays who prepared task" do
+    before do
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
+      FeatureToggle.enable!(:judge_queue)
+    end
 
+    after do
+      User.unauthenticate!
+      User.authenticate!
+    end
+
+    scenario "displays who prepared task" do
       vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
 
       task = vacols_tasks.select(&:assigned_by_first_name).first
