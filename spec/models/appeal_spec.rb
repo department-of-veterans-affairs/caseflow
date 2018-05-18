@@ -1789,14 +1789,12 @@ describe Appeal do
     end
   end
 
-  # TODO: Fix this test!
   context "#aod" do
     subject { appeal.aod }
 
     it { is_expected.to be_truthy }
   end
 
-  # TODO: Fix this test!
   context "#remand_return_date" do
     subject { appeal.remand_return_date }
 
@@ -1805,7 +1803,6 @@ describe Appeal do
     end
   end
 
-  # TODO: Fix this test!
   context "#cavc_decisions" do
     subject { appeal.cavc_decisions }
 
