@@ -1,4 +1,4 @@
-class TemporaryAppeal < ApplicationRecord
+class Appeal < ApplicationRecord
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
   validate :validate_receipt_date_within_range
 
