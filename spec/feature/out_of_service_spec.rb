@@ -1,9 +1,13 @@
 require "rails_helper"
 
 RSpec.feature "Out of Service" do
+  before do
+    User.user_repository = Fakes::UserRepository
+  end
+
   context "Across all apps" do
     before do
-      User.authenticate!(roles: ["Admin Intake"])
+      User.authenticate!(css_id: "BVAAABSHIRE", roles: ["Admin Intake"])
     end
 
     after do
