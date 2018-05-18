@@ -56,6 +56,14 @@ ActiveRecord::Schema.define(version: 20180517204250) do
     t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
   end
 
+  create_table "appeals", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.string "docket_type"
+    t.datetime "established_at"
+    t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
+  end
+
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
     t.string "document_id"
     t.integer "reviewing_judge_id"
@@ -465,14 +473,6 @@ ActiveRecord::Schema.define(version: 20180517204250) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
-  end
-
-  create_table "temporary_appeals", force: :cascade do |t|
-    t.string "veteran_file_number", null: false
-    t.date "receipt_date"
-    t.string "docket_type"
-    t.datetime "established_at"
-    t.index ["veteran_file_number"], name: "index_temporary_appeals_on_veteran_file_number"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|
