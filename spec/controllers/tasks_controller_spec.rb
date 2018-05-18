@@ -48,7 +48,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "appeal_id": appeal.id,
-          "attorney_id": attorney.id,
+          "assigned_to_id": attorney.id,
           "appeal_type": "Legacy",
           "type": "JudgeCaseAssignment"
         }
@@ -57,10 +57,7 @@ RSpec.describe TasksController, type: :controller do
       it "should not be successful" do
         allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Attorney")
         post :create, params: { tasks: params }
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "Record is invalid"
-        expect(response_body["errors"].first["detail"]).to eq "Assigned by has to be a judge"
+        expect(response.status).to eq 302
       end
     end
 
@@ -68,7 +65,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "appeal_id": appeal.id,
-          "attorney_id": attorney.id,
+          "assigned_to_id": attorney.id,
           "appeal_type": "Legacy",
           "type": "JudgeCaseAssignment"
         }
@@ -90,7 +87,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           {
             "appeal_id": 4_646_464,
-            "attorney_id": attorney.id,
+            "assigned_to_id": attorney.id,
             "appeal_type": "Legacy",
             "type": "JudgeCaseAssignment"
           }
@@ -107,7 +104,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           {
             "appeal_id": appeal.id,
-            "attorney_id": 7_777_777_777,
+            "assigned_to_id": 7_777_777_777,
             "appeal_type": "Legacy",
             "type": "JudgeCaseAssignment"
           }
@@ -138,7 +135,7 @@ RSpec.describe TasksController, type: :controller do
     context "when current user is an attorney" do
       let(:params) do
         {
-          "attorney_id": attorney.id,
+          "assigned_to_id": attorney.id,
           "appeal_type": "Legacy",
           "type": "JudgeCaseAssignment"
         }
@@ -146,17 +143,14 @@ RSpec.describe TasksController, type: :controller do
 
       it "should not be successful" do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "Record is invalid"
-        expect(response_body["errors"].first["detail"]).to eq "Assigned by has to be a judge"
+        expect(response.status).to eq 302
       end
     end
 
     context "when current user is a judge" do
       let(:params) do
         {
-          "attorney_id": attorney.id,
+          "assigned_to_id": attorney.id,
           "appeal_type": "Legacy",
           "type": "JudgeCaseAssignment"
         }
@@ -178,7 +172,7 @@ RSpec.describe TasksController, type: :controller do
       context "when attorney is not found" do
         let(:params) do
           {
-            "attorney_id": 7_777_777_777,
+            "assigned_to_id": 7_777_777_777,
             "appeal_type": "Legacy",
             "type": "JudgeCaseAssignment"
           }

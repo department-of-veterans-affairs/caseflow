@@ -20,7 +20,7 @@ class CoLocatedAdminAction < Task
     other: "Other"
   }.freeze
 
-  before_create :set_assigned_to
+  after_initialize :set_assigned_to
   validates :title, inclusion: { in: TITLES.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
 

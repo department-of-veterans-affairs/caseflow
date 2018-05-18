@@ -2,12 +2,12 @@
 class JudgeCaseAssignment
   include ActiveModel::Model
 
-  attr_accessor :task_id, :assigned_by, :assigned_to, :appeal_id, :appeal_type, :type
+  attr_accessor :task_id, :assigned_by, :assigned_to_id, :appeal_id, :appeal_type, :type
 
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validates :appeal_type, inclusion: { in: %w[Legacy Ama] }
-  validates :assigned_by, :assigned_to, presence: true
+  validates :assigned_by, :assigned_to_id, presence: true
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
@@ -18,7 +18,7 @@ class JudgeCaseAssignment
                             name: "assign_case_to_attorney") do
         self.class.repository.assign_case_to_attorney!(
           judge: assigned_by,
-          attorney: assigned_to,
+          attorney: User.find(assigned_to_id),
           vacols_id: vacols_id
         )
       end
@@ -33,7 +33,7 @@ class JudgeCaseAssignment
                             name: "reassign_case_to_attorney") do
         self.class.repository.reassign_case_to_attorney!(
           judge: assigned_by,
-          attorney: assigned_to,
+          attorney: User.find(assigned_to_id),
           vacols_id: vacols_id,
           created_in_vacols_date: created_in_vacols_date
         )
