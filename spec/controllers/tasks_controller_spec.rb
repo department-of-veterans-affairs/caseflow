@@ -77,6 +77,8 @@ RSpec.describe TasksController, type: :controller do
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["status"]).to eq "assigned"
           expect(response_body["task"]["appeal_id"]).to eq appeal.id
+          expect(response_body["task"]["instructions"]).to eq "do this"
+          expect(response_body["task"]["title"]).to eq "address_verification"
         end
 
         context "when appeal is not found" do
