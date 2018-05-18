@@ -113,7 +113,9 @@ RSpec.describe TasksController, type: :controller do
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
           post :create, params: { tasks: params }
-          expect(response.status).to eq 404
+          expect(response.status).to eq 400
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"
         end
       end
     end
@@ -181,7 +183,9 @@ RSpec.describe TasksController, type: :controller do
         it "should not be successful" do
           allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
           patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
-          expect(response.status).to eq 404
+          expect(response.status).to eq 400
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"
         end
       end
     end
