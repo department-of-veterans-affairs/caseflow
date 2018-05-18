@@ -60,7 +60,7 @@ Rails.application.configure do
   config.use_efolder_locally = false
 
   # set to true to create queues and override the sqs endpiont
-  config.sqs_create_queues = false
+  config.sqs_create_queues = true
   config.sqs_endpoint = "http://localhost:4576"
 
   # since we mock aws using localstack, provide dummy creds to the aws gem
