@@ -8,7 +8,6 @@
  *
  *= require ./_loading_container.scss
  *= require ./_comment.scss
- *= require ./_comment_icon.scss
  *= require ./_select-dropdown.scss
  *= require ./_toggle_button.scss
  *= require ./_performance_degradation_banner.scss
