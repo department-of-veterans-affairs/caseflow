@@ -303,16 +303,6 @@ select {
   vertical-align: middle;
 }
 
-.cf-form-checkbox {
-  input {
-    left: -999em;
-  }
-
-  i {
-    margin-left: 0;
-  }
-}
-
 .cf-left-padding {
   padding-left: 75px;
   margin-top: 20px;
@@ -362,18 +352,6 @@ select {
   margin: 0;
   padding: 0;
   line-height: 1;
-}
-
-.cf-icon-button {
-  cursor: pointer;
-}
-
-.cf-form-textarea {
-  margin-bottom: 40px;
-
-  p {
-    margin-top: 0;
-  }
 }
 
 .cf-borderless-rows {

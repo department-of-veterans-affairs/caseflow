@@ -954,7 +954,11 @@ fieldset {
 .cf-form-textarea {
   clear: both;
   max-width: rem(455px);
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+
+  p {
+    margin-top: 0;
+  }
 }
 
 // Wrapping element for each option */
@@ -1010,6 +1014,18 @@ fieldset {
 .cf-form-checkbox {
   &:not(:last-child) {
     margin-bottom: rem(20px);
+  }
+
+  input {
+    left: -999em;
+  }
+
+  i {
+    margin-left: 0;
+  }
+
+  .cf-required {
+    display: none;
   }
 }
 
@@ -1263,7 +1279,6 @@ button {
     margin-bottom: 20px;
  }
 }
-
 
 .usa-accordion-button {
   background-image: url(asset-path('minus.svg'));
