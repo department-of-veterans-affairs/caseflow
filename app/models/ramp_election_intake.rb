@@ -34,13 +34,7 @@ class RampElectionIntake < Intake
     return if complete? || pending?
     start_complete!
 
-    begin
-      if ramp_election.create_or_connect_end_product! == :connected
-        update!(error_code: "connected_preexisting_ep")
-      end
-    rescue StandardError
-      return clear_pending!
-    end
+    create_or_connect_end_product
 
     close_eligible_appeals!
 
@@ -87,6 +81,15 @@ class RampElectionIntake < Intake
   end
 
   private
+
+  def create_or_connect_end_product
+    if ramp_election.create_or_connect_end_product! == :connected
+      update!(error_code: "connected_preexisting_ep")
+    end
+  rescue StandardError => e
+    clear_pending!
+    raise e
+  end
 
   def close_eligible_appeals!
     LegacyAppeal.close(

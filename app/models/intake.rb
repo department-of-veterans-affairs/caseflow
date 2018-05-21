@@ -197,6 +197,13 @@ class Intake < ApplicationRecord
     FORM_TYPES.key(self.class.name)
   end
 
+  def create_end_product_and_contentions
+    detail.create_end_product_and_contentions!
+  rescue StandardError => e
+    clear_pending!
+    raise e
+  end
+
   private
 
   def file_number_valid?
