@@ -176,6 +176,15 @@ describe RampElectionIntake do
         expect(intake.completed_at).to be_nil
       end
     end
+
+    context "if end product creation fails" do
+      let(:completion_status) { "pending" }
+
+      it "clears pending status" do
+        allow_any_instance_of(Intake).to receive(:complete!).and_raise(Caseflow::Error)
+        expect(intake).to have_attributes(completion_status: nil)
+      end
+    end
   end
 
   context "#serialized_appeal_issues" do
