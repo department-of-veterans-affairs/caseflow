@@ -140,10 +140,12 @@ docker-compose down -v
 rake [RAILS_ENV=<test|development|stubbed>] db:setup
 rake [RAILS_ENV=<test|development|stubbed>] db:seed
 
-# setup local VACOLS (FAKOLS)
-rake [RAILS_ENV=<test|development|stubbed>] local:vacols:setup
-rake [RAILS_ENV=<test|development|stubbed>] local:vacols:seed
+# setup local VACOLS (FACOLS)
+rake [RAILS_ENV=<test|development>] local:vacols:setup
+rake local:vacols:seed
 ```
+
+Note you'll need to setup both the test and development databases, but only need to seed the development database.
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
