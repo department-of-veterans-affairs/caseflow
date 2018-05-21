@@ -36,10 +36,8 @@ export const ADD_ISSUE = 'ADD_ISSUE';
 export const DELETE_ISSUE = 'DELETE_ISSUE';
 export const TOGGLE_ISSUE_DELETE_MODAL = 'TOGGLE_ISSUE_DELETE_MODAL';
 
-export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_MILITARY_SERVICE = 'SET_MILITARY_SERVICE';
-export const SET_EVIDENCE = 'SET_EVIDENCE';
-export const SET_COMMENTS_FOR_ATTORNEY = 'SET_COMMENTS_FOR_ATTORNEY';
+export const SET_SUMMARY = 'SET_SUMMARY';
 
 export const TOGGLE_DOCKET_SAVING = 'TOGGLE_DOCKET_SAVING';
 export const TOGGLE_WORKSHEET_SAVING = 'TOGGLE_WORKSHEET_SAVING';
@@ -53,3 +51,16 @@ export const SET_WORKSHEET_SAVE_FAILED_STATUS = 'SET_WORKSHEET_SAVE_FAILED_STATU
 
 export const SET_WORKSHEET_EDITED_FLAG_TO_FALSE = 'SET_WORKSHEET_EDITED_FLAG_TO_FALSE';
 export const SET_EDITED_FLAG_TO_FALSE = 'SET_EDITED_FLAG_TO_FALSE';
+
+export const DISPOSITION_OPTIONS = [{ value: 'held',
+  label: 'Held' },
+{ value: 'no_show',
+  label: 'No Show' },
+{ value: 'cancelled',
+  label: 'Cancelled' },
+{ value: 'postponed',
+  label: 'Postponed' }];
+
+export const SERVER_ERROR_CODES = {
+  VACOLS_RECORD_DOES_NOT_EXIST: 1001
+};

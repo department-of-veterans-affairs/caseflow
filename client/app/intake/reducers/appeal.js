@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError } from '../util';
+import { getReceiptDateError, formatRatings } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -25,6 +25,12 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
+    },
+    ratings: {
+      $set: state.ratings || formatRatings(serverIntake.ratings)
+    },
+    isComplete: {
+      $set: Boolean(serverIntake.completed_at)
     }
   });
 };
@@ -37,7 +43,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     docketTypeError: null,
     isStarted: false,
     isReviewed: false,
-    endProductDescription: null,
+    isComplete: false,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -53,7 +59,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   default:
   }
 
-  // The rest of the actions only should be processed if a HigherLevelReview intake is being processed
+  // The rest of the actions only should be processed if a Appeal intake is being processed
   if (!state.isStarted) {
     return state;
   }
@@ -109,6 +115,53 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        },
+        completeIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        completeIntakeErrorData: {
+          $set: action.payload.responseErrorData
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      ratings: {
+        [action.payload.profileDate]: {
+          issues: {
+            [action.payload.issueId]: {
+              isSelected: {
+                $set: action.payload.isSelected
+              }
+            }
+          }
         }
       }
     });

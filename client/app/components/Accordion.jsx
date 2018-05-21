@@ -12,7 +12,7 @@ const CLASS_NAME_MAPPING = {
 
 /*
 * The base CSS file for both the Accordion and the AccordionSection components
-* originiated from vendor/assets/_rc_collapse.scss. Should there be any styling
+* originiated from app/assets/stylesheets/react/_rc_collapse.scss. Should there be any styling
 * issues for future accordion styles please consult that file along with _main.scss.
 */
 
