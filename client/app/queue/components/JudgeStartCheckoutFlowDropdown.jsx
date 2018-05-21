@@ -1,23 +1,45 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import {
+  requestSave,
+  saveSuccess
+} from '../uiReducer/uiActions';
+import { deleteAppeal } from '../QueueActions';
+import {
   dropdownStyling,
-  JUDGE_DECISION_OPTIONS
+  JUDGE_DECISION_OPTIONS,
+  JUDGE_DECISION_TYPES
 } from '../constants';
 
 class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
+  changeRoute = (props) => {
+    const {
+      appeal: { attributes: appeal },
+      vacolsId
+    } = this.props;
+    const actionType = props.value;
+
+    if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
+      // this.props.requestSave()...
+      this.props.deleteAppeal(vacolsId);
+      this.props.saveSuccess(`You have successfully submitted an OMO for ${appeal.veteran_full_name}`);
+    } else {
+      // todo: go to review dispositions
+    }
+  }
+
   render = () => <SearchableDropdown
     placeholder="Select an action&hellip;"
     name={`start-checkout-flow-${this.props.vacolsId}`}
     options={JUDGE_DECISION_OPTIONS}
     hideLabel
-    onChange={_.noop}
+    onChange={this.changeRoute}
     dropdownStyling={dropdownStyling} />
 }
 
@@ -29,4 +51,10 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId]
 });
 
-export default withRouter(connect(mapStateToProps)(JudgeStartCheckoutFlowDropdown));
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestSave,
+  saveSuccess,
+  deleteAppeal
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown));
