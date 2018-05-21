@@ -26,6 +26,7 @@ const headerColumnsContainerStyle = css(fullWidth, {
   display: 'inline-block'
 });
 const hrStyling = css(marginTop(2), marginBottom(3));
+const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -97,6 +98,7 @@ class EvaluateDecisionView extends React.PureComponent {
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
         onChange={(caseQuality) => this.setState({ caseQuality })}
         value={this.state.caseQuality}
+        styling={marginBottom(0)}
         options={[{
           value: '5',
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
@@ -114,54 +116,61 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
         }]} />
 
-      <div className="cf-push-left" {...marginRight(2)}>
-        <h3>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h3>
-        <CheckboxGroup
-          hideLabel vertical
-          name={COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}
-          onChange={_.noop}
-          options={[{
-            id: 'theory-contention',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY
-          }, {
-            id: 'case-law',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW
-          }, {
-            id: 'statue-regulation',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE
-          }, {
-            id: 'admin-procedure',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN
-          }, {
-            id: 'relevant-records',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT
-          }, {
-            id: 'lay-evidence',
-            label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY
-          }]} />
-      </div>
-      <div className="cf-push-left">
-        <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
-        <CheckboxGroup
-          hideLabel vertical
-          name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-          onChange={_.noop}
-          options={[{
-            id: 'improperly-addressed',
-            label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED
-          }, {
-            id: 'findings-not-supported',
-            label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED
-          }, {
-            id: 'due-process',
-            label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS
-          }, {
-            id: 'incomplete-remands',
-            label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS
-          }, {
-            id: 'errors',
-            label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
-          }]} />
+      {this.state.caseQuality > 0 && this.state.caseQuality < 3 && <div {...constrainWidth(50)}>
+        Please provide more details about quality of work below. If none of the below
+        apply, please add your thoughts in the comments box below.
+      </div>}
+
+      <div {...marginTop(4)}>
+        <div className="cf-push-left" {...marginRight(2)}>
+          <h3>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h3>
+          <CheckboxGroup
+            hideLabel vertical
+            name={COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}
+            onChange={_.noop}
+            options={[{
+              id: 'theory-contention',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY
+            }, {
+              id: 'case-law',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW
+            }, {
+              id: 'statue-regulation',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE
+            }, {
+              id: 'admin-procedure',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN
+            }, {
+              id: 'relevant-records',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT
+            }, {
+              id: 'lay-evidence',
+              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY
+            }]} />
+        </div>
+        <div className="cf-push-left">
+          <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
+          <CheckboxGroup
+            hideLabel vertical
+            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+            onChange={_.noop}
+            options={[{
+              id: 'improperly-addressed',
+              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED
+            }, {
+              id: 'findings-not-supported',
+              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED
+            }, {
+              id: 'due-process',
+              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS
+            }, {
+              id: 'incomplete-remands',
+              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS
+            }, {
+              id: 'errors',
+              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
+            }]} />
+        </div>
       </div>
 
       <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h3>
