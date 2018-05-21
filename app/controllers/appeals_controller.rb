@@ -6,20 +6,47 @@ class AppealsController < ApplicationController
   end
 
   def show_case_list
-    # :nocov:
-    no_cache
-
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
         return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
       end
     end
+  end
+
+  def document_count
+    render json: { document_count: appeal.number_of_documents }
+  end
+
+  def show
+    no_cache
+
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        vacols_id = params[:id]
+        MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+                              service: :queue,
+                              name: "AppealsController.show") do
+          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+          render json: { appeal: json_appeals([appeal])[:data][0] }
+        end
+      end
+    end
+  end
+
+  private
+
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
     # :nocov:
   end
 
   def get_appeals_for_file_number(file_number)
-    # :nocov:
     return file_number_not_found_error unless file_number
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
@@ -36,41 +63,6 @@ class AppealsController < ApplicationController
         appeals: json_appeals(appeals)[:data]
       }
     end
-    # :nocov:
-  end
-
-  def document_count
-    render json: { document_count: appeal.number_of_documents }
-  end
-
-  def show
-    # :nocov:
-    no_cache
-
-    respond_to do |format|
-      format.html { render template: "queue/index" }
-      format.json do
-        vacols_id = params[:id]
-        MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
-                              service: :queue,
-                              name: "AppealsController.show") do
-          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-          render json: { appeal: json_appeals([appeal])[:data][0] }
-        end
-      end
-    end
-    # :nocov:
-  end
-
-  private
-
-  # https://stackoverflow.com/a/748646
-  def no_cache
-    # :nocov:
-    response.headers["Cache-Control"] = "no-cache, no-store"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
-    # :nocov:
   end
 
   def appeal

@@ -60,4 +60,59 @@ RSpec.describe AppealsController, type: :controller do
       end
     end
   end
+
+  describe "GET cases/:id" do
+    let(:ssn) { Generators::Random.unique_ssn }
+    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
+    let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
+
+    context "when requesting html response" do
+      let(:request_format) { :html }
+
+      context "with valid Veteran ID" do
+        let(:veteran_id) { appeal.veteran.id } # TODO: This should be something different
+
+        it "should return the single page app" do
+          get :show_case_list, params: options
+          expect(response.status).to eq 200
+        end
+      end
+
+      context "with invalid Veteran ID" do
+        let(:veteran_id) { "invalidID" }
+
+        it "should return the single page app" do
+          get :show_case_list, params: options
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
+    context "when requesting json response" do
+      let(:request_format) { :json }
+
+      context "with valid Veteran ID" do
+        let(:veteran_id) { appeal.veteran.id }
+
+        it "should return a list of appeals for the Veteran" do
+          get :show_case_list, params: options
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+          expect(response_body["appeals"].size).to eq 1
+        end
+      end
+
+      context "with invalid Veteran ID" do
+        let(:veteran_id) { "invalidID" }
+
+        it "should return a 404" do
+          get :show_case_list, params: options
+          expect(response.status).to eq 404
+        end
+      end
+    end
+
+    context "when requesting json response" do
+    end
+  end
 end
