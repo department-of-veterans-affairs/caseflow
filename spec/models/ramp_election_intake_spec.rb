@@ -297,6 +297,18 @@ describe RampElectionIntake do
           expect(ramp_election.notice_date).to be_nil
         end
       end
+
+      context "intake is already in progress" do
+        it "should not create another intake" do
+          RampElectionIntake.new(
+            user: user,
+            veteran_file_number: veteran_file_number
+          ).start!
+
+          expect(intake).to_not be_nil
+          expect(subject).to eq(false)
+        end
+      end
     end
   end
 
