@@ -70,7 +70,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:request_format) { :html }
 
       context "with valid Veteran ID" do
-        let(:veteran_id) { appeal.veteran.id } # TODO: This should be something different
+        let(:veteran_id) { appeal.veteran.id }
 
         it "should return the single page app" do
           get :show_case_list, params: options
