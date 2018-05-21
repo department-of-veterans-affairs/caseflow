@@ -196,8 +196,10 @@ RSpec.feature "Queue" do
       FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_phase_two)
+      FeatureToggle.disable!(:judge_queue)
     end
     after do
+      FeatureToggle.enable!(:judge_queue)
       FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
