@@ -6,13 +6,13 @@ import { CATEGORIES, ACTIONS, debounceMs } from '../../../../app/hearings/analyt
 
 describe('.setNotes', () => {
   it('sets notes', () => {
-    const hearingIndex = 0;
+    const hearingId = 0;
     const notes = 'this is my note.';
     const date = new Date();
     const expectedAction = {
       type: Constants.SET_NOTES,
       payload: {
-        hearingIndex,
+        hearingId,
         notes,
         date
       },
@@ -24,19 +24,19 @@ describe('.setNotes', () => {
       }
     };
 
-    expect(Actions.setNotes(hearingIndex, notes, date)).to.deep.equal(expectedAction);
+    expect(Actions.setNotes(hearingId, notes, date)).to.deep.equal(expectedAction);
   });
 });
 
 describe('.setDisposition', () => {
   it('sets disposition', () => {
-    const hearingIndex = 0;
+    const hearingId = 0;
     const disposition = 'no_show';
     const date = new Date();
     const expectedAction = {
       type: Constants.SET_DISPOSITION,
       payload: {
-        hearingIndex,
+        hearingId,
         disposition,
         date
       },
@@ -49,37 +49,37 @@ describe('.setDisposition', () => {
       }
     };
 
-    expect(Actions.setDisposition(hearingIndex, disposition, date)).to.deep.equal(expectedAction);
+    expect(Actions.setDisposition(hearingId, disposition, date)).to.deep.equal(expectedAction);
   });
 });
 
 describe('.setHoldOpen', () => {
   it('sets hold open', () => {
-    const hearingIndex = 0;
+    const hearingId = 0;
     const holdOpen = 60;
     const date = new Date();
     const expectedAction = {
       type: Constants.SET_HOLD_OPEN,
       payload: {
-        hearingIndex,
+        hearingId,
         holdOpen,
         date
       }
     };
 
-    expect(Actions.setHoldOpen(hearingIndex, holdOpen, date)).to.deep.equal(expectedAction);
+    expect(Actions.setHoldOpen(hearingId, holdOpen, date)).to.deep.equal(expectedAction);
   });
 });
 
 describe('.setAod', () => {
   it('sets AOD', () => {
-    const hearingIndex = 0;
+    const hearingId = 0;
     const aod = 'filed';
     const date = new Date();
     const expectedAction = {
       type: Constants.SET_AOD,
       payload: {
-        hearingIndex,
+        hearingId,
         aod,
         date
       },
@@ -92,19 +92,19 @@ describe('.setAod', () => {
       }
     };
 
-    expect(Actions.setAod(hearingIndex, aod, date)).to.deep.equal(expectedAction);
+    expect(Actions.setAod(hearingId, aod, date)).to.deep.equal(expectedAction);
   });
 });
 
 describe('.setTranscriptRequested', () => {
   it('sets transcript requested', () => {
-    const hearingIndex = 0;
+    const hearingId = 0;
     const transcriptRequested = true;
     const date = new Date();
     const expectedAction = {
       type: Constants.SET_TRANSCRIPT_REQUESTED,
       payload: {
-        hearingIndex,
+        hearingId,
         transcriptRequested,
         date
       },
@@ -117,7 +117,7 @@ describe('.setTranscriptRequested', () => {
       }
     };
 
-    expect(Actions.setTranscriptRequested(hearingIndex, transcriptRequested, date)).to.deep.equal(expectedAction);
+    expect(Actions.setTranscriptRequested(hearingId, transcriptRequested, date)).to.deep.equal(expectedAction);
   });
 });
 
