@@ -1,3 +1,4 @@
+import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -13,6 +14,8 @@ import {
 import CaseSearchErrorMessage from './CaseSearchErrorMessage';
 import SearchBar from '../components/SearchBar';
 
+const alertBoxStyling = css({ marginBottom: '3rem' });
+
 class CaseListSearch extends React.PureComponent {
   onSubmitSearch = (searchQuery) => {
     /* eslint-disable no-empty-function */
@@ -24,7 +27,7 @@ class CaseListSearch extends React.PureComponent {
 
   render() {
     return <React.Fragment>
-      <CaseSearchErrorMessage />
+      <CaseSearchErrorMessage styling={alertBoxStyling} />
       <SearchBar
         id={this.props.elementId}
         size={this.props.searchSize}

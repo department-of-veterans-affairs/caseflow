@@ -31,7 +31,7 @@ class CaseSearchErrorMessage extends React.PureComponent {
       message = COPY.CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE;
     }
 
-    return <Alert title={title} type="error">{message}</Alert>;
+    return <Alert title={title} type="error" styling={this.props.styling}>{message}</Alert>;
   }
 }
 
