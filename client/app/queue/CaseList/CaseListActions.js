@@ -65,14 +65,18 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
 });
 
 export const fetchAppealsUsingVeteranId = (searchQuery) =>
-  (dispatch) => {
+  (dispatch) => new Promise((resolve, reject) => {
+    if (!searchQuery.length) {
+      dispatch(emptyQuerySearchAttempt());
+      reject();
+    }
+
     const veteranId = searchQuery.replace(/\D/g, '');
     // Allow for SSNs (9 digits) as well as claims file numbers (7 or 8 digits).
 
     if (!veteranId.match(/\d{7,9}/)) {
       dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
-
-      return;
+      reject();
     }
 
     dispatch(requestAppealUsingVeteranId());
@@ -84,10 +88,17 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
         if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
+          reject();
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+
+          // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
+          const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
+
+          resolve(caseflowVeteranId);
         }
       }, () => {
         dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
+        reject();
       });
-  };
+  });
