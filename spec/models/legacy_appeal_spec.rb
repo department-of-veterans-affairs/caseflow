@@ -76,11 +76,11 @@ describe LegacyAppeal do
 
   context "Works with FACOLS" do
     before do
-      FeatureToggle.enable!(:fakes_off)
+      FeatureToggle.enable!(:test_facols)
     end
 
     after do
-      FeatureToggle.disable!(:fakes_off)
+      FeatureToggle.disable!(:test_facols)
     end
 
     let(:appeal) do
@@ -1667,11 +1667,11 @@ describe LegacyAppeal do
 
   context ".for_api" do
     before do
-      FeatureToggle.enable!(:fakes_off)
+      FeatureToggle.enable!(:test_facols)
     end
 
     after do
-      FeatureToggle.disable!(:fakes_off)
+      FeatureToggle.disable!(:test_facols)
     end
 
     subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
