@@ -130,6 +130,17 @@ class ExternalApi::BGSService
     end
   end
 
+  def find_all_relationships(participant_id:)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: find all relationships: \
+                           participant_id = #{participant_id}",
+                          service: :bgs,
+                          name: "claimants.find_all_relationships") do
+      client.claimants.find_all_relationships(participant_id)
+    end
+  end
+
   private
 
   def init_client

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180517204321) do
+ActiveRecord::Schema.define(version: 20180517204250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -313,10 +313,7 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.integer "appeal_id"
     t.string "vacols_id", null: false
     t.string "witness"
-    t.string "contentions"
-    t.string "evidence"
     t.string "military_service"
-    t.string "comments_for_attorney"
     t.boolean "prepped"
     t.text "summary"
   end
@@ -469,6 +466,21 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "status", default: "assigned"
+    t.string "type"
+    t.text "title"
+    t.text "instructions"
+    t.integer "assigned_to_id"
+    t.integer "assigned_by_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
