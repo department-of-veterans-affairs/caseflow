@@ -348,6 +348,7 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completion_status IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
+    t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completion_status IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
