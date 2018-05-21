@@ -178,11 +178,15 @@ describe RampElectionIntake do
     end
 
     context "if end product creation fails" do
-      let(:completion_status) { "pending" }
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
 
       it "clears pending status" do
-        allow_any_instance_of(Intake).to receive(:complete!).and_raise(Caseflow::Error)
-        expect(intake).to have_attributes(completion_status: nil)
+        allow_any_instance_of(RampReview).to receive(:create_or_connect_end_product!).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
       end
     end
   end
