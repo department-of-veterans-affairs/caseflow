@@ -18,6 +18,22 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    context "intake is already in progress by same user" do
+      it "should not create another intake" do
+        HigherLevelReviewIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
