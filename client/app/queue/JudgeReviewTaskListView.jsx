@@ -14,7 +14,7 @@ import Alert from '../components/Alert';
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState,
+  resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
