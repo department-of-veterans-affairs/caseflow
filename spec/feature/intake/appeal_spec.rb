@@ -66,9 +66,33 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    appeal = TemporaryAppeal.find_by(veteran_file_number: "22334455")
+    appeal = Appeal.find_by(veteran_file_number: "22334455")
+    intake = Intake.find_by(veteran_file_number: "22334455")
+
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(appeal.docket_type).to eq("evidence_submission")
+
+    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Decision date: 04/25/2018")
+    expect(page).to have_content("Left knee granted")
+
+    find("label", text: "PTSD denied").click
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+
+    intake.reload
+    expect(intake.completed_at).to eq(Time.zone.now)
+
+    expect(intake).to be_success
+
+    appeal.reload
+    expect(appeal.request_issues.count).to eq 1
+    expect(appeal.request_issues.first).to have_attributes(
+      rating_issue_reference_id: "def456",
+      rating_issue_profile_date: Date.new(2018, 4, 28),
+      description: "PTSD denied"
+    )
   end
 end

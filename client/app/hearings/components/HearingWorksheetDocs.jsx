@@ -55,6 +55,7 @@ class HearingWorksheetDocs extends Component {
                   <Table
                     styling={styling}
                     columns={columns}
+                    getKeyForRow = {(index) => index}
                     rowObjects={[
                       { name: <b>Prior BVA Decision</b>,
                         value: formatDate(appeal.prior_bva_decision_date) },
@@ -71,6 +72,7 @@ class HearingWorksheetDocs extends Component {
                   <Table
                     styling={styling}
                     columns={columns}
+                    getKeyForRow = {(index) => index}
                     rowObjects={[
                       { name: <b>SSOC</b>,
                         value: formatArrayOfDateStrings(appeal.ssoc_dates) },

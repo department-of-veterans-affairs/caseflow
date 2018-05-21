@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import pluralize from 'pluralize';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,6 +8,7 @@ import { sprintf } from 'sprintf-js';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
@@ -21,11 +23,25 @@ const backLinkStyling = css({
   marginTop: '-3rem'
 });
 
+const horizontalRuleStyling = css({
+  border: 0,
+  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+  marginTop: '5rem',
+  marginBottom: '5rem'
+});
+
 class CaseListView extends React.PureComponent {
+  shouldShowBreadcrumbs = () => this.props.caseList.receivedAppeals.length > 0 || this.props.errorType;
+
   render() {
     const body = {
-      heading: null,
-      component: null
+      heading: COPY.CASE_SEARCH_HOME_PAGE_HEADING,
+      component: <React.Fragment>
+        <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
+        <CaseListSearch elementId="searchBarEmptyList" />
+        <hr {...horizontalRuleStyling} />
+        <p><Link href="/help">Caseflow Help</Link></p>
+      </React.Fragment>
     };
 
     const appealsCount = this.props.caseList.receivedAppeals.length;
@@ -63,9 +79,11 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearCaseListSearch}>{COPY.BACK_TO_PERSONAL_QUEUE_LINK_LABEL}</Link>
-      </div>
+      { this.shouldShowBreadcrumbs() &&
+        <div {...backLinkStyling}>
+          <Link to={this.props.backLinkTarget} onClick={this.props.clearCaseListSearch}>{this.props.backLinkText}</Link>
+        </div>
+      }
       <AppSegment filledBackground>
         <div>
           <h1 className="cf-push-left" {...fullWidth}>{body.heading}</h1>
@@ -75,6 +93,16 @@ class CaseListView extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+CaseListView.propTypes = {
+  backLinkTarget: PropTypes.string,
+  backLinkText: PropTypes.string
+};
+
+CaseListView.defaultProps = {
+  backLinkTarget: '/queue',
+  backLinkText: COPY.BACK_TO_PERSONAL_QUEUE_LINK_LABEL
+};
 
 const mapStateToProps = (state) => ({
   caseList: state.caseList,

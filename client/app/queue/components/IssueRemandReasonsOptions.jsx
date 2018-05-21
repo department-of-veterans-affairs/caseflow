@@ -208,6 +208,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
         Certified: {formatDateStr(appeal.certification_date)}
       </div>
+      <div {...smallBottomMargin}>Note: {issue.note}</div>
       {highlight && !this.getChosenOptions().length &&
         <div className="usa-input-error"
           {...css(redText, boldText, errorNoTopMargin)}>

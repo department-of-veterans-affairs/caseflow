@@ -15,6 +15,7 @@ import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { DISPOSITION_OPTIONS } from '../constants/constants';
 
 const textareaStyling = css({
   '@media only screen and (max-width : 1024px)': {
@@ -33,15 +34,6 @@ const issueCountStyling = css({
   paddingTop: '5px',
   paddingBottom: '5px'
 });
-
-const dispositionOptions = [{ value: 'held',
-  label: 'Held' },
-{ value: 'no_show',
-  label: 'No Show' },
-{ value: 'cancelled',
-  label: 'Cancelled' },
-{ value: 'postponed',
-  label: 'Postponed' }];
 
 const holdOption = (days, hearingDate) => ({
   value: days,
@@ -62,18 +54,23 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
+const selectedValue = (selected) => selected ? selected.value : null;
+
 export class DocketHearingRow extends React.PureComponent {
 
-  setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
+  setDisposition = (selected) =>
+    this.props.setDisposition(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
-  setHoldOpen = ({ value }) => this.props.setHoldOpen(this.props.index, value, this.props.hearingDate);
+  setHoldOpen = (selected) =>
+    this.props.setHoldOpen(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
-  setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
+  setAod = (selected) =>
+    this.props.setAod(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
-    this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+    this.props.setTranscriptRequested(this.props.hearing.id, value, this.props.hearingDate);
 
-  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
+  setNotes = (event) => this.props.setNotes(this.props.hearing.id, event.target.value, this.props.hearingDate);
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
@@ -117,8 +114,8 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               id={`${hearing.id}-prep`}
               onChange={this.preppedOnChange}
-              key={index}
-              value={hearing.prepped}
+              key={`${hearing.id}`}
+              value={hearing.prepped || false}
               name={`${hearing.id}-prep`}
               hideLabel
               {...preppedCheckboxStyling}
@@ -159,7 +156,7 @@ export class DocketHearingRow extends React.PureComponent {
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}-disposition`}
-            options={dispositionOptions}
+            options={DISPOSITION_OPTIONS}
             onChange={this.setDisposition}
             value={hearing.disposition}
             searchable={false}

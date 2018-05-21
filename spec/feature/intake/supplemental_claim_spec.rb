@@ -82,6 +82,8 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Finish processing")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
+    expect(page).to have_button("Establish EP", disabled: true)
+    expect(page).to have_content("0 rated issues")
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
 
@@ -90,6 +92,12 @@ RSpec.feature "Supplemental Claim Intake" do
     intake = Intake.find_by(veteran_file_number: "12341234")
 
     find("label", text: "PTSD denied").click
+    expect(page).to have_content("1 rated issue")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("2 rated issues")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("1 rated issue")
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
