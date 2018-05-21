@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -28,7 +29,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
       // this.props.requestSave()...
       this.props.deleteAppeal(vacolsId);
-      this.props.saveSuccess(`You have successfully submitted an OMO for ${appeal.veteran_full_name}`);
+      this.props.saveSuccess(sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name));
     } else {
       // todo: go to review dispositions
     }

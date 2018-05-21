@@ -69,10 +69,10 @@ export const JUDGE_DECISION_TYPES = {
 };
 
 export const JUDGE_DECISION_OPTIONS = [{
-  label: 'Ready for Dispatch',
+  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
   value: JUDGE_DECISION_TYPES.DISPATCH
 }, {
-  label: 'Assign OMO',
+  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
   value: JUDGE_DECISION_TYPES.OMO_REQUEST
 }];
 

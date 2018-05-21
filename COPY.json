@@ -26,7 +26,6 @@
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake please email your judge to resolve the issue.",
-  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
 
@@ -48,5 +47,10 @@
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
+  "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
+
+  "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
+  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS."
 }
