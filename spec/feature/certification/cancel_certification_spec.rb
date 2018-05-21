@@ -66,7 +66,7 @@ RSpec.feature "Cancel certification" do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: " "
-      click_button "Cancel certification"
+      safe_click "Cancel certification"
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
 
       within_fieldset("Why can't this case be certified in Caseflow?") do
