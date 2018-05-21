@@ -94,7 +94,9 @@ describe HigherLevelReviewIntake do
       end
 
       it "clears pending status" do
-        allow_any_instance_of(HigherLevelReview).to receive(:create_end_product_and_contentions!).and_raise(unknown_error)
+        allow_any_instance_of(HigherLevelReview).to receive(
+          :create_end_product_and_contentions!
+        ).and_raise(unknown_error)
 
         expect { subject }.to raise_exception
         expect(intake.completion_status).to be_nil
