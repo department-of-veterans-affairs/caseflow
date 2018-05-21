@@ -32,9 +32,6 @@ import { DECISION_TYPES } from './constants';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  // TODO: Consider changing this into a component attribute (see efolder InitContainer).
-  routedSearchHome = () => <CaseSearchSheet />;
-
   routedSearchResults = (props) => <React.Fragment>
     <SearchBar
       feedbackUrl={this.props.feedbackUrl}
@@ -109,7 +106,7 @@ class QueueApp extends React.PureComponent {
             exact
             path="/"
             title="Caseflow"
-            render={this.routedSearchHome} />
+            component={CaseSearchSheet} />
           <PageRoute
             exact
             path="/cases/:caseflowVeteranId"
