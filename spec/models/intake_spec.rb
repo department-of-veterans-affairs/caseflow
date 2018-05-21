@@ -63,7 +63,8 @@ describe Intake do
         detail: detail,
         user: user,
         started_at: 10.minutes.ago,
-        completed_at: 5.minutes.ago
+        completed_at: 5.minutes.ago,
+        completion_status: "success"
       )
     end
 
