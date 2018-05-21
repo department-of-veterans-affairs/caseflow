@@ -41,8 +41,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     name={`start-checkout-flow-${this.props.vacolsId}`}
     options={JUDGE_DECISION_OPTIONS}
     hideLabel
+    readOnly={this.props.appeal.attributes.paper_case}
     onChange={this.changeRoute}
-    dropdownStyling={dropdownStyling} />
+    dropdownStyling={dropdownStyling} />;
 }
 
 JudgeStartCheckoutFlowDropdown.propTypes = {
