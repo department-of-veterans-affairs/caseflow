@@ -22,6 +22,7 @@ namespace :local do
       # rubocop:enable Lint/HandleExceptions
     end
 
+    # rubocop:disable Metrics/MethodLength
     def setup_facols(suffix)
       puts "Stopping vacols-db-#{suffix} and removing existing volumes"
       `docker-compose stop vacols-db-#{suffix}`
@@ -62,6 +63,7 @@ namespace :local do
         puts "Failed to setup database"
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     desc "Starts and sets up a dockerized local VACOLS"
     task setup: :environment do
