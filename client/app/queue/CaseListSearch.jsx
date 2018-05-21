@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import {
   clearCaseListSearch,
   emptyQuerySearchAttempt,
-  fetchAppealsUsingVeteranId,
   fetchAppealUsingVeteranIdFailed,
   fetchAppealUsingInvalidVeteranIdFailed,
   fetchedNoAppealsUsingVeteranId,
@@ -90,7 +89,6 @@ CaseListSearch.defaultProps = {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearCaseListSearch,
   emptyQuerySearchAttempt,
-  fetchAppealsUsingVeteranId,
   fetchAppealUsingVeteranIdFailed,
   fetchAppealUsingInvalidVeteranIdFailed,
   fetchedNoAppealsUsingVeteranId,
