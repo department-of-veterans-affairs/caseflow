@@ -48,8 +48,6 @@ describe Intake do
   context ".in_progress" do
     subject { Intake.in_progress }
 
-    let!(:not_started_intake) { intake }
-
     let!(:started_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -71,7 +69,7 @@ describe Intake do
 
     it "returns in progress intakes" do
       expect(subject).to include(started_intake)
-      expect(subject).to_not include(not_started_intake, completed_intake)
+      expect(subject).to_not include(completed_intake)
     end
   end
 
