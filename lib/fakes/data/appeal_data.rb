@@ -596,7 +596,8 @@ module Fakes::Data::AppealData
         added_by_css_id: "EREMPEL",
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative: "Virginia Department of Veterans Affairs",
+        representative_name: "Virginia Department of Veterans Affairs",
+        representative_type: "Service Organization",
         issues: [
           {
             vacols_sequence_id: 1,
