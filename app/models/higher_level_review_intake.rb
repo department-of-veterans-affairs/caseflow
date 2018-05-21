@@ -1,4 +1,6 @@
 class HigherLevelReviewIntake < Intake
+  enum error_code: Intake::ERROR_CODES
+
   def find_or_build_initial_detail
     HigherLevelReview.new(veteran_file_number: veteran_file_number)
   end
