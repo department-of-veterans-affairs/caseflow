@@ -1,5 +1,6 @@
 class AppealsController < ApplicationController
   before_action :react_routed
+  before_action :set_application, only: :document_count
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
@@ -36,6 +37,10 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "queue"
+  end
 
   # https://stackoverflow.com/a/748646
   def no_cache
