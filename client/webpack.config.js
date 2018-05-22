@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
 
+const frontendToolkit = '@department-of-veterans-affairs/caseflow-frontend-toolkit';
 
   // eslint-disable-next-line no-process-env
   const devBuild = process.env.NODE_ENV !== 'production';
@@ -40,7 +41,8 @@ const _ = require('lodash');
         {
           test: /\.jsx?$/,
           loader: 'babel-loader',
-          exclude: /node_modules/
+          exclude: new RegExp(`node_modules/(?!${frontendToolkit})`)
+
         }
       ]
     }
