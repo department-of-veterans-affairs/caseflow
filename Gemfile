@@ -158,3 +158,6 @@ gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
+
+# Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
+gem "factory_bot_rails", "~> 4.8"
