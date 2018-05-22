@@ -1,6 +1,5 @@
 class IntakesController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
-  before_action :fetch_current_intake
 
   def set_application
     RequestStore.store[:application] = "intake"
@@ -23,6 +22,8 @@ class IntakesController < ApplicationController
   end
 
   def create
+    return render json: intake_in_progress.ui_hash if intake_in_progress
+
     if new_intake.start!
       render json: new_intake.ui_hash
     else
@@ -34,30 +35,30 @@ class IntakesController < ApplicationController
   end
 
   def destroy
-    current_intake.cancel!(reason: params[:cancel_reason], other: params[:cancel_other])
+    intake.cancel!(reason: params[:cancel_reason], other: params[:cancel_other])
     render json: {}
   end
 
   def review
-    if current_intake.review!(params)
+    if intake.review!(params)
       render json: {}
     else
-      render json: { error_codes: current_intake.review_errors }, status: 422
+      render json: { error_codes: intake.review_errors }, status: 422
     end
   end
 
   def complete
-    current_intake.complete!(params)
-    render json: current_intake.ui_hash
+    intake.complete!(params)
+    render json: intake.ui_hash
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
-      error_data: current_intake.detail.pending_end_product_description
+      error_data: intake.detail.pending_end_product_description
     }, status: 400
   end
 
   def error
-    current_intake.save_error!(code: params[:error_code])
+    intake.save_error!(code: params[:error_code])
     render json: {}
   end
 
@@ -69,9 +70,11 @@ class IntakesController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def fetch_current_intake
-    @current_intake = Intake.in_progress.find_by(user: current_user)
+  def intake_in_progress
+    return @intake_in_progress unless @intake_in_progress.nil?
+    @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
   end
+  helper_method :intake_in_progress
 
   def new_intake
     @new_intake ||= Intake.build(
@@ -81,7 +84,7 @@ class IntakesController < ApplicationController
     )
   end
 
-  def current_intake
+  def intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
   end
 end
