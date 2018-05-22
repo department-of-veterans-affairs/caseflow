@@ -59,7 +59,7 @@ class AttorneyTaskTable extends React.PureComponent {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
-        if (!task.attributes.task_id) {
+        if (!task.attributes.task_id || this.getAppealForTask(task, 'paper_case')) {
           return null;
         }
 
