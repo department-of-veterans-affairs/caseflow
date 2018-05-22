@@ -27,7 +27,7 @@ class CaseListSearch extends React.PureComponent {
 
   render() {
     return <React.Fragment>
-      <CaseSearchErrorMessage styling={alertBoxStyling} />
+      <div {...alertBoxStyling}><CaseSearchErrorMessage /></div>
       <SearchBar
         id={this.props.elementId}
         size={this.props.searchSize}
