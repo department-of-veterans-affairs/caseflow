@@ -11,8 +11,5 @@ FactoryBot.define do
         "783740847"
       end
     end
-
-    after(:build) do |appeal, evaluator|
-      Fakes::BGS
   end
 end
