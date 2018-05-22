@@ -2,6 +2,7 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 end
 
+# :nocov:
 # Helper for multi-database transactions
 # http://technology.customink.com/blog/2015/06/22/rails-multi-database-best-practices-roundup/
 ActiveRecord::Base.class_eval do
@@ -15,3 +16,4 @@ ActiveRecord::Base.class_eval do
     self.class.multi_transaction { yield }
   end
 end
+# :nocov:
