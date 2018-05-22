@@ -126,7 +126,7 @@ describe LegacyAppeal do
       end
 
       subject { appeal.nod }
-      it { is_expected.to have_attributes(type: "NOD", vacols_date: appeal.nod_date) }
+      it { is_expected.to have_attributes(type: "NOD", vacols_date: vacols_case.bfdnod) }
 
       context "when nod_date is nil" do
         let(:vacols_case) do
@@ -143,7 +143,7 @@ describe LegacyAppeal do
       end
 
       subject { appeal.soc }
-      it { is_expected.to have_attributes(type: "SOC", vacols_date: appeal.soc_date) }
+      it { is_expected.to have_attributes(type: "SOC", vacols_date: vacols_case.bfdsoc) }
 
       context "when soc_date is nil" do
         let(:vacols_case) do
@@ -160,7 +160,7 @@ describe LegacyAppeal do
       end
 
       subject { appeal.form9 }
-      it { is_expected.to have_attributes(type: "Form 9", vacols_date: appeal.form9_date) }
+      it { is_expected.to have_attributes(type: "Form 9", vacols_date: vacols_case.bfd19) }
 
       context "when form9_date is nil" do
         let(:vacols_case) do
@@ -202,7 +202,7 @@ describe LegacyAppeal do
 
       it "returns list of events sorted from oldest to newest by date" do
         expect(subject.length > 1).to be_truthy
-        expect(subject.first.date).to eq(vacols_case.bfdnod)
+        expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
         expect(subject.first.type).to eq(:nod)
       end
     end
@@ -1688,7 +1688,7 @@ describe LegacyAppeal do
 
     it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
-      expect(subject.first.form9_date).to eq(case_with_form_9.bfd19)
+      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
     end
   end
 
