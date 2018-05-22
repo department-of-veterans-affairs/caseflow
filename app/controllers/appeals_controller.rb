@@ -1,5 +1,6 @@
 class AppealsController < ApplicationController
   before_action :react_routed
+  before_action :set_application, only: :document_count
 
   def index
     return veteran_id_not_found_error unless veteran_id
@@ -44,6 +45,10 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "queue"
+  end
 
   # https://stackoverflow.com/a/748646
   def no_cache
