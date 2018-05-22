@@ -176,6 +176,19 @@ describe RampElectionIntake do
         expect(intake.completed_at).to be_nil
       end
     end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(RampReview).to receive(:create_or_connect_end_product!).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
+      end
+    end
   end
 
   context "#serialized_appeal_issues" do
