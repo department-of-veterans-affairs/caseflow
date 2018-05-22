@@ -324,15 +324,17 @@ describe Hearing do
         representative_name: "General Counsel" }
     end
 
-    RequestStore[:current_user] = OpenStruct.new(
-      ip_address: "127.0.0.1",
-      station_id: "397",
-      css_id: "AMCDLUCA",
-      roles: ["User", "Manage Claims Establishme", "Establish Claim"],
-      regional_office: nil
-    )
+    let(:hearing) do
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "397",
+        css_id: "AMCDLUCA",
+        roles: ["User", "Manage Claims Establishme", "Establish Claim"],
+        regional_office: nil
+      )
 
-    let(:hearing) { Hearing.create_unassigned_hearing(hearing_hash) }
+      Hearing.create_unassigned_hearing(hearing_hash)
+    end
 
     context "add a hearing with minimal data" do
       it "creates hearing with minimal data" do
