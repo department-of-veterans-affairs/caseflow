@@ -3,7 +3,8 @@ FactoryBot.define do
     transient do
       bgs_veteran_record do
         {
-          first_name: "Bob"
+          first_name: "Bob",
+          last_name: "Smith"
         }
       end
     end
