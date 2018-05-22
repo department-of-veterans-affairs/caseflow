@@ -11,9 +11,9 @@ FactoryBot.define do
 
     sequence(:file_number, 10_000)
 
-    after(:build) do |veteran, _evaluator|
+    after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[veteran.file_number] = bgs_veteran_record
+      Fakes::BGSService.veteran_records[veteran.file_number] = evaluator.bgs_veteran_record
     end
   end
 end
