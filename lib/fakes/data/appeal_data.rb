@@ -46,7 +46,7 @@ module Fakes::Data::AppealData
     end
   end
 
-def self.certification_ready_to_certify
+  def self.certification_ready_to_certify
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 24)),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 21)),
