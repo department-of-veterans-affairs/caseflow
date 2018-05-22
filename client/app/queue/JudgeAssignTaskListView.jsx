@@ -76,7 +76,7 @@ const AssignedCasesPage = connect(
               task,
               appeal: appeals[task.vacolsId] }))
         }
-        isVacolsIdSelected={isVacolsIdAssignedToUserSelected[attorneyId]}
+        isVacolsIdSelected={isVacolsIdAssignedToUserSelected[attorneyId] || {}}
         onToggleSelectionOfTaskWithVacolsId={(args) => setSelectionOfTaskOfUser({userId: attorneyId, ...args})} />
     </React.Fragment>;
   });
@@ -172,7 +172,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                isVacolsIdSelected={{}}
+                isVacolsIdSelected={isVacolsIdAssignedToUserSelected[userId.toString()] || {}}
                 onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId.toString(), ...args})} />}
           />
           <PageRoute

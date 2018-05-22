@@ -19,7 +19,7 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
       header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
       valueFunction:
         ({task}) => <Checkbox
-          name="noo"
+          name={task.vacolsId}
           label="&nbsp;"
           value={this.props.isVacolsIdSelected[task.vacolsId]}
           onChange={
