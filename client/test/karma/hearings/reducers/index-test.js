@@ -31,7 +31,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_NOTES,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           notes: 'this is my note',
           date: '2017-08-10'
         }
@@ -51,7 +51,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISPOSITION,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           disposition: 'no_show',
           date: '2017-08-10'
         }
@@ -71,7 +71,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_HOLD_OPEN,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           holdOpen: 60,
           date: '2017-08-10'
         }
@@ -91,7 +91,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_AOD,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           aod: 'filed',
           date: '2017-08-10'
         }
@@ -111,7 +111,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_TRANSCRIPT_REQUESTED,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           transcriptRequested: true,
           date: '2017-08-10'
         }

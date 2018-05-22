@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "07a398fb0102ad93684f5423e73be68ba97c74d2"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
 
 # PDF Tools
 gem "pdf-forms"
@@ -158,3 +158,6 @@ gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
+
+# Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
+gem "factory_bot_rails", "~> 4.8"

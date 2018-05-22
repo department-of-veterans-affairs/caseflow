@@ -345,8 +345,10 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.string "type"
     t.string "cancel_reason"
     t.string "cancel_other"
+    t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completion_status IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
+    t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completion_status IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
@@ -467,6 +469,21 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "status", default: "assigned"
+    t.string "type"
+    t.text "title"
+    t.text "instructions"
+    t.integer "assigned_to_id"
+    t.integer "assigned_by_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

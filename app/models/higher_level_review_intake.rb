@@ -1,4 +1,6 @@
 class HigherLevelReviewIntake < Intake
+  enum error_code: Intake::ERROR_CODES
+
   def find_or_build_initial_detail
     HigherLevelReview.new(veteran_file_number: veteran_file_number)
   end
@@ -26,7 +28,8 @@ class HigherLevelReviewIntake < Intake
 
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
-    detail.create_end_product_and_contentions!
+    create_end_product_and_contentions
+
     complete_with_status!(:success)
   end
 end

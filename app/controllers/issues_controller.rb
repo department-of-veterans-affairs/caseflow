@@ -1,5 +1,5 @@
 class IssuesController < ApplicationController
-  before_action :verify_queue_phase_two
+  before_action :verify_task_completion_access
   before_action :validate_access_to_task
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
