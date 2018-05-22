@@ -8,8 +8,7 @@ class Generators::LegacyAppeal
         vacols_id: generate_external_id,
         vacols_record: :ready_to_certify,
         manifest_vbms_fetched_at: Time.zone.now,
-        manifest_vva_fetched_at: Time.zone.now,
-        ssoc_dates: []
+        manifest_vva_fetched_at: Time.zone.now
       }
     end
 
