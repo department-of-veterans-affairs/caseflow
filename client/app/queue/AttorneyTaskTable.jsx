@@ -11,7 +11,7 @@ import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown'
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import { CATEGORIES, redText } from './constants';
+import { CATEGORIES, redText, disabledLinkStyle } from './constants';
 import COPY from '../../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
@@ -59,8 +59,12 @@ class AttorneyTaskTable extends React.PureComponent {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
-        if (!task.attributes.task_id || this.getAppealForTask(task, 'paper_case')) {
+        if (!task.attributes.task_id) {
           return null;
+        }
+
+        if (this.getAppealForTask(task, 'paper_case')) {
+          return <span {...disabledLinkStyle}>View in Reader</span>;
         }
 
         return <ReaderLink vacolsId={task.vacolsId}

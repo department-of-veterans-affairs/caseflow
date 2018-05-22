@@ -56,6 +56,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     options={DRAFT_DECISION_OPTIONS}
     onChange={this.changeRoute}
     hideLabel
+    readOnly={this.props.appeal.attributes.paper_case}
     dropdownStyling={dropdownStyling} />;
 }
 
