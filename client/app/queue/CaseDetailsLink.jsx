@@ -19,7 +19,6 @@ class CaseDetailsLink extends React.PureComponent {
   render() {
     const {
       appeal: { attributes: appeal },
-      task: { attributes: task },
       disabled
     } = this.props;
 

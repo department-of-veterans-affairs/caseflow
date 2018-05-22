@@ -22,7 +22,8 @@ class AttorneyTaskTable extends React.PureComponent {
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
-  getCaseDetailsLink = (task) => <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} disabled={!task.attributes.task_id} />;
+  getCaseDetailsLink = (task) =>
+    <CaseDetailsLink task={task} appeal={this.getAppealForTask(task)} disabled={!task.attributes.task_id} />;
 
   tableStyle = css({
     '& > tr > td': {
