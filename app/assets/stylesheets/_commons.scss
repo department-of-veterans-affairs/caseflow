@@ -420,6 +420,12 @@ svg title {
     height: inherit;
     width: inherit;
   }
+
+  .cf-form-textarea {
+    textarea {
+      max-height: 120px;
+    }
+  }
 }
 
 .cf-modal-body {
@@ -722,6 +728,7 @@ textarea {
   }
 }
 
+
 // Overrides USWDS */
 form {
   max-width: none;
@@ -954,7 +961,7 @@ fieldset {
 .cf-form-textarea {
   clear: both;
   max-width: rem(455px);
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 
   p {
     margin-top: 0;
