@@ -16,7 +16,7 @@ class WorkQueue
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
+      return QueueRepository if FeatureToggle.enabled?(:fakes_off)
       @repository ||= QueueRepository
     end
   end

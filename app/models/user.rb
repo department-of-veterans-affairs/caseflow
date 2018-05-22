@@ -217,12 +217,12 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
+      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
       @appeal_repository ||= AppealRepository
     end
 
     def user_repository
-      return UserRepository if FeatureToggle.enabled?(:test_facols)
+      return UserRepository if FeatureToggle.enabled?(:fakes_off)
       @user_repository ||= UserRepository
     end
   end

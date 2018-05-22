@@ -102,7 +102,7 @@ jobs:
           name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by timings)
+            testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
             echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
             ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 

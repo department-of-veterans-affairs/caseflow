@@ -109,12 +109,12 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:fakes_off)
     Time.zone = "America/New_York"
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:fakes_off)
   end
 
   let(:documents) { [] }
