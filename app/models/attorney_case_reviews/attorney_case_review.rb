@@ -75,7 +75,7 @@ class AttorneyCaseReview < ApplicationRecord
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:fakes_off)
+      return QueueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= QueueRepository
     end
   end
