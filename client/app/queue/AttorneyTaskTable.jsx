@@ -42,7 +42,7 @@ class AttorneyTaskTable extends React.PureComponent {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: (task) => task.attributes.task_id ?
         renderAppealType(this.getAppealForTask(task)) :
-        <span {...redText}>Please ask your judge to assign this case to you in DAS</span>,
+        <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
       span: (task) => task.attributes.task_id ? 1 : 5
     }, {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
@@ -65,7 +65,7 @@ class AttorneyTaskTable extends React.PureComponent {
         }
 
         if (this.getAppealForTask(task, 'paper_case')) {
-          return <span {...disabledLinkStyle}>View in Reader</span>;
+          return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
         }
 
         return <ReaderLink vacolsId={task.vacolsId}
