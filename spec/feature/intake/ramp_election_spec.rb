@@ -94,6 +94,26 @@ RSpec.feature "RAMP Election Intake" do
       expect(page).to have_content("Ineligible to participate in RAMP: appeal is at the Board")
     end
 
+    scenario "Search for a veteran already in progress by current user" do
+      visit "/intake"
+
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Opt-In Election Form").click
+      end
+      safe_click ".cf-submit.usa-button"
+
+      RampElectionIntake.new(
+        user: current_user,
+        veteran_file_number: "43214321"
+      ).start!
+
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
+    end
+
     scenario "Search for a veteran that has a RAMP election already processed" do
       RampElection.create!(
         veteran_file_number: "12341234",

@@ -18,6 +18,22 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    context "intake is already in progress by same user" do
+      it "should not create another intake" do
+        HigherLevelReviewIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -85,6 +101,21 @@ describe HigherLevelReviewIntake do
       it "returns nil" do
         expect(Fakes::VBMSService).not_to receive(:establish_claim!)
         expect(Fakes::VBMSService).not_to receive(:create_contentions!)
+      end
+    end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(HigherLevelReview).to receive(
+          :create_end_product_and_contentions!
+        ).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
       end
     end
   end

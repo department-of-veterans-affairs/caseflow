@@ -71,4 +71,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       state: object.regional_office.state
     }
   end
+
+  attribute :caseflow_veteran_id do
+    object.veteran.id
+  end
 end
