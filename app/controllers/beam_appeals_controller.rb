@@ -1,5 +1,5 @@
-class AmaAppealsController < ApplicationController
-  before_action :verify_ama_access
+class BeamAppealsController < ApplicationController
+  before_action :verify_beam_access
 
   def index
     appeals = Appeal.all
@@ -11,8 +11,8 @@ class AmaAppealsController < ApplicationController
 
   private
 
-  def verify_ama_access
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_ama_appeals)
+  def verify_beam_access
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_beam_appeals)
   end
 
   def json_appeals(appeals)

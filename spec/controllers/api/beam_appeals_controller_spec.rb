@@ -1,15 +1,15 @@
-RSpec.describe AmaAppealsController, type: :controller do
+RSpec.describe BeamAppealsController, type: :controller do
 
   before do
     User.authenticate!(roles: ["System Admin"])
-    FeatureToggle.enable!(:queue_ama_appeals)
+    FeatureToggle.enable!(:queue_beam_appeals)
   end
 
   after do
-    FeatureToggle.disable!(:queue_ama_appeals)
+    FeatureToggle.disable!(:queue_beam_appeals)
   end
 
-  describe "GET ama_appeals" do
+  describe "GET beam_appeals" do
     let(:bgs_veteran_record) do
       {
         first_name: "Bob",

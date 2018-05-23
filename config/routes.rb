@@ -86,7 +86,7 @@ Rails.application.routes.draw do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
-  resources :ama_appeals, only: [:index]
+  resources :beam_appeals, only: [:index]
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
@@ -124,7 +124,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index]
 
   scope path: '/queue' do
-    get '/ama_pilot', to: 'queue#index'
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
