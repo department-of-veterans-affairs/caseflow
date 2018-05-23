@@ -43,11 +43,11 @@ const UnassignedCasesPage = (props) => {
 };
 
 const AssignedCasesPage = connect(
-  (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge', 'isVacolsIdAssignedToUserSelected'),
-  (dispatch) => (bindActionCreators({setSelectionOfTaskOfUser}, dispatch)))(
+  (state) => _.pick(state.queue, 'tasksAndAppealsOfAttorney', 'attorneysOfJudge'),
+  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)))(
   (props) => {
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, isVacolsIdAssignedToUserSelected, setSelectionOfTaskOfUser
+      match, attorneysOfJudge, tasksAndAppealsOfAttorney
     } = props;
     const { attorneyId } = match.params;
 
@@ -76,8 +76,7 @@ const AssignedCasesPage = connect(
               task,
               appeal: appeals[task.vacolsId] }))
         }
-        isVacolsIdSelected={isVacolsIdAssignedToUserSelected[attorneyId] || {}}
-        onToggleSelectionOfTaskWithVacolsId={(args) => setSelectionOfTaskOfUser({userId: attorneyId, ...args})} />
+        userId={attorneyId} />
     </React.Fragment>;
   });
 
@@ -129,7 +128,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, attorneysOfJudge, match, isVacolsIdAssignedToUserSelected } = this.props;
+    const { userId, attorneysOfJudge, match } = this.props;
 
     return <AppSegment filledBackground>
       <div>
@@ -172,8 +171,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                isVacolsIdSelected={isVacolsIdAssignedToUserSelected[userId.toString()] || {}}
-                onToggleSelectionOfTaskWithVacolsId={(args) => this.props.setSelectionOfTaskOfUser({userId: this.props.userId.toString(), ...args})} />}
+                userId={this.props.userId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -194,7 +192,7 @@ JudgeAssignTaskListView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney', 'isVacolsIdAssignedToUserSelected'),
+  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney'),
   ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
 });
 
