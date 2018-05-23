@@ -1,8 +1,6 @@
 @import 'bourbon';
 @import 'neat';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
-@import 'uswds_rails_overrides/all';
+@import '../../../client/node_modules/uswds/src/stylesheets/all';
 @import 'global/fonts';
 @import 'variables';
 

@@ -1,8 +1,7 @@
 // Add scss includes explicitly here.
 @import 'global/fonts';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
-//@import '..node_modules/uswds/all';
+//@import 'uswds/all';
+@import '../../../client/node_modules/uswds/src/stylesheets/all';
 // variables here should eventually find their way into commons
 @import 'variables';
 

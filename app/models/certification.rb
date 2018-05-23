@@ -17,8 +17,8 @@ class Certification < ApplicationRecord
       certification_date: Time.zone.now.to_date
     )
 
-    # Most developers don't run shoryuken in development mode.
-    if Rails.env.stubbed? || Rails.env.test?
+    # Most developers don't run shoryuken in development mode. //Temp
+    if Rails.env.stubbed? || Rails.env.test? || Rails.env.development?
       StartCertificationJob.perform_now(self)
     else
       StartCertificationJob.perform_later(self, RequestStore[:current_user])
