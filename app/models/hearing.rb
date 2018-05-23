@@ -16,7 +16,6 @@ class Hearing < ApplicationRecord
   belongs_to :user # the judge
   has_many :hearing_views
   has_many :appeal_stream_snapshots
-  before_save :update_summary_field, if: :data_fields_changed
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
@@ -213,21 +212,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  private
-
-  def data_fields_changed
-    evidence_changed? || contentions_changed? || comments_for_attorney_changed?
-  end
-
-  def update_summary_field
-    get_paragraph = ->(data) { data.blank? ? "<p></p><p></p><p></p>" : "<p>#{data}</p><p></p>" }
-
-    self.summary = "<p><strong>Contentions</strong></p>#{get_paragraph.call(contentions)}"\
-    "<p><strong>Evidence</strong></p> #{get_paragraph.call(evidence)}"\
-    "<p><strong>Comments and special instructions to attorneys</strong></p>"\
-    "#{get_paragraph.call(comments_for_attorney)}"
-  end
-
   class << self
     attr_writer :repository
 
@@ -236,7 +220,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:fakes_off)
+      return HearingRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= HearingRepository
     end
 
