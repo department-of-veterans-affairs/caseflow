@@ -138,14 +138,8 @@ docker-compose down -v
 rake [RAILS_ENV=<test|development|stubbed>] db:setup
 rake [RAILS_ENV=<test|development|stubbed>] db:seed
 
-# setup local test VACOLS (FACOLS)
-docker ps
-# Get the CONTAINER ID of the container named VACOLS_DB-development
-docker stop <CONTAINER ID>
+# setup local VACOLS (FACOLS)
 RAILS_ENV=test rake local:vacols:setup
-
-# setup local development VACOLS (FACOLS)
-docker-compose up -d
 RAILS_ENV=development rake local:vacols:setup
 RAILS_ENV=development rake local:vacols:seed
 ```
