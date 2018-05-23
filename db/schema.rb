@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180517204321) do
+ActiveRecord::Schema.define(version: 20180523171432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -345,10 +345,10 @@ ActiveRecord::Schema.define(version: 20180517204321) do
     t.string "type"
     t.string "cancel_reason"
     t.string "cancel_other"
-    t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completion_status IS NULL)"
+    t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
-    t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completion_status IS NULL)"
+    t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
