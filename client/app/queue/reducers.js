@@ -35,7 +35,8 @@ export const initialState = {
     }
   },
   attorneysOfJudge: [],
-  tasksAndAppealsOfAttorney: {}
+  tasksAndAppealsOfAttorney: {},
+  isVacolsIdAssignedToUserSelected: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -261,6 +262,21 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
+    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.vacolsId]: {
+        $set: action.payload.selected
+      }
+    });
+
+    return update(state, {
+      isVacolsIdAssignedToUserSelected: {
+        [action.payload.userId]: {
+          $set: isVacolsIdSelected
+        }
+      }
+    });
+  }
   default:
     return state;
   }
