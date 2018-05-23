@@ -64,7 +64,7 @@ class WorksheetHeader extends React.PureComponent {
   onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
-  updatedCopiedStatus = () => this.props.setCopiedStatus(!this.props.copiedStatus);
+  updatedCopiedStatus = () => this.props.toggleCopyPaste(!this.props.copiedStatus);
   componentDidMount = () => {
     this.props.toggleCopyPaste(false);
   }
@@ -139,7 +139,7 @@ class WorksheetHeader extends React.PureComponent {
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
 
-        <ReactTooltip place="top" type="dark" effect="float" id="test" />
+        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="test" />
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           <div {...copyButtonStyling}>
