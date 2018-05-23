@@ -74,343 +74,387 @@ describe LegacyAppeal do
     }
   end
 
-  context "#documents_with_type" do
-    subject { appeal.documents_with_type(*type) }
+  context "Works with FACOLS" do
     before do
-      allow(appeal).to receive(:documents).and_return(
+      FeatureToggle.enable!(:test_facols)
+    end
+
+    after do
+      FeatureToggle.disable!(:test_facols)
+    end
+
+    let(:appeal) do
+      FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+    end
+
+    context "#documents_with_type" do
+      subject { appeal.documents_with_type(*type) }
+      let(:documents) do
         [
-          Document.new(type: "NOD", received_at: 7.days.ago),
-          Document.new(type: "BVA Decision", received_at: 7.days.ago),
-          Document.new(type: "BVA Decision", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 6.days.ago)
+          FactoryBot.build(:document, type: "NOD", received_at: 7.days.ago),
+          FactoryBot.build(:document, type: "BVA Decision", received_at: 7.days.ago),
+          FactoryBot.build(:document, type: "BVA Decision", received_at: 6.days.ago),
+          FactoryBot.build(:document, type: "SSOC", received_at: 6.days.ago)
         ]
-      )
-    end
+      end
 
-    context "when 1 type is passed" do
-      let(:type) { "BVA Decision" }
-      it "returns right number of documents and type" do
-        expect(subject.count).to eq(2)
-        expect(subject.first.type).to eq(type)
+      let(:vacols_case) do
+        FactoryBot.create(:case, documents: documents)
+      end
+
+      context "when 1 type is passed" do
+        let(:type) { "BVA Decision" }
+        it "returns right number of documents and type" do
+          expect(subject.count).to eq(2)
+          expect(subject.first.type).to eq(type)
+        end
+      end
+
+      context "when 2 types are passed" do
+        let(:type) { %w[NOD SSOC] }
+        it "returns right number of documents and type" do
+          expect(subject.count).to eq(2)
+          expect(subject.first.type).to eq(type.first)
+          expect(subject.last.type).to eq(type.last)
+        end
       end
     end
 
-    context "when 2 types are passed" do
-      let(:type) { %w[NOD SSOC] }
-      it "returns right number of documents and type" do
-        expect(subject.count).to eq(2)
-        expect(subject.first.type).to eq(type.first)
-        expect(subject.last.type).to eq(type.last)
-      end
-    end
-  end
-
-  context "#nod" do
-    subject { appeal.nod }
-    it { is_expected.to have_attributes(type: "NOD", vacols_date: appeal.nod_date) }
-
-    context "when nod_date is nil" do
-      let(:nod_date) { nil }
-      it { is_expected.to be_nil }
-    end
-  end
-
-  context "#soc" do
-    subject { appeal.soc }
-    it { is_expected.to have_attributes(type: "SOC", vacols_date: appeal.soc_date) }
-
-    context "when soc_date is nil" do
-      let(:soc_date) { nil }
-      it { is_expected.to be_nil }
-    end
-  end
-
-  context "#form9" do
-    subject { appeal.form9 }
-    it { is_expected.to have_attributes(type: "Form 9", vacols_date: appeal.form9_date) }
-
-    context "when form9_date is nil" do
-      let(:form9_date) { nil }
-      it { is_expected.to be_nil }
-    end
-  end
-
-  context "#aod" do
-    subject { appeal.aod }
-
-    it { is_expected.to be_truthy }
-  end
-
-  context "#remand_return_date" do
-    subject { appeal.remand_return_date }
-
-    context "when the appeal is active" do
-      it { is_expected.to eq(nil) }
-    end
-  end
-
-  context "#ssocs" do
-    subject { appeal.ssocs }
-
-    context "when there are no ssoc dates" do
-      it { is_expected.to eq([]) }
-    end
-
-    context "when there are ssoc dates" do
-      let(:ssoc_dates) { [Time.zone.today, (Time.zone.today - 5.days)] }
-
-      it "returns array of ssoc documents" do
-        expect(subject.first).to have_attributes(vacols_date: Time.zone.today - 5.days)
-        expect(subject.last).to have_attributes(vacols_date: Time.zone.today)
-      end
-    end
-  end
-
-  context "#cavc_decisions" do
-    subject { appeal.cavc_decisions }
-
-    let!(:cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
-    let!(:another_cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
-
-    it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
-  end
-
-  context "#v1_events" do
-    subject { appeal.v1_events }
-    let(:soc_date) { 5.days.ago }
-
-    it "returns list of events sorted from oldest to newest by date" do
-      expect(subject.length > 1).to be_truthy
-      expect(subject.first.date).to eq(5.days.ago)
-      expect(subject.first.type).to eq(:soc)
-    end
-  end
-
-  context "#form9_due_date" do
-    subject { appeal.form9_due_date }
-
-    context "when the notification date is within the last year" do
-      it { is_expected.to eq((notification_date + 1.year).to_date) }
-    end
-
-    context "when the notification date is older" do
-      let(:notification_date) { 1.year.ago }
-      it { is_expected.to eq((soc_date + 60.days).to_date) }
-    end
-
-    context "when missing notification date or soc date" do
-      let(:soc_date) { nil }
-      it { is_expected.to eq(nil) }
-    end
-  end
-
-  context "#cavc_due_date" do
-    subject { appeal.cavc_due_date }
-
-    context "when there is no decision date" do
-      it { is_expected.to eq(nil) }
-    end
-
-    context "when there is a decision date" do
-      let(:decision_date) { 30.days.ago }
-      it { is_expected.to eq(90.days.from_now.to_date) }
-    end
-  end
-
-  context "#events" do
-    subject { appeal.events }
-
-    it "returns list of events" do
-      expect(!subject.empty?).to be_truthy
-      expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
-      expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
-      expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
-      expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
-    end
-  end
-
-  context "#documents_match?" do
-    let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
-    let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
-    let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
-
-    let(:base_documents) { [nod_document, soc_document, form9_document] }
-
-    subject { appeal.documents_match? }
-    before do
-      allow(appeal).to receive(:documents).and_return(documents)
-    end
-
-    context "when there is an nod, soc, and form9 document matching the respective dates" do
-      context "when there are no ssocs" do
-        let(:documents) { base_documents }
-
-        it { is_expected.to be_truthy }
+    context "#nod" do
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_nod)
       end
 
-      context "when ssoc dates don't match" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
-          ]
+      subject { appeal.nod }
+      it { is_expected.to have_attributes(type: "NOD", vacols_date: vacols_case.bfdnod) }
+
+      context "when nod_date is nil" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
+        let(:nod_date) { nil }
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "#soc" do
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_soc)
+      end
+
+      subject { appeal.soc }
+      it { is_expected.to have_attributes(type: "SOC", vacols_date: vacols_case.bfdsoc) }
+
+      context "when soc_date is nil" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
+        let(:soc_date) { nil }
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "#form9" do
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_form_9)
+      end
+
+      subject { appeal.form9 }
+      it { is_expected.to have_attributes(type: "Form 9", vacols_date: vacols_case.bfd19) }
+
+      context "when form9_date is nil" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
+        let(:form9_date) { nil }
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "#ssocs" do
+      let(:vacols_case) do
+        FactoryBot.create(:case)
+      end
+      subject { appeal.ssocs }
+
+      context "when there are no ssoc dates" do
+        it { is_expected.to eq([]) }
+      end
+
+      context "when there are ssoc dates" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc)
         end
 
-        before do
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
+        it "returns array of ssoc documents" do
+          expect(subject.first).to have_attributes(vacols_date: vacols_case.bfssoc1)
+          expect(subject.last).to have_attributes(vacols_date: vacols_case.bfssoc2)
+        end
+      end
+    end
+
+    context "#v1_events" do
+      subject { appeal.v1_events }
+
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_soc)
+      end
+
+      it "returns list of events sorted from oldest to newest by date" do
+        expect(subject.length > 1).to be_truthy
+        expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
+        expect(subject.first.type).to eq(:nod)
+      end
+    end
+
+    context "#form9_due_date" do
+      subject { appeal.form9_due_date }
+
+      context "when the notification date is within the last year" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_notification_date)
+        end
+
+        it { is_expected.to eq((vacols_case.bfdrodec + 1.year).to_date) }
+      end
+
+      context "when the notification date is older" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_notification_date, bfdrodec: 13.months.ago, bfdsoc: 1.day.ago)
+        end
+
+        it { is_expected.to eq((vacols_case.bfdsoc + 60.days).to_date) }
+      end
+
+      context "when missing notification date or soc date" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
+
+        let(:soc_date) { nil }
+        it { is_expected.to eq(nil) }
+      end
+    end
+
+    context "#cavc_due_date" do
+      subject { appeal.cavc_due_date }
+
+      context "when there is no decision date" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
+
+        it { is_expected.to eq(nil) }
+      end
+
+      context "when there is a decision date" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_decision, bfddec: 30.days.ago)
+        end
+
+        it { is_expected.to eq(90.days.from_now.to_date) }
+      end
+    end
+
+    context "#events" do
+      let(:vacols_case) do
+        FactoryBot.create(:case_with_form_9)
+      end
+
+      subject { appeal.events }
+
+      it "returns list of events" do
+        expect(!subject.empty?).to be_truthy
+        expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
+        expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
+        expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
+        expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
+      end
+    end
+
+    context "#documents_match?" do
+      subject { appeal.documents_match? }
+
+      context "when there is an nod, soc, and form9 document matching the respective dates" do
+        context "when there are no ssocs" do
+          let(:vacols_case) do
+            FactoryBot.create(:case_with_form_9)
+          end
+
+          it { is_expected.to be_truthy }
+        end
+
+        context "when ssoc dates don't match" do
+          let(:vacols_case) do
+            FactoryBot.create(:case_with_ssoc, bfssoc1: 2.days.ago, bfssoc2: 2.days.ago)
+          end
+
+          it { is_expected.to be_falsy }
+        end
+
+        context "when received_at is nil" do
+          let(:ssoc_documents) do
+            [
+              FactoryBot.build(:document, type: "SSOC", received_at: nil),
+              FactoryBot.build(:document, type: "SSOC", received_at: 1.month.ago)
+            ]
+          end
+          let(:vacols_case) do
+            FactoryBot.create(:case_with_ssoc, ssoc_documents: ssoc_documents)
+          end
+
+          it { is_expected.to be_falsy }
+        end
+
+        context "and ssoc dates match" do
+          let(:vacols_case) do
+            FactoryBot.create(:case_with_ssoc)
+          end
+
+          it { is_expected.to be_truthy }
+        end
+      end
+
+      context "when the nod date is mismatched" do
+        let(:nod_document) do
+          [FactoryBot.build(:document, type: "NOD", received_at: 1.day.ago)]
+        end
+
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, nod_document: nod_document)
         end
 
         it { is_expected.to be_falsy }
       end
 
-      context "when received_at is nil" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
-          ]
+      context "when the soc date is mismatched" do
+        let(:soc_document) do
+          [FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago)]
         end
 
-        before do
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, soc_document: soc_document)
         end
 
         it { is_expected.to be_falsy }
       end
 
-      context "and ssoc dates match" do
-        let(:documents) do
-          base_documents + [
-            Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
-            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
-            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
-          ]
+      context "when the form9 date is mismatched" do
+        let(:form9_document) do
+          [FactoryBot.build(:document, type: "Form9", received_at: 1.day.ago)]
         end
 
-        before do
-          # vacols dates
-          appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, form9_document: form9_document)
         end
 
-        it { is_expected.to be_truthy }
+        it { is_expected.to be_falsy }
+      end
+
+      context "when at least one ssoc doesn't match" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, bfssoc1: 2.days.ago)
+        end
+
+        it { is_expected.to be_falsy }
+      end
+
+      context "when one of the dates is missing" do
+        let(:vacols_case) do
+          FactoryBot.create(:case_with_ssoc, bfdnod: nil)
+        end
+
+        it { is_expected.to be_falsy }
       end
     end
 
-    context "when the nod date is mismatched" do
-      before { nod_document.received_at = 5.days.ago }
-      it { is_expected.to be_falsy }
-    end
+    context "#serialized_decision_date" do
+      let(:appeal) { LegacyAppeal.new(decision_date: decision_date) }
+      subject { appeal.serialized_decision_date }
 
-    context "when the soc date is mismatched" do
-      before { soc_document.received_at = 6.days.ago }
-      it { is_expected.to be_falsy }
-    end
-
-    context "when the form9 date is mismatched" do
-      before { form9_document.received_at = 5.days.ago }
-      it { is_expected.to be_falsy }
-    end
-
-    context "when at least one ssoc doesn't match" do
-      before do
-        allow(appeal).to receive(:documents).and_return(
-          [
-            Document.new(type: "SSOC", received_at: 6.days.ago),
-            Document.new(type: "SSOC", received_at: 7.days.ago)
-          ]
-        )
-
-        appeal.ssoc_dates = [6.days.ago, 9.days.ago]
+      context "when decision date is nil" do
+        let(:decision_date) { nil }
+        it { is_expected.to eq("") }
       end
 
-      it { is_expected.to be_falsy }
-    end
-
-    context "when one of the dates is missing" do
-      before { appeal.nod_date = nil }
-      it { is_expected.to be_falsy }
-    end
-  end
-
-  context "#serialized_decision_date" do
-    let(:appeal) { LegacyAppeal.new(decision_date: decision_date) }
-    subject { appeal.serialized_decision_date }
-
-    context "when decision date is nil" do
-      let(:decision_date) { nil }
-      it { is_expected.to eq("") }
-    end
-
-    context "when decision date exists" do
-      let(:decision_date) { Time.zone.local(2016, 9, 6) }
-      it { is_expected.to eq("2016/09/06") }
-    end
-  end
-
-  context "#number_of_documents" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"),
-       Generators::Document.build(type: "SOC"),
-       Generators::Document.build(type: "SSOC")]
-    end
-
-    let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents)
-    end
-
-    subject { appeal.number_of_documents }
-
-    it "should return number of documents" do
-      expect(subject).to eq 3
-    end
-  end
-
-  context "#number_of_documents_after_certification" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
-       Generators::Document.build(type: "SOC", received_at: 1.day.ago),
-       Generators::Document.build(type: "SSOC", received_at: 5.days.ago)]
-    end
-
-    let(:appeal) do
-      Generators::LegacyAppeal.build(documents: documents, certification_date: certification_date)
-    end
-
-    subject { appeal.number_of_documents_after_certification }
-
-    context "when certification_date is nil" do
-      let(:certification_date) { nil }
-
-      it { is_expected.to eq 0 }
-    end
-
-    context "when certification_date is set" do
-      let(:certification_date) { 2.days.ago }
-
-      it { is_expected.to eq 1 }
-    end
-  end
-
-  context "#in_location?" do
-    subject { appeal.in_location?(location) }
-    let(:location) { :remand_returned_to_bva }
-
-    context "when location is not recognized" do
-      let(:location) { :never_never_land }
-
-      it "raises error" do
-        expect { subject }.to raise_error(LegacyAppeal::UnknownLocationError)
+      context "when decision date exists" do
+        let(:decision_date) { Time.zone.local(2016, 9, 6) }
+        it { is_expected.to eq("2016/09/06") }
       end
     end
 
-    context "when is in location" do
+    context "#number_of_documents" do
+      let(:documents) do
+        [FactoryBot.build(:document, type: "NOD"),
+         FactoryBot.build(:document, type: "SOC"),
+         FactoryBot.build(:document, type: "SSOC")]
+      end
+
+      let(:vacols_case) do
+        FactoryBot.create(:case, documents: documents)
+      end
+
+      subject { appeal.number_of_documents }
+
+      it "should return number of documents" do
+        expect(subject).to eq 3
+      end
+    end
+
+    context "#number_of_documents_after_certification" do
+      let(:documents) do
+        [FactoryBot.build(:document, type: "NOD", received_at: 4.days.ago),
+         FactoryBot.build(:document, type: "SOC", received_at: 1.day.ago),
+         FactoryBot.build(:document, type: "SSOC", received_at: 5.days.ago)]
+      end
+
+      let(:vacols_case) do
+        FactoryBot.create(:case, :certified, documents: documents, certification_date: certification_date)
+      end
+
+      subject { appeal.number_of_documents_after_certification }
+
+      context "when certification_date is nil" do
+        let(:certification_date) { nil }
+
+        it { is_expected.to eq 0 }
+      end
+
+      context "when certification_date is set" do
+        let(:certification_date) { 2.days.ago }
+
+        it do
+          is_expected.to eq 1
+        end
+      end
+    end
+
+    context "#in_location?" do
+      let(:vacols_case) do
+        FactoryBot.create(:case, bfcurloc: location_code)
+      end
+
       let(:location_code) { "96" }
-      it { is_expected.to be_truthy }
-    end
 
-    context "when is not in location" do
-      let(:location_code) { "97" }
-      it { is_expected.to be_falsey }
+      subject { appeal.in_location?(location) }
+      let(:location) { :remand_returned_to_bva }
+
+      context "when location is not recognized" do
+        let(:location) { :never_never_land }
+
+        it "raises error" do
+          expect { subject }.to raise_error(LegacyAppeal::UnknownLocationError)
+        end
+      end
+
+      context "when is in location" do
+        it { is_expected.to be_truthy }
+      end
+
+      context "when is not in location" do
+        let(:location_code) { "97" }
+        it { is_expected.to be_falsey }
+      end
     end
   end
 
@@ -1622,32 +1666,29 @@ describe LegacyAppeal do
   end
 
   context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: "999887777S") }
+    before do
+      FeatureToggle.enable!(:test_facols)
+    end
 
+    after do
+      FeatureToggle.disable!(:test_facols)
+    end
+
+    subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
+    let(:bfcorlid) { "VBMS_ID" }
+    let(:case_with_form_9) { FactoryBot.create(:case_with_form_9, :original, bfcorlid: bfcorlid) }
     let!(:veteran_appeals) do
       [
-        Generators::LegacyAppeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { soc_date: 4.days.ago }
-        ),
-        Generators::LegacyAppeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { type: "Reconsideration" }
-        ),
-        Generators::LegacyAppeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { form9_date: 3.days.ago }
-        ),
-        Generators::LegacyAppeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { form9_date: nil }
-        )
+        FactoryBot.create(:case_with_soc, :original, bfcorlid: bfcorlid),
+        FactoryBot.create(:case_with_soc, :reconsideration, bfcorlid: bfcorlid),
+        case_with_form_9,
+        FactoryBot.create(:case, :original, bfcorlid: bfcorlid)
       ]
     end
 
     it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
-      expect(subject.first.form9_date).to eq(3.days.ago)
+      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
     end
   end
 
@@ -1746,5 +1787,28 @@ describe LegacyAppeal do
       appeal.destroy!
       expect(LegacyAppeal.where(id: appeal.id)).to_not exist
     end
+  end
+
+  context "#aod" do
+    subject { appeal.aod }
+
+    it { is_expected.to be_truthy }
+  end
+
+  context "#remand_return_date" do
+    subject { appeal.remand_return_date }
+
+    context "when the appeal is active" do
+      it { is_expected.to eq(nil) }
+    end
+  end
+
+  context "#cavc_decisions" do
+    subject { appeal.cavc_decisions }
+
+    let!(:cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
+    let!(:another_cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
+
+    it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
   end
 end
