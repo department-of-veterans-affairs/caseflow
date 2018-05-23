@@ -141,7 +141,6 @@ export class DecisionReviewer extends React.PureComponent {
     const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
     const defaultUrlProps = {};
 
-    // set Link's `to` vs `href`
     if (queueEnabled) {
       // set Caseflow link to queue, Reader to Reader
       _.extend(defaultUrlProps, {
