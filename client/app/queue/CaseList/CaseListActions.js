@@ -68,7 +68,8 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
   (dispatch) => new Promise((resolve, reject) => {
     if (!searchQuery.length) {
       dispatch(emptyQuerySearchAttempt());
-      reject();
+
+      return reject();
     }
 
     const veteranId = searchQuery.replace(/\D/g, '');
@@ -76,7 +77,8 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
     if (!veteranId.match(/\d{7,9}/)) {
       dispatch(fetchAppealUsingInvalidVeteranIdFailed(searchQuery));
-      reject();
+
+      return reject();
     }
 
     dispatch(requestAppealUsingVeteranId());
@@ -88,17 +90,19 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
         if (_.size(returnedObject.appeals) === 0) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
-          reject();
-        } else {
-          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
 
-          // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
-          const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
-
-          resolve(caseflowVeteranId);
+          return reject();
         }
+        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+
+        // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
+        const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
+
+        return resolve(caseflowVeteranId);
+
       }, () => {
         dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
-        reject();
+
+        return reject();
       });
   });
