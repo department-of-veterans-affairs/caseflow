@@ -23,7 +23,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :contested_claim
-  vacols_attr_accessor :representative_type, :representative_name
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -186,6 +185,12 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
+  end
+
   attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
@@ -216,6 +221,14 @@ class LegacyAppeal < ApplicationRecord
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
+  end
+
+  def representative_name
+    power_of_attorney.vacols_representative_name
+  end
+
+  def representative_type
+    power_of_attorney.vacols_representative_type
   end
 
   # TODO: delegate this to veteran

@@ -15,7 +15,6 @@ class AppealSeries < ApplicationRecord
            :active?,
            :type_code,
            :representative_name,
-           :representative_type,
            :aod,
            :ramp_election,
            :eligible_for_ramp?,

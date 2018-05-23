@@ -55,7 +55,7 @@ class StartCertificationJob < ApplicationJob
   end
 
   def fetch_power_of_attorney!
-    poa = @certification.power_of_attorney
+    poa = @certification.appeal.power_of_attorney
     update = {
       bgs_representative_type: poa.bgs_representative_type,
       bgs_representative_name: poa.bgs_representative_name,

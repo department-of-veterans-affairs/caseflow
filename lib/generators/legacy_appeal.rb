@@ -19,8 +19,6 @@ class Generators::LegacyAppeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative_name: "Military Order of the Purple Heart",
-        representative_type: "Service Organization",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
