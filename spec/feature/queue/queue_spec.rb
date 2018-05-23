@@ -336,7 +336,7 @@ RSpec.feature "Queue" do
         expect(page.current_path).to match(/^\/cases\/\d+$/)
       end
 
-      it "clicking on back breadcrumb sends us to empty search home page" do
+      it "clicking on back breadcrumb sends us to empty search home page", skip: "the test is non-deterministic" do
         page.find("h1").find("a").click
         expect(page).to have_content(search_homepage_title)
         expect(page).to have_content(search_homepage_subtitle)
