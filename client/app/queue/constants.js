@@ -44,9 +44,9 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
-export const subHeadTextStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
+export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
+export const subHeadTextStyle = css(disabledLinkStyle, {
+  fontSize: 'small'
 });
 
 export const CATEGORIES = {
