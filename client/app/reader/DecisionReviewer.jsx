@@ -145,7 +145,7 @@ export class DecisionReviewer extends React.PureComponent {
     if (queueEnabled) {
       // set Caseflow link to queue, Reader to Reader
       _.extend(defaultUrlProps, {
-        appNameHref: `/${vacolsId}/documents/`,
+        appNameUrl: `/${vacolsId}/documents/`,
         defaultHref: '/'
       });
     } else {
