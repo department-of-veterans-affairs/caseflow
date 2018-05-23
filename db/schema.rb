@@ -313,10 +313,7 @@ ActiveRecord::Schema.define(version: 20180523171432) do
     t.integer "appeal_id"
     t.string "vacols_id", null: false
     t.string "witness"
-    t.string "contentions"
-    t.string "evidence"
     t.string "military_service"
-    t.string "comments_for_attorney"
     t.boolean "prepped"
     t.text "summary"
   end
