@@ -77,7 +77,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent)
+        .includes(:folder, :correspondent, :representative)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
