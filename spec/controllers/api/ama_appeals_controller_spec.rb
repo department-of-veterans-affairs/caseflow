@@ -1,6 +1,15 @@
 RSpec.describe AmaAppealsController, type: :controller do
 
-  describe "GET ama_appeals", focus: true do
+  before do
+    User.authenticate!(roles: ["System Admin"])
+    FeatureToggle.enable!(:queue_ama_appeals)
+  end
+
+  after do
+    FeatureToggle.disable!(:queue_ama_appeals)
+  end
+
+  describe "GET ama_appeals" do
     let(:bgs_veteran_record) do
       {
         first_name: "Bob",
@@ -10,14 +19,26 @@ RSpec.describe AmaAppealsController, type: :controller do
         date_of_birth: "05/04/1955"
       }
     end
-    let(:appeal) { create(:appeal, veteran_object: create(:veteran, bgs_veteran_record: bgs_veteran_record)) }
+    let!(:appeals) do
+      [
+        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record)),
+        FactoryBot.create(:appeal, veteran: FactoryBot.create(:veteran))
+      ]
+    end
 
     context "when request header does not contain Veteran ID" do
       it "response should error" do
-        binding.pry
         get :index
+        expect(response.status).to eq 200
+
+        returned_appeals = JSON.parse(response.body)["appeals"]["data"]
+        expect(returned_appeals.count).to eq(2)
         
-        expect(response.status).to eq 400
+        attributes = returned_appeals[0]["attributes"]
+
+        expect(attributes["veteran_full_name"]).to eq("Bob Smith")
+        expect(attributes["veteran_gender"]).to eq(bgs_veteran_record[:sex])
+        expect(attributes["veteran_date_of_birth"]).to eq(bgs_veteran_record[:date_of_birth])
       end
     end
   end

@@ -13,7 +13,8 @@ FactoryBot.define do
 
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[veteran.file_number] = evaluator.bgs_veteran_record
+      Fakes::BGSService.veteran_records[veteran.file_number] =
+        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number)
     end
   end
 end

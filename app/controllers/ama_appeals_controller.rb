@@ -1,5 +1,4 @@
 class AmaAppealsController < ApplicationController
-  before_action :verify_queue_access
   before_action :verify_ama_access
 
   def index

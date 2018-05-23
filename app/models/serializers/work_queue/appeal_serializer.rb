@@ -31,7 +31,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :veteran_full_name do
-    object.veteran ? object.veteran.name : "Cannot locate"
+    object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
   
   attribute :veteran_date_of_birth do
