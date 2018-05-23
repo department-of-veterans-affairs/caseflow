@@ -307,8 +307,8 @@
     color: $color-gray;
 
     &:hover {
-      background: $color-gray-dark;
-      border: 1px solid $color-gray-dark;
+      background: $color-gray;
+      border: 1px solid $color-gray;
       box-shadow: none;
       color: $color-white;
 
@@ -324,6 +324,10 @@
     svg {
       margin: 0 0 -2px 7px;
     }
+  }
+
+  .copy-paste-button {
+    font-size: 10px;
   }
 
   .cf-hearings-worksheet-witness-cell {
