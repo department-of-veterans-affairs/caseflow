@@ -49,7 +49,7 @@ export class DailyDocketContainer extends React.Component {
     return <div>
 
       <AutoSave
-        save={this.props.saveDocket(dailyDocket, this.props.date)}
+        save={this.props.saveDocket(_.values(dailyDocket), this.props.date)}
         spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
         isSaving={this.props.docketIsSaving}
         timeSaved={this.props.docketTimeSaved || now()}

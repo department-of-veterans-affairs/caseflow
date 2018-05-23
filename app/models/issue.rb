@@ -213,6 +213,7 @@ class Issue
     attr_writer :repository
 
     def repository
+      return IssueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= IssueRepository
     end
 

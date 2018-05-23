@@ -7,12 +7,14 @@ describe AppealIntake do
   let(:user) { Generators::User.build }
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let(:completed_at) { nil }
 
   let(:intake) do
     AppealIntake.new(
       user: user,
       detail: detail,
-      veteran_file_number: veteran_file_number
+      veteran_file_number: veteran_file_number,
+      completed_at: completed_at
     )
   end
 
@@ -25,7 +27,7 @@ describe AppealIntake do
 
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
-    let(:detail) { TemporaryAppeal.new(veteran_file_number: veteran_file_number) }
+    let(:detail) { Appeal.new(veteran_file_number: veteran_file_number) }
 
     it "updates appeal with values" do
       expect(subject).to be_truthy
@@ -46,6 +48,36 @@ describe AppealIntake do
       let(:docket_type) { nil }
 
       it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#complete!" do
+    subject { intake.complete!(params) }
+
+    let(:params) do
+      { request_issues: [
+        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" }
+      ] }
+    end
+
+    let(:detail) do
+      Appeal.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    it "completes the intake" do
+      subject
+
+      expect(intake.reload).to be_success
+      expect(intake.detail.established_at).to_not be_nil
+      expect(intake.detail.request_issues.count).to eq 1
+      expect(intake.detail.request_issues.first).to have_attributes(
+        rating_issue_reference_id: "reference-id",
+        rating_issue_profile_date: Date.new(2018, 4, 30),
+        description: "decision text"
+      )
     end
   end
 end

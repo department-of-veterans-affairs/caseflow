@@ -16,7 +16,6 @@ class Hearing < ApplicationRecord
   belongs_to :user # the judge
   has_many :hearing_views
   has_many :appeal_stream_snapshots
-  before_save :update_summary_field, if: :data_fields_changed
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
@@ -157,15 +156,26 @@ class Hearing < ApplicationRecord
     )
   end
 
+  def fetch_veteran_age
+    veteran_age
+  rescue Module::DelegationError
+    nil
+  end
+
+  def fetch_veteran_sex
+    veteran_sex
+  rescue Module::DelegationError
+    nil
+  end
+
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
                 :user,
+                :summary,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :veteran_age,
-                :veteran_sex,
                 :appellant_city,
                 :appellant_state,
                 :military_service,
@@ -173,7 +183,12 @@ class Hearing < ApplicationRecord
                 :veteran_mi_formatted,
                 :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
-    ).merge(to_hash(current_user_id))
+    ).merge(
+      to_hash(current_user_id)
+    ).merge(
+      veteran_sex: fetch_veteran_sex,
+      veteran_age: fetch_veteran_age
+    )
   end
 
   def appeals_ready_for_hearing
@@ -197,21 +212,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  private
-
-  def data_fields_changed
-    evidence_changed? || contentions_changed? || comments_for_attorney_changed?
-  end
-
-  def update_summary_field
-    get_paragraph = ->(data) { data.blank? ? "<p></p><p></p><p></p>" : "<p>#{data}</p><p></p>" }
-
-    self.summary = "<p><strong>Contentions</strong></p>#{get_paragraph.call(contentions)}"\
-    "<p><strong>Evidence</strong></p> #{get_paragraph.call(evidence)}"\
-    "<p><strong>Comments and special instructions to attorneys</strong></p>"\
-    "#{get_paragraph.call(comments_for_attorney)}"
-  end
-
   class << self
     attr_writer :repository
 
@@ -220,6 +220,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
+      return HearingRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= HearingRepository
     end
 

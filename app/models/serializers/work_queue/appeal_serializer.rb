@@ -53,6 +53,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :status
   attribute :decision_date
   attribute :certification_date
+  attribute :paper_case do
+    object.file_type.eql? "Paper"
+  end
 
   attribute :power_of_attorney do
     # TODO: change this to use our more sophisticated poa data fetching mechanism
@@ -65,5 +68,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       city: object.regional_office.city,
       state: object.regional_office.state
     }
+  end
+
+  attribute :caseflow_veteran_id do
+    object.veteran.id
   end
 end
