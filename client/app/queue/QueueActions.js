@@ -183,7 +183,7 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   );
 };
 
-export const setSelectionOfTaskOfUser = ({userId, vacolsId, selected}) => ({
+export const setSelectionOfTaskOfUser = ({ userId, vacolsId, selected }) => ({
   type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
   payload: {
     userId,

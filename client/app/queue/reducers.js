@@ -262,12 +262,13 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER:
+  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
     const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
       [action.payload.vacolsId]: {
         $set: action.payload.selected
       }
     });
+
     return update(state, {
       isVacolsIdAssignedToUserSelected: {
         [action.payload.userId]: {
@@ -275,6 +276,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  }
   default:
     return state;
   }
