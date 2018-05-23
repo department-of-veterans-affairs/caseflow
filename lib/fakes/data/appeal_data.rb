@@ -47,19 +47,21 @@ module Fakes::Data::AppealData
   end
 
   def self.certification_ready_to_certify
+    vacols_case = VACOLS::Case.where(bfcorlid: "701305078S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 17)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 18)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 8)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 11, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: vacols_case.bfssoc1)
     ]
   end
 
   def self.certification_fuzzy_match_documents
+    vacols_case = VACOLS::Case.where(bfcorlid: "783740847S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2016, 3, 3)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 8, 19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 8, 31))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc + 2.days),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19)
     ]
   end
 
