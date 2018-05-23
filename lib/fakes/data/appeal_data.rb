@@ -60,7 +60,7 @@ module Fakes::Data::AppealData
     vacols_case = VACOLS::Case.where(bfcorlid: "783740847S").first
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc + 2.days),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc - 2.day),
       Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19)
     ]
   end
