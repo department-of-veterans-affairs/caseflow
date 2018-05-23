@@ -20,7 +20,7 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
       valueFunction:
         ({task}) => <Checkbox
           name={task.vacolsId}
-          label="&nbsp;"
+          hideLabel
           value={this.props.isVacolsIdSelected[task.vacolsId]}
           onChange={
             (checked) => this.props.onToggleSelectionOfTaskWithVacolsId({vacolsId: task.vacolsId, selected: checked})} />
