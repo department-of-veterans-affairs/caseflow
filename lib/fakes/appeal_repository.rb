@@ -79,6 +79,8 @@ class Fakes::AppealRepository
 
     raise_vbms_error_if_necessary(record)
 
+    record[:ssoc_dates] = [] if record[:ssoc_dates].nil?
+
     appeal.assign_from_vacols(record)
 
     true

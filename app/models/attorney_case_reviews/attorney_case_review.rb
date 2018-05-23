@@ -62,7 +62,7 @@ class AttorneyCaseReview < ApplicationRecord
     attr_writer :repository
 
     def complete!(params)
-      transaction do
+      ActiveRecord::Base.multi_transaction do
         record = create!(params)
         MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
                               service: :vacols,
@@ -75,7 +75,7 @@ class AttorneyCaseReview < ApplicationRecord
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:fakes_off)
+      return QueueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= QueueRepository
     end
   end
