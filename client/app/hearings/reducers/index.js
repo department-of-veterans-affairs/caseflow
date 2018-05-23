@@ -229,9 +229,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, { docketTimeSaved: { $set: action.payload.timeSaved }
     });
 
-  case Constants.TOGGLE_COPY_PASTE:
-    return update(state, { copiedStatus: { $set: action.payload.copiedStatus } });
-
   case Constants.SET_DOCKET_SAVE_FAILED:
     return update(state, {
       saveDocketFailed: { $set: action.payload.saveFailed }

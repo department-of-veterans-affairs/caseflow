@@ -196,13 +196,6 @@ export const onSummaryChange = (summary) => ({
   }
 });
 
-export const toggleCopyPaste = (copiedStatus) => ({
-  type: Constants.TOGGLE_COPY_PASTE,
-  payload: {
-    copiedStatus
-  }
-});
-
 export const toggleWorksheetSaving = (saving) => ({
   type: Constants.TOGGLE_WORKSHEET_SAVING,
   payload: {

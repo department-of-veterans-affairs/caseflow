@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange, onMilitaryServiceChange, toggleCopyPaste } from '../actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../actions/Dockets';
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
@@ -64,10 +64,6 @@ class WorksheetHeader extends React.PureComponent {
   onRepNameChange = (event) => this.props.onRepNameChange(event.target.value);
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
-  updatedCopiedStatus = () => this.props.toggleCopyPaste(!this.props.copiedStatus);
-  componentDidMount = () => {
-    this.props.toggleCopyPaste(false);
-  }
 
   render() {
     const {
@@ -126,7 +122,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.date && new Date(worksheet.date) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h5>HEARING DISPOSTION</h5>
+            <h5>HEARING DISPOSITION</h5>
             <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
           </div>
         }
@@ -143,10 +139,10 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           <div {...copyButtonStyling}>
-            <CopyToClipboard text={worksheet.sanitized_vbms_id} onCopy={this.updatedCopiedStatus}>
+            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
               <button
                 data-for="test"
-                data-tip={this.props.copiedStatus ? 'Veteran ID copied to clipboard' : 'Copy To clipboard'}
+                data-tip="Copy To clipboard"
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
                 {worksheet.sanitized_vbms_id}
@@ -218,15 +214,13 @@ class WorksheetHeader extends React.PureComponent {
   }
 }
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet,
-  copiedStatus: state.copiedStatus
+  worksheet: state.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRepNameChange,
   onWitnessChange,
-  onMilitaryServiceChange,
-  toggleCopyPaste
+  onMilitaryServiceChange
 }, dispatch);
 
 export default connect(

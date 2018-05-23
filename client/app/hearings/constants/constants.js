@@ -64,5 +64,3 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 export const SERVER_ERROR_CODES = {
   VACOLS_RECORD_DOES_NOT_EXIST: 1001
 };
-
-export const TOGGLE_COPY_PASTE = 'TOGGLE_COPY_PASTE';
