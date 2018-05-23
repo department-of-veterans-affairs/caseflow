@@ -1,7 +1,7 @@
 @import 'bourbon';
 @import 'neat';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
+@import '../../../client/node_modules/uswds/src/stylesheets/core/variables';
+@import '../../../client/node_modules/uswds/src/stylesheets/all';
 @import 'global/fonts';
 
 .cf-stats-container {

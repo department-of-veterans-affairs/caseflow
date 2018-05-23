@@ -1,9 +1,11 @@
+// Dependencies already added by package
 @import 'bourbon';
 @import 'neat';
+// End
 @import '../../../client/node_modules/uswds/src/stylesheets/all';
 @import 'global/fonts';
+// Local variables
 @import 'variables';
-
 
 html,
 body {
