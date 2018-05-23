@@ -23,11 +23,9 @@ const searchStyling = (isRequestingAppealsUsingVeteranId) => css({
 
 class SearchBar extends React.PureComponent {
   render() {
+    // TODO: Move this container div inside of CaseListSearch and ger rid of this component once everybody is
+    // use queue_case_search.
     if (this.props.shouldUseQueueCaseSearch) {
-      if (this.props.errorType) {
-        return null;
-      }
-
       return <div className="section-search" {...searchStyling(this.props.isRequestingAppealsUsingVeteranId)}>
         <CaseListSearch />
       </div>;
@@ -52,7 +50,6 @@ SearchBar.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  errorType: state.caseList.search.errorType,
   isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId
 });
 

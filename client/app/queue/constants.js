@@ -44,9 +44,9 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
-export const subHeadTextStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
+export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
+export const subHeadTextStyle = css(disabledLinkStyle, {
+  fontSize: 'small'
 });
 
 export const CATEGORIES = {
@@ -77,6 +77,7 @@ export const DRAFT_DECISION_OPTIONS = [{
 }];
 
 export const SEARCH_ERROR_FOR = {
+  EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
   INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
   NO_APPEALS: 'NO_APPEALS',
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'

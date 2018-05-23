@@ -89,4 +89,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       state: "not implemented"
     }
   end
+
+  attribute :caseflow_veteran_id do
+    object.veteran.id
+  end
 end

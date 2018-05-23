@@ -123,6 +123,8 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index]
 
+  get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
