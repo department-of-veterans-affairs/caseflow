@@ -83,13 +83,8 @@ RSpec.feature "Queue" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -115,13 +110,8 @@ RSpec.feature "Queue" do
         )
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -142,25 +132,15 @@ RSpec.feature "Queue" do
         click_on "Search"
       end
 
-      it "displays error message" do
+      it "displays error message on same page" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
-      it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+      it "searching in search bar produces another error" do
+        fill_in "searchBar", with: veteran_id_with_no_appeals
         click_on "Search"
 
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
-      end
-
-      it "clicking on the x in the search bar returns browser to queue list page" do
-        click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -178,12 +158,11 @@ RSpec.feature "Queue" do
 
       it "search bar stays in top right" do
         expect(page).to have_selector("#searchBar")
-        expect(page).to_not have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(find("#searchBar")).to have_content("")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -217,8 +196,10 @@ RSpec.feature "Queue" do
       FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_phase_two)
+      FeatureToggle.disable!(:judge_queue)
     end
     after do
+      FeatureToggle.enable!(:judge_queue)
       FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
@@ -352,11 +333,11 @@ RSpec.feature "Queue" do
         click_on sprintf(COPY::BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.veteran_full_name)
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-        expect(page.current_path).to eq("/")
+        expect(page.current_path).to match(/^\/cases\/\d+$/)
       end
 
       it "clicking on back breadcrumb sends us to empty search home page" do
-        click_on COPY::BACK_TO_SEARCH_START_LINK_LABEL
+        page.find("h1").find("a").click
         expect(page).to have_content(search_homepage_title)
         expect(page).to have_content(search_homepage_subtitle)
         expect(page.current_path).to eq("/")
