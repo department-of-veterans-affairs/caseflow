@@ -1,5 +1,4 @@
 RSpec.describe BeamAppealsController, type: :controller do
-
   before do
     User.authenticate!(roles: ["System Admin"])
     FeatureToggle.enable!(:queue_beam_appeals)
@@ -33,7 +32,7 @@ RSpec.describe BeamAppealsController, type: :controller do
 
         returned_appeals = JSON.parse(response.body)["appeals"]["data"]
         expect(returned_appeals.count).to eq(2)
-        
+
         attributes = returned_appeals[0]["attributes"]
 
         expect(attributes["veteran_full_name"]).to eq("Bob Smith")
