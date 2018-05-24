@@ -180,7 +180,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+      # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
+      poa.class.repository.set_vacols_values(poa: poa, case_record: case_record)
+      poa
+    end
   end
 
   attr_writer :hearings

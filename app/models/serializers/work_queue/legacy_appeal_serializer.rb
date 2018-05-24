@@ -58,8 +58,10 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   end
 
   attribute :power_of_attorney do
-    # TODO: change this to use our more sophisticated poa data fetching mechanism
-    object.representative
+    {
+      representative_type: object.representative_type,
+      representative_name: object.representative_name
+    }
   end
 
   attribute :regional_office do
