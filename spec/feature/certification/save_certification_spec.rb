@@ -43,8 +43,9 @@ RSpec.feature "Save Certification" do
     end
 
     context "Save certification data in the DB" do
-      scenario "For the confirm case details page" do
+      scenario "For the confirm case details page", focus: true do
         visit "/certifications/#{appeal.vacols_id}/confirm_case_details"
+        binding.pry
         within_fieldset("Does the representative information from VBMS and VACOLS match?") do
           find("label", text: "No").click
         end
