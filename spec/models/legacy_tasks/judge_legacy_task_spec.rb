@@ -1,9 +1,9 @@
-describe JudgeVacolsAssignment do
+describe JudgeLegacyTask do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
   context "#from_vacols" do
-    subject { JudgeVacolsAssignment.from_vacols(case_assignment, "USER_ID") }
+    subject { JudgeLegacyTask.from_vacols(case_assignment, User.new(css_id: "USER_ID")) }
 
     context "when there is information about the case assignment" do
       let(:case_assignment) do
@@ -14,8 +14,7 @@ describe JudgeVacolsAssignment do
                        created_at: 5.days.ago,
                        assigned_to_location_date: 6.months.ago,
                        document_id: "173341517.524",
-                       assigned_by_first_name: "Joe",
-                       assigned_by_last_name: "Snuffy")
+                       assigned_by: OpenStruct.new(first_name: "Joe", last_name: "Snuffy"))
       end
 
       context "when a case has been reaasigned back to judge" do
