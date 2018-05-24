@@ -80,8 +80,14 @@ class HigherLevelReview < ApplicationRecord
     "030HLRAMA"
   end
 
+  END_PRODUCT_MODIFIERS = [ "030", "031", "032", "033", "033", "035", "036", "037", "038", "039" ]
+
   def end_product_modifier
-    "030"
+    END_PRODUCT_MODIFIERS.each do |modifier|
+      if veteran.end_products.select {|ep| ep.modifier == modifier}.length == 0
+        return modifier
+      end
+    end
   end
 
   def end_product_station
