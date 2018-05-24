@@ -139,17 +139,6 @@ export class DecisionReviewer extends React.PureComponent {
     const { vacolsId } = this.props.match.params;
 
     const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
-    const defaultUrlProps = {};
-
-    if (queueEnabled) {
-      // set Caseflow link to queue, Reader to Reader
-      _.extend(defaultUrlProps, {
-        appNameUrl: `/${vacolsId}/documents/`,
-        defaultHref: '/'
-      });
-    } else {
-      defaultUrlProps.defaultUrl = '/';
-    }
 
     return <React.Fragment>
       <NavigationBar
@@ -161,7 +150,7 @@ export class DecisionReviewer extends React.PureComponent {
         }}
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}
-        {...defaultUrlProps}>
+        defaultUrl={`/${vacolsId}/documents`}>
         <PageRoute
           exact
           title="Document Viewer | Caseflow Reader"
@@ -188,8 +177,7 @@ export class DecisionReviewer extends React.PureComponent {
         appName="Reader"
         feedbackUrl={this.props.feedbackUrl}
         buildDate={this.props.buildDate} />
-    </React.Fragment>
-    ;
+    </React.Fragment>;
   }
 }
 
