@@ -70,6 +70,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     }
   end
   attribute :caseflow_veteran_id do
-    object.veteran.id
+    object.veteran ? object.veteran.id : nil
   end
 end
