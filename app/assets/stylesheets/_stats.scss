@@ -33,14 +33,6 @@
     }
   }
 
-  .cf-stats-active-users {
-    margin-top: 40px;
-  }
-
-  .cf-stats-table {
-    margin-top: 0;
-  }
-
   .cf-stat-panel {
     @include span-columns(4);
     position: relative;

@@ -48,10 +48,10 @@ module Fakes::Data::AppealData
 
   def self.certification_ready_to_certify
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 17)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 18)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 8)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 11, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 24)),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 21)),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 15)),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 12, 2))
     ]
   end
 

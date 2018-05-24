@@ -71,3 +71,12 @@
 .comment-textarea {
   border-color: $color-gray-dark;
 }
+
+.commentIcon-container {
+  position: absolute;
+  z-index: 10;
+  // These dimensions need to match the comment icon SVG dimensions.
+  width: 40px;
+  height: 40px;
+}
+

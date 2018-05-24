@@ -136,12 +136,6 @@ p {
   text-transform: uppercase;
 }
 
-.cf-txt-example {
-  font-style: italic;
-  color: $color-gray;
-  vertical-align: middle;
-}
-
 // Use cf-push-row to wrap elements that float to the left or right
 .cf-push-row {
   @include clearfix;
@@ -426,21 +420,26 @@ svg title {
     height: inherit;
     width: inherit;
   }
+
+  .cf-form-textarea {
+    textarea {
+      max-height: 120px;
+    }
+  }
 }
 
 .cf-modal-body {
   @include transform(translateY(-50%));
   top: 50%;
-  // Previous two lines vertically center this block
   background: $color-white;
   border-radius: 3px;
   box-shadow: $cf-drop-shadow;
   color: $color-gray;
   padding: 3rem;
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
   width: 490px;
+  overflow-y: auto;
 
   table {
     margin: 0 0 2em;
@@ -637,35 +636,6 @@ div {
   margin-top: rem(30px);
 }
 
-.cf-layout-3-up {
-  border: 1px solid $color-gray-lighter;
-  display: table;
-  width: 100%;
-
-  > * {
-    display: table-cell;
-    padding: 1.5rem;
-    vertical-align: middle;
-    width: 33%;
-  }
-
-  > *:nth-child(even) {
-    border-left: 1px solid $color-gray-lighter;
-    border-right: 1px solid $color-gray-lighter;
-  }
-
-  &-title {
-    color: $color-gray;
-    font-weight: inherit;
-  }
-
-  &-text {
-    font-weight: 600;
-    margin-bottom: 0;
-    margin-top: 1rem;
-  }
-}
-
 .cf-app-footer {
   > div {
     box-sizing: border-box;
@@ -758,6 +728,7 @@ textarea {
   }
 }
 
+
 // Overrides USWDS */
 form {
   max-width: none;
@@ -801,7 +772,7 @@ form {
   }
 
   &:hover {
-    background-color: inherit;
+    background-color: transparent;
     color: $color-primary-darker;
     text-decoration: none;
   }
@@ -838,8 +809,16 @@ form {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-}
 
+  .cf-no-padding,
+    &.cf-no-padding {
+    padding: 0;
+  }
+
+  &.cf-no-margin {
+    margin: 0;
+  }
+}
 
 .cf-btn-help {
   background: transparent;
@@ -929,6 +908,8 @@ input {
 }
 
 .cf-inline-form {
+  line-height: 4em;
+
   label,
   input {
     display: inline;
@@ -941,6 +922,16 @@ input {
       height: 35px;
     }
   }
+
+  .cf-form-int-input {
+    input {
+      &[class*="cf-form-textinput"] {
+        margin: 0 12px;
+        width: 3em;
+        height: 36px;
+      }
+    }
+  }
 }
 
 .cf-required {
@@ -948,46 +939,6 @@ input {
   float: right;
   font-style: italic;
   margin-left: .25em;
-}
-
-.cf-subtext {
-  color: $color-gray;
-}
-
-.cf-characters-left {
-  color: $color-gray;
-  font-size: 0.9em;
-  font-style: italic;
-  height: 1em;
-}
-
-.cf-loading-indicator {
-  display: none;
-  background-color: $color-white;
-  border-radius: 5px;
-  padding: 0.4rem 2.7em;
-  svg { vertical-align: middle; }
-}
-
-.cf-is-loading {
-  .cf-submit {
-    display: none;
-  }
-
-  .cf-loading-indicator {
-    display: block;
-
-    .using-logo {
-      color: transparent;
-      display: inline-block;
-      width: 40%;
-      height: 90%;
-      position: relative;
-      background: image-url('icons/cf-logo-pill.svg') center no-repeat;
-      background-size: 65%;
-      @include animation(spin 2s linear infinite);
-    }
-  }
 }
 
 fieldset {
@@ -1010,12 +961,25 @@ fieldset {
 .cf-form-textarea {
   clear: both;
   max-width: rem(455px);
+  margin-bottom: 20px;
+
+  p {
+    margin-top: 0;
+  }
 }
 
 // Wrapping element for each option */
 .cf-form-radio-options {
   @include clearfix;
   margin-top: rem(10px);
+
+  input {
+    left: -999em;
+  }
+
+  i {
+    margin-left: 0;
+  }
 }
 
 .cf-form-radio-option {
@@ -1045,27 +1009,30 @@ fieldset {
   }
 }
 
-.cf-form-checkboxes.usa-grid-full {
-  margin-bottom: 0;
-}
-
-.cf-form-checkboxes,
-.cf-form-cond-req {
+.cf-form-checkboxes {
   margin-top: rem(20px);
   margin-bottom: rem(40px);
+
+  .usa-grid-full {
+    margin-bottom: 0;
+  }
 }
 
 .cf-form-checkbox {
   &:not(:last-child) {
     margin-bottom: rem(20px);
   }
-}
 
-.cf-form-checkboxes-inline {
-  .checkbox {
-    float: left;
-    padding-right: rem(30px);
-    margin-bottom: .5em;
+  input {
+    left: -999em;
+  }
+
+  i {
+    margin-left: 0;
+  }
+
+  .cf-required {
+    display: none;
   }
 }
 
@@ -1082,8 +1049,10 @@ fieldset {
 }
 
 //========================
-// Certified success page
+// Status Message
 //==========================*/
+
+// TODO Remove selector also
 .cf-app-msg-screen {
   color: $color-gray;
 }
@@ -1095,6 +1064,7 @@ fieldset {
 }
 
 // "deck" is newspaper speak for "subhead"
+// TODO Refactor
 .cf-msg-screen-deck {
   text-align: center;
   font-size: rem(20px);
@@ -1147,41 +1117,9 @@ fieldset {
   }
 }
 
-.cf-login-input {
-  // This important can be removed when the latest USWDS
-  // are merged into the gem we use.
-  // scss-lint:disable ImportantRule
-  display: inline !important;
-  // scss-lint:enable ImportantRule
-}
-
-[id=username_input_id] ~ .cf-txt-example {
-  margin-left: rem(20px);
-}
-
 //------------------------------
 // Help page
 // -------------------------------
-[id=help-page] {
-  dt {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin: 3rem auto 0;
-  }
-
-  p {
-    margin-top: 0;
-  }
-
-  img {
-    box-shadow: 0 0 20px -5px rgba($color-gray-dark, .5);
-    clear: both;
-    display: block;
-    margin: 2rem;
-    max-width: 60rem;
-    height: auto;
-  }
-}
 
 .cf-help-image-wrapper {
   text-align: center;
@@ -1201,79 +1139,6 @@ ul {
   &[id=toc] {
     li {
       padding-bottom: 10px;
-    }
-  }
-}
-
-//---------------------------
-// Date picker overrides
-//----------------------------*/
-.ui-datepicker {
-  background: $cf-background;
-  box-shadow: 0 0 30px rgba($color-base, .8);
-
-  &-header {
-    background: $color-gray;
-    color: $color-white;
-    text-align: center;
-    padding: 1rem;
-    position: relative;
-    width: 100%;
-  }
-
-  &-title {
-    font-weight: bold;
-  }
-
-  &-prev,
-  &-next {
-    color: $color-white;
-    cursor: pointer;
-    font-size: .85em;
-    line-height: 1.6;
-    position: absolute;
-
-    &:hover {
-      color: $color-white;
-    }
-  }
-
-  &-prev {
-    left: 1rem;
-  }
-
-  &-next {
-    right: 1rem;
-  }
-
-  &-calendar {
-    margin: 0;
-
-    th {
-      background: $color-gray-light;
-      color: $color-gray-dark;
-      padding: 1rem;
-      border-color: $color-gray;
-
-      &:first-child {
-        border-left-color: $color-gray-light;
-      }
-
-      &:last-child {
-        border-right-color: $color-gray-light;
-      }
-    }
-
-    td {
-      background: $cf-background;
-      border-color: $color-gray-light;
-      padding: 0;
-      text-align: right;
-    }
-
-    .ui-state-default {
-      display: block;
-      padding: 1rem;
     }
   }
 }
@@ -1317,7 +1182,6 @@ ul {
     @include transform(scale(1) rotate(-390deg));
   }
 }
-
 
 .cf-form-checkbox,
 .cf-form-radio-option {
@@ -1382,10 +1246,6 @@ button {
   }
 }
 
-.cf-secondary-disabled {
-  opacity: .25;
-}
-
 .cf-loading {
   display: inline-block;
   position: relative;
@@ -1426,7 +1286,6 @@ button {
     margin-bottom: 20px;
  }
 }
-
 
 .usa-accordion-button {
   background-image: url(asset-path('minus.svg'));
