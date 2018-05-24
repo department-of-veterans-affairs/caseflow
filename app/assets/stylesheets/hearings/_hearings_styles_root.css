@@ -6,12 +6,5 @@
  * If you add a component, add a corresponding css file here. Name all
  * styles with .react-<component_name>-<style_name>
  *
- *= require ./_loading_container.scss
- *= require ./_comment.scss
- *= require ./_select-dropdown.scss
- *= require ./_toggle_button.scss
- *= require ./_performance_degradation_banner.scss
- *= require ./_small_loader.scss
- *= require ./_search_bar.scss
- *= require ./_rc_collapse.scss
+ *= require ./_worksheet_print.scss
  */

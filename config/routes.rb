@@ -86,6 +86,8 @@ Rails.application.routes.draw do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
+  resources :beam_appeals, only: [:index]
+
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id

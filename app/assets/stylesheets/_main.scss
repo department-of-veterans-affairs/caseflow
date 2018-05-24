@@ -2,7 +2,6 @@
 @import 'global/fonts';
 @import 'uswds_rails_overrides/core/defaults';
 @import 'uswds/all';
-// variables here should eventually find their way into commons
 @import 'variables';
 
 html,
@@ -54,7 +53,9 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
+  // scss-lint:disable ImportantRule
   color: $color-gray-dark !important;
+  // scss-lint:enable ImportantRule
 }
 
 .cf-content-inside {
@@ -132,19 +133,8 @@ body {
   }
 }
 
-.cf-app-dispatch,
-.cf-app-dispatch-arc,
-.cf-app-not-set,
-.cf-app-internal {
-  .cf-app-width {
-    @include app-width('');
-  }
-}
-
-.cf-app-certification {
-  .cf-app-width {
-    @include app-width('');
-  }
+.cf-app-width {
+  @include app-width('');
 }
 
 .cf-app-queue {
@@ -181,21 +171,9 @@ body {
   background-size: 32px 32px;
 }
 
-.cf-associated-header {
-  color: $color-gray;
-  font-size: 24px;
-  margin-left: 175px;
-  font-weight: normal;
-}
-
 .cf-right-side {
   text-align: right;
   float: right;
-}
-
-.cf-section-break {
-  margin-top: 50px;
-  margin-bottom: 50px;
 }
 
 .cf-validation {
@@ -213,20 +191,11 @@ body {
 }
 
 .cf-form-textinput[readonly] {
+  // scss-lint:disable ImportantRule
   background: $color-gray-lightest !important;
-  color: $color-gray-dark;
   opacity: 1 !important;
-}
-
-.cf-loading-button-text {
-  display: inline-block;
-  margin-right: 10px;
-  line-height: 0;
-  position: relative;
-}
-
-.cf-loading-button-symbol {
-  display: inline-block;
+   // scss-lint:enable ImportantRule
+  color: $color-gray-dark;
 }
 
 .cf-button-associated-text {
@@ -242,11 +211,6 @@ body {
 .cf-form--full-width {
   width: 100%;
   max-width: 100%;
-}
-
-.cf-modal-body {
-  max-height: 100%;
-  overflow-y: auto;
 }
 
 .cf-bare-list {
@@ -272,7 +236,9 @@ body {
 }
 
 .cf-msg-screen-deck {
+  // scss-lint:disable ImportantRule
   margin-bottom: 4rem !important;
+  // scss-lint:enable ImportantRule
 
   &.cf-success-emoji-text {
     width: auto;
@@ -337,53 +303,6 @@ select {
   vertical-align: middle;
 }
 
-// Candidate for commons
-.cf-btn-link {
-
-  .cf-no-padding,
-  &.cf-no-padding {
-    padding: 0;
-  }
-
-  &.cf-no-margin {
-    margin: 0;
-  }
-
-  &:hover {
-    background-color: transparent;
-  }
-}
-
-.cf-react-loading-indicator {
-  background-color: $color-white;
-  border-radius: 5px;
-  padding: 0.4rem 2.7em;
-  text-align: center;
-  display: inline-block;
-
-  svg { vertical-align: middle; }
-}
-
-.cf-form-radio-options {
-  input {
-    left: -999em;
-  }
-
-  i {
-    margin-left: 0;
-  }
-}
-
-.cf-form-checkbox {
-  input {
-    left: -999em;
-  }
-
-  i {
-    margin-left: 0;
-  }
-}
-
 .cf-left-padding {
   padding-left: 75px;
   margin-top: 20px;
@@ -395,11 +314,6 @@ select {
     padding-left: 0;
     padding-right: 0;
   }
-}
-
-.cf-bottom-border {
-  border-bottom: 1px solid $color-gray-light;
-  margin: 40px auto;
 }
 
 .cf-bold-ordered-list {
@@ -438,55 +352,6 @@ select {
   margin: 0;
   padding: 0;
   line-height: 1;
-}
-
-.cf-icon-button {
-  cursor: pointer;
-}
-
-.cf-gray {
-  color: $color-gray;
-}
-
-// add to commons
-.cf-form-textarea {
-  margin-bottom: 40px;
-
-  p {
-    margin-top: 0;
-  }
-}
-
-// candidate for commons
-.cf-inline-field {
-  &.cf-form-textinput {
-    margin-bottom: 0;
-  }
-
-  &[type="number"] {
-    width: 60px;
-    height: 35px;
-  }
-}
-
-// add to commons
-.cf-form-textinput {
-  margin-bottom: 30px;
-}
-
-// add to commons
-.cf-inline-form {
-  line-height: 4em;
-
-  .cf-form-int-input {
-    input {
-      &[class*="cf-form-textinput"] {
-        margin: 0 12px;
-        width: 3em;
-        height: 36px;
-      }
-    }
-  }
 }
 
 .cf-borderless-rows {
@@ -545,35 +410,6 @@ select {
     span {
       font-size: 1.26em;
     }
-  }
-}
-
-.vbms-id {
-  color: $color-gray;
-}
-
-.cf-work-assignments {
-  td {
-    &:first-child {
-      > span {
-        display: block;
-        overflow: auto;
-      }
-    }
-
-    .cf-form-int-input {
-      width: 3.2em;
-      margin: 0 auto;
-    }
-  }
-
-  .cf-no-padding {
-    padding: 0 3px;
-    vertical-align: middle;
-  }
-
-  .cf-empty-cell-header {
-    min-width: 90px;
   }
 }
 

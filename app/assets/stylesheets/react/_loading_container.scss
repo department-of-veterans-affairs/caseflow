@@ -37,3 +37,23 @@
   position: relative;
   overflow: hidden;
 }
+
+.cf-loading-button-text {
+  display: inline-block;
+  margin-right: 10px;
+  line-height: 0;
+  position: relative;
+}
+
+.cf-loading-message {
+  .loading-message-text {
+    display: inline-block;
+    font-style: italic;
+    font-weight: bolder;
+  }
+
+}
+
+.cf-loading-button-symbol {
+  display: inline-block;
+}
