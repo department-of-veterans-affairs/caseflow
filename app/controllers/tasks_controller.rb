@@ -129,7 +129,7 @@ class TasksController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::LegacyAppealSerializer
     ).as_json
   end
 
