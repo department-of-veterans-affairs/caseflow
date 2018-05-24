@@ -47,7 +47,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :vacols_id do
-    "not implemented"
+    object.id
   end
 
   attribute :type do
@@ -75,7 +75,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :paper_case do
-    "not implemented"
+    false
   end
 
   attribute :power_of_attorney do
@@ -91,6 +91,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :caseflow_veteran_id do
-    object.veteran.id
+    object.veteran ? object.veteran.id : "not implemented"
   end
 end

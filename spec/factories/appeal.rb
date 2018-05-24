@@ -7,9 +7,9 @@ FactoryBot.define do
     veteran_file_number do
       if veteran
         veteran.file_number
-      else
-        "783740847"
       end
     end
+
+    association task
   end
 end

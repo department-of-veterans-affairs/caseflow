@@ -127,6 +127,7 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/beam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'tasks#index'

@@ -39,7 +39,7 @@ class QueueApp extends React.PureComponent {
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
-  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+  routedQueueList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
     <SearchBar
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
