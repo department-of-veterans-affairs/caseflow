@@ -70,9 +70,12 @@ class Fakes::Initializer
       }
 
       # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
-      Fakes::BGSService.create_veteran_records if rails_env.development?
+      if rails_env.development?
+        Fakes::BGSService.create_veteran_records
+        Fakes::BGSService.stub_intake_data
+        return
+      end
 
-      return if rails_env.development?
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
