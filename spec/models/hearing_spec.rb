@@ -327,9 +327,9 @@ describe Hearing do
     let(:hearing) do
       RequestStore[:current_user] = OpenStruct.new(
         ip_address: "127.0.0.1",
-        station_id: "397",
-        css_id: "AMCDLUCA",
-        roles: ["User", "Manage Claims Establishme", "Establish Claim"],
+        station_id: "101",
+        css_id: "BVASCASPER1",
+        roles: ["User", "Hearing Scheduling"],
         regional_office: nil
       )
 
