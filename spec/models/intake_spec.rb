@@ -345,4 +345,28 @@ describe Intake do
       it { is_expected.to be_truthy }
     end
   end
+
+  context "#start_complete!" do
+    subject { intake.start_complete! }
+
+    it "sets completion_started_at" do
+      expect(intake.completion_started_at).to be nil
+      subject
+      expect(intake.completion_started_at).not_to be nil
+    end
+  end
+
+  context "#clear_pending!" do
+    subject { intake.clear_pending! }
+
+    it "undoes whatever start_complete! does" do
+      intake.save!
+      attributes = intake.attributes
+      intake.start_complete!
+      expect(intake.attributes).not_to eql(attributes)
+      subject
+      expect(intake.attributes).to eql(attributes)
+    end
+  end
+
 end

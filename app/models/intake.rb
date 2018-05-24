@@ -5,7 +5,7 @@ class Intake < ApplicationRecord
   belongs_to :detail, polymorphic: true
 
   enum completion_status: {
-    pending: "pending",
+    # TODO: what will happen if we remove one of these but there exist records with that value
     success: "success",
     canceled: "canceled",
     error: "error"
@@ -66,6 +66,10 @@ class Intake < ApplicationRecord
         "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
         AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
       )
+  end
+
+  def pending?
+    !!completion_started_at
   end
 
   def complete?
@@ -132,13 +136,13 @@ class Intake < ApplicationRecord
 
   def start_complete!
     update_attributes!(
-      completion_status: "pending"
+      completion_started_at: Time.zone.now
     )
   end
 
   def clear_pending!
     update_attributes!(
-      completion_status: nil
+      completion_started_at: nil
     )
   end
 
