@@ -6,21 +6,18 @@ describe PowerOfAttorney do
   end
 
   it "returns bgs values" do
-    power_of_attorney.load_bgs_record!
     expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
   end
 
   it "returns bgs address" do
-    power_of_attorney.load_bgs_record!
     expect(power_of_attorney.bgs_representative_address[:city]).to eq "SAN FRANCISCO"
   end
 
   describe "error handling" do
-    let(:power_of_attorney) { PowerOfAttorney.new(bgs_participant_id: Fakes::BGSService::ID_TO_RAISE_ERROR) }
-
     it "gracefully handles error fetching address" do
-      expect(power_of_attorney.bgs_participant_id).to eq Fakes::BGSService::ID_TO_RAISE_ERROR
+      allow_any_instance_of(BGSService).to receive(:find_address_by_participant_id).and_raise(Savon::Error)
       expect(power_of_attorney.load_bgs_address!).to eq nil
+      expect(power_of_attorney.bgs_participant_id).to_not eq nil
       expect(power_of_attorney.bgs_representative_address).to eq nil
     end
   end
