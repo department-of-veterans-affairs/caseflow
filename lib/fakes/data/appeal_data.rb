@@ -47,19 +47,21 @@ module Fakes::Data::AppealData
   end
 
   def self.certification_ready_to_certify
+    vacols_case = VACOLS::Case.where(bfcorlid: "701305078S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2011, 3, 17)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 6, 18)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 7, 8)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 11, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: vacols_case.bfssoc1)
     ]
   end
 
   def self.certification_fuzzy_match_documents
+    vacols_case = VACOLS::Case.where(bfcorlid: "783740847S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2016, 3, 3)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 8, 19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 8, 31))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc - 2.days),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19)
     ]
   end
 
@@ -241,10 +243,7 @@ module Fakes::Data::AppealData
         appellant_zip: "07932",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Joe",
-        added_by_middle_name: "A",
-        added_by_last_name: "Snuffy",
-        added_by_css_id: "MAPAPPAS",
+        added_by: OpenStruct.new(name: "Joe Snuffy", css_id: "MAPAPPAS"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
         representative_name: "Virginia Department of Veterans Affairs",
@@ -284,10 +283,7 @@ module Fakes::Data::AppealData
         appellant_zip: "36838",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: nil,
-        added_by_middle_name: nil,
-        added_by_last_name: nil,
-        added_by_css_id: nil,
+        added_by: OpenStruct.new(name: nil, css_id: nil),
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
         representative_name: "No Representative",
@@ -345,10 +341,7 @@ module Fakes::Data::AppealData
         appellant_zip: "63873",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Ricky",
-        added_by_middle_name: nil,
-        added_by_last_name: "Tikitembo",
-        added_by_css_id: "HROBERT",
+        added_by: OpenStruct.new(name: "Ricky Tikitembo", css_id: "HROBERT"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
         representative_name: "One Time Representative",
@@ -392,10 +385,7 @@ module Fakes::Data::AppealData
         appellant_zip: "32883",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Dana",
-        added_by_middle_name: "T",
-        added_by_last_name: "Frey",
-        added_by_css_id: "DFREY",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
         representative_name: "Agent",
@@ -431,10 +421,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Nino",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
-        added_by_first_name: "Demo",
-        added_by_middle_name: nil,
-        added_by_last_name: "More",
-        added_by_css_id: "DMORE",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         regional_office_key: "RO13",
         representative_name: "Disabled American Veterans",
         representative_type: "Service Organization",
@@ -476,10 +463,7 @@ module Fakes::Data::AppealData
         appellant_zip: "67753",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: nil,
-        added_by_middle_name: nil,
-        added_by_last_name: nil,
-        added_by_css_id: nil,
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -521,10 +505,7 @@ module Fakes::Data::AppealData
         appellant_zip: "K1M 1C8",
         appellant_country: "CN",
         docket_number: "13 11-265",
-        added_by_first_name: "Jess",
-        added_by_middle_name: "P",
-        added_by_last_name: "Tran",
-        added_by_css_id: "HROBERT",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -590,10 +571,7 @@ module Fakes::Data::AppealData
         appellant_zip: "71882",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Enid",
-        added_by_middle_name: "Z",
-        added_by_last_name: "Rempel",
-        added_by_css_id: "EREMPEL",
+        added_by: OpenStruct.new(name: "Enid Rempel", css_id: "EREMPEL"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
         representative_name: "Virginia Department of Veterans Affairs",
