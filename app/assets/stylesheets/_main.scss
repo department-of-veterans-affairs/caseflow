@@ -1,8 +1,7 @@
 // Add scss includes explicitly here.
 @import 'global/fonts';
-
+@import '../../../client/node_modules/uswds/src/stylesheets/lib/addons/font-stacks';
 @import '../../../client/node_modules/uswds/src/stylesheets/all';
-
 // Local
 @import 'variables';
 
