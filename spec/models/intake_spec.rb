@@ -369,4 +369,23 @@ describe Intake do
     end
   end
 
+  context "#pending?" do
+    subject { intake.pending? }
+
+    context "when completion_started_at is nil" do
+      it "should be false" do
+        expect(intake.completion_started_at).to be nil
+        expect(subject).to be false
+      end
+    end
+
+    context "when completion_start_at is not nil" do
+      it "should be true" do
+        intake.start_complete!
+        expect(intake.completion_started_at).to_not be nil
+        expect(subject).to be true
+      end
+    end
+  end
+
 end
