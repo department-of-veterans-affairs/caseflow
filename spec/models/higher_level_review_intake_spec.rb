@@ -94,6 +94,50 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    it "creates end products with incrementing end product modifiers" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: { end_product_type_code: "040" }
+      )
+
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: { end_product_type_code: "030" }
+      )
+
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: { end_product_type_code: "031" }
+      )
+
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: { end_product_type_code: "033" }
+      )
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: detail.receipt_date.to_date,
+          end_product_modifier: "032",
+          end_product_label: "Higher Level Review Rating",
+          end_product_code: "030HLRAMA",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: intake.veteran.to_vbms_hash
+      )
+    end
+
     context "when no requested issues" do
       let(:params) do
         { request_issues: [] }
