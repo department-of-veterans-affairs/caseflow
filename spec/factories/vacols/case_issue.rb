@@ -8,6 +8,19 @@ FactoryBot.define do
     issaduser "user"
     issadtime { DateTime.now }
 
+    trait :compensation do
+      issprog "02"
+      isscode "15"
+      isslev1 "04"
+      isslev2 "5252"
+    end
+
+    trait :education do
+      issprog "03"
+      isscode "02"
+      isslev1 "01"
+    end
+
     trait :disposition_remanded do
       issdc "3"
     end

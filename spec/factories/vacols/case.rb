@@ -123,12 +123,20 @@ FactoryBot.define do
       bfmpro "HIS"
     end
 
+    trait :status_advance do
+      bfmpro "ADV"
+    end
+
     trait :disposition_allowed do
       bfdc "1"
     end
 
     trait :disposition_remanded do
       bfdc "3"
+    end
+
+    trait :disposition_vacated do
+      bfdc "5"
     end
 
     trait :disposition_ramp do

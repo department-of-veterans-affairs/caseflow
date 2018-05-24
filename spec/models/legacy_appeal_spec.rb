@@ -892,7 +892,7 @@ describe LegacyAppeal do
       end
 
       context "when the allowed issues are new material" do
-        let(:issues) { [FactoryBot.create(:case_issue, :disposition_allowed, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5252")] }
+        let(:issues) { [FactoryBot.create(:case_issue, :disposition_allowed, :compensation)] }
 
         it { is_expected.to be_falsey }
       end
@@ -925,7 +925,7 @@ describe LegacyAppeal do
         context "when at least one issues is new-material allowed" do
           let(:issues) do
             [
-              FactoryBot.create(:case_issue, :disposition_allowed, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5252"),
+              FactoryBot.create(:case_issue, :disposition_allowed, :compensation),
               FactoryBot.create(:case_issue, :disposition_denied)
             ]
           end
@@ -969,7 +969,7 @@ describe LegacyAppeal do
         context "contains no new-material allowed issues" do
           let(:issues) do
             [
-              FactoryBot.create(:case_issue, :disposition_allowed, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5252"),
+              FactoryBot.create(:case_issue, :disposition_allowed, :compensation),
               FactoryBot.create(:case_issue, :disposition_remanded)
             ]
           end
@@ -1004,120 +1004,126 @@ describe LegacyAppeal do
     context "#compensation_issues" do
       subject { appeal.compensation_issues }
 
-      let!(:vacols_case) { FactoryBot.create(:case, :status_remand, case_issues: issues) }
+      let!(:vacols_case) { FactoryBot.create(:case, case_issues: issues) }
       let(:compensation_issue) do
         FactoryBot.create(
-          :case_issue, :disposition_allowed, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5252")
+          :case_issue, :disposition_allowed, :compenstation)
       end
       let(:issues) do
         [
           compensation_issue,
           FactoryBot.create(
-            :case_issue, :disposition_allowed, issprog: "03", isscode: "15", isslev1: "03", isslev2: "5252")
+            :case_issue, :disposition_allowed, :education)
         ]
       end
 
       it { expect(subject[0].vacols_sequence_id).to eq(compensation_issue.issseq) }
     end
-  end
 
-  context "#compensation?" do
-    subject { appeal.compensation? }
+    context "#compensation?" do
+      subject { appeal.compensation? }
 
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
-    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
-    let(:education_issue) { Generators::Issue.build(template: :education) }
+      let!(:vacols_case) { FactoryBot.create(:case, case_issues: issues) }
+      let(:compensation_issue) do
+        FactoryBot.create(
+          :case_issue, :disposition_allowed, :compensation)
+      end
+      let(:education_issue) do
+        FactoryBot.create(
+          :case_issue, :disposition_allowed, :education)
+      end
 
-    context "when there are no compensation issues" do
-      let(:issues) { [education_issue] }
-      it { is_expected.to be false }
+      context "when there are no compensation issues" do
+        let(:issues) { [education_issue] }
+        it { is_expected.to be false }
+      end
+
+      context "when there is at least 1 compensation issue" do
+        let(:issues) { [education_issue, compensation_issue] }
+        it { is_expected.to be true }
+      end
     end
 
-    context "when there is at least 1 compensation issue" do
-      let(:issues) { [education_issue, compensation_issue] }
-      it { is_expected.to be true }
-    end
-  end
+    context "#fully_compensation?" do
+      subject { appeal.fully_compensation? }
 
-  context "#fully_compensation?" do
-    subject { appeal.fully_compensation? }
+      let!(:vacols_case) { FactoryBot.create(:case, case_issues: issues) }
+      let(:compensation_issue) do
+        FactoryBot.create(
+          :case_issue, :disposition_allowed, :compensation)
+      end
+      let(:education_issue) do
+        FactoryBot.create(
+          :case_issue, :disposition_allowed, :education)
+      end
 
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
-    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
-    let(:education_issue) { Generators::Issue.build(template: :education) }
+      context "when there is at least one non-compensation issue" do
+        let(:issues) { [education_issue, compensation_issue] }
+        it { is_expected.to be false }
+      end
 
-    context "when there is at least one non-compensation issue" do
-      let(:issues) { [education_issue, compensation_issue] }
-      it { is_expected.to be false }
-    end
-
-    context "when there are all compensation issues" do
-      let(:issues) { [compensation_issue] }
-      it { is_expected.to be true }
-    end
-  end
-
-  context "#eligible_for_ramp?" do
-    subject { appeal.eligible_for_ramp? }
-
-    let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, location_code: location_code)
+      context "when there are all compensation issues" do
+        let(:issues) { [compensation_issue] }
+        it { is_expected.to be true }
+      end
     end
 
-    let(:location_code) { nil }
+    context "#eligible_for_ramp?" do
+      subject { appeal.eligible_for_ramp? }
 
-    context "is false if status is not advance or remand" do
-      let(:status) { "Active" }
-      it { is_expected.to be_falsey }
-    end
+      let(:location_code) { nil }
 
-    context "status is remand" do
-      let(:status) { "Remand" }
-      it { is_expected.to be_truthy }
-    end
-
-    context "status is advance" do
-      let(:status) { "Advance" }
-
-      context "location is remand_returned_to_bva" do
-        let(:location_code) { "96" }
+      context "is false if status is not advance or remand" do
+        let!(:vacols_case) { FactoryBot.create(:case, :status_active) }
         it { is_expected.to be_falsey }
       end
 
-      context "location is not remand_returned_to_bva" do
-        let(:location_code) { "90" }
+      context "status is remand" do
+        let!(:vacols_case) { FactoryBot.create(:case, :status_remand) }
         it { is_expected.to be_truthy }
       end
-    end
-  end
 
-  context "#disposition_remand_priority" do
-    subject { appeal.disposition_remand_priority }
-    context "when disposition is allowed and one of the issues is remanded" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remanded)
-        ]
+      context "status is advance" do
+        context "location is remand_returned_to_bva" do
+          let!(:vacols_case) { FactoryBot.create(:case, :status_advance, bfcurloc: "96") }
+          it { is_expected.to be_falsey }
+        end
+
+        context "location is not remand_returned_to_bva" do
+          let!(:vacols_case) { FactoryBot.create(:case, :status_advance, bfcurloc: "90") }
+          it { is_expected.to be_truthy }
+        end
       end
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
-      it { is_expected.to eq("Remanded") }
     end
 
-    context "when disposition is allowed and none of the issues are remanded" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :allowed)
-        ]
+    context "#disposition_remand_priority" do
+      subject { appeal.disposition_remand_priority }
+      context "when disposition is allowed and one of the issues is remanded" do
+        let(:issues) do
+          [
+            FactoryBot.create(:case_issue, :disposition_remanded),
+            FactoryBot.create(:case_issue, :disposition_allowed)
+          ]
+        end
+        let!(:vacols_case) { FactoryBot.create(:case, :disposition_allowed, case_issues: issues) }
+        it { is_expected.to eq("Remanded") }
       end
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
-      it { is_expected.to eq("Allowed") }
-    end
 
-    context "when disposition is not allowed" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
-      it { is_expected.to eq("Vacated") }
+      context "when disposition is allowed and none of the issues are remanded" do
+        let(:issues) do
+          [
+            FactoryBot.create(:case_issue, :disposition_allowed),
+            FactoryBot.create(:case_issue, :disposition_allowed)
+          ]
+        end
+        let!(:vacols_case) { FactoryBot.create(:case, :disposition_allowed, case_issues: issues) }
+        it { is_expected.to eq("Allowed") }
+      end
+
+      context "when disposition is not allowed" do
+        let!(:vacols_case) { FactoryBot.create(:case, :disposition_vacated, case_issues: []) }
+        it { is_expected.to eq("Vacated") }
+      end
     end
   end
 
