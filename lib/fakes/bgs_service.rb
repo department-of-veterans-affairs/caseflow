@@ -30,21 +30,6 @@ class Fakes::BGSService
     Generators::Rating.build(
       participant_id: veteran.participant_id
     )
-
-    Generators::EndProduct.build(
-      veteran_file_number: "375273128",
-      bgs_attrs: { end_product_type_code: "040" }
-    )
-
-    Generators::EndProduct.build(
-      veteran_file_number: "375273128",
-      bgs_attrs: { end_product_type_code: "041" }
-    )
-
-    Generators::EndProduct.build(
-      veteran_file_number: "375273128",
-      bgs_attrs: { end_product_type_code: "030" }
-    )
   end
 
   # rubocop:disable Metrics/MethodLength

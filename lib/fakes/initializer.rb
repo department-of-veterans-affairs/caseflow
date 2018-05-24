@@ -55,13 +55,11 @@ class Fakes::Initializer
       load!(rails_env: rails_env)
 
       User.authentication_service.vacols_regional_offices = {
-        "DSUSER" => "DSUSER",
-        "RO13" => "RO13"
+        "DSUSER" => "DSUSER", "RO13" => "RO13"
       }
 
       User.authentication_service.user_session = {
-        "id" => "Fake User",
-        "css_id" => "FAKEUSER",
+        "id" => "Fake User", "css_id" => "FAKEUSER",
         "roles" =>
           ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment"],
         "station_id" => "283",

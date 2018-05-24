@@ -76,11 +76,11 @@ class SupplementalClaim < ApplicationRecord
     "040SCRAMA"
   end
 
-  END_PRODUCT_MODIFIERS = [ "040", "041", "042", "043", "044", "045", "046", "047", "048", "049" ]
+  END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
   def end_product_modifier
     END_PRODUCT_MODIFIERS.each do |modifier|
-      if veteran.end_products.select {|ep| ep.modifier == modifier}.length == 0
+      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
         return modifier
       end
     end
