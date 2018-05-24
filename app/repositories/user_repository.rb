@@ -10,6 +10,7 @@ class UserRepository
 
     # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
+    # rubocop:disable Metrics/CyclomaticComplexity
     def vacols_role(css_id)
       staff_record = staff_record_by_css_id(css_id)
       return unless staff_record
@@ -22,6 +23,7 @@ class UserRepository
         "Attorney" if staff_record.sattyid
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def can_access_task?(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
