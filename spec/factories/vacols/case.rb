@@ -9,7 +9,24 @@ FactoryBot.define do
     association :folder, factory: :folder, ticknum: :bfkey
 
     trait :assigned do
-      association :decass, factory: :decass, defolder: :bfkey
+      transient do
+        decass_count 1
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+      end
+    end
+
+    transient do
+      case_issues []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_issues.each do |case_issue|
+          case_issue.isskey = vacols_case.bfkey
+          case_issue.save
+        end
+      end
     end
 
     transient do
@@ -92,6 +109,30 @@ FactoryBot.define do
 
       bfdcertool { certification_date }
       bf41stat { certification_date }
+    end
+
+    trait :status_active do
+      bfmpro "ACT"
+    end
+
+    trait :status_remand do
+      bfmpro "REM"
+    end
+
+    trait :status_complete do
+      bfmpro "HIS"
+    end
+
+    trait :disposition_allowed do
+      bfdc "1"
+    end
+
+    trait :disposition_remanded do
+      bfdc "3"
+    end
+
+    trait :disposition_ramp do
+      bfdc "P"
     end
 
     after(:build) do |vacols_case, evaluator|
