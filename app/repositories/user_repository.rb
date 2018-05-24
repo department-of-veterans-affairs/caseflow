@@ -5,13 +5,14 @@ class UserRepository
     end
 
     def vacols_uniq_id(css_id)
-      staff_record_by_css_id(css_id).slogid
+      staff_record_by_css_id(css_id).try(:slogid)
     end
 
     # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
     def vacols_role(css_id)
       staff_record = staff_record_by_css_id(css_id)
+      return unless staff_record
       case staff_record.svlj
       when "J"
         "Judge"
@@ -32,15 +33,16 @@ class UserRepository
 
     # :nocov:
     def vacols_attorney_id(css_id)
-      staff_record_by_css_id(css_id).sattyid
+      staff_record_by_css_id(css_id).try(:sattyid)
     end
 
     def vacols_group_id(css_id)
-      staff_record_by_css_id(css_id).stitle
+      staff_record_by_css_id(css_id).try(:stitle)
     end
 
     def vacols_full_name(css_id)
       record = staff_record_by_css_id(css_id)
+      return unless record
       FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
     end
 
@@ -59,9 +61,7 @@ class UserRepository
 
     def staff_record_by_css_id(css_id)
       staff_records[css_id] ||= VACOLS::Staff.find_by(sdomainid: css_id)
-      staff = staff_records[css_id]
-      fail Caseflow::Error::UserRepositoryError, "Cannot find user with #{css_id} in VACOLS" unless staff
-      staff
+      staff_records[css_id]
     end
     # :nocov:
   end
