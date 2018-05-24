@@ -78,16 +78,6 @@
   bottom: 0;
 }
 
-// TODO: Get rid of the rule in caseflow commons that makes
-// this necessary!
-// scss-lint:disable QualifyingElement
-svg[aria-hidden=true],
-.fa[aria-hidden=true] {
-  display: inline !important;
-}
-// scss-lint:enable QualifyingElement
-
-
 .cf-non-stylized-header {
   font-size: inherit;
   margin: 0;
@@ -260,7 +250,6 @@ svg[aria-hidden=true],
   transform: scale(1.5, 2);
 }
 
-// TODO: Remove !important
 .cf-pdf-button {
   margin: 0 8px;
   color: inherit;
@@ -505,7 +494,9 @@ svg[aria-hidden=true],
 
   // We will manually draw the cursor with the annotation icon.
   * {
+    // scss-lint:disable ImportantRule
     cursor: none !important;
+    // scss-lint:enable ImportantRule
   }
 }
 
@@ -636,7 +627,9 @@ input[type="search"].cf-search-input-with-close {
 
   &.cf-next-match {
     border-radius: 0 1rem 1rem 0;
+    // scss-lint:disable ImportantRule
     margin-left: 5px !important;
+    // scss-lint:enable ImportantRule
   }
 }
 

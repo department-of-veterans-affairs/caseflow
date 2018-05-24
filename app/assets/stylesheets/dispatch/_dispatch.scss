@@ -1,4 +1,6 @@
-// TODO(jd): Remove this dispatch-specific overrides and unify the styling
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
 .route-claim-confirmNote-wrapper {
   .question-label {
     max-width: 100%;
@@ -85,3 +87,55 @@
   width: 100%;
 }
 
+.cf-bottom-border {
+  border-bottom: 1px solid $color-gray-light;
+  margin: 40px auto;
+}
+
+.cf-gray {
+  color: $color-gray;
+}
+
+.cf-inline-field {
+  &.cf-form-textinput {
+    margin-bottom: 0;
+  }
+
+  &[type="number"] {
+    width: 60px;
+    height: 35px;
+  }
+}
+
+.vbms-id {
+  color: $color-gray;
+}
+
+.cf-work-assignments {
+  td {
+    &:first-child {
+      > span {
+        display: block;
+        overflow: auto;
+      }
+    }
+
+    .cf-form-int-input {
+      width: 3.2em;
+      margin: 0 auto;
+    }
+  }
+
+  .cf-no-padding {
+    padding: 0 3px;
+    vertical-align: middle;
+  }
+
+  .cf-empty-cell-header {
+    min-width: 90px;
+  }
+}
+
+.cf-secondary-disabled {
+  opacity: .25;
+}
