@@ -66,7 +66,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    appeal = TemporaryAppeal.find_by(veteran_file_number: "22334455")
+    appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
     expect(appeal).to_not be_nil

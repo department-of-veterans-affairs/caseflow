@@ -21,7 +21,7 @@ export const newHearingState = (state, action, spec) => {
   return update(state, {
     dailyDocket: {
       [action.payload.date]: {
-        [action.payload.hearingIndex]: spec
+        [action.payload.hearingId]: spec
       }
     }
   });
@@ -36,10 +36,8 @@ export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
     dailyDocket: {
       [action.payload.date]: {
         $apply: (hearings) => {
-          const changedHearingIndex = _.findIndex(hearings, { id: action.payload.hearingId });
-
           return update(hearings, {
-            [changedHearingIndex]: spec
+            [action.payload.hearingId]: spec
           });
         }
       }
@@ -69,12 +67,10 @@ const getDailyDocketKey = (state, action) => _.findKey(
   (hearings) => _.some(hearings, { id: action.payload.hearingId })
 );
 
-const getHearingIndex = (state, action, dailyDocketKey) =>
-  _.findIndex(state.dailyDocket[dailyDocketKey], { id: action.payload.hearingId });
+const convertDailyDocketToHash = (dailyDocket) => _.mapValues(_.keyBy(dailyDocket, 'id'));
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   let dailyDocketKey;
-  let hearingIndex;
 
   switch (action.type) {
   case Constants.POPULATE_UPCOMING_HEARINGS:
@@ -85,7 +81,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.POPULATE_DAILY_DOCKET:
     return update(state, {
       dailyDocket: {
-        [action.payload.date]: { $set: _.sortBy(action.payload.dailyDocket, (hearing) => hearing.id) }
+        [action.payload.date]: { $set: convertDailyDocketToHash(action.payload.dailyDocket) }
       }
     });
 
@@ -137,8 +133,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
 
-  case Constants.SET_CONTENTIONS:
-    return newHearingWorksheetState(state, action, { contentions: { $set: action.payload.contentions } });
+  case Constants.SET_SUMMARY:
+    return newHearingWorksheetState(state, action, { summary: { $set: action.payload.summary } });
 
   case Constants.SET_MILITARY_SERVICE:
     return newHearingWorksheetState(state, action, {
@@ -147,12 +143,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_HEARING_VIEWED:
     dailyDocketKey = getDailyDocketKey(state, action);
-    hearingIndex = getHearingIndex(state, action, dailyDocketKey);
 
     return update(state, {
       dailyDocket: {
         [dailyDocketKey]: {
-          [hearingIndex]: {
+          [action.payload.hearingId]: {
             viewed_by_current_user: { $set: true }
           }
         }
@@ -162,15 +157,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_HEARING_PREPPED:
     return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } },
       action.payload.setEdited);
-  case Constants.SET_EVIDENCE:
-    return newHearingWorksheetState(state, action, {
-      evidence: { $set: action.payload.evidence }
-    });
-
-  case Constants.SET_COMMENTS_FOR_ATTORNEY:
-    return newHearingWorksheetState(state, action, {
-      comments_for_attorney: { $set: action.payload.commentsForAttorney }
-    });
 
   case Constants.SET_NOTES:
     return newHearingState(state, action, { notes: { $set: action.payload.notes } });
@@ -257,7 +243,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, {
       dailyDocket: {
         [action.payload.date]: {
-          [action.payload.index]: { edited: { $set: false } }
+          [action.payload.hearingId]: { edited: { $set: false } }
         }
       }
     });

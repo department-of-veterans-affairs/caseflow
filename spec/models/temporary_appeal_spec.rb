@@ -1,4 +1,4 @@
-describe TemporaryAppeal do
+describe Appeal do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
@@ -10,7 +10,7 @@ describe TemporaryAppeal do
   let(:established_at) { nil }
 
   let(:appeal) do
-    TemporaryAppeal.new(
+    Appeal.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       docket_type: docket_type,
