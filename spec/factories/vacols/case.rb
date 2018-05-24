@@ -8,6 +8,10 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
+    trait :assigned do
+      association :decass, factory: :decass, defolder: :bfkey
+    end
+
     transient do
       documents []
       nod_document []

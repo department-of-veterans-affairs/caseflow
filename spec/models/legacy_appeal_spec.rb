@@ -456,150 +456,233 @@ describe LegacyAppeal do
         it { is_expected.to be_falsey }
       end
     end
-  end
 
-  context "#case_assignment_exists" do
-    subject { appeal.case_assignment_exists }
+    context "#case_assignment_exists", focus: true do
+      subject { appeal.case_assignment_exists }
 
-    it { is_expected.to be_truthy }
-  end
-
-  context ".find_or_create_by_vacols_id" do
-    let!(:vacols_appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "456VBMS")
+      it { is_expected.to be_truthy }
     end
 
-    subject { LegacyAppeal.find_or_create_by_vacols_id("123C") }
+    context ".find_or_create_by_vacols_id" do
+      let!(:vacols_appeal) do
+        Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "456VBMS")
+      end
 
-    context "when no appeal exists for VACOLS id" do
-      context "when no VACOLS data exists for that appeal" do
-        before { Fakes::AppealRepository.clean! }
+      subject { LegacyAppeal.find_or_create_by_vacols_id("123C") }
 
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      context "when no appeal exists for VACOLS id" do
+        context "when no VACOLS data exists for that appeal" do
+          before { Fakes::AppealRepository.clean! }
+
+          it "raises ActiveRecord::RecordNotFound error" do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+        end
+
+        context "when VACOLS data exists for that appeal" do
+          it "saves and returns that appeal with updated VACOLS data loaded" do
+            is_expected.to be_persisted
+            expect(subject.vbms_id).to eq("456VBMS")
+          end
         end
       end
 
-      context "when VACOLS data exists for that appeal" do
-        it "saves and returns that appeal with updated VACOLS data loaded" do
-          is_expected.to be_persisted
-          expect(subject.vbms_id).to eq("456VBMS")
+      context "when appeal with VACOLS id exists in the DB" do
+        before { vacols_appeal.save! }
+
+        context "when no VACOLS data exists for that appeal" do
+          before { Fakes::AppealRepository.clean! }
+
+          it "raises ActiveRecord::RecordNotFound error" do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
         end
+
+        context "when VACOLS data exists for that appeal" do
+          let!(:updated_vacols_appeal) do
+            Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "789VBMS")
+          end
+
+          it "saves and returns that appeal with updated VACOLS data loaded" do
+            expect(subject.reload.id).to eq(vacols_appeal.id)
+            expect(subject.vbms_id).to eq("789VBMS")
+          end
+        end
+      end
+
+      context "sets the vacols_id" do
+        before do
+          allow_any_instance_of(LegacyAppeal).to receive(:save) {}
+        end
+
+        it do
+          is_expected.to be_an_instance_of(LegacyAppeal)
+          expect(subject.vacols_id).to eq("123C")
+        end
+      end
+
+      it "persists in database" do
+        expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppeal)
       end
     end
 
-    context "when appeal with VACOLS id exists in the DB" do
-      before { vacols_appeal.save! }
-
-      context "when no VACOLS data exists for that appeal" do
-        before { Fakes::AppealRepository.clean! }
-
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-        end
-      end
-
-      context "when VACOLS data exists for that appeal" do
-        let!(:updated_vacols_appeal) do
-          Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "789VBMS")
-        end
-
-        it "saves and returns that appeal with updated VACOLS data loaded" do
-          expect(subject.reload.id).to eq(vacols_appeal.id)
-          expect(subject.vbms_id).to eq("789VBMS")
-        end
-      end
-    end
-
-    context "sets the vacols_id" do
-      before do
-        allow_any_instance_of(LegacyAppeal).to receive(:save) {}
-      end
-
-      it do
-        is_expected.to be_an_instance_of(LegacyAppeal)
-        expect(subject.vacols_id).to eq("123C")
-      end
-    end
-
-    it "persists in database" do
-      expect(LegacyAppeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(LegacyAppeal)
-    end
-  end
-
-  context ".close" do
-    let(:vacols_record) { :ready_to_certify }
-    let(:issues) { [] }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
-    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
-    let(:user) { Generators::User.build }
-    let(:disposition) { "RAMP Opt-in" }
-    let(:election_receipt_date) { 2.days.ago }
-
-    context "when called with both appeal and appeals" do
+    context ".close" do
       let(:vacols_record) { :ready_to_certify }
+      let(:issues) { [] }
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_record: vacols_record, issues: issues, nod_date: nod_date) }
+      let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_decided, nod_date: nod_date) }
+      let(:user) { Generators::User.build }
+      let(:disposition) { "RAMP Opt-in" }
+      let(:election_receipt_date) { 2.days.ago }
 
-      it "should raise error" do
-        expect do
-          LegacyAppeal.close(
+      context "when called with both appeal and appeals" do
+        let(:vacols_record) { :ready_to_certify }
+
+        it "should raise error" do
+          expect do
+            LegacyAppeal.close(
+              appeal: appeal,
+              appeals: [appeal, another_appeal],
+              user: user,
+              closed_on: 4.days.ago,
+              disposition: disposition,
+              election_receipt_date: election_receipt_date
+            )
+          end.to raise_error("Only pass either appeal or appeals")
+        end
+      end
+
+      context "when multiple appeals" do
+        let(:appeal_with_nod_after_election_received) do
+          Generators::LegacyAppeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+        end
+
+        it "closes each appeal with nod_date before election received_date" do
+          expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
             appeal: appeal,
-            appeals: [appeal, another_appeal],
+            user: user,
+            closed_on: 4.days.ago,
+            disposition_code: "P"
+          )
+          expect(Fakes::AppealRepository).to receive(:close_remand!).with(
+            appeal: another_appeal,
+            user: user,
+            closed_on: 4.days.ago,
+            disposition_code: "P"
+          )
+          expect(Fakes::AppealRepository).to_not receive(:close_undecided_appeal!).with(
+            appeal: appeal_with_nod_after_election_received,
+            user: user,
+            closed_on: 4.days.ago,
+            disposition_code: "P"
+          )
+
+          LegacyAppeal.close(
+            appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
             user: user,
             closed_on: 4.days.ago,
             disposition: disposition,
             election_receipt_date: election_receipt_date
           )
-        end.to raise_error("Only pass either appeal or appeals")
+        end
+      end
+
+      context "when just one appeal" do
+        subject do
+          LegacyAppeal.close(
+            appeal: appeal,
+            user: user,
+            closed_on: 4.days.ago,
+            disposition: disposition,
+            election_receipt_date: election_receipt_date
+          )
+        end
+
+        context "when disposition is not valid" do
+          let(:disposition) { "I'm not a disposition" }
+
+          it "should raise error" do
+            expect { subject }.to raise_error(/Disposition/)
+          end
+        end
+
+        context "when disposition is valid" do
+          context "when appeal is not active" do
+            let(:vacols_record) { :full_grant_decided }
+
+            it "should raise error" do
+              expect { subject }.to raise_error(/active/)
+            end
+          end
+
+          context "when appeal is active and undecided" do
+            let(:vacols_record) { :ready_to_certify }
+
+            it "closes the appeal in VACOLS" do
+              expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
+                appeal: appeal,
+                user: user,
+                closed_on: 4.days.ago,
+                disposition_code: "P"
+              )
+
+              subject
+            end
+          end
+
+          context "when appeal is a remand" do
+            let(:vacols_record) { :remand_decided }
+
+            # Add non_new_material_allowed issue to make sure it still works
+            let(:issues) do
+              [Generators::Issue.build(disposition: :allowed)]
+            end
+
+            it "closes the remand in VACOLS" do
+              expect(Fakes::AppealRepository).to receive(:close_remand!).with(
+                appeal: appeal,
+                user: user,
+                closed_on: 4.days.ago,
+                disposition_code: "P"
+              )
+
+              subject
+            end
+          end
+        end
       end
     end
 
-    context "when multiple appeals" do
-      let(:appeal_with_nod_after_election_received) do
-        Generators::LegacyAppeal.build(vacols_record: vacols_record, nod_date: 1.day.ago)
+    context ".reopen" do
+      subject do
+        LegacyAppeal.reopen(
+          appeals: [appeal, another_appeal],
+          user: user,
+          disposition: disposition
+        )
       end
 
-      it "closes each appeal with nod_date before election received_date" do
-        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ramp_closed) }
+      let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_completed) }
+      let(:user) { Generators::User.build }
+      let(:disposition) { "RAMP Opt-in" }
+
+      it "reopens each appeal according to it's type" do
+        expect(Fakes::AppealRepository).to receive(:reopen_undecided_appeal!).with(
           appeal: appeal,
-          user: user,
-          closed_on: 4.days.ago,
-          disposition_code: "P"
+          user: user
         )
-        expect(Fakes::AppealRepository).to receive(:close_remand!).with(
+
+        expect(Fakes::AppealRepository).to receive(:reopen_remand!).with(
           appeal: another_appeal,
           user: user,
-          closed_on: 4.days.ago,
-          disposition_code: "P"
-        )
-        expect(Fakes::AppealRepository).to_not receive(:close_undecided_appeal!).with(
-          appeal: appeal_with_nod_after_election_received,
-          user: user,
-          closed_on: 4.days.ago,
           disposition_code: "P"
         )
 
-        LegacyAppeal.close(
-          appeals: [appeal, another_appeal, appeal_with_nod_after_election_received],
-          user: user,
-          closed_on: 4.days.ago,
-          disposition: disposition,
-          election_receipt_date: election_receipt_date
-        )
-      end
-    end
-
-    context "when just one appeal" do
-      subject do
-        LegacyAppeal.close(
-          appeal: appeal,
-          user: user,
-          closed_on: 4.days.ago,
-          disposition: disposition,
-          election_receipt_date: election_receipt_date
-        )
+        subject
       end
 
-      context "when disposition is not valid" do
+      context "disposition doesn't exist" do
         let(:disposition) { "I'm not a disposition" }
 
         it "should raise error" do
@@ -607,399 +690,327 @@ describe LegacyAppeal do
         end
       end
 
-      context "when disposition is valid" do
-        context "when appeal is not active" do
-          let(:vacols_record) { :full_grant_decided }
+      context "one of the non-remand appeals is active" do
+        let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
-          it "should raise error" do
-            expect { subject }.to raise_error(/active/)
-          end
-        end
-
-        context "when appeal is active and undecided" do
-          let(:vacols_record) { :ready_to_certify }
-
-          it "closes the appeal in VACOLS" do
-            expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-              appeal: appeal,
-              user: user,
-              closed_on: 4.days.ago,
-              disposition_code: "P"
-            )
-
-            subject
-          end
-        end
-
-        context "when appeal is a remand" do
-          let(:vacols_record) { :remand_decided }
-
-          # Add non_new_material_allowed issue to make sure it still works
-          let(:issues) do
-            [Generators::Issue.build(disposition: :allowed)]
-          end
-
-          it "closes the remand in VACOLS" do
-            expect(Fakes::AppealRepository).to receive(:close_remand!).with(
-              appeal: appeal,
-              user: user,
-              closed_on: 4.days.ago,
-              disposition_code: "P"
-            )
-
-            subject
-          end
+        it "should raise error" do
+          expect { subject }.to raise_error("Only closed appeals can be reopened")
         end
       end
     end
-  end
 
-  context ".reopen" do
-    subject do
-      LegacyAppeal.reopen(
-        appeals: [appeal, another_appeal],
-        user: user,
-        disposition: disposition
-      )
-    end
+    context "#certify!" do
+      let(:appeal) { LegacyAppeal.new(vacols_id: "765") }
+      subject { appeal.certify! }
 
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ramp_closed) }
-    let(:another_appeal) { Generators::LegacyAppeal.build(vacols_record: :remand_completed) }
-    let(:user) { Generators::User.build }
-    let(:disposition) { "RAMP Opt-in" }
+      context "when form8 for appeal exists in the DB" do
+        before do
+          @form8 = Form8.create(vacols_id: "765")
+          @certification = Certification.create(vacols_id: "765")
+        end
 
-    it "reopens each appeal according to it's type" do
-      expect(Fakes::AppealRepository).to receive(:reopen_undecided_appeal!).with(
-        appeal: appeal,
-        user: user
-      )
+        it "certifies the appeal using AppealRepository" do
+          expect { subject }.to_not raise_error
+          expect(Fakes::AppealRepository.certified_appeal).to eq(appeal)
+        end
 
-      expect(Fakes::AppealRepository).to receive(:reopen_remand!).with(
-        appeal: another_appeal,
-        user: user,
-        disposition_code: "P"
-      )
+        it "uploads the correct form 8 using AppealRepository" do
+          expect { subject }.to_not raise_error
+          expect(Fakes::VBMSService.uploaded_form8.id).to eq(@form8.id)
+          expect(Fakes::VBMSService.uploaded_form8_appeal).to eq(appeal)
+        end
+      end
 
-      subject
-    end
+      context "when a cancelled certification for an appeal already exists in the DB" do
+        before do
+          @form8 = Form8.create(vacols_id: "765")
+          @cancelled_certification = Certification.create!(
+            vacols_id: "765", hearing_preference: "SOME_INVALID_PREF"
+          )
+          CertificationCancellation.create!(
+            certification_id: @cancelled_certification.id,
+            cancellation_reason: "reason",
+            email: "test@caseflow.gov"
+          )
+          @certification = Certification.create!(vacols_id: "765", hearing_preference: "VIDEO")
+        end
 
-    context "disposition doesn't exist" do
-      let(:disposition) { "I'm not a disposition" }
+        it "certifies the correct appeal using AppealRepository" do
+          expect { subject }.to_not raise_error
+          expect(Fakes::AppealRepository.certification).to eq(@certification)
+        end
+      end
 
-      it "should raise error" do
-        expect { subject }.to raise_error(/Disposition/)
+      context "when form8 doesn't exist in the DB for appeal" do
+        it "throws an error" do
+          expect { subject }.to raise_error("No Form 8 found for appeal being certified")
+        end
       end
     end
 
-    context "one of the non-remand appeals is active" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+    context "#certified?" do
+      context "when case has certification date" do
+        let(:vacols_case) do
+          FactoryBot.create(:case, :certified, certification_date: 2.days.ago)
+        end
 
-      it "should raise error" do
-        expect { subject }.to raise_error("Only closed appeals can be reopened")
-      end
-    end
-  end
-
-  context "#certify!" do
-    let(:appeal) { LegacyAppeal.new(vacols_id: "765") }
-    subject { appeal.certify! }
-
-    context "when form8 for appeal exists in the DB" do
-      before do
-        @form8 = Form8.create(vacols_id: "765")
-        @certification = Certification.create(vacols_id: "765")
+        it "is true" do
+          expect(appeal.certified?).to be_truthy
+        end
       end
 
-      it "certifies the appeal using AppealRepository" do
-        expect { subject }.to_not raise_error
-        expect(Fakes::AppealRepository.certified_appeal).to eq(appeal)
-      end
+      context "when case doesn't have certification date" do
+        let(:vacols_case) do
+          FactoryBot.create(:case)
+        end
 
-      it "uploads the correct form 8 using AppealRepository" do
-        expect { subject }.to_not raise_error
-        expect(Fakes::VBMSService.uploaded_form8.id).to eq(@form8.id)
-        expect(Fakes::VBMSService.uploaded_form8_appeal).to eq(appeal)
+        it "is false" do
+          expect(appeal.certified?).to be_falsy
+        end
       end
     end
 
-    context "when a cancelled certification for an appeal already exists in the DB" do
-      before do
-        @form8 = Form8.create(vacols_id: "765")
-        @cancelled_certification = Certification.create!(
-          vacols_id: "765", hearing_preference: "SOME_INVALID_PREF"
-        )
-        CertificationCancellation.create!(
-          certification_id: @cancelled_certification.id,
-          cancellation_reason: "reason",
-          email: "test@caseflow.gov"
-        )
-        @certification = Certification.create!(vacols_id: "765", hearing_preference: "VIDEO")
-      end
+    context "#hearing_pending?" do
+      subject { LegacyAppeal.new(hearing_requested: false, hearing_held: false) }
 
-      it "certifies the correct appeal using AppealRepository" do
-        expect { subject }.to_not raise_error
-        expect(Fakes::AppealRepository.certification).to eq(@certification)
+      it "determines whether an appeal is awaiting a hearing" do
+        expect(subject.hearing_pending?).to be_falsy
+        subject.hearing_requested = true
+        expect(subject.hearing_pending?).to be_truthy
+        subject.hearing_held = true
+        expect(subject.hearing_pending?).to be_falsy
       end
     end
 
-    context "when form8 doesn't exist in the DB for appeal" do
-      it "throws an error" do
-        expect { subject }.to raise_error("No Form 8 found for appeal being certified")
+    context "#sanitized_vbms_id" do
+      subject { LegacyAppeal.new(vbms_id: "123C") }
+
+      it "left-pads case-number ids" do
+        expect(subject.sanitized_vbms_id).to eq("00000123")
       end
-    end
-  end
 
-  context "#certified?" do
-    subject { LegacyAppeal.new(certification_date: 2.days.ago) }
+      it "left-pads 7-digit case-number ids" do
+        subject.vbms_id = "2923988C"
+        expect(subject.sanitized_vbms_id).to eq("02923988")
+      end
 
-    it "reads certification date off the appeal" do
-      expect(subject.certified?).to be_truthy
-      subject.certification_date = nil
-      expect(subject.certified?).to be_falsy
-    end
-  end
-
-  context "#hearing_pending?" do
-    subject { LegacyAppeal.new(hearing_requested: false, hearing_held: false) }
-
-    it "determines whether an appeal is awaiting a hearing" do
-      expect(subject.hearing_pending?).to be_falsy
-      subject.hearing_requested = true
-      expect(subject.hearing_pending?).to be_truthy
-      subject.hearing_held = true
-      expect(subject.hearing_pending?).to be_falsy
-    end
-  end
-
-  context "#sanitized_vbms_id" do
-    subject { LegacyAppeal.new(vbms_id: "123C") }
-
-    it "left-pads case-number ids" do
-      expect(subject.sanitized_vbms_id).to eq("00000123")
-    end
-
-    it "left-pads 7-digit case-number ids" do
-      subject.vbms_id = "2923988C"
-      expect(subject.sanitized_vbms_id).to eq("02923988")
-    end
-
-    it "doesn't left-pad social security ids" do
-      subject.vbms_id = "123S"
-      expect(subject.sanitized_vbms_id).to eq("123")
-    end
-  end
-
-  context "#fetch_appeals_by_file_number" do
-    subject { LegacyAppeal.fetch_appeals_by_file_number(file_number) }
-    let!(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "123456789S")
-    end
-
-    context "when passed with valid vbms id" do
-      let(:file_number) { "123456789" }
-
-      it "returns an appeal" do
-        expect(subject.length).to eq(1)
-        expect(subject[0].vbms_id).to eq("123456789S")
+      it "doesn't left-pad social security ids" do
+        subject.vbms_id = "123S"
+        expect(subject.sanitized_vbms_id).to eq("123")
       end
     end
 
-    context "when passed an invalid vbms id" do
-      context "length greater than 9" do
+    context "#fetch_appeals_by_file_number" do
+      subject { LegacyAppeal.fetch_appeals_by_file_number(file_number) }
+      let!(:appeal) do
+        Generators::LegacyAppeal.build(vacols_id: "123C", vbms_id: "123456789S")
+      end
+
+      context "when passed with valid vbms id" do
+        let(:file_number) { "123456789" }
+
+        it "returns an appeal" do
+          expect(subject.length).to eq(1)
+          expect(subject[0].vbms_id).to eq("123456789S")
+        end
+      end
+
+      context "when passed an invalid vbms id" do
+        context "length greater than 9" do
+          let(:file_number) { "1234567890" }
+
+          it "raises ActiveRecord::RecordNotFound error" do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+        end
+
+        context "length less than 3" do
+          let(:file_number) { "12" }
+
+          it "raises ActiveRecord::RecordNotFound error" do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+        end
+      end
+    end
+
+    context ".convert_file_number_to_vacols" do
+      subject { LegacyAppeal.convert_file_number_to_vacols(file_number) }
+
+      context "for a file number with less than 9 digits" do
+        context "with leading zeros" do
+          let(:file_number) { "00001234" }
+          it { is_expected.to eq("1234C") }
+        end
+
+        context "with no leading zeros" do
+          let(:file_number) { "12345678" }
+          it { is_expected.to eq("12345678C") }
+        end
+      end
+
+      context "for a file number with 9 digits" do
+        let(:file_number) { "123456789" }
+        it { is_expected.to eq("123456789S") }
+
+        context "with letters" do
+          let(:file_number) { "12ABCSD34ASDASD56789S" }
+          it { is_expected.to eq("123456789S") }
+        end
+
+        context "with leading zeros and letters" do
+          let(:file_number) { "00123C00S9S" }
+          it { is_expected.to eq("123009C") }
+        end
+      end
+
+      context "for a file number with more than 9 digits" do
         let(:file_number) { "1234567890" }
 
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-        end
-      end
-
-      context "length less than 3" do
-        let(:file_number) { "12" }
-
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        it "raises InvalidFileNumber error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
         end
       end
     end
-  end
 
-  context ".convert_file_number_to_vacols" do
-    subject { LegacyAppeal.convert_file_number_to_vacols(file_number) }
+    context "#partial_grant_on_dispatch?" do
+      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      subject { appeal.partial_grant_on_dispatch? }
 
-    context "for a file number with less than 9 digits" do
-      context "with leading zeros" do
-        let(:file_number) { "00001234" }
-        it { is_expected.to eq("1234C") }
-      end
+      context "when no allowed issues" do
+        let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
 
-      context "with no leading zeros" do
-        let(:file_number) { "12345678" }
-        it { is_expected.to eq("12345678C") }
-      end
-    end
-
-    context "for a file number with 9 digits" do
-      let(:file_number) { "123456789" }
-      it { is_expected.to eq("123456789S") }
-
-      context "with letters" do
-        let(:file_number) { "12ABCSD34ASDASD56789S" }
-        it { is_expected.to eq("123456789S") }
-      end
-
-      context "with leading zeros and letters" do
-        let(:file_number) { "00123C00S9S" }
-        it { is_expected.to eq("123009C") }
-      end
-    end
-
-    context "for a file number with more than 9 digits" do
-      let(:file_number) { "1234567890" }
-
-      it "raises InvalidFileNumber error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
-      end
-    end
-  end
-
-  context "#partial_grant_on_dispatch?" do
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-    subject { appeal.partial_grant_on_dispatch? }
-
-    context "when no allowed issues" do
-      let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252])] }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context "when there's a mix of allowed and remanded issues" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remanded)
-        ]
-      end
-
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  context "#full_grant_on_dispatch?" do
-    let(:issues) { [] }
-    let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, issues: issues)
-    end
-    subject { appeal.full_grant_on_dispatch? }
-
-    context "when status is Remand" do
-      let(:status) { "Remand" }
-      it { is_expected.to be_falsey }
-    end
-
-    context "when status is Complete" do
-      let(:status) { "Complete" }
-
-      context "when at least one issues is new-material allowed" do
-        let(:issues) do
-          [
-            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
-            Generators::Issue.build(disposition: :denied)
-          ]
-        end
         it { is_expected.to be_falsey }
       end
 
-      context "when at least one issue is not new-material allowed" do
+      context "when the allowed issues are new material" do
+        let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252])] }
+
+        it { is_expected.to be_falsey }
+      end
+
+      context "when there's a mix of allowed and remanded issues" do
         let(:issues) do
           [
             Generators::Issue.build(disposition: :allowed),
-            Generators::Issue.build(disposition: :denied)
+            Generators::Issue.build(disposition: :remanded)
           ]
         end
+
         it { is_expected.to be_truthy }
       end
     end
-  end
 
-  context "#remand_on_dispatch?" do
-    subject { appeal.remand_on_dispatch? }
+    context "#full_grant_on_dispatch?" do
+      let(:issues) { [] }
+      let(:appeal) do
+        Generators::LegacyAppeal.build(vacols_id: "123", status: status, issues: issues)
+      end
+      subject { appeal.full_grant_on_dispatch? }
 
-    context "status is not remand" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete") }
-      it { is_expected.to be false }
-    end
+      context "when status is Remand" do
+        let(:status) { "Remand" }
+        it { is_expected.to be_falsey }
+      end
 
-    context "status is remand" do
-      let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+      context "when status is Complete" do
+        let(:status) { "Complete" }
 
-      context "contains at least one new-material allowed issue" do
-        let(:issues) do
-          [
-            Generators::Issue.build(disposition: :allowed),
-            Generators::Issue.build(disposition: :remanded)
-          ]
+        context "when at least one issues is new-material allowed" do
+          let(:issues) do
+            [
+              Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
+              Generators::Issue.build(disposition: :denied)
+            ]
+          end
+          it { is_expected.to be_falsey }
         end
 
+        context "when at least one issue is not new-material allowed" do
+          let(:issues) do
+            [
+              Generators::Issue.build(disposition: :allowed),
+              Generators::Issue.build(disposition: :denied)
+            ]
+          end
+          it { is_expected.to be_truthy }
+        end
+      end
+    end
+
+    context "#remand_on_dispatch?" do
+      subject { appeal.remand_on_dispatch? }
+
+      context "status is not remand" do
+        let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Complete") }
         it { is_expected.to be false }
       end
 
-      context "contains no new-material allowed issues" do
-        let(:issues) do
-          [
-            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
-            Generators::Issue.build(disposition: :remanded)
-          ]
+      context "status is remand" do
+        let(:appeal) { Generators::LegacyAppeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+
+        context "contains at least one new-material allowed issue" do
+          let(:issues) do
+            [
+              Generators::Issue.build(disposition: :allowed),
+              Generators::Issue.build(disposition: :remanded)
+            ]
+          end
+
+          it { is_expected.to be false }
         end
 
-        it { is_expected.to be true }
+        context "contains no new-material allowed issues" do
+          let(:issues) do
+            [
+              Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
+              Generators::Issue.build(disposition: :remanded)
+            ]
+          end
+
+          it { is_expected.to be true }
+        end
       end
     end
-  end
 
-  context "#decided_by_bva?" do
-    let(:appeal) do
-      Generators::LegacyAppeal.build(vacols_id: "123", status: status, disposition: disposition)
-    end
-
-    subject { appeal.decided_by_bva? }
-
-    let(:disposition) { "Remanded" }
-
-    context "when status is not Complete" do
-      let(:status) { "Remand" }
-      it { is_expected.to be false }
-    end
-
-    context "when status is Complete" do
-      let(:status) { "Complete" }
-
-      context "when disposition is a BVA disposition" do
-        it { is_expected.to be true }
+    context "#decided_by_bva?" do
+      let(:appeal) do
+        Generators::LegacyAppeal.build(vacols_id: "123", status: status, disposition: disposition)
       end
 
-      context "when disposition is not a BVA disposition" do
-        let(:disposition) { "Advance Allowed in Field" }
+      subject { appeal.decided_by_bva? }
+
+      let(:disposition) { "Remanded" }
+
+      context "when status is not Complete" do
+        let(:status) { "Remand" }
         it { is_expected.to be false }
       end
+
+      context "when status is Complete" do
+        let(:status) { "Complete" }
+
+        context "when disposition is a BVA disposition" do
+          it { is_expected.to be true }
+        end
+
+        context "when disposition is not a BVA disposition" do
+          let(:disposition) { "Advance Allowed in Field" }
+          it { is_expected.to be false }
+        end
+      end
+    end
+
+    context "#compensation_issues" do
+      subject { appeal.compensation_issues }
+
+      let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
+      let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+      let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
+
+      it { is_expected.to eq([compensation_issue]) }
     end
   end
-
-  context "#compensation_issues" do
-    subject { appeal.compensation_issues }
-
-    let(:appeal) { Generators::LegacyAppeal.build(issues: issues) }
-    let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
-    let(:issues) { [Generators::Issue.build(template: :education), compensation_issue] }
-
-    it { is_expected.to eq([compensation_issue]) }
-  end
-
   context "#compensation?" do
     subject { appeal.compensation? }
 
