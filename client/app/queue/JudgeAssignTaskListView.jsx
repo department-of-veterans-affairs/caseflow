@@ -24,6 +24,7 @@ import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTask
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 const UnassignedCasesPage = (props) => {
   const reviewableCount = props.tasksAndAppeals.length;
@@ -36,6 +37,19 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
+      <div style={{display: 'flex'}}>
+        <p>Assign to:&nbsp;</p>
+        <SearchableDropdown
+            name="Test user dropdown"
+            hideLabel
+            searchable
+            options={[{value: '1', label: '1'}]}
+            onChange={() => ''}
+            value={'Select a user'}
+            dropdownStyling={{width: '30rem'}} />
+        <p>&nbsp;</p>
+        <p>[Assign button]</p>
+      </div>
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }

@@ -66,10 +66,6 @@ class SearchableDropdown extends Component {
       searchable
     } = this.props;
 
-    const dropdownStyling = css({
-      '& .Select-menu-outer': this.props.dropdownStyling
-    });
-
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
@@ -113,7 +109,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} {...dropdownStyling}>
+    return <div className={dropdownClasses} style={this.props.dropdownStyling}>
       <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
