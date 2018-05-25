@@ -94,12 +94,16 @@ FactoryBot.define do
       end
     end
 
-    trait :original do
-      bfac 1
+    trait :type_original do
+      bfac "1"
     end
 
-    trait :reconsideration do
-      bfac 4
+    trait :type_reconsideration do
+      bfac "4"
+    end
+
+    trait :type_cavc_remand do
+      bfac "7"
     end
 
     trait :certified do
@@ -141,6 +145,28 @@ FactoryBot.define do
 
     trait :disposition_ramp do
       bfdc "P"
+    end
+
+    trait :representative_american_legion do
+      bfso "A"
+    end
+
+    trait :video_hearing_requested do
+      bfdocind "V"
+    end
+
+    trait :central_office_hearing do
+      bfhr "1"
+    end
+
+    trait :travel_board_hearing do
+      bfhr "2"
+    end
+
+    trait :aod do
+      after(:create) do |vacols_case, _evaluator|
+        create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
+      end
     end
 
     after(:build) do |vacols_case, evaluator|
