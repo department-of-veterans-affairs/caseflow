@@ -246,7 +246,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Joe Snuffy", css_id: "MAPAPPAS"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        case_record: Generators::Vacols::Case.create(bfso: "K"),
         issues: [
           {
             vacols_sequence_id: 1,
@@ -285,7 +284,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: nil, css_id: nil),
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
-        case_record: Generators::Vacols::Case.create(bfso: nil),
         issues: [
           { disposition: nil,
             vacols_sequence_id: 1,
@@ -342,7 +340,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Ricky Tikitembo", css_id: "HROBERT"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
-        case_record: Generators::Vacols::Case.create(bfso: "W"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -385,7 +382,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
-        case_record: Generators::Vacols::Case.create(bfso: "U"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -419,7 +415,6 @@ module Fakes::Data::AppealData
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         regional_office_key: "RO13",
-        case_record: Generators::Vacols::Case.create(bfso: "D"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -569,7 +564,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Enid Rempel", css_id: "EREMPEL"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        case_record: Generators::Vacols::Case.create(bfso: "K"),
         issues: [
           {
             vacols_sequence_id: 1,
