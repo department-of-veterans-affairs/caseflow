@@ -35,7 +35,7 @@ const UnassignedCasesPage = (props) => {
     </StatusMessage>;
   } else {
     tableContent = <React.Fragment>
-      <h2>Unassigned Cases</h2>
+      <h2>Cases to Assign</h2>
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
@@ -114,7 +114,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             <ul className="usa-sidenav-list">
               <li>
                 <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                  Unassigned Cases ({this.unassignedTasksWithAppeals().length})
+                  Cases to Assign ({this.unassignedTasksWithAppeals().length})
                 </NavLink>
               </li>
               {attorneysOfJudge.
@@ -130,7 +130,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
           <PageRoute
             exact
             path={match.url}
-            title="Unassigned Cases | Caseflow"
+            title="Cases to Assign | Caseflow"
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
