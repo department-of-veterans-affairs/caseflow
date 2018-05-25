@@ -489,13 +489,16 @@ RSpec.feature "Queue" do
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
+        sleep 1
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
         click_on "documents in Caseflow Reader"
 
+        # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
+        expect(page).to have_content("Caseflow> Reader")
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
-        click_on "> Reader"
+        click_on "Caseflow"
         expect(page.current_path).to eq "/queue"
       end
     end
