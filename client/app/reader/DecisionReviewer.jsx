@@ -136,8 +136,6 @@ export class DecisionReviewer extends React.PureComponent {
 
   render() {
     const queueEnabled = this.props.featureToggles.queueWelcomeGate;
-    const { vacolsId } = this.props.match.params;
-
     const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
 
     return <React.Fragment>
