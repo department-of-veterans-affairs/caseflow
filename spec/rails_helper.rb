@@ -246,6 +246,14 @@ RSpec.configure do |config|
     Rails.cache.clear
   end
 
+  config.before(:each) do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  config.after(:each) do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
 

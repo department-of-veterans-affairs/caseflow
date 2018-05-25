@@ -1,4 +1,4 @@
-describe LegacyAppeal, focus: true do
+describe LegacyAppeal do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -595,7 +595,8 @@ describe LegacyAppeal, focus: true do
       let!(:followup_case) do
         create(
           :case,
-          bfkey: "#{vacols_case.bfkey}#{Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)}")
+          bfkey: "#{vacols_case.bfkey}#{Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)}"
+        )
       end
 
       before do
@@ -932,19 +933,21 @@ describe LegacyAppeal, focus: true do
     end
   end
 
-  context "#compensation_issues", focus: true do
+  context "#compensation_issues" do
     subject { appeal.compensation_issues }
 
     let!(:vacols_case) { create(:case, case_issues: issues) }
     let(:compensation_issue) do
       create(
-        :case_issue, :disposition_allowed, :compensation)
+        :case_issue, :disposition_allowed, :compensation
+      )
     end
     let(:issues) do
       [
         compensation_issue,
         create(
-          :case_issue, :disposition_allowed, :education)
+          :case_issue, :disposition_allowed, :education
+        )
       ]
     end
 
@@ -957,11 +960,13 @@ describe LegacyAppeal, focus: true do
     let!(:vacols_case) { create(:case, case_issues: issues) }
     let(:compensation_issue) do
       create(
-        :case_issue, :disposition_allowed, :compensation)
+        :case_issue, :disposition_allowed, :compensation
+      )
     end
     let(:education_issue) do
       create(
-        :case_issue, :disposition_allowed, :education)
+        :case_issue, :disposition_allowed, :education
+      )
     end
 
     context "when there are no compensation issues" do
@@ -981,11 +986,13 @@ describe LegacyAppeal, focus: true do
     let!(:vacols_case) { create(:case, case_issues: issues) }
     let(:compensation_issue) do
       create(
-        :case_issue, :disposition_allowed, :compensation)
+        :case_issue, :disposition_allowed, :compensation
+      )
     end
     let(:education_issue) do
       create(
-        :case_issue, :disposition_allowed, :education)
+        :case_issue, :disposition_allowed, :education
+      )
     end
 
     context "when there is at least one non-compensation issue" do
@@ -1218,7 +1225,7 @@ describe LegacyAppeal, focus: true do
   end
 
   context "#non_canceled_end_products_within_30_days" do
-    let!(:vacols_case) { create(:case_with_decision, bfddec: 1.day.ago )}
+    let!(:vacols_case) { create(:case_with_decision, bfddec: 1.day.ago) }
     let(:result) { appeal.non_canceled_end_products_within_30_days }
 
     let!(:twenty_day_old_pending_ep) do
@@ -1289,7 +1296,7 @@ describe LegacyAppeal, focus: true do
   end
 
   context "#pending_eps" do
-    let!(:vacols_case) { create(:case_with_decision, bfddec: 1.day.ago )}
+    let!(:vacols_case) { create(:case_with_decision, bfddec: 1.day.ago) }
 
     let!(:pending_eps) do
       [
@@ -1348,7 +1355,7 @@ describe LegacyAppeal, focus: true do
   end
 
   context "#special_issues" do
-    let!(:vacols_case) { create(:case)}
+    let!(:vacols_case) { create(:case) }
     subject { appeal.special_issues }
 
     context "when no special issues are true" do
@@ -1379,7 +1386,7 @@ describe LegacyAppeal, focus: true do
   end
 
   context "#veteran" do
-    let(:vacols_case) { create(:case)}
+    let(:vacols_case) { create(:case) }
     subject { appeal.veteran }
 
     let(:veteran_record) { { file_number: appeal.sanitized_vbms_id, first_name: "Ed", last_name: "Merica" } }
@@ -1437,7 +1444,7 @@ describe LegacyAppeal, focus: true do
       [
         create(:case_issue, :disposition_allowed, issprog: "02", isscode: "01"),
         create(:case_issue, :disposition_allowed, issprog: "02", isscode: "02"),
-        create(:case_issue, :disposition_allowed, issprog: "02", isscode: "01"),
+        create(:case_issue, :disposition_allowed, issprog: "02", isscode: "01")
       ]
     end
 
@@ -1558,8 +1565,7 @@ describe LegacyAppeal, focus: true do
           appellant_first_name: "Joe",
           appellant_middle_initial: "E",
           appellant_last_name: "Tester"
-        )
-      )
+        ))
     end
     subject { appeal.appellant_last_first_mi }
     it { is_expected.to eql("Tester, Joe E.") }

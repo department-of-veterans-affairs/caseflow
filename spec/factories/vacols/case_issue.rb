@@ -6,7 +6,7 @@ FactoryBot.define do
     issprog "01"
     isscode "02"
     issaduser "user"
-    issadtime { DateTime.now }
+    issadtime { Time.zone.now }
 
     trait :compensation do
       issprog "02"

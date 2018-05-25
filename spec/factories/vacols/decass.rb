@@ -5,7 +5,7 @@ FactoryBot.define do
     deatty "100"
     deteam "A1"
     deadusr "TEST"
-    deadtim { Date.today }
-    deassign { Date.today }
+    deadtim { Time.zone.today }
+    deassign { Time.zone.today }
   end
 end
