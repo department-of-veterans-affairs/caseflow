@@ -10,20 +10,10 @@ class UserRepository
 
     # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
-    # rubocop:disable Metrics/CyclomaticComplexity
     def vacols_role(css_id)
       staff_record = staff_record_by_css_id(css_id)
-      return unless staff_record
-      case staff_record.svlj
-      when "J"
-        "Judge"
-      when "A"
-        staff_record.sattyid ? "Attorney" : "Judge"
-      when nil
-        "Attorney" if staff_record.sattyid
-      end
+      role_based_on_staff_fields(staff_record) if staff_record
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def can_access_task?(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
@@ -60,6 +50,17 @@ class UserRepository
     end
 
     private
+
+    def role_based_on_staff_fields(staff_record)
+      case staff_record.svlj
+      when "J"
+        "Judge"
+      when "A"
+        staff_record.sattyid ? "Attorney" : "Judge"
+      when nil
+        "Attorney" if staff_record.sattyid
+      end
+    end
 
     def staff_record_by_css_id(css_id)
       staff_records[css_id] ||= VACOLS::Staff.find_by(sdomainid: css_id)
