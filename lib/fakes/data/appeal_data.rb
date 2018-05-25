@@ -246,8 +246,7 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Joe Snuffy", css_id: "MAPAPPAS"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative_name: "Virginia Department of Veterans Affairs",
-        representative_type: "Service Organization",
+        case_record: Generators::Vacols::Case.create(bfso: "K"),
         issues: [
           {
             vacols_sequence_id: 1,
@@ -286,8 +285,7 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: nil, css_id: nil),
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
-        representative_name: "No Representative",
-        representative_type: "No Representative",
+        case_record: Generators::Vacols::Case.create(bfso: nil),
         issues: [
           { disposition: nil,
             vacols_sequence_id: 1,
@@ -344,8 +342,7 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Ricky Tikitembo", css_id: "HROBERT"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
-        representative_name: "One Time Representative",
-        representative_type: "One Time Representative",
+        case_record: Generators::Vacols::Case.create(bfso: "W"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -388,8 +385,7 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
-        representative_name: "Agent",
-        representative_type: "Agent",
+        case_record: Generators::Vacols::Case.create(bfso: "U"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -423,8 +419,7 @@ module Fakes::Data::AppealData
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         regional_office_key: "RO13",
-        representative_name: "Disabled American Veterans",
-        representative_type: "Service Organization",
+        case_record: Generators::Vacols::Case.create(bfso: "D"),
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -574,8 +569,7 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Enid Rempel", css_id: "EREMPEL"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative_name: "Virginia Department of Veterans Affairs",
-        representative_type: "Service Organization",
+        case_record: Generators::Vacols::Case.create(bfso: "K"),
         issues: [
           {
             vacols_sequence_id: 1,

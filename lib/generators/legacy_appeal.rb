@@ -4,6 +4,7 @@ class Generators::LegacyAppeal
   class << self
     def default_attrs
       {
+        case_record: Generators::Vacols::Case.create,
         vbms_id: generate_external_id,
         vacols_id: generate_external_id,
         vacols_record: :ready_to_certify,
