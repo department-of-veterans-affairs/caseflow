@@ -1,11 +1,15 @@
 class Generators::Vacols::Case
   class << self
+    def generate_pkseq
+      SecureRandom.random_number(99_999_999)
+    end
+
     # rubocop:disable Metrics/MethodLength
     def case_attrs
       {
         bfkey: "877483",
         bfddec: "2017-11-28 00:00:00 UTC",
-        bfcorkey: "CK168505",
+        bfcorkey: generate_pkseq,
         bfcorlid: "626343664S",
         bfdcn: nil,
         bfdocind: nil,

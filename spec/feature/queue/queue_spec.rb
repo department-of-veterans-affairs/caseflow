@@ -83,13 +83,8 @@ RSpec.feature "Queue" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -115,13 +110,8 @@ RSpec.feature "Queue" do
         )
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBar", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -142,25 +132,15 @@ RSpec.feature "Queue" do
         click_on "Search"
       end
 
-      it "displays error message" do
+      it "displays error message on same page" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
-      it "search bar moves from top right to main page body" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
-      end
-
-      it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+      it "searching in search bar produces another error" do
+        fill_in "searchBar", with: veteran_id_with_no_appeals
         click_on "Search"
 
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
-      end
-
-      it "clicking on the x in the search bar returns browser to queue list page" do
-        click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       end
     end
 
@@ -178,12 +158,11 @@ RSpec.feature "Queue" do
 
       it "search bar stays in top right" do
         expect(page).to have_selector("#searchBar")
-        expect(page).to_not have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(find("#searchBar")).to have_content("")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -217,8 +196,10 @@ RSpec.feature "Queue" do
       FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_phase_two)
+      FeatureToggle.disable!(:judge_queue)
     end
     after do
+      FeatureToggle.enable!(:judge_queue)
       FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_case_search)
@@ -352,11 +333,11 @@ RSpec.feature "Queue" do
         click_on sprintf(COPY::BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.veteran_full_name)
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-        expect(page.current_path).to eq("/")
+        expect(page.current_path).to match(/^\/cases\/\d+$/)
       end
 
-      it "clicking on back breadcrumb sends us to empty search home page" do
-        click_on COPY::BACK_TO_SEARCH_START_LINK_LABEL
+      it "clicking on back breadcrumb sends us to empty search home page", skip: "the test is non-deterministic" do
+        page.find("h1").find("a").click
         expect(page).to have_content(search_homepage_title)
         expect(page).to have_content(search_homepage_subtitle)
         expect(page.current_path).to eq("/")
@@ -395,25 +376,20 @@ RSpec.feature "Queue" do
 
     context "displays who assigned task" do
       scenario "appeal has assigner" do
-        appeal = vacols_appeals.select(&:added_by_first_name).first
+        appeal = vacols_appeals.select { |a| a.added_by.name.present? }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-
-        added_by_name = FullName.new(
-          appeal.added_by_first_name,
-          appeal.added_by_middle_name,
-          appeal.added_by_last_name
-        ).formatted(:readable_full)
         # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
         # rubocop:enable Style/FormatStringToken
-
-        expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
+        # wait for the page to finish loading
+        sleep 0.5
+        expect(page).to have_content("Assigned to you by #{appeal.added_by.name} on #{assigned_date}")
       end
 
       scenario "appeal has no assigner" do
-        appeal = vacols_appeals.select { |a| a.added_by_first_name.nil? }.first
+        appeal = vacols_appeals.select { |a| a.added_by.name.nil? }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -513,13 +489,16 @@ RSpec.feature "Queue" do
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
+        sleep 1
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
         click_on "documents in Caseflow Reader"
 
+        # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
+        expect(page).to have_content("Caseflow> Reader")
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
-        click_on "> Reader"
+        click_on "Caseflow"
         expect(page.current_path).to eq "/queue"
       end
     end
@@ -549,18 +528,12 @@ RSpec.feature "Queue" do
     scenario "displays who prepared task" do
       vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
 
-      task = vacols_tasks.select(&:assigned_by_first_name).first
+      task = vacols_tasks.select { |a| a.assigned_by.first_name.present? }.first
       visit "/queue"
 
       click_on "#{task.veteran_full_name} (#{task.vbms_id})"
 
-      assigned_by_name = FullName.new(
-        task.assigned_by_first_name,
-        nil,
-        task.assigned_by_last_name
-      ).formatted(:readable_fi_last_formatted)
-
-      expect(page).to have_content("Prepared by #{assigned_by_name}")
+      expect(page).to have_content("Prepared by #{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}")
       expect(page).to have_content("Document ID: #{task.document_id}")
     end
   end
