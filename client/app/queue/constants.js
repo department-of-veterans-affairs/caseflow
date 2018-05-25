@@ -64,6 +64,19 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
+export const JUDGE_DECISION_TYPES = {
+  DISPATCH: 'Dispatch',
+  OMO_REQUEST: 'OMORequest'
+};
+
+export const JUDGE_DECISION_OPTIONS = [{
+  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+  value: JUDGE_DECISION_TYPES.DISPATCH
+}, {
+  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+  value: JUDGE_DECISION_TYPES.OMO_REQUEST
+}];
+
 export const DECISION_TYPES = {
   OMO_REQUEST: 'OMORequest',
   DRAFT_DECISION: 'DraftDecision'
