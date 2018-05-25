@@ -376,25 +376,20 @@ RSpec.feature "Queue" do
 
     context "displays who assigned task" do
       scenario "appeal has assigner" do
-        appeal = vacols_appeals.select(&:added_by_first_name).first
+        appeal = vacols_appeals.select { |a| a.added_by.name.present? }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-
-        added_by_name = FullName.new(
-          appeal.added_by_first_name,
-          appeal.added_by_middle_name,
-          appeal.added_by_last_name
-        ).formatted(:readable_full)
         # rubocop:disable Style/FormatStringToken
         assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
         # rubocop:enable Style/FormatStringToken
-
-        expect(page).to have_content("Assigned to you by #{added_by_name} on #{assigned_date}")
+        # wait for the page to finish loading
+        sleep 0.5
+        expect(page).to have_content("Assigned to you by #{appeal.added_by.name} on #{assigned_date}")
       end
 
       scenario "appeal has no assigner" do
-        appeal = vacols_appeals.select { |a| a.added_by_first_name.nil? }.first
+        appeal = vacols_appeals.select { |a| a.added_by.name.nil? }.first
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
@@ -494,13 +489,16 @@ RSpec.feature "Queue" do
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
+        sleep 1
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
         click_on "documents in Caseflow Reader"
 
+        # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
+        expect(page).to have_content("Caseflow> Reader")
         expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
 
-        click_on "> Reader"
+        click_on "Caseflow"
         expect(page.current_path).to eq "/queue"
       end
     end
@@ -530,18 +528,12 @@ RSpec.feature "Queue" do
     scenario "displays who prepared task" do
       vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
 
-      task = vacols_tasks.select(&:assigned_by_first_name).first
+      task = vacols_tasks.select { |a| a.assigned_by.first_name.present? }.first
       visit "/queue"
 
       click_on "#{task.veteran_full_name} (#{task.vbms_id})"
 
-      assigned_by_name = FullName.new(
-        task.assigned_by_first_name,
-        nil,
-        task.assigned_by_last_name
-      ).formatted(:readable_fi_last_formatted)
-
-      expect(page).to have_content("Prepared by #{assigned_by_name}")
+      expect(page).to have_content("Prepared by #{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}")
       expect(page).to have_content("Document ID: #{task.document_id}")
     end
   end
