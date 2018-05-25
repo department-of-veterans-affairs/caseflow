@@ -78,8 +78,8 @@ export const JUDGE_DECISION_OPTIONS = [{
 }];
 
 export const DECISION_TYPES = {
-  OMO_REQUEST: 'OMORequest',
-  DRAFT_DECISION: 'DraftDecision'
+  OMO_REQUEST: 'omo_request',
+  DRAFT_DECISION: 'draft_decision'
 };
 
 export const DRAFT_DECISION_OPTIONS = [{
