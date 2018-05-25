@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180523171432) do
+ActiveRecord::Schema.define(version: 20180524174054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "annotations", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
@@ -61,6 +62,7 @@ ActiveRecord::Schema.define(version: 20180523171432) do
     t.date "receipt_date"
     t.string "docket_type"
     t.datetime "established_at"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 

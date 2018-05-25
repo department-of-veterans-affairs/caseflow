@@ -32,7 +32,7 @@ describe WorkQueue do
 
       it "returns tasks" do
         expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(AttorneyVacolsAssignment)
+        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
       end
 
       it "returns appeals" do
@@ -46,7 +46,7 @@ describe WorkQueue do
 
       it "returns tasks" do
         expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(JudgeVacolsAssignment)
+        expect(subject[0][0].class).to eq(JudgeLegacyTask)
       end
 
       it "returns appeals" do
