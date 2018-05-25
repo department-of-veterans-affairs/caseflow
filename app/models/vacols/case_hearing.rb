@@ -83,10 +83,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
-        create(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone,
-                           mduser: current_user_css_id,
-                           addtime: VacolsHelper.local_time_with_utc_timezone,
-                           adduser: current_user_css_id,
+        create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                           adduser: current_user_slogid,
                            folder_nr: "VIDEO #{hearing_info[:representative]}"))
       end
     end
@@ -128,17 +126,21 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: current_user_css_id, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
   private_class_method
 
-  def self.current_user_css_id
-    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  def self.current_user_slogid
+    @css_id ||= RequestStore.store[:current_user].slog_id.upcase
   end
 
   private
+
+  def current_user_css_id
+    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  end
 
   def update_hearing_action
     brieff.update(bfha: HearingMapper.bfha_vacols_code(self))

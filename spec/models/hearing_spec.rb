@@ -296,6 +296,7 @@ describe Hearing do
         ip_address: "127.0.0.1",
         station_id: "101",
         css_id: "BVASCASPER1",
+        slog_id: "SCASPER1",
         roles: ["User", "Hearing Scheduling"],
         regional_office: nil
       )
