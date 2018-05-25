@@ -2,8 +2,6 @@ class Fakes::QueueRepository
   class << self
     attr_accessor :appeal_records
   end
-
-  # rubocop:disable Metrics/MethodLength
   def self.tasks_for_user(_css_id)
     appeal_records || Fakes::Data::AppealData.default_queue_records.map do |record|
       # For now, we're using appeal records, which
@@ -20,13 +18,9 @@ class Fakes::QueueRepository
         created_at: record.created_at,
         date_due: record.date_due,
         docket_number: record.docket_number,
-        added_by_first_name: record.added_by_first_name,
-        added_by_middle_name: record.added_by_middle_name,
-        added_by_last_name: record.added_by_last_name,
-        added_by_css_id: record.added_by_css_id,
+        added_by: record.added_by,
         document_id: "173341517.524",
-        assigned_by_first_name: "Joe",
-        assigned_by_last_name: "Snuffy"
+        assigned_by: OpenStruct.new(first_name: "Joe", last_name: "Snuffy")
       }
       LegacyAppeal.new(task_attrs)
     end
