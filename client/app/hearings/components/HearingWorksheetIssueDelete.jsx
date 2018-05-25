@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux';
 import { toggleIssueDeleteModal, onDeleteIssue } from '../actions/Issue';
 import Modal from '../../components/Modal';
 import { TrashCan } from '../../components/RenderFunctions';
+import Button from '../../components/Button';
+
 
 class HearingWorksheetIssueDelete extends PureComponent {
 
@@ -28,13 +30,13 @@ class HearingWorksheetIssueDelete extends PureComponent {
     } = this.props;
 
     return <div>
-      <div
+        <Button
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
-        className="cf-issue-delete"
+        classNames={['cf-issue-delete', 'cf-btn-link']}
         onClick={this.handleModalOpen(issue.id)}
         alt="Remove Issue Confirmation">
         <TrashCan />
-      </div>
+       </Button>
       { issue.isShowingModal && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -73,4 +75,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheetIssueDelete);
-
