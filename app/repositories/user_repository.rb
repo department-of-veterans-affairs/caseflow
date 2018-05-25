@@ -34,8 +34,9 @@ class UserRepository
 
     def vacols_full_name(css_id)
       record = staff_record_by_css_id(css_id)
-      return unless record
-      FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
+      if record
+        FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
+      end
     end
 
     def css_id_by_full_name(full_name)
