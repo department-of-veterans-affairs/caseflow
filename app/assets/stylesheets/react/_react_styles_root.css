@@ -8,11 +8,9 @@
  *
  *= require ./_loading_container.scss
  *= require ./_comment.scss
- *= require ./_comment_icon.scss
  *= require ./_select-dropdown.scss
  *= require ./_toggle_button.scss
  *= require ./_performance_degradation_banner.scss
- *= require ./_loading-message.scss
  *= require ./_small_loader.scss
  *= require ./_search_bar.scss
  *= require ./_rc_collapse.scss

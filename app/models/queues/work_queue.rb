@@ -10,13 +10,13 @@ class WorkQueue
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
       tasks = vacols_tasks.map do |task|
-        (role + "VacolsAssignment").constantize.from_vacols(task, user.id)
+        (role + "LegacyTask").constantize.from_vacols(task, user)
       end
       [tasks, vacols_appeals]
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:fakes_off)
+      return QueueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= QueueRepository
     end
   end
