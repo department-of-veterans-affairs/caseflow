@@ -344,6 +344,7 @@ ActiveRecord::Schema.define(version: 20180524174054) do
     t.string "type"
     t.string "cancel_reason"
     t.string "cancel_other"
+    t.datetime "completion_started_at"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
