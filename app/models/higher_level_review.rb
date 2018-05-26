@@ -77,7 +77,7 @@ class HigherLevelReview < ApplicationRecord
 
   # TODO: Update with real code and modifier data
   def end_product_code
-    "030HLRAMA"
+    "030HLRR"
   end
 
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze

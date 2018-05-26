@@ -18,8 +18,8 @@ import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
 import CaseListView from './CaseListView';
+import CaseSearchSheet from './CaseSearchSheet';
 import QueueDetailView from './QueueDetailView';
-import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -28,42 +28,34 @@ import SearchBar from './SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
-import COPY from '../../../COPY.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  routedSearchHome = () => <React.Fragment>
-    { this.props.searchedAppeals.length > 0 &&
-      <SearchBar
-        feedbackUrl={this.props.feedbackUrl}
-        shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
-    }
-    <CaseListView
-      backLinkTarget="/"
-      backLinkText={COPY.BACK_TO_SEARCH_START_LINK_LABEL}
-      {...this.props} />
+  routedSearchResults = (props) => <React.Fragment>
+    <SearchBar
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <SearchEnabledView
+    <SearchBar
       feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {this.props.userRole === 'Attorney' ?
-        <AttorneyTaskListView {...this.props} /> :
-        <JudgeReviewTaskListView {...this.props} />
-      }
-    </SearchEnabledView>
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    {this.props.userRole === 'Attorney' ?
+      <AttorneyTaskListView {...this.props} /> :
+      <JudgeReviewTaskListView {...this.props} />
+    }
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
-    <SearchEnabledView
+    <SearchBar
       feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {taskType === 'Assign' ?
-        <JudgeAssignTaskListView {...this.props} match={match} /> :
-        <JudgeReviewTaskListView {...this.props} />}
-    </SearchEnabledView>
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    {taskType === 'Assign' ?
+      <JudgeAssignTaskListView {...this.props} match={match} /> :
+      <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
@@ -114,7 +106,12 @@ class QueueApp extends React.PureComponent {
             exact
             path="/"
             title="Caseflow"
-            render={this.routedSearchHome} />
+            component={CaseSearchSheet} />
+          <PageRoute
+            exact
+            path="/cases/:caseflowVeteranId"
+            title="Case Search | Caseflow"
+            render={this.routedSearchResults} />
           <PageRoute
             exact
             path="/queue"

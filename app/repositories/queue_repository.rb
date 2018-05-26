@@ -1,7 +1,7 @@
 class QueueRepository
   # :nocov:
   def self.transaction
-    VACOLS::Case.transaction do
+    VACOLS::Record.transaction do
       yield
     end
   end

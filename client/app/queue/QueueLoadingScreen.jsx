@@ -54,11 +54,23 @@ class QueueLoadingScreen extends React.PureComponent {
   };
 
   loadActiveAppeal = () => {
-    if (this.props.activeAppeal) {
+    const {
+      activeAppeal,
+      vacolsId,
+      appeals
+    } = this.props;
+
+    if (activeAppeal) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/appeals/${this.props.vacolsId}`).then((response) => {
+    if (vacolsId in appeals) {
+      this.props.setActiveAppeal(appeals[vacolsId]);
+
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/appeals/${vacolsId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveAppeal(resp.appeal);

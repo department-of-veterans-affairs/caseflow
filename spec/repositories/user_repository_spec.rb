@@ -36,6 +36,12 @@ describe UserRepository do
         expect(subject).to eq nil
       end
     end
+    context "when user does not exist in VACOLS" do
+      it "should return nil" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(nil)
+        expect(subject).to eq nil
+      end
+    end
   end
 
   context "can_access_task?" do
@@ -71,9 +77,9 @@ describe UserRepository do
     end
 
     context "when user does not exist in VACOLS" do
-      it "should raise Caseflow::Error::UserRepositoryError" do
-        allow(UserRepository).to receive(:staff_record_by_css_id).and_raise(Caseflow::Error::UserRepositoryError)
-        expect { subject }.to raise_error(Caseflow::Error::UserRepositoryError)
+      it "should return nil" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(nil)
+        expect(subject).to eq nil
       end
     end
   end

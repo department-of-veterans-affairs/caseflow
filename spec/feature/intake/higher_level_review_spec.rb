@@ -114,7 +114,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRAMA - Higher Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher Level Review Rating for Station 397 - ARC"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -127,7 +127,7 @@ RSpec.feature "Higher Level Review Intake" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher Level Review Rating",
-        end_product_code: "030HLRAMA",
+        end_product_code: "030HLRR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },

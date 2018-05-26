@@ -55,7 +55,7 @@ stubbed_vacols:
 development_vacols:
  adapter: oracle_enhanced
  host: localhost
- port: 1521
+ port: 1522
  username: VACOLS
  password: VACOLS
  database: BVAP.localdomain
