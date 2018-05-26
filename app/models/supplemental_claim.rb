@@ -73,7 +73,7 @@ class SupplementalClaim < ApplicationRecord
 
   # TODO: Update with real code and modifier data
   def end_product_code
-    "040SCRAMA"
+    "040SCR"
   end
 
   def end_product_modifier
