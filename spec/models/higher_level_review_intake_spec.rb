@@ -132,7 +132,7 @@ describe HigherLevelReviewIntake do
             date: detail.receipt_date.to_date,
             end_product_modifier: "032",
             end_product_label: "Higher Level Review Rating",
-            end_product_code: "030HLRAMA",
+            end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },

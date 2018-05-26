@@ -115,7 +115,7 @@ describe SupplementalClaimIntake do
           date: detail.receipt_date.to_date,
           end_product_modifier: "041",
           end_product_label: "Supplemental Claim Review Rating",
-          end_product_code: "040SCRAMA",
+          end_product_code: "040SCR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false
         },
