@@ -111,7 +111,7 @@ describe HigherLevelReviewIntake do
 
     context "when EPs with conflicting modifiers exist" do
       let!(:existing_eps) do
-        ["040", "030", "031", "033"].map do |modifier|
+        %w[040 030 031 033].map do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: "64205555",
             bgs_attrs: { end_product_type_code: modifier }
