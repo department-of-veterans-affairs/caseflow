@@ -4,11 +4,14 @@ class Intake < ApplicationRecord
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
+  COMPLETION_TIMEOUT = 5.minutes
+
   enum completion_status: {
-    # TODO: what will happen if we remove one of these but there exist records with that value
     success: "success",
     canceled: "canceled",
-    error: "error"
+    error: "error",
+    # TODO: This status is now unused. Remove after we verify no intakes have it.
+    pending: "pending"
   }
 
   ERROR_CODES = {
@@ -69,7 +72,7 @@ class Intake < ApplicationRecord
   end
 
   def pending?
-    !!completion_started_at
+    !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end
 
   def complete?
@@ -134,16 +137,12 @@ class Intake < ApplicationRecord
     nil
   end
 
-  def start_complete!
-    update_attributes!(
-      completion_started_at: Time.zone.now
-    )
+  def start_completion!
+    update_attributes!(completion_started_at: Time.zone.now)
   end
 
-  def clear_pending!
-    update_attributes!(
-      completion_started_at: nil
-    )
+  def abort_completion!
+    update_attributes!(completion_started_at: nil)
   end
 
   def complete_with_status!(status)
@@ -207,7 +206,7 @@ class Intake < ApplicationRecord
   def create_end_product_and_contentions
     detail.create_end_product_and_contentions!
   rescue StandardError => e
-    clear_pending!
+    abort_completion!
     raise e
   end
 

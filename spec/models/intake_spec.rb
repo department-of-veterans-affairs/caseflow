@@ -20,11 +20,16 @@ describe Intake do
       veteran_file_number: veteran_file_number,
       detail: detail,
       user: user,
-      started_at: 15.minutes.ago
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
     )
   end
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
+
+  let(:completion_status) { nil }
+  let(:completion_started_at) { nil }
 
   context ".build" do
     subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, user: user) }
@@ -346,24 +351,25 @@ describe Intake do
     end
   end
 
-  context "#start_complete!" do
-    subject { intake.start_complete! }
+  context "#start_completion!" do
+    subject { intake.start_completion! }
 
-    it "sets completion_started_at" do
-      expect(intake.completion_started_at).to be nil
+    it "sets completion_started_at to now" do
       subject
-      expect(intake.completion_started_at).not_to be nil
+      expect(intake.completion_started_at).to eq(Time.zone.now)
     end
   end
 
-  context "#clear_pending!" do
-    subject { intake.clear_pending! }
+  context "#abort_completion!" do
+    subject { intake.abort_completion! }
 
-    it "undoes whatever start_complete! does" do
+    it "undoes whatever start_completion! does" do
       intake.save!
       attributes = intake.attributes
-      intake.start_complete!
+
+      intake.start_completion!
       expect(intake.attributes).not_to eql(attributes)
+
       subject
       expect(intake.attributes).to eql(attributes)
     end
@@ -371,21 +377,22 @@ describe Intake do
 
   context "#pending?" do
     subject { intake.pending? }
+    let(:completion_status) { "pending" }
 
     context "when completion_started_at is nil" do
-      it "should be false" do
-        expect(intake.completion_started_at).to be nil
-        expect(subject).to be false
-      end
+      it { is_expected.to be false }
     end
 
-    context "when completion_start_at is not nil" do
-      it "should be true" do
-        intake.start_complete!
-        expect(intake.completion_started_at).to_not be nil
-        expect(subject).to be true
-      end
+    context "when completion_start_at is not nil and within timeout" do
+      let(:completion_started_at) { 4.minutes.ago }
+
+      it { is_expected.to be true }
+    end
+
+    context "when completion_start_at is not nil and exceeded timeout" do
+      let(:completion_started_at) { 6.minutes.ago }
+
+      it { is_expected.to be false }
     end
   end
-
 end
