@@ -39,6 +39,16 @@ RSpec.feature "Higher Level Review Intake" do
   end
 
   it "Creates an end product and contentions for it" do
+    Generators::EndProduct.build(
+      veteran_file_number: "12341234",
+      bgs_attrs: { end_product_type_code: "030" }
+    )
+
+    Generators::EndProduct.build(
+      veteran_file_number: "12341234",
+      bgs_attrs: { end_product_type_code: "031" }
+    )
+
     Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
 
     visit "/intake"
@@ -115,7 +125,7 @@ RSpec.feature "Higher Level Review Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "030",
+        end_product_modifier: "032",
         end_product_label: "Higher Level Review Rating",
         end_product_code: "030HLRR",
         gulf_war_registry: false,
