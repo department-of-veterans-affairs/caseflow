@@ -77,7 +77,7 @@ class HigherLevelReview < ApplicationRecord
 
   # TODO: Update with real code and modifier data
   def end_product_code
-    "030HLRAMA"
+    "030HLRR"
   end
 
   def end_product_modifier
