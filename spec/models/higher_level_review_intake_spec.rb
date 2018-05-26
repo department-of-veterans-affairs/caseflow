@@ -140,5 +140,20 @@ describe HigherLevelReviewIntake do
         )
       end
     end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(HigherLevelReview).to receive(
+          :create_end_product_and_contentions!
+        ).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
+      end
+    end
   end
 end

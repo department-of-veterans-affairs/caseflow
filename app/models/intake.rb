@@ -136,6 +136,12 @@ class Intake < ApplicationRecord
     )
   end
 
+  def clear_pending!
+    update_attributes!(
+      completion_status: nil
+    )
+  end
+
   def complete_with_status!(status)
     update_attributes!(
       completed_at: Time.zone.now,
@@ -192,6 +198,13 @@ class Intake < ApplicationRecord
 
   def form_type
     FORM_TYPES.key(self.class.name)
+  end
+
+  def create_end_product_and_contentions
+    detail.create_end_product_and_contentions!
+  rescue StandardError => e
+    clear_pending!
+    raise e
   end
 
   private

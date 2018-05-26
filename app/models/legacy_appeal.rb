@@ -27,7 +27,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
-  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
+  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date, :ssoc_dates
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
@@ -47,9 +47,8 @@ class LegacyAppeal < ApplicationRecord
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
-  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
-                :assigned_by_first_name, :assigned_by_last_name
+  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
+                :created_at, :document_id, :assigned_by
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -114,11 +113,6 @@ class LegacyAppeal < ApplicationRecord
     "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
     "Dismissed, Other", "Dismissed, Death", "Withdrawn"
   ].freeze
-
-  attr_writer :ssoc_dates
-  def ssoc_dates
-    @ssoc_dates ||= []
-  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -579,7 +573,7 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
+      return AppealRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= AppealRepository
     end
 

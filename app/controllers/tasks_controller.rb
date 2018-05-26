@@ -13,7 +13,7 @@ class TasksController < ApplicationController
 
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction,
-    JudgeCaseAssignment: JudgeCaseAssignment
+    AttorneyLegacyTask: AttorneyLegacyTask
   }.freeze
 
   def set_application
@@ -121,7 +121,7 @@ class TasksController < ApplicationController
 
   def task_params
     params.require("tasks")
-      .permit(:appeal_type, :appeal_id, :type, :instructions, :title)
+      .permit(:appeal_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
@@ -129,7 +129,7 @@ class TasksController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::LegacyAppealSerializer
     ).as_json
   end
 

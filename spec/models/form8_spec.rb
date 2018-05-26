@@ -270,12 +270,14 @@ describe Form8 do
     end
 
     let(:appeal) do
-      LegacyAppeal.new(
+      Generators::LegacyAppeal.build(
         vacols_id: "VACOLS-ID",
         vbms_id: "VBMS-ID",
         appellant_first_name: "Micah",
+        appellant_middle_initial: "A",
         appellant_last_name: "Bobby",
         appellant_relationship: "Brother",
+        veteran_middle_initial: "A",
         veteran_first_name: "Shane",
         veteran_last_name: "Bobby",
         notification_date: (Time.zone.now - 4.days).to_date,
@@ -292,10 +294,10 @@ describe Form8 do
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
-        appellant_name: "Micah Bobby",
+        appellant_name: "Micah A Bobby",
         appellant_relationship: "Brother",
         file_number: "VBMS-ID",
-        veteran_name: "Bobby, Shane",
+        veteran_name: "Bobby, Shane, A",
         insurance_loan_number: "1337",
         service_connection_notification_date: (Time.zone.now - 4.days).to_date,
         increased_rating_notification_date: (Time.zone.now - 4.days).to_date,

@@ -18,7 +18,9 @@
 
       .cf-msg-screen-deck {
         word-break: break-word;
+        // scss-lint:disable ImportantRule
         margin-bottom: 0 !important;
+        // scss-lint:disable ImportantRule
       }
     }
   }
