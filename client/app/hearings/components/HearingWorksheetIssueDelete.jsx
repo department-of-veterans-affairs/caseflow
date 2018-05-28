@@ -7,7 +7,6 @@ import Modal from '../../components/Modal';
 import { TrashCan } from '../../components/RenderFunctions';
 import Button from '../../components/Button';
 
-
 class HearingWorksheetIssueDelete extends PureComponent {
 
   handleModalOpen = (issueId) => () => {
@@ -30,13 +29,13 @@ class HearingWorksheetIssueDelete extends PureComponent {
     } = this.props;
 
     return <div>
-        <Button
+      <Button
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
         classNames={['cf-issue-delete', 'cf-btn-link']}
         onClick={this.handleModalOpen(issue.id)}
         alt="Remove Issue Confirmation">
         <TrashCan />
-       </Button>
+      </Button>
       { issue.isShowingModal && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],

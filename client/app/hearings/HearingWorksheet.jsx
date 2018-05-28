@@ -18,7 +18,6 @@ import CFRichTextEditor from '../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
 import Button from '../components/Button';
 
-
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
