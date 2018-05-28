@@ -36,7 +36,8 @@ export const ACTIONS = {
   SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE',
   SET_TASKS_AND_APPEALS_OF_ATTORNEY: 'SET_TASKS_AND_APPEALS_OF_ATTORNEY',
   REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY: 'REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY',
-  ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY'
+  ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY',
+  SET_SELECTION_OF_TASK_OF_USER: 'SET_SELECTION_OF_TASK_OF_USER'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -44,9 +45,9 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
-export const subHeadTextStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
+export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
+export const subHeadTextStyle = css(disabledLinkStyle, {
+  fontSize: 'small'
 });
 
 export const CATEGORIES = {
@@ -62,6 +63,19 @@ export const TASK_ACTIONS = {
 };
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
+
+export const JUDGE_DECISION_TYPES = {
+  DISPATCH: 'Dispatch',
+  OMO_REQUEST: 'OMORequest'
+};
+
+export const JUDGE_DECISION_OPTIONS = [{
+  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+  value: JUDGE_DECISION_TYPES.DISPATCH
+}, {
+  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+  value: JUDGE_DECISION_TYPES.OMO_REQUEST
+}];
 
 export const DECISION_TYPES = {
   OMO_REQUEST: 'OMORequest',
