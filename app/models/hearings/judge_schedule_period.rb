@@ -1,0 +1,2 @@
+class JudgeSchedulePeriod < SchedulePeriod
+end
