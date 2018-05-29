@@ -25,6 +25,7 @@ import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Button from '../components/Button';
 
 const UnassignedCasesPage = (props) => {
   const { attorneys, tasksAndAppeals: { length: reviewableCount } } = props;
@@ -37,7 +38,7 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
-      <div style={{display: 'flex'}}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
             name="Assignee"
@@ -48,7 +49,11 @@ const UnassignedCasesPage = (props) => {
             value={{label: 'Select a user', value: null}}
             dropdownStyling={{width: '30rem'}} />
         <p>&nbsp;</p>
-        <p>[Assign button]</p>
+        <Button
+            onClick={(e) => console.log(e)}
+            name="Switch user"
+            loading={false}
+            loadingText="Switching users" />
       </div>
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
