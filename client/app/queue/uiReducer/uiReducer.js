@@ -19,7 +19,8 @@ export const initialState = {
   modal: {
     cancelCheckout: false,
     deleteIssue: false
-  }
+  },
+  featureToggles: {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -128,6 +129,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return showModal(state, action.payload.modalType);
   case ACTIONS.HIDE_MODAL:
     return hideModal(state, action.payload.modalType);
+  case ACTIONS.SET_FEATURE_TOGGLES:
+    return update(state, {
+      featureToggles: {
+        $set: action.payload.featureToggles
+      }
+    });
   default:
     return state;
   }
