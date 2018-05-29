@@ -52,14 +52,21 @@ class SelectDispositionsView extends React.PureComponent {
   getNextStepUrl = () => {
     const {
       vacolsId,
-      nextStep,
+      userRole,
       appeal: {
         attributes: { issues }
       }
     } = this.props;
+    let nextStep;
+    const baseUrl = `/queue/appeals/${vacolsId}`;
 
-    return _.map(issues, 'disposition').includes('remanded') ?
-      `/queue/appeals/${vacolsId}/remands` : nextStep;
+    if (userRole === "Attorney") {
+      nextStep = _.map(issues, 'disposition').includes('remanded') ? 'remands' : 'submit';
+    } else if (userRole === "Judge") {
+      nextStep = 'evaluate';
+    }
+
+    return `${baseUrl}/${nextStep}`
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -134,8 +141,7 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  prevStep: PropTypes.string.isRequired,
-  nextStep: PropTypes.string.isRequired
+  userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({

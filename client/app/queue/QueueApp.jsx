@@ -67,14 +67,9 @@ class QueueApp extends React.PureComponent {
     vacolsId={props.match.params.vacolsId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => {
-    const { vacolsId } = props.match.params;
-
-    return <SelectDispositionsView
-      vacolsId={vacolsId}
-      prevStep={`/queue/appeals/${vacolsId}`}
-      nextStep={`/queue/appeals/${vacolsId}/submit`} />;
-  };
+  routedSelectDispositions = (props) => <SelectDispositionsView
+    userRole={this.props.userRole}
+    vacolsId={props.match.params.vacolsId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
@@ -84,6 +79,8 @@ class QueueApp extends React.PureComponent {
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
     nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
+
+  routedEvaluateDecision = () => <div>Evaluate Decision view</div>;
 
   queueName = () => this.props.userRole === 'Attorney' ? 'Your Queue' : 'Review Cases';
 
@@ -160,6 +157,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:vacolsId/dispositions"
             title="Draft Decision | Select Dispositions"
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:vacolsId/evaluate"
+            title="Evaluate Decision | Caseflow"
+            render={this.routedEvaluateDecision} />
         </div>
       </AppFrame>
       <Footer
