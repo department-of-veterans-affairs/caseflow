@@ -20,7 +20,7 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { getUndecidedIssues } from './utils';
-import { fullWidth } from './constants';
+import { fullWidth, PAGE_TITLES } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
@@ -44,8 +44,10 @@ const tbodyStyling = css({
 const smallTopMargin = css({ marginTop: '1rem' });
 
 class SelectDispositionsView extends React.PureComponent {
+  getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
+
   getBreadcrumb = () => ({
-    breadcrumb: 'Select Dispositions',
+    breadcrumb: this.getPageName(),
     path: `/queue/appeals/${this.props.vacolsId}/dispositions`
   });
 
@@ -60,13 +62,15 @@ class SelectDispositionsView extends React.PureComponent {
     let nextStep;
     const baseUrl = `/queue/appeals/${vacolsId}`;
 
-    if (userRole === "Attorney") {
-      nextStep = _.map(issues, 'disposition').includes('remanded') ? 'remands' : 'submit';
-    } else if (userRole === "Judge") {
+    if (_.map(issues, 'disposition').includes('remanded')) {
+      nextStep = 'remands';
+    } else if (userRole === 'Judge') {
       nextStep = 'evaluate';
+    } else {
+      nextStep = 'submit';
     }
 
-    return `${baseUrl}/${nextStep}`
+    return `${baseUrl}/${nextStep}`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -118,7 +122,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        Select Dispositions
+        {this.getPageName()}
       </h1>
       <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Review each issue and assign the appropriate dispositions.

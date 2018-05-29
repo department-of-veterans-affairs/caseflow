@@ -7,7 +7,11 @@ import { css } from 'glamor';
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
-import { fullWidth, ISSUE_DISPOSITIONS } from './constants';
+import {
+  fullWidth,
+  ISSUE_DISPOSITIONS,
+  PAGE_TITLES
+} from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -21,10 +25,20 @@ class SelectRemandReasonsView extends React.Component {
     };
   }
 
+  getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
+
   getBreadcrumb = () => ({
-    breadcrumb: 'Select Remand Reasons',
+    breadcrumb: this.getPageName(),
     path: `/queue/appeals/${this.props.appealId}/remands`
   });
+
+  getNextStepUrl = () => {
+    const { vacolsId, userRole } = this.props;
+    // todo: WrappedComponent.getBaseUrl()
+    const baseUrl = `/queue/appeals/${vacolsId}`;
+
+    return `${baseUrl}/${userRole === 'Judge' ? 'evaluate' : 'submit'}`;
+  }
 
   goToNextStep = () => {
     const { issues } = this.props;
@@ -61,7 +75,7 @@ class SelectRemandReasonsView extends React.Component {
 
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-      Select Remand Reasons
+      {this.getPageName()}
     </h1>
     <p className="cf-lead-paragraph" {...subHeadStyling}>
       Please select the appropriate remand reason(s) for all the remand dispositions.
@@ -79,7 +93,8 @@ class SelectRemandReasonsView extends React.Component {
 }
 
 SelectRemandReasonsView.propTypes = {
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {

@@ -30,7 +30,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { DECISION_TYPES } from './constants';
+import { DECISION_TYPES, PAGE_TITLES } from './constants';
 
 const appStyling = css({ paddingTop: '3rem' });
 
@@ -77,7 +77,7 @@ class QueueApp extends React.PureComponent {
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
+    userRole={this.props.userRole}
     {...props.match.params} />;
 
   routedEvaluateDecision = () => <div>Evaluate Decision view</div>;
@@ -155,7 +155,7 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/queue/appeals/:vacolsId/dispositions"
-            title="Draft Decision | Select Dispositions"
+            title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
