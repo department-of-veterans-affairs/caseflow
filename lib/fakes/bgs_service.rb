@@ -26,7 +26,7 @@ class Fakes::BGSService
   end
 
   def self.stub_intake_data
-    veteran = Veteran.find_by(file_number: "375273128")
+    veteran = Veteran.find_or_create_by_file_number("375273128")
     Generators::Rating.build(
       participant_id: veteran.participant_id
     )
