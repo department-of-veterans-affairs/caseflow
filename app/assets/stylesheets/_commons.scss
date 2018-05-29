@@ -428,6 +428,7 @@ svg title {
   }
 }
 
+// scss-lint:disable PropertyCount
 .cf-modal-body {
   @include transform(translateY(-50%));
   top: 50%;
