@@ -101,6 +101,9 @@ AttorneyTaskTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => ({
+  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
+  ..._.pick(state.ui, 'featureToggles')
+});
 
 export default connect(mapStateToProps)(AttorneyTaskTable);
