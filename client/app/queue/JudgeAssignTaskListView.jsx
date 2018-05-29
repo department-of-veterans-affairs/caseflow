@@ -45,7 +45,7 @@ const UnassignedCasesPage = (props) => {
             searchable
             options={props.attorneys.map((attorney) => ({label: attorney.full_name, value: attorney.id}))}
             onChange={(e) => {}}
-            value={{label: 'Ezra Erdman', value: '82'}}
+            value={{label: 'Select a user', value: null}}
             dropdownStyling={{width: '30rem'}} />
         <p>&nbsp;</p>
         <p>[Assign button]</p>
