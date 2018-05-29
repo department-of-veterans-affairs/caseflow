@@ -121,7 +121,7 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });

@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import { setFeatureToggles } from './uiReducer/uiActions';
+import { setFeatureToggles, setUserRole } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -35,7 +35,10 @@ import { DECISION_TYPES, PAGE_TITLES } from './constants';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  componentDidMount = () => this.props.setFeatureToggles(this.props.featureToggles);
+  componentDidMount = () => {
+    this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserRole(this.props.userRole);
+  }
 
   routedSearchResults = (props) => <React.Fragment>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
@@ -59,26 +62,21 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView {...this.props}
-      vacolsId={props.match.params.vacolsId} />
+    <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     vacolsId={props.match.params.vacolsId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView
-    userRole={this.props.userRole}
-    vacolsId={props.match.params.vacolsId} />;
+  routedSelectDispositions = (props) => <SelectDispositionsView vacolsId={props.match.params.vacolsId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
-  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    userRole={this.props.userRole}
-    {...props.match.params} />;
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
 
   routedEvaluateDecision = () => <div>Evaluate Decision view</div>;
 
@@ -191,7 +189,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setFeatureToggles
+  setFeatureToggles,
+  setUserRole
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

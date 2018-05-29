@@ -103,7 +103,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED)
+    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    ..._.pick(state.ui, 'userRole')
   };
 };
 

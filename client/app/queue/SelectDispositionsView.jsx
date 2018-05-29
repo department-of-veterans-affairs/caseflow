@@ -150,7 +150,8 @@ SelectDispositionsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  saveResult: state.ui.messages.success
+  saveResult: state.ui.messages.success,
+  ..._.pick(state.ui, 'userRole')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
