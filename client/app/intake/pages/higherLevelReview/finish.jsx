@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Button from '../../../components/Button';
-import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
 import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssues from './nonRatedIssues';
@@ -23,14 +22,6 @@ class Finish extends React.PureComponent {
       completeIntakeErrorData
     } = this.props;
 
-    const tabs = [{
-      label: 'Rated issues',
-      page: <RatedIssues />
-    }, {
-      label: 'Non-rated issues',
-      page: <NonRatedIssues />
-    }];
-
     switch (higherLevelReviewStatus) {
     case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
@@ -42,17 +33,16 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Finish processing { veteranName }'s Higher-Level Review (VA Form 20-0988)</h1>
+      <h1>Identify issues on { veteranName }'s Higher-Level Review (VA Form 20-0988)</h1>
 
       <p>
-        Select or enter the issue(s) that best match the form you are processing.
-        If the Veteran listed any non-rated issues, use the "Non-rated issues" tab,
-        and Caseflow will establish a non-rated EP for any non-rated issue(s).
+        Please select all the issues that best match the Veteran's request on the form.
+        The list below includes issues claimed by the Veteran in the last year.
+        If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <TabWindow
-        name="higher-level-review-tabwindow"
-        tabs={tabs} />
+      <RatedIssues />
+      <NonRatedIssues />
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
