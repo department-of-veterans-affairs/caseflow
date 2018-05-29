@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+
+import { setFeatureToggles } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -33,17 +36,22 @@ import { DECISION_TYPES } from './constants';
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
+  componentDidMount = () => this.props.setFeatureToggles(this.props.featureToggles);
+
   routedSearchResults = (props) => <React.Fragment>
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
+<<<<<<< HEAD
   routedQueueList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
     <SearchBar
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+=======
+  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+>>>>>>> a3401bc4839c00e2c5fd6ed095215ab9448edb3a
     {this.props.userRole === 'Attorney' ?
       <AttorneyTaskListView {...this.props} /> :
       <JudgeReviewTaskListView {...this.props} />
@@ -58,9 +66,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {taskType === 'Assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
@@ -204,4 +210,8 @@ const mapStateToProps = (state) => ({
   searchedAppeals: state.caseList.receivedAppeals
 });
 
-export default connect(mapStateToProps)(QueueApp);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFeatureToggles
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

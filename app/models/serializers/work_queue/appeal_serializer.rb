@@ -91,6 +91,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :caseflow_veteran_id do
-    object.veteran ? object.veteran.id : "not implemented"
+    object.veteran ? object.veteran.id : nil
   end
 end

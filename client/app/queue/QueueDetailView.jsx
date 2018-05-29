@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -44,10 +45,17 @@ class QueueDetailView extends React.PureComponent {
   }
 
   subHead = () => {
+    const appeal = this.props.appeal.attributes;
+    const basicSubHeading = `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
+
     if (this.props.task) {
       const task = this.props.task.attributes;
 
       if (this.props.userRole === 'Judge') {
+        if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
+          return basicSubHeading;
+        }
+
         const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
         const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
 
@@ -64,9 +72,7 @@ class QueueDetailView extends React.PureComponent {
       </React.Fragment>;
     }
 
-    const appeal = this.props.appeal.attributes;
-
-    return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
+    return basicSubHeading;
   }
 
   getCheckoutFlowDropdown = () => {
@@ -115,7 +121,7 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  breadcrumbs: state.ui.breadcrumbs,
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });

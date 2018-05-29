@@ -115,8 +115,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "assigned_to_id": attorney.id,
-            "appeal_type": "Legacy",
-            "type": "JudgeCaseAssignment"
+            "type": "AttorneyLegacyTask"
           }
         end
 
@@ -132,8 +131,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "assigned_to_id": attorney.id,
-            "appeal_type": "Legacy",
-            "type": "JudgeCaseAssignment"
+            "type": "AttorneyLegacyTask"
           }
         end
 
@@ -154,8 +152,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": 4_646_464,
               "assigned_to_id": attorney.id,
-              "appeal_type": "Legacy",
-              "type": "JudgeCaseAssignment"
+              "type": "AttorneyLegacyTask"
             }
           end
 
@@ -171,8 +168,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": appeal.id,
               "assigned_to_id": 7_777_777_777,
-              "appeal_type": "Legacy",
-              "type": "JudgeCaseAssignment"
+              "type": "AttorneyLegacyTask"
             }
           end
 
@@ -205,8 +201,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "assigned_to_id": attorney.id,
-          "appeal_type": "Legacy",
-          "type": "JudgeCaseAssignment"
+          "type": "AttorneyLegacyTask"
         }
       end
 
@@ -220,8 +215,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "assigned_to_id": attorney.id,
-          "appeal_type": "Legacy",
-          "type": "JudgeCaseAssignment"
+          "type": "AttorneyLegacyTask"
         }
       end
 
@@ -242,8 +236,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           {
             "assigned_to_id": 7_777_777_777,
-            "appeal_type": "Legacy",
-            "type": "JudgeCaseAssignment"
+            "type": "AttorneyLegacyTask"
           }
         end
 
