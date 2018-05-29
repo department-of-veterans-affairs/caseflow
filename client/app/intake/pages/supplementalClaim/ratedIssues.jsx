@@ -28,6 +28,7 @@ class RatedIssues extends React.PureComponent {
       });
 
       return (<div className="cf-intake-ratings" key={rating.profile_date}>
+        <h2>Select from previous decision issues</h2>
         <h3>
           Decision date: { formatDateStr(rating.promulgation_date) }
         </h3>
