@@ -57,7 +57,7 @@ class AttorneyTaskListView extends React.PureComponent {
         {messages.success && <Alert type="success" title={messages.success}>
           {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <AttorneyTaskTable featureToggles={this.props.featureToggles} />
+        <AttorneyTaskTable />
       </div>;
     }
 
