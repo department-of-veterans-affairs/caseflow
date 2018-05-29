@@ -20,44 +20,79 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, setSelectedAssigneeOfUser } from './QueueActions';
+import {
+  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, setSelectedAssigneeOfUser,
+  assignTasksToUser
+} from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 
-const AssignWidgetPresentational = (props) => {
-  const { userId, attorneysOfJudge, selectedAssigneeOfUser } = props;
-  const options = attorneysOfJudge.map((attorney) => ({label: attorney.full_name, value: attorney.id.toString()}));
-  const selectedOption =
-    selectedAssigneeOfUser[userId] ?
-      options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
-      {label: 'Select a user', value: null};
+class AssignWidgetPresentational extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {statusMessage: null};
+  }
 
-  return <div style={{display: 'flex', alignItems: 'center'}}>
-    <p>Assign to:&nbsp;</p>
-    <SearchableDropdown
-        name="Assignee"
-        hideLabel
-        searchable
-        options={options}
-        onChange={(option) => props.setSelectedAssigneeOfUser({userId, assigneeId: option.value})}
-        value={selectedOption}
-        dropdownStyling={{width: '30rem'}} />
-    <p>&nbsp;</p>
-    <Button
-        onClick={(e) => console.log(e)}
-        name="Assign task"
-        loading={false}
-        loadingText="Switching users" />
-  </div>;
+  vacolsIdsOfSelectedTasks = () => {
+    return _.flatMap(
+      this.props.isVacolsIdAssignedToUserSelected[this.props.userId] || [],
+      (selected, vacolsId) => (selected ? [vacolsId] : []));
+  }
+
+  handleButtonClick = () => {
+    const { userId, selectedAssigneeOfUser, assignTasksToUser } = this.props;
+    if (!selectedAssigneeOfUser[userId]) {
+      this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
+        <div className="usa-alert-body">
+          <h3 className="usa-alert-heading">Error Status</h3>
+          <p className="usa-alert-text">Please select someone to assign the tasks to.</p>
+        </div>
+      </div>});
+      return;
+    }
+
+    assignTasksToUser(
+      {vacolsIdsOfTasks: this.vacolsIdsOfSelectedTasks(), assigneeId: selectedAssigneeOfUser[userId]})
+  }
+
+  render = () => {
+    const { userId, attorneysOfJudge, selectedAssigneeOfUser } = this.props;
+    const options = attorneysOfJudge.map((attorney) => ({label: attorney.full_name, value: attorney.id.toString()}));
+    const selectedOption =
+      selectedAssigneeOfUser[userId] ?
+        options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
+        {label: 'Select a user', value: null};
+
+    return <React.Fragment>
+      {this.state.statusMessage}
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <p>Assign to:&nbsp;</p>
+        <SearchableDropdown
+            name="Assignee"
+            hideLabel
+            searchable
+            options={options}
+            onChange={(option) => this.props.setSelectedAssigneeOfUser({userId, assigneeId: option.value})}
+            value={selectedOption}
+            dropdownStyling={{width: '30rem'}} />
+        <p>&nbsp;</p>
+        <Button
+            onClick={this.handleButtonClick}
+            name="Assign task(s)"
+            loading={false}
+            loadingText="Loading" />
+      </div>
+    </React.Fragment>;
+  }
 }
 
 const AssignWidget =
   connect(
-    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser'),
-    (dispatch) => bindActionCreators({setSelectedAssigneeOfUser}, dispatch)
+    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isVacolsIdAssignedToUserSelected'),
+    (dispatch) => bindActionCreators({setSelectedAssigneeOfUser, assignTasksToUser}, dispatch)
   )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {
