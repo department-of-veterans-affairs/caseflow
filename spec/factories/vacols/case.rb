@@ -167,6 +167,7 @@ FactoryBot.define do
       after(:create) do |vacols_case, _evaluator|
         create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
       end
+    end
 
     trait :has_regional_office do
       bfregoff "RO18"
