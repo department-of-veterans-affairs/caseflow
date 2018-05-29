@@ -64,10 +64,6 @@ class AttorneyTaskTable extends React.PureComponent {
           return null;
         }
 
-        if (this.getAppealForTask(task, 'paper_case')) {
-          return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
-        }
-
         return <ReaderLink vacolsId={task.vacolsId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
