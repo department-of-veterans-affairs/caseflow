@@ -3,10 +3,7 @@ describe Appeal do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
       let(:appeal) do
-        Appeal.create!(
-          veteran_file_number: veteran_file_number,
-          uuid: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
-        )
+        create(:appeal, veteran_file_number: veteran_file_number)
       end
 
       it "finds the appeal" do
