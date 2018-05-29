@@ -11,7 +11,7 @@ import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown'
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import { CATEGORIES, redText, disabledLinkStyle } from './constants';
+import { CATEGORIES, redText } from './constants';
 import COPY from '../../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
@@ -62,10 +62,6 @@ class AttorneyTaskTable extends React.PureComponent {
       valueFunction: (task) => {
         if (!task.attributes.task_id) {
           return null;
-        }
-
-        if (this.getAppealForTask(task, 'paper_case')) {
-          return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
         }
 
         return <ReaderLink vacolsId={task.vacolsId}
