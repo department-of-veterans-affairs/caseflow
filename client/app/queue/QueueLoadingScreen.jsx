@@ -48,8 +48,8 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    if (location.pathname === '/queue/beam') {
-      return ApiUtil.get(`/beam_appeals`).then((response) => this.props.onReceiveQueue({
+    if (location.pathname === '/queue/beaam') {
+      return ApiUtil.get(`/beaam_appeals`).then((response) => this.props.onReceiveQueue({
         ...associateTasksWithAppeals(JSON.parse(response.text)),
         userId
       }));

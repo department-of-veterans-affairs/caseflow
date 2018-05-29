@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
@@ -25,6 +25,7 @@ import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
+import BeaamAppealListView from './BeaamAppealListView';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { DECISION_TYPES } from './constants';
@@ -47,6 +48,13 @@ class QueueApp extends React.PureComponent {
       <AttorneyTaskListView {...this.props} /> :
       <JudgeReviewTaskListView {...this.props} />
     }
+  </QueueLoadingScreen>;
+
+  routedBeaamList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
+    <SearchBar
+      feedbackUrl={this.props.feedbackUrl}
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
@@ -117,11 +125,18 @@ class QueueApp extends React.PureComponent {
             path="/queue"
             title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
-          <PageRoute
-            exact
-            path="/queue/:userId"
-            title={`${this.queueName()}  | Caseflow`}
-            render={this.routedQueueList} />
+          <Switch>
+            <PageRoute
+              exact
+              path="/queue/beaam"
+              title={"BEAAM Appeals"}
+              render={this.routedBeaamList} />
+            <PageRoute
+              exact
+              path="/queue/:userId"
+              title={`${this.queueName()}  | Caseflow`}
+              render={this.routedQueueList} />
+          </Switch>
           <PageRoute
             exact
             path="/queue/:userId/review"

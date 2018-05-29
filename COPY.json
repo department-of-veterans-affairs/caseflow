@@ -51,5 +51,7 @@
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+
+  "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals"
 }
