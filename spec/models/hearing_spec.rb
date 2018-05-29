@@ -292,15 +292,8 @@ describe Hearing do
     end
 
     let(:hearing) do
-      RequestStore[:current_user] = OpenStruct.new(
-        ip_address: "127.0.0.1",
-        station_id: "101",
-        css_id: "BVASCASPER1",
-        slog_id: "SCASPER1",
-        roles: ["User", "Hearing Scheduling"],
-        regional_office: nil
-      )
-
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       Hearing.create_unassigned_hearing(hearing_hash)
     end
 

@@ -133,7 +133,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   private_class_method
 
   def self.current_user_slogid
-    @css_id ||= RequestStore.store[:current_user].slog_id.upcase
+    RequestStore.store[:current_user].vacols_uniq_id.upcase
   end
 
   private
