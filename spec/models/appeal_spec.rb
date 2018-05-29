@@ -13,7 +13,7 @@ describe Appeal do
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_uuid = "11111111-aaaa-bbbb-CCCC-999999999999"
-        expect{ Appeal.find_appeal_or_legacy_appeal_by_id(made_up_uuid) }.to \
+        expect { Appeal.find_appeal_or_legacy_appeal_by_id(made_up_uuid) }.to \
           raise_exception(ActiveRecord::RecordNotFound, "Couldn't find Appeal")
       end
     end
