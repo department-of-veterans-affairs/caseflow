@@ -456,9 +456,9 @@ ActiveRecord::Schema.define(version: 20180529214648) do
 
   create_table "schedule_periods", force: :cascade do |t|
     t.string "type", null: false
-    t.bigint "user_id"
-    t.date "start_date"
-    t.date "end_date"
+    t.bigint "user_id", null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
