@@ -136,7 +136,7 @@ class TasksController < ApplicationController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end

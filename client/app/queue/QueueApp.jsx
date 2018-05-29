@@ -43,15 +43,8 @@ class QueueApp extends React.PureComponent {
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
-<<<<<<< HEAD
   routedQueueList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
-=======
-  routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
->>>>>>> a3401bc4839c00e2c5fd6ed095215ab9448edb3a
     {this.props.userRole === 'Attorney' ?
       <AttorneyTaskListView {...this.props} /> :
       <JudgeReviewTaskListView {...this.props} />
