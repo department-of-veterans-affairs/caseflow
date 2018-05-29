@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Button from '../../../components/Button';
-import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
+import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
@@ -18,14 +18,6 @@ class Finish extends React.PureComponent {
       veteranName
     } = this.props;
 
-    const tabs = [{
-      label: 'Rated issues',
-      page: <RatedIssues />
-    }, {
-      label: 'Non-rated issues',
-      page: <NonRatedIssues />
-    }];
-
     switch (appeal) {
     case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
@@ -37,15 +29,16 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Finish processing { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
+      <h1>Identify issues on { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
 
       <p>
-        Select or enter all the issues that best match the Veteran's request.
+        Please select all the issues that best match the Veteran's request on the form.
+        The list below includes issues claimed by the Veteran in the last year.
+        If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <TabWindow
-        name="appeal-tabwindow"
-        tabs={tabs} />
+      <RatedIssues />
+      <NonRatedIssues />
 
     </div>;
   }
@@ -68,6 +61,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={!this.props.appeal.selectedRatingCount}
     >
       Establish appeal
     </Button>;
@@ -84,11 +78,18 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
+const RatedIssueCounterConnected = connect(
+  ({ appeal }) => ({
+    selectedRatingCount: appeal.selectedRatingCount
+  })
+)(RatedIssueCounter);
+
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
+      <RatedIssueCounterConnected />
     </div>
 }
 
