@@ -55,7 +55,7 @@ class Form8 < ApplicationRecord
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
-    ssoc_dates = appeal.ssoc_dates.empty? ? [] : appeal.ssoc_dates.sort
+    ssoc_dates = appeal.ssoc_dates.present? ? appeal.ssoc_dates.sort : []
 
     assign_attributes(
       vacols_id: appeal.vacols_id,

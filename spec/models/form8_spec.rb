@@ -1,4 +1,7 @@
 describe Form8 do
+  before { FeatureToggle.enable!(:test_facols) }
+  after { FeatureToggle.disable!(:test_facols) }
+
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,
@@ -33,7 +36,8 @@ describe Form8 do
 
   context "#update_from_appeal" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+    let(:vacols_case) { FactoryBot.create(:case, :has_regional_office) }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
 
     it "populates _initial_ fields with the same values as their counterparts" do
       form8.assign_attributes_from_appeal(appeal)
@@ -48,7 +52,8 @@ describe Form8 do
 
   context "#attributes" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+    let(:vacols_case) { FactoryBot.create(:case, :has_regional_office) }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
 
     it "does not return initial attributes" do
       form8.assign_attributes_from_appeal(appeal)
@@ -258,53 +263,5 @@ describe Form8 do
   context "#document_type_id" do
     subject { Form8.new.document_type_id }
     it { is_expected.to eq("178") }
-  end
-
-  context ".from_appeal" do
-    before do
-      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-    end
-
-    after do
-      Timecop.return
-    end
-
-    let(:appeal) do
-      Generators::LegacyAppeal.build(
-        vacols_id: "VACOLS-ID",
-        vbms_id: "VBMS-ID",
-        appellant_first_name: "Micah",
-        appellant_middle_initial: "A",
-        appellant_last_name: "Bobby",
-        appellant_relationship: "Brother",
-        veteran_middle_initial: "A",
-        veteran_first_name: "Shane",
-        veteran_last_name: "Bobby",
-        notification_date: (Time.zone.now - 4.days).to_date,
-        soc_date: (Time.zone.now - 4.days).to_date,
-        form9_date: (Time.zone.now - 4.days).to_date,
-        insurance_loan_number: "1337",
-        regional_office_key: "RO37"
-      )
-    end
-
-    it "creates new form8 with values copied over correctly" do
-      form8 = Form8.new
-      form8.assign_attributes_from_appeal(appeal)
-
-      expect(form8).to have_attributes(
-        vacols_id: "VACOLS-ID",
-        appellant_name: "Micah A Bobby",
-        appellant_relationship: "Brother",
-        file_number: "VBMS-ID",
-        veteran_name: "Bobby, Shane, A",
-        insurance_loan_number: "1337",
-        service_connection_notification_date: (Time.zone.now - 4.days).to_date,
-        increased_rating_notification_date: (Time.zone.now - 4.days).to_date,
-        other_notification_date: (Time.zone.now - 4.days).to_date,
-        soc_date: (Time.zone.now - 4.days).to_date,
-        certification_date: Time.zone.now.to_date
-      )
-    end
   end
 end
