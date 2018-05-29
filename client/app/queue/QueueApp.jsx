@@ -43,7 +43,7 @@ class QueueApp extends React.PureComponent {
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
-  routedQueueList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
+  routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {this.props.userRole === 'Attorney' ?
       <AttorneyTaskListView {...this.props} /> :
@@ -51,7 +51,7 @@ class QueueApp extends React.PureComponent {
     }
   </QueueLoadingScreen>;
 
-  routedBeaamList = (routerProps) => <QueueLoadingScreen {...this.props} {...routerProps}>
+  routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
     <SearchBar
       feedbackUrl={this.props.feedbackUrl}
       shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
@@ -128,7 +128,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/queue/beaam"
-              title={"BEAAM Appeals"}
+              title="BEAAM Appeals"
               render={this.routedBeaamList} />
             <PageRoute
               exact

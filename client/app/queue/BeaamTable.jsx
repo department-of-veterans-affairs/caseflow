@@ -2,23 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 
 import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
-import { sortTasks, renderAppealType } from './utils';
-import { DateString } from '../util/DateUtil';
-import { CATEGORIES, redText, disabledLinkStyle } from './constants';
+import { renderAppealType } from './utils';
+import { CATEGORIES, disabledLinkStyle } from './constants';
 import COPY from '../../../COPY.json';
 
 class BeaamTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getCaseDetailsLink = (appeal) =>
-    <CaseDetailsLink task={{vacolsId: appeal.attributes.vacolsId}} appeal={appeal} />;
+    <CaseDetailsLink task={{ vacolsId: appeal.attributes.vacolsId }} appeal={appeal} />;
 
   getQueueColumns = () => {
     const columns = [{
@@ -32,7 +29,7 @@ class BeaamTable extends React.PureComponent {
       valueFunction: (appeal) => appeal.attributes.docket_number
     }, {
       header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (appeal) => { appeal.attributes.issues.length }
+      valueFunction: (appeal) => appeal.attributes.issues.length
     }, {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       valueFunction: (appeal) => {

@@ -39,23 +39,16 @@ class QueueLoadingScreen extends React.PureComponent {
       userId,
       loadedUserId,
       tasks,
-      appeals,
-      location
+      appeals
     } = this.props;
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
     }
 
-    if (location.pathname === '/queue/beaam') {
-      return ApiUtil.get(`/beaam_appeals`).then((response) => this.props.onReceiveQueue({
-        ...associateTasksWithAppeals(JSON.parse(response.text)),
-        userId
-      }));
-    }
-
-    return ApiUtil.get(`/queue/${userId}`).then((response) => this.props.onReceiveQueue({
+    return ApiUtil.get(urlToLoad).then((response) => this.props.onReceiveQueue({
       ...associateTasksWithAppeals(JSON.parse(response.text)),
       userId
     }));

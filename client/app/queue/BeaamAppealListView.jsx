@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import BeaamTable from './BeaamTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
+import _ from 'lodash';
 
 import { fullWidth } from './constants';
 import COPY from '../../../COPY.json';
@@ -25,12 +25,7 @@ class BeaamListView extends React.PureComponent {
   };
 }
 
-BeaamListView.propTypes = {
-  appeals: PropTypes.object.isRequired
-};
-
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
   ..._.pick(state.ui, 'messages')
 });
 

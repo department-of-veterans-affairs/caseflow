@@ -909,12 +909,11 @@ RSpec.feature "Queue" do
       FeatureToggle.disable!(:queue_beaam_appeals)
     end
 
-
     let!(:appeals) do
       [
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: {first_name: "Joe"})),
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: {first_name: "Bob"})),
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: {first_name: "Pal"}))
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Joe" })),
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Bob" })),
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Pal" }))
       ]
     end
 
