@@ -47,8 +47,18 @@ class AssignWidgetPresentational extends React.PureComponent {
     if (!selectedAssigneeOfUser[userId]) {
       this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">Error Status</h3>
+          <h3 className="usa-alert-heading">No assignee</h3>
           <p className="usa-alert-text">Please select someone to assign the tasks to.</p>
+        </div>
+      </div>});
+      return;
+    }
+
+    if (this.vacolsIdsOfSelectedTasks().length === 0) {
+      this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
+        <div className="usa-alert-body">
+          <h3 className="usa-alert-heading">No tasks select</h3>
+          <p className="usa-alert-text">Please select a task.</p>
         </div>
       </div>});
       return;
