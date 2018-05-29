@@ -12,7 +12,7 @@ export default class NonRatedIssues extends React.PureComponent {
       name="add-issue"
       legacyStyling={false}
     >
-      Add issue
+      + Add issue
     </Button>
   </div>;
 }
