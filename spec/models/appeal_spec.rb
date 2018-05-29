@@ -10,34 +10,38 @@ describe Appeal do
       end
 
       it "finds the appeal" do
-        expect(Appeal.find_appeal_or_legacy_appeal_by_id(appeal.uuid)).to eq(appeal)
+        expect(Appeal.find_appeal_or_legacy_appeal_by_id(appeal.uuid)).to \
+          eq(appeal)
       end
 
-      it "return nil for a non-existant one" do
-        expect(Appeal.find_appeal_or_legacy_appeal_by_id("11111111-aaaa-bbbb-CCCC-999999999999")).to be_nil
+      it "returns RecordNotFound for a non-existant one" do
+        made_up_uuid = "11111111-aaaa-bbbb-CCCC-999999999999"
+        expect{ Appeal.find_appeal_or_legacy_appeal_by_id(made_up_uuid) }.to \
+          raise_exception(ActiveRecord::RecordNotFound, "Couldn't find Appeal")
       end
     end
 
     context "with a legacy appeal" do
-      let(:veteran_file_number) { "111223333" }
+      let(:vacols_id) { "1234567" }
       let(:legacy_appeal) do
-        Generators::LegacyAppeal.build(
-          vacols_id: "1234567",
-          vbms_id: "111223333S",
-          type: "Original",
-          decision_date: 365.days.ago.to_date,
-          issues: [
-            Generators::Issue.build(codes: %w[02 01]),
-            Generators::Issue.build(codes: %w[02 02]),
-            Generators::Issue.build(codes: %w[02 03])
-          ]
-        )
+        create(:legacy_appeal, vacols_id: vacols_id, vbms_id: "111223333S")
       end
 
       it "finds the appeal" do
         legacy_appeal.save
-        expect(Appeal.find_appeal_or_legacy_appeal_by_id(veteran_file_number)).to
-        eq([legacy_appeal])
+        expect(Appeal.find_appeal_or_legacy_appeal_by_id(vacols_id)).to \
+          eq(legacy_appeal)
+      end
+
+      it "returns RecordNotFound for a non-existant one" do
+        made_up_non_uuid = "9876543"
+        expect do
+          Appeal.find_appeal_or_legacy_appeal_by_id(made_up_non_uuid)
+        end.to \
+          raise_exception(
+            ActiveRecord::RecordNotFound,
+            "Couldn't find LegacyAppeal"
+          )
       end
     end
   end
