@@ -36,7 +36,8 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isVacolsIdAssignedToUserSelected: {}
+  isVacolsIdAssignedToUserSelected: {},
+  selectedAssigneeOfUser: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -277,6 +278,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.SET_SELECTED_ASSIGNEE_OF_USER:
+    return update(state, {
+      selectedAssigneeOfUser: {
+        [action.payload.userId]: {
+          $set: action.payload.assigneeId
+        }
+      }
+    });
   default:
     return state;
   }

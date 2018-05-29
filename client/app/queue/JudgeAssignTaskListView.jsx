@@ -20,7 +20,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser } from './QueueActions';
+import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, setSelectedAssigneeOfUser } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -28,15 +28,22 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 
 const AssignWidgetPresentational = (props) => {
+  const { userId, attorneysOfJudge, selectedAssigneeOfUser } = props;
+  const options = attorneysOfJudge.map((attorney) => ({label: attorney.full_name, value: attorney.id.toString()}));
+  const selectedOption =
+    selectedAssigneeOfUser[userId] ?
+      options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
+      {label: 'Select a user', value: null};
+
   return <div style={{display: 'flex', alignItems: 'center'}}>
     <p>Assign to:&nbsp;</p>
     <SearchableDropdown
         name="Assignee"
         hideLabel
         searchable
-        options={props.attorneys.map((attorney) => ({label: attorney.full_name, value: attorney.id}))}
-        onChange={(e) => {}}
-        value={{label: 'Select a user', value: null}}
+        options={options}
+        onChange={(option) => props.setSelectedAssigneeOfUser({userId, assigneeId: option.value})}
+        value={selectedOption}
         dropdownStyling={{width: '30rem'}} />
     <p>&nbsp;</p>
     <Button
@@ -47,10 +54,14 @@ const AssignWidgetPresentational = (props) => {
   </div>;
 }
 
-const AssignWidget = connect((state) => ({attorneys: state.queue.attorneysOfJudge}))(AssignWidgetPresentational);
+const AssignWidget =
+  connect(
+    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser'),
+    (dispatch) => bindActionCreators({setSelectedAssigneeOfUser}, dispatch)
+  )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {
-  const { attorneys, tasksAndAppeals: { length: reviewableCount } } = props;
+  const { attorneys, tasksAndAppeals: { length: reviewableCount }, userId } = props;
   let tableContent;
 
   if (reviewableCount === 0) {
@@ -60,7 +71,7 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
-      <AssignWidget />
+      <AssignWidget userId={userId} />
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
