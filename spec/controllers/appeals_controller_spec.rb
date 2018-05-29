@@ -1,9 +1,17 @@
 RSpec.describe AppealsController, type: :controller do
-  before { User.authenticate!(roles: ["System Admin"]) }
+  before do
+    FeatureToggle.enable!(:test_facols)
+    User.authenticate!(roles: ["System Admin"])
+  end
+
+  after { FeatureToggle.disable!(:test_facols) }
+
+  let(:ssn) { Generators::Random.unique_ssn }
+  let(:vbms_id) { "#{ssn}S" }
 
   describe "GET appeals" do
-    let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
+    let(:vacols_case) { FactoryBot.create(:case, bfcorlid: vbms_id, bfregoff: "RO18") }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
     let(:veteran_id) { appeal.vbms_id }
 
     context "when request header does not contain Veteran ID" do
@@ -38,13 +46,8 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/appeal_id/document_count" do
     context "when appeal has documents" do
-      let(:documents) do
-        [
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
-        ]
-      end
-      let(:appeal) { Generators::LegacyAppeal.create(vacols_id: "654321", documents: documents) }
+      let(:vacols_case) { FactoryBot.create(:case_with_soc, bfcorlid: vbms_id, bfregoff: "RO18") }
+      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
@@ -62,8 +65,9 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET cases/:id" do
-    let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
+    before { FactoryBot.create(:veteran, file_number: ssn) }
+    let(:vacols_case) { FactoryBot.create(:case, bfcorlid: vbms_id, bfregoff: "RO18") }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do
