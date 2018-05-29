@@ -36,7 +36,7 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isVacolsIdAssignedToUserSelected: {},
+  isTaskAssignedToUserSelected: {},
   selectedAssigneeOfUser: {}
 };
 
@@ -264,16 +264,17 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
-    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
-      [action.payload.vacolsId]: {
+    console.log(action.payload);
+    const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.taskId]: {
         $set: action.payload.selected
       }
     });
 
     return update(state, {
-      isVacolsIdAssignedToUserSelected: {
+      isTaskAssignedToUserSelected: {
         [action.payload.userId]: {
-          $set: isVacolsIdSelected
+          $set: isTaskSelected
         }
       }
     });
