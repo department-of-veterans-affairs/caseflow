@@ -11,7 +11,7 @@ import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown'
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import { CATEGORIES, redText, disabledLinkStyle } from './constants';
+import { CATEGORIES, redText } from './constants';
 import COPY from '../../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
