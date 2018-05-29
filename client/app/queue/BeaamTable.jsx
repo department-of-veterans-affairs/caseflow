@@ -56,8 +56,6 @@ class BeaamTable extends React.PureComponent {
     getKeyForRow={this.getKeyForRow}
     bodyStyling={this.tableStyle}
   />;
-
-  // render = () => <div>Hello World</div>
 }
 
 BeaamTable.propTypes = {

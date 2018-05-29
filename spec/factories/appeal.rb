@@ -9,7 +9,5 @@ FactoryBot.define do
         veteran.file_number
       end
     end
-
-    association task
   end
 end
