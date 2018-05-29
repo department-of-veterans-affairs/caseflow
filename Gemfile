@@ -161,3 +161,9 @@ gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
+
+# Added at 2018-05-29 12:33:39 -0400 by teja:
+gem "business_time", "~> 0.9.3"
+
+# Added at 2018-05-29 12:39:32 -0400 by teja:
+gem "holidays", "~> 6.4"
