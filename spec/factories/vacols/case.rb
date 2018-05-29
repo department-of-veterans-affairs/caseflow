@@ -90,6 +90,10 @@ FactoryBot.define do
       bf41stat { certification_date }
     end
 
+    trait :has_regional_office do
+      bfregoff "RO18"
+    end
+
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[vacols_case.bfcorlid] =
