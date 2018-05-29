@@ -9,7 +9,7 @@ FactoryBot.define do
       end
     end
 
-    sequence(:file_number, 10_000)
+    sequence(:file_number, 100_000_000)
 
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}

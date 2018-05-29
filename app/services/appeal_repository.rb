@@ -215,7 +215,7 @@ class AppealRepository
   def self.folder_type_from(folder_record)
     if %w[Y 1 0].include?(folder_record.tivbms)
       "VBMS"
-    elsif folder_record.tisubj == "Y"
+    elsif folder_record.tisubj2 == "Y"
       "VVA"
     else
       "Paper"
