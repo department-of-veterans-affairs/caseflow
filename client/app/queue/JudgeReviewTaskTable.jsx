@@ -91,6 +91,9 @@ JudgeReviewTaskTable.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => ({
+  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
+  ..._.pick(state.ui, 'featureToggles')
+});
 
 export default connect(mapStateToProps)(JudgeReviewTaskTable);
