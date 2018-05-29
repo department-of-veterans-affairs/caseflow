@@ -27,7 +27,7 @@ import AssignedCasesPage from './AssignedCasesPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 const UnassignedCasesPage = (props) => {
-  const reviewableCount = props.tasksAndAppeals.length;
+  const { attorneys, tasksAndAppeals: { length: reviewableCount } } = props;
   let tableContent;
 
   if (reviewableCount === 0) {
@@ -40,12 +40,12 @@ const UnassignedCasesPage = (props) => {
       <div style={{display: 'flex'}}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
-            name="Test user dropdown"
+            name="Assignee"
             hideLabel
             searchable
-            options={[{value: '1', label: '1'}]}
-            onChange={() => ''}
-            value={'Select a user'}
+            options={props.attorneys.map((attorney) => ({label: attorney.full_name, value: attorney.id}))}
+            onChange={(e) => {}}
+            value={{label: 'Ezra Erdman', value: '82'}}
             dropdownStyling={{width: '30rem'}} />
         <p>&nbsp;</p>
         <p>[Assign button]</p>
@@ -148,7 +148,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                userId={this.props.userId.toString()} />}
+                userId={this.props.userId.toString()}
+                attorneys={attorneysOfJudge} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
