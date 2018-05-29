@@ -27,6 +27,28 @@ import AssignedCasesPage from './AssignedCasesPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 
+const AssignWidgetPresentational = (props) => {
+  return <div style={{display: 'flex', alignItems: 'center'}}>
+    <p>Assign to:&nbsp;</p>
+    <SearchableDropdown
+        name="Assignee"
+        hideLabel
+        searchable
+        options={props.attorneys.map((attorney) => ({label: attorney.full_name, value: attorney.id}))}
+        onChange={(e) => {}}
+        value={{label: 'Select a user', value: null}}
+        dropdownStyling={{width: '30rem'}} />
+    <p>&nbsp;</p>
+    <Button
+        onClick={(e) => console.log(e)}
+        name="Assign task"
+        loading={false}
+        loadingText="Switching users" />
+  </div>;
+}
+
+const AssignWidget = connect((state) => ({attorneys: state.queue.attorneysOfJudge}))(AssignWidgetPresentational);
+
 const UnassignedCasesPage = (props) => {
   const { attorneys, tasksAndAppeals: { length: reviewableCount } } = props;
   let tableContent;
@@ -38,23 +60,7 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
-      <div style={{display: 'flex', alignItems: 'center'}}>
-        <p>Assign to:&nbsp;</p>
-        <SearchableDropdown
-            name="Assignee"
-            hideLabel
-            searchable
-            options={props.attorneys.map((attorney) => ({label: attorney.full_name, value: attorney.id}))}
-            onChange={(e) => {}}
-            value={{label: 'Select a user', value: null}}
-            dropdownStyling={{width: '30rem'}} />
-        <p>&nbsp;</p>
-        <Button
-            onClick={(e) => console.log(e)}
-            name="Switch user"
-            loading={false}
-            loadingText="Switching users" />
-      </div>
+      <AssignWidget />
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
