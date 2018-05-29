@@ -58,7 +58,8 @@ class TasksController < ApplicationController
 
   def update
     return invalid_type_error unless task_class
-    task = task_class.update(task_params.merge(task_id: params[:id]))
+    task = task_class.find_by(task_id: params[:id])
+    task.update(task_params)
 
     return invalid_record_error(task) unless task.valid?
     render json: { task: task }, status: 200

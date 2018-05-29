@@ -212,7 +212,7 @@ export const assignTasksToUser = ({vacolsIdsOfTasks, assigneeId}) => (dispatch) 
   dispatch(startAssignTasksToUser({vacolsIdsOfTasks, assigneeId}));
 
   return Promise.all(vacolsIdsOfTasks.map((vacolsId) => {
-    return ApiUtil.patch(`/tasks/${vacolsId}`, {data: {assigned_to_id: assigneeId}});
+    return ApiUtil.patch(`/tasks/${vacolsId}`, {data: {tasks: {assigned_to_id: assigneeId, type: 'AttorneyLegacyTask'}}});
   })).
   then((resp) => console.log(resp)).
   catch((resp) => console.log('error', resp));
