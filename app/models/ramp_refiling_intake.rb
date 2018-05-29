@@ -28,7 +28,7 @@ class RampRefilingIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
-    start_complete!
+    start_completion!
 
     detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
     detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
@@ -59,7 +59,7 @@ class RampRefilingIntake < Intake
   def create_end_product_and_contentions
     detail.create_end_product_and_contentions! if detail.needs_end_product?
   rescue StandardError => e
-    clear_pending!
+    abort_completion!
     raise e
   end
 
