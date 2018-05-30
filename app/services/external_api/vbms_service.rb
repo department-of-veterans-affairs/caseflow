@@ -178,6 +178,9 @@ class ExternalApi::VBMSService
                           name: name) do
       (include_user ? vbms_client_with_user : @vbms_client).send_request(request)
     end
+  rescue VBMS::ClientError
+    "The maximum data length for AddressLine1  was not satisfied: The AddressLine1  must not be greater than 20 characters."
+  end
   rescue VBMS::ClientError => e
     address_error = "Please shorten the Veteran's Address Line 1 in VBMS to 20 characters or less (including spaces), then try again."
     Rails.logger.error "#{address_error}\n#{e.message}\n#{e.backtrace.join("\n")}"
