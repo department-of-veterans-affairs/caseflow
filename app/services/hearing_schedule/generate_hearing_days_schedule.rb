@@ -1,6 +1,8 @@
-# GenerateHearingDaysSchedule is used to generate hearing days between  
+# GenerateHearingDaysSchedule is used to generate hearing days in a
+# a data range specified used in Hearing schedule.
 #
-#
+# It takes account to weekends, holidays and board non-available days before
+# creating the hearing days schedule for the board and ROs.
 
 class HearingSchedule::GenerateHearingDaysSchedule
 
@@ -12,7 +14,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @available_days = filter_non_available_days(start_date, end_date, board_non_availability_days)
   end
 
-  def filter_non_available_days(start_date, end_date, board_non_availability_days)
+  def filter_non_available_days(start_date, end_date)
     business_days = []
     current_day = start_date
 
