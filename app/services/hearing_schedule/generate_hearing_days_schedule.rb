@@ -20,22 +20,22 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     while current_day <= end_date
       business_days << current_day unless
-        (is_weekend(current_day) || is_holiday(current_day) || is_board_not_available(current_day))
+        (weekend?(current_day) || holiday?(current_day) || board_not_available?(current_day))
       current_day = current_day + 1.day
     end
 
     business_days
   end
 
-  def is_weekend(day)
+  def weekend?(day)
     day.saturday? || day.sunday?
   end
 
-  def is_holiday(day)
+  def holiday?(day)
     @holidays.find { |holiday| holiday[:date] == day }.present?
   end
 
-  def is_board_not_available(day)
+  def board_not_available?(day)
     @board_non_availability_days.find { |non_available_day| non_available_day == day }.present?
   end
 end
