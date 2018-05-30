@@ -36,10 +36,10 @@ class AssignWidgetPresentational extends React.PureComponent {
     this.state = {statusMessage: null};
   }
 
-  vacolsIdsOfSelectedTasks = () => {
+  idsOfSelectedTasks = () => {
     return _.flatMap(
-      this.props.isVacolsIdAssignedToUserSelected[this.props.userId] || [],
-      (selected, vacolsId) => (selected ? [vacolsId] : []));
+      this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
+      (selected, taskId) => (selected ? [taskId] : []));
   }
 
   handleButtonClick = () => {
@@ -54,7 +54,7 @@ class AssignWidgetPresentational extends React.PureComponent {
       return;
     }
 
-    if (this.vacolsIdsOfSelectedTasks().length === 0) {
+    if (this.idsOfSelectedTasks().length === 0) {
       this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
           <h3 className="usa-alert-heading">No tasks select</h3>
@@ -65,7 +65,7 @@ class AssignWidgetPresentational extends React.PureComponent {
     }
 
     assignTasksToUser(
-      {vacolsIdsOfTasks: this.vacolsIdsOfSelectedTasks(), assigneeId: selectedAssigneeOfUser[userId]})
+      {idsOfTasks: this.idsOfSelectedTasks(), assigneeId: selectedAssigneeOfUser[userId]})
   }
 
   render = () => {
@@ -101,7 +101,7 @@ class AssignWidgetPresentational extends React.PureComponent {
 
 const AssignWidget =
   connect(
-    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isVacolsIdAssignedToUserSelected'),
+    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isTaskAssignedToUserSelected'),
     (dispatch) => bindActionCreators({setSelectedAssigneeOfUser, assignTasksToUser}, dispatch)
   )(AssignWidgetPresentational);
 

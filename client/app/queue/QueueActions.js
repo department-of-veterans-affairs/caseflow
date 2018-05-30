@@ -200,18 +200,18 @@ export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
   }
 });
 
-export const startAssignTasksToUser = ({vacolsIdsOfTasks, assigneeId}) => ({
+export const startAssignTasksToUser = ({idsOfTasks, assigneeId}) => ({
   type: '',
   payload: {
-    vacolsIdsOfTasks,
+    idsOfTasks,
     assigneeId
   }
 });
 
-export const assignTasksToUser = ({vacolsIdsOfTasks, assigneeId}) => (dispatch) => {
-  dispatch(startAssignTasksToUser({vacolsIdsOfTasks, assigneeId}));
+export const assignTasksToUser = ({idsOfTasks, assigneeId}) => (dispatch) => {
+  dispatch(startAssignTasksToUser({idsOfTasks, assigneeId}));
 
-  return Promise.all(vacolsIdsOfTasks.map((vacolsId) => {
+  return Promise.all(idsOfTasks.map((vacolsId) => {
     return ApiUtil.patch(`/tasks/${vacolsId}`, {data: {tasks: {assigned_to_id: assigneeId, type: 'AttorneyLegacyTask'}}});
   })).
   then((resp) => console.log(resp)).
