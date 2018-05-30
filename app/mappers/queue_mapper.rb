@@ -14,18 +14,32 @@ module QueueMapper
   }.freeze
 
   DEFICIENCIES = {
-    DEQR1: :issues_are_not_addressed,
-    DEQR2: :theory_contention,
-    DEQR3: :caselaw,
-    DEQR4: :statue_regulation,
-    DEQR5: :admin_procedure,
-    DEQR6: :relevant_records,
-    DEQR7: :lay_evidence,
-    DEQR8: :findings_are_not_supported,
-    DEQR9: :process_violations,
-    DEQR10: :remands_are_not_completed,
-    DEQR11: :grammar_errors
-  }
+    issues_are_not_addressed: :deqr1,
+    theory_contention: :deqr2,
+    caselaw: :deqr3,
+    statue_regulation: :deqr4,
+    admin_procedure: :deqr5,
+    relevant_records: :deqr6,
+    lay_evidence: :deqr7,
+    findings_are_not_supported: :deqr8,
+    process_violations: :deqr9,
+    remands_are_not_completed: :deqr10,
+    grammar_errors: :deqr11
+  }.freeze
+
+  QUALITY = {
+    "5" => :outstanding,
+    "4" => :exceeds_expectations,
+    "3" => :meets_expectations,
+    "2" => :needs_improvements,
+    "1" => :does_not_meet_expectations
+  }.freeze
+
+  COMPLEXITY = {
+    "3" => :hard,
+    "2" => :medium,
+    "1" => :easy
+  }.freeze
 
   WORK_PRODUCTS = {
     DEC: "Decision",
@@ -48,11 +62,27 @@ module QueueMapper
         decass_attrs[k] = work_product_to_vacols_code(decass_attrs[:work_product], decass_attrs[:overtime])
       end
 
+      if k == :complexity
+        decass_attrs[k] = COMPLEXITY.key(decass_attrs[:complexity])
+      end
+
+      if k == :quality
+        decass_attrs[k] = QUALITY.key(decass_attrs[:quality])
+      end
+
       result[COLUMN_NAMES[k]] = decass_attrs[k]
       result
     end
 
-    update_attrs.merge(demdtim: VacolsHelper.local_date_with_utc_timezone)
+    update_attrs.merge(rename_deficiencies(decass_attrs[:deficiencies]))
+      .merge(demdtim: VacolsHelper.local_date_with_utc_timezone)
+  end
+
+  def self.rename_deficiencies(deficiencies)
+    (deficiencies || []).each_with_object({}) do |d, result|
+      result[DEFICIENCIES[d]] = "Y"
+      result
+    end
   end
 
   def self.work_product_to_vacols_code(work_product, overtime)

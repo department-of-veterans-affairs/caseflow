@@ -99,8 +99,8 @@ class QueueRepository
   end
 
   def self.sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, type:, decass_attrs:)
-    decass_record = find_decass_record(vacols_id, created_in_vacols_date)
     vacols_case = VACOLS::Case.find(vacols_id)
+    decass_record = find_decass_record(vacols_id, created_in_vacols_date)
     if type == :draft_decision
       vacols_case.update_vacols_location!(LOCATION_CODES[:bva_dispatch])
       update_decass_record(decass_record, decass_attrs)
