@@ -1,5 +1,5 @@
 describe HearingSchedule::GenerateHearingDaysSchedule do
-  let(:board_non_available_days) {
+  let(:board_non_available_days) do
     [
       Date.parse("2018-04-03"),
       Date.parse("2018-04-09"),
@@ -16,9 +16,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       Date.parse("2018-10-13"),
       Date.parse("2018-07-17")
     ]
-  }
+  end
 
-  let(:federal_holidays) {
+  let(:federal_holidays) do
     [
       Date.parse("2025-01-01"),
       Date.parse("2025-01-20"),
@@ -31,26 +31,30 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       Date.parse("2025-11-27"),
       Date.parse("2025-12-25")
     ]
-  }
+  end
 
-  let(:generate_hearing_days_schedule) { HearingSchedule::GenerateHearingDaysSchedule.new(
-    Date.parse("2018-04-01"),
-    Date.parse("2018-09-30"),
-    board_non_available_days
-  )}
-  
+  let(:generate_hearing_days_schedule) do
+    HearingSchedule::GenerateHearingDaysSchedule.new(
+      Date.parse("2018-04-01"),
+      Date.parse("2018-09-30"),
+      board_non_available_days
+    )
+  end
+
   # generating a schedule for 2025
-  let(:generate_hearing_days_schedule2) { HearingSchedule::GenerateHearingDaysSchedule.new(
-    Date.parse("2025-04-01"),
-    Date.parse("2025-09-30"),
-    board_non_available_days.map { |day| day + 7.year }
-  )}
+  let(:generate_hearing_days_schedule2) do
+    HearingSchedule::GenerateHearingDaysSchedule.new(
+      Date.parse("2025-04-01"),
+      Date.parse("2025-09-30"),
+      board_non_available_days.map { |day| day + 7.years }
+    )
+  end
 
   context "gets all available business days between a date range" do
     subject { generate_hearing_days_schedule.available_days }
 
     it "has avaiable hearing days" do
-     expect(subject.count).to be > 100 
+      expect(subject.count).to be > 100
     end
 
     it "removes weekends" do

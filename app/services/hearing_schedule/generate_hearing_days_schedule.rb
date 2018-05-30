@@ -5,7 +5,6 @@
 # creating the hearing days schedule for the board and ROs.
 
 class HearingSchedule::GenerateHearingDaysSchedule
-
   attr_reader :available_days
 
   def initialize(start_date, end_date, board_non_availability_days = [])
@@ -21,13 +20,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # assuming all dates provided here are in EST
     while current_day <= end_date
       business_days << current_day unless
-        (weekend?(current_day) || holiday?(current_day) || board_not_available?(current_day))
-      current_day = current_day + 1.day
+        weekend?(current_day) || holiday?(current_day) || board_not_available?(current_day)
+      current_day += 1.day
     end
 
     business_days
   end
-  
+
   private
 
   def weekend?(day)
