@@ -28,14 +28,14 @@ class JudgeAssignTaskTable extends React.PureComponent {
       header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
       valueFunction:
         ({ task }) => <Checkbox
-          name={task.attributes.appeal_id}
+          name={task.id}
           hideLabel
-          value={this.isTaskSelected(task.attributes.appeal_id)}
+          value={this.isTaskSelected(task.id)}
           onChange={
             (checked) =>
               this.props.setSelectionOfTaskOfUser(
                 { userId: this.props.userId,
-                  taskId: task.attributes.appeal_id,
+                  taskId: task.id,
                   selected: checked })} />
     },
     {
