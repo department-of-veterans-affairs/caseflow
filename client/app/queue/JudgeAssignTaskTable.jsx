@@ -19,7 +19,7 @@ class JudgeAssignTaskTable extends React.PureComponent {
     return isTaskSelected[taskId] || false;
   }
 
-  getKeyForRow = (rowNumber, { task }) => task.attributes.appeal_id;
+  getKeyForRow = (rowNumber, { task }) => task.id;
 
   getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
