@@ -110,8 +110,8 @@ class Finish extends React.PureComponent {
             <ol className="cf-bare-list">
               <li>
                 <strong>1a.</strong> Upload the RAMP Selection Form to the VBMS eFolder and
-                ensure the Document Type is <strong>Correspondence</strong>.</li>
-              <li><strong>1b.</strong> Update the Subject Line with “RAMP Lane Selection”.</li>
+                ensure the Document Type is <strong>RAMP Opt-In Election</strong>.</li>
+              <li><strong>1b.</strong> Update the Subject Line with “RAMP Selection”.</li>
             </ol>
 
             <Checkbox
