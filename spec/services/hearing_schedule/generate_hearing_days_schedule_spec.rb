@@ -18,6 +18,34 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     ]
   end
 
+  let(:ro_non_available_days) do
+    { 
+      "RO01" => [
+        Date.parse("2018-04-03"),
+        Date.parse("2018-04-06"),
+        Date.parse("2018-04-10"),
+        Date.parse("2018-04-18"),
+        Date.parse("2018-05-30"),
+        Date.parse("2018-05-29"),
+        Date.parse("2018-06-07"),
+        Date.parse("2018-06-14")
+      ],
+      "RO03" => [
+        Date.parse("2018-04-03"),
+        Date.parse("2018-04-06"),
+        Date.parse("2018-04-10"),
+        Date.parse("2018-04-18"),
+        Date.parse("2018-05-30"),
+        Date.parse("2018-05-29"),
+        Date.parse("2018-06-26"),
+        Date.parse("2018-06-21"),
+        Date.parse("2018-06-15"),
+        Date.parse("2018-06-13"),
+        Date.parse("2018-07-04") 
+      ]
+    }
+  end
+
   let(:federal_holidays) do
     [
       Date.parse("2025-01-01"),
@@ -37,7 +65,16 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     HearingSchedule::GenerateHearingDaysSchedule.new(
       Date.parse("2018-04-01"),
       Date.parse("2018-09-30"),
-      board_non_available_days
+      board_non_available_days,
+    )
+  end
+
+  let(:generate_hearing_days_schedule_removed_ro_na) do
+    HearingSchedule::GenerateHearingDaysSchedule.new(
+      Date.parse("2018-04-01"),
+      Date.parse("2018-09-30"),
+      board_non_available_days,
+      ro_non_available_days
     )
   end
 
@@ -71,6 +108,24 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
     it "removes holidays" do
       expect(subject.find { |day| federal_holidays.include?(day) }).to eq nil
+    end
+  end
+
+  context "RO available days" do
+    subject { generate_hearing_days_schedule }
+
+    it "assigns ros to initial available days" do
+      subject.ros.map { |key, value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
+    end
+  end
+
+  context "filters RO non-avaiable days for each RO" do
+    subject { generate_hearing_days_schedule_removed_ro_na } 
+
+    it "remove non-available_days" do
+      subject.ros.each do |key, value|
+        value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }        
+      end
     end
   end
 end
