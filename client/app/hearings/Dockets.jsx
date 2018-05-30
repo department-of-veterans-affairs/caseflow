@@ -98,7 +98,11 @@ export class Dockets extends React.Component {
   }
 
   linkToDailyDocket = (docket) => {
-    if (docket.master_record) {
+    const momentDate = moment(docket.date);
+
+    // don't show a link if it's a master record or if the docket date is more
+    // than 30 days away from current day.
+    if (docket.master_record || momentDate.isAfter(moment().add(30, 'days'))) {
       return moment(docket.date).format('ddd M/DD/YYYY');
     }
 
