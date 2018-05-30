@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180510171815) do
+ActiveRecord::Schema.define(version: 20180524174054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "annotations", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
@@ -56,39 +57,13 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
   end
 
-  create_table "appeals", id: :serial, force: :cascade do |t|
-    t.string "vacols_id", null: false
-    t.string "vbms_id"
-    t.boolean "rice_compliance", default: false
-    t.boolean "private_attorney_or_agent", default: false
-    t.boolean "waiver_of_overpayment", default: false
-    t.boolean "pension_united_states", default: false
-    t.boolean "vamc", default: false
-    t.boolean "incarcerated_veterans", default: false
-    t.boolean "dic_death_or_accrued_benefits_united_states", default: false
-    t.boolean "vocational_rehab", default: false
-    t.boolean "foreign_claim_compensation_claims_dual_claims_appeals", default: false
-    t.boolean "manlincon_compliance", default: false
-    t.boolean "hearing_including_travel_board_video_conference", default: false
-    t.boolean "home_loan_guaranty", default: false
-    t.boolean "insurance", default: false
-    t.boolean "national_cemetery_administration", default: false
-    t.boolean "spina_bifida", default: false
-    t.boolean "radiation", default: false
-    t.boolean "nonrating_issue", default: false
-    t.boolean "us_territory_claim_philippines", default: false
-    t.boolean "contaminated_water_at_camp_lejeune", default: false
-    t.boolean "mustard_gas", default: false
-    t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
-    t.boolean "foreign_pension_dic_all_other_foreign_countries", default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
-    t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
-    t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
-    t.string "dispatched_to_station"
-    t.integer "appeal_series_id"
-    t.boolean "issues_pulled"
-    t.index ["appeal_series_id"], name: "index_appeals_on_appeal_series_id"
-    t.index ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true
+  create_table "appeals", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date "receipt_date"
+    t.string "docket_type"
+    t.datetime "established_at"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
@@ -340,10 +315,7 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.integer "appeal_id"
     t.string "vacols_id", null: false
     t.string "witness"
-    t.string "contentions"
-    t.string "evidence"
     t.string "military_service"
-    t.string "comments_for_attorney"
     t.boolean "prepped"
     t.text "summary"
   end
@@ -372,8 +344,11 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.string "type"
     t.string "cancel_reason"
     t.string "cancel_other"
+    t.datetime "completion_started_at"
+    t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
+    t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
@@ -496,6 +471,21 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
+  create_table "tasks", force: :cascade do |t|
+    t.integer "appeal_id", null: false
+    t.string "status", default: "assigned"
+    t.string "type"
+    t.text "title"
+    t.text "instructions"
+    t.integer "assigned_to_id"
+    t.integer "assigned_by_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "team_quotas", id: :serial, force: :cascade do |t|
     t.date "date", null: false
     t.string "task_type", null: false
@@ -503,14 +493,6 @@ ActiveRecord::Schema.define(version: 20180510171815) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
-  end
-
-  create_table "temporary_appeals", force: :cascade do |t|
-    t.string "veteran_file_number", null: false
-    t.date "receipt_date"
-    t.string "docket_type"
-    t.datetime "established_at"
-    t.index ["veteran_file_number"], name: "index_temporary_appeals_on_veteran_file_number"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|
@@ -567,7 +549,6 @@ ActiveRecord::Schema.define(version: 20180510171815) do
 
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
-  add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"

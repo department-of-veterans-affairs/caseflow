@@ -66,14 +66,14 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    appeal = TemporaryAppeal.find_by(veteran_file_number: "22334455")
+    appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(appeal.docket_type).to eq("evidence_submission")
 
-    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
 

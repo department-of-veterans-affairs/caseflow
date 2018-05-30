@@ -55,6 +55,18 @@ describe RampRefilingIntake do
         expect(completed_ramp_election.issues.first.description).to eq("Left knee")
       end
     end
+
+    context "intake is already in progress" do
+      it "should not create another intake" do
+        RampRefilingIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
   end
 
   context "#validate_start" do
@@ -209,6 +221,21 @@ describe RampRefilingIntake do
         expect(intake.detail.established_at).to eq(Time.zone.now)
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
+      end
+    end
+
+    context "if end product creation fails" do
+      let(:option_selected) { "supplemental_claim" }
+
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(RampRefiling).to receive(:create_end_product_and_contentions!).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
       end
     end
   end

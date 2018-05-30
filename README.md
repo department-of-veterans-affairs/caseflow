@@ -10,7 +10,9 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install chromedriver rbenv nvm yarn
+    brew install rbenv nvm yarn
+    brew tap caskroom/cask
+    brew cask install chromedriver
 
 Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
 - Run `mkdir ~/.nvm`
@@ -29,10 +31,6 @@ Then run the following:
     gem install bundler
 
 *NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`.
-
-You need to have Chromedriver running to run the Capybara tests. Let `brew` tell you how to do that:
-
-    brew info chromedriver
 
 Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
@@ -140,10 +138,13 @@ docker-compose down -v
 rake [RAILS_ENV=<test|development|stubbed>] db:setup
 rake [RAILS_ENV=<test|development|stubbed>] db:seed
 
-# setup local VACOLS (FAKOLS)
-rake [RAILS_ENV=<test|development|stubbed>] local:vacols:setup
-rake [RAILS_ENV=<test|development|stubbed>] local:vacols:seed
+# setup local VACOLS (FACOLS)
+RAILS_ENV=test rake local:vacols:setup
+RAILS_ENV=development rake local:vacols:setup
+RAILS_ENV=development rake local:vacols:seed
 ```
+
+Note you'll need to setup both the test and development databases, but only need to seed the development database.
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
@@ -251,6 +252,16 @@ what roles they have and therefore what pages they can access. To add new users 
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
 
+To use intake features as the users, you'll need to toggle two features in a
+rails console `rails c`:
+
+```
+[1] FeatureToggle.enable!(:intakeAma)
+=> true
+[2] FeatureToggle.enable!(:intake)
+=> true
+```
+
 This page also contains links to different parts of the site to make dev-ing faster. Please
 add more links and users as needed.
 
@@ -259,25 +270,6 @@ add more links and users as needed.
 To run the test suite:
 
     rake
-
-### Parallelized tests
-You'll be able to get through the tests a lot faster if you put all your CPUs to work.
-Parallel test categories are split up by category:
-- `unit`: Any test that isn't a feature test, since these are :lightning: fast
-- `other`: Any feature test that is not in a subfolder
-- CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
-
-To set your environment up for parallel testing run:
-
-    rake spec:parallel:setup
-
-To run the test suite in parallel:
-
-    rake spec:parallel
-
-You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
-
-    rake spec:parallel:CATEGORY
 
 ## Feature Toggle and Functions
 

@@ -1,9 +1,13 @@
 class Generators::Vacols::Correspondent
   class << self
+    def generate_pkseq
+      SecureRandom.random_number(99_999_999)
+    end
+
     # rubocop:disable Metrics/MethodLength
     def correspondent_attrs
       {
-        stafkey: "CK168505",
+        stafkey: generate_pkseq,
         susrpw: nil,
         susrsec: nil,
         susrtyp: "VETERAN",

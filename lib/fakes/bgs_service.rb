@@ -25,6 +25,13 @@ class Fakes::BGSService
     end
   end
 
+  def self.stub_intake_data
+    veteran = Veteran.find_or_create_by_file_number("375273128")
+    Generators::Rating.build(
+      participant_id: veteran.participant_id
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -295,6 +302,69 @@ class Fakes::BGSService
 
     { rating_issues: rating_issues }
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def find_all_relationships(_participant_id:)
+    [
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: "Y",
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "02171972",
+        date_of_death: "03072014",
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: nil,
+        fiduciary: nil,
+        file_number: "123456789",
+        first_name: "BOB",
+        gender: "M",
+        last_name: "VANCE",
+        middle_name: "D",
+        poa: "DISABLED AMERICAN VETERANS",
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "5382910292",
+        relationship_begin_date: nil,
+        relationship_end_date: nil,
+        relationship_type: "Spouse",
+        ssn: "123456789",
+        ssn_verified_ind: "Unverified",
+        terminate_reason: nil
+      },
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: nil,
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "04121995",
+        date_of_death: nil,
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: "cathy@gmail.com",
+        fiduciary: nil,
+        file_number: nil,
+        first_name: "CATHY",
+        gender: nil,
+        last_name: "SMITH",
+        middle_name: nil,
+        poa: nil,
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "1129318238",
+        relationship_begin_date: "08121999",
+        relationship_end_date: nil,
+        relationship_type: "Child",
+        ssn: nil,
+        ssn_verified_ind: nil,
+        terminate_reason: nil
+      }
+    ]
+  end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

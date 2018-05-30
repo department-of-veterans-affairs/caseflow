@@ -176,6 +176,19 @@ describe RampElectionIntake do
         expect(intake.completed_at).to be_nil
       end
     end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(RampReview).to receive(:create_or_connect_end_product!).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
+      end
+    end
   end
 
   context "#serialized_appeal_issues" do
@@ -282,6 +295,18 @@ describe RampElectionIntake do
 
           expect(ramp_election).to_not be_nil
           expect(ramp_election.notice_date).to be_nil
+        end
+      end
+
+      context "intake is already in progress" do
+        it "should not create another intake" do
+          RampElectionIntake.new(
+            user: user,
+            veteran_file_number: veteran_file_number
+          ).start!
+
+          expect(intake).to_not be_nil
+          expect(subject).to eq(false)
         end
       end
     end

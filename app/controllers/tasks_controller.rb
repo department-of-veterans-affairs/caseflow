@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_queue_access
-  before_action :verify_queue_phase_two, only: :complete
-  before_action :verify_queue_phase_three, only: [:create, :update]
+  before_action :verify_task_completion_access, only: :complete
+  before_action :verify_task_assignment_access, only: [:create, :update]
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "TasksController failed: #{e.message}"
@@ -10,6 +10,11 @@ class TasksController < ApplicationController
   end
 
   ROLES = %w[Judge Attorney].freeze
+
+  TASK_CLASSES = {
+    CoLocatedAdminAction: CoLocatedAdminAction,
+    AttorneyLegacyTask: AttorneyLegacyTask
+  }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -44,23 +49,37 @@ class TasksController < ApplicationController
   end
 
   def create
-    return invalid_role_error if current_user.vacols_role != "Judge"
-    JudgeCaseAssignment.new(task_params).assign_to_attorney!
-    render json: {}, status: :created
+    return invalid_type_error unless task_class
+    task = task_class.create(task_params)
+
+    return invalid_record_error(task) unless task.valid?
+    render json: { task: task }, status: :created
   end
 
   def update
-    return invalid_role_error if current_user.vacols_role != "Judge"
-    JudgeCaseAssignment.new(task_params.merge(task_id: params[:id])).reassign_to_attorney!
-    render json: {}, status: 200
+    return invalid_type_error unless task_class
+    task = task_class.update(task_params.merge(task_id: params[:id]))
+
+    return invalid_record_error(task) unless task.valid?
+    render json: { task: task }, status: 200
   end
 
   private
+
+  def task_class
+    TASK_CLASSES[task_params[:type].try(:to_sym)]
+  end
 
   def user
     @user ||= User.find(params[:user_id])
   end
   helper_method :user
+
+  def invalid_record_error(task)
+    render json:  {
+      "errors": ["title": "Record is invalid", "detail": task.errors.full_messages.join(" ,")]
+    }, status: 400
+  end
 
   def invalid_role_error
     render json: {
@@ -80,6 +99,15 @@ class TasksController < ApplicationController
     }, status: 400
   end
 
+  def invalid_type_error
+    render json: {
+      "errors": [
+        "title": "Invalid Task Type Error",
+        "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
+      ]
+    }, status: 400
+  end
+
   def complete_params
     params.require("tasks").permit(:type,
                                    :reviewing_judge_id,
@@ -93,15 +121,15 @@ class TasksController < ApplicationController
 
   def task_params
     params.require("tasks")
-      .permit(:appeal_type, :appeal_id)
-      .merge(assigned_to: User.find(params[:tasks][:attorney_id]))
+      .permit(:appeal_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
+      .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::LegacyAppealSerializer
     ).as_json
   end
 

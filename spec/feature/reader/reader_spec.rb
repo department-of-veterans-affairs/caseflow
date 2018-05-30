@@ -109,12 +109,12 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
-    FeatureToggle.enable!(:fakes_off)
+    FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
   end
 
   after do
-    FeatureToggle.disable!(:fakes_off)
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:documents) { [] }
@@ -340,13 +340,9 @@ RSpec.feature "Reader" do
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
 
-        click_on "Caseflow", match: :first
+        click_on "> Reader"
         expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
-
-        click_on "Continue"
-
-        expect(page).to have_content("Documents")
       end
 
       context "search for appeals using veteran id" do
@@ -474,7 +470,7 @@ RSpec.feature "Reader" do
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow Reader")
+      expect(page).to have_content("Caseflow> Reader")
 
       add_comment_without_clicking_save("text")
       page.find("body").click
@@ -525,7 +521,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow Reader")
+      expect(page).to have_content("Caseflow> Reader")
 
       add_comment(text: "comment text")
 
@@ -605,7 +601,7 @@ RSpec.feature "Reader" do
 
     scenario "Add, edit, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Caseflow Reader")
+      expect(page).to have_content("Caseflow> Reader")
 
       # Click on the link to the first file
       click_on documents[0].type

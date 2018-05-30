@@ -130,3 +130,8 @@ export const hideModal = (modalType) => ({
   type: ACTIONS.HIDE_MODAL,
   payload: { modalType }
 });
+
+export const setFeatureToggles = (featureToggles) => ({
+  type: ACTIONS.SET_FEATURE_TOGGLES,
+  payload: { featureToggles }
+});

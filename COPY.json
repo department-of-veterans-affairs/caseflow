@@ -1,14 +1,15 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
+  "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING": "Server encountered an error searching for “%s”",
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
+  "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
+  "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
-  "BACK_TO_PERSONAL_QUEUE_LINK_LABEL": "< Back to Your Queue",
   "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
-  "BACK_TO_SEARCH_START_LINK_LABEL": "< Back to Case Search",
 
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
@@ -26,9 +27,12 @@
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake please email your judge to resolve the issue.",
+  "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
+  "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
 
+  "JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE": "Select",
   "JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
@@ -47,5 +51,13 @@
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+
+  "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
+
+  "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
+  "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
+
+  "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
+  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS."
 }

@@ -92,7 +92,11 @@ class WorksheetHeader extends React.PureComponent {
 
     const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
-    const getDisposition = (dispositionSymbol) => _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol }).label;
+    const getDisposition = (dispositionSymbol) => {
+      const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
+
+      return disposition ? disposition.label : '';
+    };
 
     return <div>
       <div className="cf-hearings-worksheet-data">
