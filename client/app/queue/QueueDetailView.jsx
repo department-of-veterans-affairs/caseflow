@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -120,7 +121,7 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  breadcrumbs: state.ui.breadcrumbs,
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });

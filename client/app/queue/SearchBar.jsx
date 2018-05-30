@@ -50,7 +50,8 @@ SearchBar.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId
+  isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId,
+  shouldUseQueueCaseSearch: state.ui.featureToggles.queue_case_search
 });
 
 export default connect(mapStateToProps)(SearchBar);
