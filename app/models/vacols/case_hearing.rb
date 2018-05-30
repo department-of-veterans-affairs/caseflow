@@ -4,6 +4,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
+  validates :hearing_type, :hearing_date, :room, presence: true, on: :create
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
@@ -85,7 +86,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: "VIDEO #{hearing_info[:representative]}"))
+                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
       end
     end
 
