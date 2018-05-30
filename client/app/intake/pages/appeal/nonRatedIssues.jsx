@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../../components/Button';
+import ISSUE_CATEGORIES from '../../constants.js'
 
 export default class NonRatedIssues extends React.PureComponent {
   render = () => <div className="cf-non-rated-issues">
