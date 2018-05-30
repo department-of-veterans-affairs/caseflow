@@ -45,6 +45,11 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Creates an end product" do
+    Generators::EndProduct.build(
+      veteran_file_number: "12341234",
+      bgs_attrs: { end_product_type_code: "040" }
+    )
+
     Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
 
     visit "/intake"
@@ -79,7 +84,7 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
-    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -102,7 +107,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
     expect(page).to have_content(
-      "Established EP: 040SCRAMA - Supplemental Claim Review Rating for Station 397 - ARC"
+      "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -113,9 +118,9 @@ RSpec.feature "Supplemental Claim Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "040",
-        end_product_label: "Supplemental Claim Review Rating",
-        end_product_code: "040SCRAMA",
+        end_product_modifier: "041",
+        end_product_label: "Supplemental Claim Rating",
+        end_product_code: "040SCR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },

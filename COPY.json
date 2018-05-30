@@ -51,5 +51,10 @@
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review"
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
+  "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
+
+  "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
+  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS."
 }

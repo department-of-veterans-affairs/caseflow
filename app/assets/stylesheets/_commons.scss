@@ -430,6 +430,7 @@ svg title {
   }
 }
 
+// scss-lint:disable PropertyCount
 .cf-modal-body {
   @include transform(translateY(-50%));
   top: 50%;
@@ -441,6 +442,7 @@ svg title {
   position: relative;
   margin: 0 auto;
   width: 490px;
+  max-height: 100%;
   overflow-y: auto;
 
   table {

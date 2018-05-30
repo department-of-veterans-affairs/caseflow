@@ -11,5 +11,9 @@ FactoryBot.define do
         "783740847"
       end
     end
+
+    uuid do
+      SecureRandom.uuid
+    end
   end
 end
