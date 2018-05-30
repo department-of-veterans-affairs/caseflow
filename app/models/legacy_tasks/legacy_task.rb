@@ -8,10 +8,6 @@ class LegacyTask
   attr_accessor(*ATTRS)
 
   ### Serializer Methods Start
-  def id
-    appeal_id
-  end
-
   def assigned_on
     assigned_at
   end
