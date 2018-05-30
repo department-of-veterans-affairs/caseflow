@@ -33,8 +33,8 @@ class SelectRemandReasonsView extends React.Component {
   });
 
   getNextStepUrl = () => {
-    const { vacolsId, userRole } = this.props;
-    const baseUrl = `/queue/appeals/${vacolsId}`;
+    const { appealId, userRole } = this.props;
+    const baseUrl = `/queue/appeals/${appealId}`;
 
     return `${baseUrl}/${userRole === 'Judge' ? 'evaluate' : 'submit'}`;
   }
