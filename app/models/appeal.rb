@@ -14,14 +14,6 @@ class Appeal < ApplicationRecord
 
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
-  def sanitized_vbms_id
-    veteran_file_number
-  end
-
-  def vbms_id
-    veteran_file_number
-  end
-
   def self.find_appeal_or_legacy_appeal_by_id(id)
     if UUID_REGEX.match(id)
       find_by_uuid!(id)

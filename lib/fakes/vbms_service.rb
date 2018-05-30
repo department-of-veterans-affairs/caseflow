@@ -83,12 +83,12 @@ class Fakes::VBMSService
     {
       manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
       manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
-      documents: (document_records || {})[appeal.sanitized_vbms_id] || @documents || []
+      documents: (document_records || {})[appeal.veteran_file_number] || @documents || []
     }
   end
 
   def self.fetch_document_series_for(appeal)
-    Document.where(file_number: appeal.sanitized_vbms_id).map do |document|
+    Document.where(file_number: appeal.veteran_file_number).map do |document|
       (0..document.id % 3).map do |index|
         OpenStruct.new(
           document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
