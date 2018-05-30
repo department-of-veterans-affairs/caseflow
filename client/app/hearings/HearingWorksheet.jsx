@@ -198,6 +198,7 @@ export class HearingWorksheet extends React.PureComponent {
             classNames={['usa-button-outline']}
             name="Save as PDF"
             onClick={this.openPdf(worksheet, worksheetIssues)}
+            aria-label="Save as PDF"
           />
         </div>
       }
