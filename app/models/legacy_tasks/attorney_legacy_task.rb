@@ -50,7 +50,7 @@ class AttorneyLegacyTask < LegacyTask
   private
 
   def vacols_id
-    task_id ? task_id.split("-", 2).first : LegacyAppeal.find(appeal_id).vacols_id
+    task_id ? task_id.split("-", 2).first : appeal_id
   end
 
   def created_in_vacols_date
