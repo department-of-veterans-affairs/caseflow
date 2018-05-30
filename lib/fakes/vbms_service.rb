@@ -39,7 +39,8 @@ class Fakes::VBMSService
     @document_records ||= {}
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      @document_records[row_hash["vbms_id"].gsub(/[^0-9]/, "")] =
+        Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
     end
   end
 
@@ -82,7 +83,7 @@ class Fakes::VBMSService
     {
       manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
       manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
-      documents: (document_records || {})[appeal.vbms_id] || @documents || []
+      documents: (document_records || {})[appeal.sanitized_vbms_id] || @documents || []
     }
   end
 

@@ -6,6 +6,22 @@ class Appeal < ApplicationRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
+  def document_fetcher
+    @document_fetcher ||= DocumentFetcher.new(
+      appeal: self, use_efolder: true
+    )
+  end
+
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+
+  def sanitized_vbms_id
+    veteran_file_number
+  end
+
+  def vbms_id
+    veteran_file_number
+  end
+
   def self.find_appeal_or_legacy_appeal_by_id(id)
     if UUID_REGEX.match(id)
       find_by_uuid!(id)
@@ -22,6 +38,10 @@ class Appeal < ApplicationRecord
     request_issues.destroy_all unless request_issues.empty?
 
     request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
+  end
+
+  def serializer
+    ::WorkQueue::AppealSerializer
   end
 
   private
