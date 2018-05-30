@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
 import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssues from './nonRatedIssues';
@@ -23,14 +22,6 @@ class Finish extends React.PureComponent {
       completeIntakeErrorData
     } = this.props;
 
-    const tabs = [{
-      label: 'Rated issues',
-      page: <RatedIssues />
-    }, {
-      label: 'Non-rated issues',
-      page: <NonRatedIssues />
-    }];
-
     switch (supplementalClaimStatus) {
     case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
@@ -42,7 +33,7 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Finish processing { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+      <h1>Identify issues on { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
@@ -51,14 +42,13 @@ class Finish extends React.PureComponent {
       }
 
       <p>
-        Select or enter the issue(s) that best match the form you are processing.
-        If the Veteran listed any non-rated issues, use the "Non-rated issues" tab,
-        and Caseflow will establish a non-rated EP for any non-rated issue(s).
+        Please select all the issues that best match the Veteran's request on the form.
+        The list below includes issues claimed by the Veteran in the last year.
+        If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <TabWindow
-        name="supplemental-claim-tabwindow"
-        tabs={tabs} />
+      <RatedIssues />
+      <NonRatedIssues />
 
     </div>;
   }
