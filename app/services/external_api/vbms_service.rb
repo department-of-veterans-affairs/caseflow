@@ -179,7 +179,8 @@ class ExternalApi::VBMSService
       (include_user ? vbms_client_with_user : @vbms_client).send_request(request)
     end
   rescue VBMS::ClientError => e
-    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+    address_error = "Please shorten the Veteran's Address Line 1 in VBMS to 20 characters or less (including spaces), then try again."
+    Rails.logger.error "#{address_error}\n#{e.message}\n#{e.backtrace.join("\n")}"
 
     raise e
   end
