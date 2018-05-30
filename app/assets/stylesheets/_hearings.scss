@@ -307,8 +307,8 @@
     color: $color-gray;
 
     &:hover {
-      background: $color-gray;
-      border: 1px solid $color-gray;
+      background: $color-gray-dark;
+      border: 1px solid $color-gray-dark;
       box-shadow: none;
       color: $color-white;
 
@@ -327,7 +327,7 @@
   }
 
   .copy-paste-button {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .cf-hearings-worksheet-witness-cell {

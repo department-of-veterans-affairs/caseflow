@@ -142,7 +142,7 @@ class WorksheetHeader extends React.PureComponent {
             <CopyToClipboard text={worksheet.sanitized_vbms_id}>
               <button
                 data-for="test"
-                data-tip="Copy To clipboard"
+                data-tip="Click to copy to Clipboard"
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
                 {worksheet.sanitized_vbms_id}
