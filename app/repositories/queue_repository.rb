@@ -98,6 +98,18 @@ class QueueRepository
     true
   end
 
+  def self.sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, type:, decass_attrs:)
+    decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+    vacols_case = VACOLS::Case.find(vacols_id)
+    if type == :draft_decision
+      vacols_case.update_vacols_location!(LOCATION_CODES[:bva_dispatch])
+      update_decass_record(decass_record, decass_attrs)
+    else
+      # Validate by checking that the work product is OMO (overtime or not)
+      vacols_case.update_vacols_location!(LOCATION_CODES[:omo_office])
+    end
+  end
+
   def self.find_decass_record(vacols_id, created_in_vacols_date)
     decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
     unless decass_record

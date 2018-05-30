@@ -352,6 +352,20 @@ ActiveRecord::Schema.define(version: 20180531181503) do
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
+  create_table "judge_case_reviews", force: :cascade do |t|
+    t.integer "attorney_id"
+    t.integer "judge_id"
+    t.string "task_id"
+    t.string "complexity"
+    t.string "quality"
+    t.string "title"
+    t.text "comment"
+    t.text "factors_not_considered", default: [], array: true
+    t.text "areas_for_improvement", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "legacy_appeals", force: :cascade do |t|
     t.string "vacols_id", null: false
     t.string "vbms_id"

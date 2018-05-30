@@ -7,8 +7,25 @@ module QueueMapper
     reassigned_to_judge_date: :dereceive,
     assigned_to_attorney_date: :deassign,
     attorney_id: :deatty,
-    group_name: :deteam
+    group_name: :deteam,
+    complexity: :defdiff,
+    quality: :deoq,
+    comment: :debmcom
   }.freeze
+
+  DEFICIENCIES = {
+    DEQR1: :issues_are_not_addressed,
+    DEQR2: :theory_contention,
+    DEQR3: :caselaw,
+    DEQR4: :statue_regulation,
+    DEQR5: :admin_procedure,
+    DEQR6: :relevant_records,
+    DEQR7: :lay_evidence,
+    DEQR8: :findings_are_not_supported,
+    DEQR9: :process_violations,
+    DEQR10: :remands_are_not_completed,
+    DEQR11: :grammar_errors
+  }
 
   WORK_PRODUCTS = {
     DEC: "Decision",
