@@ -33,7 +33,9 @@ class HearingWorksheetIssueDelete extends PureComponent {
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
         classNames={['cf-issue-delete', 'cf-btn-link']}
         onClick={this.handleModalOpen(issue.id)}
-        alt="Remove Issue Confirmation">
+        alt="Remove Issue Confirmation"
+        name="Delete Issue"
+        aria-label="Delete Issue">
         <TrashCan />
       </Button>
       { issue.isShowingModal && <Modal
