@@ -38,7 +38,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     Date.parse("2018-09-30"),
     board_non_available_days
   )}
-
+  
+  # generating a schedule for 2025
   let(:generate_hearing_days_schedule2) { HearingSchedule::GenerateHearingDaysSchedule.new(
     Date.parse("2025-04-01"),
     Date.parse("2025-09-30"),
@@ -47,6 +48,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   context "gets all available business days between a date range" do
     subject { generate_hearing_days_schedule.available_days }
+
+    it "has avaiable hearing days" do
+     expect(subject.count).to be > 100 
+    end
 
     it "removes weekends" do
       expect(subject.find { |day| day.saturday? || day.sunday? }).to eq nil

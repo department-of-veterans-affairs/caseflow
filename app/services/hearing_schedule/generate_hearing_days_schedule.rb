@@ -10,14 +10,15 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def initialize(start_date, end_date, board_non_availability_days = [])
     @board_non_availability_days = board_non_availability_days
-    @holidays = Holidays.between(start_date, end_date, :federal_reserve) 
-    @available_days = filter_non_available_days(start_date, end_date, board_non_availability_days)
+    @holidays = Holidays.between(start_date, end_date, :federal_reserve)
+    @available_days = filter_non_available_days(start_date, end_date)
   end
 
   def filter_non_available_days(start_date, end_date)
     business_days = []
     current_day = start_date
 
+    # assuming all dates provided here are in EST
     while current_day <= end_date
       business_days << current_day unless
         (weekend?(current_day) || holiday?(current_day) || board_not_available?(current_day))
@@ -26,6 +27,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     business_days
   end
+  
+  private
 
   def weekend?(day)
     day.saturday? || day.sunday?
