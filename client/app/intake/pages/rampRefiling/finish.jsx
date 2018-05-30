@@ -102,16 +102,16 @@ class Finish extends React.PureComponent {
       <ol className="cf-bare-list" ref={this.setOutsideCaseflowStepsNode}>
         <li>
           <div className="cf-intake-step">
-            <strong>Step 1. Complete the following tasks outside Caseflow and mark when complete</strong>
+            <strong>1. Complete the following tasks outside Caseflow and mark when complete</strong>
             <span className="cf-required">Required</span>
           </div>
 
           <div className="cf-intake-substeps">
             <ol className="cf-bare-list">
               <li>
-                <strong>Step 1a.</strong> Upload the RAMP Selection Form to the VBMS eFolder and
-                ensure the Document Type is <strong>RAMP Selection</strong>.</li>
-              <li><strong>Step 1b.</strong> Update the Subject Line with “RAMP Lane Selection”.</li>
+                <strong>1a.</strong> Upload the RAMP Selection Form to the VBMS eFolder and
+                ensure the Document Type is <strong>RAMP Opt-In Election</strong>.</li>
+              <li><strong>1b.</strong> Update the Subject Line with “RAMP Selection”.</li>
             </ol>
 
             <Checkbox
@@ -126,18 +126,18 @@ class Finish extends React.PureComponent {
 
         <li>
           { outsideCaseflowStepsConfirmed && <div><div className="cf-intake-step">
-            <strong>Step 2. Review and select contentions</strong>
+            <strong>2. Review and select contentions</strong>
             <span className="cf-required">Required</span>
           </div>
 
           <div className="cf-intake-substeps">
             <ol className="cf-bare-list">
               <li>
-                <strong>Step 2a.</strong> From the list of eligible contentions below,
+                <strong>2a.</strong> From the list of eligible contentions below,
                 select the contentions requested for review on the Veteran’s form.
               </li>
               <li>
-                <strong>Step 2b.</strong> If the form contains any ineligible contentions,
+                <strong>2b.</strong> If the form contains any ineligible contentions,
                 note via the checkbox at the bottom of the table.
               </li>
             </ol>
