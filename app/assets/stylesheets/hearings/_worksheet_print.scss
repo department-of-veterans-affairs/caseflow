@@ -161,6 +161,10 @@
      }
   }
 
+  .cf-app-segment {
+    margin-top: -3rem;
+}
+
 
   .cf-hearings-worksheet {
     margin-bottom: 0;
@@ -195,6 +199,10 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+
+        // .cf-hearings-worksheet-data:first-child {
+        //   margin-top: -3rem;
+        // }
 
         .cf-hearings-worksheet-data:last-child {
           margin-bottom: inherit;
