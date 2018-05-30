@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { getDecisionTypeDisplay } from './utils';
+import {
+  getDecisionTypeDisplay,
+  getUndecidedIssues
+} from './utils';
 
 import {
   setDecisionOptions,
@@ -101,9 +104,10 @@ class SubmitDecisionView extends React.PureComponent {
       data: {
         tasks: {
           type: decision.type,
-          issues: _.map(issues, (issue) => _.pick(issue,
-            ['disposition', 'vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']
-          )),
+          issues: getUndecidedIssues(issues).map((issue) => _.extend({},
+            _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
+            { disposition: _.capitalize(issue.disposition) })
+          ),
           ...decision.opts
         }
       }
