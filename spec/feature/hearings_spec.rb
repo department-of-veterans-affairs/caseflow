@@ -124,6 +124,7 @@ RSpec.feature "Hearings" do
     scenario "Upcoming docket days correctly handles master records" do
       visit "/hearings/dockets"
       expect(page).not_to have_link(5000.days.from_now.strftime("%-m/%-d/%Y"))
+      expect(page).to have_content(5000.days.from_now.strftime("%-m/%-d/%Y"))
       expect(page).not_to have_link(Time.zone.now.strftime("%-m/%-d/%Y"))
     end
 
