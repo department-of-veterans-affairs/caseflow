@@ -180,6 +180,10 @@ class Issue
     }
   end
 
+  def remand_reasons
+    Issue.load_remands_from_vacols(id, vacols_sequence_id)
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -208,10 +212,6 @@ class Issue
     issue_description
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-
-  def remand_reasons
-    Issue.load_remands_from_vacols(id, vacols_sequence_id)
-  end
 
   class << self
     attr_writer :repository
