@@ -135,24 +135,22 @@ export const CANCELLATION_REASONS = {
 };
 
 export const ISSUE_CATEGORIES = [
-  Unknown,
-  Apportionment,
-  Incarceration Adjustments,
-  Audit Error Worksheet (DFAS),
-  Active Duty Adjustments,
-  Drill Pay Adjustments,
-  Character of discharge determinations,
-  Income/net worth (pension),
-  Dependent child -
-  Dependent child - Adopted,
-  Dependent child - Stepchild,
-  Dependent child - Biological,
-  Dependency Spouse -
-  Dependency Spouse - Common law marriage,
-  Dependency Spouse - Inference of marriage,
-  Dependency Spouse - Deemed valid marriage,
-  Military Retired Pay,
-  Contested Claims (other than apportionment),
-  Lack of Qualifying Service,
-  Other non-rated
+  "Unknown issue category",
+  "Apportionment",
+  "Incarceration Adjustments",
+  "Audit Error Worksheet (DFAS)",
+  "Active Duty Adjustments",
+  "Drill Pay Adjustments",
+  "Character of discharge determinations",
+  "Income/net worth (pension)",
+  "Dependent child - Adopted",
+  "Dependent child - Stepchild",
+  "Dependent child - Biological",
+  "Dependency Spouse - Common law marriage",
+  "Dependency Spouse - Inference of marriage",
+  "Dependency Spouse - Deemed valid marriage",
+  "Military Retired Pay",
+  "Contested Claims (other than apportionment)",
+  "Lack of Qualifying Service",
+  "Other non-rated"
 ];
