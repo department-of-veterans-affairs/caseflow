@@ -91,7 +91,7 @@ class AssignWidgetPresentational extends React.PureComponent {
         <p>&nbsp;</p>
         <Button
             onClick={this.handleButtonClick}
-            name="Assign task(s)"
+            name={`Assign ${this.idsOfSelectedTasks().length} case(s)`}
             loading={false}
             loadingText="Loading" />
       </div>
