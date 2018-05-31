@@ -27,6 +27,9 @@ namespace :local do
       puts "Stopping vacols-db-#{suffix} and removing existing volumes"
       `docker-compose stop vacols-db-#{suffix}`
       `docker-compose rm -f -v vacols-db-#{suffix}`
+      `docker volume rm caseflow_ORCL_#{suffix}`
+      `docker volume rm caseflow_u01_#{suffix}`
+      `docker volume rm caseflow_u02_#{suffix}`
       puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
       `docker-compose up vacols-db-#{suffix} &> './tmp/vacols.log' &`
 
