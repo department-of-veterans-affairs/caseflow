@@ -379,7 +379,6 @@ RSpec.feature "RAMP Election Intake" do
       click_label("confirm-finish")
       safe_click "button#button-submit-review"
 
-      sleep 30
       expect(page).to have_content("The address is too long")
     end
   end

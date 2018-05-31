@@ -180,6 +180,7 @@ class ExternalApi::VBMSService
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+
     raise e
   end
 end
