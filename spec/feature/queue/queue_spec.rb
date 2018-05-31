@@ -899,6 +899,30 @@ RSpec.feature "Queue" do
       expect(page).not_to have_content("Select Dispositions > Submit")
     end
   end
+
+  context "when beaam appeals are turned on" do
+    before do
+      FeatureToggle.enable!(:queue_beaam_appeals)
+    end
+
+    after do
+      FeatureToggle.disable!(:queue_beaam_appeals)
+    end
+
+    let!(:appeals) do
+      [
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Joe" })),
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Bob" })),
+        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Pal" }))
+      ]
+    end
+
+    scenario "going to the root beaam appeal page, shows a beaam appeal" do
+      visit "/queue/beaam"
+
+      expect(page).to have_content("Pal")
+    end
+  end
 end
 
 # rubocop:enable Style/FormatString
