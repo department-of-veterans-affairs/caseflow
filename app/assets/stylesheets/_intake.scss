@@ -35,10 +35,29 @@
   max-width: 100%;
 }
 
+.cf-intake-ratings {
+  padding-bottom: 1em;
+}
+
 [id=button-begin-next-intake] {
   margin-top: 10px;
 }
 
 .cf-non-rated-issues {
   padding-top: 2em;
+}
+
+.cf-non-rated-issue {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-template-columns: auto auto;
+  padding-bottom: 1em;
+}
+
+.cf-non-rated-issue div {
+  margin: 0;
+}
+
+.cf-non-rated-issue label {
+  margin-bottom: 8px;
 }
