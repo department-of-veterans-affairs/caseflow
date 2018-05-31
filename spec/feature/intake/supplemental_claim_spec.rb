@@ -84,7 +84,7 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
-    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_button("Establish EP", disabled: true)

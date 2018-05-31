@@ -4,6 +4,16 @@ class Appeal < ApplicationRecord
 
   has_many :request_issues, as: :review_request
 
+  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
+
+  def self.find_appeal_or_legacy_appeal_by_id(id)
+    if UUID_REGEX.match(id)
+      find_by_uuid!(id)
+    else
+      LegacyAppeal.find_by!(vacols_id: id)
+    end
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
