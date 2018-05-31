@@ -62,7 +62,11 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def respond_to_doc_retrieval_error(e)
-    render json: { "errors": ["status": e.message, "title": e.to_s, "detail": e.message] }, status: e.message
+    if e.class.method_defined? :serialize_response
+      render e.serialize_response
+    else
+      render json: { "errors": ["status": e.message, "title": e.to_s, "detail": e.message] }, status: e.message
+    end
   end
 
   def appeal_id

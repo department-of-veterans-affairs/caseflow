@@ -64,11 +64,11 @@ class ExternalApi::EfolderService
         fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
       end
     when 403
-      fail Caseflow::Error::EfolderAccessForbidden, "403: #{response_body}"
+      fail Caseflow::Error::EfolderAccessForbidden, code: code, message: response_body
     when 400
-      fail Caseflow::Error::ClientRequestError, "400: #{response_body}"
+      fail Caseflow::Error::ClientRequestError, code: code, message: response_body
     when 500
-      fail Caseflow::Error::DocumentRetrievalError, "502: #{response_body}"
+      fail Caseflow::Error::DocumentRetrievalError, code: 502, message: response_body
     else
       msg = "Failed for #{vbms_id}, user_id: #{user_id}, error: #{response_body}, HTTP code: #{code}"
       fail Caseflow::Error::DocumentRetrievalError, msg
