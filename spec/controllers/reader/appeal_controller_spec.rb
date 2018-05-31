@@ -15,11 +15,18 @@ RSpec.describe Reader::AppealController, type: :controller do
     ]
   end
   let(:vacols_case) do
-    create(:case, :has_regional_office, case_issues: case_issues)
+    create(
+      :case,
+      :has_regional_office,
+      :type_original,
+      :aod,
+      case_issues: case_issues,
+      folder: create(:folder, tinum: "docket-number"),
+      correspondent: create(:correspondent, snamef: "first", snamemi: "m", snamel: "last"))
   end
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
-  describe "GET fetch appeal by VBMS Id", focus: true do
+  describe "GET fetch appeal by VBMS Id" do
     it "should be successful" do
       request.env["HTTP_VETERAN_ID"] = appeal[:vbms_id]
       get :find_appeals_by_veteran_id
