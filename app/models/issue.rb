@@ -180,15 +180,6 @@ class Issue
     }
   end
 
-  def remand_reasons
-    VACOLS::RemandReason.where(rmdkey: id, rmdissseq: vacols_sequence_id).map do |reason|
-      {
-        code: reason.rmdval,
-        after_certification: reason.rmddev.eql?("R2")
-      }
-    end
-  end
-
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -217,6 +208,10 @@ class Issue
     issue_description
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+
+  def remand_reasons
+    Issue.load_remands_from_vacols(id, vacols_sequence_id)
+  end
 
   class << self
     attr_writer :repository
@@ -262,6 +257,10 @@ class Issue
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id
       )
+    end
+
+    def load_remands_from_vacols(*args)
+      repository.load_remands_from_vacols(*args)
     end
 
     private
