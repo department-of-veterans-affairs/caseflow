@@ -18,6 +18,13 @@ export default class NonRatedIssue extends React.PureComponent {
 
         <TextField
           name="Issue description" />
+
+          <Button
+            name="save-issue"
+            legacyStyling={false}
+          >
+            Save
+          </Button>
       </div>
     )
   }

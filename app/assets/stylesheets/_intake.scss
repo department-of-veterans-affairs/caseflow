@@ -50,7 +50,7 @@
 .cf-non-rated-issue {
   display: grid;
   grid-column-gap: 10px;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto 76px;
   padding-bottom: 1em;
 }
 
@@ -60,4 +60,9 @@
 
 .cf-non-rated-issue label {
   margin-bottom: 8px;
+}
+
+.cf-non-rated-issue > span {
+  align-self: end;
+  padding-bottom: 5px;
 }

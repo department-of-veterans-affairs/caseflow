@@ -12,6 +12,7 @@ export default class NonRatedIssues extends React.PureComponent {
     </p>
     <div>
       <NonRatedIssue />
+      <NonRatedIssue />
     </div>
     <Button
       name="add-issue"
