@@ -46,6 +46,29 @@ RSpec.describe IntakesController do
           expect(response.status).to eq(400)
         end
       end
+
+      context "long address error" do
+        let(:long_address_error) do
+          Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(
+            OpenStruct.new(
+              body: "The maximum data length for AddressLine1  was not satisfied:" \
+              " The AddressLine1  must not be greater than 20 characters."
+            )
+          )
+        end
+
+        it "should throw a long address error" do
+          intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
+          intake.save!
+          allow_any_instance_of(Intake).to receive(:complete!).and_raise(long_address_error)
+
+          expect do
+            post :complete, params: { id: intake.id }
+          end.to raise_error { |error|
+            expect(error).to be_a(Caseflow::Error::LongAddress)
+          }
+        end
+      end
     end
   end
 end

@@ -348,5 +348,34 @@ RSpec.feature "RAMP Election Intake" do
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
     end
+
+    scenario "Complete intake for RAMP Election form fails due to long address" do
+      Fakes::VBMSService.end_product_claim_id = "SHANE9642"
+      allow(VBMSService).to receive(:establish_claim!).and_raise(long_address_error)
+
+      RampElection.create!(
+        veteran_file_number: "12341234",
+        notice_date: Date.new(2017, 11, 7)
+      )
+
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
+      within_fieldset("Which review lane did the veteran select?") do
+        find("label", text: "Higher Level Review with Informal Conference").click
+      end
+
+      fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("The address is too long")
+    end
   end
 end

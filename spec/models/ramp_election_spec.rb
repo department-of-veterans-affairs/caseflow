@@ -165,6 +165,34 @@ describe RampElection do
           end
         end
       end
+
+      context "when VBMS throws a long address error" do
+        before do
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_raise(long_address_error2)
+        end
+
+        let(:long_address_error) do
+          Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(
+            OpenStruct.new(
+              body: "The maximum data length for AddressLine1  was not satisfied:" \
+              " The AddressLine1  must not be greater than 20 characters."
+            )
+          )
+        end
+
+        let(:long_address_error2) do
+          VBMS::HTTPError.new("500", "<ns4:message>The maximum data length for " \
+            "AddressLine1  was not satisfied: The AddressLine1  must not be " \
+            "greater than 20 characters.</ns4:message>")
+        end
+
+        it "raises a parsed EstablishClaimFailedInVBMS error" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(Caseflow::Error::LongAddress)
+            expect(error.error_code).to eq("long_address")
+          end
+        end
+      end
     end
   end
 
