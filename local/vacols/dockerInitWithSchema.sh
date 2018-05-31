@@ -24,8 +24,6 @@
 #    xihzhang    05/23/16 - Creation
 #
 
-set -ex
-
 # basic parameters
 LOG_DIR=/home/oracle/setup/log
 SETUP_DIR=/home/oracle/setup
@@ -57,11 +55,11 @@ if [ -f /home/oracle/setup/log/setupDB.log ]
 then
     echo "Start up Oracle Database"
     echo "Start up Oracle Database" >> $INIT_LOG
-    /bin/bash -e -x $SETUP_DIR/startupDB.sh 2>&1
+    /bin/bash $SETUP_DIR/startupDB.sh 2>&1
 else
     echo "Setup Oracle Database"
     echo "Setup Oracle Database" >> $INIT_LOG
-    /bin/bash -e -x $SETUP_DIR/setupDB.sh 2>&1
+    /bin/bash $SETUP_DIR/setupDB.sh 2>&1
 fi
 
 echo "" >> $INIT_LOG

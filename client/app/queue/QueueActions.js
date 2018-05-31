@@ -212,7 +212,6 @@ export const assignTasksToUser = ({idsOfTasks, assigneeId}) => (dispatch) => {
   dispatch(startAssignTasksToUser({idsOfTasks, assigneeId}));
 
   return Promise.all(idsOfTasks.map((taskId) => {
-    return Promise.resolve('{"task":{"id":"3662856","assigned_to":{"id":82,"station_id":"101","css_id":"BVAEERDMAN","full_name":"Ezra Erdman","email":null,"roles":[],"selected_regional_office":null,"display_name":"BVAEERDMAN (VACO)"},"assigned_by":{"full_name":"Anjali Abshire","email":null,"roles":["BVAAABSHIRE"],"id":720,"station_id":"101","css_id":"BVAAABSHIRE","selected_regional_office":null,"display_name":"BVAAABSHIRE (VACO)"},"type":"AttorneyLegacyTask","validation_context":null,"errors":{}}}');
     return ApiUtil.post(
       '/tasks', {data: {tasks: {assigned_to_id: assigneeId, type: 'AttorneyLegacyTask', id: taskId}}});
   })).

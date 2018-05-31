@@ -6,6 +6,7 @@ services:
     image: vacols_db
     tty: true
     stdin_open: true
+    command: bash -c "/home/oracle/setup/dockerInit.sh"
     volumes:
       - "u01_test:/u01/app/oracle/oradata"
       - "ORCL_test:/ORCL"
@@ -18,6 +19,7 @@ services:
     image: vacols_db
     tty: true
     stdin_open: true
+    command: bash -c "/home/oracle/setup/dockerInit.sh"
     volumes:
       - "u01_development:/u01/app/oracle/oradata"
       - "ORCL_development:/ORCL"
