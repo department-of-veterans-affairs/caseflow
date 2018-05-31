@@ -63,7 +63,12 @@ json_config = <<EOS
       {
         feature: "judge_queue",
         enable_all: true
+      },
+      {
+        feature: "judge_assignment",
+        enable_all: true
       }
 ]
 EOS
+
 FeatureToggle.sync! json_config
