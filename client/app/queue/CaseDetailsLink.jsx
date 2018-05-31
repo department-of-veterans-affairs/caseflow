@@ -24,7 +24,7 @@ class CaseDetailsLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${this.props.task.vacolsId}`}
+        to={`/queue/appeals/${appeal.vacols_id}`}
         disabled={disabled || appeal.paper_case}
         onClick={this.setActiveAppealAndTask}
       >
@@ -43,7 +43,7 @@ class CaseDetailsLink extends React.PureComponent {
 }
 
 CaseDetailsLink.propTypes = {
-  task: PropTypes.object.isRequired,
+  task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool
 };
