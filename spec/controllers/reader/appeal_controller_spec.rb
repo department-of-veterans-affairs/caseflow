@@ -8,8 +8,14 @@ RSpec.describe Reader::AppealController, type: :controller do
   end
 
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
+  let(:case_issues) do
+    [
+      create(:case_issue),
+      create(:case_issue)
+    ]
+  end
   let(:vacols_case) do
-    create(:case, :has_regional_office)
+    create(:case, :has_regional_office, case_issues: case_issues)
   end
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
@@ -21,7 +27,7 @@ RSpec.describe Reader::AppealController, type: :controller do
       expect(response.status).to eq 200
       hashed_appeal = appeal.to_hash(issues: appeal.issues)
       response_body = JSON.parse(response.body)["appeals"]
-      binding.pry
+
       appeal_response = response_body[0].deep_symbolize_keys
       hashed_issue = hashed_appeal["issues"]
 
