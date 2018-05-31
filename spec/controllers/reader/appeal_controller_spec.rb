@@ -22,7 +22,8 @@ RSpec.describe Reader::AppealController, type: :controller do
       :aod,
       case_issues: case_issues,
       folder: create(:folder, tinum: "docket-number"),
-      correspondent: create(:correspondent, snamef: "first", snamemi: "m", snamel: "last"))
+      correspondent: create(:correspondent, snamef: "first", snamemi: "m", snamel: "last")
+    )
   end
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 

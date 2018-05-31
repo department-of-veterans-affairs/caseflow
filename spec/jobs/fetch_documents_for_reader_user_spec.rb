@@ -24,7 +24,8 @@ describe FetchDocumentsForReaderUserJob do
     let(:appeal) do
       create(
         :legacy_appeal,
-        vacols_case: create(:case, documents: [document], staff: create(:staff, sdomainid: user.css_id)))
+        vacols_case: create(:case, documents: [document], staff: create(:staff, sdomainid: user.css_id))
+      )
     end
 
     let(:doc_struct) do
