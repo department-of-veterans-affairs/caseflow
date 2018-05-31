@@ -55,6 +55,11 @@ RSpec.feature "RAMP Election Intake" do
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
   end
 
+  let(:long_address_error) do
+    VBMS::HTTPError.new("500", "<ns4:message>The maximum data length for AddressLine1  " \
+      "was not satisfied: The AddressLine1  must not be greater than 20 characters.</ns4:message>")
+  end
+
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
@@ -350,7 +355,6 @@ RSpec.feature "RAMP Election Intake" do
     end
 
     scenario "Complete intake for RAMP Election form fails due to long address" do
-      Fakes::VBMSService.end_product_claim_id = "SHANE9642"
       allow(VBMSService).to receive(:establish_claim!).and_raise(long_address_error)
 
       RampElection.create!(
@@ -375,6 +379,7 @@ RSpec.feature "RAMP Election Intake" do
       click_label("confirm-finish")
       safe_click "button#button-submit-review"
 
+      sleep 30
       expect(page).to have_content("The address is too long")
     end
   end
