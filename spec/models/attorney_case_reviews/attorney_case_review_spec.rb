@@ -26,6 +26,11 @@ describe AttorneyCaseReview do
         it { is_expected.to be_valid }
       end
 
+      context "when correct format with letters" do
+        let(:task_id) { "123456L-2013-12-06" }
+        it { is_expected.to be_valid }
+      end
+
       context "when incorrect format" do
         let(:task_id) { "123456-2013/12/06" }
         it { is_expected.to_not be_valid }
