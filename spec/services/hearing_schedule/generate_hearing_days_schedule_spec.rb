@@ -58,7 +58,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "change the year" do
-
     # generating a schedule for 2025
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
