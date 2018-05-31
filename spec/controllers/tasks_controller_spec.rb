@@ -274,12 +274,11 @@ RSpec.describe TasksController, type: :controller do
   describe "POST tasks/:task_id/complete" do
     let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
     let(:vacols_staff) { FactoryBot.create(:staff, :judge_role, :has_location_code, sdomainid: judge.css_id) }
-    let(:vacols_case) { FactoryBot.create(:case, bfcurloc: vacols_staff.slogid) }
-    let(:vacols_decass) { FactoryBot.create(:decass, defolder: vacols_case.bfkey) }
-    let(:task_id) { "#{vacols_case.bfkey}-#{vacols_decass.deadtim.strftime('%Y-%m-%d')}" }
+    let(:vacols_case) { FactoryBot.create(:case, :assigned, bfcurloc: vacols_staff.slogid) }
+    let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass.first.deadtim.strftime('%Y-%m-%d')}" }
+
     before do
       User.stub = judge
-      FactoryBot.create(:folder, ticknum: vacols_case.bfkey)
 
       FeatureToggle.enable!(:queue_phase_two)
     end
@@ -322,8 +321,8 @@ RSpec.describe TasksController, type: :controller do
           "document_id": "123456789.1234",
           "overtime": true,
           "note": "something",
-          "issues": [{ "disposition": "remanded", "vacols_sequence_id": vacols_issue_remanded.issseq },
-                     { "disposition": "allowed", "vacols_sequence_id": vacols_issue_allowed.issseq }]
+          "issues": [{ "disposition": "Remanded", "vacols_sequence_id": vacols_issue_remanded.issseq },
+                     { "disposition": "Allowed", "vacols_sequence_id": vacols_issue_allowed.issseq }]
         }
       end
 
