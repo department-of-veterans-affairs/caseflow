@@ -1,9 +1,19 @@
 RSpec.describe Reader::AppealController, type: :controller do
-  let!(:user) { User.authenticate!(roles: ["Reader"]) }
-  let(:vacols_record) { :remand_decided }
-  let(:appeal) { Generators::LegacyAppeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
 
-  describe "GET fetch appeal by VBMS Id" do
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let!(:user) { User.authenticate!(roles: ["Reader"]) }
+  let(:vacols_case) do
+    create(:case, :has_regional_office)
+  end
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+  describe "GET fetch appeal by VBMS Id", focus: true do
     it "should be successful" do
       request.env["HTTP_VETERAN_ID"] = appeal[:vbms_id]
       get :find_appeals_by_veteran_id
@@ -11,7 +21,7 @@ RSpec.describe Reader::AppealController, type: :controller do
       expect(response.status).to eq 200
       hashed_appeal = appeal.to_hash(issues: appeal.issues)
       response_body = JSON.parse(response.body)["appeals"]
-
+      binding.pry
       appeal_response = response_body[0].deep_symbolize_keys
       hashed_issue = hashed_appeal["issues"]
 
