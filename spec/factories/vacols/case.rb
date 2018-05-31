@@ -8,6 +8,8 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
+    bfregoff "RO18"
+
     trait :assigned do
       transient do
         decass_count 1
@@ -15,6 +17,17 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+      end
+    end
+
+    transient do
+      case_hearings []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_hearings.each do |case_hearing|
+          case_hearing.folder_nr = vacols_case.bfkey
+          case_hearing.save
+        end
       end
     end
 
@@ -143,6 +156,10 @@ FactoryBot.define do
       bfdc "5"
     end
 
+    trait :disposition_granted_by_aoj do
+      bfdc "B"
+    end
+
     trait :disposition_ramp do
       bfdc "P"
     end
@@ -169,8 +186,14 @@ FactoryBot.define do
       end
     end
 
-    trait :has_regional_office do
-      bfregoff "RO18"
+    transient do
+      remand_return_date nil
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.remand_return_date
+          create(:priorloc, lockey: vacols_case.bfkey, locstto: "96", locdout: evaluator.remand_return_date)
+        end
+      end
     end
 
     after(:build) do |vacols_case, evaluator|
