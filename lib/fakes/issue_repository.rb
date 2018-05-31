@@ -34,9 +34,11 @@ class Fakes::IssueRepository
       Fakes::AppealRepository.issue_records[args[:vacols_id]].delete(record)
     end
 
-    def load_remands_from_vacols
+    # rubocop:disable Lint/UnusedMethodArgument
+    def load_remands_from_vacols(vacols_id, vacols_sequence_id)
       []
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     def find_issue(vacols_id, vacols_sequence_id)
       init_issue_records(vacols_id)
