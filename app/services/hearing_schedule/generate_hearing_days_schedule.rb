@@ -1,8 +1,7 @@
-# GenerateHearingDaysSchedule is used to generate hearing days in a
-# a data range specified used in Hearing schedule.
+# GenerateHearingDaysSchedule is used to generate the dates available for RO
+# video hearings in a specified date range after filtering out weekends, 
+# holidays, and board non-availability dates
 #
-# It takes account to weekends, holidays and board non-available days before
-# creating the hearing days schedule for the board and ROs.
 
 class HearingSchedule::GenerateHearingDaysSchedule
   attr_reader :available_days
@@ -17,7 +16,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     business_days = []
     current_day = start_date
 
-    # assuming all dates provided here are in EST
     while current_day <= end_date
       business_days << current_day unless
         weekend?(current_day) || holiday?(current_day) || board_not_available?(current_day)
