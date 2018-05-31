@@ -1,8 +1,10 @@
 class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"
+  self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
+  validates :hearing_type, :hearing_date, :room, presence: true, on: :create
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
@@ -39,7 +41,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     transcript_requested: :tranreq,
     add_on: :addon,
     representative_name: :repname,
-    staff_id: :mduser
+    staff_id: :mduser,
+    room: :room,
+    hearing_date: :hearing_date,
+    hearing_type: :hearing_type
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -71,6 +76,18 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def load_hearing(pkseq)
       select_hearings.find_by(hearing_pkseq: pkseq)
+    end
+
+    def create_hearing!(hearing_info)
+      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+      attrs.except!(nil)
+      MetricsService.record("VACOLS: create_hearing!",
+                            service: :vacols,
+                            name: "create_hearing") do
+        create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                           adduser: current_user_slogid,
+                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
+      end
     end
 
     private
@@ -110,11 +127,21 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
+  private_class_method
+
+  def self.current_user_slogid
+    RequestStore.store[:current_user].vacols_uniq_id.upcase
+  end
+
   private
+
+  def current_user_css_id
+    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  end
 
   def update_hearing_action
     brieff.update(bfha: HearingMapper.bfha_vacols_code(self))
@@ -123,10 +150,6 @@ class VACOLS::CaseHearing < VACOLS::Record
   def create_or_update_diaries
     create_or_update_abeyance_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
-  end
-
-  def current_user_css_id
-    @css_id ||= RequestStore.store[:current_user].css_id.upcase
   end
 
   def case_id
