@@ -180,6 +180,15 @@ class Issue
     }
   end
 
+  def remand_reasons
+    VACOLS::RemandReason.where(rmdkey: id, rmdissseq: vacols_sequence_id).map do |reason|
+      {
+        code: reason.rmdval,
+        after_certification: reason.rmddev.eql?("R2")
+      }
+    end
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity

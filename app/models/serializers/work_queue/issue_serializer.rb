@@ -10,12 +10,5 @@ class WorkQueue::IssueSerializer < ActiveModel::Serializer
   attribute :vacols_sequence_id
   attribute :labels
   attribute(:readjudication) { false }
-  attribute :remand_reasons do
-    VACOLS::RemandReason.where(rmdkey: object.id, rmdissseq: object.vacols_sequence_id).map do |reason|
-      {
-        code: reason.rmdval,
-        after_certification: reason.rmddev.eql?("R2")
-      }
-    end
-  end
+  attribute :remand_reasons
 end
