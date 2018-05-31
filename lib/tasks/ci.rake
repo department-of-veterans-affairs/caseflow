@@ -86,7 +86,7 @@ namespace :ci do
   task :circleci_verify_code_coverage do
     require "simplecov"
 
-    api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts?circle-token=#{ENV['CIRCLE_TOKEN']}" # rubocop:disable Metrics/LineLength
+    api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts" # rubocop:disable Metrics/LineLength
     coverage_dir = "/tmp/coverage"
     SimpleCov.coverage_dir(coverage_dir)
     # Set the merge_timeout very large so that we don't exclude results
@@ -96,7 +96,7 @@ namespace :ci do
     artifact_urls = artifacts.map { |a| a["url"] }
     resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
     resultsets = resultset_urls.map do |u|
-      c = open(u + "?circle-token=#{ENV['CIRCLE_TOKEN']}").read
+      c = open(u).read
       JSON.parse(c)
     end
     # SimpleCov doesn't really support merging results after the fact.
