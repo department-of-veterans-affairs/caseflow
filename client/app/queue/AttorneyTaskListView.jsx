@@ -20,9 +20,9 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { Task, DeprecatedTask } from './reducers';
+import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent<{loadedQueueTasks: {[string]: DeprecatedTask}, appeals: Object, tasks: {[string]: Task}, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
+class AttorneyTaskListView extends React.PureComponent<{loadedQueueTasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, tasks: Tasks, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();

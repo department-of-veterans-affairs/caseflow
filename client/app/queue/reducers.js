@@ -25,6 +25,10 @@ export type Task = {
   }
 };
 
+export type LoadedQueueTasks = { [string]: DeprecatedTask };
+export type Tasks = { [string]: Task };
+export type LoadedQueueAppeals = { [string]: Object };
+
 export const initialState = {
   judges: {},
   tasks: {},
