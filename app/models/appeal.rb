@@ -18,7 +18,7 @@ class Appeal < ApplicationRecord
     if UUID_REGEX.match(id)
       find_by_uuid!(id)
     else
-      LegacyAppeal.find_by!(vacols_id: id)
+      LegacyAppeal.find_or_create_by_vacols_id(id)
     end
   end
 
