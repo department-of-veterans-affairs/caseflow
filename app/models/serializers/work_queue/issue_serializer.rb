@@ -10,4 +10,5 @@ class WorkQueue::IssueSerializer < ActiveModel::Serializer
   attribute :vacols_sequence_id
   attribute :labels
   attribute(:readjudication) { false }
+  attribute :remand_reasons
 end
