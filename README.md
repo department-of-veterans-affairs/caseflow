@@ -133,6 +133,11 @@ docker-compose down
 docker-compose down -v
 ```
 
+Enable features
+```
+bundle exec rails runner scripts/enable_features_dev.rb
+```
+
 ## Setup your Database Schema
 ```
 rake [RAILS_ENV=<test|development|stubbed>] db:setup
