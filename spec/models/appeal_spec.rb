@@ -7,7 +7,7 @@ describe Appeal do
     FeatureToggle.disable!(:test_facols)
   end
 
-  context "#find_appeal_or_legacy_appeal_by_id" do
+  context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
       let(:appeal) do
