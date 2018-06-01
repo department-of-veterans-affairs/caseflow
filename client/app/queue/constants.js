@@ -117,7 +117,7 @@ const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
-  parameterizedDispositions
+  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
 export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(

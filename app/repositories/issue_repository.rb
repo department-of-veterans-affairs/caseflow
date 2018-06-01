@@ -66,7 +66,7 @@ class IssueRepository
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
-    case issue_attrs[:disposition]
+    case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
     when "Remanded"
       if record.issdc != "3"
         remand_reasons = RemandReasonMapper.convert_to_vacols_format(

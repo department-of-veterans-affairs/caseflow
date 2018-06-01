@@ -20,7 +20,7 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { getUndecidedIssues } from './utils';
-import { fullWidth } from './constants';
+import { fullWidth, ISSUE_DISPOSITIONS } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
@@ -58,7 +58,7 @@ class SelectDispositionsView extends React.PureComponent {
       }
     } = this.props;
 
-    return _.map(issues, 'disposition').includes('remanded') ?
+    return _.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED) ?
       `/queue/appeals/${vacolsId}/remands` : nextStep;
   }
 
