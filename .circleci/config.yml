@@ -1,6 +1,5 @@
 version: 2
 jobs:
-  resource_class: xlarge
   build:
     docker:
       # The first image listed is the image that all steps run inside of.
