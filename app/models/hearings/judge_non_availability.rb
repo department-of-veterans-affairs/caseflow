@@ -1,0 +1,2 @@
+class JudgeNonAvailability < NonAvailability
+end
