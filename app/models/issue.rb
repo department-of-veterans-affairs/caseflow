@@ -181,7 +181,7 @@ class Issue
   end
 
   def remand_reasons
-    Issue.load_remands_from_vacols(vacols_id: id, vacols_sequence_id: vacols_sequence_id)
+    self.class.repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
   private
@@ -257,10 +257,6 @@ class Issue
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id
       )
-    end
-
-    def load_remands_from_vacols(vacols_id:, vacols_sequence_id:)
-      repository.load_remands_from_vacols(vacols_id, vacols_sequence_id)
     end
 
     private
