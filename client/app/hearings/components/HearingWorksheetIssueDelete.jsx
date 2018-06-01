@@ -28,8 +28,6 @@ class HearingWorksheetIssueDelete extends PureComponent {
       appealKey
     } = this.props;
 
-    const trashCan = <TrashCan />;
-
     return <div>
       <Button
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
@@ -38,7 +36,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
         alt="Remove Issue Confirmation"
         name="Delete Issue"
         aria-label="Delete Issue">
-        {trashCan}
+        <TrashCan alt="Delete Issue" />
       </Button>
       { issue.isShowingModal && <Modal
         buttons = {[
