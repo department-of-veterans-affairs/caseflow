@@ -28,13 +28,9 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-const dispositionLabelForDescription = (descr) => {
-  const dispositionId = CASE_DISPOSITION_ID_BY_DESCRIPTION[descr.toLowerCase()];
-
+const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
-  const dispositionDescr = VACOLS_DISPOSITIONS_BY_ID[dispositionId];
-
-  return `${dispositionId} - ${dispositionDescr}`;
+  return `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}`;
 };
 
 export default class IssueListItem extends React.PureComponent {

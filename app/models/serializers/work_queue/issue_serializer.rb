@@ -3,7 +3,7 @@ class WorkQueue::IssueSerializer < ActiveModel::Serializer
   attribute(:program) { object.codes[0] }
   attribute(:type) { object.codes[1] }
   attribute(:codes) { object.codes[2..-1] }
-  attribute :disposition
+  attribute(:disposition) { object.disposition_id }
   attribute :close_date
   attribute :note
   attribute :id
