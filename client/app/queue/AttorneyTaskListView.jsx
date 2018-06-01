@@ -80,7 +80,7 @@ const mapStateToProps = (state) => ({
   ..._.pick(state.queue.stagedChanges, 'taskDecision'),
   ..._.pick(state.queue, 'tasks'),
   judges: state.queue.judges,
-  loadedQueueTasks: state.queue.loadedQueue.tasks,
+  loadedQueueTasks: state.queue.loadedQueue.tasks
 });
 
 const mapDispatchToProps = (dispatch) => ({
