@@ -8,6 +8,12 @@ class HearingsController < ApplicationController
     render json: hearing.to_hash(current_user.id)
   end
 
+  # :nocov:
+  def create
+    Hearing.create_unassigned_hearing(create_params)
+    render json: hearing.to_hash(current_user.id)
+  end
+
   def logo_name
     "Hearing Prep"
   end

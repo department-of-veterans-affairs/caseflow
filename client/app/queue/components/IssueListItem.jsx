@@ -92,7 +92,6 @@ export default class IssueListItem extends React.PureComponent {
       issue,
       issue: {
         disposition,
-        type,
         levels,
         note
       },
