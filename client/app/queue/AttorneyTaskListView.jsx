@@ -20,9 +20,9 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import DeprecatedTasks from './reducers';
+import DeprecatedTask from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent<{tasks: DeprecatedTasks, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
+class AttorneyTaskListView extends React.PureComponent<{tasks: Object, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -33,7 +33,8 @@ class AttorneyTaskListView extends React.PureComponent<{tasks: DeprecatedTasks, 
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
+    const t: DeprecatedTask = {};
+    if (_.some(this.props.tasks, (task: DeprecatedTask) => !task.attributes.task_id)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
