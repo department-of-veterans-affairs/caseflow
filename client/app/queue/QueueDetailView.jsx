@@ -9,16 +9,15 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
+import CaseTitle from './CaseTitle';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import TabWindow from '../components/TabWindow';
-import { fullWidth, CATEGORIES } from './constants';
-import ReaderLink from './ReaderLink';
+import { CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
-const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
 
 class QueueDetailView extends React.PureComponent {
@@ -90,27 +89,14 @@ class QueueDetailView extends React.PureComponent {
     return null;
   }
 
-  render = () => {
-    const appeal = this.props.appeal.attributes;
-
-    return <AppSegment filledBackground>
-      <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
-        {appeal.veteran_full_name} ({appeal.vbms_id})
-      </h1>
-      <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
-      <ReaderLink
-        vacolsId={this.props.vacolsId}
-        analyticsSource={CATEGORIES.QUEUE_TASK}
-        redirectUrl={window.location.pathname}
-        appeal={this.props.appeal}
-        taskType="Draft Decision"
-        longMessage />
-      {this.getCheckoutFlowDropdown()}
-      <TabWindow
-        name="queue-tabwindow"
-        tabs={this.tabs()} />
-    </AppSegment>;
-  };
+  render = () => <AppSegment filledBackground>
+    <CaseTitle appeal={this.props.appeal} {...this.props} />
+    <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
+    {this.getCheckoutFlowDropdown()}
+    <TabWindow
+      name="queue-tabwindow"
+      tabs={this.tabs()} />
+  </AppSegment>;
 }
 
 QueueDetailView.propTypes = {
