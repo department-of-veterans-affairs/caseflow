@@ -1,45 +1,37 @@
 require "rails_helper"
 
 RSpec.feature "Cancel certification" do
+
+
   let!(:current_user) { User.authenticate! }
 
-  let(:nod) { Generators::Document.build(type: "NOD") }
-  let(:soc) { Generators::Document.build(type: "SOC") }
-  let(:form9) { Generators::Document.build(type: "Form 9") }
-
   let(:appeal) do
-    Generators::LegacyAppeal.build(
-      vacols_record: {
-        template: :ready_to_certify,
-        nod_date: nod.received_at,
-        soc_date: soc.received_at,
-        form9_date: form9.received_at
-      },
-      documents: [nod, soc, form9]
-    )
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_ssoc, :has_regional_office)
   end
 
   let(:appeal_mismatched_docs) do
-    Generators::LegacyAppeal.build(
-      vacols_record: {
-        template: :ready_to_certify,
-        nod_date: nod.received_at,
-        soc_date: soc.received_at,
-        form9_date: form9.received_at
-      },
-      documents: []
-    )
+    create(:legacy_appeal, vacols_case: vacols_case_mismatched)
+  end
+
+  let(:vacols_case_mismatched) do
+    create(:case_with_ssoc, :has_regional_office, :has_mismatched_form_9)
   end
 
   context "As an authorized user" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
     before(:all) do
+      FeatureToggle.enable!(:test_facols)
       FeatureToggle.enable!(:certification_v2)
     end
 
     after(:all) do
       FeatureToggle.disable!(:certification_v2)
+      FeatureToggle.disable!(:test_facols)
     end
 
     scenario "Validate Input Fields" do
