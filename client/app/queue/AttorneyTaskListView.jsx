@@ -20,9 +20,9 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { DeprecatedTask } from './reducers';
+import type { Task, DeprecatedTask } from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent<{tasks: {[string]: DeprecatedTask}, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
+class AttorneyTaskListView extends React.PureComponent<{loadedQueueTasks: {[string]: DeprecatedTask}, appeals: Object, tasks: {[string]: Task}, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -33,7 +33,7 @@ class AttorneyTaskListView extends React.PureComponent<{tasks: {[string]: Deprec
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task: DeprecatedTask) => !task.attributes.task_id)) {
+    if (_.some(this.props.loadedQueueTasks, (task: DeprecatedTask) => !this.props.tasks[task.id].attributes.task_id)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
@@ -43,7 +43,7 @@ class AttorneyTaskListView extends React.PureComponent<{tasks: {[string]: Deprec
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    const noTasks = !_.size(this.props.loadedQueueTasks) && !_.size(this.props.appeals);
     let tableContent;
 
     if (noTasks) {
@@ -70,15 +70,17 @@ class AttorneyTaskListView extends React.PureComponent<{tasks: {[string]: Deprec
 }
 
 AttorneyTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
+  ..._.pick(state.queue.loadedQueue, 'appeals'),
   ..._.pick(state.ui, 'messages'),
   ..._.pick(state.queue.stagedChanges, 'taskDecision'),
-  judges: state.queue.judges
+  ..._.pick(state.queue, 'tasks'),
+  judges: state.queue.judges,
+  loadedQueueTasks: state.queue.loadedQueue.tasks,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -17,6 +17,14 @@ export type DeprecatedTask = {
   id: string
 };
 
+export type Task = {
+  id: string,
+  vacolsId: string,
+  attributes: {
+    task_id: string
+  }
+};
+
 export const initialState = {
   judges: {},
   tasks: {},
