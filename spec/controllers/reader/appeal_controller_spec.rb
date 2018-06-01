@@ -17,7 +17,6 @@ RSpec.describe Reader::AppealController, type: :controller do
   let(:vacols_case) do
     create(
       :case,
-      :has_regional_office,
       :type_original,
       :aod,
       case_issues: case_issues,

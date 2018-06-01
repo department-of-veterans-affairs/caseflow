@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:hearing_pkseq)
     hearing_type "V"
     hearing_date { Time.zone.today }
+    room 1
 
     trait :disposition_held do
       hearing_disp "H"
