@@ -3,7 +3,7 @@ class JudgeCaseReview < ApplicationRecord
   belongs_to :attorney, class_name: "User"
 
   # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
+  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
   enum title: {
     omo_request: "omo_request",
