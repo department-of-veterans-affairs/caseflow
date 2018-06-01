@@ -1,3 +1,4 @@
+// @flow
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
@@ -12,8 +13,15 @@ import uiReducer from './uiReducer/uiReducer';
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
+export type DeprecatedTasks = {
+  [string]: {
+    foo: {}
+  }
+};
+
 export const initialState = {
   judges: {},
+  tasks: {},
   loadedQueue: {
     appeals: {},
     tasks: {},
@@ -54,6 +62,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
         loadedUserId: {
           $set: action.payload.userId
         }
+      },
+      tasks: {
+        $merge: action.payload.tasks
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -67,6 +78,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
       loadedQueue: {
         appeals: { $unset: action.payload.appealId },
         tasks: { $unset: action.payload.appealId }
+      },
+      tasks: {
+        $unset: action.payload.appealId
       }
     });
   case ACTIONS.EDIT_APPEAL:
@@ -249,6 +263,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
             data: _.pick(action.payload, 'tasks', 'appeals')
           }
         }
+      },
+      tasks: {
+        $merge: action.payload.tasks
       }
     });
   case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
