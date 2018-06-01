@@ -188,7 +188,6 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    console.log("state::", state.nonRatedIssues[action.payload.issueId].issueDescription)
     return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {

@@ -1,17 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addNonRatedIssue } from '../../actions/common';
+import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import Button from '../../../components/Button';
-import NonRatedIssue from '../../components/NonRatedIssue'
-import ISSUE_CATEGORIES from '../../constants.js'
+import { NonRatedIssueUnconnected, AddIssueButtonUnconnected } from '../../components/NonRatedIssue'
 import _ from 'lodash';
 
-class NonRatedIssues extends React.PureComponent {
+class NonRatedIssuesUnconnected extends React.PureComponent {
   render() {
-    const { appeal } = this.props;
+    const { nonRatedIssues } = this.props;
 
-    const nonRatedIssuesSection = _.map(appeal.nonRatedIssues, (issue, issueId) => {
+    const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
         <NonRatedIssue key={issueId} issueId={issueId} />
       )
@@ -31,26 +30,23 @@ class NonRatedIssues extends React.PureComponent {
   }
 };
 
-const NonRatedIssuesConnected = connect(
+export default const NonRatedIssues = connect(
   ({ appeal }) => ({
-    appeal
+    nonRatedIssues: appeal.nonRatedIssues
   })
-)(NonRatedIssues);
+)(NonRatedIssuesUnconnected);
 
-export default NonRatedIssuesConnected;
+const NonRatedIssue = connect(
+  ({ appeal }) => ({
+    nonRatedIssues: appeal.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssueUnconnected);
 
-class AddIssueButtonUnconnected extends React.PureComponent {
-  render = () =>
-    <Button
-      name="add-issue"
-      onClick={this.props.addNonRatedIssue}
-      legacyStyling={false}
-    >
-    + Add issue
-    </Button>;
-}
-
-export const AddIssueButton = connect(
+const AddIssueButton = connect(
   ({ appeal }) => ({ nonRatedIssues: appeal.nonRatedIssues }),
   (dispatch) => bindActionCreators({
     addNonRatedIssue
