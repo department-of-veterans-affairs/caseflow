@@ -117,17 +117,12 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const addNonRatedIssue = () => ({
-  type: ACTIONS.ADD_NON_RATING_ISSUE
-});
-
-export const setNonRatedIssue = (nonRatedIssueId, issueCategory, issueDescription) => ({
-  type: ACTIONS.SET_NON_RATED_ISSUE,
+export const addNonRatedIssue = (nonRatedIssues) => ({
+  type: ACTIONS.ADD_NON_RATED_ISSUE,
   payload: {
-    nonRatedIssueId,
-    issueCategory,
-    issueDescription
-  }
+    nonRatedIssues
+  },
+  meta: { analytics }
 });
 
 export const setIssueCategory = (issueId, category) => ({

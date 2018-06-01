@@ -4,15 +4,16 @@ import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { setIssueCategory, setIssueDescription } from '../actions/common';
 import { ISSUE_CATEGORIES} from '../constants'
 
 class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
-    this.props.setIssueCategory(event.target.parentElement.key, event.target.value);
+    this.props.setIssueCategory(this.props.issueId, event.value);
   }
 
   handleDescriptionChange(event) {
-    this.props.setIssueDescription(event.target.parentElement.key, event.target.value);
+    this.props.setIssueDescription(this.props.issueId, event);
   }
 
   render () {
@@ -23,10 +24,12 @@ class NonRatedIssue extends React.PureComponent {
           label="Issue category"
           placeholder="Select or enter..."
           options={ISSUE_CATEGORIES}
+          value={this.props.appeal.nonRatedIssues[this.props.issueId] ? this.props.appeal.nonRatedIssues[this.props.issueId].issueCategory : null}
           onChange={event => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
+          value={this.props.appeal.nonRatedIssues[this.props.issueId] ? this.props.appeal.nonRatedIssues[this.props.issueId].issueDescription : null}
           onChange={event => this.handleDescriptionChange(event)} />
 
           <Button

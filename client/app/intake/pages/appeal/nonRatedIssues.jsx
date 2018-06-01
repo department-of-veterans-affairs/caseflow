@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addNonRatedIssue, setNonRatedIssue } from '../../actions/common';
+import { addNonRatedIssue } from '../../actions/common';
 import Button from '../../../components/Button';
 import NonRatedIssue from '../../components/NonRatedIssue'
 import ISSUE_CATEGORIES from '../../constants.js'
@@ -9,15 +9,6 @@ import _ from 'lodash';
 
 class NonRatedIssues extends React.PureComponent {
   render() {
-
-    const nonRatedIssuesSection = () => {
-      for (issueId in this.props.nonRatedIssues) {
-        return <NonRatedIssue
-        key={issueId}
-        />
-      }
-    }
-
     return <div className="cf-non-rated-issues">
       <h2>Enter other issue(s) for review</h2>
       <p>
@@ -25,7 +16,7 @@ class NonRatedIssues extends React.PureComponent {
       please note them below. Otherwise, leave the section blank.
       </p>
       <div>
-        { nonRatedIssuesSection }
+        <NonRatedIssue key="0" issueId="0" />
       </div>
       <AddIssueButton />
     </div>;
@@ -35,10 +26,7 @@ class NonRatedIssues extends React.PureComponent {
 const NonRatedIssuesConnected = connect(
   ({ appeal }) => ({
     appeal
-  }),
-  (dispatch) => bindActionCreators({
-    setNonRatedIssue
-  }, dispatch)
+  })
 )(NonRatedIssues);
 
 export default NonRatedIssuesConnected;
