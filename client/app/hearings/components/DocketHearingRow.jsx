@@ -119,6 +119,7 @@ export class DocketHearingRow extends React.PureComponent {
               name={`${hearing.id}-prep`}
               hideLabel
               {...preppedCheckboxStyling}
+              tabindex="1"
             />
           </span>
         </td>
@@ -134,6 +135,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-appellant">
           {appellantDisplay}
           <ViewableItemLink
+            tabindex="2"
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
             linkProps={{
@@ -160,6 +162,7 @@ export class DocketHearingRow extends React.PureComponent {
             onChange={this.setDisposition}
             value={hearing.disposition}
             searchable={false}
+            tabindex="3"
           />
           <SearchableDropdown
             label="Hold Open"
@@ -168,6 +171,7 @@ export class DocketHearingRow extends React.PureComponent {
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
             searchable={false}
+            tabindex="4"
           />
           <SearchableDropdown
             label="AOD"
@@ -176,6 +180,7 @@ export class DocketHearingRow extends React.PureComponent {
             onChange={this.setAod}
             value={hearing.aod}
             searchable={false}
+            tabindex="5"
           />
           <div className="transcriptRequested">
             <Checkbox
@@ -183,6 +188,7 @@ export class DocketHearingRow extends React.PureComponent {
               name={`${hearing.id}.transcript_requested`}
               value={hearing.transcript_requested}
               onChange={this.setTranscriptRequested}
+              tabindex="7"
             />
           </div>
         </td>
@@ -201,6 +207,7 @@ export class DocketHearingRow extends React.PureComponent {
                 name="Notes"
                 onChange={this.setNotes}
                 maxLength="100"
+                tabindex="6"
               />
             </div>
           </div>
