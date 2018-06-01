@@ -12,7 +12,7 @@ import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown'
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;

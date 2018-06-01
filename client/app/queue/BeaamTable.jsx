@@ -9,7 +9,7 @@ import CaseDetailsLink from './CaseDetailsLink';
 
 import { renderAppealType } from './utils';
 import { CATEGORIES, disabledLinkStyle } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class BeaamTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
