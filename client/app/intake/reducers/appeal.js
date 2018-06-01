@@ -32,6 +32,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     selectedRatingCount: {
       $set: state.selectedRatingCount
     },
+    nonRatedIssues: {
+      $set: state.nonRatedIssues
+    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     }
@@ -48,6 +51,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     isReviewed: false,
     isComplete: false,
     selectedRatingCount: 0,
+    nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -170,6 +174,24 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       selectedRatingCount: {
         $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      }
+    });
+  case ACTIONS.ADD_NON_RATING_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [Object.keys(nonRatedIssues).length]: {
+          issueCategory: '',
+          issueDescription: ''
+        }
+      }
+    });
+  case ACTIONS.SET_NON_RATING_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.nonRatedIssueId]: {
+          issueCategory: { $set: action.payload.issueCategory },
+          issueDescription: { $set: action.payload.issueDescription }
+        }
       }
     });
   default:

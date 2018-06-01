@@ -117,6 +117,45 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
+export const addNonRatedIssue = () => ({
+  type: ACTIONS.ADD_NON_RATING_ISSUE
+});
+
+export const setNonRatedIssue = (nonRatedIssueId, issueCategory, issueDescription) => ({
+  type: ACTIONS.SET_NON_RATED_ISSUE,
+  payload: {
+    nonRatedIssueId,
+    issueCategory,
+    issueDescription
+  }
+});
+
+export const setIssueCategory = (issueId, category) => ({
+  type: ACTIONS.SET_ISSUE_CATEGORY,
+  payload: {
+    issueId,
+    category
+  },
+  meta: {
+    analytics: {
+      label: category
+    }
+  }
+});
+
+export const setIssueDescription = (issueId, description) => ({
+  type: ACTIONS.SET_ISSUE_DESCRIPTION,
+  payload: {
+    issueId,
+    description
+  },
+  meta: {
+    analytics: {
+      label: description
+    }
+  }
+});
+
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
   meta: {

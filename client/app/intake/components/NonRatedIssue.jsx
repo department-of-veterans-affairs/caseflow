@@ -6,18 +6,28 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ISSUE_CATEGORIES} from '../constants'
 
-export default class NonRatedIssue extends React.PureComponent {
+class NonRatedIssue extends React.PureComponent {
+  handleCategoryChange(event) {
+    this.props.setIssueCategory(event.target.parentElement.key, event.target.value);
+  }
+
+  handleDescriptionChange(event) {
+    this.props.setIssueDescription(event.target.parentElement.key, event.target.value);
+  }
+
   render () {
     return (
-      <div className="cf-non-rated-issue">
+      <div className="cf-non-rated-issue" key={this.props.key}>
         <SearchableDropdown
           name="issue-category"
           label="Issue category"
           placeholder="Select or enter..."
-          options={ISSUE_CATEGORIES} />
+          options={ISSUE_CATEGORIES}
+          onChange={event => this.handleCategoryChange(event)} />
 
         <TextField
-          name="Issue description" />
+          name="Issue description"
+          onChange={event => this.handleDescriptionChange(event)} />
 
           <Button
             name="save-issue"
@@ -28,7 +38,19 @@ export default class NonRatedIssue extends React.PureComponent {
       </div>
     )
   }
-}
+};
+
+const NonRatedIssueConnected = connect(
+  ({ appeal }) => ({
+    appeal
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssue);
+
+export default NonRatedIssueConnected;
 
 // class NonRatedIssue extends React.PureComponent {
 //   setIssueCategoryFromDropdown = (issueCategory) => {
