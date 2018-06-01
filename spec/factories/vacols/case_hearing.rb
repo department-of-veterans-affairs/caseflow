@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :case_hearing, class: VACOLS::CaseHearing do
     sequence(:hearing_pkseq)
     hearing_type "V"
-    hearing_date { Date.today }
+    hearing_date { Time.zone.today }
 
     trait :disposition_held do
       hearing_disp "H"

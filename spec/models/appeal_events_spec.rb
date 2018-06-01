@@ -24,8 +24,8 @@ describe AppealEvents do
       let(:notification_date) { 4.days.ago }
 
       subject do
-        events.find do
-          |event| event.type == :claim_decision &&
+        events.find do |event|
+          event.type == :claim_decision &&
             event.date == AppealRepository.normalize_vacols_date(notification_date)
         end
       end
@@ -108,8 +108,8 @@ describe AppealEvents do
       let(:certification_date) { 2.days.ago }
 
       subject do
-        events.find do
-          |event| event.type == :certified && event.date == AppealRepository.normalize_vacols_date(certification_date)
+        events.find do |event|
+          event.type == :certified && event.date == AppealRepository.normalize_vacols_date(certification_date)
         end
       end
 
@@ -125,8 +125,8 @@ describe AppealEvents do
 
     context "remand return event" do
       subject do
-        events.find do
-          |event| event.type == :remand_return && event.date == AppealRepository.normalize_vacols_date(2.days.ago)
+        events.find do |event|
+          event.type == :remand_return && event.date == AppealRepository.normalize_vacols_date(2.days.ago)
         end
       end
 
@@ -162,7 +162,7 @@ describe AppealEvents do
         ]
       end
 
-      let!(:hearing_for_another_appeal) { create(:case_hearing, :disposition_no_show, hearing_date: 2.day.ago) }
+      let!(:hearing_for_another_appeal) { create(:case_hearing, :disposition_no_show, hearing_date: 2.days.ago) }
 
       let(:hearing_held_events) do
         events.select { |event| event.type == :hearing_held }
@@ -207,8 +207,8 @@ describe AppealEvents do
       let(:decision_date) { nil }
 
       subject do
-        events.find do
-          |event| event.type == :field_grant && event.date == AppealRepository.normalize_vacols_date(decision_date)
+        events.find do |event|
+          event.type == :field_grant && event.date == AppealRepository.normalize_vacols_date(decision_date)
         end
       end
 
@@ -228,8 +228,8 @@ describe AppealEvents do
 
     context "issue event" do
       subject do
-        events.select do
-          |event| event.type == :field_grant && event.date == AppealRepository.normalize_vacols_date(issue_close_date)
+        events.select do |event|
+          event.type == :field_grant && event.date == AppealRepository.normalize_vacols_date(issue_close_date)
         end.length
       end
 
@@ -254,7 +254,7 @@ describe AppealEvents do
         let(:issue_close_date) { Time.zone.now }
         let(:decision_date) { Time.zone.now }
         let(:vacols_case) { create(:case, :disposition_granted_by_aoj, bfddec: decision_date, case_issues: issues) }
-        
+
         it { is_expected.to eq(1) }
       end
     end
