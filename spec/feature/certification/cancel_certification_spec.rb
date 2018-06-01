@@ -16,7 +16,7 @@ RSpec.feature "Cancel certification" do
   end
 
   let(:vacols_case_mismatched) do
-    create(:case_with_ssoc, :has_regional_office, :has_mismatched_form_9)
+    create(:case_with_ssoc, :has_regional_office, bfd19: 2.months.ago )
   end
 
   context "As an authorized user" do

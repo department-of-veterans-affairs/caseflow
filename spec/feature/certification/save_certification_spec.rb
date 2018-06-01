@@ -21,7 +21,7 @@ RSpec.feature "Save Certification" do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc, :has_default_regional_office)
+    create(:case_with_ssoc, bfregoff: "DSUSER")
   end
 
   def uncertify_appeal
@@ -206,12 +206,6 @@ RSpec.feature "Save Certification" do
         expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
         expect(find_field("Name of certifying official").value).to eq "Lauren Roth"
 
-        within_fieldset("Title of certifying official") do
-          find("label", text: "Other").click
-        end
-
-        fill_in "Specify other title of certifying official", with: "President"
-        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         within_fieldset("Title of certifying official") do
           expect(find_field("Other", visible: false)).to be_checked
         end

@@ -173,14 +173,6 @@ FactoryBot.define do
       bfregoff "RO18"
     end
 
-    trait :has_default_regional_office do
-      bfregoff "DSUSER"
-    end
-
-    trait :has_mismatched_form_9 do
-      bfd19 { 2.months.ago }
-    end
-
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[vacols_case.bfcorlid] =
