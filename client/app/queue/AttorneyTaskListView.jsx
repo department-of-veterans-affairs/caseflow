@@ -20,7 +20,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import DeprecatedTask from './reducers';
+import type { DeprecatedTask } from './reducers';
 
 class AttorneyTaskListView extends React.PureComponent<{tasks: Object, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
   componentWillUnmount = () => {
@@ -33,7 +33,6 @@ class AttorneyTaskListView extends React.PureComponent<{tasks: Object, appeals: 
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    const t: DeprecatedTask = {};
     if (_.some(this.props.tasks, (task: DeprecatedTask) => !task.attributes.task_id)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
