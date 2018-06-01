@@ -1,11 +1,7 @@
 import { after, css, merge } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
 
-import AppealDocumentCount from './AppealDocumentCount';
-import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import ReaderLink from './ReaderLink';
 
 const headerStyling = css({
   float: 'left',
@@ -38,26 +34,10 @@ const horizontalRuleStyling = css({
 
 export default class CaseTitle extends React.PureComponent {
   render = () => <React.Fragment>
-    <h1 {...headerStyling}>{this.props.appeal.attributes.veteran_full_name}</h1>
+    <h1 {...headerStyling}>{this.props.heading}</h1>
     <ul className="usa-unstyled-list usa-nav-secondary-links" {...listStyling}>
-      <li>Veteran ID: <b>{this.props.appeal.attributes.vbms_id}</b></li>
-      <li>
-        <ReaderLink
-          vacolsId={this.props.vacolsId}
-          analyticsSource={CATEGORIES.QUEUE_TASK}
-          redirectUrl={window.location.pathname}
-          appeal={this.props.appeal}
-          taskType="Draft Decision"
-          message={
-            <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
-          } />
-      </li>
+      {this.props.children.map((child, i) => <li key={i}>{child}</li>)}
     </ul>
     <hr {...horizontalRuleStyling} />
   </React.Fragment>;
 }
-
-CaseTitle.propTypes = {
-  appeal: PropTypes.object,
-  vacolsId: PropTypes.string.isRequired
-};

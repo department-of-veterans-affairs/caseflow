@@ -8,9 +8,11 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import AppealDetail from './AppealDetail';
+import AppealDocumentCount from './AppealDocumentCount';
 import AppellantDetail from './AppellantDetail';
 import CaseTitle from './CaseTitle';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
+import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import { CATEGORIES } from './constants';
 import { DateString } from '../util/DateUtil';
@@ -90,7 +92,18 @@ class QueueDetailView extends React.PureComponent {
   }
 
   render = () => <AppSegment filledBackground>
-    <CaseTitle appeal={this.props.appeal} {...this.props} />
+    <CaseTitle heading={this.props.appeal.attributes.veteran_full_name}>
+      <React.Fragment>Veteran ID: <b>{this.props.appeal.attributes.vbms_id}</b></React.Fragment>
+      <ReaderLink
+        vacolsId={this.props.vacolsId}
+        analyticsSource={CATEGORIES.QUEUE_TASK}
+        redirectUrl={window.location.pathname}
+        appeal={this.props.appeal}
+        taskType="Draft Decision"
+        message={
+          <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
+        } />
+    </CaseTitle>
     <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
     {this.getCheckoutFlowDropdown()}
     <TabWindow
