@@ -181,6 +181,10 @@ class Issue
     }
   end
 
+  def remand_reasons
+    self.class.repository.load_remands_from_vacols(id, vacols_sequence_id)
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
