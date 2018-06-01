@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { toggleIssueDeleteModal, onDeleteIssue } from '../actions/Issue';
 import Modal from '../../components/Modal';
-import { TrashCan } from '../../components/RenderFunctions';
-import Button from '../../components/Button';
+import { trashCan } from '../../components/RenderFunctions';
 
 class HearingWorksheetIssueDelete extends PureComponent {
 
@@ -29,15 +28,16 @@ class HearingWorksheetIssueDelete extends PureComponent {
     } = this.props;
 
     return <div>
-      <Button
+      <button
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
-        classNames={['cf-issue-delete', 'cf-btn-link']}
+        className="cf-issue-delete"
         onClick={this.handleModalOpen(issue.id)}
         alt="Remove Issue Confirmation"
         name="Delete Issue"
-        aria-label="Delete Issue">
-        <TrashCan alt="Delete Issue" />
-      </Button>
+        aria-label="Delete Issue"
+        type="button">
+        {trashCan()}
+      </button>
       { issue.isShowingModal && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
