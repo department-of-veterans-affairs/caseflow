@@ -9,6 +9,14 @@ import _ from 'lodash';
 
 class NonRatedIssues extends React.PureComponent {
   render() {
+    const { appeal } = this.props;
+
+    const nonRatedIssuesSection = _.map(appeal.nonRatedIssues, (issue, issueId) => {
+      return (
+        <NonRatedIssue key={issueId} issueId={issueId} />
+      )
+    });
+
     return <div className="cf-non-rated-issues">
       <h2>Enter other issue(s) for review</h2>
       <p>
@@ -16,7 +24,7 @@ class NonRatedIssues extends React.PureComponent {
       please note them below. Otherwise, leave the section blank.
       </p>
       <div>
-        <NonRatedIssue key="0" issueId="0" />
+        { nonRatedIssuesSection }
       </div>
       <AddIssueButton />
     </div>;
