@@ -109,7 +109,7 @@ describe AppealEvents do
 
       subject do
         events.find do |event|
-          event.type == :certified && event.date == AppealRepository.normalize_vacols_date(certification_date)
+          event.type == :certified && event.date == certification_date.to_date
         end
       end
 
