@@ -4,7 +4,7 @@ import { sprintf } from 'sprintf-js';
 
 import Alert from '../components/Alert';
 import { SEARCH_ERROR_FOR } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class CaseSearchErrorMessage extends React.PureComponent {
   render() {
