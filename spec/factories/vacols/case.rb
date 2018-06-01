@@ -30,7 +30,7 @@ FactoryBot.define do
     end
 
     transient do
-      documents []  
+      documents []
       nod_document []
       soc_document []
       form9_document []
@@ -56,7 +56,7 @@ FactoryBot.define do
           factory :case_with_form_9 do
             bfd19 { 3.months.ago }
             transient do
-              form9_document { [create(:document, type: "Form 9", received_at: 3.months.ago)] } 
+              form9_document { [create(:document, type: "Form 9", received_at: 3.months.ago)] }
             end
 
             factory :case_with_ssoc do

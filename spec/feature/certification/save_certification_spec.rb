@@ -5,7 +5,7 @@ RSpec.feature "Save Certification" do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
     FeatureToggle.enable!(:test_facols)
-    PowerOfAttorney.repository = FeatureToggle.enabled?(:test_facols) ? PowerOfAttorneyRepository : Fakes::PowerOfAttorneyRepository 
+    PowerOfAttorney.repository = PowerOfAttorneyRepository if FeatureToggle.enabled?(:test_facols)
   end
 
   after do
@@ -24,7 +24,7 @@ RSpec.feature "Save Certification" do
     create(:case_with_ssoc, :has_default_regional_office)
   end
 
-  def uncertify_appeal 
+  def uncertify_appeal
     vacols_case.reload
     vacols_case.update!(bf41stat: nil)
   end
@@ -166,7 +166,6 @@ RSpec.feature "Save Certification" do
         expect(representative.repfirst).to be_eql("Clarence")
         expect(representative.repmi).to be_nil
         expect(representative.replast).to be_eql("Darrow")
-      
 
         # path 2 - select 'no' first question and select informal form 9
 
@@ -203,7 +202,6 @@ RSpec.feature "Save Certification" do
 
         uncertify_appeal
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
-        binding.pry
         expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
         expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
         expect(find_field("Name of certifying official").value).to eq "Lauren Roth"

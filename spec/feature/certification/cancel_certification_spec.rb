@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Cancel certification" do
-
-
   let!(:current_user) { User.authenticate! }
 
   let(:appeal) do
