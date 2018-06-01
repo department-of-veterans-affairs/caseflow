@@ -18,7 +18,8 @@
     "build:production": "NODE_ENV=production yarn run build",
     "dev:clear-build": "rm ../app/assets/webpack/* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
+    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js",
+    "type-check": "flow check"
   },
   "cacheDirectories": [
     "node_modules",

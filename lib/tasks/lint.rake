@@ -15,6 +15,9 @@ task :lint do
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
   eslint_result = ShellCommand.run("cd ./client && yarn run #{eslint_cmd}")
 
+  puts "\nrunning Flow..."
+  eslint_result = ShellCommand.run("cd ./client && yarn run flow check")
+
   puts "\n"
   if scss_result && rubocop_result && eslint_result
     puts Rainbow("Passed. Everything looks stylish! " \
