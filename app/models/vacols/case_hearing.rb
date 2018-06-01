@@ -127,7 +127,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
