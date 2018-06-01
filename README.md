@@ -146,6 +146,19 @@ RAILS_ENV=development rake local:vacols:seed
 
 Note you'll need to setup both the test and development databases, but only need to seed the development database.
 
+## Debugging FACOLS setup
+Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
+
+1) Running `rake local:vacols:setup` logs out:
+```
+[36mVACOLS_DB-development     |[0m tail: cannot open '/u01/app/oracle/diag/rdbms/bvap/BVAP/trace/alert_BVAP.log' for reading: No such file or directory
+[36mVACOLS_DB-development     |[0m tail: no files remaining
+[36mVACOLS_DB-development exited with code 1
+```
+Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
+
+2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
+
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
