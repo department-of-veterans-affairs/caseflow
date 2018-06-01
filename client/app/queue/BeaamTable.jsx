@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,9 +10,8 @@ import CaseDetailsLink from './CaseDetailsLink';
 import { renderAppealType } from './utils';
 import { CATEGORIES, disabledLinkStyle } from './constants';
 import COPY from '../../COPY.json';
-import DeprecatedTasks from './reducers';
 
-class BeaamTable extends React.PureComponent<{tasks: DeprecatedTasks, appeals: Object, featureToggles: Object}> {
+class BeaamTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getCaseDetailsLink = (appeal) =>
@@ -57,11 +55,10 @@ class BeaamTable extends React.PureComponent<{tasks: DeprecatedTasks, appeals: O
 }
 
 BeaamTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);
