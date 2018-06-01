@@ -12,9 +12,9 @@ import AppealDocumentCount from './AppealDocumentCount';
 import AppellantDetail from './AppellantDetail';
 import CaseTitle from './CaseTitle';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
-import ReaderLink from './ReaderLink';
 import TabWindow from '../components/TabWindow';
 import { CATEGORIES } from './constants';
+import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
