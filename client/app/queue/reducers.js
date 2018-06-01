@@ -13,7 +13,9 @@ import uiReducer from './uiReducer/uiReducer';
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
-export type DeprecatedTask = number;
+export type DeprecatedTask = {
+  id: string
+};
 
 export const initialState = {
   judges: {},

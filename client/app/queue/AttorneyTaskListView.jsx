@@ -22,7 +22,7 @@ import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 import type { DeprecatedTask } from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent<{tasks: Object, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
+class AttorneyTaskListView extends React.PureComponent<{tasks: {[string]: DeprecatedTask}, appeals: Object, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
