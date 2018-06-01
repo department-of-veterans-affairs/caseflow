@@ -22,7 +22,17 @@ import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent<{loadedQueueTasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, tasks: Tasks, messages: Object, showErrorMessage: Function, resetSaveState: Function, resetSuccessMessages: Function, resetErrorMessages: Function, clearCaseSelectSearch: Function}> {
+class AttorneyTaskListView extends React.PureComponent<{
+  loadedQueueTasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  messages: Object,
+  showErrorMessage: Function,
+  resetSaveState: Function,
+  resetSuccessMessages: Function,
+  resetErrorMessages: Function,
+  clearCaseSelectSearch: Function
+}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
