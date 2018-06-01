@@ -23,7 +23,8 @@ export type Task = {
   id: string,
   vacolsId: string,
   attributes: {
-    task_id: string
+    task_id: string,
+    task_type: string
   }
 };
 

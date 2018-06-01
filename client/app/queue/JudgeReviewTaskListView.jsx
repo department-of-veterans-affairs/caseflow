@@ -21,17 +21,18 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { LoadedQueueTasks, LoadedQueueAppeals, QueueState } from './reducers';
+import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals, QueueState } from './reducers';
 
 class JudgeReviewTaskListView extends React.PureComponent<{
   loadedQueueTasks: LoadedQueueTasks,
+  tasks: Tasks,
   appeals: LoadedQueueAppeals,
   messages: Object,
-  showErrorMessage: Function,
   resetSaveState: Function,
   resetSuccessMessages: Function,
   resetErrorMessages: Function,
-  clearCaseSelectSearch: Function
+  clearCaseSelectSearch: Function,
+  userId: string
 }> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
@@ -48,9 +49,10 @@ class JudgeReviewTaskListView extends React.PureComponent<{
     const {
       loadedQueueTasks,
       userId,
-      messages
+      messages,
+      tasks
     } = this.props;
-    const reviewableCount = _.filter(loadedQueueTasks, (task) => task.attributes.task_type === 'Review').length;
+    const reviewableCount = _.filter(loadedQueueTasks, (task) => tasks[task.id].attributes.task_type === 'Review').length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -82,6 +84,7 @@ JudgeReviewTaskListView.propTypes = {
 
 const mapStateToProps = (state: {queue: QueueState, ui: Object}) => ({
   ..._.pick(state.queue.loadedQueue, 'appeals'),
+  ..._.pick(state.queue, 'tasks'),
   ..._.pick(state.ui, 'messages'),
   loadedQueueTasks: state.queue.loadedQueue.tasks
 });
