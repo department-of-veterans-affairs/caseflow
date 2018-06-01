@@ -1,5 +1,6 @@
 version: 2
 jobs:
+  resource_class: xlarge
   build:
     docker:
       # The first image listed is the image that all steps run inside of.
@@ -39,27 +40,25 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ arch }}-{{ .Branch }}
-            - gem-cache
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             
       - run: bundle install --path vendor/bundle
       
       - save_cache:
-          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
