@@ -97,12 +97,6 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
-  ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
-  }))
-);
-
 export const REMAND_REASONS = Object.assign({},
   ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
     [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
@@ -117,10 +111,5 @@ const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
-  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
-));
-
-export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
-  parameterizedDispositions,
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));

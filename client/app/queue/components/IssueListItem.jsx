@@ -8,10 +8,7 @@ import {
   getIssueTypeDescription,
   getIssueDiagnosticCodeLabel
 } from '../utils';
-import {
-  boldText,
-  CASE_DISPOSITION_ID_BY_DESCRIPTION
-} from '../constants';
+import { boldText } from '../constants';
 import ISSUE_INFO from '../../../../constants/ISSUE_INFO.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
