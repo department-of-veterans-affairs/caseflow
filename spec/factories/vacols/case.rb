@@ -196,6 +196,16 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      staff nil
+    end
+
+    after(:build) do |vacols_case, evaluator|
+      if evaluator.staff
+        vacols_case.bfcurloc = evaluator.staff.slogid
+      end
+    end
+
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[vacols_case.bfcorlid] =
