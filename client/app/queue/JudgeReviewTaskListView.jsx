@@ -21,7 +21,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals, QueueState } from './reducers';
+import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
 class JudgeReviewTaskListView extends React.PureComponent<{
   loadedQueueTasks: LoadedQueueTasks,
@@ -82,7 +82,7 @@ JudgeReviewTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state: {queue: QueueState, ui: Object}) => ({
+const mapStateToProps = (state) => ({
   ..._.pick(state.queue.loadedQueue, 'appeals'),
   ..._.pick(state.queue, 'tasks'),
   ..._.pick(state.ui, 'messages'),
