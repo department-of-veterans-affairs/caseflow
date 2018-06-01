@@ -10,7 +10,7 @@ import CaseDetailsLink from './CaseDetailsLink';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
 
 import { sortTasks, renderAppealType } from './utils';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class JudgeReviewTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
