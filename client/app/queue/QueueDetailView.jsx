@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +10,7 @@ import AppealDetail from './AppealDetail';
 import AppealDocumentCount from './AppealDocumentCount';
 import AppellantDetail from './AppellantDetail';
 import CaseTitle from './CaseTitle';
+import CaseSnapshot from './CaseSnapshot';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import TabWindow from '../components/TabWindow';
 import { CATEGORIES } from './constants';
@@ -19,8 +19,6 @@ import { DateString } from '../util/DateUtil';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
-
-const subHeadStyling = css({ marginBottom: '2rem' });
 
 class QueueDetailView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -47,7 +45,7 @@ class QueueDetailView extends React.PureComponent {
 
   subHead = () => {
     const appeal = this.props.appeal.attributes;
-    const basicSubHeading = `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
+    const basicSubHeading = `Assigned to ${appeal.location_code}`;
 
     if (this.props.task) {
       const task = this.props.task.attributes;
@@ -104,8 +102,7 @@ class QueueDetailView extends React.PureComponent {
           <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
         } />
     </CaseTitle>
-    <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
-    {this.getCheckoutFlowDropdown()}
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} userRole={this.props.userRole} />
     <TabWindow
       name="queue-tabwindow"
       tabs={this.tabs()} />

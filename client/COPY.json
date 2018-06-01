@@ -23,6 +23,8 @@
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Reader Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
 
+  "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
+
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Tasks not found",
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
