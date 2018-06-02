@@ -66,7 +66,7 @@ export const completeIntake = (intakeId, appeal) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = {
+  const ratingData = {
     request_issues:
       _(appeal.ratings).
         map((rating) => {
@@ -77,6 +77,22 @@ export const completeIntake = (intakeId, appeal) => (dispatch) => {
         flatten().
         filter('isSelected')
   };
+
+  const nonRatingData = {
+    request_issues:
+      _.map(appeal.nonRatedIssues, (issue, issueId) => {
+        return {
+          reference_id: 1,
+          profile_date: "2018-05-28",
+          decision_text: issue.issueDescription,
+          issue_category: issue.issueCategory
+        }
+      })
+  }
+
+  const data = {
+    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
+  }
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(

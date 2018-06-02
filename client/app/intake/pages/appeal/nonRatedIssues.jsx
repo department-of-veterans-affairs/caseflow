@@ -30,11 +30,13 @@ class NonRatedIssuesUnconnected extends React.PureComponent {
   }
 };
 
-export default const NonRatedIssues = connect(
+const NonRatedIssues = connect(
   ({ appeal }) => ({
     nonRatedIssues: appeal.nonRatedIssues
   })
 )(NonRatedIssuesUnconnected);
+
+export default NonRatedIssues;
 
 const NonRatedIssue = connect(
   ({ appeal }) => ({
