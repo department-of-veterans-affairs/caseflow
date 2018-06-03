@@ -256,19 +256,19 @@
     }
   }
 
+  .transcriptCell {
+    background-color: $color-gray-lightest;
+  }
+
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: 1.5em .32em;
+    padding: .4em;
     width: 100%;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
       margin-top: 0;
-    }
-
-    .cf-form-checkbox {
-      margin-top: 32px;
     }
   }
 }
