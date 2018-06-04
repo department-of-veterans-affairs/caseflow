@@ -63,11 +63,11 @@ module QueueMapper
       end
 
       if k == :complexity
-        decass_attrs[k] = COMPLEXITY.key(decass_attrs[:complexity])
+        decass_attrs[k] = COMPLEXITY.key(decass_attrs[:complexity].to_sym)
       end
 
       if k == :quality
-        decass_attrs[k] = QUALITY.key(decass_attrs[:quality])
+        decass_attrs[k] = QUALITY.key(decass_attrs[:quality].to_sym)
       end
 
       result[COLUMN_NAMES[k]] = decass_attrs[k]
@@ -80,7 +80,7 @@ module QueueMapper
 
   def self.rename_deficiencies(deficiencies)
     (deficiencies || []).each_with_object({}) do |d, result|
-      result[DEFICIENCIES[d]] = "Y"
+      result[DEFICIENCIES[d.to_sym]] = "Y"
       result
     end
   end

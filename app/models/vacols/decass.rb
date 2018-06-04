@@ -9,6 +9,16 @@ class VACOLS::Decass < VACOLS::Record
 
   has_one :case, foreign_key: :bfkey
 
+  delegate :update_vacols_location!, to: :case
+
+  def omo_request?
+    ["IME", "VHA", "OTI", "OTV"].include? deprod
+  end
+
+  def draft_decision?
+    ["DEC", "OTD"].include? deprod
+  end
+
   def update(*)
     update_error_message
   end

@@ -94,19 +94,21 @@ class QueueRepository
     update_decass_record(decass_record, decass_attrs)
 
     # update location with the judge's slogid
-    VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
+    decass_record.update_vacols_location!(judge_vacols_user_id)
     true
   end
 
-  def self.sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, type:, decass_attrs:)
-    vacols_case = VACOLS::Case.find(vacols_id)
-    decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-    if type == :draft_decision
-      vacols_case.update_vacols_location!(LOCATION_CODES[:bva_dispatch])
-      update_decass_record(decass_record, decass_attrs)
-    else
-      # Validate by checking that the work product is OMO (overtime or not)
-      vacols_case.update_vacols_location!(LOCATION_CODES[:omo_office])
+  def self.sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
+    transaction do
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      case location
+      when :bva_dispatch
+        fail Caseflow::Error::QueueRepositoryError, "The work product is not decision" unless decass_record.draft_decision?
+        update_decass_record(decass_record, decass_attrs)
+      when :omo_office
+        fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
+      end
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
   end
 
