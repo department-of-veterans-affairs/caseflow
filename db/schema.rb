@@ -469,7 +469,7 @@ ActiveRecord::Schema.define(version: 20180601173719) do
     t.string "rating_issue_reference_id"
     t.date "rating_issue_profile_date"
     t.string "contention_reference_id"
-    t.string "description", null: false
+    t.string "description"
     t.string "issue_category"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end

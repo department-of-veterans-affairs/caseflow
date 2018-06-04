@@ -1,6 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatDateStringForApi } from '../../util/DateUtil';
+import { formatRatingData } from '../util';
 import _ from 'lodash';
 
 const analytics = true;
@@ -79,31 +80,7 @@ export const completeIntake = (intakeId, higherLevelReview) => (dispatch) => {
     meta: { analytics }
   });
 
-  const ratingData = {
-    request_issues:
-      _(higherLevelReview.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
-
-  const nonRatingData = {
-    request_issues:
-      _.map(higherLevelReview.nonRatedIssues, (issue) => {
-        return {
-          decision_text: issue.issueDescription,
-          issue_category: issue.issueCategory
-        };
-      })
-  };
-
-  const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
-  };
+  const data = formatRatingData(higherLevelReview);
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(

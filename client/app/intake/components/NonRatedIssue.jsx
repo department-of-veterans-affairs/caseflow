@@ -28,16 +28,8 @@ export class NonRatedIssueUnconnected extends React.PureComponent {
 
         <TextField
           name="Issue description"
-          required
           value={nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueDescription : null}
           onChange={(event) => this.handleDescriptionChange(event)} />
-
-        <Button
-          name="save-issue"
-          legacyStyling={false}
-        >
-            Save
-        </Button>
       </div>
     );
   }

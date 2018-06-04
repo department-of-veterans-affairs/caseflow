@@ -34,3 +34,35 @@ export const formatRatings = (ratings) => {
     );
   }), 'profile_date');
 };
+
+export const formatRatingData = (intakeState) => {
+  const ratingData = {
+    request_issues:
+      _(intakeState.ratings).
+        map((rating) => {
+          return _.map(rating.issues, (issue) => {
+            return _.merge(issue, { profile_date: rating.profile_date });
+          });
+        }).
+        flatten().
+        filter('isSelected')
+  };
+
+  const nonRatingData = {
+    request_issues:
+      _.map(intakeState.nonRatedIssues, (issue) => {
+        if (issue.issueCategory) {
+          return {
+            decision_text: issue.issueDescription,
+            issue_category: issue.issueCategory
+          };
+        }
+      })
+  };
+
+  const data = {
+    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
+  };
+
+  return data;
+};
