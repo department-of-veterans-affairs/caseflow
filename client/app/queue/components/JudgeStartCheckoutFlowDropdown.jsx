@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../COPY.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 

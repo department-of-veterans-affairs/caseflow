@@ -1,4 +1,5 @@
 class VACOLS::RemandReason < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.rmdrea"
 
   CODES = Constants::ACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys).concat(
@@ -11,4 +12,5 @@ class VACOLS::RemandReason < VACOLS::Record
   def self.create_remand_reasons!(rmdkey, rmdissseq, remand_reasons)
     (remand_reasons || []).each { |remand_reason| create!(remand_reason.merge(rmdkey: rmdkey, rmdissseq: rmdissseq)) }
   end
+  # :nocov:
 end

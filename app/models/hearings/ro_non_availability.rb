@@ -1,0 +1,2 @@
+class RoNonAvailability < NonAvailability
+end
