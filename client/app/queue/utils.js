@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
@@ -8,6 +9,7 @@ import {
 } from './constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import type {Task} from './reducers';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -40,7 +42,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks = {}, appeals = {} }) => {
+export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: {[string]: Task}, appeals: {[string]: Object}}) => {
   const partitionedTasks = _.partition(tasks, (task) =>
     appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
   );

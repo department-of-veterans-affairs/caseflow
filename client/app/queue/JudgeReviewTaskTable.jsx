@@ -79,12 +79,11 @@ class JudgeReviewTaskTable extends React.PureComponent<{
   });
 
   render = () => {
+    const {tasks, appeals} = this.props;
     return <Table
       columns={this.getQueueColumns}
       rowObjects={
-        sortTasks(
-          _.pick(this.props, 'tasks', 'appeals')
-        ).filter((task) => task.attributes.task_type === 'Review')
+        sortTasks({tasks, appeals}).filter((task) => task.attributes.task_type === 'Review')
       }
       getKeyForRow={this.getKeyForRow}
       bodyStyling={this.tableStyle}
@@ -110,7 +109,7 @@ const mapStateToProps = (state: State): {
       }
     },
     ui: {
-      featureToggle
+      featureToggles
     }
   } = state;
 
