@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,8 +12,13 @@ import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowD
 
 import { sortTasks, renderAppealType } from './utils';
 import COPY from '../../COPY.json';
+import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
-class JudgeReviewTaskTable extends React.PureComponent {
+class JudgeReviewTaskTable extends React.PureComponent<{
+  tasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  featureToggles: Object
+}> {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getAppealForTask = (task, attr) => {

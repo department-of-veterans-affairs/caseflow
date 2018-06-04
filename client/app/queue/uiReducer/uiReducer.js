@@ -1,3 +1,4 @@
+// @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
@@ -5,6 +6,25 @@ import _ from 'lodash';
 const initialSaveState = {
   savePending: false,
   saveSuccessful: null
+};
+
+export type UiState = {
+  selectingJudge: boolean,
+  breadcrumbs: Array<Object>,
+  highlightFormItems: boolean,
+  messages: {
+    success: ?string,
+    error: ?string
+  },
+  saveState: {
+    savePending: boolean,
+    saveSuccessful: ?boolean
+  },
+  modal: {
+    cancelCheckout: boolean,
+    deleteIssue: boolean
+  },
+  featureToggles: Object
 };
 
 export const initialState = {
@@ -50,7 +70,7 @@ const setModalState = (state, visibility, modalType) => update(state, {
 const showModal = (state, modalType) => setModalState(state, true, modalType);
 const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
-const workQueueUiReducer = (state = initialState, action = {}) => {
+const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) => {
   switch (action.type) {
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {

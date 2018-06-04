@@ -9,6 +9,7 @@ import { ACTIONS } from './constants';
 import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
+import type { UiState } from './uiReducer/uiReducer';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -332,6 +333,14 @@ const workQueueReducer = (state = initialState, action = {}) => {
   default:
     return state;
   }
+};
+
+export type State = {
+  caseDetail: Object,
+  caseList: Object,
+  caseSelect: Object,
+  queue: QueueState,
+  ui: UiState
 };
 
 const rootReducer = combineReducers({
