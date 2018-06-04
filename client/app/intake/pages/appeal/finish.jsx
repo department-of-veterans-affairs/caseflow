@@ -16,7 +16,10 @@ class Finish extends React.PureComponent {
   render() {
     const {
       appeal,
-      veteranName
+      veteranName,
+      requestState,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (appeal) {
