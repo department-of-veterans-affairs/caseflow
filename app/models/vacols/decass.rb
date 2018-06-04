@@ -12,11 +12,11 @@ class VACOLS::Decass < VACOLS::Record
   delegate :update_vacols_location!, to: :case
 
   def omo_request?
-    ["IME", "VHA", "OTI", "OTV"].include? deprod
+    %w[IME VHA OTI OTV].include? deprod
   end
 
   def draft_decision?
-    ["DEC", "OTD"].include? deprod
+    %w[DEC OTD].include? deprod
   end
 
   def update(*)
