@@ -20,7 +20,7 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { getUndecidedIssues } from './utils';
-import { fullWidth, PAGE_TITLES } from './constants';
+import { fullWidth, PAGE_TITLES, USER_ROLES } from './constants';
 
 const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
 const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
@@ -64,7 +64,7 @@ class SelectDispositionsView extends React.PureComponent {
 
     if (_.map(issues, 'disposition').includes('remanded')) {
       nextStep = 'remands';
-    } else if (userRole === 'Judge') {
+    } else if (userRole === USER_ROLES.JUDGE) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';

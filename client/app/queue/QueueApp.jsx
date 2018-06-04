@@ -31,7 +31,7 @@ import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { DECISION_TYPES, PAGE_TITLES } from './constants';
+import { DECISION_TYPES, PAGE_TITLES, USER_ROLES } from './constants';
 
 const appStyling = css({ paddingTop: '3rem' });
 
@@ -48,7 +48,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    {this.props.userRole === 'Attorney' ?
+    {this.props.userRole === USER_ROLES.ATTORNEY ?
       <AttorneyTaskListView {...this.props} /> :
       <JudgeReviewTaskListView {...this.props} />
     }
@@ -88,7 +88,7 @@ class QueueApp extends React.PureComponent {
 
   routedEvaluateDecision = () => <div>Evaluate Decision view</div>;
 
-  queueName = () => this.props.userRole === 'Attorney' ? 'Your Queue' : 'Review Cases';
+  queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
   render = () => <BrowserRouter>
     <NavigationBar

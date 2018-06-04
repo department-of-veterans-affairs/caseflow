@@ -10,7 +10,8 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import {
   fullWidth,
   ISSUE_DISPOSITIONS,
-  PAGE_TITLES
+  PAGE_TITLES,
+  USER_ROLES
 } from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -36,7 +37,7 @@ class SelectRemandReasonsView extends React.Component {
     const { appealId, userRole } = this.props;
     const baseUrl = `/queue/appeals/${appealId}`;
 
-    return `${baseUrl}/${userRole === 'Judge' ? 'evaluate' : 'submit'}`;
+    return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
   }
 
   goToNextStep = () => {

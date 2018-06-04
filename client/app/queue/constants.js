@@ -125,6 +125,11 @@ export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
+export const USER_ROLES = {
+  ATTORNEY: 'Attorney',
+  JUDGE: 'Judge'
+};
+
 export const PAGE_TITLES = {
   DISPOSITIONS: {
     JUDGE: 'Review Dispositions',
