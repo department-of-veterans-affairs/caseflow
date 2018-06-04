@@ -36,9 +36,9 @@ class Reader::AppealController < Reader::ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get appeal information for #{vacols_id}",
                               name: "Reader::AppealController.show") do
-          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+          appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(vacols_id)
           render json: {
-            appeal: appeal.to_hash(issues: appeal.issues)
+            appeal: json_appeal(appeal)
           }
         end
       end
@@ -46,6 +46,13 @@ class Reader::AppealController < Reader::ApplicationController
   end
 
   private
+
+  def json_appeal(appeal)
+    ActiveModelSerializers::SerializableResource.new(
+      appeal,
+      serializer: appeal.serializer
+    ).as_json
+  end
 
   def veteran_id
     request.headers["HTTP_VETERAN_ID"]
