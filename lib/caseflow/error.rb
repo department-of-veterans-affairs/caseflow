@@ -3,17 +3,12 @@ module Caseflow::Error
     attr_accessor :code, :message
 
     def initialize(args)
-      if args.is_a?(Hash)
-        @code = args[:code]
-        @message = args[:message]
-      else
-        @code = args
-        @message = args
-      end
+      @code = args[:code]
+      @message = args[:message]
     end
 
     def serialize_response
-      { json: { "errors": ["status": @code, "title": @message, "detail": @message] }, status: @code }
+      { json: { "errors": ["status": code, "title": message, "detail": message] }, status: code }
     end
   end
 
