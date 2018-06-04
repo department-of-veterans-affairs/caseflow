@@ -20,7 +20,8 @@ export const initialState = {
     cancelCheckout: false,
     deleteIssue: false
   },
-  featureToggles: {}
+  featureToggles: {},
+  userRole: ''
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -134,6 +135,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       featureToggles: {
         $set: action.payload.featureToggles
       }
+    });
+  case ACTIONS.SET_USER_ROLE:
+    return update(state, {
+      userRole: { $set: action.payload.userRole }
     });
   default:
     return state;
