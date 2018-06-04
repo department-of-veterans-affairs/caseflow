@@ -447,8 +447,8 @@ ActiveRecord::Schema.define(version: 20180530210916) do
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type", null: false
     t.bigint "review_request_id", null: false
-    t.string "rating_issue_reference_id", null: false
-    t.date "rating_issue_profile_date", null: false
+    t.string "rating_issue_reference_id"
+    t.date "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description", null: false
     t.string "issue_category"

@@ -82,8 +82,8 @@ export const completeIntake = (intakeId, appeal) => (dispatch) => {
     request_issues:
       _.map(appeal.nonRatedIssues, (issue, issueId) => {
         return {
-          reference_id: 1,
-          profile_date: "2018-05-28",
+          reference_id: null,
+          profile_date: null,
           decision_text: issue.issueDescription,
           issue_category: issue.issueCategory
         }
