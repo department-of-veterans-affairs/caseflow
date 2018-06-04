@@ -21,12 +21,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
     },
-    selectedRatingCount: {
-      $set: state.selectedRatingCount
-    },
-    nonRatedIssues: {
-      $set: state.nonRatedIssues
-    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },

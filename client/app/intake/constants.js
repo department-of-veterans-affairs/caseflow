@@ -137,39 +137,30 @@ export const CANCELLATION_REASONS = {
   }
 };
 
-export const ISSUE_CATEGORIES = [{ value: 'Unknown issue category',
-  label: 'Unknown issue category' },
-{ value: 'Apportionment',
-  label: 'Apportionment' },
-{ value: 'Incarceration Adjustments',
-  label: 'Incarceration Adjustments' },
-{ value: 'Audit Error Worksheet (DFAS)',
-  label: 'Audit Error Worksheet (DFAS)' },
-{ value: 'Active Duty Adjustments',
-  label: 'Active Duty Adjustments' },
-{ value: 'Drill Pay Adjustments',
-  label: 'Drill Pay Adjustments' },
-{ value: 'Character of discharge determinations',
-  label: 'Character of discharge determinations' },
-{ value: 'Income/net worth (pension)',
-  label: 'Income/net worth (pension)' },
-{ value: 'Dependent child - Adopted',
-  label: 'Dependent child - Adopted' },
-{ value: 'Dependent child - Stepchild',
-  label: 'Dependent child - Stepchild' },
-{ value: 'Dependent child - Biological',
-  label: 'Dependent child - Biological' },
-{ value: 'Dependency Spouse - Common law marriage',
-  label: 'Dependency Spouse - Common law marriage' },
-{ value: 'Dependency Spouse - Inference of marriage',
-  label: 'Dependency Spouse - Inference of marriage' },
-{ value: 'Dependency Spouse - Deemed valid marriage',
-  label: 'Dependency Spouse - Deemed valid marriage' },
-{ value: 'Military Retired Pay',
-  label: 'Military Retired Pay' },
-{ value: 'Contested Claims (other than apportionment)',
-  label: 'Contested Claims (other than apportionment)' },
-{ value: 'Lack of Qualifying Service',
-  label: 'Lack of Qualifying Service' },
-{ value: 'Other non-rated',
-  label: 'Other non-rated' }];
+const issueCategoriesArray = [
+  'Unknown issue category',
+  'Apportionment',
+  'Incarceration Adjustments',
+  'Audit Error Worksheet (DFAS)',
+  'Active Duty Adjustments',
+  'Drill Pay Adjustments',
+  'Character of discharge determinations',
+  'Income/net worth (pension)',
+  'Dependent child - Adopted',
+  'Dependent child - Stepchild',
+  'Dependent child - Biological',
+  'Dependency Spouse - Common law marriage',
+  'Dependency Spouse - Inference of marriage',
+  'Dependency Spouse - Deemed valid marriage',
+  'Military Retired Pay',
+  'Contested Claims (other than apportionment)',
+  'Lack of Qualifying Service',
+  'Other non-rated'
+];
+
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  }
+});
