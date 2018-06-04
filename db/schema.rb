@@ -10,11 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180531181503) do
+ActiveRecord::Schema.define(version: 20180601173719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "allocations", force: :cascade do |t|
+    t.bigint "schedule_period_id", null: false
+    t.string "regional_office", null: false
+    t.float "allocated_days", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
+  end
 
   create_table "annotations", id: :serial, force: :cascade do |t|
     t.integer "document_id", null: false
