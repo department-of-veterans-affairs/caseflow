@@ -32,6 +32,28 @@ export type Tasks = { [string]: Task };
 
 export type LoadedQueueAppeals = { [string]: Object };
 
+export type QueueState = {
+  judges: Object,
+  tasks: Tasks,
+  loadedQueue: {
+    appeals: LoadedQueueAppeals,
+    tasks: LoadedQueueTasks,
+    loadedUserId: string
+  },
+  editingIssue: Object,
+  docCountForAppeal: {[string]: Object},
+  stagedChanges: {
+    appeals: {[string]: Object},
+    taskDecision: {
+      type: '',
+      opts: {}
+    }
+  },
+  attorneysOfJudge: [],
+  tasksAndAppealsOfAttorney: {[string]: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals}},
+  isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
+};
+
 export const initialState = {
   judges: {},
   tasks: {},
