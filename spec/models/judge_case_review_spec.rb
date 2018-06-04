@@ -12,13 +12,12 @@ describe JudgeCaseReview do
         allow(QueueRepository).to receive(:sign_decision_or_create_omo!).with(
           vacols_id: "123456",
           created_in_vacols_date: "2013-12-06".to_date,
-          location: "bva_dispatch",
+          location: :bva_dispatch,
           decass_attrs: {
             complexity: "hard",
             quality: "does_not_meet_expectations",
             comment: "do this",
             modifying_user: "CFS456",
-            note: "something",
             deficiencies: %w[theory_contention relevant_records process_violations]
           }
         ).and_return(true)
@@ -40,7 +39,7 @@ describe JudgeCaseReview do
 
       it "should create Judge Case Review" do
         expect(subject.valid?).to eq true
-        expect(subject.location).to eq :bva_dispatch
+        expect(subject.location).to eq "bva_dispatch"
         expect(subject.complexity).to eq "hard"
         expect(subject.quality).to eq "does_not_meet_expectations"
         expect(subject.comment).to eq "do this"
