@@ -358,7 +358,7 @@ ActiveRecord::Schema.define(version: 20180531181503) do
     t.string "task_id"
     t.string "complexity"
     t.string "quality"
-    t.string "title"
+    t.string "location"
     t.text "comment"
     t.text "factors_not_considered", default: [], array: true
     t.text "areas_for_improvement", default: [], array: true

@@ -6,7 +6,7 @@ class CreateJudgeCaseReviews < ActiveRecord::Migration[5.1]
       t.string "task_id"
       t.string  "complexity"
       t.string "quality"
-      t.string "title"
+      t.string "location"
       t.text "comment"
       t.text "factors_not_considered", array: true, default: []
       t.text "areas_for_improvement", array: true, default: []

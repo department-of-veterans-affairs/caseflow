@@ -4,7 +4,7 @@ class JudgeCaseReview < ApplicationRecord
 
   # task ID is vacols_id concatenated with the date assigned
   validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
-  validates :complexity, :quality, presence: true
+  validates :location, :complexity, :quality, presence: true
 
   enum location: {
     omo_office: "omo_office",
@@ -47,7 +47,7 @@ class JudgeCaseReview < ApplicationRecord
         if record.valid?
           MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
                                 service: :vacols,
-                                name: "judge_case_review_" + location) do
+                                name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
           end
         end
