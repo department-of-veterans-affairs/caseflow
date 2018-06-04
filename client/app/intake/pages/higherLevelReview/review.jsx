@@ -32,13 +32,6 @@ class Review extends React.PureComponent {
     default:
     }
 
-    const radioOptions = [
-      { value: 'false',
-        displayText: 'No' },
-      { value: 'true',
-        displayText: 'Yes' }
-    ];
-
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
 
