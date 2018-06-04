@@ -60,13 +60,29 @@ describe IssueRepository do
       end
     end
 
-    context "when disposition is not changed to remanded" do
+    context "when disposition is not changed from remanded" do
       let(:initial_disposition) { "3" }
       let(:disposition) { "Remanded" }
       let(:readjudication) { nil }
 
-      it "does not create remand reasons" do
+      it "does not create new remand reasons" do
         expect(IssueRepository).to_not receive(:create_remand_reasons!)
+        subject
+      end
+
+      it "updates existing remand reasons" do
+        expect(IssueRepository).to receive(:update_remand_reasons!)
+        subject
+      end
+    end
+
+    context "when disposition is changed from remanded" do
+      let(:initial_disposition) { "3" }
+      let(:disposition) { "Allowed" }
+      let(:readjudication) { nil }
+
+      it "deletes existing remand reasons" do
+        expect(IssueRepository).to receive(:delete_remand_reasons!)
         subject
       end
     end
