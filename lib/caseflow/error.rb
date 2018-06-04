@@ -1,8 +1,21 @@
 module Caseflow::Error
-  class EfolderError < StandardError; end
+  class EfolderError < StandardError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code]
+      @message = args[:message]
+    end
+
+    def serialize_response
+      { json: { "errors": ["status": code, "title": message, "detail": message] }, status: code }
+    end
+  end
+
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
