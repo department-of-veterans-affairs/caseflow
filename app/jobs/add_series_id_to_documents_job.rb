@@ -2,7 +2,7 @@ class AddSeriesIdToDocumentsJob < ApplicationJob
   queue_as :low_priority
 
   def perform(appeal)
-    documents_to_check = Document.where(file_number: appeal.sanitized_vbms_id).where(series_id: nil)
+    documents_to_check = Document.where(file_number: appeal.veteran_file_number).where(series_id: nil)
 
     if documents_to_check.count > 0
       document_series = VBMSService.fetch_document_series_for(appeal)
