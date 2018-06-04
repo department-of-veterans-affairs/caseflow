@@ -85,7 +85,6 @@ export default class IssueListItem extends React.PureComponent {
       issue,
       issue: {
         disposition,
-        type,
         levels,
         note
       },
@@ -96,7 +95,7 @@ export default class IssueListItem extends React.PureComponent {
 
     if (issuesOnly) {
       issueContent = <React.Fragment>
-        {type} {levels.join(', ')}
+        {getIssueTypeDescription(issue)} {levels.join(', ')}
       </React.Fragment>;
     } else {
       issueContent = <React.Fragment>
