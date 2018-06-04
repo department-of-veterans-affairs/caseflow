@@ -2,8 +2,7 @@ import React from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
-import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../actions/common';
-import { ISSUE_CATEGORIES} from '../constants'
+import { ISSUE_CATEGORIES } from '../constants';
 
 export class NonRatedIssueUnconnected extends React.PureComponent {
   handleCategoryChange(event) {
@@ -23,26 +22,26 @@ export class NonRatedIssueUnconnected extends React.PureComponent {
           name="issue-category"
           label="Issue category"
           placeholder="Select or enter..."
-          options={ ISSUE_CATEGORIES }
-          value={ nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueCategory : null }
-          onChange={ event => this.handleCategoryChange(event) } />
+          options={ISSUE_CATEGORIES}
+          value={nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueCategory : null}
+          onChange={(event) => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
           required
-          value={ nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueDescription : null }
-          onChange={ event => this.handleDescriptionChange(event) } />
+          value={nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueDescription : null}
+          onChange={(event) => this.handleDescriptionChange(event)} />
 
-          <Button
-            name="save-issue"
-            legacyStyling={false}
-          >
+        <Button
+          name="save-issue"
+          legacyStyling={false}
+        >
             Save
-          </Button>
+        </Button>
       </div>
-    )
+    );
   }
-};
+}
 
 export class AddIssueButtonUnconnected extends React.PureComponent {
   render = () =>
@@ -53,4 +52,4 @@ export class AddIssueButtonUnconnected extends React.PureComponent {
     >
     + Add issue
     </Button>;
-};
+}

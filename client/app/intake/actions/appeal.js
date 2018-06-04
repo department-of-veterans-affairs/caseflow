@@ -80,17 +80,17 @@ export const completeIntake = (intakeId, appeal) => (dispatch) => {
 
   const nonRatingData = {
     request_issues:
-      _.map(appeal.nonRatedIssues, (issue, issueId) => {
+      _.map(appeal.nonRatedIssues, (issue) => {
         return {
           decision_text: issue.issueDescription,
           issue_category: issue.issueCategory
-        }
+        };
       })
-  }
+  };
 
   const data = {
     request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
-  }
+  };
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(

@@ -181,8 +181,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       nonRatedIssues: {
         [Object.keys(state.nonRatedIssues).length]: {
           $set: {
-            "issueCategory": null,
-            "issueDescription": null
+            issueCategory: null,
+            issueDescription: null
           }
         }
       }
@@ -192,8 +192,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       nonRatedIssues: {
         [action.payload.issueId]: {
           $set: {
-            "issueCategory": action.payload.category,
-            "issueDescription": state.nonRatedIssues[action.payload.issueId].issueDescription
+            issueCategory: action.payload.category,
+            issueDescription: state.nonRatedIssues[action.payload.issueId].issueDescription
           }
         }
       }
@@ -203,8 +203,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       nonRatedIssues: {
         [action.payload.issueId]: {
           $set: {
-            "issueCategory": state.nonRatedIssues[action.payload.issueId].issueCategory,
-            "issueDescription": action.payload.description
+            issueCategory: state.nonRatedIssues[action.payload.issueId].issueCategory,
+            issueDescription: action.payload.description
           }
         }
       }

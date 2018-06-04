@@ -31,12 +31,12 @@
   min-width: 500px;
 }
 
-.cf-intake-ratings label {
-  max-width: 100%;
-}
-
 .cf-intake-ratings {
   padding-bottom: 1em;
+
+  label {
+    max-width: 100%;
+  }
 }
 
 [id=button-begin-next-intake] {
@@ -52,17 +52,17 @@
   grid-column-gap: 10px;
   grid-template-columns: auto auto 76px;
   padding-bottom: 1em;
-}
 
-.cf-non-rated-issue div {
-  margin: 0;
-}
+  div {
+    margin: 0;
+  }
 
-.cf-non-rated-issue label {
-  margin-bottom: 8px;
-}
+  label {
+    margin-bottom: 8px;
+  }
 
-.cf-non-rated-issue > span {
-  align-self: end;
-  padding-bottom: 5px;
+  > span {
+    align-self: end;
+    padding-bottom: 5px;
+  }
 }
