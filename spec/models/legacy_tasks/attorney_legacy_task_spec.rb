@@ -64,7 +64,7 @@ describe AttorneyLegacyTask do
       )
     end
     context "when all required values are present" do
-      let(:task_id) { "3615398-2018-04-18" }
+      let(:task_id) { "361539D8-2018-04-18" }
       let(:assigned_by) { judge }
       let(:assigned_to) { attorney }
 

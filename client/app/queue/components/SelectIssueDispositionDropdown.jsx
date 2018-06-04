@@ -8,7 +8,7 @@ import Checkbox from '../../components/Checkbox';
 
 import StringUtil from '../../util/StringUtil';
 import { COLORS, ERROR_FIELD_REQUIRED, ISSUE_DISPOSITIONS } from '../constants';
-import VACOLS_DISPOSITIONS_BY_ID from '../../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
   if (highlight && !issueDisposition) {
