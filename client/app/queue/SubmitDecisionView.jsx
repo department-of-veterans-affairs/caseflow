@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -34,6 +35,9 @@ import {
   DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import type { State, DeprecatedTask, Tasks } from './reducers';
+import type { OMapIterator } from 'lodash';
+import type { UiStateError } from './uiReducer/uiReducer';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -51,7 +55,22 @@ const checkboxStyling = css({ marginTop: '1rem' });
 const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
-class SubmitDecisionView extends React.PureComponent {
+class SubmitDecisionView extends React.PureComponent<{|
+  appeal: Object,
+  task: DeprecatedTask,
+  decision: Object,
+  judges: Object,
+  error: ?UiStateError,
+  highlightFormItems: boolean,
+  selectingJudge: boolean,
+  vacolsId: string,
+  nextStep: string,
+  setDecisionOptions: Function,
+  resetDecisionOptions: Function,
+  setSelectingJudge: Function,
+  requestSave: Function,
+  deleteAppeal: Function
+|}> {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
@@ -144,10 +163,10 @@ class SubmitDecisionView extends React.PureComponent {
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
-          options={_.map(judges, (judge, value) => ({
+          options={_.map(judges, ((judge, value) => ({
             label: judge.full_name,
             value
-          }))}
+          }): OMapIterator<Object, Object, Object>))}
           onChange={({ value }) => {
             this.props.setSelectingJudge(false);
             this.props.setDecisionOptions({ reviewing_judge_id: value });
@@ -248,14 +267,27 @@ SubmitDecisionView.propTypes = {
   nextStep: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.stagedChanges.taskDecision,
-  judges: state.queue.judges,
-  error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
-});
+const mapStateToProps = (state: State, ownProps: Object): {|
+  appeal: Object,
+  task: DeprecatedTask,
+  decision: Object,
+  judges: Object,
+  error: ?UiStateError,
+  highlightFormItems: boolean,
+  selectingJudge: boolean
+|} => {
+  const {highlightFormItems, selectingJudge} = state.ui;
+
+  return {
+    appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
+    task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+    decision: state.queue.stagedChanges.taskDecision,
+    judges: state.queue.judges,
+    error: state.ui.messages.error,
+    highlightFormItems,
+    selectingJudge
+  };
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,

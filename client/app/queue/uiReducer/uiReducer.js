@@ -8,13 +8,15 @@ const initialSaveState = {
   saveSuccessful: null
 };
 
+export type UiStateError = {detail: string, title: string}
+
 export type UiState = {
   selectingJudge: boolean,
   breadcrumbs: Array<Object>,
   highlightFormItems: boolean,
   messages: {
     success: ?string,
-    error: ?string
+    error: ?UiStateError
   },
   saveState: {
     savePending: boolean,
