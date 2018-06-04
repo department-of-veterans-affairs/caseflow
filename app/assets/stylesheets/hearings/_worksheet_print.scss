@@ -16,7 +16,9 @@
    }
 
     td {
-      padding: 0 .5em;
+      // scss-lint:disable ImportantRule
+      padding: 0 .5em !important;
+      // scss-lint:disable ImportantRule
       padding-bottom: 0;
     }
 
@@ -37,7 +39,9 @@
    }
 
     .cf-form-textarea {
-      min-height: 0;
+      // scss-lint:disable ImportantRule
+      min-height: 25px !important;
+      // scss-lint:enable ImportantRule
       margin-bottom: 0;
    }
  }
