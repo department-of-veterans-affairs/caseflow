@@ -32,7 +32,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case_mismatch) do
-    create(:case_with_ssoc, bfregoff: "DSUSER", bfdsoc: 1.days.ago)
+    create(:case_with_ssoc, bfregoff: "DSUSER", bfdsoc: 1.day.ago)
   end
 
   let(:appeal_already_certified) do
