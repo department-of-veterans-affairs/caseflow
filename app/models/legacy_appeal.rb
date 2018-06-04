@@ -506,6 +506,10 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def serializer
+    ::WorkQueue::LegacyAppealSerializer
+  end
+
   private
 
   def matched_document(type, vacols_datetime)

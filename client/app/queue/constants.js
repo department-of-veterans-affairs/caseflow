@@ -5,7 +5,7 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -124,3 +124,19 @@ export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
   parameterizedDispositions,
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
+
+export const USER_ROLES = {
+  ATTORNEY: 'Attorney',
+  JUDGE: 'Judge'
+};
+
+export const PAGE_TITLES = {
+  DISPOSITIONS: {
+    JUDGE: 'Review Dispositions',
+    ATTORNEY: 'Select Dispositions'
+  },
+  REMANDS: {
+    JUDGE: 'Review Remand Reasons',
+    ATTORNEY: 'Select Remand Reasons'
+  }
+};
