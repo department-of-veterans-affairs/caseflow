@@ -131,6 +131,14 @@
     margin-bottom: 2px;
  }
 
+ .cf-app-segment {
+    margin-top: -35px;
+ }
+
+ .cf-content-inside .cf-app-segment {
+    margin-bottom: -19px;
+}
+
   .cf-print-page-break {
     break-after: page;
   }
@@ -160,11 +168,6 @@
       right: 30px;
      }
   }
-
-  .cf-app-segment {
-    margin-top: -3rem;
-}
-
 
   .cf-hearings-worksheet {
     margin-bottom: 0;
@@ -200,9 +203,9 @@
         display: flex;
         flex-direction: column;
 
-        // .cf-hearings-worksheet-data:first-child {
-        //   margin-top: -3rem;
-        // }
+        .cf-hearings-worksheet-data:first-child {
+          margin-top: -35px;
+        }
 
         .cf-hearings-worksheet-data:last-child {
           margin-bottom: inherit;
