@@ -36,9 +36,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
     },
-    selectedRatingCount: {
-      $set: state.selectedRatingCount
-    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
@@ -56,6 +53,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     informalConferenceError: null,
     sameOffice: null,
     sameOfficeError: null,
+    differentAppellantOption: false,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -100,6 +98,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_DIFFERENT_APPELLANT_OPTION:
+    return update(state, {
+      differentAppellantOption: {
+        $set: action.payload.differentAppellantOption
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:

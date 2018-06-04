@@ -91,6 +91,13 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setDifferentAppellantOption = (differentAppellantOption) => ({
+  type: ACTIONS.SET_DIFFERENT_APPELLANT_OPTION,
+  payload: {
+    differentAppellantOption
+  }
+});
+
 export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
   payload: {

@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
-import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
+import DifferentAppellant from '../../components/DifferentAppellant'
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
-import { setReceiptDate } from '../../actions/common';
+import { setReceiptDate, setDifferentAppellantOption } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
@@ -66,9 +67,20 @@ class Review extends React.PureComponent {
         value={sameOffice}
       />
 
+      <DifferentAppellantConnected />
+
     </div>;
   }
 }
+
+const DifferentAppellantConnected = connect(
+  ({ higherLevelReview }) => ({
+    differentAppellantOption: higherLevelReview.differentAppellantOption
+  }),
+  (dispatch) => bindActionCreators({
+    setDifferentAppellantOption
+  })
+)(DifferentAppellant)
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
