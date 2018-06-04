@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -56,7 +56,7 @@ class Review extends React.PureComponent {
         label="Did the Veteran request an informal conference?"
         strongLabel
         vertical
-        options={radioOptions}
+        options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
         value={informalConference}
@@ -67,7 +67,7 @@ class Review extends React.PureComponent {
         label="Did the Veteran request review by the same office?"
         strongLabel
         vertical
-        options={radioOptions}
+        options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
         value={sameOffice}

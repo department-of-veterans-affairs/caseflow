@@ -6,6 +6,13 @@ export const PAGE_PATHS = {
   COMPLETED: '/completed'
 };
 
+export const BOOLEAN_RADIO_OPTIONS = [
+  { value: 'false',
+    displayText: 'No' },
+  { value: 'true',
+    displayText: 'Yes' }
+];
+
 export const ACTIONS = {
   SET_FORM_TYPE: 'SET_FORM_TYPE',
   START_NEW_INTAKE: 'START_NEW_INTAKE',
