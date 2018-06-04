@@ -12,7 +12,7 @@ import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowD
 
 import { sortTasks, renderAppealType } from './utils';
 import COPY from '../../COPY.json';
-import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
+import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
 class JudgeReviewTaskTable extends React.PureComponent<{
   tasks: LoadedQueueTasks,
@@ -97,9 +97,24 @@ JudgeReviewTaskTable.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'featureToggles')
-});
+const mapStateToProps = (state: State): {
+  tasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  featureToggles: Object
+} => {
+  const {
+    queue: {
+      loadedQueue: {
+        tasks,
+        appeals
+      }
+    },
+    ui: {
+      featureToggle
+    }
+  } = state;
+
+  return {tasks, appeals, featureToggles};
+};
 
 export default connect(mapStateToProps)(JudgeReviewTaskTable);
