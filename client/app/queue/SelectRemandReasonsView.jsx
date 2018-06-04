@@ -78,7 +78,7 @@ class SelectRemandReasonsView extends React.Component {
       {this.getPageName()}
     </h1>
     <p className="cf-lead-paragraph" {...subHeadStyling}>
-      Please select the appropriate remand reason(s) for all the remand dispositions.
+      Please {this.props.userRoles === USER_ROLES.ATTORNEY ? 'select' : 'review'} the appropriate remand reason(s) for all the remand dispositions.
     </p>
     <hr />
     {_.map(_.range(this.state.issuesRendered), (idx) =>
