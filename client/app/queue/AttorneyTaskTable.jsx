@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,8 +14,14 @@ import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
 import COPY from '../../COPY.json';
+import type { State, LoadedQueueAppeals, LoadedQueueTasks, Tasks } from './reducers';
 
-class AttorneyTaskTable extends React.PureComponent {
+class AttorneyTaskTable extends React.PureComponent<{|
+  loadedQueueTasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  featureToggles: Object
+|}> {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.vacolsId];
@@ -82,24 +89,47 @@ class AttorneyTaskTable extends React.PureComponent {
     return columns;
   };
 
-  render = () => <Table
-    columns={this.getQueueColumns}
-    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
-    getKeyForRow={this.getKeyForRow}
-    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
-    bodyStyling={this.tableStyle}
-  />;
+  render = () => {
+    const {appeals, loadedQueueTasks, tasks} = this.props;
+    const taskWithId = {};
+    for (const id in loadedQueueTasks) {
+      taskWithId[id] = tasks[id];
+    }
+    return <Table
+      columns={this.getQueueColumns}
+      rowObjects={sortTasks({appeals, tasks: taskWithId})}
+      getKeyForRow={this.getKeyForRow}
+      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
+      bodyStyling={this.tableStyle} />;
+  }
 }
 
 AttorneyTaskTable.propTypes = {
   tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'featureToggles')
-});
+const mapStateToProps = (state: State): {|
+  loadedQueueTasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  featureToggles: Object
+|} => {
+  const {
+    queue: {
+      loadedQueue: {
+        tasks: loadedQueueTasks,
+        appeals
+      },
+      tasks
+    },
+    ui: {
+      featureToggles
+    }
+  } = state;
+  return {loadedQueueTasks, appeals, tasks, featureToggles};
+};
 
 export default connect(mapStateToProps)(AttorneyTaskTable);
