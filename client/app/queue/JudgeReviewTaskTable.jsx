@@ -15,8 +15,9 @@ import COPY from '../../COPY.json';
 import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
 class JudgeReviewTaskTable extends React.PureComponent<{
-  tasks: LoadedQueueTasks,
+  loadedQueueTasks: LoadedQueueTasks,
   appeals: LoadedQueueAppeals,
+  tasks: Tasks,
   featureToggles: Object
 }> {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -79,11 +80,18 @@ class JudgeReviewTaskTable extends React.PureComponent<{
   });
 
   render = () => {
-    const {tasks, appeals} = this.props;
+    const {loadedQueueTasks, appeals, tasks} = this.props;
+    const taskWithId = {};
+    for (const id in loadedQueueTasks) {
+      taskWithId[id] = tasks[id];
+    }
+
     return <Table
       columns={this.getQueueColumns}
       rowObjects={
-        sortTasks({tasks, appeals}).filter((task) => task.attributes.task_type === 'Review')
+        sortTasks(
+          {tasks: taskWithId, appeals})
+          .filter((task) => task.attributes.task_type === 'Review')
       }
       getKeyForRow={this.getKeyForRow}
       bodyStyling={this.tableStyle}
@@ -92,28 +100,31 @@ class JudgeReviewTaskTable extends React.PureComponent<{
 }
 
 JudgeReviewTaskTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  loadedQueueTasks: PropTypes.object.isRequired,
+  appeals: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state: State): {
-  tasks: LoadedQueueTasks,
+  loadedQueueTasks: LoadedQueueTasks,
   appeals: LoadedQueueAppeals,
+  tasks: Tasks,
   featureToggles: Object
 } => {
   const {
     queue: {
       loadedQueue: {
-        tasks,
+        tasks: loadedQueueTasks,
         appeals
-      }
+      },
+      tasks
     },
     ui: {
       featureToggles
     }
   } = state;
 
-  return {tasks, appeals, featureToggles};
+  return {loadedQueueTasks, appeals, tasks, featureToggles};
 };
 
 export default connect(mapStateToProps)(JudgeReviewTaskTable);
