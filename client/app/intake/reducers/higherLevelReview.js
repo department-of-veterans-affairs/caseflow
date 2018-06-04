@@ -39,6 +39,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     selectedRatingCount: {
       $set: state.selectedRatingCount
     },
+    nonRatedIssues: {
+      $set: state.nonRatedIssues
+    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
@@ -61,6 +64,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isComplete: false,
     endProductDescription: null,
     selectedRatingCount: 0,
+    nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -195,6 +199,39 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       selectedRatingCount: {
         $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      }
+    });
+  case ACTIONS.ADD_NON_RATED_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [Object.keys(state.nonRatedIssues).length]: {
+          $set: {
+            issueCategory: null,
+            issueDescription: null
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_CATEGORY:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          $set: {
+            issueCategory: action.payload.category,
+            issueDescription: state.nonRatedIssues[action.payload.issueId].issueDescription
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_DESCRIPTION:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          $set: {
+            issueCategory: state.nonRatedIssues[action.payload.issueId].issueCategory,
+            issueDescription: action.payload.description
+          }
+        }
       }
     });
   default:

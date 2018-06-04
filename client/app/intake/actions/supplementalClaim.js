@@ -53,7 +53,7 @@ export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = {
+  const ratingData = {
     request_issues:
       _(supplementalClaim.ratings).
         map((rating) => {
@@ -63,6 +63,20 @@ export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
         }).
         flatten().
         filter('isSelected')
+  };
+
+  const nonRatingData = {
+    request_issues:
+      _.map(supplementalClaim.nonRatedIssues, (issue) => {
+        return {
+          decision_text: issue.issueDescription,
+          issue_category: issue.issueCategory
+        };
+      })
+  };
+
+  const data = {
+    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
