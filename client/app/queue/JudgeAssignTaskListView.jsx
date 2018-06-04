@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,6 +25,7 @@ import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTask
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
+import type { State, LoadedQueueAppeals, LoadedQueueTasks, Tasks, TasksAndAppealsOfAttorney } from './reducers';
 
 const UnassignedCasesPage = (props) => {
   const reviewableCount = props.tasksAndAppeals.length;
@@ -43,7 +45,23 @@ const UnassignedCasesPage = (props) => {
   return tableContent;
 };
 
-class JudgeAssignTaskListView extends React.PureComponent {
+class JudgeAssignTaskListView extends React.PureComponent<{|
+  attorneysOfJudge: Array<Object>,
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  appeals: LoadedQueueAppeals,
+  loadedQueueTasks: LoadedQueueTasks,
+  tasks: Tasks,
+  userId: string,
+  userCssId: string,
+  match: {params: {[string]: string}, url: string},
+  clearCaseSelectSearch: Function,
+  resetErrorMessages: Function,
+  resetSuccessMessages: Function,
+  resetSaveState: Function,
+  setAttorneysOfJudge: Function,
+  fetchTasksAndAppealsOfAttorney: Function,
+  setSelectionOfTaskOfUser: Function
+|}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -55,7 +73,14 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 
   unassignedTasksWithAppeals = () => {
-    return sortTasks(_.pick(this.props, 'tasks', 'appeals')).
+    const {loadedQueueTasks, appeals, tasks} = this.props;
+    const taskWithId = {};
+
+    for (const id in loadedQueueTasks) {
+      taskWithId[id] = tasks[id];
+    }
+
+    return sortTasks({tasks: taskWithId, appeals}).
       filter((task) => task.attributes.task_type === 'Assign').
       map((task) => ({
         task,
@@ -97,7 +122,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {this.unassignedTasksWithAppeals().length} Cases</h1>
-          {this.switchLink(this)}
+          {this.switchLink()}
         </div>
         <div className="usa-width-one-fourth">
           <LoadingDataDisplay
@@ -148,16 +173,33 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
   tasksAndAppealsOfAttorney: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney'),
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
-});
+const mapStateToProps = (state: State): {|
+  attorneysOfJudge: Array<Object>,
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  loadedQueueTasks: LoadedQueueTasks
+|} => {
+  const {
+    queue: {
+      attorneysOfJudge,
+      tasksAndAppealsOfAttorney,
+      tasks,
+      loadedQueue: {
+        tasks: loadedQueueTasks,
+        appeals
+      }
+    }
+  } = state;
+
+  return {attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, loadedQueueTasks, appeals};
+}
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

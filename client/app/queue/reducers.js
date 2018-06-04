@@ -33,6 +33,13 @@ export type Tasks = { [string]: Task };
 
 export type LoadedQueueAppeals = { [string]: Object };
 
+export type TasksAndAppealsOfAttorney = {
+  [string]: {
+    state: string,
+    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals}
+  }
+};
+
 export type QueueState = {
   judges: Object,
   tasks: Tasks,
@@ -50,8 +57,8 @@ export type QueueState = {
       opts: {}
     }
   },
-  attorneysOfJudge: [],
-  tasksAndAppealsOfAttorney: {[string]: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals}},
+  attorneysOfJudge: Array<Object>,
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
   isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
 };
 
