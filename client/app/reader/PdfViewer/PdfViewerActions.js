@@ -70,7 +70,7 @@ export const fetchAppealDetails = (vacolsId) =>
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+      dispatch(onReceiveAppealDetails(returnedObject.appeal.data.attributes));
     }, () => dispatch(onAppealDetailsLoadingFail()));
   };
 
