@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180524174054) do
+ActiveRecord::Schema.define(version: 20180531181503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -387,6 +387,16 @@ ActiveRecord::Schema.define(version: 20180524174054) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "non_availabilities", force: :cascade do |t|
+    t.bigint "schedule_period_id", null: false
+    t.string "type", null: false
+    t.date "date", null: false
+    t.string "object_identifier", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
@@ -452,6 +462,17 @@ ActiveRecord::Schema.define(version: 20180524174054) do
     t.string "contention_reference_id"
     t.string "description", null: false
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
+  end
+
+  create_table "schedule_periods", force: :cascade do |t|
+    t.string "type", null: false
+    t.bigint "user_id", null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
+    t.boolean "finalized"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

@@ -9,7 +9,7 @@ class AttorneyCaseReview < ApplicationRecord
   attr_accessor :issues
 
   # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
+  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)

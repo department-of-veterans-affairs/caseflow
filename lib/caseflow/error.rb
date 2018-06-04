@@ -27,6 +27,8 @@ module Caseflow::Error
         new("missing_ssn")
       when /The PersonalInfo.+must not be empty/
         new("bgs_info_invalid")
+      when /The maximum data length for AddressLine1/
+        LongAddress.new("long_address")
       else
         error
       end
@@ -34,6 +36,7 @@ module Caseflow::Error
   end
 
   class DuplicateEp < EstablishClaimFailedInVBMS; end
+  class LongAddress < EstablishClaimFailedInVBMS; end
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end

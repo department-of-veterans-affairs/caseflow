@@ -9,7 +9,7 @@ import CaseDetailsLink from './CaseDetailsLink';
 
 import { renderAppealType } from './utils';
 import { CATEGORIES, disabledLinkStyle } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class BeaamTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -37,7 +37,7 @@ class BeaamTable extends React.PureComponent {
           return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
         }
 
-        return <ReaderLink vacolsId={appeal.attributes.vacolsId}
+        return <ReaderLink vacolsId={appeal.attributes.vacols_id}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={appeal} />;
@@ -61,6 +61,6 @@ BeaamTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);
