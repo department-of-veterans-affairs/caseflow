@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
-import Button from '../../../components/Button';
 import { NonRatedIssueUnconnected, AddIssueButtonUnconnected } from '../../components/NonRatedIssue'
 import _ from 'lodash';
 
