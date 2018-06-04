@@ -1,5 +1,5 @@
 import AppealDocumentCount from './AppealDocumentCount';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import CaseDetailsLink from './CaseDetailsLink';
 import Checkbox from '../components/Checkbox';
 import PropTypes from 'prop-types';
