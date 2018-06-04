@@ -1,6 +1,7 @@
+// @flow
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,8 +12,23 @@ import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
+import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
-class QueueLoadingScreen extends React.PureComponent {
+class QueueLoadingScreen extends React.PureComponent<{|
+  children: ?React.Node,
+  judges: Object,
+  activeAppeal: Object,
+  appeals: LoadedQueueAppeals,
+  tasks: LoadedQueueTasks,
+  loadedUserId: string,
+  userId: string,
+  vacolsId: string,
+  userCanAccessQueue: boolean,
+  urlToLoad: string,
+  setActiveAppeal: Function,
+  onReceiveQueue: Function,
+  onReceiveJudges: Function
+|}> {
   loadJudges = () => {
     if (!_.isEmpty(this.props.judges)) {
       return Promise.resolve();
@@ -120,7 +136,13 @@ QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: State): {|
+  judges: Object,
+  activeAppeal: Object,
+  appeals: LoadedQueueAppeals,
+  tasks: LoadedQueueTasks,
+  loadedUserId: string
+|} => ({
   ..._.pick(state.queue, 'judges'),
   ...state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
