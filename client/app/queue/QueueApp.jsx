@@ -163,7 +163,7 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/queue/appeals/:appealId/remands"
-            title="Draft Decision | Select Issue Remand Reasons"
+            title={`Draft Decision | ${PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
