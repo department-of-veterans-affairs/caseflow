@@ -20,11 +20,12 @@ class VACOLS::RemandReason < VACOLS::Record
   end
 
   def self.delete_remand_reasons!(rmdkey, rmdissseq)
-    load_remand_reasons(rmdkey, rmdissseq).delete_all
+    load_remand_reasons(rmdkey, rmdissseq)
+      .delete_all
   end
 
   def self.update_remand_reasons!(rmdkey, rmdissseq, remand_reasons)
-    (remand_reasons || []).map do |remand_reason|
+    remand_reasons.map do |remand_reason|
       load_remand_reasons(rmdkey, rmdissseq, rmdval: remand_reason[:rmdval])
         .update_all(remand_reason)
     end

@@ -100,20 +100,21 @@ class IssueRepository
   def self.update_remand_reasons(record, issue_attrs)
     args = [issue_attrs[:vacols_id], issue_attrs[:vacols_sequence_id]]
 
-    if issue_attrs[:disposition].eql? "Remanded"
-      remand_reasons = RemandReasonMapper.convert_to_vacols_format(
-        issue_attrs[:vacols_user_id],
-        issue_attrs[:remand_reasons]
-      )
-      args.push(remand_reasons)
-
-      if record.issdc.eql? "3"
-        update_remand_reasons!(*args)
-      else
-        create_remand_reasons!(*args)
-      end
-    else
+    unless issue_attrs[:disposition].eql? "Remanded"
       delete_remand_reasons!(*args)
+      return
+    end
+
+    remand_reasons = RemandReasonMapper.convert_to_vacols_format(
+      issue_attrs[:vacols_user_id],
+      issue_attrs[:remand_reasons]
+    )
+    args.push(remand_reasons)
+
+    if record.issdc.eql? "3"
+      update_remand_reasons!(*args)
+    else
+      create_remand_reasons!(*args)
     end
   end
 end
