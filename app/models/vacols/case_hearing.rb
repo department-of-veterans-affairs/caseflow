@@ -85,7 +85,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                             service: :vacols,
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
-                           adduser: current_user_slogid,
+                           adduser: self.current_user_slogid,
                            folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
       end
     end
@@ -127,7 +127,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
