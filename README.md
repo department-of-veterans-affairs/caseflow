@@ -151,6 +151,10 @@ RAILS_ENV=development rake local:vacols:seed
 
 Note you'll need to setup both the test and development databases, but only need to seed the development database.
 
+## Setup shortcuts
+
+To rapidly set up your local development (and testing) environment, you can run `bundle exec rake local:build`. In order to rebuild your local development run that command after tearing down your existing environment with this command: `bundle exec rake local:destroy`.
+
 ## Debugging FACOLS setup
 Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
 
