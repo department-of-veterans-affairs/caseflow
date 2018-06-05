@@ -96,6 +96,10 @@ class Veteran < ApplicationRecord
     self.class.bgs.can_access?(file_number)
   end
 
+  def relationships
+    @relationships ||= fetch_relationships
+  end
+
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
@@ -136,6 +140,12 @@ class Veteran < ApplicationRecord
 
   def fetch_end_products
     self.class.bgs.get_end_products(file_number).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+  end
+
+  def fetch_relationships
+    self.class.bgs.find_all_relationships(
+      participant_id: Veteran.find_or_create_by_file_number(file_number).participant_id
+    ).map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
   end
 
   def period_of_service(s)

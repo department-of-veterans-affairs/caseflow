@@ -6,9 +6,9 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
-import DifferentAppellant from '../../components/DifferentAppellant'
+import DifferentClaimant from '../../components/DifferentClaimant'
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
-import { setReceiptDate, setDifferentAppellantOption } from '../../actions/common';
+import { setReceiptDate, setDifferentClaimantOption } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
@@ -67,20 +67,20 @@ class Review extends React.PureComponent {
         value={sameOffice}
       />
 
-      <DifferentAppellantConnected />
+      <DifferentClaimantConnected />
 
     </div>;
   }
 }
 
-const DifferentAppellantConnected = connect(
+const DifferentClaimantConnected = connect(
   ({ higherLevelReview }) => ({
-    differentAppellantOption: higherLevelReview.differentAppellantOption
+    differentClaimantOption: higherLevelReview.differentClaimantOption
   }),
   (dispatch) => bindActionCreators({
-    setDifferentAppellantOption
+    setDifferentClaimantOption
   })
-)(DifferentAppellant)
+)(DifferentClaimant)
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {

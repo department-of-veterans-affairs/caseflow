@@ -53,12 +53,13 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     informalConferenceError: null,
     sameOffice: null,
     sameOfficeError: null,
-    differentAppellantOption: false,
+    differentClaimantOption: false,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
     selectedRatingCount: 0,
+    differentClaimantOption: false;
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -102,8 +103,8 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     });
   case ACTIONS.SET_DIFFERENT_APPELLANT_OPTION:
     return update(state, {
-      differentAppellantOption: {
-        $set: action.payload.differentAppellantOption
+      differentClaimantOption: {
+        $set: action.payload.differentClaimantOption
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:

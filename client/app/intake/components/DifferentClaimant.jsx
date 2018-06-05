@@ -2,23 +2,23 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 
-export default class DifferentAppelant extends React.PureComponent {
+export default class DifferentClaimant extends React.PureComponent {
   render = () => {
     const {
-      differentAppellantOption,
-      setDifferentAppellantOption
+      differentClaimantOption,
+      setDifferentClaimantOption
     } = this.props;
 
-    <div className="cf-different-appellant">
+    return <div className="cf-different-claimant">
       <RadioField
-        name="different-appellant-option"
+        name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={setDifferentAppellantOption}
-        value={differentAppellantOption}
+        onChange={setDifferentClaimantOption}
+        value={differentClaimantOption}
       />
-    </div>
+    </div>;
   }
-}
+};
