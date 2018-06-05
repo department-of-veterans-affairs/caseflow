@@ -92,7 +92,7 @@ class RampRefiling < RampReview
   def validate_option_selected
     return unless option_selected && ramp_elections
 
-    if ramp_elections.any? { |e| e.higher_level_review? } && higher_level_review?
+    if ramp_elections.any?(&:higher_level_review?) && higher_level_review?
       errors.add(:option_selected, "higher_level_review_invalid")
     end
   end
