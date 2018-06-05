@@ -193,7 +193,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
+            <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
             <div {...textareaStyling}>
               <Textarea
                 id={`${hearing.id}.notes`}
