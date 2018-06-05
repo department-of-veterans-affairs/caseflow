@@ -64,11 +64,17 @@ class IssueRepository
   end
 
   def self.update_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+    existing_remand_reasons = VACOLS::RemandReason.load_remand_reasons(vacols_id, vacols_sequence_id)
+      .pluck(:rmdval)
+    reasons_to_delete = existing_remand_reasons - remand_reasons.pluck(:rmdval)
+
+    delete_remand_reasons!(vacols_id, vacols_sequence_id, rmdval: reasons_to_delete)
+
     VACOLS::RemandReason.update_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
   end
 
-  def self.delete_remand_reasons!(vacols_id, vacols_sequence_id)
-    VACOLS::RemandReason.delete_remand_reasons!(vacols_id, vacols_sequence_id)
+  def self.delete_remand_reasons!(vacols_id, vacols_sequence_id, **kwargs)
+    VACOLS::RemandReason.delete_remand_reasons!(vacols_id, vacols_sequence_id, **kwargs)
   end
 
   def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)

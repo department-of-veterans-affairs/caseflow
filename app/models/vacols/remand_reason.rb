@@ -19,8 +19,8 @@ class VACOLS::RemandReason < VACOLS::Record
     where(rmdkey: rmdkey, rmdissseq: rmdissseq, **kwargs)
   end
 
-  def self.delete_remand_reasons!(rmdkey, rmdissseq)
-    load_remand_reasons(rmdkey, rmdissseq)
+  def self.delete_remand_reasons!(rmdkey, rmdissseq, **kwargs)
+    load_remand_reasons(rmdkey, rmdissseq, **kwargs)
       .delete_all
   end
 
