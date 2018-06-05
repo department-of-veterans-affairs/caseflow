@@ -269,6 +269,10 @@ this page to switch to any user that is currently in the database. The users' na
 what roles they have and therefore what pages they can access. To add new users with new
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
+In order to impersonate other user, the user will need to have Global Admin role.
+(To grant a role refer to https://github.com/department-of-veterans-affairs/caseflow-commons#functions)
+On test/users page, switch to a user that has Global Admin role. `Log in as user` interface
+will show up where you will have to specify User ID and Station ID.
 
 To use intake features as the users, you'll need to toggle two features in a
 rails console `rails c`:
