@@ -122,12 +122,7 @@ To rapidly set up your local development (and testing) environment, you can run:
 bundle exec rake local:build
 ```
 
-In order to rebuild your local development run that command after tearing down your existing environment with this command:
-```
-bundle exec rake local:destroy
-```
-
-Both of the above shortcuts run a set of commands in sequence that should build (or destroy) your local environment. If you need to troubleshoot the process, you can copy each individual step out of these tasks and run them independently.
+The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
 ## Debugging FACOLS setup
 Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
@@ -141,6 +136,12 @@ Sometimes the above setup fails, or the app cannot connect to the DB. Here are s
 Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
 
 2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
+
+If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
+```
+bundle exec rake local:destroy
+bundle exec rake local:build
+```
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
