@@ -1,8 +1,8 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
 import _ from 'lodash';
-import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
@@ -97,12 +97,6 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
-  ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
-  }))
-);
-
 export const REMAND_REASONS = Object.assign({},
   ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
     [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
@@ -117,11 +111,6 @@ const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
-  parameterizedDispositions
-));
-
-export const DISPOSITION_ID_BY_PARAMETERIZED = _.fromPairs(_.zip(
-  parameterizedDispositions,
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 

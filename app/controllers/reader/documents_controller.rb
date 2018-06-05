@@ -1,6 +1,4 @@
 class Reader::DocumentsController < Reader::ApplicationController
-  EXCEPTIONS = [Caseflow::Error::EfolderError].freeze
-
   # rubocop:disable Metrics/MethodLength
   def index
     respond_to do |format|
@@ -22,8 +20,9 @@ class Reader::DocumentsController < Reader::ApplicationController
         end
       end
     end
-  rescue *EXCEPTIONS => e
-    respond_to_doc_retrieval_error(e)
+  rescue StandardError => e
+    raise e unless e.class.method_defined? :serialize_response
+    render e.serialize_response
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -59,10 +58,6 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:tags] = document.tags
       end
     end
-  end
-
-  def respond_to_doc_retrieval_error(e)
-    render json: { "errors": ["status": e.message, "title": e.to_s, "detail": e.message] }, status: e.message
   end
 
   def appeal_id

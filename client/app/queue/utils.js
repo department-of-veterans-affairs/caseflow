@@ -3,11 +3,11 @@ import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  DECISION_TYPES,
-  DISPOSITION_ID_BY_PARAMETERIZED
+  DECISION_TYPES
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -106,5 +106,5 @@ export const getIssueDiagnosticCodeLabel = (code) => {
  * @returns {Array}
  */
 export const getUndecidedIssues = (issues) => _.filter(issues, (issue) =>
-  !issue.disposition || Number(DISPOSITION_ID_BY_PARAMETERIZED[issue.disposition])
+  !issue.disposition || (Number(issue.disposition) && issue.disposition in VACOLS_DISPOSITIONS_BY_ID)
 );
