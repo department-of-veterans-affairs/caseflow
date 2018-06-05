@@ -16,9 +16,9 @@ class ExternalApi::EfolderService
     response = send_efolder_request("/api/v1/files?download=true", user, headers)
 
     if response.error?
-      fail Caseflow::Error::EfolderAccessForbidden, "403" if response.try(:code) == 403
-      fail Caseflow::Error::DocumentRetrievalError, "502" if response.try(:code) == 500
-      fail Caseflow::Error::DocumentRetrievalError, response.code.to_s
+      fail Caseflow::Error::EfolderAccessForbidden, code: 403 if response.try(:code) == 403
+      fail Caseflow::Error::DocumentRetrievalError, code: 502 if response.try(:code) == 500
+      fail Caseflow::Error::DocumentRetrievalError, code: response.code.to_s
     end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
@@ -54,24 +54,25 @@ class ExternalApi::EfolderService
 
     msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, \
       user_id: #{user.id}, response attributes: #{response_attrs}"
-    fail Caseflow::Error::DocumentRetrievalError, msg
+    fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)
     case code
     when 200
       if response_body["data"]["attributes"]["sources"].blank?
-        fail Caseflow::Error::DocumentRetrievalError, "Failed for #{vbms_id}, manifest sources are blank"
+        msg = "Failed for #{vbms_id}, manifest sources are blank"
+        fail Caseflow::Error::DocumentRetrievalError, code: 502, message: msg
       end
     when 403
-      fail Caseflow::Error::EfolderAccessForbidden, "403"
+      fail Caseflow::Error::EfolderAccessForbidden, code: code, message: response_body
     when 400
-      fail Caseflow::Error::ClientRequestError, "400"
+      fail Caseflow::Error::ClientRequestError, code: code, message: response_body
     when 500
-      fail Caseflow::Error::DocumentRetrievalError, "502"
+      fail Caseflow::Error::DocumentRetrievalError, code: 502, message: response_body
     else
       msg = "Failed for #{vbms_id}, user_id: #{user_id}, error: #{response_body}, HTTP code: #{code}"
-      fail Caseflow::Error::DocumentRetrievalError, msg
+      fail Caseflow::Error::DocumentRetrievalError, code: 502, message: msg
     end
   end
 

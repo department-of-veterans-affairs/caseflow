@@ -48,10 +48,11 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(urlToLoad).then((response) => this.props.onReceiveQueue({
-      ...associateTasksWithAppeals(JSON.parse(response.text)),
-      userId
-    }));
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+      this.props.onReceiveQueue({
+        ...associateTasksWithAppeals(JSON.parse(response.text)),
+        userId
+      }));
   };
 
   loadActiveAppeal = () => {
