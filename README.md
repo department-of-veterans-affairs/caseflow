@@ -115,45 +115,19 @@ brew services stop postgresql
 brew services stop redis
 ```
 
-Start all containers
-```
-docker-compose up -d
-# run without -d to start your environment and view container logging in the foreground
-
-docker-compose ps
-# this shows you the status of all of your dependencies
-```
-
-Turning off dependencies
-```
-# this stops all containers
-docker-compose down
-
-# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
-docker-compose down -v
-```
-
-Enable features
-```
-bundle exec rails runner scripts/enable_features_dev.rb
-```
-
-## Setup your Database Schema
-```
-rake [RAILS_ENV=<test|development|stubbed>] db:setup
-rake [RAILS_ENV=<test|development|stubbed>] db:seed
-
-# setup local VACOLS (FACOLS)
-RAILS_ENV=test rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:seed
-```
-
-Note you'll need to setup both the test and development databases, but only need to seed the development database.
-
 ## Setup shortcuts
 
-To rapidly set up your local development (and testing) environment, you can run `bundle exec rake local:build`. In order to rebuild your local development run that command after tearing down your existing environment with this command: `bundle exec rake local:destroy`.
+To rapidly set up your local development (and testing) environment, you can run:
+```
+bundle exec rake local:build
+```
+
+In order to rebuild your local development run that command after tearing down your existing environment with this command:
+```
+bundle exec rake local:destroy
+```
+
+Both of the above shortcuts run a set of commands in sequence that should build (or destroy) your local environment. If you need to troubleshoot the process, you can copy each individual step out of these tasks and run them independently.
 
 ## Debugging FACOLS setup
 Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
