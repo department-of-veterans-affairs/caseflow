@@ -7,6 +7,7 @@ describe JudgeCaseReview do
 
     context "when all parameters are present to sign a decision and VACOLS update is successful" do
       before do
+        FeatureToggle.enable!(:test_facols)
         allow(UserRepository).to receive(:vacols_uniq_id).and_return("CFS456")
         allow(UserRepository).to receive(:can_access_task?).and_return(true)
         allow(QueueRepository).to receive(:sign_decision_or_create_omo!).with(
@@ -21,6 +22,10 @@ describe JudgeCaseReview do
             modifying_user: "CFS456"
           }
         ).and_return(true)
+      end
+
+      after do
+        FeatureToggle.disable!(:test_facols)
       end
 
       let(:params) do
