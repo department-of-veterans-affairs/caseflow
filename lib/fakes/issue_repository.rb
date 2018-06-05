@@ -34,6 +34,18 @@ class Fakes::IssueRepository
       Fakes::AppealRepository.issue_records[args[:vacols_id]].delete(record)
     end
 
+    def create_remand_reasons!(_vacols_id, _vacols_sequence_id, _remand_reasons)
+      []
+    end
+
+    def update_remand_reasons!(_vacols_id, _vacols_sequence_id, _remand_reasons)
+      []
+    end
+
+    def delete_remand_reasons!(_vacols_id, _vacols_sequence_id)
+      []
+    end
+
     def load_remands_from_vacols(_vacols_id, _vacols_sequence_id)
       []
     end
