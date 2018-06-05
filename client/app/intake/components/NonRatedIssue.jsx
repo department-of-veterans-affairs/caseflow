@@ -6,29 +6,29 @@ import { ISSUE_CATEGORIES } from '../constants';
 
 export class NonRatedIssueUnconnected extends React.PureComponent {
   handleCategoryChange(event) {
-    this.props.setIssueCategory(this.props.issueId, event.value);
+    this.props.setIssueCategory(this.props.id, event.value);
   }
 
   handleDescriptionChange(event) {
-    this.props.setIssueDescription(this.props.issueId, event);
+    this.props.setIssueDescription(this.props.id, event);
   }
 
   render () {
-    const { nonRatedIssues } = this.props;
+    const { id, category, description } = this.props;
 
     return (
-      <div className="cf-non-rated-issue" key={this.props.key}>
+      <div className="cf-non-rated-issue">
         <SearchableDropdown
           name="issue-category"
           label="Issue category"
           placeholder="Select or enter..."
           options={ISSUE_CATEGORIES}
-          value={nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueCategory : null}
+          value={category}
           onChange={(event) => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
-          value={nonRatedIssues[this.props.issueId] ? nonRatedIssues[this.props.issueId].issueDescription : null}
+          value={description}
           onChange={(event) => this.handleDescriptionChange(event)} />
       </div>
     );

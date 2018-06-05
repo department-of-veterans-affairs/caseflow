@@ -50,18 +50,16 @@ export const formatRatingData = (intakeState) => {
 
   const nonRatingData = {
     request_issues:
-      _.map(intakeState.nonRatedIssues, (issue) => {
-        if (issue.issueCategory) {
-          return {
-            decision_text: issue.issueDescription,
-            issue_category: issue.issueCategory
-          };
-        }
-      })
+      _(intakeState.nonRatedIssues).map((issue) => {
+        return {
+          decision_text: issue.description,
+          issue_category: issue.category
+        };
+      }).filter('issue_category')
   };
 
   const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues)
+    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
   };
 
   return data;

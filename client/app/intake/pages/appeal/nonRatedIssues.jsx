@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
-import { NonRatedIssuesUnconnected, NonRatedIssueUnconnected, AddIssueButtonUnconnected } from '../../components/NonRatedIssue';
+import { NonRatedIssueUnconnected, AddIssueButtonUnconnected } from '../../components/NonRatedIssue';
 import _ from 'lodash';
 
 class NonRatedIssuesUnconnected extends React.PureComponent {
@@ -11,7 +11,7 @@ class NonRatedIssuesUnconnected extends React.PureComponent {
 
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
-        <NonRatedIssue key={issueId} issueId={issueId} />
+        <NonRatedIssue key={issueId} id={issueId} category={issue.category} description={issue.description} />
       );
     });
 

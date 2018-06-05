@@ -11,7 +11,7 @@ class NonRatedIssuesUnconnected extends React.PureComponent {
 
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
-        <NonRatedIssue key={issueId} issueId={issueId} />
+        <NonRatedIssue key={issueId} id={issueId} category={issue.category} description={issue.description} />
       );
     });
 
