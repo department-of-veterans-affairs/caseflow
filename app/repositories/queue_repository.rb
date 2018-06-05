@@ -103,7 +103,10 @@ class QueueRepository
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
       case location
       when :bva_dispatch
-        fail Caseflow::Error::QueueRepositoryError, "The work product is not decision" unless decass_record.draft_decision?
+        unless decass_record.draft_decision?
+          msg = "The work product is not decision"
+          fail Caseflow::Error::QueueRepositoryError, msg
+        end
         update_decass_record(decass_record, decass_attrs)
       when :omo_office
         fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
