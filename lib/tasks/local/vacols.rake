@@ -73,14 +73,16 @@ namespace :local do
     desc "Seeds local VACOLS"
     task seed: :environment do
       date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
-
+      hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
+      travel_board_date_shift = Time.now.utc.beginning_of_day - Time.utc(2018, 03, 20)
+      
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
       read_csv(VACOLS::Representative, date_shift)
       read_csv(VACOLS::Correspondent, date_shift)
       read_csv(VACOLS::CaseIssue, date_shift)
       read_csv(VACOLS::Note, date_shift)
-      read_csv(VACOLS::CaseHearing, date_shift)
+      read_csv(VACOLS::CaseHearing, hearing_date_shift)
       read_csv(VACOLS::Decass, date_shift)
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)
