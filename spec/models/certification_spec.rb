@@ -1,55 +1,59 @@
 describe Certification do
-  let(:certification_date) { nil }
-  let(:nod) { Generators::Document.build(type: "NOD") }
-  let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
-  let(:form9) { Generators::Document.build(type: "Form 9") }
-  let(:documents) { [nod, soc, form9] }
-
-  let(:vacols_record_template) { :ready_to_certify }
-  let(:ssoc_date) { nil }
-  let(:vacols_record) do
-    {
-      template: vacols_record_template,
-      nod_date: nod.received_at,
-      soc_date: soc.received_at,
-      ssoc_dates: ssoc_date ? [ssoc_date] : nil,
-      form9_date: form9.received_at
-    }
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    FeatureToggle.enable!(:test_facols)
   end
 
-  let(:appeal) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
-  let(:certification_completed_at) { nil }
-  let(:poa_matches) { true }
-  let(:poa_correct_in_bgs) { false }
+  let(:vacols_case) do
+    create(:case_with_ssoc, :has_regional_office)
+  end
+
+  let(:vacols_case_no_ssocs) do
+    create(:case_with_form_9, :has_regional_office)
+  end
+
+  let(:vacols_case_certified) do
+    create(:case_with_ssoc, :certified, :has_regional_office)
+  end
+
+  let(:vacols_case_missing_data) do
+    create(:case_with_nod, :has_regional_office)
+  end
+
+  let(:vacols_case_mismatch) do
+    create(:case_with_soc, :has_regional_office, bfd19: 3.months.ago)
+  end
+
+  let(:vacols_case_ssoc_mismatch) do
+    create(:case_with_ssoc, :has_regional_office, bfssoc1: 1.month.ago)
+  end
+
+  let(:vacols_case_mismatch) do
+    create(:case_with_soc, :has_regional_office, bfd19: 3.months.ago)
+  end
+
+  let(:vacols_case_multiple_mismatch) do
+    create(:case, :has_regional_office, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago,
+                                        bfssoc1: 1.month.ago)
+  end
+
   let(:certification) do
-    Certification.create(
-      vacols_id: appeal.vacols_id,
-      completed_at: certification_completed_at,
-      poa_correct_in_bgs: poa_correct_in_bgs,
-      poa_matches: poa_matches,
-      vacols_representative_name: "VACOLS_NAME",
-      bgs_representative_name: "BGS_NAME",
-      vacols_representative_type: "VACOLS_TYPE",
-      bgs_representative_type: "BGS_TYPE",
-      representative_name: "NAME",
-      representative_type: "TYPE"
-    )
+    create(:certification, :default_representative, vacols_case: vacols_case)
   end
 
   let(:user) { User.find_or_create_by(station_id: 456, css_id: 124) }
-
-  before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  end
 
   context "#async_start!" do
     subject { certification.async_start! }
 
     context "when appeal has already been certified" do
-      let(:vacols_record_template) { :certified }
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_certified)
+      end
 
       it "returns already_certified and sets the flag" do
         subject
@@ -67,8 +71,9 @@ describe Certification do
     end
 
     context "when appeal is missing certification data" do
-      let(:vacols_record) { {} }
-
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_missing_data)
+      end
       it "returns data_missing and sets the flag" do
         subject
         expect(certification.certification_status).to eq(:data_missing)
@@ -78,15 +83,17 @@ describe Certification do
     end
 
     context "when a document is mismatched" do
-      let(:documents) { [soc, form9] }
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_mismatch)
+      end
 
       it "returns mismatched_documents and sets the flag" do
         subject
         expect(certification.certification_status).to eq(:mismatched_documents)
 
-        expect(certification.reload.nod_matching_at).to be_nil
+        expect(certification.reload.nod_matching_at).to eq(Time.zone.now)
         expect(certification.soc_matching_at).to eq(Time.zone.now)
-        expect(certification.form9_matching_at).to eq(Time.zone.now)
+        expect(certification.form9_matching_at).to be_nil
         expect(certification.ssocs_required).to be_falsey
         expect(certification.ssocs_matching_at).to be_nil
         expect(certification.form8_started_at).to be_nil
@@ -96,15 +103,17 @@ describe Certification do
         subject
 
         expect(Certification.was_missing_doc.count).to eq(1)
-        expect(Certification.was_missing_nod.count).to eq(1)
+        expect(Certification.was_missing_nod.count).to eq(0)
         expect(Certification.was_missing_soc.count).to eq(0)
         expect(Certification.was_missing_ssoc.count).to eq(0)
-        expect(Certification.was_missing_form9.count).to eq(0)
+        expect(Certification.was_missing_form9.count).to eq(1)
       end
     end
 
     context "when ssocs are mismatched" do
-      let(:ssoc_date) { 1.day.ago }
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_ssoc_mismatch)
+      end
 
       it "is included in the relevant certification_stats" do
         subject
@@ -118,8 +127,9 @@ describe Certification do
     end
 
     context "when multiple docs are mismatched" do
-      let(:documents) { [] }
-      let(:ssoc_date) { 1.day.ago }
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_multiple_mismatch)
+      end
 
       it "is included in the relevant certification_stats" do
         subject
@@ -133,6 +143,10 @@ describe Certification do
     end
 
     context "when appeal is ready to start" do
+      let(:certification) do
+        create(:certification, vacols_case: vacols_case_no_ssocs)
+      end
+
       it "returns success and sets timestamps" do
         subject
         expect(certification.certification_status).to eq(:started)
@@ -151,9 +165,9 @@ describe Certification do
       end
 
       context "when appeal has ssoc" do
-        let(:ssoc_date) { 4.days.ago }
-        let(:ssoc) { Generators::Document.build(type: "SSOC", received_at: 4.days.ago) }
-        let(:documents) { [nod, soc, form9, ssoc] }
+        let(:certification) do
+          create(:certification, vacols_case: vacols_case)
+        end
 
         it "returns success and sets ssoc_required" do
           subject
@@ -178,6 +192,9 @@ describe Certification do
         context "when matching form8 is stale (> 48 hrs old)" do
           let!(:form8) do
             Form8.create(certification_id: certification.id, updated_at: 3.days.ago)
+          end
+          let(:appeal) do
+            certification.appeal
           end
 
           it "updates the form8's values from appeal" do
@@ -218,6 +235,12 @@ describe Certification do
   end
 
   context "#appeal" do
+    let(:appeal) do
+      create(:legacy_appeal, vacols_case: vacols_case)
+    end
+    let(:certification) do
+      create(:certification, vacols_id: appeal.vacols_id)
+    end
     subject { certification.appeal }
 
     it "lazily loads the appeal for the certification" do
@@ -233,10 +256,10 @@ describe Certification do
     end
 
     context "when completed" do
-      let(:certification_completed_at) { 1.hour.from_now }
-
       context "when not created (in db)" do
-        let(:certification) { Certification.new }
+        let(:certification) do
+          build(:certification, vacols_case: vacols_case)
+        end
 
         it "is_expected to be_nil" do
           expect(subject).to eq nil
@@ -244,7 +267,7 @@ describe Certification do
       end
 
       context "when created" do
-        before { certification.save! }
+        before { certification.update!(completed_at: 1.hour.from_now) }
 
         it "returns the time since certification started" do
           expect(subject).to eq(1.hour)
@@ -254,6 +277,9 @@ describe Certification do
   end
 
   context ".complete!" do
+    let(:certification) do
+      create(:certification, :default_representative, vacols_case: vacols_case, hearing_preference: "VIDEO")
+    end
     subject { certification.user_id }
 
     before do
@@ -268,13 +294,15 @@ describe Certification do
 
   context ".find_by_vacols_id" do
     let(:vacols_id) { "1122" }
-    let!(:certification) { Certification.create(vacols_id: vacols_id) }
+    let(:certification) do
+      create(:certification, vacols_id: vacols_id)
+    end
 
     subject { Certification.find_by_vacols_id(vacols_id) }
 
     context "when certification exists and it has not been cancelled before" do
       it "loads that certification " do
-        expect(subject.id).to eq(certification.id)
+        expect(certification.id).to eq(subject.id)
       end
     end
 
@@ -365,7 +393,9 @@ describe Certification do
 
   context "#rep_name, #rep_type" do
     context "when the user indicates that poa matches across bgs and vacols" do
-      let(:poa_matches) { true }
+      let(:certification) do
+        create(:certification, :default_representative, :poa_matches, vacols_case: vacols_case)
+      end
       it "returns representative name from vacols" do
         expect(certification.rep_name).to eq("VACOLS_NAME")
       end
@@ -375,8 +405,10 @@ describe Certification do
     end
 
     context "when the user indicates that poa does not match but bgs is correct" do
-      let(:poa_matches) { false }
-      let(:poa_correct_in_bgs) { true }
+      let(:certification) do
+        create(:certification, :default_representative, :poa_correct_in_bgs, vacols_case: vacols_case,
+                                                                             hearing_preference: "VIDEO")
+      end
       it "returns representative type from bgs" do
         expect(certification.rep_name).to eq("BGS_NAME")
       end
@@ -386,8 +418,9 @@ describe Certification do
     end
 
     context "when bgs and vacols poa are both not correct" do
-      let(:poa_matches) { false }
-      let(:poa_correct_in_bgs) { false }
+      let(:certification) do
+        create(:certification, :default_representative, vacols_case: vacols_case, hearing_preference: "VIDEO")
+      end
       it "returns representative type from bgs" do
         expect(certification.rep_name).to eq("NAME")
       end
