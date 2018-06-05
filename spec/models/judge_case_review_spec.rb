@@ -16,9 +16,9 @@ describe JudgeCaseReview do
           decass_attrs: {
             complexity: "hard",
             quality: "does_not_meet_expectations",
+            deficiencies: %w[theory_contention relevant_records process_violations],
             comment: "do this",
-            modifying_user: "CFS456",
-            deficiencies: %w[theory_contention relevant_records process_violations]
+            modifying_user: "CFS456"
           }
         ).and_return(true)
       end
