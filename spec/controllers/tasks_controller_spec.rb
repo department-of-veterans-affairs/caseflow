@@ -321,8 +321,8 @@ RSpec.describe TasksController, type: :controller do
           "document_id": "123456789.1234",
           "overtime": true,
           "note": "something",
-          "issues": [{ "disposition": "Remanded", "vacols_sequence_id": vacols_issue_remanded.issseq },
-                     { "disposition": "Allowed", "vacols_sequence_id": vacols_issue_allowed.issseq }]
+          "issues": [{ "disposition": "3", "vacols_sequence_id": vacols_issue_remanded.issseq },
+                     { "disposition": "1", "vacols_sequence_id": vacols_issue_allowed.issseq }]
         }
       end
 

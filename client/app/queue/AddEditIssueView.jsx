@@ -35,8 +35,8 @@ import {
   fullWidth,
   ERROR_FIELD_REQUIRED
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
