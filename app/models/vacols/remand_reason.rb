@@ -15,8 +15,8 @@ class VACOLS::RemandReason < VACOLS::Record
     (remand_reasons || []).each { |remand_reason| create!(remand_reason.merge(rmdkey: rmdkey, rmdissseq: rmdissseq)) }
   end
 
-  def self.load_remand_reasons(rmdkey, rmdissseq)
-    where(rmdkey: rmdkey, rmdissseq: rmdissseq)
+  def self.load_remand_reasons(rmdkey, rmdissseq, **kwargs)
+    where(rmdkey: rmdkey, rmdissseq: rmdissseq, **kwargs)
   end
 
   def self.delete_remand_reasons!(rmdkey, rmdissseq)
@@ -24,9 +24,9 @@ class VACOLS::RemandReason < VACOLS::Record
   end
 
   def self.update_remand_reasons!(rmdkey, rmdissseq, remand_reasons)
-    load_remand_reasons(rmdkey, rmdissseq).map.with_index do |reason, idx|
-      updated_reason = remand_reasons[idx].merge(rmdkey: rmdkey, rmdissseq: rmdissseq)
-      reason.update_attributes!(updated_reason)
+    (remand_reasons || []).map do |remand_reason|
+      load_remand_reasons(rmdkey, rmdissseq, rmdval: remand_reason[:rmdval])
+        .update_all(remand_reason)
     end
   end
 
