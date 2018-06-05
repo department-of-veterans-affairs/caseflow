@@ -74,8 +74,8 @@ namespace :local do
     task seed: :environment do
       date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
       hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
-      travel_board_date_shift = Time.now.utc.beginning_of_day - Time.utc(2018, 03, 20)
-      
+      travel_board_date_shift = Time.now.utc.beginning_of_day - Time.utc(2018, 0o3, 20)
+
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
       read_csv(VACOLS::Representative, date_shift)
