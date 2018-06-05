@@ -115,41 +115,14 @@ brew services stop postgresql
 brew services stop redis
 ```
 
-Start all containers
-```
-docker-compose up -d
-# run without -d to start your environment and view container logging in the foreground
+## Setup shortcuts
 
-docker-compose ps
-# this shows you the status of all of your dependencies
+To rapidly set up your local development (and testing) environment, you can run:
+```
+bundle exec rake local:build
 ```
 
-Turning off dependencies
-```
-# this stops all containers
-docker-compose down
-
-# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
-docker-compose down -v
-```
-
-Enable features
-```
-bundle exec rails runner scripts/enable_features_dev.rb
-```
-
-## Setup your Database Schema
-```
-rake [RAILS_ENV=<test|development|stubbed>] db:setup
-rake [RAILS_ENV=<test|development|stubbed>] db:seed
-
-# setup local VACOLS (FACOLS)
-RAILS_ENV=test rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:seed
-```
-
-Note you'll need to setup both the test and development databases, but only need to seed the development database.
+The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
 ## Debugging FACOLS setup
 Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
@@ -163,6 +136,12 @@ Sometimes the above setup fails, or the app cannot connect to the DB. Here are s
 Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
 
 2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
+
+If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
+```
+bundle exec rake local:destroy
+bundle exec rake local:build
+```
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
