@@ -27,7 +27,7 @@ class NonRatedIssuesUnconnected extends React.PureComponent {
       <AddIssueButton />
     </div>;
   }
-};
+}
 
 const NonRatedIssues = connect(
   ({ appeal }) => ({

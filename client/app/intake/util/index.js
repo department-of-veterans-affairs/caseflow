@@ -55,7 +55,8 @@ export const formatRatingData = (intakeState) => {
           decision_text: issue.description,
           issue_category: issue.category
         };
-      }).filter('issue_category')
+      }).
+        filter('issue_category')
   };
 
   const data = {

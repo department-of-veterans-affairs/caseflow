@@ -162,5 +162,5 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
   return {
     value: category,
     label: category
-  }
+  };
 });

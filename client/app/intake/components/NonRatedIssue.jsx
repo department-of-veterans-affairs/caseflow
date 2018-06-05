@@ -14,7 +14,7 @@ export class NonRatedIssueUnconnected extends React.PureComponent {
   }
 
   render () {
-    const { id, category, description } = this.props;
+    const { category, description } = this.props;
 
     return (
       <div className="cf-non-rated-issue">
