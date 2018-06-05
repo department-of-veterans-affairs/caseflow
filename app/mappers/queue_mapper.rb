@@ -57,16 +57,16 @@ module QueueMapper
     update_attrs = COLUMN_NAMES.keys.each_with_object({}) do |k, result|
       # skip only if the key is not passed, if the key is passed and the value is nil - include that
       next unless decass_attrs.keys.include? k
-      case k
-      when :work_product
-        result[COLUMN_NAMES[k]] = work_product_to_vacols_code(decass_attrs[:work_product], decass_attrs[:overtime])
-      when :complexity
-        result[COLUMN_NAMES[k]] = COMPLEXITY.key(decass_attrs[:complexity].to_sym)
-      when :quality
-        result[COLUMN_NAMES[k]] = QUALITY.key(decass_attrs[:quality].to_sym)
-      else
-        result[COLUMN_NAMES[k]] = decass_attrs[k]
-      end
+      result[COLUMN_NAMES[k]] = case k
+                                when :work_product
+                                  work_product_to_vacols_code(decass_attrs[:work_product], decass_attrs[:overtime])
+                                when :complexity
+                                  COMPLEXITY.key(decass_attrs[:complexity].to_sym)
+                                when :quality
+                                  QUALITY.key(decass_attrs[:quality].to_sym)
+                                else
+                                  decass_attrs[k]
+                                end
       result
     end
 
