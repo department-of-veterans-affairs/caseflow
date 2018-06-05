@@ -5,9 +5,9 @@ import {
   redText,
   DECISION_TYPES
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
