@@ -24,8 +24,19 @@ export type Task = {
   id: string,
   vacolsId: string,
   attributes: {
+    added_by_css_id: string,
+    added_by_name: string,
+    appeal_id: string,
+    assigned_by_first_name: string,
+    assigned_by_last_name: string,
+    assigned_on: string,
+    docket_date: string,
+    docket_name: string,
+    document_id: string,
+    due_on: string,
     task_id: string,
-    task_type: string
+    task_type: string,
+    user_id: string
   }
 };
 

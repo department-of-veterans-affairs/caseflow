@@ -35,7 +35,7 @@ import {
   DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
-import type { State, DeprecatedTask, Tasks } from './reducers';
+import type { State, DeprecatedTask, Task } from './reducers';
 import type { OMapIterator } from 'lodash';
 import type { UiStateError } from './uiReducer/uiReducer';
 
@@ -57,7 +57,7 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 
 class SubmitDecisionView extends React.PureComponent<{|
   appeal: Object,
-  task: DeprecatedTask,
+  task: Task,
   decision: Object,
   judges: Object,
   error: ?UiStateError,
@@ -269,21 +269,41 @@ SubmitDecisionView.propTypes = {
 
 const mapStateToProps = (state: State, ownProps: Object): {|
   appeal: Object,
-  task: DeprecatedTask,
+  task: Task,
   decision: Object,
   judges: Object,
   error: ?UiStateError,
   highlightFormItems: boolean,
   selectingJudge: boolean
 |} => {
-  const {highlightFormItems, selectingJudge} = state.ui;
+  const {
+    queue: {
+      stagedChanges: {
+        appeals: {
+          [ownProps.vacolsId]: appeal
+        },
+        taskDecision: decision
+      },
+      tasks: {
+        [ownProps.vacolsId]: task
+      },
+      judges
+    },
+    ui: {
+      highlightFormItems,
+      selectingJudge,
+      messages: {
+        error
+      }
+    }
+  } = state;
 
   return {
-    appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-    task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-    decision: state.queue.stagedChanges.taskDecision,
-    judges: state.queue.judges,
-    error: state.ui.messages.error,
+    appeal,
+    task,
+    decision,
+    judges,
+    error,
     highlightFormItems,
     selectingJudge
   };
