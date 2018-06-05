@@ -49,10 +49,10 @@ class Test::UsersController < ApplicationController
       }
     },
     {
-        name: "Hearing Schedule",
-        links: {
-            current_schedule: "/hearings/schedule"
-        }
+      name: "Hearing Schedule",
+      links: {
+        current_schedule: "/hearings/schedule"
+      }
     },
     {
       name: "Miscellaneous",

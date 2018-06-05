@@ -13,4 +13,3 @@ class Hearings::ScheduleController < HearingsController
     verify_authorized_roles("Hearing Schedule")
   end
 end
-
