@@ -7,19 +7,31 @@ namespace :local do
     puts "Starting docker containers in the background"
     `docker-compose up -d`
 
-    puts "Setting up FACOLS"
-    Rake::Task["local:vacols:setup"].invoke
+    puts "Waiting for our FACOLS containers to be ready"
+    180.times do
+      break if `docker-compose ps | grep 'health: starting'`.strip.chomp.empty?
+      print "."
+      sleep 1
+    end
+    # Add a new line so that this scipt's output is more readable.
+    puts ""
+
+    puts "Setting up development FACOLS"
+    `RAILS_ENV=development bundle exec rake local:vacols:setup`
+
+    puts "Setting up local caseflow database"
+    `RAILS_ENV=development bundle exec rake db:setup`
+
+    puts "Seeding local caseflow database"
+    `RAILS_ENV=development bundle exec rake db:seed`
 
     puts "Enabling feature flags"
     `bundle exec rails runner scripts/enable_features_dev.rb`
 
-    puts "Setting up local caseflow database"
-    Rake::Task["db:setup"].invoke
-
-    puts "Seeding local caseflow database"
-    Rake::Task["db:seed"].invoke
-
     puts "Seeding FACOLS"
-    Rake::Task["local:vacols:seed"].invoke
+    `RAILS_ENV=development bundle exec rake local:vacols:seed`
+
+    puts "Setting up test FACOLS"
+    `RAILS_ENV=test bundle exec rake local:vacols:setup`
   end
 end
