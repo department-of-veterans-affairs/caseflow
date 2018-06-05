@@ -100,7 +100,7 @@ class IssueRepository
   def self.update_remand_reasons(record, issue_attrs)
     args = [issue_attrs[:vacols_id], issue_attrs[:vacols_sequence_id]]
 
-    unless issue_attrs[:disposition].eql? "Remanded"
+    unless Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]].eql? "Remanded"
       delete_remand_reasons!(*args)
       return
     end
