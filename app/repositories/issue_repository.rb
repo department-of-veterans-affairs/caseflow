@@ -82,7 +82,7 @@ class IssueRepository
   # :nocov:
 
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
-    case issue_attrs[:disposition]
+    case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
     when "Vacated"
       if record.issdc != "5" && issue_attrs[:readjudication]
         create_vacols_issue!(issue_attrs: record.attributes_for_readjudication.merge(

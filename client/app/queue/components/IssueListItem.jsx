@@ -8,10 +8,7 @@ import {
   getIssueTypeDescription,
   getIssueDiagnosticCodeLabel
 } from '../utils';
-import {
-  boldText,
-  CASE_DISPOSITION_ID_BY_DESCRIPTION
-} from '../constants';
+import { boldText } from '../constants';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
@@ -28,13 +25,9 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-const dispositionLabelForDescription = (descr) => {
-  const dispositionId = CASE_DISPOSITION_ID_BY_DESCRIPTION[descr.toLowerCase()];
-
+const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
-  const dispositionDescr = VACOLS_DISPOSITIONS_BY_ID[dispositionId];
-
-  return `${dispositionId} - ${dispositionDescr}`;
+  return `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}`;
 };
 
 export default class IssueListItem extends React.PureComponent {

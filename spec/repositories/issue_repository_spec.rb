@@ -41,7 +41,7 @@ describe IssueRepository do
 
     context "when disposition is changed to remanded" do
       let(:initial_disposition) { nil }
-      let(:disposition) { "Remanded" }
+      let(:disposition) { "3" }
       let(:readjudication) { nil }
       let(:remand_reasons) do
         [{
@@ -62,7 +62,7 @@ describe IssueRepository do
 
     context "when disposition is not changed from remanded" do
       let(:initial_disposition) { "3" }
-      let(:disposition) { "Remanded" }
+      let(:disposition) { "3" }
       let(:readjudication) { nil }
 
       it "does not create new remand reasons" do
@@ -89,7 +89,7 @@ describe IssueRepository do
 
     context "when disposition is changed to vacated and readjudication is selected" do
       let(:initial_disposition) { nil }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { true }
       let(:result_params) do
         {
@@ -113,7 +113,7 @@ describe IssueRepository do
 
     context "when disposition is changed to vacated and readjudication is not selected" do
       let(:initial_disposition) { nil }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { false }
 
       it "does not create a duplicate issue" do
@@ -124,7 +124,7 @@ describe IssueRepository do
 
     context "when disposition is not changed but readjudication is selected" do
       let(:initial_disposition) { "5" }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { true }
 
       it "does not create a duplicate issue" do
