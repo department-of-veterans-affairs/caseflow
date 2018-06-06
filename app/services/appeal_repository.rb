@@ -278,6 +278,18 @@ class AppealRepository
     "98"
   end
 
+  # Finds appeals in the set of vacols_ids passed that have been reopened after
+  # being closed for RAMP
+  def self.find_ramp_reopened_appeals(vacols_ids)
+    VACOLS::Case
+      .where(bfkey: vacols_ids)
+      .where([
+               "bfdc IS NULL OR (bfdc != 'P' AND (bfmpro != 'HIS' OR bfdc NOT IN (?)))",
+               VACOLS::Case::BVA_DISPOSITION_CODES
+             ])
+      .map { |case_record| build_appeal(case_record) }
+  end
+
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
