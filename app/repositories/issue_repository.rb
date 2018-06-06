@@ -62,11 +62,20 @@ class IssueRepository
   def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
     VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
   end
+
+  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
+    VACOLS::RemandReason.where(rmdkey: vacols_id, rmdissseq: vacols_sequence_id).map do |reason|
+      {
+        code: reason.rmdval,
+        after_certification: reason.rmddev.eql?("R2")
+      }
+    end
+  end
   # :nocov:
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
-    case issue_attrs[:disposition]
+    case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
     when "Remanded"
       if record.issdc != "3"
         remand_reasons = RemandReasonMapper.convert_to_vacols_format(
