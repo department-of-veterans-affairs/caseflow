@@ -189,6 +189,15 @@ class Helpers::Sanitizers
     # Nothing to sanitize in this table
   end
 
+  # Actcode
+  def white_list_actcode
+    %w[actckey actcdesc actcsec actcukey actcdtc actadusr actadtim actmdusr actmdtim acactive actsys actdesc2 acspare1 acspare2 acspare3]
+  end
+
+  def sanitize_actcode(actcode, _exist_hash)
+    # Nothing to sanitize in this table
+  end
+
   # Folder
   def white_list_folder
     %w[ticknum ticorkey tistkey tifiloc tidrecv tiddue
