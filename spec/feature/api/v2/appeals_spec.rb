@@ -156,6 +156,18 @@ describe "Appeals API v2", type: :request do
       expect(ApiView.count).to eq(1)
     end
 
+    it "records source if sent" do
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}",
+        "source": "white house hotline"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      expect(ApiView.last.source).to eq("white house hotline")
+    end
+
     it "caches response" do
       headers = {
         "ssn": "111223333",

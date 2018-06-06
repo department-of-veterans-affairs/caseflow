@@ -1,6 +1,6 @@
 class Api::V2::AppealsController < Api::ApplicationController
   def index
-    api_key.api_views.create(vbms_id: vbms_id)
+    api_key.api_views.create(vbms_id: vbms_id, source: source)
     render json: json_appeals
   rescue ActiveRecord::RecordNotFound
     veteran_not_found
@@ -12,6 +12,10 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def ssn
     request.headers["ssn"]
+  end
+
+  def source
+    request.headers["source"]
   end
 
   def json_appeals
