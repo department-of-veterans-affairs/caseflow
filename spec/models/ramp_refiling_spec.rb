@@ -18,7 +18,8 @@ describe RampRefiling do
       notice_date: 3.days.ago,
       receipt_date: 2.days.ago,
       option_selected: original_election_option,
-      end_product_reference_id: "123"
+      end_product_reference_id: "123",
+      established_at: 1.day.ago
     )
   end
 
