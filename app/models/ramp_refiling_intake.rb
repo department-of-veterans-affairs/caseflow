@@ -10,9 +10,7 @@ class RampRefilingIntake < Intake
   }.merge(Intake::ERROR_CODES)
 
   def preload_intake_data!
-    ramp_elections.each do |election|
-      election.recreate_issues_from_contentions!
-    end
+    ramp_elections.map(&:recreate_issues_from_contentions!)
   end
 
   def review!(request_params)
