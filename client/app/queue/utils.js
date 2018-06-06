@@ -10,6 +10,7 @@ import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import type {Task} from './reducers';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import type { Tasks } from './reducers';
 
 export const associateTasksWithAppeals =
   (serverData: Object = {}) => {
@@ -43,7 +44,7 @@ export const associateTasksWithAppeals =
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: {[string]: Task}, appeals: {[string]: Object}}) => {
+export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: {[string]: Object}}) => {
   const partitionedTasks = _.partition(tasks, (task) =>
     appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
   );
