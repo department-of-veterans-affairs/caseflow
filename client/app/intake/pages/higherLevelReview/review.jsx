@@ -6,7 +6,7 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
-import DifferentClaimant from '../../components/DifferentClaimant';
+import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
 import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
@@ -67,13 +67,13 @@ class Review extends React.PureComponent {
         value={sameOffice}
       />
 
-      <DifferentClaimantConnected />
+      <SelectClaimantConnected />
 
     </div>;
   }
 }
 
-const DifferentClaimantConnected = connect(
+const SelectClaimantConnected = connect(
   ({ higherLevelReview }) => ({
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
@@ -83,7 +83,7 @@ const DifferentClaimantConnected = connect(
     setClaimantNotVeteran,
     setClaimant
   }, dispatch)
-)(DifferentClaimant);
+)(SelectClaimant);
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {

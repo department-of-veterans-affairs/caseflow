@@ -2,7 +2,7 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 
-export default class DifferentClaimant extends React.PureComponent {
+export default class SelectClaimant extends React.PureComponent {
   render = () => {
     const {
       claimantNotVeteran,
