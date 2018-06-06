@@ -44,10 +44,6 @@ class RampRefilingIntake < Intake
   end
 
   def ui_hash
-    issues = []
-    ramp_elections.each do |election|
-      issues += election.issues
-    end
     super.merge(
       option_selected: detail.option_selected,
       receipt_date: detail.receipt_date,
