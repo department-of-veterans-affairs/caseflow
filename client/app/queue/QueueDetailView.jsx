@@ -13,7 +13,7 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import TabWindow from '../components/TabWindow';
-import { CATEGORIES } from './constants';
+import { CATEGORIES, USER_ROLES } from './constants';
 import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
@@ -50,7 +50,7 @@ class QueueDetailView extends React.PureComponent {
     if (this.props.task) {
       const task = this.props.task.attributes;
 
-      if (this.props.userRole === 'Judge') {
+      if (this.props.userRole === USER_ROLES.JUDGE) {
         if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
           return basicSubHeading;
         }
@@ -117,7 +117,7 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });

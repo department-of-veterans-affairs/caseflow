@@ -8,7 +8,7 @@ import { timeFunctionPromise } from '../util/PerfDebug';
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 
-const timeoutSettings = {
+const defaultTimeoutSettings = {
   response: STANDARD_API_TIMEOUT_MILLISECONDS,
   deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
 };
@@ -50,6 +50,8 @@ const httpMethods = {
   },
 
   get(url, options = {}) {
+    const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+
     let promise = request.
       get(url).
       set(getHeadersObject(options.headers)).
