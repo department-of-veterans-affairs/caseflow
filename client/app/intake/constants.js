@@ -1,3 +1,5 @@
+import { formatRadioOptions } from './util';
+
 export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
@@ -25,7 +27,7 @@ export const ACTIONS = {
   SET_INFORMAL_CONFERENCE: 'SET_INFORMAL_CONFERENCE',
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
-  SET_DIFFERENT_APPELLANT_OPTION: 'SET_DIFFERENT_APPELLANT_OPTION',
+  SET_DIFFERENT_CLAIMANT_OPTION: 'SET_DIFFERENT_CLAIMANT_OPTION',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
@@ -166,9 +168,11 @@ const issueCategoriesArray = [
   'Other non-rated'
 ];
 
-export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
-  return {
-    value: category,
-    label: category
-  };
-});
+// export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+//   return {
+//     value: category,
+//     label: category
+//   };
+// });
+
+export const ISSUE_CATEGORIES = formatRadioOptions(issueCategoriesArray);

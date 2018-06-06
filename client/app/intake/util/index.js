@@ -65,3 +65,12 @@ export const formatRatingData = (intakeState) => {
 
   return data;
 };
+
+export const formatRadioOptions = (optionsArray) => {
+  return optionsArray.map((option) => {
+    return {
+      value: option,
+      label: option
+    };
+  });
+}

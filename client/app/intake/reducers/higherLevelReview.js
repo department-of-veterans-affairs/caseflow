@@ -59,7 +59,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isComplete: false,
     endProductDescription: null,
     selectedRatingCount: 0,
-    differentClaimantOption: false,
+    differentClaimantOption: null,
     nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -102,7 +102,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
-  case ACTIONS.SET_DIFFERENT_APPELLANT_OPTION:
+  case ACTIONS.SET_DIFFERENT_CLAIMANT_OPTION:
     return update(state, {
       differentClaimantOption: {
         $set: action.payload.differentClaimantOption

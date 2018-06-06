@@ -79,7 +79,7 @@ const DifferentClaimantConnected = connect(
   }),
   (dispatch) => bindActionCreators({
     setDifferentClaimantOption
-  })
+  }, dispatch)
 )(DifferentClaimant)
 
 class ReviewNextButton extends React.PureComponent {
