@@ -37,7 +37,6 @@ class RampClosedAppeal < ApplicationRecord
       appeals_to_reclose += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
     end
 
-    # TODO: actually close these once we verify everything is good.
     appeals_to_reclose.each(&:reclose!)
   end
 end
