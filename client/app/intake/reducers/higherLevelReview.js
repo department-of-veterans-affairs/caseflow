@@ -56,7 +56,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     informalConferenceError: null,
     sameOffice: null,
     sameOfficeError: null,
-    differentClaimantOption: null,
+    claimantIsVeteran: null,
     claimant: null,
     isStarted: false,
     isReviewed: false,
@@ -105,10 +105,10 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
-  case ACTIONS.SET_DIFFERENT_CLAIMANT_OPTION:
+  case ACTIONS.SET_CLAIMANT_IS_VETERAN:
     return update(state, {
-      differentClaimantOption: {
-        $set: action.payload.differentClaimantOption
+      claimantIsVeteran: {
+        $set: action.payload.claimantIsVeteran
       }
     });
   case ACTIONS.SET_CLAIMANT:

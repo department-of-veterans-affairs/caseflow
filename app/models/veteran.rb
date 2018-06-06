@@ -144,7 +144,7 @@ class Veteran < ApplicationRecord
 
   def fetch_relationships
     self.class.bgs.find_all_relationships(
-      participant_id: Veteran.find_or_create_by_file_number(file_number).participant_id
+      participant_id: participant_id
     ).map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
   end
 

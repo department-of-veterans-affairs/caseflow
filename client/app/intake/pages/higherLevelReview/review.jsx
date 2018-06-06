@@ -8,7 +8,7 @@ import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import DifferentClaimant from '../../components/DifferentClaimant';
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
-import { setReceiptDate, setDifferentClaimantOption, setClaimant } from '../../actions/common';
+import { setReceiptDate, setClaimantIsVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
@@ -75,12 +75,12 @@ class Review extends React.PureComponent {
 
 const DifferentClaimantConnected = connect(
   ({ higherLevelReview }) => ({
-    differentClaimantOption: higherLevelReview.differentClaimantOption,
+    claimantIsVeteran: higherLevelReview.claimantIsVeteran,
     claimant: higherLevelReview.claimant,
     relationships: higherLevelReview.relationships
   }),
   (dispatch) => bindActionCreators({
-    setDifferentClaimantOption,
+    setClaimantIsVeteran,
     setClaimant
   }, dispatch)
 )(DifferentClaimant);
