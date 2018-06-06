@@ -111,11 +111,6 @@ class LegacyAppeal < ApplicationRecord
     omo_office: "20"
   }.freeze
 
-  BVA_DISPOSITIONS = [
-    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
-    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
-  ].freeze
-
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
@@ -385,7 +380,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def decided_by_bva?
-    !active? && BVA_DISPOSITIONS.include?(disposition)
+    !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
 
   def merged?
@@ -667,6 +662,12 @@ class LegacyAppeal < ApplicationRecord
         appeal_id = appeal_vbms_ids[appeal.vbms_id]
         acc[appeal_id] ||= []
         acc[appeal_id] << appeal
+      end
+    end
+
+    def bva_dispositions
+      VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
+        Constants::VACOLS_DISPOSITIONS_BY_ID[code]
       end
     end
 
