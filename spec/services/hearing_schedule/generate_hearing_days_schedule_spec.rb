@@ -64,7 +64,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
         schedule_period,
-        co_non_available_days.map { |day| day.date += 7.years; day }
+        co_non_available_days.map do |day| 
+          day.date += 7.years
+          day
+        end
       )
     end
 
