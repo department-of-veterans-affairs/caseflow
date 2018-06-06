@@ -169,11 +169,9 @@ const issueCategoriesArray = [
   'Other non-rated'
 ];
 
-// export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
-//   return {
-//     value: category,
-//     label: category
-//   };
-// });
-
-export const ISSUE_CATEGORIES = formatRadioOptions(issueCategoriesArray);
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});
