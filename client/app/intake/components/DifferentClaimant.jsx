@@ -1,7 +1,6 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
-import { setDifferentClaimantOption } from '../actions/common';
 import { formatRadioOptions } from '../util';
 
 export default class DifferentClaimant extends React.PureComponent {
@@ -13,15 +12,15 @@ export default class DifferentClaimant extends React.PureComponent {
       setClaimant
     } = this.props;
 
-    let showClaimants = differentClaimantOption === 'true'
+    let showClaimants = differentClaimantOption === 'true';
 
-    const claimantLabel = "Please select the claimant listed on the form. " +
-    "If you do not see the claimant, you will need to add it through SHARE, " +
-    "then refresh this page.";
+    const claimantLabel = 'Please select the claimant listed on the form. ' +
+    'If you do not see the claimant, you will need to add it through SHARE, ' +
+    'then refresh this page.';
 
     const fakeClaimants = [
-      "Joe Snuffy, Spouse",
-      "Name 2, Relationship"
+      'Joe Snuffy, Spouse',
+      'Name 2, Relationship'
     ];
 
     const fakeClaimantOptions = formatRadioOptions(fakeClaimants);
@@ -54,4 +53,4 @@ export default class DifferentClaimant extends React.PureComponent {
       { showClaimants && claimantOptions() }
     </div>;
   }
-};
+}

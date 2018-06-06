@@ -6,7 +6,7 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
-import DifferentClaimant from '../../components/DifferentClaimant'
+import DifferentClaimant from '../../components/DifferentClaimant';
 import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
 import { setReceiptDate, setDifferentClaimantOption, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
@@ -26,12 +26,12 @@ class Review extends React.PureComponent {
     } = this.props;
 
     switch (higherLevelReviewStatus) {
-      case INTAKE_STATES.NONE:
-        return <Redirect to={PAGE_PATHS.BEGIN} />;
-      case INTAKE_STATES.COMPLETED:
-        return <Redirect to={PAGE_PATHS.COMPLETED} />;
-      default:
-    };
+    case INTAKE_STATES.NONE:
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    case INTAKE_STATES.COMPLETED:
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
+    default:
+    }
 
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
@@ -71,7 +71,7 @@ class Review extends React.PureComponent {
 
     </div>;
   }
-};
+}
 
 const DifferentClaimantConnected = connect(
   ({ higherLevelReview }) => ({
@@ -100,7 +100,7 @@ class ReviewNextButton extends React.PureComponent {
     >
       Continue to next step
     </Button>;
-};
+}
 
 const ReviewNextButtonConnected = connect(
   ({ higherLevelReview, intake }) => ({
@@ -119,7 +119,7 @@ export class ReviewButtons extends React.PureComponent {
       <CancelButton />
       <ReviewNextButtonConnected history={this.props.history} />
     </div>
-};
+}
 
 export default connect(
   (state) => ({

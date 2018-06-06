@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
+import { getReceiptDateError, formatRatings } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -41,10 +41,10 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     endProductDescription: {
       $set: serverIntake.end_product_description
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
     }
+    // relationships: {
+    //   $set: formatRelationships(serverIntake.relationships)
+    // }
   });
 };
 
@@ -56,14 +56,13 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     informalConferenceError: null,
     sameOffice: null,
     sameOfficeError: null,
-    differentClaimantOption: false,
+    differentClaimantOption: null,
+    claimant: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
     selectedRatingCount: 0,
-    differentClaimantOption: null,
-    claimant: null,
     nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED

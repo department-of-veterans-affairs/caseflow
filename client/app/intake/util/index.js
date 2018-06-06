@@ -36,13 +36,15 @@ export const formatRatings = (ratings) => {
 };
 
 export const formatRelationships = (relationships) => {
-  const first =  _.capitalize(relationships.first_name);
-  const last =  _.capitalize(relationships.last_name);
-  const type =  _.capitalize(relationships.relationship_type);
+  const first = _.capitalize(relationships.first_name);
+  const last = _.capitalize(relationships.last_name);
+  const type = _.capitalize(relationships.relationship_type);
 
   return relationships.map((relationship) => {
-    value: relationship.participant_id,
-    displayText: `${first} ${last}, ${type}`
+    return {
+      value: relationship.participant_id,
+      displayText: `${first} ${last}, ${type}`
+    };
   });
 };
 
@@ -84,4 +86,4 @@ export const formatRadioOptions = (optionsArray) => {
       displayText: option
     };
   });
-}
+};
