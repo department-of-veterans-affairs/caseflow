@@ -6,12 +6,13 @@ describe AttorneyCaseReview do
     Fakes::Initializer.load!
   end
 
-  context ".create" do
-    subject { AttorneyCaseReview.create(params) }
+  context ".complete" do
+    subject { AttorneyCaseReview.complete(params) }
+
     context "should validate format of the task ID" do
       let(:params) do
         {
-          type: "OMORequest",
+          document_type: "omo_request",
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -21,8 +22,14 @@ describe AttorneyCaseReview do
           attorney: attorney
         }
       end
+
       context "when correct format" do
         let(:task_id) { "123456-2013-12-06" }
+        it { is_expected.to be_valid }
+      end
+
+      context "when correct format with letters" do
+        let(:task_id) { "123456L-2013-12-06" }
         it { is_expected.to be_valid }
       end
 
@@ -31,10 +38,6 @@ describe AttorneyCaseReview do
         it { is_expected.to_not be_valid }
       end
     end
-  end
-
-  context ".complete!" do
-    subject { AttorneyCaseReview.complete!(params) }
 
     context "when all parameters are present for OMO Request and Vacols update is successful" do
       before do
@@ -57,7 +60,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          type: "OMORequest",
+          document_type: "omo_request",
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -68,8 +71,8 @@ describe AttorneyCaseReview do
         }
       end
 
-      it "should create OMORequest record" do
-        expect(subject.class).to eq OMORequest
+      it "should create OMO Request record" do
+        expect(subject.document_type).to eq "omo_request"
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "OMO - IME"
         expect(subject.document_id).to eq "123456789.1234"
@@ -79,7 +82,7 @@ describe AttorneyCaseReview do
       end
     end
 
-    context "when all parameters are present for Draft Decision and Vacols update is successful" do
+    context "when all parameters are present for draft decision and VACOLS update is successful" do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).with(
           vacols_id: "123456",
@@ -122,7 +125,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          type: "DraftDecision",
+          document_type: "draft_decision",
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -142,7 +145,7 @@ describe AttorneyCaseReview do
       end
 
       it "should create DraftDecision record" do
-        expect(subject.class).to eq DraftDecision
+        expect(subject.document_type).to eq "draft_decision"
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "Decision"
         expect(subject.document_id).to eq "123456789.1234"
@@ -153,7 +156,7 @@ describe AttorneyCaseReview do
       end
     end
 
-    context "when not all required parameters are present and Vacols update is successful" do
+    context "when not all required parameters are present and VACOLS update is successful" do
       before do
         allow(Fakes::QueueRepository).to receive(:reassign_case_to_judge!).and_return(true)
       end
@@ -171,7 +174,8 @@ describe AttorneyCaseReview do
       end
 
       it "should not create AttorneyCaseReview record" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(subject.valid?).to eq false
+        expect(subject.errors.full_messages.first).to eq "Document type can't be blank"
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
@@ -184,7 +188,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          type: "OMORequest",
+          document_type: "omo_request",
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -209,7 +213,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          type: "DraftDecision",
+          document_type: "draft_decision",
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -238,7 +242,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          type: "DraftDecision",
+          document_type: "draft_decision",
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -249,8 +253,8 @@ describe AttorneyCaseReview do
         }
       end
 
-      it "should create DraftDecision record" do
-        expect(subject.class).to eq DraftDecision
+      it "should create Draft Decision record" do
+        expect(subject.document_type).to eq "draft_decision"
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "Decision"
         expect(subject.document_id).to eq "123456789.1234"

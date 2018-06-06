@@ -11,7 +11,8 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
+               "Hearing Schedule"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {

@@ -106,7 +106,9 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
 
   LOCATION_CODES = {
-    remand_returned_to_bva: "96"
+    remand_returned_to_bva: "96",
+    bva_dispatch: "30",
+    omo_office: "20"
   }.freeze
 
   BVA_DISPOSITIONS = [
@@ -506,6 +508,10 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def serializer
+    ::WorkQueue::LegacyAppealSerializer
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -580,12 +586,11 @@ class LegacyAppeal < ApplicationRecord
     # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
-          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,

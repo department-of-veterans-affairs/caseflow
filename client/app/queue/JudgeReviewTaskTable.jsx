@@ -10,7 +10,7 @@ import CaseDetailsLink from './CaseDetailsLink';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
 
 import { sortTasks, renderAppealType } from './utils';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class JudgeReviewTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -91,6 +91,9 @@ JudgeReviewTaskTable.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => ({
+  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
+  ..._.pick(state.ui, 'featureToggles')
+});
 
 export default connect(mapStateToProps)(JudgeReviewTaskTable);

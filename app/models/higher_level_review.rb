@@ -77,11 +77,17 @@ class HigherLevelReview < ApplicationRecord
 
   # TODO: Update with real code and modifier data
   def end_product_code
-    "030HLRAMA"
+    "030HLRR"
   end
 
+  END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
+
   def end_product_modifier
-    "030"
+    END_PRODUCT_MODIFIERS.each do |modifier|
+      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
+        return modifier
+      end
+    end
   end
 
   def end_product_station

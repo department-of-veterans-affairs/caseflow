@@ -19,7 +19,7 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class JudgeReviewTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -36,7 +36,6 @@ class JudgeReviewTaskListView extends React.PureComponent {
   render = () => {
     const {
       tasks,
-      featureToggles,
       userId,
       messages
     } = this.props;
@@ -48,7 +47,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
         {COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE}
       </StatusMessage>;
     } else {
-      tableContent = <JudgeReviewTaskTable featureToggles={featureToggles} />;
+      tableContent = <JudgeReviewTaskTable />;
     }
 
     return <AppSegment filledBackground>

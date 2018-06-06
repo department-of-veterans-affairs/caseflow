@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
+import BareList from '../../components/BareList';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -9,24 +10,31 @@ import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constan
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
+const steps = [
+  <span>
+    Upload the RAMP Election form to the VBMS eFolder with
+    Document Type <b>RAMP Opt-in Election</b> and Subject Line "RAMP Election".
+  </span>,
+  <span>
+    Notify the Veteran by mail of his/her ineligibility to participate
+    in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
+  </span>,
+  <span>
+    Document your actions as a permanent note in VBMS.
+  </span>
+
+];
+
+const stepFns = steps.map((step, index) =>
+  () => <span><strong>Step {index + 1}.</strong> {step}</span>
+);
+
 const rampIneligibleInstructions = <div>
   <p>
     Please check the Veteran ID entered, and if the Veteran ID is correct,
     take the following actions outside Caseflow:
   </p>
-  <ul>
-    <li>
-      Upload the RAMP Election to the VBMS eFolder with
-      Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
-    </li>
-    <li>
-      Notify the Veteran by mail of his/her ineligibility to participate
-      in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
-    </li>
-    <li>
-      Document your actions as a permanent note in VBMS.
-    </li>
-  </ul>
+  <BareList items={stepFns} />
 </div>;
 
 class Search extends React.PureComponent {

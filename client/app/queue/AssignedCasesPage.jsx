@@ -22,6 +22,10 @@ const AssignedCasesPage = (props) => {
   if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
     const { error } = tasksAndAppealsOfAttorney[attorneyId];
 
+    if (!error.response) {
+      return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
+    }
+
     return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>;
   }
 

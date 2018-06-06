@@ -31,10 +31,33 @@
   min-width: 500px;
 }
 
-.cf-intake-ratings label {
-  max-width: 100%;
+.cf-intake-ratings {
+  padding-bottom: 1em;
+
+  label {
+    max-width: 100%;
+  }
 }
 
 [id=button-begin-next-intake] {
   margin-top: 10px;
+}
+
+.cf-non-rated-issues {
+  padding-top: 1em;
+}
+
+.cf-non-rated-issue {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-template-columns: auto auto;
+  padding-bottom: 1em;
+
+  div {
+    margin: 0;
+  }
+
+  label {
+    margin-bottom: 8px;
+  }
 }

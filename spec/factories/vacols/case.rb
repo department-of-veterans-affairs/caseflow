@@ -2,11 +2,32 @@ FactoryBot.define do
   factory :case, class: VACOLS::Case do
     sequence(:bfkey)
     sequence(:bfcorkey)
-    sequence(:bfcorlid, 10_000) { |n| "#{n}S" }
+    sequence(:bfcorlid, 100_000_000) { |n| "#{n}S" }
 
     association :representative, factory: :representative, repkey: :bfkey
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
+
+    trait :assigned do
+      transient do
+        decass_count 1
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+      end
+    end
+
+    transient do
+      case_issues []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_issues.each do |case_issue|
+          case_issue.isskey = vacols_case.bfkey
+          case_issue.save
+        end
+      end
+    end
 
     transient do
       documents []
@@ -73,12 +94,16 @@ FactoryBot.define do
       end
     end
 
-    trait :original do
-      bfac 1
+    trait :type_original do
+      bfac "1"
     end
 
-    trait :reconsideration do
-      bfac 4
+    trait :type_reconsideration do
+      bfac "4"
+    end
+
+    trait :type_cavc_remand do
+      bfac "7"
     end
 
     trait :certified do
@@ -90,9 +115,77 @@ FactoryBot.define do
       bf41stat { certification_date }
     end
 
+    trait :status_active do
+      bfmpro "ACT"
+    end
+
+    trait :status_remand do
+      bfmpro "REM"
+    end
+
+    trait :status_complete do
+      bfmpro "HIS"
+    end
+
+    trait :status_advance do
+      bfmpro "ADV"
+    end
+
+    trait :disposition_allowed do
+      bfdc "1"
+    end
+
+    trait :disposition_remanded do
+      bfdc "3"
+    end
+
+    trait :disposition_vacated do
+      bfdc "5"
+    end
+
+    trait :disposition_ramp do
+      bfdc "P"
+    end
+
+    trait :representative_american_legion do
+      bfso "A"
+    end
+
+    trait :video_hearing_requested do
+      bfdocind "V"
+    end
+
+    trait :central_office_hearing do
+      bfhr "1"
+    end
+
+    trait :travel_board_hearing do
+      bfhr "2"
+    end
+
+    trait :aod do
+      after(:create) do |vacols_case, _evaluator|
+        create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
+      end
+    end
+
+    trait :has_regional_office do
+      bfregoff "RO18"
+    end
+
+    transient do
+      staff nil
+    end
+
+    after(:build) do |vacols_case, evaluator|
+      if evaluator.staff
+        vacols_case.bfcurloc = evaluator.staff.slogid
+      end
+    end
+
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[vacols_case.bfcorlid] =
+      Fakes::VBMSService.document_records[vacols_case.bfcorlid.gsub(/[^0-9]/, "")] =
         evaluator.documents + evaluator.nod_document + evaluator.soc_document +
         evaluator.form9_document + evaluator.ssoc_documents + evaluator.decision_document
     end

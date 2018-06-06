@@ -116,11 +116,11 @@ describe Hearing do
 
     let(:appeal) do
       Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing },
-                                      vbms_id: "123C",
+                                      vbms_id: "12345678",
                                       documents: documents)
     end
     let!(:additional_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "12345678")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
     let(:documents) do
@@ -279,6 +279,46 @@ describe Hearing do
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
         expect(hearing.representative_name).to eq "DAV - DON REED"
+      end
+    end
+  end
+
+  context "#create" do
+    let(:hearing) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Hearing.create_unassigned_hearing(hearing_hash)
+    end
+
+    context "add a hearing with only required attributes" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: 1.day.ago,
+          room: "1" }
+      end
+
+      it "creates hearing with required attributes" do
+        expect(hearing.hearing_type).to eq "C"
+        expect(hearing.hearing_date).to eq 1.day.ago
+        expect(hearing.room).to eq "1"
+      end
+    end
+
+    context "add a video hearing" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: 1.day.ago,
+          representative: "RO89",
+          room: "5",
+          representative_name: "General Counsel" }
+      end
+
+      it "creates a video hearing" do
+        expect(hearing.hearing_type).to eq "C"
+        expect(hearing.hearing_date).to eq 1.day.ago
+        expect(hearing.folder_nr).to eq "VIDEO RO89"
+        expect(hearing.room).to eq "5"
+        expect(hearing.repname).to eq "General Counsel"
       end
     end
   end

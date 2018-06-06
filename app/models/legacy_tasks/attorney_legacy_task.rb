@@ -1,6 +1,6 @@
 class AttorneyLegacyTask < LegacyTask
   # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
+  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validates :assigned_by, :assigned_to, presence: true
   validate :assigned_by_role_is_valid
 

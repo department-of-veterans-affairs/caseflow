@@ -18,7 +18,7 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class AttorneyTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -57,7 +57,7 @@ class AttorneyTaskListView extends React.PureComponent {
         {messages.success && <Alert type="success" title={messages.success}>
           {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <AttorneyTaskTable featureToggles={this.props.featureToggles} />
+        <AttorneyTaskTable />
       </div>;
     }
 
