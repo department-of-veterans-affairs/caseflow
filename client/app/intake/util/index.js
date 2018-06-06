@@ -40,6 +40,7 @@ export const formatRelationships = (relationships) => {
     const first = _.capitalize(relationship.first_name);
     const last = _.capitalize(relationship.last_name);
     const type = _.capitalize(relationship.relationship_type);
+
     return {
       value: relationship.participant_id,
       displayText: `${first} ${last}, ${type}`
