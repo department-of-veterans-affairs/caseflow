@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -41,6 +41,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     endProductDescription: {
       $set: serverIntake.end_product_description
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };

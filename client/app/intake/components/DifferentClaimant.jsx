@@ -26,7 +26,7 @@ export default class DifferentClaimant extends React.PureComponent {
 
     const fakeClaimantOptions = formatRadioOptions(fakeClaimants);
 
-    const claimantRadio = () => {
+    const claimantOptions = () => {
       return <div className="cf-claimant-options">
         <RadioField
           name="claimant-options"
@@ -35,6 +35,7 @@ export default class DifferentClaimant extends React.PureComponent {
           vertical
           options={fakeClaimantOptions}
           onChange={setClaimant}
+          value={claimant}
         />
       </div>;
     };
@@ -50,7 +51,7 @@ export default class DifferentClaimant extends React.PureComponent {
         value={differentClaimantOption}
       />
 
-      { showClaimants && claimantRadio() }
+      { showClaimants && claimantOptions() }
     </div>;
   }
 };

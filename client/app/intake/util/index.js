@@ -35,6 +35,17 @@ export const formatRatings = (ratings) => {
   }), 'profile_date');
 };
 
+export const formatRelationships = (relationships) => {
+  const first =  _.capitalize(relationships.first_name);
+  const last =  _.capitalize(relationships.last_name);
+  const type =  _.capitalize(relationships.relationship_type);
+
+  return relationships.map((relationship) => {
+    value: relationship.participant_id,
+    displayText: `${first} ${last}, ${type}`
+  });
+};
+
 export const formatRatingData = (intakeState) => {
   const ratingData = {
     request_issues:
