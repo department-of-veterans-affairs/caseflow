@@ -91,10 +91,10 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const setClaimantIsVeteran = (claimantIsVeteran) => ({
-  type: ACTIONS.SET_CLAIMANT_IS_VETERAN,
+export const setClaimantNotVeteran = (claimantNotVeteran) => ({
+  type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
   payload: {
-    claimantIsVeteran
+    claimantNotVeteran
   }
 });
 

@@ -5,14 +5,14 @@ import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 export default class DifferentClaimant extends React.PureComponent {
   render = () => {
     const {
-      claimantIsVeteran,
-      setClaimantIsVeteran,
+      claimantNotVeteran,
+      setClaimantNotVeteran,
       claimant,
       setClaimant,
       relationships
     } = this.props;
 
-    let showClaimants = claimantIsVeteran === 'true';
+    let showClaimants = claimantNotVeteran === 'true';
 
     const claimantLabel = 'Please select the claimant listed on the form. ' +
     'If you do not see the claimant, you will need to add it through SHARE, ' +
@@ -39,8 +39,8 @@ export default class DifferentClaimant extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={setClaimantIsVeteran}
-        value={claimantIsVeteran}
+        onChange={setClaimantNotVeteran}
+        value={claimantNotVeteran}
       />
 
       { showClaimants && claimantOptions() }
