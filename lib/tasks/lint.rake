@@ -16,10 +16,10 @@ task :lint do
   eslint_result = ShellCommand.run("cd ./client && yarn run #{eslint_cmd}")
 
   puts "\nrunning Flow..."
-  eslint_result = ShellCommand.run("cd ./client && yarn run flow check")
+  flow_result = ShellCommand.run("cd ./client && yarn run flow check")
 
   puts "\n"
-  if scss_result && rubocop_result && eslint_result
+  if scss_result && rubocop_result && eslint_result && flow_result
     puts Rainbow("Passed. Everything looks stylish! " \
       "But there may have been auto-corrections that you now need to check in.").green
   else
