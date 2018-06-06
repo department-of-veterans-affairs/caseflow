@@ -1132,7 +1132,7 @@ declare module "lodash" {
     functionsIn(object?: ?Object): Array<string>;
     get(
       object?: ?Object | ?Array<any>,
-      path?: ?Array<string> | string,
+      path?: ?Array<string> | string | number,
       defaultValue?: any
     ): any;
     has(object: Object, path: Array<string> | string): boolean;
