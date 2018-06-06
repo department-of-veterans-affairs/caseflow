@@ -64,6 +64,7 @@ describe IssueRepository do
       let(:initial_disposition) { "3" }
       let(:disposition) { "3" }
       let(:readjudication) { nil }
+      let(:remand_reason) { create(:remand_reason) }
 
       it "does not create new remand reasons" do
         expect(IssueRepository).to_not receive(:create_remand_reasons!)
