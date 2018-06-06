@@ -191,7 +191,8 @@ class Helpers::Sanitizers
 
   # Actcode
   def white_list_actcode
-    %w[actckey actcdesc actcsec actcukey actcdtc actadusr actadtim actmdusr actmdtim acactive actsys actdesc2 acspare1 acspare2 acspare3]
+    %w[actckey actcdesc actcsec actcukey actcdtc actadusr actadtim actmdusr actmdtim acactive actsys actdesc2
+       acspare1 acspare2 acspare3]
   end
 
   def sanitize_actcode(actcode, _exist_hash)
