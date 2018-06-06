@@ -82,6 +82,7 @@ namespace :local do
       read_csv(VACOLS::CaseIssue, date_shift)
       read_csv(VACOLS::Note, date_shift)
       read_csv(VACOLS::CaseHearing, hearing_date_shift)
+      read_csv(VACOLS::Actcode, date_shift)
       read_csv(VACOLS::Decass, date_shift)
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)

@@ -492,7 +492,7 @@ RSpec.feature "Queue" do
         sleep 1
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
 
-        click_on "documents in Caseflow Reader"
+        click_on "View #{appeal.documents.count} documents"
 
         # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
         expect(page).to have_content("Caseflow> Reader")
