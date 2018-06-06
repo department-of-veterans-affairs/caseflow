@@ -7,4 +7,3 @@ FactoryBot.define do
   factory :co_non_availability, class: CoNonAvailability, parent: :non_availability do
   end
 end
-
