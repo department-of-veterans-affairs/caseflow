@@ -106,7 +106,9 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
 
   LOCATION_CODES = {
-    remand_returned_to_bva: "96"
+    remand_returned_to_bva: "96",
+    bva_dispatch: "30",
+    omo_office: "20"
   }.freeze
 
   def document_fetcher
