@@ -1,10 +1,10 @@
 class JudgeCaseReview < ApplicationRecord
+  include LegacyTaskConcern
+
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
-  validates :location, :complexity, :quality, presence: true
+  validates :location, :complexity, :quality, :task_id, presence: true
 
   enum location: {
     omo_office: "omo_office",
@@ -29,14 +29,6 @@ class JudgeCaseReview < ApplicationRecord
   end
 
   private
-
-  def vacols_id
-    task_id.split("-", 2).first
-  end
-
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date
-  end
 
   class << self
     attr_writer :repository
