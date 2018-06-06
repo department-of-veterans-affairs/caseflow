@@ -74,30 +74,30 @@ namespace :local do
     task seed: :environment do
       date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
 
-      # read_csv(VACOLS::Case, date_shift)
-      # read_csv(VACOLS::Folder, date_shift)
-      # read_csv(VACOLS::Representative, date_shift)
-      # read_csv(VACOLS::Correspondent, date_shift)
-      # read_csv(VACOLS::CaseIssue, date_shift)
-      # read_csv(VACOLS::Note, date_shift)
-      # read_csv(VACOLS::Actcode, date_shift)
-      # read_csv(VACOLS::CaseHearing, date_shift)
-      # read_csv(VACOLS::Decass, date_shift)
-      # read_csv(VACOLS::Staff, date_shift)
-      # read_csv(VACOLS::Vftypes, date_shift)
-      # read_csv(VACOLS::Issref, date_shift)
+      read_csv(VACOLS::Case, date_shift)
+      read_csv(VACOLS::Folder, date_shift)
+      read_csv(VACOLS::Representative, date_shift)
+      read_csv(VACOLS::Correspondent, date_shift)
+      read_csv(VACOLS::CaseIssue, date_shift)
+      read_csv(VACOLS::Note, date_shift)
+      read_csv(VACOLS::Actcode, date_shift)
+      read_csv(VACOLS::CaseHearing, date_shift)
+      read_csv(VACOLS::Decass, date_shift)
+      read_csv(VACOLS::Staff, date_shift)
+      read_csv(VACOLS::Vftypes, date_shift)
+      read_csv(VACOLS::Issref, date_shift)
       read_csv(VACOLS::TravelBoardSchedule, date_shift)
 
-      # css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
-      #   User.find_or_create_by(
-      #     css_id: s.sdomainid
-      #   ) do |user|
-      #     user.station_id = "101"
-      #     user.full_name = "#{s.snamef} #{s.snamel}"
-      #   end.css_id
-      # end
-      # Functions.grant!("System Admin", users: css_ids)
-      # setup_dispatch
+      css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
+        User.find_or_create_by(
+          css_id: s.sdomainid
+        ) do |user|
+          user.station_id = "101"
+          user.full_name = "#{s.snamef} #{s.snamel}"
+        end.css_id
+      end
+      Functions.grant!("System Admin", users: css_ids)
+      setup_dispatch
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -135,14 +135,14 @@ namespace :local do
 
       # In order to add a new table, you'll also need to add a sanitize and white_list method
       # to the Helpers::Sanitizers class.
-      # write_csv(VACOLS::Case, cases, sanitizer)
-      # write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
-      # write_csv(VACOLS::Representative, cases.map(&:representative), sanitizer)
-      # write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
-      # write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
-      # write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
-      # write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings), sanitizer)
-      # write_csv(VACOLS::Decass, cases.map(&:decass), sanitizer)
+      write_csv(VACOLS::Case, cases, sanitizer)
+      write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
+      write_csv(VACOLS::Representative, cases.map(&:representative), sanitizer)
+      write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
+      write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
+      write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
+      write_csv(VACOLS::CaseHearing, cases.map(&:case_hearings), sanitizer)
+      write_csv(VACOLS::Decass, cases.map(&:decass), sanitizer)
 
       # We do not dump all of the vftypes table since there are some rows that seem not relevant to our work and
       # may contain things we should not check in. Instead we're scoping it to Diagnostic Codes (DG), and remand
@@ -221,8 +221,6 @@ namespace :local do
     end
 
     def read_csv(klass, date_shift)
-
-      puts klass
       items = []
       klass.delete_all
       CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
