@@ -36,7 +36,7 @@ class RampRefiling < RampReview
   end
 
   def election_receipt_date
-    ramp_elections && ramp_elections.map(&:receipt_date).min
+    ramp_elections.map(&:receipt_date).min
   end
 
   def needs_end_product?
@@ -80,7 +80,7 @@ class RampRefiling < RampReview
   end
 
   def validate_receipt_date
-    return unless receipt_date && ramp_elections
+    return unless receipt_date && election_receipt_date
 
     if election_receipt_date > receipt_date
       errors.add(:receipt_date, "before_ramp_receipt_date")
@@ -90,7 +90,7 @@ class RampRefiling < RampReview
   end
 
   def validate_option_selected
-    return unless option_selected && ramp_elections
+    return unless option_selected
 
     if ramp_elections.any?(&:higher_level_review?) && higher_level_review?
       errors.add(:option_selected, "higher_level_review_invalid")

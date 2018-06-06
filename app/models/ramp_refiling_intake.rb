@@ -11,7 +11,7 @@ class RampRefilingIntake < Intake
 
   def preload_intake_data!
     ramp_elections.each do |election|
-      election && election.recreate_issues_from_contentions!
+      election.recreate_issues_from_contentions!
     end
   end
 
@@ -46,16 +46,12 @@ class RampRefilingIntake < Intake
   end
 
   def ui_hash
-    issues = []
-    ramp_elections.each do |election|
-      issues += election.issues
-    end
     super.merge(
       option_selected: detail.option_selected,
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: issues.map(&:ui_hash),
+      issues: ramp_elections.map(&:issues).flatten.map(&:ui_hash),
       end_product_description: detail.end_product_description
     )
   end
