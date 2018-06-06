@@ -70,7 +70,7 @@ export const formatRadioOptions = (optionsArray) => {
   return optionsArray.map((option) => {
     return {
       value: option,
-      label: option
+      displayText: option
     };
   });
 }
