@@ -116,11 +116,11 @@ describe Hearing do
 
     let(:appeal) do
       Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing },
-                                      vbms_id: "123C",
+                                      vbms_id: "12345678",
                                       documents: documents)
     end
     let!(:additional_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "12345678")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
     let(:documents) do

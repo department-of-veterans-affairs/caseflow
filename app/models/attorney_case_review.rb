@@ -2,14 +2,19 @@ class AttorneyCaseReview < ApplicationRecord
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :attorney, :type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
+  validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
+
+  enum document_type: {
+    omo_request: "omo_request",
+    draft_decision: "draft_decision"
+  }
 
   attr_accessor :issues
 
   # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
+  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
@@ -61,14 +66,16 @@ class AttorneyCaseReview < ApplicationRecord
   class << self
     attr_writer :repository
 
-    def complete!(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = create!(params)
-        MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
-                              service: :vacols,
-                              name: record.type) do
-          record.reassign_case_to_judge_in_vacols!
-          record.update_issue_dispositions! if record.type == "DraftDecision"
+        record = create(params)
+        if record.valid?
+          MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
+                                service: :vacols,
+                                name: record.document_type) do
+            record.reassign_case_to_judge_in_vacols!
+            record.update_issue_dispositions! if record.draft_decision?
+          end
         end
         record
       end
