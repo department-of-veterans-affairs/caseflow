@@ -47,7 +47,31 @@ const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-class AddEditIssueView extends React.Component {
+class AddEditIssueView extends React.Component<{|
+  highlight: boolean,
+  appeal: Object,
+  task: Task,
+  issue: Object,
+  error: ?UiStateError,
+  modal: boolean,
+  action: string,
+  vacolsId: string,
+  nextStep: string,
+  prevStep: string,
+  issueId: string,
+  updateEditingAppealIssue: Function,
+  startEditingAppealIssue: Function,
+  cancelEditingAppealIssue: Function,
+  saveEditedAppealIssue: Function,
+  highlightInvalidFormItems: Function,
+  deleteEditingAppealIssue: Function,
+  requestUpdate: Function,
+  requestDelete: Function,
+  showModal: Function,
+  hideModal: Function,
+  requestSave: Function,
+  editAppeal: Function
+|}> {
   componentDidMount = () => {
     const { issueId, vacolsId } = this.props;
 
@@ -338,7 +362,7 @@ AddEditIssueView.propTypes = {
   issue: PropTypes.object
 };
 
-const mapStateToProps = (state: State, ownProps): {|
+const mapStateToProps = (state: State, ownProps: Object): {|
     highlight: boolean,
     appeal: Object,
     task: Task,
@@ -349,7 +373,7 @@ const mapStateToProps = (state: State, ownProps): {|
   return {
     highlight: state.ui.highlightFormItems,
     appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-    task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+    task: state.queue.tasks[ownProps.vacolsId],
     issue: state.queue.editingIssue,
     error: state.ui.messages.error,
     modal: state.ui.modal.deleteIssue
