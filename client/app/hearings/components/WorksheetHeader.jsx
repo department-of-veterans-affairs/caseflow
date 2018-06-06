@@ -135,13 +135,13 @@ class WorksheetHeader extends React.PureComponent {
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
 
-        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="test" />
+        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="copy-vbms-id" />
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           <div {...copyButtonStyling}>
             <CopyToClipboard text={worksheet.sanitized_vbms_id}>
               <button
-                data-for="test"
+                data-for="copy-vbms-id"
                 data-tip="Click to copy to clipboard"
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
