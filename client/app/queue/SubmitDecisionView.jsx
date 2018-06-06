@@ -35,8 +35,7 @@ import {
   DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
-import type { State, DeprecatedTask, Task } from './reducers';
-import type { OMapIterator } from 'lodash';
+import type { State, Task } from './reducers';
 import type { UiStateError } from './uiReducer/uiReducer';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
@@ -59,7 +58,7 @@ class SubmitDecisionView extends React.PureComponent<{|
   appeal: Object,
   task: Task,
   decision: Object,
-  judges: Object,
+  judges: {[string] : Object},
   error: ?UiStateError,
   highlightFormItems: boolean,
   selectingJudge: boolean,
@@ -164,10 +163,10 @@ class SubmitDecisionView extends React.PureComponent<{|
         <SearchableDropdown
           name="Select a judge"
           placeholder="Select a judge&hellip;"
-          options={_.map(judges, ((judge, value) => ({
+          options={_.map(judges, (judge, value) => ({
             label: judge.full_name,
             value
-          }): OMapIterator<Object, Object, Object>))}
+          }))}
           onChange={({ value }) => {
             this.props.setSelectingJudge(false);
             this.props.setDecisionOptions({ reviewing_judge_id: value });
@@ -272,7 +271,7 @@ const mapStateToProps = (state: State, ownProps: Object): {|
   appeal: Object,
   task: Task,
   decision: Object,
-  judges: Object,
+  judges: {[string] : Object},
   error: ?UiStateError,
   highlightFormItems: boolean,
   selectingJudge: boolean
@@ -308,7 +307,7 @@ const mapStateToProps = (state: State, ownProps: Object): {|
     highlightFormItems,
     selectingJudge
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,

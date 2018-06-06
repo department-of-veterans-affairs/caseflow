@@ -8,8 +8,7 @@ import { ACTIONS } from './constants';
 
 import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
-import uiReducer from './uiReducer/uiReducer';
-import type { UiState } from './uiReducer/uiReducer';
+import * as uiReducer from './uiReducer/uiReducer';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -358,7 +357,7 @@ export type State = {
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
-  ui: UiState
+  ui: uiReducer.UiState
 };
 
 const rootReducer = combineReducers({

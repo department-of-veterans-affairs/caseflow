@@ -12,7 +12,7 @@ import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
-import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
+import type { State, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
 class QueueLoadingScreen extends React.PureComponent<{|
   children: ?React.Node,

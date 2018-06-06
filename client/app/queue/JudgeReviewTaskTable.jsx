@@ -80,9 +80,10 @@ class JudgeReviewTaskTable extends React.PureComponent<{
   });
 
   render = () => {
-    const {loadedQueueTasks, appeals, tasks} = this.props;
+    const { loadedQueueTasks, appeals, tasks } = this.props;
     const taskWithId = {};
-    for (const id in loadedQueueTasks) {
+
+    for (const id of Object.keys(loadedQueueTasks)) {
       taskWithId[id] = tasks[id];
     }
 
@@ -90,8 +91,9 @@ class JudgeReviewTaskTable extends React.PureComponent<{
       columns={this.getQueueColumns}
       rowObjects={
         sortTasks(
-          {tasks: taskWithId, appeals})
-          .filter((task) => task.attributes.task_type === 'Review')
+          { tasks: taskWithId,
+            appeals }).
+          filter((task) => task.attributes.task_type === 'Review')
       }
       getKeyForRow={this.getKeyForRow}
       bodyStyling={this.tableStyle}
@@ -124,7 +126,10 @@ const mapStateToProps = (state: State): {
     }
   } = state;
 
-  return {loadedQueueTasks, appeals, tasks, featureToggles};
+  return { loadedQueueTasks,
+    appeals,
+    tasks,
+    featureToggles };
 };
 
 export default connect(mapStateToProps)(JudgeReviewTaskTable);

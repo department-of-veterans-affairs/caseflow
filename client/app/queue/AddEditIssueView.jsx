@@ -378,7 +378,7 @@ const mapStateToProps = (state: State, ownProps: Object): {|
     error: state.ui.messages.error,
     modal: state.ui.modal.deleteIssue
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,

@@ -90,14 +90,17 @@ class AttorneyTaskTable extends React.PureComponent<{|
   };
 
   render = () => {
-    const {appeals, loadedQueueTasks, tasks} = this.props;
+    const { appeals, loadedQueueTasks, tasks } = this.props;
     const taskWithId = {};
-    for (const id in loadedQueueTasks) {
+
+    for (const id of Object.keys(loadedQueueTasks)) {
       taskWithId[id] = tasks[id];
     }
+
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={sortTasks({appeals, tasks: taskWithId})}
+      rowObjects={sortTasks({ appeals,
+        tasks: taskWithId })}
       getKeyForRow={this.getKeyForRow}
       rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
       bodyStyling={this.tableStyle} />;
@@ -105,7 +108,7 @@ class AttorneyTaskTable extends React.PureComponent<{|
 }
 
 AttorneyTaskTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   tasks: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
@@ -129,7 +132,11 @@ const mapStateToProps = (state: State): {|
       featureToggles
     }
   } = state;
-  return {loadedQueueTasks, appeals, tasks, featureToggles};
+
+  return { loadedQueueTasks,
+    appeals,
+    tasks,
+    featureToggles };
 };
 
 export default connect(mapStateToProps)(AttorneyTaskTable);

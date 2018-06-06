@@ -52,7 +52,8 @@ class JudgeReviewTaskListView extends React.PureComponent<{
       messages,
       tasks
     } = this.props;
-    const reviewableCount = _.filter(loadedQueueTasks, (task) => tasks[task.id].attributes.task_type === 'Review').length;
+    const reviewableCount =
+      _.filter(loadedQueueTasks, (task) => tasks[task.id].attributes.task_type === 'Review').length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -82,12 +83,32 @@ JudgeReviewTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state: {queue: QueueState, ui: Object}) => ({
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
-  ..._.pick(state.queue, 'tasks'),
-  ..._.pick(state.ui, 'messages'),
-  loadedQueueTasks: state.queue.loadedQueue.tasks
-});
+const mapStateToProps = (state: {queue: QueueState, ui: Object}): {|
+  appeals: LoadedQueueAppeals,
+  loadedQueueTasks: LoadedQueueTasks,
+  tasks: Tasks,
+  messages: Object
+|} => {
+  const {
+    queue: {
+      loadedQueue: {
+        appeals,
+        tasks: loadedQueueTasks
+      },
+      tasks
+    },
+    ui: {
+      messages
+    }
+  } = state;
+
+  return {
+    appeals,
+    tasks,
+    messages,
+    loadedQueueTasks
+  };
+};
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

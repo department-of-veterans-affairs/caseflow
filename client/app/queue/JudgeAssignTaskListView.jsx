@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { css } from 'glamor';
 import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
@@ -73,14 +72,15 @@ class JudgeAssignTaskListView extends React.PureComponent<{|
   };
 
   unassignedTasksWithAppeals = () => {
-    const {loadedQueueTasks, appeals, tasks} = this.props;
+    const { loadedQueueTasks, appeals, tasks } = this.props;
     const taskWithId = {};
 
-    for (const id in loadedQueueTasks) {
+    for (const id of Object.keys(loadedQueueTasks)) {
       taskWithId[id] = tasks[id];
     }
 
-    return sortTasks({tasks: taskWithId, appeals}).
+    return sortTasks({ tasks: taskWithId,
+      appeals }).
       filter((task) => task.attributes.task_type === 'Assign').
       map((task) => ({
         task,
@@ -198,8 +198,12 @@ const mapStateToProps = (state: State): {|
     }
   } = state;
 
-  return {attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, loadedQueueTasks, appeals};
-}
+  return { attorneysOfJudge,
+    tasksAndAppealsOfAttorney,
+    tasks,
+    loadedQueueTasks,
+    appeals };
+};
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

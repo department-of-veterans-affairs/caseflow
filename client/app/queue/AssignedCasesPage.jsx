@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import SmallLoader from '../components/SmallLoader';
@@ -39,7 +38,8 @@ const AssignedCasesPage = (props: {|
   const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
   const { tasks: taskIdsOfAttorney, appeals } = tasksAndAppealsOfAttorney[attorneyId].data;
   const tasksOfAttorney = {};
-  for (const taskId in taskIdsOfAttorney) {
+
+  for (const taskId of Object.keys(taskIdsOfAttorney)) {
     tasksOfAttorney[taskId] = tasks[taskId];
   }
 
@@ -64,10 +64,12 @@ const mapStateToProps = (state: State): {|
   attorneysOfJudge: AttorneysOfJudge,
   tasks: Tasks
 |} => {
-  const {tasksAndAppealsOfAttorney, attorneysOfJudge, tasks} = state.queue;
+  const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
 
-  return {tasksAndAppealsOfAttorney, attorneysOfJudge, tasks};
-}
+  return { tasksAndAppealsOfAttorney,
+    attorneysOfJudge,
+    tasks };
+};
 
 export default connect(
   mapStateToProps,
