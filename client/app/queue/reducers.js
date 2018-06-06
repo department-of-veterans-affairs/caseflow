@@ -132,9 +132,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
       loadedQueue: {
         appeals: { $unset: action.payload.appealId },
         tasks: { $unset: action.payload.appealId }
-      },
-      tasks: {
-        $unset: action.payload.appealId
       }
     });
   case ACTIONS.EDIT_APPEAL:
