@@ -14,7 +14,8 @@ class TasksController < ApplicationController
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction,
     AttorneyCaseReview: AttorneyCaseReview,
-    JudgeCaseAssignmentToAttorney: JudgeCaseAssignmentToAttorney
+    JudgeCaseAssignmentToAttorney: JudgeCaseAssignmentToAttorney,
+    JudgeCaseReview: JudgeCaseReview
   }.freeze
 
   def set_application
@@ -103,6 +104,11 @@ class TasksController < ApplicationController
   end
 
   def complete_params
+    return attorney_case_review_params if task_class == AttorneyCaseReview
+    return judge_case_review_params if task_class == JudgeCaseReview
+  end
+
+  def attorney_case_review_params
     params.require("tasks").permit(:document_type,
                                    :reviewing_judge_id,
                                    :document_id,
@@ -112,6 +118,19 @@ class TasksController < ApplicationController
                                    issues: [:disposition, :vacols_sequence_id, :readjudication,
                                             remand_reasons: [:code, :after_certification]])
       .merge(attorney: current_user, task_id: params[:task_id])
+  end
+
+  def judge_case_review_params
+    params.require("tasks").permit(:location,
+                                   :attorney_id,
+                                   :complexity,
+                                   :quality,
+                                   :comment,
+                                   factors_not_considered: [],
+                                   areas_for_improvement: [],
+                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                            remand_reasons: [:code, :after_certification]])
+      .merge(judge: current_user, task_id: params[:task_id])
   end
 
   def task_params

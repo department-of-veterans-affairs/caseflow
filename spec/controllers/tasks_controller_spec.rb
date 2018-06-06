@@ -279,7 +279,6 @@ RSpec.describe TasksController, type: :controller do
 
     before do
       User.stub = judge
-
       FeatureToggle.enable!(:queue_phase_two)
     end
 
@@ -287,76 +286,78 @@ RSpec.describe TasksController, type: :controller do
       FeatureToggle.disable!(:queue_phase_two)
     end
 
-    context "when all parameters are present to create OMO request" do
-      let(:params) do
-        {
-          "type": "AttorneyCaseReview",
-          "document_type": "omo_request",
-          "reviewing_judge_id": judge.id,
-          "work_product": "OMO - IME",
-          "document_id": "123456789.1234",
-          "overtime": true,
-          "note": "something"
-        }
+    context "Attorney Case Review" do
+      context "when all parameters are present to create OMO request" do
+        let(:params) do
+          {
+            "type": "AttorneyCaseReview",
+            "document_type": "omo_request",
+            "reviewing_judge_id": judge.id,
+            "work_product": "OMO - IME",
+            "document_id": "123456789.1234",
+            "overtime": true,
+            "note": "something"
+          }
+        end
+
+        it "should be successful" do
+          post :complete, params: { task_id: task_id, tasks: params }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+          expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+          expect(response_body["task"]["overtime"]).to eq true
+          expect(response_body["task"]["note"]).to eq "something"
+          expect(response_body.keys).to_not include "issues"
+        end
       end
 
-      it "should be successful" do
-        post :complete, params: { task_id: task_id, tasks: params }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["task"]["document_id"]).to eq "123456789.1234"
-        expect(response_body["task"]["overtime"]).to eq true
-        expect(response_body["task"]["note"]).to eq "something"
-        expect(response_body.keys).to_not include "issues"
-      end
-    end
+      context "when all parameters are present to create Draft Decision" do
+        let(:vacols_issue_remanded) { FactoryBot.create(:case_issue, :disposition_remanded, isskey: vacols_case.bfkey) }
+        let(:vacols_issue_allowed) { FactoryBot.create(:case_issue, :disposition_allowed, isskey: vacols_case.bfkey) }
+        let(:params) do
+          {
+            "type": "AttorneyCaseReview",
+            "document_type": "draft_decision",
+            "reviewing_judge_id": judge.id,
+            "work_product": "Decision",
+            "document_id": "123456789.1234",
+            "overtime": true,
+            "note": "something",
+            "issues": [{ "disposition": "3", "vacols_sequence_id": vacols_issue_remanded.issseq },
+                       { "disposition": "1", "vacols_sequence_id": vacols_issue_allowed.issseq }]
+          }
+        end
 
-    context "when all parameters are present to create Draft Decision" do
-      let(:vacols_issue_remanded) { FactoryBot.create(:case_issue, :disposition_remanded, isskey: vacols_case.bfkey) }
-      let(:vacols_issue_allowed) { FactoryBot.create(:case_issue, :disposition_allowed, isskey: vacols_case.bfkey) }
-      let(:params) do
-        {
-          "type": "AttorneyCaseReview",
-          "document_type": "draft_decision",
-          "reviewing_judge_id": judge.id,
-          "work_product": "Decision",
-          "document_id": "123456789.1234",
-          "overtime": true,
-          "note": "something",
-          "issues": [{ "disposition": "3", "vacols_sequence_id": vacols_issue_remanded.issseq },
-                     { "disposition": "1", "vacols_sequence_id": vacols_issue_allowed.issseq }]
-        }
-      end
-
-      it "should be successful" do
-        post :complete, params: { task_id: task_id, tasks: params }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["task"]["document_id"]).to eq "123456789.1234"
-        expect(response_body["task"]["overtime"]).to eq true
-        expect(response_body["task"]["note"]).to eq "something"
-        expect(response_body.keys).to include "issues"
-      end
-    end
-
-    context "when not all parameters are present" do
-      let(:params) do
-        {
-          "type": "AttorneyCaseReview",
-          "document_type": "omo_request",
-          "work_product": "OMO - IME",
-          "document_id": "123456789.1234",
-          "overtime": true,
-          "note": "something"
-        }
+        it "should be successful" do
+          post :complete, params: { task_id: task_id, tasks: params }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+          expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+          expect(response_body["task"]["overtime"]).to eq true
+          expect(response_body["task"]["note"]).to eq "something"
+          expect(response_body.keys).to include "issues"
+        end
       end
 
-      it "should not be successful" do
-        post :complete, params: { task_id: task_id, tasks: params }
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)
-        expect(response_body["errors"].first["title"]).to eq "Record is invalid"
-        expect(response_body["errors"].first["detail"]).to eq "Reviewing judge can't be blank"
+      context "when not all parameters are present" do
+        let(:params) do
+          {
+            "type": "AttorneyCaseReview",
+            "document_type": "omo_request",
+            "work_product": "OMO - IME",
+            "document_id": "123456789.1234",
+            "overtime": true,
+            "note": "something"
+          }
+        end
+
+        it "should not be successful" do
+          post :complete, params: { task_id: task_id, tasks: params }
+          expect(response.status).to eq 400
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["title"]).to eq "Record is invalid"
+          expect(response_body["errors"].first["detail"]).to eq "Reviewing judge can't be blank"
+        end
       end
     end
   end
