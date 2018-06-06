@@ -92,7 +92,8 @@ RSpec.feature "Higher Level Review Intake" do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
-    expect(page).to have_content("Joe Snuffy, Spouse")
+    expect(page).to have_content("Bob Vance, Spouse")
+    expect(page).to have_content("Cathy Smith, Child")
 
     safe_click "#button-submit-review"
 

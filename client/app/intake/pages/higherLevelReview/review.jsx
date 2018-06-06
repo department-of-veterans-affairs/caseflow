@@ -76,7 +76,8 @@ class Review extends React.PureComponent {
 const DifferentClaimantConnected = connect(
   ({ higherLevelReview }) => ({
     differentClaimantOption: higherLevelReview.differentClaimantOption,
-    claimant: higherLevelReview.claimant
+    claimant: higherLevelReview.claimant,
+    relationships: higherLevelReview.relationships
   }),
   (dispatch) => bindActionCreators({
     setDifferentClaimantOption,
