@@ -42,7 +42,6 @@
    }
  }
 
-
   .cf-help-divider {
     display: none;
  }
@@ -73,6 +72,10 @@
     font-size: 1.1rem;
  }
 
+  .cf-tab.disabled {
+    background-color: $color-white;
+ }
+
   .cf-active {
     color: $color-primary;
     font-weight: 700;
@@ -101,6 +104,11 @@
     width: auto;
  }
 
+ .usa-accordion-content {
+   padding-top: 15px;
+   padding-bottom: 15px;
+ }
+
   .cf-hearings-worksheet-data {
     white-space: pre-line;
     margin-bottom: 0;
@@ -115,6 +123,10 @@
       margin-top: 0;
     }
 
+    h1 {
+      margin-bottom: 15px;
+    }
+
     .cf-form-textinput {
       p {
         margin-top: 0;
@@ -125,6 +137,7 @@
 
   .cf-tab-window-body-full-screen {
     margin-top: -35px;
+    padding-top: 35px;
  }
 
   .cf-title-meta-right {
@@ -138,10 +151,6 @@
  .cf-content-inside .cf-app-segment {
     margin-bottom: -19px;
 }
-
-  .cf-print-page-break {
-    break-after: page;
-  }
 
   body {
     counter-reset: page pages;
@@ -174,8 +183,18 @@
     padding-bottom: 0;
 
     table {
-      margin: 1em 0 0;
+      margin: 0 0 0;
 
+   }
+
+   .worksheetDocs {
+     margin-bottom: 5px;
+   }
+
+   .cf-hearings-column {
+    td {
+      padding: 1rem;
+    }
    }
 
     .cf-form-textarea {
@@ -185,18 +204,17 @@
         // scss-lint:enable ImportantRule
    }
  }
-
+   .cf-hearings-worksheet-data {
+     p {
+         margin-bottom: 0 ;
+     }
+   }
 
     .cf-hearings-second-page {
       min-height: 11in;
       display: flex;
       flex-direction: column;
       padding: 2em;
-
-      p {
-        margin-top: 0;
-        margin-bottom: 1.2rem;
-      }
 
       .cf-hearings-worksheet-form {
         flex-grow: 1;
@@ -205,6 +223,7 @@
 
         .cf-hearings-worksheet-data:first-child {
           margin-top: -35px;
+
         }
 
         .cf-hearings-worksheet-data:last-child {
