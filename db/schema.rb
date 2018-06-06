@@ -361,6 +361,20 @@ ActiveRecord::Schema.define(version: 20180601173719) do
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
   end
 
+  create_table "judge_case_reviews", force: :cascade do |t|
+    t.integer "attorney_id"
+    t.integer "judge_id"
+    t.string "task_id"
+    t.string "complexity"
+    t.string "quality"
+    t.string "location"
+    t.text "comment"
+    t.text "factors_not_considered", default: [], array: true
+    t.text "areas_for_improvement", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "legacy_appeals", force: :cascade do |t|
     t.string "vacols_id", null: false
     t.string "vbms_id"
@@ -466,10 +480,11 @@ ActiveRecord::Schema.define(version: 20180601173719) do
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type", null: false
     t.bigint "review_request_id", null: false
-    t.string "rating_issue_reference_id", null: false
-    t.date "rating_issue_profile_date", null: false
+    t.string "rating_issue_reference_id"
+    t.date "rating_issue_profile_date"
     t.string "contention_reference_id"
-    t.string "description", null: false
+    t.string "description"
+    t.string "issue_category"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 

@@ -103,6 +103,15 @@ RSpec.feature "Supplemental Claim Intake" do
     find("label", text: "Left knee granted").click
     expect(page).to have_content("1 rated issue")
 
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
@@ -130,7 +139,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: "IAMANEPID",
-      contention_descriptions: ["PTSD denied"]
+      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"]
     )
 
     intake.reload
@@ -140,11 +149,17 @@ RSpec.feature "Supplemental Claim Intake" do
 
     supplemental_claim.reload
     expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
-    expect(supplemental_claim.request_issues.count).to eq 1
+    expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: Date.new(2018, 4, 28),
       description: "PTSD denied"
+    )
+    expect(supplemental_claim.request_issues.last).to have_attributes(
+      rating_issue_reference_id: nil,
+      rating_issue_profile_date: nil,
+      issue_category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments"
     )
   end
 end
