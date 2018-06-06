@@ -53,8 +53,6 @@ class AttorneyCaseReview < ApplicationRecord
     end
   end
 
-  private
-
   class << self
     attr_writer :repository
 

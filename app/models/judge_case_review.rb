@@ -28,8 +28,6 @@ class JudgeCaseReview < ApplicationRecord
     )
   end
 
-  private
-
   class << self
     attr_writer :repository
 
