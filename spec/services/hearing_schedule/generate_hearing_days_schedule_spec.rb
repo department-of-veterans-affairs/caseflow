@@ -1,20 +1,23 @@
 describe HearingSchedule::GenerateHearingDaysSchedule do
-  let(:board_non_available_days) do
+  let(:schedule_period) { create(:ro_schedule_period) }
+
+  let(:co_non_available_days) do
     [
-      Date.parse("2018-04-03"),
-      Date.parse("2018-04-09"),
-      Date.parse("2018-05-04"),
-      Date.parse("2018-06-10"),
-      Date.parse("2018-06-19"),
-      Date.parse("2018-06-24"),
-      Date.parse("2018-06-25"),
-      Date.parse("2018-07-11"),
-      Date.parse("2018-07-15"),
-      Date.parse("2018-07-19"),
-      Date.parse("2018-08-27"),
-      Date.parse("2018-07-28"),
-      Date.parse("2018-10-13"),
-      Date.parse("2018-07-17")
+      create(:co_non_availability, date: Date.parse("2018-04-03"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-04-09"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-05-04"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-06-10"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-06-19"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-06-19"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-06-24"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-06-25"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-07-11"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-07-15"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-07-19"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-08-27"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-07-28"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-10-13"), schedule_period_id: schedule_period.id),
+      create(:co_non_availability, date: Date.parse("2018-07-17"), schedule_period_id: schedule_period.id)
     ]
   end
 
@@ -35,9 +38,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   let(:generate_hearing_days_schedule) do
     HearingSchedule::GenerateHearingDaysSchedule.new(
-      Date.parse("2018-04-01"),
-      Date.parse("2018-09-30"),
-      board_non_available_days
+      schedule_period,
+      co_non_available_days
     )
   end
 
@@ -53,7 +55,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
 
     it "removes board non-available days" do
-      expect(subject.find { |day| board_non_available_days.include?(day) }).to eq nil
+      expect(subject.find { |day| co_non_available_days.include?(day) }).to eq nil
     end
   end
 
@@ -61,9 +63,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     # generating a schedule for 2025
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
-        Date.parse("2025-04-01"),
-        Date.parse("2025-09-30"),
-        board_non_available_days.map { |day| day + 7.years }
+        schedule_period,
+        co_non_available_days.map { |day| day.date += 7.years; day }
       )
     end
 
