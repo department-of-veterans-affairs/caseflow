@@ -1,5 +1,3 @@
-import { formatRadioOptions } from './util';
-
 export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
