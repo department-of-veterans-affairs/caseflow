@@ -1,6 +1,6 @@
 # This job will fetch the number of contentions for every
 # EP known to Intake
-class SyncIntakeJob < ApplicationJob
+class SyncIntakeJob < CaseflowJob
   queue_as :low_priority
 
   def perform

@@ -279,7 +279,6 @@ class AppealRepository
   def self.find_ramp_reopened_appeals(vacols_ids)
     VACOLS::Case
       .where(bfkey: vacols_ids)
-      .where.not(bfdc: "P")
       .where([
                "bfdc IS NULL OR (bfdc != 'P' AND (bfmpro != 'HIS' OR bfdc NOT IN (?)))",
                VACOLS::Case::BVA_DISPOSITION_CODES
