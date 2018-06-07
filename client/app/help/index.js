@@ -13,7 +13,6 @@ import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
 
-
 class Help extends React.PureComponent {
 
   render() {
