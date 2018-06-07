@@ -14,6 +14,7 @@ class QueueRepository
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.appeals_from_tasks(tasks)
     vacols_ids = tasks.map(&:vacols_id)
 
@@ -47,6 +48,7 @@ class QueueRepository
     appeals.map(&:save)
     appeals
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
     transaction do
