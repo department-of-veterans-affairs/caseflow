@@ -1,4 +1,4 @@
-module DateHelper
+module FakeDateHelper
   def get_unique_dates_between(start_date, end_date, num_of_dates, exclude_weekends = true)
     dates = Set.new
 
