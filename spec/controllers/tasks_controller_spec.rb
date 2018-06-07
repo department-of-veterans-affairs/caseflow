@@ -272,13 +272,13 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST tasks/:task_id/complete" do
-    let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
-    let(:vacols_staff) { FactoryBot.create(:staff, :judge_role, :has_location_code, sdomainid: judge.css_id) }
-    let(:vacols_case) { FactoryBot.create(:case, :assigned, bfcurloc: vacols_staff.slogid) }
+    let(:judge) { create(:user, station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { create(:user, station_id: User::BOARD_STATION_ID) }
+    let(:vacols_staff) { create(:staff, :judge_role, :has_location_code, sdomainid: judge.css_id) }
+    let(:vacols_case) { create(:case, :assigned, bfcurloc: vacols_staff.slogid) }
     let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass.first.deadtim.strftime('%Y-%m-%d')}" }
 
     before do
-      User.stub = judge
       FeatureToggle.enable!(:queue_phase_two)
     end
 
@@ -287,6 +287,10 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "Attorney Case Review" do
+      before do
+        User.stub = judge
+      end
+
       context "when all parameters are present to create OMO request" do
         let(:params) do
           {
@@ -307,7 +311,6 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["task"]["document_id"]).to eq "123456789.1234"
           expect(response_body["task"]["overtime"]).to eq true
           expect(response_body["task"]["note"]).to eq "something"
-          expect(response_body.keys).to_not include "issues"
         end
       end
 
@@ -357,6 +360,57 @@ RSpec.describe TasksController, type: :controller do
           response_body = JSON.parse(response.body)
           expect(response_body["errors"].first["title"]).to eq "Record is invalid"
           expect(response_body["errors"].first["detail"]).to eq "Reviewing judge can't be blank"
+        end
+      end
+    end
+
+    context "Judge Case Review" do
+      before do
+        User.stub = judge
+        expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
+      end
+
+      context "when all parameters are present to send to omo office" do
+        let(:params) do
+          {
+            "type": "JudgeCaseReview",
+            "location": "omo_office",
+            "attorney_id": attorney.id
+          }
+        end
+
+        it "should be successful" do
+          post :complete, params: { task_id: task_id, tasks: params }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+          expect(response_body["task"]["location"]).to eq "omo_office"
+        end
+      end
+
+      context "when all parameters are present to send to sing a decision" do
+        let(:params) do
+          {
+            "type": "JudgeCaseReview",
+            "location": "bva_dispatch",
+            "attorney_id": attorney.id,
+            "complexity": "easy",
+            "quality": "meets_expectations",
+            "comment": "do this",
+            "factors_not_considered": %w[theory_contention relevant_records],
+            "areas_for_improvement": ["process_violations"]
+          }
+        end
+
+        it "should be successful" do
+          post :complete, params: { task_id: task_id, tasks: params }
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+          expect(response_body["task"]["location"]).to eq "bva_dispatch"
+          expect(response_body["task"]["judge_id"]).to eq judge.id
+          expect(response_body["task"]["attorney_id"]).to eq attorney.id
+          expect(response_body["task"]["complexity"]).to eq "easy"
+          expect(response_body["task"]["quality"]).to eq "meets_expectations"
+          expect(response_body["task"]["comment"]).to eq "do this"
         end
       end
     end

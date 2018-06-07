@@ -5,7 +5,7 @@ describe JudgeCaseReview do
   let!(:vacols_case) { create(:case, bfkey: "123456") }
 
   context ".create" do
-    subject { JudgeCaseReview.create(params) }
+    subject { JudgeCaseReview.complete(params) }
 
     context "when all parameters are present to sign a decision and VACOLS update is successful" do
       before do
@@ -20,7 +20,6 @@ describe JudgeCaseReview do
       end
 
       context "when bva dispatch" do
-
         let(:params) do
           {
             location: "bva_dispatch",
@@ -56,6 +55,26 @@ describe JudgeCaseReview do
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
           expect(vacols_case.reload.bfcurloc).to eq "30"
+        end
+      end
+
+      context "when omo office" do
+        let(:params) do
+          {
+            location: "omo_office",
+            judge: judge,
+            task_id: "123456-2013-12-06",
+            attorney: attorney
+          }
+        end
+        let(:work_product) { "IME" }
+
+        it "should create Judge Case Review" do
+          expect(subject.valid?).to eq true
+          expect(subject.location).to eq "omo_office"
+          expect(subject.judge).to eq judge
+          expect(subject.attorney).to eq attorney
+          expect(vacols_case.reload.bfcurloc).to eq "20"
         end
       end
     end

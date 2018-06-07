@@ -48,7 +48,7 @@ class TasksController < ApplicationController
     return invalid_record_error(record) unless record.valid?
 
     response = { task: record }
-    response[:issues] = record.appeal.issues if record.draft_decision?
+    response[:issues] = record.appeal.issues
     render json: response
   end
 

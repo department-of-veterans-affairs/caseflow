@@ -4,12 +4,17 @@ class JudgeCaseReview < ApplicationRecord
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :location, :complexity, :quality, :task_id, presence: true
+  validates :task_id, presence: true
+  validates :location, :complexity, :quality, if: :bva_dispatch
 
   enum location: {
     omo_office: "omo_office",
     bva_dispatch: "bva_dispatch"
   }
+
+  def appeal
+    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+  end
 
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
@@ -31,9 +36,9 @@ class JudgeCaseReview < ApplicationRecord
   class << self
     attr_writer :repository
 
-    def create(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = super
+        record = create(params)
         if record.valid?
           MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
                                 service: :vacols,
