@@ -371,5 +371,5 @@ end
 
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
-  config.include FakeDateHelpers
+  config.include FakeDateHelper
 end
