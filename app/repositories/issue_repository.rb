@@ -39,7 +39,7 @@ class IssueRepository
       record = validate_issue_presence!(vacols_id, vacols_sequence_id)
 
       VACOLS::CaseIssue.delete_issue!(vacols_id, vacols_sequence_id)
-      delete_remand_reasons!(vacols_id, vacols_sequence_id) if record.issdc.eql?("3")
+      RemandReasonRepository.delete_remand_reasons!(vacols_id, vacols_sequence_id) if record.issdc.eql?("3")
     end
   end
 

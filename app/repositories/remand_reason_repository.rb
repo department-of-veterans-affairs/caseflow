@@ -39,8 +39,10 @@ class RemandReasonRepository
 
   def self.update_remand_reasons(record, issue_attrs)
     args = [issue_attrs[:vacols_id], issue_attrs[:vacols_sequence_id]]
+    disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[record.issdc]
+    new_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
 
-    unless Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]].eql? "Remanded"
+    if disposition.eql?("Remanded") && !new_disposition.eql?("Remanded")
       delete_remand_reasons!(*args)
       return
     end
@@ -51,9 +53,9 @@ class RemandReasonRepository
     )
     args.push(remand_reasons)
 
-    if record.issdc.eql? "3"
+    if disposition.eql?("Remanded")
       update_remand_reasons!(*args)
-    else
+    elsif new_disposition.eql?("Remanded")
       create_remand_reasons!(*args)
     end
   end
