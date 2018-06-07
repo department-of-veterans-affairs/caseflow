@@ -7,7 +7,7 @@ import { ACTIONS } from './constants';
 
 import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
-import * as uiReducer from './uiReducer/uiReducer';
+import uiReducer from './uiReducer/uiReducer';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
