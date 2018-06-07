@@ -20,7 +20,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
+import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
 class AttorneyTaskListView extends React.PureComponent<{
   loadedQueueTasks: LoadedQueueTasks,
@@ -84,14 +84,39 @@ AttorneyTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
-  ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.stagedChanges, 'taskDecision'),
-  ..._.pick(state.queue, 'tasks'),
-  judges: state.queue.judges,
-  loadedQueueTasks: state.queue.loadedQueue.tasks
-});
+const mapStateToProps = (state: State): {|
+  appeals: LoadedQueueAppeals,
+  loadedQueueTasks: LoadedQueueTasks,
+  tasks: Tasks,
+  messages: Object,
+  taskDecision: Object,
+  judges: Object
+|} => {
+  const {
+    queue: {
+      loadedQueue: {
+        appeals,
+        tasks: loadedQueueTasks
+      },
+      stagedChanges: {
+        taskDecision
+      },
+      tasks,
+      judges
+    },
+    ui: {
+      messages
+    }
+  } = state;
+  return ({
+    appeals,
+    messages,
+    taskDecision,
+    tasks,
+    judges,
+    loadedQueueTasks
+  });
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
