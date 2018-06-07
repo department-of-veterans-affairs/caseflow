@@ -5244,6 +5244,13 @@ react-textarea-autosize@^5.1.0:
   dependencies:
     prop-types "^15.5.10"
 
+react-tooltip@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-3.6.0.tgz#61fd8502540d91fb3397e3fc90b487c0842c4189"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.0"
+
 react-virtualized@^9.10.1:
   version "9.18.5"
   resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.18.5.tgz#42dd390ebaa7ea809bfcaf775d39872641679b89"
