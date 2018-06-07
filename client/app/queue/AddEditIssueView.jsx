@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -38,8 +37,6 @@ import {
 } from './constants';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import type { State, Task } from './reducers';
-import type { UiStateError } from './uiReducer/uiReducer';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -47,31 +44,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-class AddEditIssueView extends React.Component<{|
-  highlight: boolean,
-  appeal: Object,
-  task: Task,
-  issue: Object,
-  error: ?UiStateError,
-  modal: boolean,
-  action: string,
-  vacolsId: string,
-  nextStep: string,
-  prevStep: string,
-  issueId: string,
-  updateEditingAppealIssue: Function,
-  startEditingAppealIssue: Function,
-  cancelEditingAppealIssue: Function,
-  saveEditedAppealIssue: Function,
-  highlightInvalidFormItems: Function,
-  deleteEditingAppealIssue: Function,
-  requestUpdate: Function,
-  requestDelete: Function,
-  showModal: Function,
-  hideModal: Function,
-  requestSave: Function,
-  editAppeal: Function
-|}> {
+class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, vacolsId } = this.props;
 
@@ -195,7 +168,7 @@ class AddEditIssueView extends React.Component<{|
     value
   }));
 
-  renderIssueAttrs = (attrs: {[string]: Object} = {}) => _.map(attrs, (obj, value) => ({
+  renderIssueAttrs = (attrs) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));
@@ -362,14 +335,7 @@ AddEditIssueView.propTypes = {
   issue: PropTypes.object
 };
 
-const mapStateToProps = (state: State, ownProps: Object): {|
-    highlight: boolean,
-    appeal: Object,
-    task: Task,
-    issue: Object,
-    error: ?UiStateError,
-    modal: boolean
-|} => {
+const mapStateToProps = (state, ownProps) => {
   return {
     highlight: state.ui.highlightFormItems,
     appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
