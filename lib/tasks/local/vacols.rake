@@ -87,7 +87,7 @@ namespace :local do
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)
       read_csv(VACOLS::Issref, date_shift)
-      read_csv(VACOLS::TravelBoardSchedule, date_shift)
+      read_csv(VACOLS::TravelBoardSchedule)
 
       css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
         User.find_or_create_by(
@@ -221,7 +221,7 @@ namespace :local do
       end
     end
 
-    def read_csv(klass, date_shift)
+    def read_csv(klass, date_shift = nil)
       items = []
       klass.delete_all
       CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
@@ -230,7 +230,7 @@ namespace :local do
       end
 
       klass.columns_hash.each do |k, v|
-        if v.type == :date
+        if date_shift && v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)
