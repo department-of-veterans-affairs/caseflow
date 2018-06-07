@@ -13,6 +13,10 @@ class HigherLevelReviewIntake < Intake
     )
   end
 
+  def cancel_detail!
+    detail.remove_claimants!
+  end
+
   def review!(request_params)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))

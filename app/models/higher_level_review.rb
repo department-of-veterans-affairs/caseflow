@@ -35,6 +35,10 @@ class HigherLevelReview < ApplicationRecord
     claimants.create_from_intake_data!(claimant_data)
   end
 
+  def remove_claimants!
+    claimants.destroy_all
+  end
+
   def end_product_description
     end_product_reference_id && end_product_to_establish.description_with_routing
   end
