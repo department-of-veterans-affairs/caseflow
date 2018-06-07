@@ -6,6 +6,8 @@ class Api::V2::AppealsController < Api::ApplicationController
     veteran_not_found
   rescue Caseflow::Error::InvalidSSN
     invalid_ssn
+  rescue Errno::ETIMEDOUT
+    upstream_timeout
   end
 
   private
@@ -63,5 +65,15 @@ class Api::V2::AppealsController < Api::ApplicationController
         "detail": "Please enter a valid 9 digit SSN in the 'ssn' header"
       ]
     }, status: 422
+  end
+
+  def upstream_timeout
+    render json: {
+      "errors": [
+        "status": "504",
+        "title": "Gateway Timeout",
+        "detail": "Upstream service timed out"
+      ]
+    }, status: 504
   end
 end
