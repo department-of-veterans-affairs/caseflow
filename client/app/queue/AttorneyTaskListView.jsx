@@ -108,6 +108,7 @@ const mapStateToProps = (state: State): {|
       messages
     }
   } = state;
+
   return ({
     appeals,
     messages,
