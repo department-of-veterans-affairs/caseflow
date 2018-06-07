@@ -160,6 +160,7 @@ namespace :local do
         VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
         sanitizer
       )
+      write_csv(VACOLS::Actcode, VACOLS::Actcode.all, sanitizer)
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
