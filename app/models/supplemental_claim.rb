@@ -2,6 +2,7 @@ class SupplementalClaim < ApplicationRecord
   include EstablishesEndProduct
 
   has_many :request_issues, as: :review_request
+  has_many :claimants, as: :review_claimant
 
   validate :validate_receipt_date
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
@@ -12,6 +13,14 @@ class SupplementalClaim < ApplicationRecord
 
   def start_review!
     @saving_review = true
+  end
+
+  def create_claimants!(claimant_data:)
+    claimants.create_from_intake_data!(claimant_data)
+  end
+
+  def remove_claimants!
+    claimants.destroy_all
   end
 
   def create_end_product_and_contentions!

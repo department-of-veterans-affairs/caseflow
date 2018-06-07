@@ -3,6 +3,7 @@ class Appeal < ApplicationRecord
   validate :validate_receipt_date_within_range
 
   has_many :request_issues, as: :review_request
+  has_many :claimants, as: :review_claimant
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -24,6 +25,14 @@ class Appeal < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def create_claimants!(claimant_data:)
+    claimants.create_from_intake_data!(claimant_data)
+  end
+
+  def remove_claimants!
+    claimants.destroy_all
   end
 
   def create_issues!(request_issues_data:)

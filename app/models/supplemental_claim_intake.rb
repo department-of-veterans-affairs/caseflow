@@ -13,9 +13,14 @@ class SupplementalClaimIntake < Intake
     )
   end
 
+  def cancel_detail!
+    detail.remove_claimants!
+  end
+
   def review!(request_params)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date))
+    detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
   end
 
   def review_errors

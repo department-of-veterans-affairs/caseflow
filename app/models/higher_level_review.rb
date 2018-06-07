@@ -18,6 +18,14 @@ class HigherLevelReview < ApplicationRecord
   def start_review!
     @saving_review = true
   end
+  
+  def create_claimants!(claimant_data:)
+    claimants.create_from_intake_data!(claimant_data)
+  end
+
+  def remove_claimants!
+    claimants.destroy_all
+  end
 
   def create_end_product_and_contentions!
     return nil if contention_descriptions_to_create.empty?
@@ -29,14 +37,6 @@ class HigherLevelReview < ApplicationRecord
     request_issues.destroy_all unless request_issues.empty?
 
     request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
-  end
-
-  def create_claimants!(claimant_data:)
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
   end
 
   def end_product_description
