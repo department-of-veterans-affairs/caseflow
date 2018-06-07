@@ -39,55 +39,6 @@ describe IssueRepository do
       end
     end
 
-    context "when disposition is changed to remanded" do
-      let(:initial_disposition) { nil }
-      let(:disposition) { "3" }
-      let(:readjudication) { nil }
-      let(:remand_reasons) do
-        [{
-          rmdval: "AB",
-          rmddev: "R2",
-          rmdmdusr: "TEST1",
-          rmdmdtim: VacolsHelper.local_time_with_utc_timezone
-        }]
-      end
-
-      it "creates remand reasons" do
-        expect(IssueRepository).to receive(:create_remand_reasons!)
-          .with("123456", "3", remand_reasons).once
-        expect(BusinessMetrics).to_not receive(:record)
-        subject
-      end
-    end
-
-    context "when disposition is not changed from remanded" do
-      let(:initial_disposition) { "3" }
-      let(:disposition) { "3" }
-      let(:readjudication) { nil }
-      let(:remand_reason) { create(:remand_reason) }
-
-      it "does not create new remand reasons" do
-        expect(IssueRepository).to_not receive(:create_remand_reasons!)
-        subject
-      end
-
-      it "updates existing remand reasons" do
-        expect(IssueRepository).to receive(:update_remand_reasons!)
-        subject
-      end
-    end
-
-    context "when disposition is changed from remanded" do
-      let(:initial_disposition) { "3" }
-      let(:disposition) { "Allowed" }
-      let(:readjudication) { nil }
-
-      it "deletes existing remand reasons" do
-        expect(IssueRepository).to receive(:delete_remand_reasons!)
-        subject
-      end
-    end
-
     context "when disposition is changed to vacated and readjudication is selected" do
       let(:initial_disposition) { nil }
       let(:disposition) { "5" }
