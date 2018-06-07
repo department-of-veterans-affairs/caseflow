@@ -38,8 +38,8 @@ class Rating
   class << self
     def fetch_timely(participant_id:)
       response = BGSService.new.fetch_ratings_in_range(
-        participant_id: participant_id,
-        start_date: Time.zone.today - TIMELY_DAYS,
+        participant_id: v.participant_id,
+        start_date: Time.zone.today - 368,
         end_date: Time.zone.today
       )
 

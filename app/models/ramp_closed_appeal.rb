@@ -4,6 +4,9 @@ class RampClosedAppeal < ApplicationRecord
   delegate :established_at, to: :ramp_election
 
   def reclose!
+    # If the ramp election was already rolled back, it can't be reclosed, so skip
+    return unless ramp_election.established?
+
     # If the end product was canceled, don't re-close the VACOLS appeal.
     # Instead rollback the RAMP election data from Caseflow
     return ramp_election.rollback! if ramp_election.end_product_canceled?
@@ -35,6 +38,10 @@ class RampClosedAppeal < ApplicationRecord
 
     find_in_batches(batch_size: 800) do |batch|
       appeals_to_reclose += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
+    end
+
+    appeals_to_reclose = appeals_to_reclose.map do |appeal|
+      RampClosedAppeal.find_by(vacols_id: appeal.vacols_id)
     end
 
     # TODO: actually close these once we verify everything is good.
