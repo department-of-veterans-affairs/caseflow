@@ -182,7 +182,7 @@ class Issue
   end
 
   def remand_reasons
-    self.class.remands_repository.load_remands_from_vacols(id, vacols_sequence_id)
+    self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
   private
@@ -222,9 +222,9 @@ class Issue
       @repository ||= IssueRepository
     end
 
-    def remands_repository
+    def remand_repository
       return RemandReasonRepository if FeatureToggle.enabled?(:test_facols)
-      @remands_repository ||= RemandReasonRepository
+      @remand_repository ||= RemandReasonRepository
     end
 
     def load_from_vacols(hash)
