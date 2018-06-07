@@ -13,7 +13,8 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
   });
 
   const data = {
-    receipt_date: formatDateStringForApi(supplementalClaim.receiptDate)
+    receipt_date: formatDateStringForApi(supplementalClaim.receiptDate),
+    claimant: supplementalClaim.claimant
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
