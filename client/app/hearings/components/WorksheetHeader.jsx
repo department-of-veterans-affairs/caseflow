@@ -10,6 +10,7 @@ import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../ac
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
+import ReactTooltip from 'react-tooltip';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -133,11 +134,15 @@ class WorksheetHeader extends React.PureComponent {
           <h5>VETERAN NAME</h5>
           <div><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
+
+        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="copy-vbms-id" />
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           <div {...copyButtonStyling}>
             <CopyToClipboard text={worksheet.sanitized_vbms_id}>
               <button
+                data-for="copy-vbms-id"
+                data-tip="Click to copy to clipboard"
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
                 {worksheet.sanitized_vbms_id}
