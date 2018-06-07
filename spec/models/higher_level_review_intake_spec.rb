@@ -42,19 +42,20 @@ describe HigherLevelReviewIntake do
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
-      HigherLevelReview.create_claimants!("1234")
     end
 
     it "cancels and deletes the Higher Level Review record created" do
+      detail.create_claimants!(claimant_data: "1234")
+
       subject
 
       expect(intake.reload).to be_canceled
-      expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
+      # expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
       expect(intake).to have_attributes(
         cancel_reason: "system_error",
         cancel_other: nil
       )
-      expect { detail.claimants }
+      expect(Claimant.find_by(participant_id: "1234")).to be_nil
     end
   end
 
