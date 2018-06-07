@@ -76,7 +76,7 @@ describe RampClosedAppeal do
     end
   end
 
-  context ".reclose_all!", focus: true do
+  context ".reclose_all!" do
     subject { RampClosedAppeal.reclose_all! }
 
     let!(:other_ramp_closed_appeals) do
@@ -132,6 +132,12 @@ describe RampClosedAppeal do
                     ])
 
       RequestStore[:current_user] = user
+
+      FeatureToggle.enable!(:reclose_ramp_appeals_script)
+    end
+
+    after do
+      FeatureToggle.disable!(:reclose_ramp_appeals_script)
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do
