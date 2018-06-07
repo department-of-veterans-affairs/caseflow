@@ -1,9 +1,16 @@
 describe CoLocatedAdminAction do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-  let(:appeal) { LegacyAppeal.create(vacols_id: "123456") }
+  let!(:vacols_case) { create(:case) }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   before do
+    RequestStore.store[:current_user] = attorney
     allow_any_instance_of(User).to receive(:vacols_role).and_return("Attorney")
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context ".create" do
@@ -21,6 +28,7 @@ describe CoLocatedAdminAction do
         expect(subject.assigned_at).to_not eq nil
         expect(subject.assigned_by).to eq attorney
         expect(subject.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
       end
     end
 
