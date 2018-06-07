@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180601173719) do
+ActiveRecord::Schema.define(version: 20180606222704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -496,6 +496,8 @@ ActiveRecord::Schema.define(version: 20180601173719) do
     t.boolean "finalized"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "file_name"
+    t.string "file_path"
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 

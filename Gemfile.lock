@@ -357,6 +357,9 @@ GEM
     ref (2.0.0)
     request_store (1.4.0)
       rack (>= 1.4)
+    roo (2.7.1)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
     rspec (3.7.0)
       rspec-core (~> 3.7.0)
       rspec-expectations (~> 3.7.0)
@@ -529,6 +532,7 @@ DEPENDENCIES
   redis-namespace
   redis-rails (~> 5.0.2)
   request_store
+  roo (~> 2.7)
   rspec
   rspec-rails
   rspec_junit_formatter
