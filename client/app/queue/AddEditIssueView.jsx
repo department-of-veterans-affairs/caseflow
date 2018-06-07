@@ -168,7 +168,7 @@ class AddEditIssueView extends React.Component {
     value
   }));
 
-  renderIssueAttrs = (attrs) => _.map(attrs, (obj, value) => ({
+  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));
@@ -335,16 +335,14 @@ AddEditIssueView.propTypes = {
   issue: PropTypes.object
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    highlight: state.ui.highlightFormItems,
-    appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-    task: state.queue.tasks[ownProps.vacolsId],
-    issue: state.queue.editingIssue,
-    error: state.ui.messages.error,
-    modal: state.ui.modal.deleteIssue
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  highlight: state.ui.highlightFormItems,
+  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
+  task: state.queue.tasks[ownProps.vacolsId],
+  issue: state.queue.editingIssue,
+  error: state.ui.messages.error,
+  modal: state.ui.modal.deleteIssue
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateEditingAppealIssue,
