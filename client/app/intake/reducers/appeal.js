@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -31,6 +31,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };
@@ -79,6 +82,18 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+    return update(state, {
+      claimantNotVeteran: {
+        $set: action.payload.claimantNotVeteran
+      }
+    });
+  case ACTIONS.SET_CLAIMANT:
+    return update(state, {
+      claimant: {
+        $set: action.payload.claimant
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:

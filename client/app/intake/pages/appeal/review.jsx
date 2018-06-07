@@ -6,8 +6,9 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
+import SelectClaimant from '../../components/SelectClaimant';
 import { setDocketType, submitReview } from '../../actions/appeal';
-import { setReceiptDate } from '../../actions/common';
+import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
@@ -61,9 +62,24 @@ class Review extends React.PureComponent {
         errorMessage={docketTypeError}
         value={docketType}
       />
+
+      <SelectClaimantConnected />
+
     </div>;
   }
 }
+
+const SelectClaimantConnected = connect(
+  ({ appeal }) => ({
+    claimantNotVeteran: appeal.claimantNotVeteran,
+    claimant: appeal.claimant,
+    relationships: appeal.relationships
+  }),
+  (dispatch) => bindActionCreators({
+    setClaimantNotVeteran,
+    setClaimant
+  }, dispatch)
+)(SelectClaimant);
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {

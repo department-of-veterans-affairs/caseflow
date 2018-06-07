@@ -62,6 +62,15 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
 
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("Bob Vance, Spouse")
+    expect(page).to have_content("Cathy Smith, Child")
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")

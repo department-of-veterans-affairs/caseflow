@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -26,6 +26,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     endProductDescription: {
       $set: serverIntake.end_product_description
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };
@@ -67,6 +70,18 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+    return update(state, {
+      claimantNotVeteran: {
+        $set: action.payload.claimantNotVeteran
+      }
+    });
+  case ACTIONS.SET_CLAIMANT:
+    return update(state, {
+      claimant: {
+        $set: action.payload.claimant
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
