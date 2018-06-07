@@ -105,8 +105,10 @@
  }
 
  .usa-accordion-content {
-   padding-top: 15px;
+   padding-top: 10px;
    padding-bottom: 15px;
+   padding-left: 20px;
+   padding-right: 20px;
  }
 
   .cf-hearings-worksheet-data {
@@ -115,7 +117,7 @@
 
     p {
       font-size: 11px;
-      margin-top: 10px;
+      margin-top: 0px;
     }
 
     h4 {
@@ -188,13 +190,13 @@
    }
 
    .worksheetDocs {
-     margin-bottom: 5px;
+     margin-bottom: 15px;
    }
 
    .cf-hearings-column {
-    td {
-      padding: 1rem;
-    }
+      td {
+        padding: 0.7rem;
+      }
    }
 
     .cf-form-textarea {
@@ -204,11 +206,14 @@
         // scss-lint:enable ImportantRule
    }
  }
-   .cf-hearings-worksheet-data {
-     p {
-         margin-bottom: 0 ;
-     }
-   }
+
+    .cf-hearings-worksheet-data-cell {
+       button {
+         margin-bottom: 0;
+         font-size: 1.3rem;
+         padding: 0.5rem 1rem;
+       }
+    }
 
     .cf-hearings-second-page {
       min-height: 11in;
