@@ -3,7 +3,7 @@ class SchedulePeriod < ApplicationRecord
 
   def spreadsheet
     # file = S3Service.fetch_file(file_name, file_path)
-    file = '../Documents/duplicateDates.xlsx'
+    file = '../Documents/wrongDataType.xlsx'
     Roo::Spreadsheet.open(file, extension: :xlsx)
   end
 end
