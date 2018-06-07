@@ -64,6 +64,14 @@ describe RampClosedAppeal do
 
         subject
       end
+
+      context "when appeal was decided by BVA" do
+        let(:vacols_case) { create(:case, :status_complete, :disposition_allowed) }
+
+        it "raises error" do
+          expect { subject }.to raise_error(RampClosedAppeal::NoReclosingBvaDecidedAppeals)
+        end
+      end
     end
 
     context "when appeal is not in history status" do

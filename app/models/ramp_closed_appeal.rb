@@ -1,4 +1,6 @@
 class RampClosedAppeal < ApplicationRecord
+  class NoReclosingBvaDecidedAppeals < StandardError; end
+
   belongs_to :ramp_election
 
   delegate :established_at, to: :ramp_election
@@ -10,6 +12,8 @@ class RampClosedAppeal < ApplicationRecord
     # If the end product was canceled, don't re-close the VACOLS appeal.
     # Instead rollback the RAMP election data from Caseflow
     return ramp_election.rollback! if ramp_election.end_product_canceled?
+
+    fail NoReclosingBvaDecidedAppeals if appeal.decided_by_bva?
 
     # Need to reopen the appeal first if its not active before we can close it
     if !appeal.active?
