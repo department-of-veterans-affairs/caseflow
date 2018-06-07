@@ -135,7 +135,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "assigned_to_id": user.id,
-            "type": "AttorneyLegacyTask"
+            "type": "JudgeCaseAssignmentToAttorney"
           }
         end
 
@@ -151,7 +151,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "assigned_to_id": attorney.id,
-            "type": "AttorneyLegacyTask"
+            "type": "JudgeCaseAssignmentToAttorney"
           }
         end
 
@@ -171,7 +171,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": 4_646_464,
               "assigned_to_id": attorney.id,
-              "type": "AttorneyLegacyTask"
+              "type": "JudgeCaseAssignmentToAttorney"
             }
           end
 
@@ -186,7 +186,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": appeal.id,
               "assigned_to_id": 7_777_777_777,
-              "type": "AttorneyLegacyTask"
+              "type": "JudgeCaseAssignmentToAttorney"
             }
           end
 
@@ -222,7 +222,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "assigned_to_id": user.id,
-          "type": "AttorneyLegacyTask"
+          "type": "JudgeCaseAssignmentToAttorney"
         }
       end
 
@@ -237,7 +237,7 @@ RSpec.describe TasksController, type: :controller do
       let(:params) do
         {
           "assigned_to_id": attorney.id,
-          "type": "AttorneyLegacyTask"
+          "type": "JudgeCaseAssignmentToAttorney"
         }
       end
 
@@ -257,7 +257,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           {
             "assigned_to_id": 7_777_777_777,
-            "type": "AttorneyLegacyTask"
+            "type": "JudgeCaseAssignmentToAttorney"
           }
         end
 
