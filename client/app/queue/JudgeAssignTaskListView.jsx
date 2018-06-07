@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,7 +23,6 @@ import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTask
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
-import type { State, LoadedQueueAppeals, LoadedQueueTasks, Tasks, TasksAndAppealsOfAttorney } from './reducers';
 
 const UnassignedCasesPage = (props) => {
   const reviewableCount = props.tasksAndAppeals.length;
@@ -44,23 +42,7 @@ const UnassignedCasesPage = (props) => {
   return tableContent;
 };
 
-class JudgeAssignTaskListView extends React.PureComponent<{|
-  attorneysOfJudge: Array<Object>,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  appeals: LoadedQueueAppeals,
-  loadedQueueTasks: LoadedQueueTasks,
-  tasks: Tasks,
-  userId: string,
-  userCssId: string,
-  match: {params: {[string]: string}, url: string},
-  clearCaseSelectSearch: Function,
-  resetErrorMessages: Function,
-  resetSuccessMessages: Function,
-  resetSaveState: Function,
-  setAttorneysOfJudge: Function,
-  fetchTasksAndAppealsOfAttorney: Function,
-  setSelectionOfTaskOfUser: Function
-|}> {
+class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -179,13 +161,7 @@ JudgeAssignTaskListView.propTypes = {
   tasksAndAppealsOfAttorney: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state: State): {|
-  attorneysOfJudge: Array<Object>,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  appeals: LoadedQueueAppeals,
-  tasks: Tasks,
-  loadedQueueTasks: LoadedQueueTasks
-|} => {
+const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge,
