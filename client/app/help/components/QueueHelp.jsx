@@ -62,12 +62,17 @@ class QueueHelp extends React.Component {
 
       <h2 id="cases-not-assigned-to-me">6. How can I see cases that are not assigned to me?</h2>
 
-      <p>The Hearing Worksheet can be accessed by clicking on the Veteran’s VBMS ID located below the name of the Appellant. On the Hearing Worksheet, you will be able to view Appellant/Veteran Profile Information, Appeal Stream Documents and Issues, Contentions, Periods and circumstances of service, Evidence, and your Comments and special instructions to attorneys.
+      <p>You can search for cases that are not assigned to you by entering a Veteran ID in the search bar in
+        the top left of the screen. The Hearing Worksheet can be accessed by clicking on the Veteran’s VBMS ID located below the name of the Appellant. On the Hearing Worksheet, you will be able to view Appellant/Veteran Profile Information, Appeal Stream Documents and Issues, Contentions, Periods and circumstances of service, Evidence, and your Comments and special instructions to attorneys.
       </p>
 
       <h2 id="encounter-problems">7. What should I do if I encounter problems?</h2>
 
-      <p>Reviewing the FAQs or Training Guide. If you encounter any problems while using Hearing Prep, contact the Caseflow Product Support Team by calling 1-844-876-5548 or sending an email to <a href="mailto: caseflow@va.gov">caseflow@va.gov</a>. They can be reached from 8:00AM to 8:00PM EST.
+      <p>Reviewing the FAQs or Training Guide may help you with most questions or issues. They may be accessed by clicking Help,
+        located in the dropdown menu next to your username. However, If you encounter any problems while using Queue,
+        feel free to send feedback using the "Send Feedback" link in the Help menu or the link at the bottom of the
+        page. Additionally, you may contact the Caseflow Product Support Team by calling 1-844-876-5548 or sending an email to <a href="mailto: caseflow@va.gov">caseflow@va.gov</a>.
+        They can be reached from 8:00AM to 8:00PM ET Monday through Friday.
       </p>
 
       <h2 id="share-feedback">8. How do I share my suggestions for improving Queue?</h2>
