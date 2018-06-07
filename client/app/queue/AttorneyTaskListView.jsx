@@ -72,14 +72,32 @@ AttorneyTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
-  ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.stagedChanges, 'taskDecision'),
-  ..._.pick(state.queue, 'tasks'),
-  judges: state.queue.judges,
-  loadedQueueTasks: state.queue.loadedQueue.tasks
-});
+const mapStateToProps = (state) => {
+  const {
+    queue: {
+      loadedQueue: {
+        appeals,
+        tasks: loadedQueueTasks
+      },
+      stagedChanges: {
+        taskDecision
+      },
+      tasks,
+      judges
+    },
+    ui: {
+      messages
+    }
+  } = state;
+  return ({
+    appeals,
+    messages,
+    taskDecision,
+    tasks,
+    judges,
+    loadedQueueTasks
+  });
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
