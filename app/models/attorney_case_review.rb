@@ -1,15 +1,19 @@
 class AttorneyCaseReview < ApplicationRecord
+  include LegacyTaskConcern
+
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :attorney, :type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
+  validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
 
-  attr_accessor :issues
+  enum document_type: {
+    omo_request: "omo_request",
+    draft_decision: "draft_decision"
+  }
 
-  # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
+  attr_accessor :issues
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
@@ -17,6 +21,7 @@ class AttorneyCaseReview < ApplicationRecord
 
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
+
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,
       created_in_vacols_date: created_in_vacols_date,
@@ -48,27 +53,19 @@ class AttorneyCaseReview < ApplicationRecord
     end
   end
 
-  private
-
-  def vacols_id
-    task_id.split("-", 2).first
-  end
-
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date
-  end
-
   class << self
     attr_writer :repository
 
-    def complete!(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = create!(params)
-        MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
-                              service: :vacols,
-                              name: record.type) do
-          record.reassign_case_to_judge_in_vacols!
-          record.update_issue_dispositions! if record.type == "DraftDecision"
+        record = create(params)
+        if record.valid?
+          MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
+                                service: :vacols,
+                                name: record.document_type) do
+            record.reassign_case_to_judge_in_vacols!
+            record.update_issue_dispositions! if record.draft_decision?
+          end
         end
         record
       end

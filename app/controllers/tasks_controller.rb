@@ -3,7 +3,7 @@ class TasksController < ApplicationController
   before_action :verify_task_completion_access, only: :complete
   before_action :verify_task_assignment_access, only: [:create, :update]
 
-  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
+  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "TasksController failed: #{e.message}"
     Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
@@ -13,7 +13,8 @@ class TasksController < ApplicationController
 
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction,
-    AttorneyLegacyTask: AttorneyLegacyTask
+    AttorneyCaseReview: AttorneyCaseReview,
+    JudgeCaseAssignmentToAttorney: JudgeCaseAssignmentToAttorney
   }.freeze
 
   def set_application
@@ -40,11 +41,13 @@ class TasksController < ApplicationController
   end
 
   def complete
-    record = AttorneyCaseReview.complete!(complete_params.merge(attorney: current_user, task_id: params[:task_id]))
-    return completion_error unless record
+    return invalid_type_error unless task_class
 
-    response = { attorney_case_review: record }
-    response[:issues] = record.appeal.issues if record.type == "DraftDecision"
+    record = task_class.complete(complete_params)
+    return invalid_record_error(record) unless record.valid?
+
+    response = { task: record }
+    response[:issues] = record.appeal.issues if record.draft_decision?
     render json: response
   end
 
@@ -67,7 +70,7 @@ class TasksController < ApplicationController
   private
 
   def task_class
-    TASK_CLASSES[task_params[:type].try(:to_sym)]
+    TASK_CLASSES[params["tasks"][:type].try(:to_sym)]
   end
 
   def user
@@ -90,15 +93,6 @@ class TasksController < ApplicationController
     }, status: 400
   end
 
-  def completion_error
-    render json: {
-      "errors": [
-        "title": "Error Completing Attorney Case Review",
-        "detail": "Errors occured when completing attorney case review"
-      ]
-    }, status: 400
-  end
-
   def invalid_type_error
     render json: {
       "errors": [
@@ -109,7 +103,7 @@ class TasksController < ApplicationController
   end
 
   def complete_params
-    params.require("tasks").permit(:type,
+    params.require("tasks").permit(:document_type,
                                    :reviewing_judge_id,
                                    :document_id,
                                    :work_product,
@@ -117,6 +111,7 @@ class TasksController < ApplicationController
                                    :note,
                                    issues: [:disposition, :vacols_sequence_id, :readjudication,
                                             remand_reasons: [:code, :after_certification]])
+      .merge(attorney: current_user, task_id: params[:task_id])
   end
 
   def task_params

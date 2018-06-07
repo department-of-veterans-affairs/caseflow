@@ -34,6 +34,9 @@ export const ACTIONS = {
   CONFIRM_FINISH_INTAKE: 'CONFIRM_FINISH_INTAKE',
   COMPLETE_INTAKE_NOT_CONFIRMED: 'COMPLETE_INTAKE_NOT_CONFIRMED',
   SET_ISSUE_SELECTED: 'SET_ISSUE_SELECTED',
+  ADD_NON_RATED_ISSUE: 'ADD_NON_RATED_ISSUE',
+  SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',
+  SET_ISSUE_DESCRIPTION: 'SET_ISSUE_DESCRIPTION',
   SET_HAS_INELIGIBLE_ISSUE: 'SET_HAS_INELIGIBLE_ISSUE',
   CONFIRM_INELIGIBLE_FORM: 'CONFIRM_INELIGIBLE_FORM',
   CONFIRM_OUTSIDE_CASEFLOW_STEPS: 'CONFIRM_OUTSIDE_CASEFLOW_STEPS',
@@ -133,3 +136,31 @@ export const CANCELLATION_REASONS = {
     name: 'Other'
   }
 };
+
+const issueCategoriesArray = [
+  'Unknown issue category',
+  'Apportionment',
+  'Incarceration Adjustments',
+  'Audit Error Worksheet (DFAS)',
+  'Active Duty Adjustments',
+  'Drill Pay Adjustments',
+  'Character of discharge determinations',
+  'Income/net worth (pension)',
+  'Dependent child - Adopted',
+  'Dependent child - Stepchild',
+  'Dependent child - Biological',
+  'Dependency Spouse - Common law marriage',
+  'Dependency Spouse - Inference of marriage',
+  'Dependency Spouse - Deemed valid marriage',
+  'Military Retired Pay',
+  'Contested Claims (other than apportionment)',
+  'Lack of Qualifying Service',
+  'Other non-rated'
+];
+
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});

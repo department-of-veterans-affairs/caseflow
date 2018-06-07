@@ -471,7 +471,6 @@ describe LegacyAppeal do
     end
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
-    let(:election_receipt_date) { 2.days.ago }
 
     before do
       RequestStore[:current_user] = user
@@ -485,8 +484,7 @@ describe LegacyAppeal do
             appeals: [appeal, appeal_with_decision],
             user: user,
             closed_on: 4.days.ago,
-            disposition: disposition,
-            election_receipt_date: election_receipt_date
+            disposition: disposition
           )
         end.to raise_error("Only pass either appeal or appeals")
       end
@@ -500,18 +498,17 @@ describe LegacyAppeal do
         create(:legacy_appeal, vacols_case: vacols_case_with_recent_nod)
       end
 
-      it "closes each appeal with nod_date before election received_date" do
+      it "closes each appeal" do
         LegacyAppeal.close(
           appeals: [appeal, appeal_with_decision, appeal_with_nod_after_election_received],
           user: user,
           closed_on: 4.days.ago,
-          disposition: disposition,
-          election_receipt_date: election_receipt_date
+          disposition: disposition
         )
 
         expect(vacols_case.reload.bfmpro).to eq("HIS")
         expect(another_vacols_case.reload.bfmpro).to eq("HIS")
-        expect(vacols_case_with_recent_nod.reload.bfmpro).to_not eq("HIS")
+        expect(vacols_case_with_recent_nod.reload.bfmpro).to eq("HIS")
       end
     end
 
@@ -521,8 +518,7 @@ describe LegacyAppeal do
           appeal: appeal,
           user: user,
           closed_on: 4.days.ago,
-          disposition: disposition,
-          election_receipt_date: election_receipt_date
+          disposition: disposition
         )
       end
 

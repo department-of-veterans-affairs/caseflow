@@ -8,6 +8,7 @@ require File.expand_path("../../config/environment", __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "spec_helper"
+require "date_helper"
 require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
@@ -35,7 +36,7 @@ require "timeout"
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-# ActiveRecord::Migration.maintain_test_schema!
+ActiveRecord::Migration.maintain_test_schema!
 
 require "capybara"
 require "capybara/rspec"
@@ -370,4 +371,5 @@ end
 
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
+  config.include DateHelper
 end

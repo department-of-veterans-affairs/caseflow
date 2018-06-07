@@ -262,6 +262,10 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location!(appeal, location)
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
     return unless appeal.active?
@@ -272,6 +276,18 @@ class AppealRepository
 
     # By default, we route the appeal to ARC
     "98"
+  end
+
+  # Finds appeals in the set of vacols_ids passed that have been reopened after
+  # being closed for RAMP
+  def self.find_ramp_reopened_appeals(vacols_ids)
+    VACOLS::Case
+      .where(bfkey: vacols_ids)
+      .where([
+               "bfdc IS NULL OR (bfdc != 'P' AND (bfmpro != 'HIS' OR bfdc NOT IN (?)))",
+               VACOLS::Case::BVA_DISPOSITION_CODES
+             ])
+      .map { |case_record| build_appeal(case_record) }
   end
 
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
@@ -520,6 +536,7 @@ class AppealRepository
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,
                           name: "active_cases_for_user") do
+
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)

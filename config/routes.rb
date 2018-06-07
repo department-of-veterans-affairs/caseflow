@@ -86,12 +86,13 @@ Rails.application.routes.draw do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
-  resources :beam_appeals, only: [:index]
+  resources :beaam_appeals, only: [:index]
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
+    resources :schedule, only: [:index, :show]
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
@@ -127,6 +128,7 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'tasks#index'
