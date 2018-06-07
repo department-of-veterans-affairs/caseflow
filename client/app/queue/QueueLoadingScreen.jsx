@@ -137,14 +137,8 @@ QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
 };
 
-const mapStateToProps = (state: State): {|
-  judges: Object,
-  activeAppeal: Object,
-  appeals: LoadedQueueAppeals,
-  tasks: LoadedQueueTasks,
-  loadedUserId: string
-|} => ({
-  ..._.pick(state.queue, 'judges'),
+const mapStateToProps = (state: State) => ({
+  judges: state.queue.judges,
   ...state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
