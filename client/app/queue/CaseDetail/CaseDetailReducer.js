@@ -1,12 +1,19 @@
+// @flow
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
+import type { Task } from '../reducers';
+
+export type CaseDetailState = {|
+  activeAppeal: ?Object,
+  activeTask: ?Task
+|};
 
 export const initialState = {
   activeAppeal: null,
   activeTask: null
 };
 
-export const caseDetailReducer = (state = initialState, action = {}) => {
+export const caseDetailReducer = (state: CaseDetailState = initialState, action: {[string]: Object} = {}) => {
   switch (action.type) {
   case Constants.CLEAR_ACTIVE_APPEAL_AND_TASK:
     return initialState;

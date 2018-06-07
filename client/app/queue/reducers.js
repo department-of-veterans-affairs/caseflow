@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
-import caseDetailReducer from './CaseDetail/CaseDetailReducer';
+import * as caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import * as uiReducer from './uiReducer/uiReducer';
 
@@ -353,7 +353,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
 };
 
 export type State = {
-  caseDetail: Object,
+  caseDetail: caseDetailReducer.CaseDetailState,
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
