@@ -5,7 +5,7 @@ RSpec.feature "Save Certification" do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
     FeatureToggle.enable!(:test_facols)
-    PowerOfAttorney.repository = PowerOfAttorneyRepository if FeatureToggle.enabled?(:test_facols)
+    PowerOfAttorney.repository = PowerOfAttorneyRepository
   end
 
   after do
@@ -24,13 +24,17 @@ RSpec.feature "Save Certification" do
     create(:case_with_ssoc, bfregoff: "DSUSER")
   end
 
+  let(:default_user) do
+    create(:default_user)
+  end
+
   def uncertify_appeal
     vacols_case.reload
     vacols_case.update!(bf41stat: nil)
   end
 
   context "As an authorized user" do
-    let!(:current_user) { User.authenticate!(roles: ["Certify Appeal"]) }
+    let!(:current_user) { User.authenticate!(user: default_user) }
 
     let(:vbms_error) do
       VBMS::ClientError.new("<faultstring>Claim not certified.</faultstring>")

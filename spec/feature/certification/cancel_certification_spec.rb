@@ -19,8 +19,12 @@ RSpec.feature "Cancel certification" do
     create(:case_with_ssoc, :has_regional_office, bfd19: 2.months.ago)
   end
 
+  let(:default_user) do
+    create(:default_user, roles: ["Certify Appeal", "CertificationV2"])
+  end
+
   context "As an authorized user" do
-    let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
+    let!(:current_user) { User.authenticate!(user: default_user) }
 
     before(:all) do
       FeatureToggle.enable!(:test_facols)

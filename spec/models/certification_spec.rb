@@ -12,35 +12,6 @@ describe Certification do
     create(:case_with_ssoc, :has_regional_office)
   end
 
-  let(:vacols_case_no_ssocs) do
-    create(:case_with_form_9, :has_regional_office)
-  end
-
-  let(:vacols_case_certified) do
-    create(:case_with_ssoc, :certified, :has_regional_office)
-  end
-
-  let(:vacols_case_missing_data) do
-    create(:case_with_nod, :has_regional_office)
-  end
-
-  let(:vacols_case_mismatch) do
-    create(:case_with_soc, :has_regional_office, bfd19: 3.months.ago)
-  end
-
-  let(:vacols_case_ssoc_mismatch) do
-    create(:case_with_ssoc, :has_regional_office, bfssoc1: 1.month.ago)
-  end
-
-  let(:vacols_case_mismatch) do
-    create(:case_with_soc, :has_regional_office, bfd19: 3.months.ago)
-  end
-
-  let(:vacols_case_multiple_mismatch) do
-    create(:case, :has_regional_office, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago,
-                                        bfssoc1: 1.month.ago)
-  end
-
   let(:certification) do
     create(:certification, :default_representative, vacols_case: vacols_case)
   end
@@ -53,6 +24,10 @@ describe Certification do
     context "when appeal has already been certified" do
       let(:certification) do
         create(:certification, vacols_case: vacols_case_certified)
+      end
+
+      let(:vacols_case_certified) do
+        create(:case_with_ssoc, :certified, :has_regional_office)
       end
 
       it "returns already_certified and sets the flag" do
@@ -74,6 +49,11 @@ describe Certification do
       let(:certification) do
         create(:certification, vacols_case: vacols_case_missing_data)
       end
+
+      let(:vacols_case_missing_data) do
+        create(:case_with_nod, :has_regional_office)
+      end
+
       it "returns data_missing and sets the flag" do
         subject
         expect(certification.certification_status).to eq(:data_missing)
@@ -85,6 +65,10 @@ describe Certification do
     context "when a document is mismatched" do
       let(:certification) do
         create(:certification, vacols_case: vacols_case_mismatch)
+      end
+
+      let(:vacols_case_mismatch) do
+        create(:case_with_soc, :has_regional_office, bfd19: 3.months.ago)
       end
 
       it "returns mismatched_documents and sets the flag" do
@@ -115,6 +99,10 @@ describe Certification do
         create(:certification, vacols_case: vacols_case_ssoc_mismatch)
       end
 
+      let(:vacols_case_ssoc_mismatch) do
+        create(:case_with_ssoc, :has_regional_office, bfssoc1: 1.month.ago)
+      end
+
       it "is included in the relevant certification_stats" do
         subject
 
@@ -131,6 +119,11 @@ describe Certification do
         create(:certification, vacols_case: vacols_case_multiple_mismatch)
       end
 
+      let(:vacols_case_multiple_mismatch) do
+        create(:case, :has_regional_office, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago,
+                                            bfssoc1: 1.month.ago)
+      end
+
       it "is included in the relevant certification_stats" do
         subject
 
@@ -145,6 +138,10 @@ describe Certification do
     context "when appeal is ready to start" do
       let(:certification) do
         create(:certification, vacols_case: vacols_case_no_ssocs)
+      end
+
+      let(:vacols_case_no_ssocs) do
+        create(:case_with_form_9, :has_regional_office)
       end
 
       it "returns success and sets timestamps" do

@@ -16,7 +16,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc, bfregoff: "DSUSER", bfdsoc: 181.days.ago)
+    create(:case_with_ssoc, :has_regional_office, bfdsoc: 181.days.ago)
   end
 
   let(:appeal_ready_exact_match) do
@@ -24,7 +24,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case_exact) do
-    create(:case_with_ssoc, bfregoff: "DSUSER")
+    create(:case_with_ssoc, :has_regional_office)
   end
 
   let(:appeal_mismatched_documents) do
@@ -32,7 +32,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case_mismatch) do
-    create(:case_with_ssoc, bfregoff: "DSUSER", bfdsoc: 1.day.ago)
+    create(:case_with_ssoc, :has_regional_office, bfdsoc: 1.day.ago)
   end
 
   let(:appeal_already_certified) do
@@ -40,7 +40,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case_certified) do
-    create(:case_with_ssoc, :certified, bfregoff: "DSUSER")
+    create(:case_with_ssoc, :certified, :has_regional_office)
   end
 
   let(:appeal_not_ready) do
@@ -48,7 +48,7 @@ RSpec.feature "Start Certification" do
   end
 
   let(:vacols_case_not_ready) do
-    create(:case_with_nod, bfregoff: "DSUSER")
+    create(:case_with_nod, :has_regional_office)
   end
 
   context "As a user who's not logged in" do
