@@ -11,6 +11,8 @@ import HearingsHelp from './components/HearingsHelp';
 import ReaderHelp from './components/ReaderHelp';
 import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
+import QueueHelp from './components/QueueHelp';
+
 
 class Help extends React.PureComponent {
 
@@ -57,6 +59,10 @@ class Help extends React.PureComponent {
               path="/intake/help"
               title="Intake Help"
               component={IntakeHelp} />
+            <PageRoute exact
+              path="/queue/help"
+              title="Queue Help"
+              component={QueueHelp} />
           </div>
         </AppFrame>
         <Footer
@@ -68,4 +74,3 @@ class Help extends React.PureComponent {
   }
 }
 export default Help;
-
