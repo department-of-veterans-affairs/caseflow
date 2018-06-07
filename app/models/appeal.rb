@@ -3,7 +3,7 @@ class Appeal < ApplicationRecord
   validate :validate_receipt_date_within_range
 
   has_many :request_issues, as: :review_request
-  has_many :claimants, as: :review_claimant
+  has_many :claimants, as: :review_request
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 

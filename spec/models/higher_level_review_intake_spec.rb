@@ -42,6 +42,7 @@ describe HigherLevelReviewIntake do
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
+      HigherLevelReview.create_claimants!("1234")
     end
 
     it "cancels and deletes the Higher Level Review record created" do
@@ -53,6 +54,7 @@ describe HigherLevelReviewIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { detail.claimants }
     end
   end
 

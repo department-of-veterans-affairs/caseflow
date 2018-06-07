@@ -4,7 +4,7 @@ class HigherLevelReview < ApplicationRecord
   validate :validate_receipt_date
 
   has_many :request_issues, as: :review_request
-  has_many :claimants, as: :review_claimant
+  has_many :claimants, as: :review_request
 
   with_options if: :saving_review do
     validates :receipt_date, presence: { message: "blank" }
@@ -18,7 +18,7 @@ class HigherLevelReview < ApplicationRecord
   def start_review!
     @saving_review = true
   end
-  
+
   def create_claimants!(claimant_data:)
     claimants.create_from_intake_data!(claimant_data)
   end

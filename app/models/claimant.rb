@@ -1,5 +1,5 @@
 class Claimant < ApplicationRecord
-  belongs_to :review_claimant, polymorphic: true
+  belongs_to :review_request, polymorphic: true
 
   def self.create_from_intake_data!(data)
     create!(
