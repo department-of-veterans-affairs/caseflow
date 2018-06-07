@@ -20,16 +20,24 @@ class QueueRepository
     appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                     service: :vacols,
                                     name: "appeals_from_tasks") do
+
+      # Run queries to fetch different types of data so the # of queries doesn't increase with
+      # the # of appeals. Combine that data manually.
       case_records = QueueRepository.appeal_info_query(vacols_ids)
       aod_by_appeal = aod_query(vacols_ids)
       hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
       issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
+      remand_reasons_by_appeal = Issue.repository.load_remand_reasons_for_appeals(vacols_ids)
 
       case_records.map do |case_record|
         appeal = AppealRepository.build_appeal(case_record)
 
         appeal.aod = aod_by_appeal[appeal.vacols_id]
-        appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue) }
+        appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map do |vacols_issue|
+          issue = Issue.load_from_vacols(vacols_issue)
+          issue.remand_reasons = remand_reasons_by_appeal[appeal.vacols_id][issue.vacols_sequence_id] || []
+          issue
+        end
         appeal.hearings = hearings_by_appeal[appeal.vacols_id] || []
 
         appeal

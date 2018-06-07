@@ -64,35 +64,34 @@ class IssueRepository
   end
 
   def self.remand_reason_from_vacols_remand_reason(reason)
-      {
-        code: reason.rmdval,
-        after_certification: reason.rmddev.eql?("R2")
-      }
+    {
+      code: reason.rmdval,
+      after_certification: reason.rmddev.eql?("R2")
+    }
   end
 
   def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
     VACOLS::RemandReason.where(rmdkey: vacols_id, rmdissseq: vacols_sequence_id).map do |reason|
-      self.remand_reason_from_vacols_remand_reason(reason)
+      remand_reason_from_vacols_remand_reason(reason)
     end
   end
 
-
-# Returns remand reasons grouped by brieff.bfkey and the issue sequence id. For example:
-# {"465400"=>{},
-#  "1074694"=>
-#   {6=>
-#     [{:code=>"1E", :after_certification=>false},
-#      {:code=>"1B", :after_certification=>false}],
-#    8=>
-#     [{:code=>"1B", :after_certification=>false},
-#      {:code=>"1C", :after_certification=>false},
-#      {:code=>"1E", :after_certification=>false}],
-#   },
-#  "1014716"=>
-#   {1=>
-#     [{:code=>"1A", :after_certification=>true},
-#      {:code=>"3D", :after_certification=>true}]}
-#  }
+  # Returns remand reasons grouped by brieff.bfkey and the issue sequence id. For example:
+  # {"465400"=>{},
+  #  "1074694"=>
+  #   {6=>
+  #     [{:code=>"1E", :after_certification=>false},
+  #      {:code=>"1B", :after_certification=>false}],
+  #    8=>
+  #     [{:code=>"1B", :after_certification=>false},
+  #      {:code=>"1C", :after_certification=>false},
+  #      {:code=>"1E", :after_certification=>false}],
+  #   },
+  #  "1014716"=>
+  #   {1=>
+  #     [{:code=>"1A", :after_certification=>true},
+  #      {:code=>"3D", :after_certification=>true}]}
+  #  }
   def self.load_remands_for_multiple_appeals(vacols_ids)
     # `rmdissseq` will be null for remand reasons on appeals before 1999.
     # See https://github.com/department-of-veterans-affairs/dsva-vacols/issues/13
@@ -108,7 +107,7 @@ class IssueRepository
       reason_group = reason_groups[vacols_id].group_by(&:rmdissseq)
       reason_group.each do |issue_sequence_id, reasons|
         formatted_reasons = reasons.map do |reason|
-          self.remand_reason_from_vacols_remand_reason(reason)
+          remand_reason_from_vacols_remand_reason(reason)
         end
 
         obj[vacols_id][issue_sequence_id] = formatted_reasons
