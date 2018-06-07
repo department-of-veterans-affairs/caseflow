@@ -44,9 +44,6 @@ gem "puma", "~> 2.16.0"
 # use to_b method to convert string to boolean
 gem "wannabe_bool"
 
-# Style
-gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
-
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
 

@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/18F/uswds-rails-gem.git
-  revision: aa12ddd314209ef9e75bb2f2bfcf1454336df049
-  specs:
-    uswds-rails (1.0.0)
-      sass
-
-GIT
   remote: https://github.com/colszowka/simplecov.git
   revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
   specs:
@@ -546,7 +539,6 @@ DEPENDENCIES
   timecop
   tzinfo-data
   uglifier (>= 1.3.0)
-  uswds-rails!
   wannabe_bool
   web-console (~> 3.0)
   zero_downtime_migrations
