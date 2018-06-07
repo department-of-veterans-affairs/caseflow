@@ -304,7 +304,7 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/MethodLength
-  def find_all_relationships(_participant_id:)
+  def find_all_relationships(*)
     [
       {
         authzn_change_clmant_addrs_ind: nil,
