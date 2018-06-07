@@ -46,7 +46,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def assign_available_days_to_ros(ro_cities)
-    ro_cities.each { |ro_key, value| ro_cities[ro_key][:available_days] = @available_days }
+    ro_cities.each_key { |ro_key| ro_cities[ro_key][:available_days] = @available_days }
   end
 
   # Filters out the non-available RO days from the board available days for
@@ -62,7 +62,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   ]}
   #
   def filter_non_available_ro_days
-    @ros.each do |ro_key, value|
+    @ros.each_key do |ro_key|
       @ros[ro_key][:available_days] = @ros[ro_key][:available_days] - (@ro_non_available_days[ro_key] || [])
     end
   end

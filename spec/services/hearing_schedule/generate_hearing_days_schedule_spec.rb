@@ -20,7 +20,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   let(:ro_non_available_days) do
-    { 
+    {
       "RO01" => ro_one_non_available_days,
       "RO03" => ro_three_non_available_days
     }
@@ -95,12 +95,12 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     subject { generate_hearing_days_schedule_removed_ro_na }
 
     it "assigns ros to initial available days" do
-      subject.ros.map { |key, value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
+      subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
     end
 
     it "remove non-available_days" do
       subject.ros.each do |key, value|
-        value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }        
+        value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }
       end
     end
   end
