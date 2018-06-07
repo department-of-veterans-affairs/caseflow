@@ -48,8 +48,6 @@ const aboutHeadingStyling = css({
   marginBottom: '0.5rem'
 });
 
-// TODO: Move the copy into COPY.json
-// TODO: Separate the design and application code?
 export default class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
@@ -57,7 +55,9 @@ export default class CaseSnapshot extends React.PureComponent {
       const dateAssigned = new Date(this.props.task.attributes.assigned_on);
       const dayCountSinceAssignment = Math.round(Math.abs((today - dateAssigned) / (24 * 60 * 60 * 1000)));
 
-      return <React.Fragment><dt>Total days waiting</dt><dd>{dayCountSinceAssignment}</dd></React.Fragment>;
+      return <React.Fragment>
+        <dt>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt><dd>{dayCountSinceAssignment}</dd>
+      </React.Fragment>;
     }
 
     return null;
@@ -65,7 +65,7 @@ export default class CaseSnapshot extends React.PureComponent {
 
   taskAssignmentListItems = () => {
     const assignedToListItem = <React.Fragment>
-      <dt>Assigned to</dt><dd>{this.props.appeal.attributes.location_code}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
     </React.Fragment>;
 
     if (!this.props.task) {
@@ -83,15 +83,20 @@ export default class CaseSnapshot extends React.PureComponent {
       const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
 
       return <React.Fragment>
-        <dt>Prepared by</dt><dd>{nameAbbrev}</dd>
-        <dt>Document ID</dt><dd>{task.document_id}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.document_id}</dd>
       </React.Fragment>;
     }
 
     return <React.Fragment>
-      {task.added_by_name ? <React.Fragment><dt>Assigned by</dt><dd>{task.added_by_name}</dd></React.Fragment> : null }
-      <dt>Assigned on</dt><dd><DateString date={task.assigned_on} dateFormat="MM/DD/YY" /></dd>
-      <dt>Due</dt><dd><DateString date={task.due_on} dateFormat="MM/DD/YY" /></dd>
+      { task.added_by_name && <React.Fragment>
+        <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
+        <dd>{task.added_by_name}</dd>
+      </React.Fragment> }
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+      <dd><DateString date={task.assigned_on} dateFormat="MM/DD/YY" /></dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+      <dd><DateString date={task.due_on} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -100,8 +105,10 @@ export default class CaseSnapshot extends React.PureComponent {
       <div className="usa-width-one-fourth">
         <h3 {...aboutHeadingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <dl {...definitionListStyling} {...aboutListStyling}>
-          <dt>Type</dt><dd>{renderAppealType(this.props.appeal)}</dd>
-          <dt>Docket</dt><dd>{this.props.appeal.attributes.docket_number}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
+          <dd>{renderAppealType(this.props.appeal)}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
+          <dd>{this.props.appeal.attributes.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}
         </dl>
       </div>
@@ -110,9 +117,8 @@ export default class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </dl>
       </div>
-      {/* TODO: Make the dropdown box go the full width here. */}
       <div className="usa-width-one-half">
-        <h3>Actions</h3>
+        <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <SelectCheckoutFlowDropdown vacolsId={this.props.appeal.attributes.vacols_id} />
       </div>
     </div>;
