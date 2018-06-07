@@ -262,6 +262,10 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location!(appeal, location)
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
     return unless appeal.active?

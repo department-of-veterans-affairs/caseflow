@@ -14,7 +14,7 @@ class TasksController < ApplicationController
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction,
     AttorneyCaseReview: AttorneyCaseReview,
-    AttorneyLegacyTask: AttorneyLegacyTask
+    JudgeCaseAssignmentToAttorney: JudgeCaseAssignmentToAttorney
   }.freeze
 
   def set_application
