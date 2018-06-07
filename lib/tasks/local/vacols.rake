@@ -87,7 +87,7 @@ namespace :local do
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)
       read_csv(VACOLS::Issref, date_shift)
-      read_csv(VACOLS::TravelBoardSchedule)
+      read_csv(VACOLS::TravelBoardSchedule, date_shift)
 
       css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
         User.find_or_create_by(
