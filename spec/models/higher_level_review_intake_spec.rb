@@ -77,12 +77,10 @@ describe HigherLevelReviewIntake do
     context "Veteran is claimant" do
       let(:params) do
         ActionController::Parameters.new(
-          {
-            receipt_date: 1.day.ago,
-            informal_conference: false,
-            same_office: false,
-            claimant: nil
-          }
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: nil
         )
       end
 
@@ -91,7 +89,7 @@ describe HigherLevelReviewIntake do
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: intake.veteran.participant_id,
+          participant_id: intake.veteran.participant_id
         )
       end
     end
@@ -99,12 +97,10 @@ describe HigherLevelReviewIntake do
     context "Claimant is different than Veteran" do
       let(:params) do
         ActionController::Parameters.new(
-          {
-            receipt_date: 1.day.ago,
-            informal_conference: false,
-            same_office: false,
-            claimant: "1234"
-          }
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: "1234"
         )
       end
 
@@ -113,7 +109,7 @@ describe HigherLevelReviewIntake do
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234",
+          participant_id: "1234"
         )
       end
     end

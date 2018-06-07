@@ -77,10 +77,8 @@ describe SupplementalClaimIntake do
     context "Veteran is claimant" do
       let(:params) do
         ActionController::Parameters.new(
-          {
-            receipt_date: 1.day.ago,
-            claimant: nil
-          }
+          receipt_date: 1.day.ago,
+          claimant: nil
         )
       end
 
@@ -89,7 +87,7 @@ describe SupplementalClaimIntake do
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: intake.veteran.participant_id,
+          participant_id: intake.veteran.participant_id
         )
       end
     end
@@ -97,10 +95,8 @@ describe SupplementalClaimIntake do
     context "Claimant is different than Veteran" do
       let(:params) do
         ActionController::Parameters.new(
-          {
-            receipt_date: 1.day.ago,
-            claimant: "1234"
-          }
+          receipt_date: 1.day.ago,
+          claimant: "1234"
         )
       end
 
@@ -109,7 +105,7 @@ describe SupplementalClaimIntake do
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234",
+          participant_id: "1234"
         )
       end
     end
