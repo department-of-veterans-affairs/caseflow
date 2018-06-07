@@ -18,15 +18,46 @@ describe AppealIntake do
     )
   end
 
+  context "#cancel!" do
+    subject { intake.cancel!(reason: "system_error", other: nil) }
+
+    let(:detail) do
+      Appeal.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
+      )
+    end
+
+    it "cancels and deletes the Higher Level Review record created" do
+      subject
+
+      expect(intake.reload).to be_canceled
+      expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect(intake).to have_attributes(
+        cancel_reason: "system_error",
+        cancel_other: nil
+      )
+      expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
   context "#review!" do
     subject { intake.review!(request_params) }
 
     let(:request_params) do
-      ActionController::Parameters.new(receipt_date: receipt_date, docket_type: docket_type)
+      ActionController::Parameters.new(receipt_date: receipt_date, docket_type: docket_type, claimant: claimant)
     end
 
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
+    let(:claimant) { nil }
     let(:detail) { Appeal.new(veteran_file_number: veteran_file_number) }
 
     it "updates appeal with values" do
@@ -35,6 +66,15 @@ describe AppealIntake do
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
         docket_type: "hearing"
+      )
+    end
+
+    it "adds veteran to claimants" do
+      expect(subject).to be_truthy
+
+      expect(intake.detail.claimants.count).to eq 1
+      expect(intake.detail.claimants.first).to have_attributes(
+        participant_id: intake.veteran.participant_id,
       )
     end
 
@@ -48,6 +88,19 @@ describe AppealIntake do
       let(:docket_type) { nil }
 
       it { is_expected.to be_falsey }
+    end
+
+    context "Claimant is different than Veteran" do
+      let(:claimant) { "1234" }
+
+      it "adds other relationship to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: "1234",
+        )
+      end
     end
   end
 

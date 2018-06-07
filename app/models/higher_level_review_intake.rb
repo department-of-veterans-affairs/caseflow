@@ -15,6 +15,7 @@ class HigherLevelReviewIntake < Intake
 
   def cancel_detail!
     detail.remove_claimants!
+    super
   end
 
   def review!(request_params)

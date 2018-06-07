@@ -44,6 +44,13 @@ describe SupplementalClaimIntake do
       )
     end
 
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
+      )
+    end
+
     it "cancels and deletes the supplemental claim record created" do
       subject
 
@@ -53,6 +60,58 @@ describe SupplementalClaimIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  context "#review!" do
+    subject { intake.review!(params) }
+
+    let(:detail) do
+      SupplementalClaim.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    context "Veteran is claimant" do
+      let(:params) do
+        ActionController::Parameters.new(
+          {
+            receipt_date: 1.day.ago,
+            claimant: nil
+          }
+        )
+      end
+
+      it "adds veteran to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: intake.veteran.participant_id,
+        )
+      end
+    end
+
+    context "Claimant is different than Veteran" do
+      let(:params) do
+        ActionController::Parameters.new(
+          {
+            receipt_date: 1.day.ago,
+            claimant: "1234"
+          }
+        )
+      end
+
+      it "adds other relationship to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: "1234",
+        )
+      end
     end
   end
 
