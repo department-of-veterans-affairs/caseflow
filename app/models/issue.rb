@@ -181,8 +181,9 @@ class Issue
     }
   end
 
+  attr_writer :remand_reasons
   def remand_reasons
-    self.class.repository.load_remands_from_vacols(id, vacols_sequence_id)
+    @remand_reasons ||= self.class.repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
   private
