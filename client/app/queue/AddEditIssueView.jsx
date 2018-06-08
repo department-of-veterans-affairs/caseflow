@@ -338,7 +338,7 @@ AddEditIssueView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  task: state.queue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
   modal: state.ui.modal.deleteIssue
