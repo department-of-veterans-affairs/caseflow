@@ -60,26 +60,6 @@ class IssueRepository
       .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
   end
 
-  def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
-    VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
-  end
-
-  def self.remand_reason_from_vacols_remand_reason(reason)
-    {
-      code: reason.rmdval,
-      after_certification: reason.rmddev.eql?("R2")
-    }
-  end
-
-  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
-    VACOLS::RemandReason.where(rmdkey: vacols_id, rmdissseq: vacols_sequence_id).map do |reason|
-      remand_reason_from_vacols_remand_reason(reason)
-    end
-  end
-
-
-  # :nocov:
-
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
     case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
     when "Vacated"

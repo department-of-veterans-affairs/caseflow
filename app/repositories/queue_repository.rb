@@ -28,7 +28,7 @@ class QueueRepository
       aod_by_appeal = aod_query(vacols_ids)
       hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
       issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
-      remand_reasons_by_appeal = Issue.repository.load_remand_reasons_for_appeals(vacols_ids)
+      remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
       case_records.map do |case_record|
         appeal = AppealRepository.build_appeal(case_record)
