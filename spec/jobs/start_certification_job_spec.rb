@@ -1,33 +1,32 @@
 require "rails_helper"
 
 describe StartCertificationJob do
-  let(:certification_date) { nil }
-  let(:nod) { Generators::Document.build(type: "NOD") }
-  let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
-  let(:form9) { Generators::Document.build(type: "Form 9") }
-  let(:documents) { [nod, soc, form9] }
-
-  let(:vacols_record_template) { :ready_to_certify }
-  let(:ssoc_date) { nil }
-  let(:vacols_record) do
-    {
-      template: vacols_record_template,
-      nod_date: nod.received_at,
-      soc_date: soc.received_at,
-      ssoc_dates: ssoc_date ? [ssoc_date] : nil,
-      form9_date: form9.received_at
-    }
+  before do
+    FeatureToggle.enable!(:test_facols)
   end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:appeal) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_ssoc, :has_regional_office)
+  end
+
+  let(:certification) do
+    create(:certification, vacols_case: vacols_case, loading_data: true)
+  end
+
+  let(:certification_missing_data) do
+    create(:certification, vacols_id: "FAKE_ID_WITH_NO_DATA", loading_data: true)
   end
 
   context ".perform" do
     it "indicates when starting certification is successful" do
-      certification = Certification.new(
-        vacols_id: appeal.vacols_id,
-        loading_data: true
-      )
       StartCertificationJob.perform_now(certification)
 
       expect(certification.loading_data).to eq(false)
@@ -35,13 +34,9 @@ describe StartCertificationJob do
     end
 
     it "indicates when starting certification failed" do
-      certification = Certification.new(
-        vacols_id: "FAKE_ID_WITH_NO_DATA",
-        loading_data: true
-      )
-      StartCertificationJob.perform_now(certification)
+      StartCertificationJob.perform_now(certification_missing_data)
 
-      expect(certification.loading_data_failed).to eq(true)
+      expect(certification_missing_data.loading_data_failed).to eq(true)
     end
   end
 end

@@ -4,7 +4,8 @@ RSpec.feature "Save Certification" do
   before do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
-    allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_name!).and_call_original
+    FeatureToggle.enable!(:test_facols)
+    PowerOfAttorney.repository = PowerOfAttorneyRepository
   end
 
   after do
@@ -12,27 +13,28 @@ RSpec.feature "Save Certification" do
     expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
     form8_location = Form8.pdf_service.output_location_for(expected_form8)
     File.delete(form8_location) if File.exist?(form8_location)
-  end
-
-  let(:nod) { Generators::Document.build(type: "NOD") }
-  let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
-  let(:form9) { Generators::Document.build(type: "Form 9") }
-  let(:vacols_record) do
-    {
-      template: :ready_to_certify,
-      nod_date: nod.received_at,
-      soc_date: soc.received_at,
-      form9_date: form9.received_at,
-      notification_date: 1.day.ago
-    }
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:appeal) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: [nod, soc, form9])
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_ssoc, bfregoff: "DSUSER")
+  end
+
+  let(:default_user) do
+    create(:default_user)
+  end
+
+  def uncertify_appeal
+    vacols_case.reload
+    vacols_case.update!(bf41stat: nil)
   end
 
   context "As an authorized user" do
-    let!(:current_user) { User.authenticate!(roles: ["Certify Appeal"]) }
+    let!(:current_user) { User.authenticate!(user: default_user) }
 
     let(:vbms_error) do
       VBMS::ClientError.new("<faultstring>Claim not certified.</faultstring>")
@@ -164,14 +166,14 @@ RSpec.feature "Save Certification" do
         expect(page).to have_content "Success"
         expect(page).to have_content "Representative fields updated in VACOLS"
 
-        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
-          case_record: nil,
-          first_name: "Clarence",
-          middle_initial: "",
-          last_name: "Darrow"
-        )
+        representative = VACOLS::Representative.find(vacols_case.bfkey)
+        expect(representative.repfirst).to be_eql("Clarence")
+        expect(representative.repmi).to be_nil
+        expect(representative.replast).to be_eql("Darrow")
 
         # path 2 - select 'no' first question and select informal form 9
+
+        uncertify_appeal
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         within_fieldset("Has the appellant requested a change to their " \
                         "hearing preference since submitting the Form 9") do
@@ -202,6 +204,7 @@ RSpec.feature "Save Certification" do
         expect(form8.certifying_official_name).to eq "Tom Cruz"
         expect(form8.certification_date.strftime("%m/%d/%Y")).to eq Time.zone.today.strftime("%m/%d/%Y")
 
+        uncertify_appeal
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
         expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
@@ -216,6 +219,7 @@ RSpec.feature "Save Certification" do
       end
 
       scenario "Trying to skip steps" do
+        uncertify_appeal
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
         fill_in "Name of certifying official", with: "Tom Cruz"
