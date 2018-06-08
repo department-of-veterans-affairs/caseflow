@@ -56,9 +56,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 

@@ -80,7 +80,7 @@
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS": "Remands not complete, legally insufficient, or require necessary development",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS": "Major or frequent spelling, grammar, typographical, usage, formatting errors",
 
-  "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional factors affecting complexity and quality"
+  "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional factors affecting complexity and quality",
   "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
 
   "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
