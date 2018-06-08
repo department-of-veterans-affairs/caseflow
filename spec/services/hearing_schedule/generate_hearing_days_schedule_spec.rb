@@ -37,7 +37,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     subject { generate_hearing_days_schedule.available_days }
 
     it "has available hearing days" do
-      expect(subject.count).to be 111
+      # total 130 weekdays - (15 N/A days + 3 holidays) = 112
+      expect(subject.count).to be 112
     end
 
     it "removes weekends" do
