@@ -107,6 +107,8 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
+  get 'queue/help' => 'help#queue'
+
 
   root 'home#index'
 
