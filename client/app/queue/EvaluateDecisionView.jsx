@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-import moment from 'moment';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -22,19 +21,6 @@ import {
   PAGE_TITLES,
   CATEGORIES
 } from './constants';
-const mediumSizeText = css({ fontSize: 'medium' });
-const headerColumnStyle = css(mediumSizeText, {
-  float: 'left',
-  width: '31%',
-  '&:not(:last-of-type)': {
-    marginRight: '2%'
-  },
-  '> h3': marginBottom(0.5)
-});
-const headerColumnsContainerStyle = css(fullWidth, {
-  display: 'inline-block'
-});
-const hrStyling = css(marginTop(2), marginBottom(3));
 const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 
 class EvaluateDecisionView extends React.PureComponent {
@@ -61,11 +47,8 @@ class EvaluateDecisionView extends React.PureComponent {
     const {
       appeal: { attributes: appeal },
       task: { attributes: task },
-      vacolsId,
-      docCount
+      vacolsId
     } = this.props;
-    const dateAssigned = moment(task.assigned_on)
-    const daysWorked = moment().startOf('day').diff(dateAssigned, 'days');
 
     return <React.Fragment>
       <CaseTitle heading={appeal.veteran_full_name}>
@@ -80,33 +63,10 @@ class EvaluateDecisionView extends React.PureComponent {
             <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
           } />
       </CaseTitle>
-      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1), marginTop(2))}>
+      {/* todo: CaseSnapshot */}
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
-      <p className="cf-lead-paragraph" {...mediumSizeText}>
-        Counsel: {task.assigned_by_first_name} {task.assigned_by_last_name}<br />
-        Document ID: {task.document_id}
-      </p>
-      <div {...headerColumnsContainerStyle}>
-        <div {...headerColumnStyle}>
-          <h3>Case details</h3>
-          Docket number: {appeal.docket_number}<br />
-          Number of issues: {appeal.issues.length}<br />
-          Number of documents: {docCount}
-        </div>
-        <div {...headerColumnStyle}>
-          <h3>Timeliness</h3>
-          Date assigned: {dateAssigned.format('M/D/YY')}<br />
-          Decision submitted: {}<br />
-          Calendar days worked: {daysWorked}<br />
-        </div>
-        <div {...headerColumnStyle}>
-          <h3>Notes from the attorney</h3>
-          <p>{appeal.note}</p>
-        </div>
-      </div>
-
-      <hr {...hrStyling} />
 
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}</h3>
       <RadioField vertical hideLabel
@@ -221,8 +181,7 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
-  docCount: state.queue.docCountForAppeal[ownProps.appealId] || 0
+  task: state.queue.loadedQueue.tasks[ownProps.appealId]
 });
 
 export default connect(mapStateToProps)(decisionViewBase(EvaluateDecisionView));
