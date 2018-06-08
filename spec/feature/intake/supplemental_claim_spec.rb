@@ -91,6 +91,8 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to have_content("Cathy Smith, Child")
 
+    find("label", text: "Cathy Smith, Child", match: :prefer_exact).click
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -104,6 +106,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
+    expect(supplemental_claim.claimants.first).to have_attributes(
+      participant_id: "1129318238"
+    )
     intake = Intake.find_by(veteran_file_number: "12341234")
 
     find("label", text: "PTSD denied").click

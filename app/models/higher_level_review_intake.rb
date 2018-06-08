@@ -20,8 +20,8 @@ class HigherLevelReviewIntake < Intake
 
   def review!(request_params)
     detail.start_review!
-    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
     detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
+    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
   end
 
   def review_errors

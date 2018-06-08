@@ -71,6 +71,10 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to have_content("Cathy Smith, Child")
 
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -81,6 +85,9 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(appeal.docket_type).to eq("evidence_submission")
+    expect(appeal.claimants.first).to have_attributes(
+      participant_id: intake.veteran.participant_id
+    )
 
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")

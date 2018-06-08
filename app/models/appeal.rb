@@ -28,6 +28,7 @@ class Appeal < ApplicationRecord
   end
 
   def create_claimants!(claimant_data:)
+    claimants.destroy_all unless claimants.empty?
     claimants.create_from_intake_data!(claimant_data)
   end
 
