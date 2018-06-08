@@ -30,7 +30,7 @@ class QueueHelp extends React.Component {
         <li><a href="#share-feedback">8. How do I share my suggestions for improving Queue?</a></li>
       </ul>
 
-      <div className="cf-help-divider"></div>
+      <div className="cf-help-divider" />
       <h2 id="what-is-caseflow-queue">1. What is Caseflow Queue?</h2>
 
       <p>
@@ -52,10 +52,8 @@ class QueueHelp extends React.Component {
       <h2 id="launch-queue">3. How do I launch Queue?</h2>
 
       <p>
-       You can launch Queue by typing (or copying and pasting) the URL,
-        <a href="https://appeals.cf.ds.va.gov/queue" target="_blank" rel="noopener noreferrer">
-        https://appeals.cf.ds.va.gov/queue</a>, into your Google Chrome browser and logging in with your
-        VA credentials. You will be taken to the <b>Your Queue </b> page.
+        You can launch Queue by visiting the URL, <a href="https://appeals.cf.ds.va.gov/queue" target="_blank" rel="noopener noreferrer"> https://appeals.cf.ds.va.gov/queue</a>,
+         in your Google Chrome browser and logging in with you VA credentials. You will be taken to the <b>Your Queue </b> page.
       </p>
 
       <h2 id="queue-get-cases">4. Where does Queue get cases?</h2>
