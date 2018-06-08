@@ -54,7 +54,13 @@ class QueueDetailView extends React.PureComponent {
           <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
         } />
     </CaseTitle>
-    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} userRole={this.props.userRole} />
+    <CaseSnapshot
+      appeal={this.props.appeal}
+      featureToggles={this.props.featureToggles}
+      loadedQueueAppealIds={this.props.loadedQueueAppealIds}
+      task={this.props.task}
+      userRole={this.props.userRole}
+    />
     <TabWindow
       name="queue-tabwindow"
       tabs={this.tabs()} />

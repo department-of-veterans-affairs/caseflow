@@ -1,9 +1,11 @@
 import { after, css, merge } from 'glamor';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
+import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
@@ -51,9 +53,9 @@ const aboutHeadingStyling = css({
 export default class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
-      const today = new Date();
-      const dateAssigned = new Date(this.props.task.attributes.assigned_on);
-      const dayCountSinceAssignment = Math.round(Math.abs((today - dateAssigned) / (24 * 60 * 60 * 1000)));
+      const today = moment();
+      const dateAssigned = moment(this.props.task.attributes.assigned_on);
+      const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt><dd>{dayCountSinceAssignment}</dd>
@@ -74,7 +76,7 @@ export default class CaseSnapshot extends React.PureComponent {
 
     const task = this.props.task.attributes;
 
-    if (this.props.userRole === 'Judge') {
+    if (this.props.userRole === USER_ROLES.JUDGE) {
       if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
         return assignedToListItem;
       }
@@ -117,16 +119,21 @@ export default class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </dl>
       </div>
-      <div className="usa-width-one-half">
-        <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-        <SelectCheckoutFlowDropdown vacolsId={this.props.appeal.attributes.vacols_id} />
-      </div>
+      { this.props.featureToggles.phase_two &&
+        this.props.loadedQueueAppealIds.includes(this.props.appeal.attributes.vacols_id) &&
+        <div className="usa-width-one-half">
+          <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+          <SelectCheckoutFlowDropdown vacolsId={this.props.appeal.attributes.vacols_id} />
+        </div>
+      }
     </div>;
   };
 }
 
 CaseSnapshot.propTypes = {
   appeal: PropTypes.object.isRequired,
+  featureToggles: PropTypes.object,
+  loadedQueueAppealIds: PropTypes.array,
   task: PropTypes.object,
   userRole: PropTypes.string
 };

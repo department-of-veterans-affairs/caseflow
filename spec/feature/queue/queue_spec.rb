@@ -374,33 +374,6 @@ RSpec.feature "Queue" do
       User.authenticate!(roles: ["System Admin"])
     end
 
-    context "displays who assigned task" do
-      scenario "appeal has assigner" do
-        appeal = vacols_appeals.select { |a| a.added_by.name.present? }.first
-        visit "/queue"
-
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        # rubocop:disable Style/FormatStringToken
-        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
-        # rubocop:enable Style/FormatStringToken
-        # wait for the page to finish loading
-        sleep 0.5
-        expect(page).to have_content("Assigned to you by #{appeal.added_by.name} on #{assigned_date}")
-      end
-
-      scenario "appeal has no assigner" do
-        appeal = vacols_appeals.select { |a| a.added_by.name.nil? }.first
-        visit "/queue"
-
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        # rubocop:disable Style/FormatStringToken
-        assigned_date = appeal.assigned_to_attorney_date.strftime("%m/%d/%y")
-        # rubocop:enable Style/FormatStringToken
-
-        expect(page).to have_content("Assigned to you on #{assigned_date}")
-      end
-    end
-
     context "loads appeal summary view" do
       scenario "appeal has hearing" do
         appeal = vacols_appeals.reject { |a| a.hearings.empty? }.first
@@ -439,7 +412,7 @@ RSpec.feature "Queue" do
 
         expect(page).not_to have_content("Hearing preference")
 
-        expect(page).to have_content("Type(s): CAVC")
+        expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL} CAVC/i)
         expect(page).to have_content("Power of Attorney: #{appeal.representative}")
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
@@ -534,7 +507,7 @@ RSpec.feature "Queue" do
       click_on "#{task.veteran_full_name} (#{task.vbms_id})"
 
       expect(page).to have_content("Prepared by #{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}")
-      expect(page).to have_content("Document ID: #{task.document_id}")
+      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
 
