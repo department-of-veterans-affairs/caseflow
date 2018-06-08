@@ -88,6 +88,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
+    return true if current_user.admin?
     role = current_user.vacols_role
     return true if role == "Attorney"
     return true if role == "Judge" && feature_enabled?(:judge_queue)
