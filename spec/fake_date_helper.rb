@@ -4,7 +4,7 @@ module FakeDateHelper
 
     return nil if (end_date - start_date) < num_of_dates
 
-    while dates.size <= num_of_dates
+    while dates.size < num_of_dates
       date = Faker::Date.between(start_date, end_date)
       dates.add(date) unless exclude_weekends && (date.saturday? || date.sunday?)
     end
