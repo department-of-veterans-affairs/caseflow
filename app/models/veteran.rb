@@ -143,9 +143,11 @@ class Veteran < ApplicationRecord
   end
 
   def fetch_relationships
-    self.class.bgs.find_all_relationships(
+    relationships = self.class.bgs.find_all_relationships(
       participant_id: participant_id
-    ).map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
+    )
+    relationships_array = Array.wrap(relationships)
+    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
   end
 
   def period_of_service(s)
