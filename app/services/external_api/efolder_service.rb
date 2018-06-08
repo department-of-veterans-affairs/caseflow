@@ -116,6 +116,8 @@ class ExternalApi::EfolderService
 
     url = URI.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)
+    request.open_timeout = 600 # seconds
+    request.read_timeout = 600 # seconds
     request.auth.ssl.ssl_version  = :TLSv1_2
     request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
 
