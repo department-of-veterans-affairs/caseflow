@@ -31,7 +31,7 @@ class AttorneyTaskListView extends React.PureComponent {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
+    if (_.some(this.props.loadedQueueTasks, (task) => !this.props.tasks[task.id].attributes.task_id)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
@@ -41,7 +41,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    const noTasks = !_.size(this.props.loadedQueueTasks) && !_.size(this.props.appeals);
     let tableContent;
 
     if (noTasks) {
@@ -68,16 +68,37 @@ class AttorneyTaskListView extends React.PureComponent {
 }
 
 AttorneyTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'messages'),
-  ..._.pick(state.queue.stagedChanges, 'taskDecision'),
-  judges: state.queue.judges
-});
+const mapStateToProps = (state) => {
+  const {
+    queue: {
+      loadedQueue: {
+        appeals,
+        tasks: loadedQueueTasks
+      },
+      stagedChanges: {
+        taskDecision
+      },
+      tasks,
+      judges
+    },
+    ui: {
+      messages
+    }
+  } = state;
+
+  return ({
+    appeals,
+    messages,
+    taskDecision,
+    tasks,
+    judges,
+    loadedQueueTasks
+  });
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

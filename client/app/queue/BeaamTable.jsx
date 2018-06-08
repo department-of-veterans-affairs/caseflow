@@ -51,12 +51,10 @@ class BeaamTable extends React.PureComponent {
     columns={this.getQueueColumns}
     rowObjects={_.values(this.props.appeals)}
     getKeyForRow={this.getKeyForRow}
-    bodyStyling={this.tableStyle}
   />;
 }
 
 BeaamTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
 };
