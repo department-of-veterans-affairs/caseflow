@@ -92,7 +92,7 @@ class IssueRepository
   #     [{:code=>"1A", :after_certification=>true},
   #      {:code=>"3D", :after_certification=>true}]}
   #  }
-  def self.load_remands_for_multiple_appeals(vacols_ids)
+  def self.load_remand_reasons_for_appeals(vacols_ids)
     # `rmdissseq` will be null for remand reasons on appeals before 1999.
     # See https://github.com/department-of-veterans-affairs/dsva-vacols/issues/13
     # If we ever want to display remand reasons for appeals before then,
