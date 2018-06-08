@@ -6,12 +6,12 @@ class Relationship
 
   class << self
     def from_bgs_hash(hash)
-      hashArray = Array.wrap(hash)
+      hash_array = Array.wrap(hash)
       new(
-        participant_id: hashArray[:ptcpnt_id],
-        first_name: hashArray[:first_name],
-        last_name: hashArray[:last_name],
-        relationship_type: hashArray[:relationship_type]
+        participant_id: hash_array[:ptcpnt_id],
+        first_name: hash_array[:first_name],
+        last_name: hash_array[:last_name],
+        relationship_type: hash_array[:relationship_type]
       )
     end
   end
