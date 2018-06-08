@@ -1,9 +1,11 @@
 class SchedulePeriod < ApplicationRecord
   belongs_to :user
 
+  DOWNLOAD_SPREADSHEET_PATH = '/tmp/hearing_schedule/spreadsheets'
+
   def spreadsheet
-    # file = S3Service.fetch_file(file_name, file_path)
-    file = '../Documents/wrongDataType.xlsx'
-    Roo::Spreadsheet.open(file, extension: :xlsx)
+    file_path = DOWNLOAD_SPREADSHEET_PATH + file_name
+    S3Service.fetch_file(file_name, file_path)
+    Roo::Spreadsheet.open(file_path, extension: :xlsx)
   end
 end

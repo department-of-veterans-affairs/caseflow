@@ -28,6 +28,7 @@ class HearingSchedule::ValidateRoSpreadsheet
         co_non_availability_template.column(2)[1] == Date.parse('31/10/2018') &&
         co_non_availability_template.column(1).uniq == [nil, 'Example'] &&
         co_non_availability_template.column(3).uniq == [nil]
+        co_non_availability_template.row(1).count == 2
       fail(CoTemplateNotFollowed)
     end
   end
