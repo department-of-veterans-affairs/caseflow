@@ -60,7 +60,7 @@ class IssueRepository
       .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
   end
   # :nocov:
-  
+
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
     case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
     when "Vacated"

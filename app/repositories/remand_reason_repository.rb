@@ -19,7 +19,7 @@ class RemandReasonRepository
     end
   end
 
-    # Returns remand reasons grouped by brieff.bfkey and the issue sequence id. For example:
+  # Returns remand reasons grouped by brieff.bfkey and the issue sequence id. For example:
   # {"465400"=>{},
   #  "1074694"=>
   #   {6=>
