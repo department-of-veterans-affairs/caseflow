@@ -57,7 +57,8 @@ export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
-  QUEUE_TASK: 'Queue Task'
+  QUEUE_TASK: 'Queue Task',
+  EVALUATE_DECISION: 'Evaluate Decision'
 };
 
 export const TASK_ACTIONS = {
@@ -131,5 +132,6 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  }
+  },
+  EVALUATE: 'Evaluate Decision'
 };

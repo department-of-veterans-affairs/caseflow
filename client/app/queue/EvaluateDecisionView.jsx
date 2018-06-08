@@ -9,9 +9,19 @@ import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
+import ReaderLink from './ReaderLink';
+import CaseTitle from './CaseTitle';
+import AppealDocumentCount from './AppealDocumentCount';
 
 import COPY from '../../COPY.json';
-import { fullWidth, marginBottom, marginTop, marginRight } from './constants';
+import {
+  fullWidth,
+  marginBottom,
+  marginTop,
+  marginRight,
+  PAGE_TITLES,
+  CATEGORIES
+} from './constants';
 const mediumSizeText = css({ fontSize: 'medium' });
 const headerColumnStyle = css(mediumSizeText, {
   float: 'left',
@@ -38,18 +48,40 @@ class EvaluateDecisionView extends React.PureComponent {
     };
   }
 
+  getPageName = () => PAGE_TITLES.EVALUATE;
+
+  getBreadcrumb = () => ({
+    breadcrumb: this.getPageName(),
+    path: `/queue/appeals/${this.props.vacolsId}/evaluate`
+  });
+
+  validateForm = () => true;
+
   render = () => {
     const {
       appeal: { attributes: appeal },
       task: { attributes: task },
+      vacolsId,
       docCount
     } = this.props;
     const dateAssigned = moment(task.assigned_on)
     const daysWorked = moment().startOf('day').diff(dateAssigned, 'days');
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        Evaluate Decision - {appeal.veteran_full_name}
+      <CaseTitle heading={appeal.veteran_full_name}>
+        <React.Fragment>Veteran ID: <b>{appeal.vbms_id}</b></React.Fragment>
+        <ReaderLink
+          appeal={this.props.appeal}
+          analyticsSource={CATEGORIES.EVALUATE_DECISION}
+          redirectUrl={window.location.pathname}
+          taskType="Dispatch"
+          vacolsId={vacolsId}
+          message={
+            <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
+          } />
+      </CaseTitle>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1), marginTop(2))}>
+        {this.getPageName()}
       </h1>
       <p className="cf-lead-paragraph" {...mediumSizeText}>
         Counsel: {task.assigned_by_first_name} {task.assigned_by_last_name}<br />
