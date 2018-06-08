@@ -56,7 +56,7 @@ class Judge
     attr_writer :repository
 
     def repository
-      return JudgeRepository if FeatureToggle.enabled?(:fakes_off)
+      return JudgeRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= JudgeRepository
     end
 

@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
+
+import { setFeatureToggles, setUserRole } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -19,87 +22,76 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 
 import CaseListView from './CaseListView';
+import CaseSearchSheet from './CaseSearchSheet';
 import QueueDetailView from './QueueDetailView';
-import SearchEnabledView from './SearchEnabledView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
+import BeaamAppealListView from './BeaamAppealListView';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { DECISION_TYPES } from './constants';
-import COPY from '../../../COPY.json';
+import { DECISION_TYPES, PAGE_TITLES, USER_ROLES } from './constants';
 
 const appStyling = css({ paddingTop: '3rem' });
 
 class QueueApp extends React.PureComponent {
-  routedSearchHome = () => <React.Fragment>
-    { this.props.searchedAppeals.length > 0 &&
-      <SearchBar
-        feedbackUrl={this.props.feedbackUrl}
-        shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
-    }
-    <CaseListView
-      backLinkTarget="/"
-      backLinkText={COPY.BACK_TO_SEARCH_START_LINK_LABEL}
-      {...this.props} />
+  componentDidMount = () => {
+    this.props.setFeatureToggles(this.props.featureToggles);
+    this.props.setUserRole(this.props.userRole);
+  }
+
+  routedSearchResults = (props) => <React.Fragment>
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <SearchEnabledView
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    {this.props.userRole === USER_ROLES.ATTORNEY ?
+      <AttorneyTaskListView {...this.props} /> :
+      <JudgeReviewTaskListView {...this.props} />
+    }
+  </QueueLoadingScreen>;
+
+  routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
+    <SearchBar
       feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {this.props.userRole === 'Attorney' ?
-        <AttorneyTaskListView {...this.props} /> :
-        <JudgeReviewTaskListView {...this.props} />
-      }
-    </SearchEnabledView>
+      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
-    <SearchEnabledView
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search}>
-      {taskType === 'Assign' ?
-        <JudgeAssignTaskListView {...this.props} match={match} /> :
-        <JudgeReviewTaskListView {...this.props} />}
-    </SearchEnabledView>
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    {taskType === 'Assign' ?
+      <JudgeAssignTaskListView {...this.props} match={match} /> :
+      <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView {...this.props}
-      vacolsId={props.match.params.vacolsId} />
+    <QueueDetailView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     vacolsId={props.match.params.vacolsId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => {
-    const { vacolsId } = props.match.params;
-
-    return <SelectDispositionsView
-      vacolsId={vacolsId}
-      prevStep={`/queue/appeals/${vacolsId}`}
-      nextStep={`/queue/appeals/${vacolsId}/submit`} />;
-  };
+  routedSelectDispositions = (props) => <SelectDispositionsView vacolsId={props.match.params.vacolsId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
     {...props.match.params} />;
 
-  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
-    {...props.match.params} />;
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView
     nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
     {...props.match.params} />;
 
-  queueName = () => this.props.userRole === 'Attorney' ? 'Your Queue' : 'Review Cases';
+  queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
   render = () => <BrowserRouter>
     <NavigationBar
@@ -119,17 +111,29 @@ class QueueApp extends React.PureComponent {
             exact
             path="/"
             title="Caseflow"
-            render={this.routedSearchHome} />
+            component={CaseSearchSheet} />
+          <PageRoute
+            exact
+            path="/cases/:caseflowVeteranId"
+            title="Case Search | Caseflow"
+            render={this.routedSearchResults} />
           <PageRoute
             exact
             path="/queue"
             title={`${this.queueName()}  | Caseflow`}
             render={this.routedQueueList} />
-          <PageRoute
-            exact
-            path="/queue/:userId"
-            title={`${this.queueName()}  | Caseflow`}
-            render={this.routedQueueList} />
+          <Switch>
+            <PageRoute
+              exact
+              path="/queue/beaam"
+              title="BEAAM Appeals"
+              render={this.routedBeaamList} />
+            <PageRoute
+              exact
+              path="/queue/:userId"
+              title={`${this.queueName()}  | Caseflow`}
+              render={this.routedQueueList} />
+          </Switch>
           <PageRoute
             exact
             path="/queue/:userId/review"
@@ -162,19 +166,18 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path="/queue/appeals/:appealId/remands"
-            title="Draft Decision | Select Issue Remand Reasons"
+            title={`Draft Decision | ${PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
             path="/queue/appeals/:vacolsId/dispositions"
-            title="Draft Decision | Select Dispositions"
+            title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId/evaluate"
-            title="Evaluate Decision"
-            render={this.routedEvaluateDecision}
-          />
+            title="Evaluate Decision | Caseflow"
+            render={this.routedEvaluateDecision} />
         </div>
       </AppFrame>
       <Footer
@@ -203,4 +206,9 @@ const mapStateToProps = (state) => ({
   searchedAppeals: state.caseList.receivedAppeals
 });
 
-export default connect(mapStateToProps)(QueueApp);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFeatureToggles,
+  setUserRole
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

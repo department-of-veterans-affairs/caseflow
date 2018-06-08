@@ -11,7 +11,8 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
+               "Hearing Schedule"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -217,12 +218,12 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
-      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
+      return AppealRepository if FeatureToggle.enabled?(:test_facols)
       @appeal_repository ||= AppealRepository
     end
 
     def user_repository
-      return UserRepository if FeatureToggle.enabled?(:fakes_off)
+      return UserRepository if FeatureToggle.enabled?(:test_facols)
       @user_repository ||= UserRepository
     end
   end

@@ -35,7 +35,7 @@ require "timeout"
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-# ActiveRecord::Migration.maintain_test_schema!
+ActiveRecord::Migration.maintain_test_schema!
 
 require "capybara"
 require "capybara/rspec"
@@ -116,17 +116,21 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!(css_id: nil, roles: nil)
+    def authenticate!(css_id: nil, roles: nil, user: nil)
       Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
-      self.stub = User.from_session(
-        "user" =>
-          { "id" => css_id || "DSUSER",
-            "name" => "Lauren Roth",
-            "station_id" => "283",
-            "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-      )
+      self.stub = if user.nil?
+                    User.from_session(
+                      "user" =>
+                        { "id" => css_id || "DSUSER",
+                          "name" => "Lauren Roth",
+                          "station_id" => "283",
+                          "email" => "test@example.com",
+                          "roles" => roles || ["Certify Appeal"] }
+                    )
+                  else
+                    user
+                  end
     end
 
     def tester!(roles: nil)
@@ -245,6 +249,9 @@ RSpec.configure do |config|
     Timecop.return
     Rails.cache.clear
   end
+
+  # Allows us to use shorthand FactoryBot methods.
+  config.include FactoryBot::Syntax::Methods
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

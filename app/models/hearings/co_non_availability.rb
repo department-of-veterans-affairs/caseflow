@@ -1,0 +1,2 @@
+class CoNonAvailability < NonAvailability
+end

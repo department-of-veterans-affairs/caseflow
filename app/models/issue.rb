@@ -5,7 +5,8 @@ class Issue
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :readable_disposition, :close_date, :note
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition,
+                :disposition_id, :readable_disposition, :close_date, :note
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
@@ -180,6 +181,10 @@ class Issue
     }
   end
 
+  def remand_reasons
+    self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -213,8 +218,13 @@ class Issue
     attr_writer :repository
 
     def repository
-      return IssueRepository if FeatureToggle.enabled?(:fakes_off)
+      return IssueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= IssueRepository
+    end
+
+    def remand_repository
+      return RemandReasonRepository if FeatureToggle.enabled?(:test_facols)
+      @remand_repository ||= RemandReasonRepository
     end
 
     def load_from_vacols(hash)
@@ -230,6 +240,7 @@ class Issue
         note: hash["issdesc"],
         # disposition is a snake_case symbol, i.e. :remanded
         disposition: disposition,
+        disposition_id: hash["issdc"] || nil,
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])

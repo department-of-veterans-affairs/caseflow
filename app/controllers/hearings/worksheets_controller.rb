@@ -35,10 +35,7 @@ class Hearings::WorksheetsController < HearingsController
   def worksheet_params
     params.require("worksheet").permit(:representative_name,
                                        :witness,
-                                       :contentions,
                                        :military_service,
-                                       :evidence,
-                                       :comments_for_attorney,
                                        :prepped,
                                        :summary)
   end

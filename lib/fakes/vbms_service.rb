@@ -33,13 +33,14 @@ class Fakes::VBMSService
   def self.load_vbms_ids_mappings
     file_path = Rails.root.join("local", "vacols", "vbms_setup.csv")
 
-    return if !File.exist?(file_path) || @load_vbms_ids_mappings
+    return if !Rails.env.development? || !File.exist?(file_path) || @load_vbms_ids_mappings
 
     @load_vbms_ids_mappings = true
     @document_records ||= {}
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      @document_records[row_hash["vbms_id"]] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      @document_records[row_hash["vbms_id"].gsub(/[^0-9]/, "")] =
+        Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
     end
   end
 
@@ -82,12 +83,12 @@ class Fakes::VBMSService
     {
       manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
       manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
-      documents: (document_records || {})[appeal.vbms_id] || @documents || []
+      documents: (document_records || {})[appeal.veteran_file_number] || @documents || []
     }
   end
 
   def self.fetch_document_series_for(appeal)
-    Document.where(file_number: appeal.sanitized_vbms_id).map do |document|
+    Document.where(file_number: appeal.veteran_file_number).map do |document|
       (0..document.id % 3).map do |index|
         OpenStruct.new(
           document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",

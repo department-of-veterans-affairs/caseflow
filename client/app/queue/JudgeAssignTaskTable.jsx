@@ -1,19 +1,43 @@
+import AppealDocumentCount from './AppealDocumentCount';
+import COPY from '../../COPY.json';
 import CaseDetailsLink from './CaseDetailsLink';
+import Checkbox from '../components/Checkbox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Table from '../components/Table';
 import _ from 'lodash';
 import moment from 'moment';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { renderAppealType } from './utils';
-import AppealDocumentCount from './AppealDocumentCount';
-import COPY from '../../../COPY.json';
+import { setSelectionOfTaskOfUser } from './QueueActions';
 
-export default class JudgeAssignTaskTable extends React.PureComponent {
+class JudgeAssignTaskTable extends React.PureComponent {
+  isVacolsIdSelected = (vacolsId) => {
+    const isVacolsIdSelected = this.props.isVacolsIdAssignedToUserSelected[this.props.userId] || {};
+
+    return isVacolsIdSelected[vacolsId] || false;
+  }
+
   getKeyForRow = (rowNumber, { task }) => task.id;
 
   getCaseDetailsLink = ({ task, appeal }) => <CaseDetailsLink task={task} appeal={appeal} />;
 
   getQueueColumns = () => [
+    {
+      header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
+      valueFunction:
+        ({ task }) => <Checkbox
+          name={task.vacolsId}
+          hideLabel
+          value={this.isVacolsIdSelected(task.vacolsId)}
+          onChange={
+            (checked) =>
+              this.props.setSelectionOfTaskOfUser(
+                { userId: this.props.userId,
+                  vacolsId: task.vacolsId,
+                  selected: checked })} />
+    },
     {
       header: COPY.JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: this.getCaseDetailsLink
@@ -53,5 +77,16 @@ export default class JudgeAssignTaskTable extends React.PureComponent {
 }
 
 JudgeAssignTaskTable.propTypes = {
-  tasksAndAppeals: PropTypes.array.isRequired
+  tasksAndAppeals: PropTypes.array.isRequired,
+  userId: PropTypes.string.isRequired
 };
+
+const mapStateToProps = (state) => _.pick(state.queue, 'isVacolsIdAssignedToUserSelected');
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setSelectionOfTaskOfUser
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeAssignTaskTable);

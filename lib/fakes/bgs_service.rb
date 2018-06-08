@@ -25,6 +25,13 @@ class Fakes::BGSService
     end
   end
 
+  def self.stub_intake_data
+    veteran = Veteran.find_or_create_by_file_number("375273128")
+    Generators::Rating.build(
+      participant_id: veteran.participant_id
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -297,7 +304,7 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/MethodLength
-  def find_all_relationships(_participant_id:)
+  def find_all_relationships(*)
     [
       {
         authzn_change_clmant_addrs_ind: nil,

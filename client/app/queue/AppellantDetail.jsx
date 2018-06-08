@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import BareList from '../components/BareList';
 import { boldText, TASK_ACTIONS } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import { DateString } from '../util/DateUtil';
 
 const detailHeaderStyling = css({

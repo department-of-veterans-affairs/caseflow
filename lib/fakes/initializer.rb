@@ -46,7 +46,7 @@ class Fakes::Initializer
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env, app_name: nil)
-      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed?
+      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed? || rails_env.development?
     end
 
     private
@@ -55,13 +55,11 @@ class Fakes::Initializer
       load!(rails_env: rails_env)
 
       User.authentication_service.vacols_regional_offices = {
-        "DSUSER" => "DSUSER",
-        "RO13" => "RO13"
+        "DSUSER" => "DSUSER", "RO13" => "RO13"
       }
 
       User.authentication_service.user_session = {
-        "id" => "Fake User",
-        "css_id" => "FAKEUSER",
+        "id" => "Fake User", "css_id" => "FAKEUSER",
         "roles" =>
           ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment"],
         "station_id" => "283",
@@ -70,9 +68,12 @@ class Fakes::Initializer
       }
 
       # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
-      Fakes::BGSService.create_veteran_records if rails_env.development?
+      if rails_env.development?
+        Fakes::BGSService.create_veteran_records
+        Fakes::BGSService.stub_intake_data
+        return
+      end
 
-      return if rails_env.development?
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)

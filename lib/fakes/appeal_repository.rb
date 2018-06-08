@@ -66,6 +66,8 @@ class Fakes::AppealRepository
     fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
   end
 
+  def self.find_ramp_reopened_appeals(_); end
+
   def self.load_vacols_data(appeal)
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record("load appeal #{appeal.vacols_id}", service: :vacols) do
@@ -78,6 +80,8 @@ class Fakes::AppealRepository
     record = record.dup
 
     raise_vbms_error_if_necessary(record)
+
+    record[:ssoc_dates] = [] if record[:ssoc_dates].nil?
 
     appeal.assign_from_vacols(record)
 

@@ -25,7 +25,7 @@ jobs:
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.8
@@ -39,27 +39,25 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ arch }}-{{ .Branch }}
-            - gem-cache
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             
       - run: bundle install --path vendor/bundle
       
       - save_cache:
-          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
@@ -102,7 +100,7 @@ jobs:
           name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*.rb" | circleci tests split --split-by timings)
+            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by timings)
             echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
             ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 

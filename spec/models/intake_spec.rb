@@ -20,11 +20,16 @@ describe Intake do
       veteran_file_number: veteran_file_number,
       detail: detail,
       user: user,
-      started_at: 15.minutes.ago
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
     )
   end
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
+
+  let(:completion_status) { nil }
+  let(:completion_started_at) { nil }
 
   context ".build" do
     subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, user: user) }
@@ -48,8 +53,6 @@ describe Intake do
   context ".in_progress" do
     subject { Intake.in_progress }
 
-    let!(:not_started_intake) { intake }
-
     let!(:started_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -65,13 +68,14 @@ describe Intake do
         detail: detail,
         user: user,
         started_at: 10.minutes.ago,
-        completed_at: 5.minutes.ago
+        completed_at: 5.minutes.ago,
+        completion_status: "success"
       )
     end
 
     it "returns in progress intakes" do
       expect(subject).to include(started_intake)
-      expect(subject).to_not include(not_started_intake, completed_intake)
+      expect(subject).to_not include(completed_intake)
     end
   end
 
@@ -344,6 +348,51 @@ describe Intake do
     context "when number is valid (even with extra spaces)" do
       let(:veteran_file_number) { "  64205050  " }
       it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#start_completion!" do
+    subject { intake.start_completion! }
+
+    it "sets completion_started_at to now" do
+      subject
+      expect(intake.completion_started_at).to eq(Time.zone.now)
+    end
+  end
+
+  context "#abort_completion!" do
+    subject { intake.abort_completion! }
+
+    it "undoes whatever start_completion! does" do
+      intake.save!
+      attributes = intake.attributes
+
+      intake.start_completion!
+      expect(intake.attributes).not_to eql(attributes)
+
+      subject
+      expect(intake.attributes).to eql(attributes)
+    end
+  end
+
+  context "#pending?" do
+    subject { intake.pending? }
+    let(:completion_status) { "pending" }
+
+    context "when completion_started_at is nil" do
+      it { is_expected.to be false }
+    end
+
+    context "when completion_start_at is not nil and within timeout" do
+      let(:completion_started_at) { 4.minutes.ago }
+
+      it { is_expected.to be true }
+    end
+
+    context "when completion_start_at is not nil and exceeded timeout" do
+      let(:completion_started_at) { 6.minutes.ago }
+
+      it { is_expected.to be false }
     end
   end
 end

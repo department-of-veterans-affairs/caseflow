@@ -38,6 +38,7 @@ class RatedIssues extends React.PureComponent {
     });
 
     return <div>
+      <h2>Select from previous decision issues</h2>
       { ratedIssuesSections }
     </div>;
   }

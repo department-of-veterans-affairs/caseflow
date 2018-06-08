@@ -17,8 +17,7 @@ describe Hearing do
       date: date,
       disposition: disposition,
       hold_open: hold_open,
-      type: type,
-      contentions: "no treatment after service private or VA\n"
+      type: type
     )
   end
 
@@ -36,32 +35,6 @@ describe Hearing do
       let(:type) { :central_office }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
-    end
-  end
-
-  context "update_summary_field" do
-    subject { hearing2 }
-
-    it "updates summary field after contentions is updated" do
-      expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
-      "CS denied in 3/68 DX of C-spine issue</p><p></p><p><strong>Evidence</strong></p>"\
-      " <p></p><p></p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
-      "</p><p></p><p></p><p></p>"
-      subject.contentions = "no treatment after service private or VA\n"\
-      "CS denied in 3/68 DX of C-spine issue"
-      subject.save
-      expect(subject.summary).to eq expected_string
-    end
-
-    it "updates summary field after evidence and comments updated" do
-      expected_string = "<p><strong>Contentions</strong></p><p>no treatment after service private or VA\n"\
-      "</p><p></p><p><strong>Evidence</strong></p>"\
-      " <p>evidence</p><p></p><p><strong>Comments and special instructions to attorneys</strong>"\
-      "</p><p>here are the list of comments here</p><p></p>"
-      evidence = "evidence"
-      comments_for_attorney = "here are the list of comments here"
-      subject.update!(evidence: evidence, comments_for_attorney: comments_for_attorney)
-      expect(subject.summary).to eq expected_string
     end
   end
 
@@ -143,11 +116,11 @@ describe Hearing do
 
     let(:appeal) do
       Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing },
-                                      vbms_id: "123C",
+                                      vbms_id: "12345678",
                                       documents: documents)
     end
     let!(:additional_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "12345678")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
     let(:documents) do
@@ -266,10 +239,7 @@ describe Hearing do
       let(:hearing_hash) do
         {
           military_service: "Vietnam 1968 - 1970",
-          evidence: "Medical exam done on 10/10/2003",
           witness: "Jane Smith attended",
-          contentions: "The veteran believes their neck is hurt",
-          comments_for_attorney: "Look for neck-related records",
           prepped: true
         }
       end
@@ -277,10 +247,7 @@ describe Hearing do
       it "updates hearing columns" do
         subject
         expect(hearing.military_service).to eq "Vietnam 1968 - 1970"
-        expect(hearing.evidence).to eq "Medical exam done on 10/10/2003"
         expect(hearing.witness).to eq "Jane Smith attended"
-        expect(hearing.contentions).to eq "The veteran believes their neck is hurt"
-        expect(hearing.comments_for_attorney).to eq "Look for neck-related records"
         expect(hearing.prepped).to be_truthy
       end
     end
@@ -312,6 +279,46 @@ describe Hearing do
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
         expect(hearing.representative_name).to eq "DAV - DON REED"
+      end
+    end
+  end
+
+  context "#create" do
+    let(:hearing) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Hearing.create_unassigned_hearing(hearing_hash)
+    end
+
+    context "add a hearing with only required attributes" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: 1.day.ago,
+          room: "1" }
+      end
+
+      it "creates hearing with required attributes" do
+        expect(hearing.hearing_type).to eq "C"
+        expect(hearing.hearing_date).to eq 1.day.ago
+        expect(hearing.room).to eq "1"
+      end
+    end
+
+    context "add a video hearing" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: 1.day.ago,
+          representative: "RO89",
+          room: "5",
+          representative_name: "General Counsel" }
+      end
+
+      it "creates a video hearing" do
+        expect(hearing.hearing_type).to eq "C"
+        expect(hearing.hearing_date).to eq 1.day.ago
+        expect(hearing.folder_nr).to eq "VIDEO RO89"
+        expect(hearing.room).to eq "5"
+        expect(hearing.repname).to eq "General Counsel"
       end
     end
   end

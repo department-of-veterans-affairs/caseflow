@@ -7,7 +7,12 @@ import { css } from 'glamor';
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
-import { fullWidth, ISSUE_DISPOSITIONS } from './constants';
+import {
+  fullWidth,
+  ISSUE_DISPOSITIONS,
+  PAGE_TITLES,
+  USER_ROLES
+} from './constants';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -21,10 +26,19 @@ class SelectRemandReasonsView extends React.Component {
     };
   }
 
+  getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
+
   getBreadcrumb = () => ({
-    breadcrumb: 'Select Remand Reasons',
+    breadcrumb: this.getPageName(),
     path: `/queue/appeals/${this.props.appealId}/remands`
   });
+
+  getNextStepUrl = () => {
+    const { appealId, userRole } = this.props;
+    const baseUrl = `/queue/appeals/${appealId}`;
+
+    return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
+  }
 
   goToNextStep = () => {
     const { issues } = this.props;
@@ -61,10 +75,11 @@ class SelectRemandReasonsView extends React.Component {
 
   render = () => <React.Fragment>
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-      Select Remand Reasons
+      {this.getPageName()}
     </h1>
     <p className="cf-lead-paragraph" {...subHeadStyling}>
-      Please select the appropriate remand reason(s) for all the remand dispositions.
+      Please {this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'}
+      the appropriate remand reason(s) for all the remand dispositions.
     </p>
     <hr />
     {_.map(_.range(this.state.issuesRendered), (idx) =>
@@ -79,7 +94,8 @@ class SelectRemandReasonsView extends React.Component {
 }
 
 SelectRemandReasonsView.propTypes = {
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -88,7 +104,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED)
+    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    ..._.pick(state.ui, 'userRole')
   };
 };
 

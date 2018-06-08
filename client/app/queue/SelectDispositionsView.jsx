@@ -23,8 +23,11 @@ import {
   fullWidth,
   marginBottom,
   marginLeft,
-  DISPOSITION_ID_BY_PARAMETERIZED
+  PAGE_TITLES,
+  USER_ROLES,
+  ISSUE_DISPOSITIONS
 } from './constants';
+import { getUndecidedIssues } from './utils';
 
 const tableStyling = css({
   '& tr': {
@@ -46,22 +49,33 @@ const tbodyStyling = css({
 const smallTopMargin = css({ marginTop: '1rem' });
 
 class SelectDispositionsView extends React.PureComponent {
+  getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
+
   getBreadcrumb = () => ({
-    breadcrumb: 'Select Dispositions',
+    breadcrumb: this.getPageName(),
     path: `/queue/appeals/${this.props.vacolsId}/dispositions`
   });
 
   getNextStepUrl = () => {
     const {
       vacolsId,
-      nextStep,
+      userRole,
       appeal: {
         attributes: { issues }
       }
     } = this.props;
+    let nextStep;
+    const baseUrl = `/queue/appeals/${vacolsId}`;
 
-    return _.map(issues, 'disposition').includes('remanded') ?
-      `/queue/appeals/${vacolsId}/remands` : nextStep;
+    if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
+      nextStep = 'remands';
+    } else if (userRole === USER_ROLES.JUDGE) {
+      nextStep = 'evaluate';
+    } else {
+      nextStep = 'submit';
+    }
+
+    return `${baseUrl}/${nextStep}`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -111,15 +125,9 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { attributes: { issues } }
     } = this.props;
 
-    // filter already-decided issues from attorney checkout flow. undecided disposition
-    // ids are all numerical (1-9), decided ids are alphabetical (A-X)
-    const filteredIssues = _.filter(issues, (issue) =>
-      !issue.disposition || Number(DISPOSITION_ID_BY_PARAMETERIZED[issue.disposition])
-    );
-
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        Select Dispositions
+        {this.getPageName()}
       </h1>
       <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Review each issue and assign the appropriate dispositions.
@@ -128,7 +136,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={filteredIssues}
+        rowObjects={getUndecidedIssues(issues)}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
@@ -142,13 +150,13 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  prevStep: PropTypes.string.isRequired,
-  nextStep: PropTypes.string.isRequired
+  userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  saveResult: state.ui.messages.success
+  saveResult: state.ui.messages.success,
+  ..._.pick(state.ui, 'userRole')
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

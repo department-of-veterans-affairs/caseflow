@@ -4,11 +4,14 @@ class Intake < ApplicationRecord
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
+  COMPLETION_TIMEOUT = 5.minutes
+
   enum completion_status: {
-    pending: "pending",
     success: "success",
     canceled: "canceled",
-    error: "error"
+    error: "error",
+    # TODO: This status is now unused. Remove after we verify no intakes have it.
+    pending: "pending"
   }
 
   ERROR_CODES = {
@@ -38,7 +41,10 @@ class Intake < ApplicationRecord
 
     fail FormTypeNotSupported unless intake_classname
 
-    intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
+    intake_classname.constantize.new(
+      veteran_file_number: veteran_file_number,
+      user: user
+    )
   end
 
   def self.flagged_for_manager_review
@@ -63,6 +69,10 @@ class Intake < ApplicationRecord
         "(intakes.completed_at > latest_success.succeeded_at OR latest_success.succeeded_at IS NULL)
         AND NOT (intakes.type = 'RampElectionIntake' AND ramp_elections.established_at IS NOT NULL)"
       )
+  end
+
+  def pending?
+    !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end
 
   def complete?
@@ -127,10 +137,12 @@ class Intake < ApplicationRecord
     nil
   end
 
-  def start_complete!
-    update_attributes!(
-      completion_status: "pending"
-    )
+  def start_completion!
+    update_attributes!(completion_started_at: Time.zone.now)
+  end
+
+  def abort_completion!
+    update_attributes!(completion_started_at: nil)
   end
 
   def complete_with_status!(status)
@@ -183,12 +195,20 @@ class Intake < ApplicationRecord
       veteran_file_number: veteran_file_number,
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
-      completed_at: completed_at
+      completed_at: completed_at,
+      relationships: veteran && veteran.relationships
     }
   end
 
   def form_type
     FORM_TYPES.key(self.class.name)
+  end
+
+  def create_end_product_and_contentions
+    detail.create_end_product_and_contentions!
+  rescue StandardError => e
+    abort_completion!
+    raise e
   end
 
   private

@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.5.7":
-  version "2.5.7"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.5.7.tgz#c5d389e9eef6a95ec8458d4777f30e0bae32adbc"
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.5.8":
+  version "2.5.8"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.5.8.tgz#4fb51a21011c9ecd6b0b390518462135e681dc1e"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -5010,6 +5010,13 @@ react-textarea-autosize@^5.1.0:
   resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-5.1.0.tgz#ffbf8164fce217c79443c1c17dedf730592df224"
   dependencies:
     prop-types "^15.5.10"
+
+react-tooltip@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-3.6.0.tgz#61fd8502540d91fb3397e3fc90b487c0842c4189"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.0"
 
 react-virtualized@^9.10.1:
   version "9.18.5"

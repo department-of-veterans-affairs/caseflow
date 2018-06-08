@@ -33,6 +33,12 @@ class Fakes::HearingRepository
     hearing.assign_from_vacols(hearing_info)
   end
 
+  def self.create_vacols_hearing!(hearing_info)
+    return if (hearing_info.keys.map(&:to_sym) &
+        [:hearing_type, :hearing_date, :representative, :representative_name]).empty?
+    Generators::Vacols::CaseHearing.create(hearing_info)
+  end
+
   def self.load_vacols_data(hearing)
     return false if hearing_records.blank?
     record = find_by_vacols_id(hearing.vacols_id)

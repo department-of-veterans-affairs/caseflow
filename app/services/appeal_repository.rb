@@ -216,7 +216,7 @@ class AppealRepository
   def self.folder_type_from(folder_record)
     if %w[Y 1 0].include?(folder_record.tivbms)
       "VBMS"
-    elsif folder_record.tisubj == "Y"
+    elsif folder_record.tisubj2 == "Y"
       "VVA"
     else
       "Paper"
@@ -262,6 +262,10 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location!(appeal, location)
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
     return unless appeal.active?
@@ -272,6 +276,18 @@ class AppealRepository
 
     # By default, we route the appeal to ARC
     "98"
+  end
+
+  # Finds appeals in the set of vacols_ids passed that have been reopened after
+  # being closed for RAMP
+  def self.find_ramp_reopened_appeals(vacols_ids)
+    VACOLS::Case
+      .where(bfkey: vacols_ids)
+      .where([
+               "bfdc IS NULL OR (bfdc != 'P' AND (bfmpro != 'HIS' OR bfdc NOT IN (?)))",
+               VACOLS::Case::BVA_DISPOSITION_CODES
+             ])
+      .map { |case_record| build_appeal(case_record) }
   end
 
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
@@ -400,7 +416,7 @@ class AppealRepository
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def self.reopen_undecided_appeal!(appeal:, user:)
+  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
 
@@ -410,7 +426,10 @@ class AppealRepository
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
-    fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+
+    if safeguards
+      fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+    end
 
     previous_location = case_record.previous_location
     fail AppealNotValidToReopen unless previous_location
@@ -520,6 +539,7 @@ class AppealRepository
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,
                           name: "active_cases_for_user") do
+
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)

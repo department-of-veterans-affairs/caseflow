@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -11,7 +10,7 @@ import RadioField from '../components/RadioField';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import { fullWidth, marginBottom, marginTop, marginRight } from './constants';
 const mediumSizeText = css({ fontSize: 'medium' });
 const headerColumnStyle = css(mediumSizeText, {

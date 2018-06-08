@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -19,13 +19,13 @@ class CaseDetailsLink extends React.PureComponent {
   render() {
     const {
       appeal: { attributes: appeal },
-      task: { attributes: task }
+      disabled
     } = this.props;
 
     return <React.Fragment>
       <Link
         to={`/queue/appeals/${this.props.task.vacolsId}`}
-        disabled={!task.task_id || appeal.paper_case}
+        disabled={disabled || appeal.paper_case}
         onClick={this.setActiveAppealAndTask}
       >
         {appeal.veteran_full_name} ({appeal.vbms_id})
@@ -44,7 +44,8 @@ class CaseDetailsLink extends React.PureComponent {
 
 CaseDetailsLink.propTypes = {
   task: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  disabled: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

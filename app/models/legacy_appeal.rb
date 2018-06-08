@@ -27,7 +27,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
-  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
+  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date, :ssoc_dates
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
@@ -47,9 +47,8 @@ class LegacyAppeal < ApplicationRecord
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
-  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
-                :assigned_by_first_name, :assigned_by_last_name
+  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
+                :created_at, :document_id, :assigned_by
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -107,18 +106,11 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
 
   LOCATION_CODES = {
-    remand_returned_to_bva: "96"
+    remand_returned_to_bva: "96",
+    bva_dispatch: "30",
+    omo_office: "20",
+    caseflow: "CASEFLOW"
   }.freeze
-
-  BVA_DISPOSITIONS = [
-    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
-    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
-  ].freeze
-
-  attr_writer :ssoc_dates
-  def ssoc_dates
-    @ssoc_dates ||= []
-  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -389,7 +381,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def decided_by_bva?
-    !active? && BVA_DISPOSITIONS.include?(disposition)
+    !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
 
   def merged?
@@ -512,6 +504,10 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def serializer
+    ::WorkQueue::LegacyAppealSerializer
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -579,19 +575,18 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:fakes_off)
+      return AppealRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
-          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,
@@ -605,13 +600,14 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:)
+    def reopen(appeals:, user:, disposition:, safeguards: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
-            disposition: disposition
+            disposition: disposition,
+            safeguards: safeguards
           )
         end
       end
@@ -671,6 +667,12 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
+    def bva_dispositions
+      VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
+        Constants::VACOLS_DISPOSITIONS_BY_ID[code]
+      end
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
@@ -696,7 +698,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -717,7 +719,8 @@ class LegacyAppeal < ApplicationRecord
 
         repository.reopen_undecided_appeal!(
           appeal: appeal,
-          user: user
+          user: user,
+          safeguards: safeguards
         )
       end
     end

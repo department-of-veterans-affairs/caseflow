@@ -10,7 +10,7 @@ class RampRefilingIntake < Intake
   }.merge(Intake::ERROR_CODES)
 
   def preload_intake_data!
-    ramp_election && ramp_election.recreate_issues_from_contentions!
+    ramp_elections.map(&:recreate_issues_from_contentions!)
   end
 
   def review!(request_params)
@@ -28,11 +28,12 @@ class RampRefilingIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
-    start_complete!
+    start_completion!
+
     detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
     detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
 
-    detail.create_end_product_and_contentions! if detail.needs_end_product?
+    create_end_product_and_contentions
 
     complete_with_status!(:success)
     detail.update!(established_at: Time.zone.now) unless detail.established_at
@@ -48,19 +49,26 @@ class RampRefilingIntake < Intake
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: ramp_election.issues.map(&:ui_hash),
+      issues: ramp_elections.map(&:issues).flatten.map(&:ui_hash),
       end_product_description: detail.end_product_description
     )
   end
 
   private
 
+  def create_end_product_and_contentions
+    detail.create_end_product_and_contentions! if detail.needs_end_product?
+  rescue StandardError => e
+    abort_completion!
+    raise e
+  end
+
   def validate_detail_on_start
-    if !ramp_election
+    if ramp_elections.empty?
       self.error_code = :no_complete_ramp_election
-    elsif ramp_election.end_product_active?
+    elsif ramp_elections.any?(&:end_product_active?)
       self.error_code = :ramp_election_is_active
-    elsif ramp_election.issues.empty?
+    elsif ramp_elections.all? { |election| election.issues.empty? }
       self.error_code = :ramp_election_no_issues
     elsif ramp_refiling_already_processed?
       # For now caseflow does not support processing the multiple ramp refilings
@@ -70,7 +78,7 @@ class RampRefilingIntake < Intake
   end
 
   def ramp_refiling_already_processed?
-    !RampRefiling.where(ramp_election_id: ramp_election.id).empty?
+    !RampRefiling.where(veteran_file_number: veteran_file_number).empty?
   end
 
   def find_or_build_initial_detail
@@ -84,8 +92,8 @@ class RampRefilingIntake < Intake
     )
   end
 
-  def ramp_election
-    initial_ramp_refiling.ramp_election
+  def ramp_elections
+    RampElection.established.where(veteran_file_number: veteran_file_number).all
   end
 
   def fetch_ramp_election

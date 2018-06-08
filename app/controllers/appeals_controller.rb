@@ -1,22 +1,17 @@
 class AppealsController < ApplicationController
   before_action :react_routed
+  before_action :set_application, only: :document_count
 
   def index
-    return veteran_id_not_found_error unless veteran_id
+    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
+  end
 
-    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          service: :queue,
-                          name: "AppealsController.index") do
-
-      begin
-        appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran_id)
-      rescue ActiveRecord::RecordNotFound
-        appeals = []
+  def show_case_list
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
       end
-
-      render json: {
-        appeals: json_appeals(appeals)[:data]
-      }
     end
   end
 
@@ -25,25 +20,27 @@ class AppealsController < ApplicationController
   end
 
   def show
-    # :nocov:
     no_cache
 
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        vacols_id = params[:id]
-        MetricsService.record("VACOLS: Get appeal information for VACOLS ID #{vacols_id}",
+        id = params[:id]
+        MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+          appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
     end
-    # :nocov:
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "queue"
+  end
 
   # https://stackoverflow.com/a/748646
   def no_cache
@@ -54,15 +51,30 @@ class AppealsController < ApplicationController
     # :nocov:
   end
 
-  def veteran_id
-    request.headers["HTTP_VETERAN_ID"]
+  def get_appeals_for_file_number(file_number)
+    return file_number_not_found_error unless file_number
+
+    MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
+                          service: :queue,
+                          name: "AppealsController.index") do
+
+      begin
+        appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
+      rescue ActiveRecord::RecordNotFound
+        appeals = []
+      end
+
+      render json: {
+        appeals: json_appeals(appeals)[:data]
+      }
+    end
   end
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
   end
 
-  def veteran_id_not_found_error
+  def file_number_not_found_error
     render json: {
       "errors": [
         "title": "Must include Veteran ID",
@@ -74,7 +86,7 @@ class AppealsController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::LegacyAppealSerializer
     ).as_json
   end
 end

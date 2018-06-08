@@ -3,21 +3,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import AppealDetail from './AppealDetail';
+import AppealDocumentCount from './AppealDocumentCount';
 import AppellantDetail from './AppellantDetail';
+import CaseTitle from './CaseTitle';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import TabWindow from '../components/TabWindow';
-import { fullWidth, CATEGORIES } from './constants';
+import { CATEGORIES, USER_ROLES } from './constants';
 import ReaderLink from './ReaderLink';
 import { DateString } from '../util/DateUtil';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
-const headerStyling = css({ marginBottom: '0.5rem' });
 const subHeadStyling = css({ marginBottom: '2rem' });
 
 class QueueDetailView extends React.PureComponent {
@@ -44,10 +46,17 @@ class QueueDetailView extends React.PureComponent {
   }
 
   subHead = () => {
+    const appeal = this.props.appeal.attributes;
+    const basicSubHeading = `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
+
     if (this.props.task) {
       const task = this.props.task.attributes;
 
-      if (this.props.userRole === 'Judge') {
+      if (this.props.userRole === USER_ROLES.JUDGE) {
+        if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
+          return basicSubHeading;
+        }
+
         const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
         const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
 
@@ -64,9 +73,7 @@ class QueueDetailView extends React.PureComponent {
       </React.Fragment>;
     }
 
-    const appeal = this.props.appeal.attributes;
-
-    return `Docket Number: ${appeal.docket_number}, Assigned to ${appeal.location_code}`;
+    return basicSubHeading;
   }
 
   getCheckoutFlowDropdown = () => {
@@ -84,27 +91,25 @@ class QueueDetailView extends React.PureComponent {
     return null;
   }
 
-  render = () => {
-    const appeal = this.props.appeal.attributes;
-
-    return <AppSegment filledBackground>
-      <h1 className="cf-push-left" {...css(headerStyling, fullWidth)}>
-        {appeal.veteran_full_name} ({appeal.vbms_id})
-      </h1>
-      <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
+  render = () => <AppSegment filledBackground>
+    <CaseTitle heading={this.props.appeal.attributes.veteran_full_name}>
+      <React.Fragment>Veteran ID: <b>{this.props.appeal.attributes.vbms_id}</b></React.Fragment>
       <ReaderLink
         vacolsId={this.props.vacolsId}
         analyticsSource={CATEGORIES.QUEUE_TASK}
         redirectUrl={window.location.pathname}
         appeal={this.props.appeal}
         taskType="Draft Decision"
-        longMessage />
-      {this.getCheckoutFlowDropdown()}
-      <TabWindow
-        name="queue-tabwindow"
-        tabs={this.tabs()} />
-    </AppSegment>;
-  };
+        message={
+          <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
+        } />
+    </CaseTitle>
+    <p className="cf-lead-paragraph" {...subHeadStyling}>{this.subHead()}</p>
+    {this.getCheckoutFlowDropdown()}
+    <TabWindow
+      name="queue-tabwindow"
+      tabs={this.tabs()} />
+  </AppSegment>;
 }
 
 QueueDetailView.propTypes = {
@@ -115,7 +120,7 @@ QueueDetailView.propTypes = {
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  breadcrumbs: state.ui.breadcrumbs,
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });
