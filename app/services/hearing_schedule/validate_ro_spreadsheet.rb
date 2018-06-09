@@ -28,20 +28,21 @@ class HearingSchedule::ValidateRoSpreadsheet
            co_non_availability_template.column(1).uniq == [nil, "Example"] &&
            co_non_availability_template.column(3).uniq == [nil] &&
            co_non_availability_template.row(1).count == 2
-      fail(CoTemplateNotFollowed)
+      fail CoTemplateNotFollowed
     end
   end
 
   def validate_co_non_availability_dates
     unless co_non_availability_dates.all? { |date| date.instance_of?(Date) }
-      fail(CoDatesNotCorrectFormat)
+      fail CoDatesNotCorrectFormat
     end
     unless co_non_availability_dates.uniq == co_non_availability_dates
-      fail(CoDatesNotUnique)
+      fail CoDatesNotUnique
     end
     unless co_non_availability_dates.all? { |date| date > @start_date && date < @end_date }
-      fail(CoDatesNotInRange)
+      fail CoDatesNotInRange
     end
+    true
   end
 
   def validate
