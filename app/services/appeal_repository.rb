@@ -262,6 +262,10 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location!(appeal, location)
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
     return unless appeal.active?
@@ -412,7 +416,7 @@ class AppealRepository
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def self.reopen_undecided_appeal!(appeal:, user:)
+  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
 
@@ -422,7 +426,10 @@ class AppealRepository
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
-    fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+
+    if safeguards
+      fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+    end
 
     previous_location = case_record.previous_location
     fail AppealNotValidToReopen unless previous_location
