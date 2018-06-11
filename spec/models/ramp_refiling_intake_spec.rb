@@ -240,7 +240,7 @@ describe RampRefilingIntake do
     let(:detail) do
       RampRefiling.create!(
         veteran_file_number: veteran_file_number,
-        receipt_date: 2.days.ago,
+        receipt_date: 10.seconds.ago,
         option_selected: option_selected,
         appeal_docket: appeal_docket
       )
