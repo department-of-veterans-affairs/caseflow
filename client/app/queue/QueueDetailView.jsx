@@ -41,13 +41,7 @@ class QueueDetailView extends React.PureComponent {
 
   render = () => <AppSegment filledBackground>
     <CaseTitle appeal={this.props.appeal} vacolsId={this.props.vacolsId} redirectUrl={window.location.pathname} />
-    <CaseSnapshot
-      appeal={this.props.appeal}
-      featureToggles={this.props.featureToggles}
-      loadedQueueAppealIds={this.props.loadedQueueAppealIds}
-      task={this.props.task}
-      userRole={this.props.userRole}
-    />
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
     <TabWindow
       name="queue-tabwindow"
       tabs={this.tabs()} />
@@ -55,16 +49,13 @@ class QueueDetailView extends React.PureComponent {
 }
 
 QueueDetailView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  featureToggles: PropTypes.object,
-  userRole: PropTypes.string
+  vacolsId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
-  task: state.caseDetail.activeTask,
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  ..._.pick(state.ui, 'breadcrumbs'),
+  task: state.caseDetail.activeTask
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

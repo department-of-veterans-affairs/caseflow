@@ -8,9 +8,8 @@ import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
-import ReaderLink from './ReaderLink';
 import CaseTitle from './CaseTitle';
-import AppealDocumentCount from './AppealDocumentCount';
+import CaseSnapshot from './CaseSnapshot';
 
 import COPY from '../../COPY.json';
 import {
@@ -19,7 +18,6 @@ import {
   marginTop,
   marginRight,
   PAGE_TITLES,
-  CATEGORIES
 } from './constants';
 const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 
@@ -38,7 +36,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.vacolsId}/evaluate`
+    path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
   validateForm = () => true;
@@ -47,23 +45,20 @@ class EvaluateDecisionView extends React.PureComponent {
     const {
       appeal: { attributes: appeal },
       task: { attributes: task },
-      vacolsId
+      appealId
     } = this.props;
 
     return <React.Fragment>
-      <CaseTitle heading={appeal.veteran_full_name}>
-        <React.Fragment>Veteran ID: <b>{appeal.vbms_id}</b></React.Fragment>
-        <ReaderLink
-          appeal={this.props.appeal}
-          analyticsSource={CATEGORIES.EVALUATE_DECISION}
-          redirectUrl={window.location.pathname}
-          taskType="Dispatch"
-          vacolsId={vacolsId}
-          message={
-            <React.Fragment>View <AppealDocumentCount appeal={this.props.appeal} /> documents</React.Fragment>
-          } />
-      </CaseTitle>
-      {/* todo: CaseSnapshot */}
+      <CaseTitle
+        heading={appeal.veteran_full_name}
+        vacolsId={appealId}
+        appeal={this.props.appeal}
+        analyticsSource="evaluate_decision"
+        taskType="Dispatch"
+        redirectUrl={window.location.pathname} />
+      <CaseSnapshot
+        appeal={this.props.appeal}
+        task={this.props.task} />
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
