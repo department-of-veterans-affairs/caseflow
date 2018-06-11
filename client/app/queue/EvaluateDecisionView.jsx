@@ -20,6 +20,7 @@ import {
   PAGE_TITLES,
 } from './constants';
 const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
+const setWidth = (width) => css({ width });
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -108,7 +109,7 @@ class EvaluateDecisionView extends React.PureComponent {
       </div>}
 
       <div {...marginTop(4)}>
-        <div className="cf-push-left" {...marginRight(2)}>
+        <div className="cf-push-left" {...css(marginRight(2), setWidth('calc(50% - 2rem)'))}>
           <h3>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h3>
           <CheckboxGroup
             hideLabel vertical
