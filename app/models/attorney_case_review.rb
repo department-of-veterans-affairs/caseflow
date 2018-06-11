@@ -25,10 +25,14 @@ class AttorneyCaseReview < ApplicationRecord
         document_id: document_id,
         overtime: overtime,
         note: note,
-        modifying_user: attorney.vacols_uniq_id,
+        modifying_user: modifying_user,
         reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
+  end
+
+  def modifying_user
+    attorney.vacols_uniq_id
   end
 
   class << self

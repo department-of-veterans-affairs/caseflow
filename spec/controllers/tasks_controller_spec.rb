@@ -274,9 +274,13 @@ RSpec.describe TasksController, type: :controller do
   describe "POST tasks/:task_id/complete" do
     let(:judge) { create(:user, station_id: User::BOARD_STATION_ID) }
     let(:attorney) { create(:user, station_id: User::BOARD_STATION_ID) }
-    let(:vacols_staff) { create(:staff, :judge_role, :has_location_code, sdomainid: judge.css_id) }
-    let(:vacols_case) { create(:case, :assigned, bfcurloc: vacols_staff.slogid) }
+
+    let(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
+    let(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
+
     let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass.first.deadtim.strftime('%Y-%m-%d')}" }
+    let(:vacols_issue_remanded) { create(:case_issue, :disposition_remanded, isskey: vacols_case.bfkey) }
+    let(:vacols_issue_allowed) { create(:case_issue, :disposition_allowed, isskey: vacols_case.bfkey) }
 
     before do
       FeatureToggle.enable!(:queue_phase_two)
@@ -288,8 +292,10 @@ RSpec.describe TasksController, type: :controller do
 
     context "Attorney Case Review" do
       before do
-        User.stub = judge
+        User.stub = attorney
       end
+
+      let(:vacols_case) { create(:case, :assigned, bfcurloc: attorney_staff.slogid) }
 
       context "when all parameters are present to create OMO request" do
         let(:params) do
@@ -315,8 +321,6 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when all parameters are present to create Draft Decision" do
-        let(:vacols_issue_remanded) { FactoryBot.create(:case_issue, :disposition_remanded, isskey: vacols_case.bfkey) }
-        let(:vacols_issue_allowed) { FactoryBot.create(:case_issue, :disposition_allowed, isskey: vacols_case.bfkey) }
         let(:params) do
           {
             "type": "AttorneyCaseReview",
@@ -370,6 +374,8 @@ RSpec.describe TasksController, type: :controller do
         expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
       end
 
+      let(:vacols_case) { create(:case, :assigned, bfcurloc: judge_staff.slogid) }
+
       context "when all parameters are present to send to omo office" do
         let(:params) do
           {
@@ -387,7 +393,7 @@ RSpec.describe TasksController, type: :controller do
         end
       end
 
-      context "when all parameters are present to send to sing a decision" do
+      context "when all parameters are present to send to sign a decision" do
         let(:params) do
           {
             "type": "JudgeCaseReview",
@@ -397,7 +403,9 @@ RSpec.describe TasksController, type: :controller do
             "quality": "meets_expectations",
             "comment": "do this",
             "factors_not_considered": %w[theory_contention relevant_records],
-            "areas_for_improvement": ["process_violations"]
+            "areas_for_improvement": ["process_violations"],
+            "issues": [{ "disposition": "1", "vacols_sequence_id": vacols_issue_remanded.issseq },
+                       { "disposition": "3", "vacols_sequence_id": vacols_issue_allowed.issseq }]
           }
         end
 
@@ -411,6 +419,9 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["task"]["complexity"]).to eq "easy"
           expect(response_body["task"]["quality"]).to eq "meets_expectations"
           expect(response_body["task"]["comment"]).to eq "do this"
+          expect(response_body.keys).to include "issues"
+          expect(response_body["issues"].select { |i| i["vacols_sequence_id"] == vacols_issue_remanded.issseq }.first["disposition"]).to eq "allowed"
+          expect(response_body["issues"].select { |i| i["vacols_sequence_id"] == vacols_issue_allowed.issseq }.first["disposition"]).to eq "remanded"
         end
       end
     end

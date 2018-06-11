@@ -24,9 +24,13 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: judge.vacols_uniq_id
+        modifying_user: modifying_user
       }
     )
+  end
+
+  def modifying_user
+    judge.vacols_uniq_id
   end
 
   class << self

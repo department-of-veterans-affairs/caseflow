@@ -18,7 +18,7 @@ module LegacyTaskConcern
         vacols_id: vacols_id,
         vacols_sequence_id: issue_attrs[:vacols_sequence_id],
         issue_attrs: {
-          vacols_user_id: attorney.vacols_uniq_id,
+          vacols_user_id: modifying_user,
           disposition: issue_attrs[:disposition],
           disposition_date: VacolsHelper.local_date_with_utc_timezone,
           readjudication: issue_attrs[:readjudication],
