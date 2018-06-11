@@ -152,6 +152,13 @@ ActiveRecord::Schema.define(version: 20180611221431) do
     t.string "ep_code"
   end
 
+  create_table "claimants", force: :cascade do |t|
+    t.string "review_request_type", null: false
+    t.bigint "review_request_id", null: false
+    t.string "participant_id", null: false
+    t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
+  end
+
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
