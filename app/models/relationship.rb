@@ -5,12 +5,12 @@ class Relationship
   attr_accessor :participant_id, :first_name, :last_name, :relationship_type
 
   class << self
-    def from_bgs_hash(_hash)
+    def from_bgs_hash(hash)
       new(
-        participant_id: hash_array[:ptcpnt_id],
-        first_name: hash_array[:first_name],
-        last_name: hash_array[:last_name],
-        relationship_type: hash_array[:relationship_type]
+        participant_id: hash[:ptcpnt_id],
+        first_name: hash[:first_name],
+        last_name: hash[:last_name],
+        relationship_type: hash[:relationship_type]
       )
     end
   end
