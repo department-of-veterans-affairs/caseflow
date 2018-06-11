@@ -116,17 +116,21 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!(css_id: nil, roles: nil)
+    def authenticate!(css_id: nil, roles: nil, user: nil)
       Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
-      self.stub = User.from_session(
-        "user" =>
-          { "id" => css_id || "DSUSER",
-            "name" => "Lauren Roth",
-            "station_id" => "283",
-            "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-      )
+      self.stub = if user.nil?
+                    User.from_session(
+                      "user" =>
+                        { "id" => css_id || "DSUSER",
+                          "name" => "Lauren Roth",
+                          "station_id" => "283",
+                          "email" => "test@example.com",
+                          "roles" => roles || ["Certify Appeal"] }
+                    )
+                  else
+                    user
+                  end
     end
 
     def tester!(roles: nil)

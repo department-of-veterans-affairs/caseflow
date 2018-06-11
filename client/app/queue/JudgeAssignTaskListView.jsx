@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { css } from 'glamor';
 import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
@@ -55,7 +54,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 
   unassignedTasksWithAppeals = () => {
-    return sortTasks(_.pick(this.props, 'tasks', 'appeals')).
+    const { loadedQueueTasks, appeals, tasks } = this.props;
+    const taskWithId = {};
+
+    for (const id of Object.keys(loadedQueueTasks)) {
+      taskWithId[id] = tasks[id];
+    }
+
+    return sortTasks({ tasks: taskWithId,
+      appeals }).
       filter((task) => task.attributes.task_type === 'Assign').
       map((task) => ({
         task,
@@ -97,7 +104,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {this.unassignedTasksWithAppeals().length} Cases</h1>
-          {this.switchLink(this)}
+          {this.switchLink()}
         </div>
         <div className="usa-width-one-fourth">
           <LoadingDataDisplay
@@ -148,16 +155,31 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
   tasksAndAppealsOfAttorney: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'attorneysOfJudge', 'tasksAndAppealsOfAttorney'),
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals')
-});
+const mapStateToProps = (state) => {
+  const {
+    queue: {
+      attorneysOfJudge,
+      tasksAndAppealsOfAttorney,
+      tasks,
+      loadedQueue: {
+        tasks: loadedQueueTasks,
+        appeals
+      }
+    }
+  } = state;
+
+  return { attorneysOfJudge,
+    tasksAndAppealsOfAttorney,
+    tasks,
+    loadedQueueTasks,
+    appeals };
+};
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

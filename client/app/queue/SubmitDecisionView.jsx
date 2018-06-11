@@ -249,14 +249,39 @@ SubmitDecisionView.propTypes = {
   nextStep: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.stagedChanges.taskDecision,
-  judges: state.queue.judges,
-  error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
-});
+const mapStateToProps = (state, ownProps) => {
+  const {
+    queue: {
+      stagedChanges: {
+        appeals: {
+          [ownProps.vacolsId]: appeal
+        },
+        taskDecision: decision
+      },
+      tasks: {
+        [ownProps.vacolsId]: task
+      },
+      judges
+    },
+    ui: {
+      highlightFormItems,
+      selectingJudge,
+      messages: {
+        error
+      }
+    }
+  } = state;
+
+  return {
+    appeal,
+    task,
+    decision,
+    judges,
+    error,
+    highlightFormItems,
+    selectingJudge
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,

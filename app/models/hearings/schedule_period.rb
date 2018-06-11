@@ -1,11 +1,12 @@
 class SchedulePeriod < ApplicationRecord
   belongs_to :user
 
-  DOWNLOAD_SPREADSHEET_PATH = "/tmp/hearing_schedule/spreadsheets".freeze
+  def spreadsheet_location
+    File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)
+  end
 
   def spreadsheet
-    file_path = DOWNLOAD_SPREADSHEET_PATH + file_name
-    S3Service.fetch_file(file_name, file_path)
-    Roo::Spreadsheet.open(file_path, extension: :xlsx)
+    S3Service.fetch_file(file_name, spreadsheet_location)
+    Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)
   end
 end
