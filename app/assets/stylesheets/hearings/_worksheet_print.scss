@@ -18,7 +18,7 @@
   }
 
   h5 {
-    font-size: 11px;
+    font-size: 10px;
     margin-bottom: 5px;
   }
 
@@ -27,26 +27,26 @@
     margin-bottom: 12px;
     font-family: sans-serif;
 
-    b{
-      font-weight:normal;
+    b {
+      font-weight: normal;
     }
   }
 
-  .cf-hearings-form-headers{
+  .cf-hearings-form-headers {
     font-family: sans-serif;
 
-      .cf-hearings-worksheet-data {
-        p {
-            margin-bottom: -1rem;
-            font-size: 13px;
-        }
+    .cf-hearings-worksheet-data {
+      p {
+        margin-bottom: -1rem;
+        font-size: 13px;
       }
+    }
   }
 
   .cf-hearings-form-head {
     .cf-hearings-worksheet-data {
       p {
-          margin-bottom: 2.5rem;
+        margin-bottom: 2.5rem;
       }
     }
   }
@@ -148,11 +148,11 @@
     width: auto;
  }
 
- .usa-accordion-content {
-   padding-top: 10px;
-   padding-bottom: 15px;
-   padding-left: 20px;
-   padding-right: 20px;
+  .usa-accordion-content {
+    padding-top: 10px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
  }
 
   .cf-hearings-worksheet-data {
@@ -161,7 +161,7 @@
 
     p {
       font-size: 11px;
-      margin-top: 0px;
+      margin-top: 0;
       margin-bottom: 3.5rem;
     }
 
@@ -191,11 +191,11 @@
     margin-bottom: 2px;
  }
 
- .cf-app-segment {
+  .cf-app-segment {
     margin-top: -35px;
  }
 
- .cf-content-inside .cf-app-segment {
+  .cf-content-inside .cf-app-segment {
     margin-bottom: -19px;
 }
 
@@ -230,16 +230,20 @@
     padding-bottom: 0;
 
     table {
-      margin: 0 0 0;
-
+      margin: 0;
    }
 
-   .worksheetDocs {
-     margin-bottom: 15px;
+    .worksheetDocs {
+      margin-bottom: 15px;
+      padding-left: 0.7rem;
    }
 
-   .cf-hearings-column {
-     th {
+    .cf-top-margin {
+      padding-left: 0.7rem;
+    }
+
+    .cf-hearings-column {
+      th {
         padding: 0.1rem;
         border-style: hidden;
       }
@@ -258,11 +262,11 @@
  }
 
     .cf-hearings-worksheet-data-cell {
-       button {
-         margin-bottom: 0;
-         font-size: 1.3rem;
-         padding: 0.5rem 1rem;
-       }
+      button {
+        margin-bottom: 0;
+        font-size: 1.3rem;
+        padding: 0.5rem 1rem;
+      }
     }
 
     .cf-hearings-second-page {
