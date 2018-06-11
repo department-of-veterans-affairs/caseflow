@@ -6,7 +6,7 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def spreadsheet
-    S3Service.fetch_file(file_name, spreadsheet_location)
-    Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)
+    # S3Service.fetch_file(file_name, spreadsheet_location)
+    Roo::Spreadsheet.open('spec/support/validJudgeSpreadsheet.xlsx', extension: :xlsx)
   end
 end
