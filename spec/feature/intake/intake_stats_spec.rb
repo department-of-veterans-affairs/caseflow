@@ -91,7 +91,7 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     [:supplemental_claim, :higher_level_review, :higher_level_review_with_hearing, :appeal].each do |type|
-      completed_ramp_election = RampElection.create!(
+      RampElection.create!(
         veteran_file_number: "64205555",
         notice_date: 2.years.ago,
         receipt_date: 1.year.ago,
