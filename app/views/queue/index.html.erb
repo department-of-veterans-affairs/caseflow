@@ -2,7 +2,7 @@
   <%= react_component("Queue", props: {
     userDisplayName: current_user.display_name,
     userId: current_user.id,
-    userRole: current_user.vacols_role,
+    userRole: current_user.admin? ? "Attorney" : current_user.vacols_role,
     userCssId: current_user.css_id,
     userCanAccessQueue: can_access_queue?,
     dropdownUrls: dropdown_urls,
