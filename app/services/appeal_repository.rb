@@ -369,6 +369,10 @@ class AppealRepository
       # (It's a VACOLS thing)
       follow_up_appeal_key = "#{case_record.bfkey}P"
 
+      # Remands can be reopened, which means there will already be a post-remand case.
+      # Check for that, and if the post-remand case exists, skip the post-remand creation
+      return if VACOLS::Case.find_by(bfkey: follow_up_appeal_key)
+
       follow_up_case = VACOLS::Case.create!(
         case_record.remand_clone_attributes.merge(
           bfkey: follow_up_appeal_key,
