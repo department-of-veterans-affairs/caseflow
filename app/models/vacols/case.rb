@@ -249,7 +249,7 @@ class VACOLS::Case < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def previous_location
+  def previous_active_location
     conn = self.class.connection
 
     case_id = conn.quote(bfkey)
@@ -261,11 +261,13 @@ class VACOLS::Case < VACOLS::Record
         SELECT LOCSTTO
         FROM PRIORLOC
         WHERE LOCKEY = #{case_id}
+          AND LOCSTTO <> '99'
+          AND LOCDIN IS NOT NULL
         ORDER BY LOCDOUT DESC
       SQL
     end
 
-    result[1]["locstto"]
+    result.first["locstto"]
   end
 
   ##
