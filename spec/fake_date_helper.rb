@@ -1,5 +1,5 @@
 module FakeDateHelper
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def get_unique_dates_between(start_date, end_date, num_of_dates,
                                exclude_weekends = true)
     dates = Set.new
@@ -16,4 +16,5 @@ module FakeDateHelper
 
     dates.to_a
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
