@@ -39,6 +39,14 @@ RSpec.feature "Higher Level Review Intake" do
   end
 
   it "Creates an end product and contentions for it" do
+    # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
+    allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+      first_name: "BOB",
+      last_name: "VANCE",
+      ptcpnt_id: "5382910292",
+      relationship_type: "Spouse"
+    )
+
     Generators::EndProduct.build(
       veteran_file_number: "12341234",
       bgs_attrs: { end_product_type_code: "030" }
@@ -93,7 +101,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     expect(page).to have_content("Please select the claimant listed on the form.")
     expect(page).to have_content("Bob Vance, Spouse")
-    expect(page).to have_content("Cathy Smith, Child")
+    expect(page).to_not have_content("Cathy Smith, Child")
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 

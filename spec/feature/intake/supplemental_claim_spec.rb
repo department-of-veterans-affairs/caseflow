@@ -45,6 +45,24 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Creates an end product" do
+    # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
+    allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+      [
+        {
+          first_name: "FOO",
+          last_name: "BAR",
+          ptcpnt_id: "5382910292",
+          relationship_type: "Spouse"
+        },
+        {
+          first_name: "BAZ",
+          last_name: "QUX",
+          ptcpnt_id: "5382910293",
+          relationship_type: "Child"
+        }
+      ]
+    )
+
     Generators::EndProduct.build(
       veteran_file_number: "12341234",
       bgs_attrs: { end_product_type_code: "040" }
@@ -88,10 +106,10 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
-    expect(page).to have_content("Bob Vance, Spouse")
-    expect(page).to have_content("Cathy Smith, Child")
+    expect(page).to have_content("Foo Bar, Spouse")
+    expect(page).to have_content("Baz Qux, Child")
 
-    find("label", text: "Cathy Smith, Child", match: :prefer_exact).click
+    find("label", text: "Baz Qux, Child", match: :prefer_exact).click
 
     safe_click "#button-submit-review"
 
@@ -107,7 +125,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(supplemental_claim.claimants.first).to have_attributes(
-      participant_id: "1129318238"
+      participant_id: "5382910293"
     )
     intake = Intake.find_by(veteran_file_number: "12341234")
 

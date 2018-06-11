@@ -35,7 +35,7 @@ describe AppealIntake do
       )
     end
 
-    it "cancels and deletes the Higher Level Review record created" do
+    it "cancels and deletes the Appeal record created" do
       subject
 
       expect(intake.reload).to be_canceled
@@ -51,14 +51,14 @@ describe AppealIntake do
   context "#review!" do
     subject { intake.review!(request_params) }
 
-    let(:request_params) do
-      ActionController::Parameters.new(receipt_date: receipt_date, docket_type: docket_type, claimant: claimant)
-    end
-
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
     let(:claimant) { nil }
-    let(:detail) { Appeal.new(veteran_file_number: veteran_file_number) }
+    let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
+
+    let(:request_params) do
+      ActionController::Parameters.new(receipt_date: receipt_date, docket_type: docket_type, claimant: claimant)
+    end
 
     it "updates appeal with values" do
       expect(subject).to be_truthy
