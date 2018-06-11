@@ -69,8 +69,6 @@ RSpec.feature "Queue" do
     let(:appeal) { appeals.first }
     let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
     let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
-    before { FeatureToggle.enable!(:queue_case_search) }
-    after { FeatureToggle.disable!(:queue_case_search) }
 
     context "when invalid Veteran ID input" do
       before do
@@ -193,7 +191,6 @@ RSpec.feature "Queue" do
     before do
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
-      FeatureToggle.enable!(:queue_case_search)
       FeatureToggle.enable!(:case_search_home_page)
       FeatureToggle.disable!(:queue_phase_two)
       FeatureToggle.disable!(:judge_queue)
@@ -202,7 +199,6 @@ RSpec.feature "Queue" do
       FeatureToggle.enable!(:judge_queue)
       FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
-      FeatureToggle.disable!(:queue_case_search)
     end
 
     scenario "logo links to / instead of /queue" do
