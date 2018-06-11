@@ -9,7 +9,21 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::CoDatesNotInRange)
+      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique)
+    end
+  end
+
+  context "when CO non-availaility dates are not the right format" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+          Roo::Spreadsheet.open("spec/support/judgeWrongDataType.xlsx", extension: :xlsx),
+          Date.parse("01/01/2018"),
+          Date.parse("01/03/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat)
     end
   end
 
