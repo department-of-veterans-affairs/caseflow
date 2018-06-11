@@ -65,19 +65,20 @@
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
 
-  "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "How would you rate the complexity of this case?",
+  "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
+  "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY": "Easy",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_MEDIUM": "Medium",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_HARD": "Hard",
 
-  "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "How would you rate the overall quality of this case?",
+  "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
+  "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_5": "5 - Outstanding",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_4": "4 - Exceeds expectations",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_3": "3 - Meets expectations",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_2": "2 - Needs improvement",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_1": "1 - Does not meet expectations",
 
-  "JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL": "Were there any factors not considered?",
   "JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY": "Theory contention",
   "JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW": "Case law",
   "JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE": "Statue regulation",
@@ -91,6 +92,12 @@
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS": "Did not adequately address due process violations",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS": "Remands not complete, legally insufficient, or require necessary development",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS": "Major or frequent spelling, grammar, typographical, usage, formatting errors",
+
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
 
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional factors affecting complexity and quality",
   "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",

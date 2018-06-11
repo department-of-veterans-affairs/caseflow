@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
 import _ from 'lodash';
+import moment from 'moment';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -21,6 +22,8 @@ import {
 } from './constants';
 const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 const setWidth = (width) => css({ width });
+const headerStyling = marginBottom(1.5);
+const hrStyling = css(marginTop(2), marginBottom(3));
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -48,6 +51,8 @@ class EvaluateDecisionView extends React.PureComponent {
       task: { attributes: task },
       appealId
     } = this.props;
+    const dateAssigned = moment(task.assigned_on)
+    const daysWorked = moment().startOf('day').diff(dateAssigned, 'days');
 
     return <React.Fragment>
       <CaseTitle
@@ -57,14 +62,23 @@ class EvaluateDecisionView extends React.PureComponent {
         analyticsSource="evaluate_decision"
         taskType="Dispatch"
         redirectUrl={window.location.pathname} />
+      <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
+        {this.getPageName()}
+      </h1>
       <CaseSnapshot
         appeal={this.props.appeal}
         task={this.props.task} />
-      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(2), marginTop(2))}>
-        {this.getPageName()}
-      </h1>
+      <hr {...hrStyling} />
 
-      <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}</h3>
+      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
+      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}<br />
+      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {}<br />
+      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b> ({COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}<br />
+
+      <hr {...hrStyling} />
+
+      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}</h2>
+      <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
         onChange={(caseComplexity) => this.setState({ caseComplexity })}
@@ -80,7 +94,10 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_HARD
         }]} />
 
-      <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}</h3>
+      <hr {...hrStyling} />
+
+      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}</h2>
+      <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
         onChange={(caseQuality) => this.setState({ caseQuality })}
@@ -110,10 +127,10 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <div {...marginTop(4)}>
         <div className="cf-push-left" {...css(marginRight(2), setWidth('calc(50% - 2rem)'))}>
-          <h3>{COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}</h3>
+          <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
           <CheckboxGroup
             hideLabel vertical
-            name={COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LABEL}
+            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={_.noop}
             options={[{
               id: 'theory-contention',
@@ -159,6 +176,8 @@ class EvaluateDecisionView extends React.PureComponent {
             }]} />
         </div>
       </div>
+
+      <hr {...hrStyling} />
 
       <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h3>
       <TextareaField
