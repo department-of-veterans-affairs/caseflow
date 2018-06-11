@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180601173719) do
+ActiveRecord::Schema.define(version: 20180611221431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -460,7 +460,6 @@ ActiveRecord::Schema.define(version: 20180601173719) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
-    t.integer "ramp_election_id"
     t.string "option_selected"
     t.date "receipt_date"
     t.string "end_product_reference_id"
