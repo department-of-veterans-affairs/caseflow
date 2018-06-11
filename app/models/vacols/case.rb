@@ -260,18 +260,12 @@ class VACOLS::Case < VACOLS::Record
       conn.select_all(<<-SQL)
         SELECT LOCSTTO
         FROM PRIORLOC
-        JOIN (
-          SELECT LOCKEY, LOCDOUT
-          FROM PRIORLOC
-          WHERE LOCKEY = #{case_id}
-            AND LOCDIN IS NULL
-        ) T
-          ON T.LOCKEY = PRIORLOC.LOCKEY
-          AND T.LOCDOUT = PRIORLOC.LOCDIN
+        WHERE LOCKEY = #{case_id}
+        ORDER BY LOCDOUT DESC
       SQL
     end
 
-    result.first["locstto"]
+    result[1]["locstto"]
   end
 
   ##
