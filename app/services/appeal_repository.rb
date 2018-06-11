@@ -369,6 +369,10 @@ class AppealRepository
       # (It's a VACOLS thing)
       follow_up_appeal_key = "#{case_record.bfkey}P"
 
+      # Remands can be reopened, which means there will already be a post-remand case.
+      # Check for that, and if the post-remand case exists, skip the post-remand creation
+      return if VACOLS::Case.find_by(bfkey: follow_up_appeal_key)
+
       follow_up_case = VACOLS::Case.create!(
         case_record.remand_clone_attributes.merge(
           bfkey: follow_up_appeal_key,
@@ -431,11 +435,11 @@ class AppealRepository
       fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
     end
 
-    previous_location = case_record.previous_location
-    fail AppealNotValidToReopen unless previous_location
-    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_location
+    previous_active_location = case_record.previous_active_location
+    fail AppealNotValidToReopen unless previous_active_location
+    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
 
-    adv_status = previous_location == "77"
+    adv_status = previous_active_location == "77"
     fail AppealNotValidToReopen unless adv_status ^ (close_disposition == "9")
 
     bfmpro = adv_status ? "ADV" : "ACT"
@@ -451,7 +455,7 @@ class AppealRepository
         bfattid: nil
       )
 
-      case_record.update_vacols_location!(previous_location)
+      case_record.update_vacols_location!(previous_active_location)
 
       folder_record.update_attributes!(
         ticukey: "ACTIVE",
@@ -481,9 +485,9 @@ class AppealRepository
     fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
     fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
 
-    previous_location = case_record.previous_location
-    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_location
-    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_location)
+    previous_active_location = case_record.previous_active_location
+    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_active_location
+    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
     fail AppealNotValidToReopen unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
@@ -491,7 +495,7 @@ class AppealRepository
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "REM")
 
-      case_record.update_vacols_location!(previous_location)
+      case_record.update_vacols_location!(previous_active_location)
 
       folder_record.update_attributes!(
         ticukey: "REMAND",
