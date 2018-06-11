@@ -15,10 +15,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     @spreadsheet.sheet(JUDGE_NON_AVAILABILITY_SHEET)
   end
 
-  def judge_non_availability_dates
-    judge_non_availability_template.each_row_streaming(offset: 7)
-  end
-
   def validate_judge_non_availability_template
     unless judge_non_availability_template.column(1)[0] == "Judge Non-Availability Dates"
       fail JudgeTemplateNotFollowed
@@ -26,7 +22,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_non_availability_dates
-    unless judge_non_availability_dates { |row| row[2].instance_of?(Date) }
+    unless judge_non_availability_template.each_row_streaming(offset: 7) { |row| row[3].value.instance_of?(Date) }
       fail JudgeDatesNotCorrectFormat
     end
     true
