@@ -7,7 +7,7 @@ class RampClosedAppeal < ApplicationRecord
 
   def reclose!
     # If the ramp election was already rolled back, it can't be reclosed, so skip
-    return unless ramp_election && ramp_election.established?
+    return unless ramp_election.established?
 
     # If the end product was canceled, don't re-close the VACOLS appeal.
     # Instead rollback the RAMP election data from Caseflow
