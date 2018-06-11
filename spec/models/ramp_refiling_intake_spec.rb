@@ -177,16 +177,7 @@ describe RampRefilingIntake do
                end_product_reference_id: end_product.claim_id,
                established_at: Time.zone.now)
       end
-      let!(:ramp_election2) do
-        create(:ramp_election,
-               veteran_file_number: veteran_file_number,
-               notice_date: 2.days.ago,
-               end_product_reference_id: Generators::EndProduct.build(
-                 veteran_file_number: veteran_file_number,
-                 bgs_attrs: { status_type_code: "CLR" }
-               ).claim_id,
-               established_at: Time.zone.now)
-      end
+      let!(:ramp_election2) { second_completed_ramp_election }
       let!(:contention2) do
         Generators::Contention.build(
           claim_id: claim_id2,
@@ -325,16 +316,7 @@ describe RampRefilingIntake do
     end
 
     context "if there are multiple ramp elections" do
-      let!(:second_election) do
-        create(:ramp_election,
-               veteran_file_number: veteran_file_number,
-               notice_date: 2.days.ago,
-               end_product_reference_id: Generators::EndProduct.build(
-                 veteran_file_number: veteran_file_number,
-                 bgs_attrs: { status_type_code: "CLR" }
-               ).claim_id,
-               established_at: Time.zone.now)
-      end
+      let!(:second_election) { second_completed_ramp_election }
       let!(:contention2) do
         Generators::Contention.build(
           claim_id: second_election.end_product_reference_id,
