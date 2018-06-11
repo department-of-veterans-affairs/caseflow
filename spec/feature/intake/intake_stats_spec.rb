@@ -100,7 +100,6 @@ RSpec.feature "Intake Stats Dashboard" do
       )
 
       RampRefiling.create!(
-        ramp_election: completed_ramp_election,
         veteran_file_number: "64205555",
         receipt_date: 45.minutes.ago,
         option_selected: type,
@@ -112,7 +111,6 @@ RSpec.feature "Intake Stats Dashboard" do
 
     # Add an "in progress" refiling to make sure it doesn't show up
     RampRefiling.create!(
-      ramp_election: RampElection.last,
       veteran_file_number: "64205555",
       receipt_date: 45.minutes.ago,
       option_selected: :appeal,
