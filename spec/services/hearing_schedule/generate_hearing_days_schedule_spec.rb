@@ -2,7 +2,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   let(:schedule_period) { create(:ro_schedule_period) }
 
   let(:co_non_available_days) do
-    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 15).map do |date|
+    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 20).map do |date|
       create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
     end
   end
@@ -37,8 +37,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     subject { generate_hearing_days_schedule.available_days }
 
     it "has available hearing days" do
-      # total 130 weekdays - (15 N/A days + 3 holidays) = 112
-      expect(subject.count).to be 112
+      # total 130 weekdays - (20 N/A days + 3 holidays) = 107
+      expect(subject.count).to be 107
     end
 
     it "removes weekends" do
