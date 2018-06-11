@@ -420,8 +420,12 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["task"]["quality"]).to eq "meets_expectations"
           expect(response_body["task"]["comment"]).to eq "do this"
           expect(response_body.keys).to include "issues"
-          expect(response_body["issues"].select { |i| i["vacols_sequence_id"] == vacols_issue_remanded.issseq }.first["disposition"]).to eq "allowed"
-          expect(response_body["issues"].select { |i| i["vacols_sequence_id"] == vacols_issue_allowed.issseq }.first["disposition"]).to eq "remanded"
+          expect(response_body["issues"].select do |i|
+            i["vacols_sequence_id"] == vacols_issue_remanded.issseq
+          end.first["disposition"]).to eq "allowed"
+          expect(response_body["issues"].select do |i|
+            i["vacols_sequence_id"] == vacols_issue_allowed.issseq
+          end.first["disposition"]).to eq "remanded"
         end
       end
     end

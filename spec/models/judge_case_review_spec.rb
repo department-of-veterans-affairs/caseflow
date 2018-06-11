@@ -36,13 +36,13 @@ describe JudgeCaseReview do
             issues: issues
           }
         end
-         let(:issues) do
-            [
-              { disposition: "5", vacols_sequence_id: 1, readjudication: true },
-              { disposition: "3", vacols_sequence_id: 2,
-                remand_reasons: [{ code: "AB", after_certification: true }] }
-            ]
-          end
+        let(:issues) do
+          [
+            { disposition: "5", vacols_sequence_id: 1, readjudication: true },
+            { disposition: "3", vacols_sequence_id: 2,
+              remand_reasons: [{ code: "AB", after_certification: true }] }
+          ]
+        end
         let(:work_product) { "DEC" }
 
         it "should create Judge Case Review" do
