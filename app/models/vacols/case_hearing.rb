@@ -78,6 +78,11 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
+    def load_days_for_range(start_date, end_date)
+      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date)
+
+    end
+
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
@@ -116,6 +121,19 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+
+    def select_schedule_days
+      select(:hearing_pkseq,
+             :hearing_date,
+             :hearing_type,
+             :folder_nr,
+             :repname,
+             :room,
+             :board_member,
+             :mduser,
+             :mdtime,
+             :canceldate)
+    end
   end
 
   def master_record_type
@@ -134,7 +152,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   private_class_method
 
   def self.current_user_slogid
-    RequestStore.store[:current_user].vacols_uniq_id.upcase
+    slogid = RequestStore.store[:current_user].vacols_uniq_id
+    slogid.nil? ? "" : slogid.upcase
   end
 
   private

@@ -92,10 +92,11 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :schedule, only: [:index, :show]
+    resources :hearing_day, only: [:index, :show]
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
 
   resources :hearings, only: [:update]
 

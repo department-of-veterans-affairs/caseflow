@@ -23,6 +23,10 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
         .where("staff.sdomainid = #{id}")
         .where("tbstdate > ?", 1.year.ago.beginning_of_day)
     end
+
+    def load_days_for_range(start_date, end_date)
+      where("tbstdate BETWEEN ? AND ?", start_date, end_date)
+    end
   end
 
   def master_record_type
