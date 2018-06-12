@@ -1,4 +1,10 @@
 describe QueueRepository do
+  context ".assign_case_to_attorney!" do
+    subject { QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id) }
+
+
+  end
+
   context ".filter_duplicate_tasks" do
     subject { QueueRepository.filter_duplicate_tasks(tasks) }
 
