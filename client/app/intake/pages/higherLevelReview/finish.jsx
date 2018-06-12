@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import RatedIssueCounter from '../../components/RatedIssueCounter';
-import NonRatedIssues from './nonRatedIssues';
+import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
 import { completeIntake } from '../../actions/higherLevelReview';
-import { bindActionCreators } from 'redux';
+import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
@@ -53,6 +54,17 @@ class Finish extends React.PureComponent {
     </div>;
   }
 }
+
+const NonRatedIssues = connect(
+  ({ higherLevelReview }) => ({
+    nonRatedIssues: higherLevelReview.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    addNonRatedIssue,
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {

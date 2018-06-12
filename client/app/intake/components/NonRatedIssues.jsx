@@ -3,8 +3,40 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import { ISSUE_CATEGORIES } from '../constants';
+import _ from 'lodash';
 
-export class NonRatedIssueUnconnected extends React.PureComponent {
+export default class NonRatedIssuesUnconnected extends React.PureComponent {
+  render() {
+    const { nonRatedIssues } = this.props;
+
+    const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
+      return (
+        <NonRatedIssue key={issueId} id={issueId} category={issue.category} description={issue.description} />
+      );
+    });
+
+    return <div className="cf-non-rated-issues">
+      <h2>Enter other issue(s) for review</h2>
+      <p>
+      If the Veteran included any additional issues you cannot find in the list above,
+      please note them below. Otherwise, leave the section blank.
+      </p>
+      <div>
+        { nonRatedIssuesSection }
+      </div>
+
+      <Button
+        name="add-issue"
+        onClick={this.props.addNonRatedIssue}
+        legacyStyling={false}
+      >
+      + Add issue
+      </Button>
+    </div>;
+  }
+}
+
+class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
     this.props.setIssueCategory(this.props.id, event.value);
   }
@@ -33,15 +65,4 @@ export class NonRatedIssueUnconnected extends React.PureComponent {
       </div>
     );
   }
-}
-
-export class AddIssueButtonUnconnected extends React.PureComponent {
-  render = () =>
-    <Button
-      name="add-issue"
-      onClick={this.props.addNonRatedIssue}
-      legacyStyling={false}
-    >
-    + Add issue
-    </Button>;
 }
