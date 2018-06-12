@@ -2,10 +2,10 @@ namespace :local do
   desc "build local development environment"
   task :build do
     puts "Building docker services from configuration"
-    `docker-compose build --no-cache`
+    system("docker-compose build --no-cache") || abort
 
     puts "Starting docker containers in the background"
-    `docker-compose up -d`
+    system("docker-compose up -d") || abort
 
     puts "Waiting for our FACOLS containers to be ready"
     180.times do
@@ -17,21 +17,21 @@ namespace :local do
     puts ""
 
     puts "Setting up development FACOLS"
-    `RAILS_ENV=development bundle exec rake local:vacols:setup`
+    system("RAILS_ENV=development bundle exec rake local:vacols:setup") || abort
 
     puts "Setting up local caseflow database"
-    `RAILS_ENV=development bundle exec rake db:setup`
+    system("RAILS_ENV=development bundle exec rake db:setup") || abort
 
     puts "Seeding local caseflow database"
-    `RAILS_ENV=development bundle exec rake db:seed`
+    system("RAILS_ENV=development bundle exec rake db:seed") || abort
 
     puts "Enabling feature flags"
-    `bundle exec rails runner scripts/enable_features_dev.rb`
+    system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
 
     puts "Seeding FACOLS"
-    `RAILS_ENV=development bundle exec rake local:vacols:seed`
+    system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
 
     puts "Setting up test FACOLS"
-    `RAILS_ENV=test bundle exec rake local:vacols:setup`
+    system("RAILS_ENV=test bundle exec rake local:vacols:setup") || abort
   end
 end
