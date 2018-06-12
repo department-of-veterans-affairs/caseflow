@@ -1,3 +1,4 @@
+# Hearing Prep repository.
 class HearingRepository
   class << self
     # :nocov:
@@ -44,11 +45,6 @@ class HearingRepository
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
-    end
-
-    def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
-      VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
     end
 
     def load_vacols_data(hearing)
