@@ -39,7 +39,8 @@ export const submitReview = (intakeId, higherLevelReview) => (dispatch) => {
   const data = {
     informal_conference: higherLevelReview.informalConference,
     same_office: higherLevelReview.sameOffice,
-    receipt_date: formatDateStringForApi(higherLevelReview.receiptDate)
+    receipt_date: formatDateStringForApi(higherLevelReview.receiptDate),
+    claimant: higherLevelReview.claimant
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).

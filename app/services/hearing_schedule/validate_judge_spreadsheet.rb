@@ -1,4 +1,5 @@
 class HearingSchedule::ValidateJudgeSpreadsheet
+<<<<<<< HEAD
   JUDGE_NON_AVAILABILITY_SHEET = 0
 
   class JudgeDatesNotCorrectFormat < StandardError; end
