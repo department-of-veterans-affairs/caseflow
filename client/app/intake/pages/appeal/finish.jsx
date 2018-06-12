@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import RatedIssueCounter from '../../components/RatedIssueCounter';
+import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
 import NonRatedIssues from './nonRatedIssues';
-import RatedIssues from './ratedIssues';
 import { Redirect } from 'react-router-dom';
 import { completeIntake } from '../../actions/appeal';
+import { setIssueSelected } from '../../actions/common';
 import { bindActionCreators } from 'redux';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -53,6 +53,16 @@ class Finish extends React.PureComponent {
     </div>;
   }
 }
+
+const RatedIssues = connect(
+  ({ appeal, intake }) => ({
+    intakeId: intake.id,
+    reviewState: appeal
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
