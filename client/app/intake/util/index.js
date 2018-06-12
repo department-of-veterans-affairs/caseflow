@@ -78,3 +78,25 @@ export const formatRatingData = (intakeState) => {
 
   return data;
 };
+
+export const prepareReviewData = (intakeData, intakeType) => {
+  switch (intakeType) {
+  case "appeal":
+    return {
+      docket_type: intakeData.docketType,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  case "supplementalClaim":
+    return {
+        receipt_date: formatDateStringForApi(intakeData.receiptDate),
+        claimant: intakeData.claimant
+      };
+  case "higherLevelReview":
+    return {
+      informal_conference: intakeData.informalConference,
+      same_office: intakeData.sameOffice,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+};
