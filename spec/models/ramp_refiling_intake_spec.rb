@@ -160,7 +160,7 @@ describe RampRefilingIntake do
           context "a saved RampRefiling already exists for the veteran" do
             let!(:preexisting_ramp_refiling) { RampRefiling.create!(veteran_file_number: veteran_file_number) }
 
-            it "adds ramp_election_no_issues and returns false" do
+            it "adds ramp_refiling_already_processed and returns false" do
               expect(subject).to eq(false)
               expect(intake.error_code).to eq("ramp_refiling_already_processed")
             end

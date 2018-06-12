@@ -125,8 +125,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 
@@ -279,8 +278,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 
@@ -368,8 +366,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 
