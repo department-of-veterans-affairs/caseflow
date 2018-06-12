@@ -12,10 +12,6 @@ class JudgeCaseReview < ApplicationRecord
     bva_dispatch: "bva_dispatch"
   }
 
-  def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
-  end
-
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
 
@@ -28,9 +24,13 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: judge.vacols_uniq_id
+        modifying_user: modifying_user
       }
     )
+  end
+
+  def modifying_user
+    judge.vacols_uniq_id
   end
 
   class << self
@@ -44,6 +44,7 @@ class JudgeCaseReview < ApplicationRecord
                                 service: :vacols,
                                 name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
+            record.update_issue_dispositions! if record.bva_dispatch?
           end
         end
         record
