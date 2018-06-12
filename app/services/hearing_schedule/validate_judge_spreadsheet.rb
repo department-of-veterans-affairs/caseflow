@@ -30,7 +30,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def validate_judge_non_availability_template
     unless judge_non_availability_template.column(1)[0] == "Judge Non-Availability Dates" &&
-    judge_non_availability_template.row(7).uniq == [nil, "Jones, Bernard", ]
+        judge_non_availability_template.row(7).uniq == [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")] &&
+        judge_non_availability_template.column(5).uniq == [nil]
       fail JudgeTemplateNotFollowed
     end
   end
