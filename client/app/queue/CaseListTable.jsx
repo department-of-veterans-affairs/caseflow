@@ -39,7 +39,7 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
           appeal={appeal}
-          getLinkText={(appeal) => appeal.docket_number}
+          getLinkText={() => appeal.attributes.docket_number}
           onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)} />
       </React.Fragment>
     },

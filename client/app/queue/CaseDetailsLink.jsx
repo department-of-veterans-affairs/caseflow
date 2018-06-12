@@ -10,7 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 
-const getLinkText = (appeal) => <React.Fragment>{appeal.veteran_full_name} ({appeal.vbms_id})</React.Fragment>
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteran_full_name} ({appeal.vbms_id})</React.Fragment>;
 
 class CaseDetailsLink extends React.PureComponent {
   setActiveAppealAndTask = () => {
@@ -53,7 +53,7 @@ CaseDetailsLink.propTypes = {
 
 CaseDetailsLink.defaultProps = {
   getLinkText
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveAppeal,
