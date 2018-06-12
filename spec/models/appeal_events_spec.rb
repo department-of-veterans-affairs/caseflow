@@ -174,7 +174,8 @@ describe AppealEvents do
 
       let(:vacols_case) { create(:case, case_hearings: hearings) }
 
-      it "adds hearing events for all closed hearings associated with the appeal" do
+      it "adds hearing events for all closed hearings associated with the appeal", focus: true do
+        binding.pry
         expect(hearing_held_events.length).to eq(1)
         expect(no_show_hearing_events.length).to eq(1)
       end
