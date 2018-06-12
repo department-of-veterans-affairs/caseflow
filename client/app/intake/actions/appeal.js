@@ -26,7 +26,8 @@ export const submitReview = (intakeId, appeal) => (dispatch) => {
 
   const data = {
     docket_type: appeal.docketType,
-    receipt_date: formatDateStringForApi(appeal.receiptDate)
+    receipt_date: formatDateStringForApi(appeal.receiptDate),
+    claimant: appeal.claimant
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
