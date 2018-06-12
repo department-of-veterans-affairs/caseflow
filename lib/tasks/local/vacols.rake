@@ -160,6 +160,7 @@ namespace :local do
         VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
         sanitizer
       )
+      write_csv(VACOLS::Actcode, VACOLS::Actcode.all, sanitizer)
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
@@ -221,7 +222,7 @@ namespace :local do
       end
     end
 
-    def read_csv(klass, date_shift)
+    def read_csv(klass, date_shift = nil)
       items = []
       klass.delete_all
       CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
@@ -230,7 +231,7 @@ namespace :local do
       end
 
       klass.columns_hash.each do |k, v|
-        if v.type == :date
+        if date_shift && v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)

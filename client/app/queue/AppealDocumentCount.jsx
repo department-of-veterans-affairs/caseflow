@@ -11,6 +11,10 @@ class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const appeal = this.props.appeal.attributes;
 
+    if (appeal.paper_case) {
+      return;
+    }
+
     if (!this.props.docCountForAppeal) {
       const requestOptions = {
         withCredentials: true,

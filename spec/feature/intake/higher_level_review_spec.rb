@@ -39,6 +39,14 @@ RSpec.feature "Higher Level Review Intake" do
   end
 
   it "Creates an end product and contentions for it" do
+    # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
+    allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+      first_name: "BOB",
+      last_name: "VANCE",
+      ptcpnt_id: "5382910292",
+      relationship_type: "Spouse"
+    )
+
     Generators::EndProduct.build(
       veteran_file_number: "12341234",
       bgs_attrs: { end_product_type_code: "030" }
@@ -86,6 +94,17 @@ RSpec.feature "Higher Level Review Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("Bob Vance, Spouse")
+    expect(page).to_not have_content("Cathy Smith, Child")
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -100,6 +119,9 @@ RSpec.feature "Higher Level Review Intake" do
     expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
+    expect(higher_level_review.claimants.first).to have_attributes(
+      participant_id: "5382910292"
+    )
 
     intake = Intake.find_by(veteran_file_number: "12341234")
 

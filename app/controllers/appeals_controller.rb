@@ -17,6 +17,8 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
   end
 
   def show

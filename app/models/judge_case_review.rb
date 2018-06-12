@@ -1,10 +1,11 @@
 class JudgeCaseReview < ApplicationRecord
+  include LegacyTaskConcern
+
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
-  validates :location, :complexity, :quality, presence: true
+  validates :task_id, presence: true
+  validates :location, :complexity, :quality, presence: true, if: :bva_dispatch?
 
   enum location: {
     omo_office: "omo_office",
@@ -23,32 +24,27 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: judge.vacols_uniq_id
+        modifying_user: modifying_user
       }
     )
   end
 
-  private
-
-  def vacols_id
-    task_id.split("-", 2).first
-  end
-
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date
+  def modifying_user
+    judge.vacols_uniq_id
   end
 
   class << self
     attr_writer :repository
 
-    def create(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = super
+        record = create(params)
         if record.valid?
           MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
                                 service: :vacols,
                                 name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
+            record.update_issue_dispositions! if record.bva_dispatch?
           end
         end
         record
