@@ -76,8 +76,8 @@ const sectionHeadingStyling = css({
   padding: '1rem 2rem'
 });
 
-const ContentSection = ({element}) => <React.Fragment>
-    <h2 id={`${getIdForElement(element)}`} {...sectionHeadingStyling}>{element.props.title}</h2>
-    <div {...sectionSegmentStyling}>{element}</div>
-  </React.Fragment>;
+const ContentSection = ({ element }) => <React.Fragment>
+  <h2 id={`${getIdForElement(element)}`} {...sectionHeadingStyling}>{element.props.title}</h2>
+  <div {...sectionSegmentStyling}>{element}</div>
+</React.Fragment>;
 

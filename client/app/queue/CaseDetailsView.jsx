@@ -30,7 +30,7 @@ const horizontalRuleStyling = css({
 // TODO: Move this out to its own component when it gets complex.
 const PowerOfAttorneyDetail = ({ appeal }) => <p>{appeal.attributes.power_of_attorney}</p>;
 
-class QueueDetailView extends React.PureComponent {
+class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.clearActiveAppealAndTask();
   }
@@ -63,7 +63,7 @@ class QueueDetailView extends React.PureComponent {
   </AppSegment>;
 }
 
-QueueDetailView.propTypes = {
+CaseDetailsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   featureToggles: PropTypes.object,
   userRole: PropTypes.string
@@ -82,4 +82,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetBreadcrumbs
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);
