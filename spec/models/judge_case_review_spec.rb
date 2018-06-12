@@ -3,6 +3,9 @@ describe JudgeCaseReview do
   let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
   let!(:decass) { create(:decass, deadtim: "2013-12-06".to_date, defolder: "123456", deprod: work_product) }
   let!(:vacols_case) { create(:case, bfkey: "123456") }
+  let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
+  let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
+  let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id) }
 
   context ".create" do
     subject { JudgeCaseReview.complete(params) }
@@ -11,7 +14,6 @@ describe JudgeCaseReview do
       before do
         RequestStore.store[:current_user] = judge
         FeatureToggle.enable!(:test_facols)
-        allow(UserRepository).to receive(:vacols_uniq_id).and_return("CFS456")
         allow(UserRepository).to receive(:can_access_task?).and_return(true)
       end
 
@@ -30,8 +32,16 @@ describe JudgeCaseReview do
             quality: "does_not_meet_expectations",
             comment: "do this",
             factors_not_considered: %w[theory_contention relevant_records],
-            areas_for_improvement: ["process_violations"]
+            areas_for_improvement: ["process_violations"],
+            issues: issues
           }
+        end
+        let(:issues) do
+          [
+            { disposition: "5", vacols_sequence_id: 1, readjudication: true },
+            { disposition: "3", vacols_sequence_id: 2,
+              remand_reasons: [{ code: "AB", after_certification: true }] }
+          ]
         end
         let(:work_product) { "DEC" }
 
@@ -55,6 +65,27 @@ describe JudgeCaseReview do
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
           expect(vacols_case.reload.bfcurloc).to eq "30"
+
+          vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
+          # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
+          expect(vacols_issues.size).to eq 3
+
+          expect(vacols_issues.first.issdc).to eq "5"
+          expect(vacols_issues.first.issseq).to eq 1
+          expect(vacols_issues.first.issmduser).to eq "CFS456"
+
+          expect(vacols_issues.second.issdc).to eq "3"
+          expect(vacols_issues.second.issseq).to eq 2
+          expect(vacols_issues.second.issmduser).to eq "CFS456"
+
+          expect(vacols_issues.third.issdc).to eq nil
+          expect(vacols_issues.third.issseq).to eq 3
+          expect(vacols_issues.third.issaduser).to eq "CFS456"
+
+          remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: "2")
+          expect(remand_reasons.size).to eq 1
+          expect(remand_reasons.first.rmdissseq).to eq 2
+          expect(remand_reasons.first.rmdmdusr).to eq "CFS456"
         end
       end
 
