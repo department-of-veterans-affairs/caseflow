@@ -106,13 +106,11 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
 
   LOCATION_CODES = {
-    remand_returned_to_bva: "96"
+    remand_returned_to_bva: "96",
+    bva_dispatch: "30",
+    omo_office: "20",
+    caseflow: "CASEFLOW"
   }.freeze
-
-  BVA_DISPOSITIONS = [
-    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
-    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
-  ].freeze
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -383,7 +381,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def decided_by_bva?
-    !active? && BVA_DISPOSITIONS.include?(disposition)
+    !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
 
   def merged?
@@ -602,13 +600,14 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:)
+    def reopen(appeals:, user:, disposition:, safeguards: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
-            disposition: disposition
+            disposition: disposition,
+            safeguards: safeguards
           )
         end
       end
@@ -668,6 +667,12 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
+    def bva_dispositions
+      VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
+        Constants::VACOLS_DISPOSITIONS_BY_ID[code]
+      end
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
@@ -693,7 +698,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -714,7 +719,8 @@ class LegacyAppeal < ApplicationRecord
 
         repository.reopen_undecided_appeal!(
           appeal: appeal,
-          user: user
+          user: user,
+          safeguards: safeguards
         )
       end
     end

@@ -103,7 +103,8 @@ class SubmitDecisionView extends React.PureComponent {
     const params = {
       data: {
         tasks: {
-          type: decision.type,
+          document_type: decision.type,
+          type: 'AttorneyCaseReview',
           issues: getUndecidedIssues(issues).map((issue) => _.extend({},
             _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
             { disposition: _.capitalize(issue.disposition) })
@@ -248,14 +249,39 @@ SubmitDecisionView.propTypes = {
   nextStep: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.stagedChanges.taskDecision,
-  judges: state.queue.judges,
-  error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
-});
+const mapStateToProps = (state, ownProps) => {
+  const {
+    queue: {
+      stagedChanges: {
+        appeals: {
+          [ownProps.vacolsId]: appeal
+        },
+        taskDecision: decision
+      },
+      tasks: {
+        [ownProps.vacolsId]: task
+      },
+      judges
+    },
+    ui: {
+      highlightFormItems,
+      selectingJudge,
+      messages: {
+        error
+      }
+    }
+  } = state;
+
+  return {
+    appeal,
+    task,
+    decision,
+    judges,
+    error,
+    highlightFormItems,
+    selectingJudge
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,

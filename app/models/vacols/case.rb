@@ -14,6 +14,8 @@ class VACOLS::Case < VACOLS::Record
 
   class InvalidLocationError < StandardError; end
 
+  BVA_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
+
   TYPES = {
     "1" => "Original",
     "2" => "Supplemental",
@@ -247,7 +249,7 @@ class VACOLS::Case < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def previous_location
+  def previous_active_location
     conn = self.class.connection
 
     case_id = conn.quote(bfkey)
@@ -258,14 +260,10 @@ class VACOLS::Case < VACOLS::Record
       conn.select_all(<<-SQL)
         SELECT LOCSTTO
         FROM PRIORLOC
-        JOIN (
-          SELECT LOCKEY, LOCDOUT
-          FROM PRIORLOC
-          WHERE LOCKEY = #{case_id}
-            AND LOCDIN IS NULL
-        ) T
-          ON T.LOCKEY = PRIORLOC.LOCKEY
-          AND T.LOCDOUT = PRIORLOC.LOCDIN
+        WHERE LOCKEY = #{case_id}
+          AND LOCSTTO <> '99'
+          AND LOCDIN IS NOT NULL
+        ORDER BY LOCDOUT DESC
       SQL
     end
 

@@ -1,0 +1,32 @@
+{
+  "COMPLEXITY": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+
+  "QUALITY": {
+    "outstanding": "Outstanding",
+    "exceeds_expectations": "Exceeds expectations",
+    "meets_expectations": "Meets expectations",
+    "needs_improvements": "Needs improvements",
+    "does_not_meet_expectations": "Does not meet expectations"
+  },
+
+  "FACTORS_NOT_CONSIDERED": {
+    "theory_contention": "Theory contention",
+    "caselaw": "Case law",
+    "statue_regulation": "Statue regulation",
+    "admin_procedure": "Administrative procedure, procedure opinion",
+    "relevant_records": "Relevant records (medical, service, emplyoment)",
+    "lay_evidence": "Lay evidence"
+  },
+
+  "AREAS_FOR_IMPROVEMENT": {
+    "issues_are_not_addressed": "Did not properly identify and address before the Board",
+    "findings_are_not_supported": "Findings are not supported by adequate reasons, bases",
+    "process_violations": "Did not adequatley address due process violations",
+    "remands_are_not_completed": "Remands not complete, legally sufficient or require necessary development",
+    "grammar_errors": "Major or frequent spelling, grammar, typographical, usage, formatting errors"
+  }
+}

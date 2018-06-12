@@ -14,6 +14,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 export const initialState = {
   judges: {},
+  tasks: {},
   loadedQueue: {
     appeals: {},
     tasks: {},
@@ -54,6 +55,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
         loadedUserId: {
           $set: action.payload.userId
         }
+      },
+      tasks: {
+        $merge: action.payload.tasks
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -249,6 +253,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
             data: _.pick(action.payload, 'tasks', 'appeals')
           }
         }
+      },
+      tasks: {
+        $merge: action.payload.tasks
       }
     });
   case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
