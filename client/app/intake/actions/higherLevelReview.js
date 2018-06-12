@@ -1,7 +1,5 @@
 import { ACTIONS } from '../constants';
 
-// const analytics = true;
-
 export const setInformalConference = (informalConference) => ({
   type: ACTIONS.SET_INFORMAL_CONFERENCE,
   payload: {

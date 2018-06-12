@@ -102,7 +102,8 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   default:
     return {
-      receipt_date: formatDateStringForApi(intakeData.receiptDate)
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
     };
   }
 };
