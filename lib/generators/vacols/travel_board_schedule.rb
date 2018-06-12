@@ -3,26 +3,26 @@ class Generators::Vacols::TravelBoardSchedule
     # rubocop:disable Metrics/MethodLength
     def travel_board_sched_attrs
       {
-          tbyear: "2017",
-          tbtrip: 1,
-          tbleg: 1,
-          tbro: "RO17",
-          tbstdate: "2017-01-30 00:00:00",
-          tbenddate: "2017-02-03 00:00:00",
-          tbmem1: "955",
-          tbmem2: nil,
-          tbmem3: nil,
-          tbmem4: nil,
-          tbaty1: nil,
-          tbaty2: nil,
-          tbaty3: nil,
-          tbaty4: nil,
-          tbadduser: "AABSHIRE",
-          tbaddtime: "2016-09-21 00:00:00 UTC",
-          tbmoduser: "SAABSHIRE",
-          tbmodtime: "2016-09-21 00:00:00 UTC",
-          tbbvapoc: nil,
-          tbropoc: nil
+        tbyear: "2017",
+        tbtrip: 1,
+        tbleg: 1,
+        tbro: "RO17",
+        tbstdate: "2017-01-30 00:00:00",
+        tbenddate: "2017-02-03 00:00:00",
+        tbmem1: "955",
+        tbmem2: nil,
+        tbmem3: nil,
+        tbmem4: nil,
+        tbaty1: nil,
+        tbaty2: nil,
+        tbaty3: nil,
+        tbaty4: nil,
+        tbadduser: "AABSHIRE",
+        tbaddtime: "2016-09-21 00:00:00 UTC",
+        tbmoduser: "SAABSHIRE",
+        tbmodtime: "2016-09-21 00:00:00 UTC",
+        tbbvapoc: nil,
+        tbropoc: nil
       }
     end
     # rubocop:enable Metrics/MethodLength

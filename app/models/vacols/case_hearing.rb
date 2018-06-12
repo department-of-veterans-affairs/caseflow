@@ -80,7 +80,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def load_days_for_range(start_date, end_date)
       select_schedule_days.where("hearing_date between ? and ?", start_date, end_date)
-
     end
 
     def create_hearing!(hearing_info)

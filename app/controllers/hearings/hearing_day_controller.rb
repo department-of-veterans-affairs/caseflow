@@ -7,13 +7,13 @@ class Hearings::HearingDayController < HearingsController
   def index
     respond_to do |format|
       format.html { render "hearings/schedule_index" }
-      format.json {
+      format.json do
         video_and_co, travel_board = HearingDay.load_days_for_range(params[:start_date], params[:end_date])
         render json: {
           hearings: json_hearings(video_and_co),
           tbhearings: json_tb_hearings(travel_board)
         }
-      }
+      end
     end
   end
 
@@ -41,14 +41,14 @@ class Hearings::HearingDayController < HearingsController
   def json_hearings(hearings)
     ActiveModelSerializers::SerializableResource.new(
       hearings,
-        each_serializer: ::Hearings::HearingDaySerializer
+      each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
   end
 
   def json_tb_hearings(tbhearings)
     ActiveModelSerializers::SerializableResource.new(
-        tbhearings,
-        each_serializer: ::Hearings::TravelBoardScheduleSerializer
+      tbhearings,
+      each_serializer: ::Hearings::TravelBoardScheduleSerializer
     ).as_json
   end
 end
