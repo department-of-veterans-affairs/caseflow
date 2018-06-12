@@ -40,9 +40,7 @@ class HearingWorksheetDocs extends Component {
             title={accordionTitle}
           >
             <div>
-              <div {...styling}>
-                {worksheet.cached_number_of_documents}
-            Documents in Claims Folder
+              <div {...styling}> {worksheet.cached_number_of_documents} Documents in Claims Folder
               </div>
 
               {Object.values(worksheetAppeals).map((appeal, key) => {
@@ -108,8 +106,7 @@ class HearingWorksheetDocs extends Component {
         >
           <div>
             <div {...styling} className="worksheetDocs">
-              {worksheet.cached_number_of_documents}
-          Documents in Claims Folder
+              {worksheet.cached_number_of_documents} Documents in Claims Folder
             </div>
 
             {Object.values(worksheetAppeals).map((appeal, key) => {
