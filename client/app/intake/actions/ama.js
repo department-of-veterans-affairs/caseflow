@@ -1,7 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatRatingData, prepareReviewData } from '../util';
-import { formatDateStringForApi } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const analytics = true;

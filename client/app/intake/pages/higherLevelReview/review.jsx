@@ -88,7 +88,7 @@ const SelectClaimantConnected = connect(
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview).then(
+    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview, 'higherLevelReview').then(
       () => this.props.history.push('/finish')
     );
   }
