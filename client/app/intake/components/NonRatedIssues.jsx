@@ -7,11 +7,23 @@ import _ from 'lodash';
 
 export default class NonRatedIssuesUnconnected extends React.PureComponent {
   render() {
-    const { nonRatedIssues } = this.props;
+    const {
+      nonRatedIssues,
+      addNonRatedIssue,
+      setIssueCategory,
+      setIssueDescription
+    } = this.props;
 
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
-        <NonRatedIssue key={issueId} id={issueId} category={issue.category} description={issue.description} />
+        <NonRatedIssue
+          key={issueId}
+          id={issueId}
+          category={issue.category}
+          description={issue.description}
+          setCategory={setIssueCategory}
+          setDescription={setIssueDescription}
+        />
       );
     });
 
@@ -27,7 +39,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
       <Button
         name="add-issue"
-        onClick={this.props.addNonRatedIssue}
+        onClick={addNonRatedIssue}
         legacyStyling={false}
       >
       + Add issue
@@ -38,11 +50,11 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
 class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
-    this.props.setIssueCategory(this.props.id, event.value);
+    this.props.setCategory(this.props.id, event.value);
   }
 
   handleDescriptionChange(event) {
-    this.props.setIssueDescription(this.props.id, event);
+    this.props.setDescription(this.props.id, event);
   }
 
   render () {
