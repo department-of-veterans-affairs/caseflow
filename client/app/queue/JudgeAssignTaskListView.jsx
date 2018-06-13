@@ -105,7 +105,7 @@ const AssignWidget =
   )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {
-  const { attorneys, tasksAndAppeals: { length: reviewableCount }, userId } = props;
+  const { attorneys, tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
   let tableContent;
 
   if (reviewableCount === 0) {
@@ -115,7 +115,7 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
-      <AssignWidget userId={userId} />
+      {featureToggles.judge_assign_cases ? <AssignWidget userId={userId} /> : null}
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
@@ -223,7 +223,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
                 userId={this.props.userId.toString()}
-                attorneys={attorneysOfJudge} />}
+                attorneys={attorneysOfJudge}
+                featureToggles={this.props.featureToggles} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -253,14 +254,20 @@ const mapStateToProps = (state) => {
         tasks: loadedQueueTasks,
         appeals
       }
+    },
+    ui: {
+      featureToggles
     }
   } = state;
 
-  return { attorneysOfJudge,
+  return {
+    attorneysOfJudge,
     tasksAndAppealsOfAttorney,
     tasks,
     loadedQueueTasks,
-    appeals };
+    appeals,
+    featureToggles
+  };
 };
 
 const mapDispatchToProps = (dispatch) => (
