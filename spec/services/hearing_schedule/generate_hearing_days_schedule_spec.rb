@@ -84,7 +84,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
   end
 
-  context "RO available days" do
+  context "filter available days" do
     let(:generate_hearing_days_schedule_removed_ro_na) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
         schedule_period,
@@ -93,15 +93,41 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       )
     end
 
-    subject { generate_hearing_days_schedule_removed_ro_na }
+    context "RO available days" do
+      subject { generate_hearing_days_schedule_removed_ro_na }
 
-    it "assigns ros to initial available days" do
-      subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
+      it "assigns ros to initial available days" do
+        subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
+      end
+
+      it "remove non-available_days" do
+        subject.ros.each do |key, value|
+          value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }
+        end
+      end
     end
 
-    it "remove non-available_days" do
-      subject.ros.each do |key, value|
-        value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }
+    context "Travelboard hearing days" do
+  
+      let(:travel_board_schedule) do
+        [
+          create(:travel_board_schedule),
+          create(:travel_board_schedule, tbstdate: Date.parse("2018-06-18"), tbenddate: Date.parse("2018-06-22")),
+          create(:travel_board_schedule, tbro: "RO03", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
+        ]
+      end
+  
+
+      let(:generate_hearing_days_schedule_removed_ro_na) do
+        HearingSchedule::GenerateHearingDaysSchedule.new(
+          schedule_period
+        )
+      end
+  
+      subject { generate_hearing_days_schedule_removed_ro_na }
+       
+      it "travel board hearing days removed" do
+        binding.pry
       end
     end
   end
