@@ -1,17 +1,24 @@
-class Hearings::HearingDayController < HearingsController
+class Hearings::HearingDayController < ApplicationController
   before_action :verify_access
+  before_action :check_hearing_schedule_out_of_service
 
   # Controller to add and update hearing schedule days.
 
   # show schedule days for date range provided
   def index
+    @start_date = params[:start_date].nil? ? (Date.today - 365.days) : Date.parse(params[:start_date])
+    @end_date = params[:end_date].nil? ? Date.today : Date.parse(params[:end_date])
+    video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
+    @hearings = json_hearings(video_and_co)
+    @tbhearings = json_tb_hearings(travel_board)
     respond_to do |format|
-      format.html { render "hearings/schedule_index" }
+      format.html do
+        render "hearings/schedule_index"
+      end
       format.json do
-        video_and_co, travel_board = HearingDay.load_days_for_range(params[:start_date], params[:end_date])
         render json: {
-          hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board)
+          hearings: @hearings,
+          tbhearings: @tbhearings
         }
       end
     end
@@ -26,10 +33,22 @@ class Hearings::HearingDayController < HearingsController
     }, status: :created
   end
 
+  def logo_name
+    "Hearing Schedule"
+  end
+
   private
 
   def verify_access
     verify_authorized_roles("Hearing Schedule")
+  end
+
+  def check_hearing_schedule_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("hearing_schedule_out_of_service")
+  end
+
+  def set_application
+    RequestStore.store[:application] = "hearings"
   end
 
   def invalid_record_error(hearing)
