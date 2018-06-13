@@ -8,7 +8,7 @@ RSpec.feature "Cancel certification" do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc, :has_regional_office)
+    create(:case_with_ssoc)
   end
 
   let(:appeal_mismatched_docs) do
@@ -16,7 +16,7 @@ RSpec.feature "Cancel certification" do
   end
 
   let(:vacols_case_mismatched) do
-    create(:case_with_ssoc, :has_regional_office, bfd19: 2.months.ago)
+    create(:case_with_ssoc, bfd19: 2.months.ago)
   end
 
   let(:default_user) do
