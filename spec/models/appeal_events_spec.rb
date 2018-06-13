@@ -146,23 +146,23 @@ describe AppealEvents do
       before { appeal.save! }
 
       let!(:held_hearing) do
-        create(:case_hearing, :disposition_held, transent: 1.day.ago)
+        build(:case_hearing, :disposition_held, transent: 1.day.ago)
       end
 
       let!(:cancelled_hearing) do
-        create(:case_hearing, :disposition_cancelled, transent: 1.day.ago)
+        build(:case_hearing, :disposition_cancelled, transent: 1.day.ago)
       end
 
       let!(:hearings) do
         [
-          create(:case_hearing, :disposition_held, hearing_date: 4.days.ago),
-          create(:case_hearing, :disposition_no_show, hearing_date: 3.days.ago),
-          create(:case_hearing),
-          create(:case_hearing, :disposition_postponed, hearing_date: 2.days.ago)
+          build(:case_hearing, :disposition_held, hearing_date: 4.days.ago),
+          build(:case_hearing, :disposition_no_show, hearing_date: 3.days.ago),
+          build(:case_hearing),
+          build(:case_hearing, :disposition_postponed, hearing_date: 2.days.ago)
         ]
       end
 
-      let!(:hearing_for_another_appeal) { create(:case_hearing, :disposition_no_show, hearing_date: 2.days.ago) }
+      let!(:hearing_for_another_appeal) { build(:case_hearing, :disposition_no_show, hearing_date: 2.days.ago) }
 
       let(:hearing_held_events) do
         events.select { |event| event.type == :hearing_held }
@@ -174,8 +174,7 @@ describe AppealEvents do
 
       let(:vacols_case) { create(:case, case_hearings: hearings) }
 
-      it "adds hearing events for all closed hearings associated with the appeal", focus: true do
-        binding.pry
+      it "adds hearing events for all closed hearings associated with the appeal" do
         expect(hearing_held_events.length).to eq(1)
         expect(no_show_hearing_events.length).to eq(1)
       end
@@ -186,11 +185,11 @@ describe AppealEvents do
       before { appeal.save! }
 
       let!(:held_hearing) do
-        create(:case_hearing, :disposition_held, transent: 1.day.ago)
+        build(:case_hearing, :disposition_held, transent: 1.day.ago)
       end
 
       let!(:cancelled_hearing) do
-        create(:case_hearing, :disposition_cancelled, transent: 1.day.ago)
+        build(:case_hearing, :disposition_cancelled, transent: 1.day.ago)
       end
 
       let(:transcript_events) do

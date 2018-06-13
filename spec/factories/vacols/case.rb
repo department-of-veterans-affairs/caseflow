@@ -21,12 +21,12 @@ FactoryBot.define do
     end
 
     transient do
+      # Pass an array of built (not created) case_hearings to associate with this appeal
       case_hearings []
 
       after(:create) do |vacols_case, evaluator|
         evaluator.case_hearings.each do |case_hearing|
-          case_hearing.folder_nr = vacols_case.bfkey
-          case_hearing.save
+          case_hearing.update!(folder_nr: vacols_case.bfkey)
         end
       end
     end
