@@ -6,7 +6,7 @@ import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssues from './nonRatedIssues';
 import RatedIssues from './ratedIssues';
 import { connect } from 'react-redux';
-import { completeIntake } from '../../actions/supplementalClaim';
+import { completeIntake } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
