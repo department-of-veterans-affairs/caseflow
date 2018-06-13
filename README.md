@@ -210,6 +210,13 @@ To test the app connected to external dependencies, you'll need to set up Oracle
 
 ### Environment variables
 
+First you'll need to install ansible-vault and credstash.
+```sh
+pip install ansible-vault
+pip install credstash
+```
+For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash)
+
 We'll need to obtain the Ansible vault password using credstash:
 
 ```sh
