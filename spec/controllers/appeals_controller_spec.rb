@@ -115,4 +115,24 @@ RSpec.describe AppealsController, type: :controller do
     context "when requesting json response" do
     end
   end
+
+  describe "GET appeals/:id" do
+    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "0000000000S") }
+
+    it "should succeed" do
+      get :show, params: { id: appeal.vacols_id }
+
+      assert_response :success
+    end
+  end
+
+  describe "GET appeals/:id.json" do
+    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "0000000000S") }
+
+    it "should succeed" do
+      get :show, params: { id: appeal.vacols_id }, as: :json
+
+      assert_response :success
+    end
+  end
 end
