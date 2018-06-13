@@ -2,6 +2,7 @@
 class VACOLS::TravelBoardSchedule < VACOLS::Record
   self.table_name = "vacols.tbsched"
 
+  # :nocov:
   class << self
     def hearings_for_judge(css_id)
       id = connection.quote(css_id)
