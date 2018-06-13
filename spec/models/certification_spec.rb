@@ -120,8 +120,7 @@ describe Certification do
       end
 
       let(:vacols_case_multiple_mismatch) do
-        create(:case, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago,
-                                            bfssoc1: 1.month.ago)
+        create(:case, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago, bfssoc1: 1.month.ago)
       end
 
       it "is included in the relevant certification_stats" do
