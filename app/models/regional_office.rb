@@ -71,12 +71,14 @@ class RegionalOffice
     "RO01" => {
       label: "Boston regional office",
       city: "Boston", state: "MA",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO02" => {
       label: "Togus regional office",
       city: "Togus", state: "ME",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO03" => {
       label: "White River regional office",
@@ -86,257 +88,308 @@ class RegionalOffice
     "RO04" => {
       label: "Providence regional office",
       city: "Providence", state: "RI",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO05" => {
       label: "White River regional office",
       city: "White River Junction", state: "VT",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO06" => {
       label: "New York City regional office",
       city: "New York", state: "NY",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO07" => {
       label: "Buffalo regional office",
       city: "Buffalo", state: "NY",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO08" => {
       label: "Hartford regional office",
       city: "Hartford", state: "CT",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO09" => {
       label: "Newark regional office",
       city: "Newark", state: "NJ",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO10" => {
       label: "Philadelphia regional office",
       city: "Philadelphia", state: "PA",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO11" => {
       label: "Pittsburgh regional office",
       city: "Pittsburgh", state: "PA",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO13" => {
       label: "Baltimore regional office",
       city: "Baltimore", state: "MD",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO14" => {
       label: "Roanoke regional office",
       city: "Roanoke", state: "VA",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO15" => {
       label: "Huntington regional office",
       city: "Huntington", state: "WV",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO16" => {
       label: "Atlanta regional office",
       city: "Atlanta", state: "GA",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO17" => {
       label: "St. Petersburg regional office",
       city: "St. Petersburg", state: "FL",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO18" => {
       label: "Winston-Salem regional office",
       city: "Winston-Salem", state: "NC",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO19" => {
       label: "Columbia regional office",
       city: "Columbia", state: "SC",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO20" => {
       label: "Nashville regional office",
       city: "Nashville", state: "TN",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO21" => {
       label: "New Orleans regional office",
       city: "New Orleans", state: "LA",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO22" => {
       label: "Montgomery regional office",
       city: "Montgomery", state: "AL",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO23" => {
       label: "Jackson regional office",
       city: "Jackson", state: "MS",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO25" => {
       label: "Cleveland regional office",
       city: "Cleveland", state: "OH",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO26" => {
       label: "Indianapolis regional office",
       city: "Indianapolis", state: "IN",
-      timezone: "America/Indiana/Indianapolis"
+      timezone: "America/Indiana/Indianapolis",
+      hold_hearings: true
     },
     "RO27" => {
       label: "Louisville regional office",
       city: "Louisville", state: "KY",
-      timezone: "America/Kentucky/Louisville"
+      timezone: "America/Kentucky/Louisville",
+      hold_hearings: true
     },
     "RO28" => {
       label: "Chicago regional office",
       city: "Chicago", state: "IL",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO29" => {
       label: "Detroit regional office",
       city: "Detroit", state: "MI",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO30" => {
       label: "Milwaukee regional office",
       city: "Milwaukee", state: "WI",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO31" => {
       label: "St. Louis regional office",
       city: "St. Louis", state: "MO",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO33" => {
       label: "Des Moines regional office",
       city: "Des Moines", state: "IA",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO34" => {
       label: "Lincoln regional office",
       city: "Lincoln", state: "NE",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO35" => {
       label: "St. Paul regional office",
       city: "St. Paul", state: "MN",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO36" => {
       label: "Ft. Harrison regional office",
       city: "Ft. Harrison", state: "MT",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO37" => {
       label: "Fargo regional office",
       city: "Fargo", state: "ND",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO38" => {
       label: "Sioux Falls regional office",
       city: "Sioux Falls", state: "SD",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO39" => {
       label: "Denver regional office",
       city: "Denver", state: "CO",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO40" => {
       label: "Albuquerque regional office",
       city: "Albuquerque", state: "NM",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO41" => {
       label: "Salt Lake City regional office",
       city: "Salt Lake City", state: "UT",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO42" => {
       label: "Cheyenne regional office",
       city: "Cheyenne", state: "WY",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO43" => {
       label: "Oakland regional office",
       city: "Oakland", state: "CA",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO44" => {
       label: "Los Angeles regional office",
       city: "Los Angeles", state: "CA",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO45" => {
       label: "Phoenix regional office",
       city: "Phoenix", state: "AZ",
-      timezone: "America/Denver"
+      timezone: "America/Denver",
+      hold_hearings: true
     },
     "RO46" => {
       label: "Seattle regional office",
       city: "Seattle", state: "WA",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO47" => {
       label: "Boise regional office",
       city: "Boise", state: "ID",
-      timezone: "America/Boise"
+      timezone: "America/Boise",
+      hold_hearings: true
     },
     "RO48" => {
       label: "Portland regional office",
       city: "Portland", state: "OR",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO49" => {
       label: "Waco regional office",
       city: "Waco", state: "TX",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO50" => {
       label: "Little Rock regional office",
       city: "Little Rock", state: "AR",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO51" => {
       label: "Muskogee regional office",
       city: "Muskogee", state: "OK",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO52" => {
       label: "Wichita regional office",
       city: "Wichita", state: "KS",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO54" => {
       label: "Reno regional office",
       city: "Reno", state: "NV",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO55" => {
       label: "San Juan regional office",
       city: "San Juan", state: "PR",
-      timezone: "America/Puerto_Rico"
+      timezone: "America/Puerto_Rico",
+      hold_hearings: true
     },
     "RO58" => {
       label: "Manila regional office",
       city: "Manila", state: "PI",
-      timezone: "Asia/Manila"
+      timezone: "Asia/Manila",
+      hold_hearings: true
     },
     "RO59" => {
       label: "Honolulu regional office",
       city: "Honolulu", state: "HI",
-      timezone: "Pacific/Honolulu"
+      timezone: "Pacific/Honolulu",
+      hold_hearings: true
     },
     "RO60" => {
       label: "Wilmington regional office",
       city: "Wilmington", state: "DE",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO61" => {
       label: "Houston regional office",
@@ -346,12 +399,14 @@ class RegionalOffice
     "RO62" => {
       label: "Houston regional office",
       city: "Houston", state: "TX",
-      timezone: "America/Chicago"
+      timezone: "America/Chicago",
+      hold_hearings: true
     },
     "RO63" => {
       label: "Anchorage regional office",
       city: "Anchorage", state: "AK",
-      timezone: "America/Anchorage"
+      timezone: "America/Anchorage",
+      hold_hearings: true
     },
     "RO64" => { city: "Columbia Fiduciary Hub", state: "SC", timezone: "America/New_York" },
     "RO65" => { city: "Indianapolis Fiduciary Hub", state: "IN", timezone: "America/Indiana/Indianapolis" },
@@ -369,7 +424,8 @@ class RegionalOffice
     "RO73" => {
       label: "Manchester regional office",
       city: "Manchester", state: "NH",
-      timezone: "America/New_York"
+      timezone: "America/New_York",
+      hold_hearings: true
     },
     "RO74" => { city: "Philadelphia RACC", state: "PA", timezone: "America/New_York" },
     "RO75" => { city: "Milwaukee RACC", state: "WI", timezone: "America/Chicago" },
@@ -377,7 +433,8 @@ class RegionalOffice
     "RO77" => {
       label: "San Diego regional office",
       city: "San Diego", state: "CA",
-      timezone: "America/Los_Angeles"
+      timezone: "America/Los_Angeles",
+      hold_hearings: true
     },
     "RO78" => {
       label: "Legacy RO (RO78)",
