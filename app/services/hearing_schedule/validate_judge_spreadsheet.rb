@@ -9,7 +9,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   class JudgeTemplateNotFollowed < StandardError; end
   class JudgeDatesNotUnique < StandardError; end
   class JudgeDatesNotInRange < StandardError; end
-  class JudgeNotInDb < StandardError; end
+  class JudgeNotInDatabase < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
     @spreadsheet = spreadsheet
@@ -50,7 +50,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless judge_non_availability_dates.all? do |date|
              User.where(css_id: date[1], full_name: date[0].split(", ").reverse.join(" ")).count > 0
            end
-      fail JudgeNotInDb
+      fail JudgeNotInDatabase
     end
     true
   end

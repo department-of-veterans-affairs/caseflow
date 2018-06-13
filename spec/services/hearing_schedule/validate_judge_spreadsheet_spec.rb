@@ -43,7 +43,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDb)
+      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase)
     end
   end
 
