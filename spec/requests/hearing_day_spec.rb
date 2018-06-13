@@ -13,7 +13,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
 
     describe "Get hearing schedule for a date range" do
-      let!(:hearings) {
+      let!(:hearings) do
         RequestStore[:current_user] = user
         Generators::Vacols::CaseHearing.create(
           [{ hearing_type: "C", hearing_date: "7-Jun-2017", room: "1" },
@@ -21,7 +21,7 @@ RSpec.describe "Hearing Schedule", type: :request do
         )
         Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
         Generators::Vacols::Staff.create(sattyid: "955")
-      }
+      end
 
       it "Get hearings" do
         hearings
