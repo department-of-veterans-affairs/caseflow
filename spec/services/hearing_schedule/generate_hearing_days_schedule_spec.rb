@@ -109,25 +109,27 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
     context "Travelboard hearing days" do
   
-      let(:travel_board_schedule) do
+      let(:travel_board_schedules) do
         [
           create(:travel_board_schedule),
           create(:travel_board_schedule, tbstdate: Date.parse("2018-06-18"), tbenddate: Date.parse("2018-06-22")),
           create(:travel_board_schedule, tbro: "RO03", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
         ]
       end
-  
 
-      let(:generate_hearing_days_schedule_removed_ro_na) do
+      let(:generate_hearing_days_schedule_removed_tb) do
         HearingSchedule::GenerateHearingDaysSchedule.new(
           schedule_period
         )
       end
   
-      subject { generate_hearing_days_schedule_removed_ro_na }
+      subject { generate_hearing_days_schedule_removed_tb }
        
       it "travel board hearing days removed" do
-        binding.pry
+        travel_board_schedules.each do |tb_schedule|
+          dates = (tb_schedule[:tbstdate]..tb_schedule[:tbenddate]).to_a
+          dates.each {|date| expect(subject.ros[tb_schedule[:tbro]][:available_days].include?(date)).not_to eq true }
+        end
       end
     end
   end
