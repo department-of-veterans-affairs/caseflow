@@ -133,7 +133,7 @@ class TasksController < ApplicationController
 
   def task_params
     params.require("tasks")
-      .permit(:id, :type, :instructions, :title)
+      .permit(:vacols_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end

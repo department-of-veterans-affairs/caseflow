@@ -228,7 +228,7 @@ export const assignTasksToUser = ({idsOfTasks, assigneeId}) => (dispatch) => {
         });
     */
     return ApiUtil.post(
-      '/tasks', {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', id: taskId}}}).
+      '/tasks', {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', vacols_id: taskId}}}).
       then(JSON.parse).
       then(
         (resp) => {
