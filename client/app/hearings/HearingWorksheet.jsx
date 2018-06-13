@@ -143,9 +143,9 @@ export class HearingWorksheet extends React.PureComponent {
         />
       </form>
       {this.props.print &&
-          <WorksheetFooter
-            veteranName={this.props.worksheet.veteran_fi_last_formatted}
-          />
+        <WorksheetFooter
+          veteranName={this.props.worksheet.veteran_fi_last_formatted}
+        />
       }
     </div>;
 
