@@ -11,6 +11,7 @@ class VACOLS::Case < VACOLS::Record
   has_many   :case_hearings,   foreign_key: :folder_nr
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
+  has_many   :priorloc,        foreign_key: :lockey
 
   class InvalidLocationError < StandardError; end
 
@@ -249,7 +250,7 @@ class VACOLS::Case < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def previous_location
+  def previous_active_location
     conn = self.class.connection
 
     case_id = conn.quote(bfkey)
@@ -260,14 +261,10 @@ class VACOLS::Case < VACOLS::Record
       conn.select_all(<<-SQL)
         SELECT LOCSTTO
         FROM PRIORLOC
-        JOIN (
-          SELECT LOCKEY, LOCDOUT
-          FROM PRIORLOC
-          WHERE LOCKEY = #{case_id}
-            AND LOCDIN IS NULL
-        ) T
-          ON T.LOCKEY = PRIORLOC.LOCKEY
-          AND T.LOCDOUT = PRIORLOC.LOCDIN
+        WHERE LOCKEY = #{case_id}
+          AND LOCSTTO <> '99'
+          AND LOCDIN IS NOT NULL
+        ORDER BY LOCDOUT DESC
       SQL
     end
 

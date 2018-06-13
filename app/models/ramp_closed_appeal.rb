@@ -23,6 +23,9 @@ class RampClosedAppeal < ApplicationRecord
         disposition: "RAMP Opt-in",
         safeguards: false
       )
+
+      # reload the appeal now that it's active
+      @appeal = nil
     end
 
     LegacyAppeal.close(
