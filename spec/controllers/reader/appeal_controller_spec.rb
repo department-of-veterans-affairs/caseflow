@@ -1,7 +1,31 @@
 RSpec.describe Reader::AppealController, type: :controller do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
-  let(:vacols_record) { :remand_decided }
-  let(:appeal) { Generators::LegacyAppeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
+  let(:case_issues) do
+    [
+      create(:case_issue),
+      create(:case_issue)
+    ]
+  end
+  let(:vacols_case) do
+    create(
+      :case,
+      :has_regional_office,
+      :type_original,
+      :aod,
+      case_issues: case_issues,
+      folder: create(:folder, tinum: "docket-number"),
+      correspondent: create(:correspondent, snamef: "first", snamemi: "m", snamel: "last")
+    )
+  end
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   describe "GET fetch appeal by VBMS Id" do
     it "should be successful" do

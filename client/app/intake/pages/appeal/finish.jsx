@@ -10,12 +10,16 @@ import { completeIntake } from '../../actions/appeal';
 import { bindActionCreators } from 'redux';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
     const {
       appeal,
-      veteranName
+      veteranName,
+      requestState,
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (appeal) {
@@ -39,6 +43,12 @@ class Finish extends React.PureComponent {
 
       <RatedIssues />
       <NonRatedIssues />
+
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
+      }
 
     </div>;
   }

@@ -35,8 +35,8 @@ import {
   fullWidth,
   ERROR_FIELD_REQUIRED
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -338,7 +338,7 @@ AddEditIssueView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  task: state.queue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
   modal: state.ui.modal.deleteIssue

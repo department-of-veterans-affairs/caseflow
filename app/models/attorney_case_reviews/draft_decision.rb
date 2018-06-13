@@ -1,2 +1,0 @@
-class DraftDecision < AttorneyCaseReview
-end

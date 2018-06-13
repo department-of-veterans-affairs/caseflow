@@ -1,18 +1,18 @@
-class BeamAppealsController < ApplicationController
-  before_action :verify_beam_access
+class BeaamAppealsController < ApplicationController
+  before_action :verify_beaam_access
 
   def index
     appeals = Appeal.all
     render json: {
-      tasks: [],
-      appeals: json_appeals(appeals)
+      appeals: json_appeals(appeals),
+      tasks: []
     }
   end
 
   private
 
-  def verify_beam_access
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_beam_appeals)
+  def verify_beaam_access
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_beaam_appeals)
   end
 
   def json_appeals(appeals)

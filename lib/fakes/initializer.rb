@@ -46,7 +46,7 @@ class Fakes::Initializer
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env, app_name: nil)
-      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed?
+      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed? || rails_env.development?
     end
 
     private

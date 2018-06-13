@@ -7,4 +7,6 @@
  * styles with .react-<component_name>-<style_name>
  *
  *= require ./_worksheet_print.scss
+ *= require ./_react-draft-wysiwyg.css
+ *= require ./_wysiwyg.scss
  */

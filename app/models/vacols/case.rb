@@ -14,6 +14,8 @@ class VACOLS::Case < VACOLS::Record
 
   class InvalidLocationError < StandardError; end
 
+  BVA_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze
+
   TYPES = {
     "1" => "Original",
     "2" => "Supplemental",

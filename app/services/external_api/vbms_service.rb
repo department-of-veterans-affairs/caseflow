@@ -38,20 +38,20 @@ class ExternalApi::VBMSService
 
     @vbms_client ||= init_vbms_client
 
-    sanitized_id = appeal.sanitized_vbms_id
+    veteran_file_number = appeal.veteran_file_number
     request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-                VBMS::Requests::FindDocumentVersionReference.new(sanitized_id)
+                VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
               else
-                VBMS::Requests::ListDocuments.new(sanitized_id)
+                VBMS::Requests::ListDocuments.new(veteran_file_number)
               end
-    documents = send_and_log_request(sanitized_id, request)
+    documents = send_and_log_request(veteran_file_number, request)
 
     Rails.logger.info("Document list length: #{documents.length}")
 
     {
       manifest_vbms_fetched_at: nil,
       manifest_vva_fetched_at: nil,
-      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, sanitized_id) }
+      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, veteran_file_number) }
     }
   end
 
@@ -60,10 +60,10 @@ class ExternalApi::VBMSService
 
     @vbms_client ||= init_vbms_client
 
-    sanitized_id = appeal.sanitized_vbms_id
-    request = VBMS::Requests::FindDocumentSeriesReference.new(sanitized_id)
+    veteran_file_number = appeal.veteran_file_number
+    request = VBMS::Requests::FindDocumentSeriesReference.new(veteran_file_number)
 
-    send_and_log_request(sanitized_id, request)
+    send_and_log_request(veteran_file_number, request)
   end
 
   def self.upload_document_to_vbms(appeal, form8)

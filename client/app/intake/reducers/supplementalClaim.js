@@ -21,9 +21,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
     },
-    selectedRatingCount: {
-      $set: state.selectedRatingCount
-    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
@@ -42,6 +39,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isComplete: false,
     endProductDescription: null,
     selectedRatingCount: 0,
+    nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -152,6 +150,37 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       selectedRatingCount: {
         $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      }
+    });
+  case ACTIONS.ADD_NON_RATED_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [Object.keys(state.nonRatedIssues).length]: {
+          $set: {
+            category: null,
+            description: null
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_CATEGORY:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          category: {
+            $set: action.payload.category
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_DESCRIPTION:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          description: {
+            $set: action.payload.description
+          }
+        }
       }
     });
   default:
