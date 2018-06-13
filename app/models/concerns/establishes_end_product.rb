@@ -12,7 +12,40 @@ module EstablishesEndProduct
   extend ActiveSupport::Concern
 
   class EstablishedEndProductNotFound < StandardError; end
-  class InvalidEndProductError < StandardError; end
+
+  # class HigherLevelReview
+  #   def establish_end_product!
+  #     end_product_establishment.perform!
+  #
+  #     update!(
+  #       end_product_reference_id: end_product_establishment.end_product_reference_id,
+  #       established_at: Time.zone.now
+  #     )
+  #   end
+  #
+  #   def sync_ep_status!
+  #     update!(
+  #       end_product_status: end_product_establishment.status_type_code,
+  #       end_product_status_last_synced_at: Time.zone.now
+  #     )
+  #   end
+  #
+  #   delegate :end_product, to: :end_product_establishment
+  #
+  #   private
+  #
+  #   def end_product_establishment
+  #     @end_product_establishment ||= EndProductEstablishment.new(
+  #       veteran: veteran,
+  #       end_product_reference_id: end_product_reference_id,
+  #       claim_date: receipt_date,
+  #       end_product_code: "030HLRR",
+  #       valid_modifiers: END_PRODUCT_MODIFIERS,
+  #       end_product_station: "397",
+  #       cached_end_product_status: end_product_status
+  #     )
+  #   end
+  # end
 
   module ClassMethods
     def established
@@ -28,18 +61,28 @@ module EstablishesEndProduct
     end
   end
 
+  # GOOD
   def establish_end_product!
-    fail InvalidEndProductError unless end_product_to_establish.valid?
+    end_product_establishment.perform!
 
-    establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      update!(
-        end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
-      )
-    end
-  rescue VBMS::HTTPError => error
-    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+    update!(
+      end_product_reference_id: end_product_establishment.reference_id,
+      established_at: Time.zone.now
+    )
   end
+
+  # def establish_end_product!
+  #   fail InvalidEndProductError unless end_product_to_establish.valid?
+  #
+  #   establish_claim_in_vbms(end_product_to_establish).tap do |result|
+  #     update!(
+  #       end_product_reference_id: result.claim_id,
+  #       established_at: Time.zone.now
+  #     )
+  #   end
+  # rescue VBMS::HTTPError => error
+  #   raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  # end
 
   def end_product_active?
     sync_ep_status! && cached_status_active?
@@ -86,10 +129,15 @@ module EstablishesEndProduct
     )
   end
 
-  def establish_claim_in_vbms(end_product)
-    VBMSService.establish_claim!(
-      claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+  def end_product_establishment
+    @end_product_establishment ||= EndProductEstablishment.new(
+      veteran: veteran,
+      reference_id: end_product_reference_id,
+      claim_date: receipt_date,
+      code: end_product_code,
+      valid_modifiers: [end_product_modifier],
+      station: "397",
+      cached_status: end_product_status
     )
   end
 
