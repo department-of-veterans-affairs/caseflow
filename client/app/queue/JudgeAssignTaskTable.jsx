@@ -69,6 +69,7 @@ class JudgeAssignTaskTable extends React.PureComponent {
 
   render = () => {
     console.log(this.props.isTaskAssignedToUserSelected);
+
     return <Table
       columns={this.getQueueColumns}
       rowObjects={this.props.tasksAndAppeals}

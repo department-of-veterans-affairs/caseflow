@@ -200,40 +200,31 @@ export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
   }
 });
 
-export const startAssignTasksToUser = ({idsOfTasks, assigneeId}) => ({
-  type: '',
-  payload: {
-    idsOfTasks,
-    assigneeId
-  }
-});
-
-export const receiveTask = (task) => ({
-  type: '',
+export const taskInitialAssigned = (task) => ({
+  type: ACTIONS.TASK_INITIAL_ASSIGNED,
   payload: {
     task
   }
 });
 
-export const assignTasksToUser = ({idsOfTasks, assigneeId}) => (dispatch) => {
-  dispatch(startAssignTasksToUser({idsOfTasks, assigneeId}));
-
+export const initialAssignTasksToUser = ({ idsOfTasks, assigneeId }) => (dispatch) => {
   return Promise.all(idsOfTasks.map((taskId) => {
     return Promise.resolve('{"task":{"vacols_id":"3662856","type":"JudgeCaseAssignmentToAttorney","assigned_by":{"full_name":"Anjali Abshire","email":null,"roles":["BVAAABSHIRE"],"id":747,"station_id":"101","css_id":"BVAAABSHIRE","selected_regional_office":null,"display_name":"BVAAABSHIRE (VACO)"},"assigned_to":{"id":51,"station_id":"101","css_id":"BVAEERDMAN","full_name":"Ezra Erdman","email":null,"roles":[],"selected_regional_office":null,"display_name":"BVAEERDMAN (VACO)"},"validation_context":null,"errors":{}}}').
       then(JSON.parse).
       then(
         (resp) => {
-          dispatch(receiveTask(resp.task));
+          dispatch(taskInitialAssigned(resp.task));
         });
+
     /*
     return ApiUtil.post(
       '/tasks', {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', vacols_id: taskId}}}).
       then(JSON.parse).
       then(
         (resp) => {
-          dispatch(receiveTask(resp.task));
+          dispatch(taskInitialAssigned(resp.task));
         });
     */
   })).
-  catch((resp) => console.log('error', resp));
-}
+    catch((resp) => console.log('error', resp));
+};

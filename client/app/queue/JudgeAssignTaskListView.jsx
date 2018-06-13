@@ -21,7 +21,7 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, setSelectedAssigneeOfUser,
-  assignTasksToUser
+  initialAssignTasksToUser
 } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
@@ -32,7 +32,7 @@ import Button from '../components/Button';
 class AssignWidgetPresentational extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {statusMessage: null};
+    this.state = { statusMessage: null };
   }
 
   idsOfSelectedTasks = () => {
@@ -42,57 +42,65 @@ class AssignWidgetPresentational extends React.PureComponent {
   }
 
   handleButtonClick = () => {
-    const { userId, selectedAssigneeOfUser, assignTasksToUser } = this.props;
+    const { userId, selectedAssigneeOfUser, initialAssignTasksToUser } = this.props;
+
     if (!selectedAssigneeOfUser[userId]) {
-      this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
+      this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
           <h3 className="usa-alert-heading">No assignee</h3>
           <p className="usa-alert-text">Please select someone to assign the tasks to.</p>
         </div>
-      </div>});
+      </div> });
+
       return;
     }
 
     if (this.idsOfSelectedTasks().length === 0) {
-      this.setState({statusMessage: <div className="usa-alert usa-alert-error" role="alert">
+      this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
           <h3 className="usa-alert-heading">No tasks select</h3>
           <p className="usa-alert-text">Please select a task.</p>
         </div>
-      </div>});
+      </div> });
+
       return;
     }
 
-    assignTasksToUser(
-      {idsOfTasks: this.idsOfSelectedTasks(), assigneeId: selectedAssigneeOfUser[userId]})
+    initialAssignTasksToUser(
+      { idsOfTasks: this.idsOfSelectedTasks(),
+        assigneeId: selectedAssigneeOfUser[userId] });
   }
 
   render = () => {
     const { userId, attorneysOfJudge, selectedAssigneeOfUser } = this.props;
-    const options = attorneysOfJudge.map((attorney) => ({label: attorney.full_name, value: attorney.id.toString()}));
+    const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
+      value: attorney.id.toString() }));
     const selectedOption =
       selectedAssigneeOfUser[userId] ?
         options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
-        {label: 'Select a user', value: null};
+        { label: 'Select a user',
+          value: null };
 
     return <React.Fragment>
       {this.state.statusMessage}
-      <div style={{display: 'flex', alignItems: 'center'}}>
+      <div style={{ display: 'flex',
+        alignItems: 'center' }}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
-            name="Assignee"
-            hideLabel
-            searchable
-            options={options}
-            onChange={(option) => this.props.setSelectedAssigneeOfUser({userId, assigneeId: option.value})}
-            value={selectedOption}
-            dropdownStyling={{width: '30rem'}} />
+          name="Assignee"
+          hideLabel
+          searchable
+          options={options}
+          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId,
+            assigneeId: option.value })}
+          value={selectedOption}
+          dropdownStyling={{ width: '30rem' }} />
         <p>&nbsp;</p>
         <Button
-            onClick={this.handleButtonClick}
-            name={`Assign ${this.idsOfSelectedTasks().length} case(s)`}
-            loading={false}
-            loadingText="Loading" />
+          onClick={this.handleButtonClick}
+          name={`Assign ${this.idsOfSelectedTasks().length} case(s)`}
+          loading={false}
+          loadingText="Loading" />
       </div>
     </React.Fragment>;
   }
@@ -101,7 +109,8 @@ class AssignWidgetPresentational extends React.PureComponent {
 const AssignWidget =
   connect(
     (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isTaskAssignedToUserSelected'),
-    (dispatch) => bindActionCreators({setSelectedAssigneeOfUser, assignTasksToUser}, dispatch)
+    (dispatch) => bindActionCreators({ setSelectedAssigneeOfUser,
+      initialAssignTasksToUser }, dispatch)
   )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {

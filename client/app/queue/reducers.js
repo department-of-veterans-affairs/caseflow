@@ -293,6 +293,41 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.TASK_INITIAL_ASSIGNED: {
+    const appeal = state.loadedQueue.appeals[action.payload.task.vacols_id];
+
+    return update(state, {
+      tasks: {
+        [action.payload.task.vacols_id]: {
+          $set: action.payload.task
+        }
+      },
+      loadedQueue: {
+        tasks: {
+          $unset: [action.payload.task.vacols_id]
+        },
+        appeals: {
+          $unset: [action.payload.task.vacols_id]
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.task.assigned_to.id]: {
+          data: {
+            tasks: {
+              [action.payload.task.vacols_id]: {
+                $set: action.payload.task
+              }
+            },
+            appeals: {
+              [appeal.vacols_id]: {
+                $set: appeal
+              }
+            }
+          }
+        }
+      }
+    });
+  }
   default:
     return state;
   }
