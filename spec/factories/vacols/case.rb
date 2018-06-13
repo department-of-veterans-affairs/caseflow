@@ -37,6 +37,7 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         evaluator.case_issues.each do |case_issue|
           case_issue.isskey = vacols_case.bfkey
+          case_issue.issseq = VACOLS::CaseIssue.generate_sequence_id(vacols_case.bfkey)
           case_issue.save
         end
       end
