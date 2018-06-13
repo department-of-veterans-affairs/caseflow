@@ -4,10 +4,9 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import RatedIssueCounter from '../../components/RatedIssueCounter';
 import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssues from './ratedIssues';
-import { addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
+import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
+import { setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import { completeIntake } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -65,6 +64,16 @@ const NonRatedIssues = connect(
     setIssueDescription
   }, dispatch)
 )(NonRatedIssuesUnconnected);
+
+const RatedIssues = connect(
+  ({ supplementalClaim, intake }) => ({
+    intakeId: intake.id,
+    reviewState: supplementalClaim
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
