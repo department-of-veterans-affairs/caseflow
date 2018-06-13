@@ -10,6 +10,6 @@ class SyncIntakeJob < CaseflowJob
     RampElection.sync_all!
 
     reclosed_appeals = RampClosedAppeal.reclose_all!
-    slack_service.send_notification("Reclosing RAMP VACOLS appeals TRACER (count: #{reclosed_appeals.count})")
+    slack_service.send_notification("Intake: Reclosing RAMP VACOLS appeals TRACER (count: #{reclosed_appeals.count})")
   end
 end
