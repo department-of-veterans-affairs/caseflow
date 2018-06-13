@@ -11,6 +11,7 @@ class VACOLS::Case < VACOLS::Record
   has_many   :case_hearings,   foreign_key: :folder_nr
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
+  has_many   :priorloc,        foreign_key: :lockey
 
   class InvalidLocationError < StandardError; end
 
