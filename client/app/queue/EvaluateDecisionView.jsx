@@ -23,7 +23,21 @@ import {
 const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
+const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
+
+const twoColumnContainerStyling = css({
+  display: 'inline-flex',
+  width: '100%'
+});
+const leftColumnStyling = css({
+  '@media(min-width: 950px)': setWidth('calc(50% - 2rem)'),
+  '@media(max-width: 949px)': setWidth('calc(100% - 2rem)')
+});
+const subHeadStyling = css({
+  lineHeight: 2,
+  paddingLeft: '1rem'
+});
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -83,6 +97,7 @@ class EvaluateDecisionView extends React.PureComponent {
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
         onChange={(caseComplexity) => this.setState({ caseComplexity })}
         value={this.state.caseComplexity}
+        styling={marginBottom(0)}
         options={[{
           value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
@@ -125,8 +140,8 @@ class EvaluateDecisionView extends React.PureComponent {
         apply, please add your thoughts in the comments box below.
       </div>}
 
-      <div {...marginTop(4)}>
-        <div className="cf-push-left" {...css(marginRight(2), setWidth('calc(50% - 2rem)'))}>
+      <div {...css(twoColumnContainerStyling, marginTop(4))}>
+        <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
           <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
           <CheckboxGroup
             hideLabel vertical
@@ -152,8 +167,7 @@ class EvaluateDecisionView extends React.PureComponent {
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY
             }]} />
         </div>
-        <div className="cf-push-left">
-          <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
+        <div className="cf-push-left" {...marginTop(2)}>
           <CheckboxGroup
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
@@ -179,10 +193,12 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <hr {...hrStyling} />
 
-      <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h3>
+      <h2 {...inlineHeaderStyling}>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h2>
+      <span {...subHeadStyling}>Optional</span>
+      <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}</h3>
       <TextareaField
         name="additional-factors"
-        label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}
+        label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
         value={this.state.additionalFactors}
         onChange={(additionalFactors) => this.setState({ additionalFactors })} />
