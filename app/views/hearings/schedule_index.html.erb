@@ -1,1 +1,24 @@
-<html></html>
+<h1>Hearing Schedule</h1>
+<h2>From <%= @start_date.to_s %> to <%= @end_date.to_s %> </h2>
+<h3>*** Placeholder page to test main page url. To be replaced with React component in near future. ***</h3>
+
+<table>
+  <thead>
+  <tr>
+    <th>Hearing ID</th>
+    <th>Hearing Date</th>
+    <th>Hearing Room</th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+    <% @hearings[:data].each do |hearing| %>
+      <tr>
+        <td><%= hearing[:attributes][:hearing_pkseq] %></td>
+        <td><%= hearing[:attributes][:hearing_date] %></td>
+        <td><%= hearing[:attributes][:room] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
