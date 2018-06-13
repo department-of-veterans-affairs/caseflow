@@ -28,76 +28,10 @@ class HearingWorksheetDocs extends Component {
     const accordionTitle = 'Procedural History';
 
     return <div className="cf-app-segment">
-      {!this.props.print &&
-        <Accordion
-          style="bordered"
-          defaultActiveKey={[accordionTitle]}
-        >
-          <AccordionSection
-            id="procedural-history-details-accordion"
-            className="usa-grid"
-            disabled={false}
-            title={accordionTitle}
-          >
-            <div>
-              <div {...styling}> {worksheet.cached_number_of_documents} Documents in Claims Folder
-              </div>
-
-              {Object.values(worksheetAppeals).map((appeal, key) => {
-
-                let notCertified = !appeal.certification_date;
-
-                return <div key={appeal.id} id={appeal.id}>
-                  <div className="cf-hearings-column">
-                  Appeal Stream <span>{key + 1}</span> - Docket #<span>{appeal.docket_number}</span>
-                    {appeal.contested_claim && <span className="cf-red-text">&nbsp;&nbsp;CC</span>}
-                    {appeal.dic && <span className="cf-red-text">&nbsp;&nbsp;DIC</span>}
-                  </div>
-                  <div className="cf-push-left cf-hearings-column">
-                    <Table
-                      styling={styling}
-                      columns={columns}
-                      getKeyForRow = {(index) => index}
-                      rowObjects={[
-                        { name: <b>Prior BVA Decision</b>,
-                          value: formatDate(appeal.prior_bva_decision_date) },
-                        { name: <b>NOD</b>,
-                          value: formatDate(appeal.nod_date) },
-                        { name: <b>SOC</b>,
-                          value: formatDate(appeal.soc_date) },
-                        { name: <b>Form 9</b>,
-                          value: formatDate(appeal.form9_date) }
-                      ]}
-                    />
-                  </div>
-                  <div className="cf-push-right cf-hearings-column">
-                    <Table
-                      styling={styling}
-                      columns={columns}
-                      getKeyForRow = {(index) => index}
-                      rowObjects={[
-                        { name: <b>SSOC</b>,
-                          value: formatArrayOfDateStrings(appeal.ssoc_dates) },
-                        { name: <b>Certification</b>,
-                          value: notCertified ? <span>Not certified</span> : formatDate(appeal.certification_date) },
-                        { name: <b>Docs since Certification</b>,
-                          value: appeal.cached_number_of_documents_after_certification }
-                      ]}
-                    />
-                  </div>
-                </div>;
-              })}
-            </div>
-          </AccordionSection>
-        </Accordion>
-      }
-
-      {this.props.print &&
       <Accordion
-        style="borderless"
+        style={this.props.print ? 'borderless' : 'bordered'}
         defaultActiveKey={[accordionTitle]}
       >
-
         <AccordionSection
           id="procedural-history-details-accordion"
           className="usa-grid"
@@ -115,7 +49,7 @@ class HearingWorksheetDocs extends Component {
 
               return <div key={appeal.id} id={appeal.id}>
                 <div className="cf-hearings-column cf-top-margin">
-                Appeal Stream <span>{key + 1}</span> - Docket #<span>{appeal.docket_number}</span>
+                  Appeal Stream <span>{key + 1}</span> - Docket #<span>{appeal.docket_number}</span>
                   {appeal.contested_claim && <span className="cf-red-text">&nbsp;&nbsp;CC</span>}
                   {appeal.dic && <span className="cf-red-text">&nbsp;&nbsp;DIC</span>}
                 </div>
@@ -156,7 +90,6 @@ class HearingWorksheetDocs extends Component {
           </div>
         </AccordionSection>
       </Accordion>
-      }
     </div>;
   }
 }
