@@ -4,85 +4,51 @@ require "rails_helper"
 RSpec.feature "Start Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    FeatureToggle.enable!(:test_facols)
   end
 
-  let(:nod) { Generators::Document.build(type: "NOD") }
-  let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
-  let(:form9) { Generators::Document.build(type: "Form 9") }
-  let(:mismatched_nod) { Generators::Document.build(type: "NOD", received_at: 100.days.ago) }
-
-  let(:documents) { [nod, soc, form9] }
-  let(:mismatched_documents) { [mismatched_nod, soc] }
-
-  let(:vacols_record) do
-    {
-      template: :ready_to_certify,
-      type: "Original",
-      file_type: "VVA",
-      representative: "The American Legion",
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      veteran_middle_initial: "X",
-      appellant_first_name: "Susie",
-      appellant_middle_initial: nil,
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      nod_date: nod.received_at,
-      soc_date: soc.received_at + 4.days,
-      form9_date: form9.received_at
-    }
-  end
-
-  let(:vacols_record_exact_match) do
-    {
-      template: :ready_to_certify,
-      type: "Original",
-      file_type: "VVA",
-      representative: "The American Legion",
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      veteran_middle_initial: "X",
-      appellant_first_name: "Susie",
-      appellant_middle_initial: nil,
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      nod_date: nod.received_at,
-      soc_date: soc.received_at,
-      form9_date: form9.received_at
-    }
-  end
-
-  let(:appeal_ready_exact_match) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record_exact_match, documents: documents)
-  end
-
-  let(:vacols_record_with_ssocs) do
-    vacols_record.merge(ssoc_dates: [6.days.from_now, 7.days.from_now])
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:appeal_ready) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_ssoc, :has_regional_office, bfdsoc: 181.days.ago)
+  end
+
+  let(:appeal_ready_exact_match) do
+    create(:legacy_appeal, vacols_case: vacols_case_exact)
+  end
+
+  let(:vacols_case_exact) do
+    create(:case_with_ssoc, :has_regional_office)
   end
 
   let(:appeal_mismatched_documents) do
-    Generators::LegacyAppeal.build(vacols_record: vacols_record_with_ssocs, documents: mismatched_documents)
+    create(:legacy_appeal, vacols_case: vacols_case_mismatch)
   end
 
-  let(:appeal_not_ready) do
-    Generators::LegacyAppeal.build(vacols_record: :not_ready_to_certify, documents: documents)
-  end
-
-  # Fakes::AppealRepository is stubbed to raise an error with this id
-  let(:appeal_vbms_error) do
-    Generators::LegacyAppeal.build(
-      vbms_id: Fakes::AppealRepository::RAISE_VBMS_ERROR_ID,
-      vacols_record: vacols_record,
-      documents: documents
-    )
+  let(:vacols_case_mismatch) do
+    create(:case_with_ssoc, :has_regional_office, bfdsoc: 1.day.ago)
   end
 
   let(:appeal_already_certified) do
-    Generators::LegacyAppeal.build(vacols_record: :certified, documents: documents)
+    create(:legacy_appeal, vacols_case: vacols_case_certified)
+  end
+
+  let(:vacols_case_certified) do
+    create(:case_with_ssoc, :certified, :has_regional_office)
+  end
+
+  let(:appeal_not_ready) do
+    create(:legacy_appeal, vacols_case: vacols_case_not_ready)
+  end
+
+  let(:vacols_case_not_ready) do
+    create(:case_with_nod, :has_regional_office)
   end
 
   context "As a user who's not logged in" do
@@ -111,7 +77,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_title("Check Documents | Caseflow Certification")
       expect(page).to have_content("All documents found with matching VBMS and VACOLS dates.")
       expect(page).to have_content("SOC and SSOC dates in VBMS can be up to 4 days")
-      expect(page).to have_content("SOC 09/10/1987 09/06/1987")
+      expect(page).to have_content("SOC 07/04/2014 07/01/2014")
 
       click_button("Continue")
       expect(page).to have_title("Confirm Case Details | Caseflow Certification")

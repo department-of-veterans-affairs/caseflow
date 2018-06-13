@@ -154,7 +154,7 @@
       vertical-align: top;
       margin: 0;
       border: none;
-      padding: .75em 0.75em .75em .25em;
+      padding: .25em 0.75em .75em .25em;
 
       &:first-child {
         font-weight: bold;
@@ -256,19 +256,19 @@
     }
   }
 
+  .transcriptCell {
+    background-color: $color-gray-lightest;
+  }
+
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: 1.5em .32em;
+    padding: .4em;
     width: 100%;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
       margin-top: 0;
-    }
-
-    .cf-form-checkbox {
-      margin-top: 32px;
     }
   }
 }
@@ -324,6 +324,11 @@
     svg {
       margin: 0 0 -2px 7px;
     }
+  }
+
+  .copy-paste-button {
+    font-size: 14px;
+    font-family: 'Source Sans Bold';
   }
 
   .cf-hearings-worksheet-witness-cell {
@@ -387,6 +392,8 @@
 
   .cf-issue-delete {
     cursor: pointer;
+    padding: 0;
+    background-color: $color-white;
   }
 
   h2 {

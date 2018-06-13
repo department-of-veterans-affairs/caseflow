@@ -7,7 +7,7 @@ import Alert from '../components/Alert';
 import _ from 'lodash';
 
 import { fullWidth } from './constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class BeaamListView extends React.PureComponent {
   render = () => {

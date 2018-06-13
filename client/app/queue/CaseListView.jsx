@@ -14,7 +14,7 @@ import { fullWidth } from './constants';
 
 import { clearCaseListSearch, onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 class CaseListView extends React.PureComponent {
   componentWillUnmount = () => this.props.clearCaseListSearch();

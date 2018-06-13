@@ -98,11 +98,6 @@ export default function decisionViewBase(ComponentToWrap) {
       history.push('/queue');
     }
 
-    goToStep = (url) => {
-      this.props.history.push(url);
-      window.scrollTo(0, 0);
-    };
-
     goToPrevStep = () => {
       const { breadcrumbs, prevStep } = this.props;
       const prevStepHook = _.get(this.state.wrapped, 'goToPrevStep');

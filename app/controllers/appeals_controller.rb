@@ -17,6 +17,8 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
   end
 
   def show
@@ -26,10 +28,10 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         id = params[:id]
-        MetricsService.record("Get appeal information for #{id}",
+        MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          appeal = Appeal.find_appeal_or_legacy_appeal_by_id(id)
+          appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end

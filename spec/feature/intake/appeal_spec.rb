@@ -34,6 +34,9 @@ RSpec.feature "Appeal Intake" do
   end
 
   it "Creates an appeal" do
+    # Testing no relationships, tests 2 relationships in HRL and one in SC
+    allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
+
     visit "/intake"
     safe_click ".Select"
 
@@ -62,6 +65,19 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
 
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to_not have_content("Bob Vance, Spouse")
+    expect(page).to_not have_content("Cathy Smith, Child")
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -72,12 +88,25 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(appeal.docket_type).to eq("evidence_submission")
+    expect(appeal.claimants.first).to have_attributes(
+      participant_id: intake.veteran.participant_id
+    )
 
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
 
     find("label", text: "PTSD denied").click
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
@@ -88,11 +117,18 @@ RSpec.feature "Appeal Intake" do
     expect(intake).to be_success
 
     appeal.reload
-    expect(appeal.request_issues.count).to eq 1
+    expect(appeal.request_issues.count).to eq 2
     expect(appeal.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: Date.new(2018, 4, 28),
       description: "PTSD denied"
+    )
+
+    expect(appeal.request_issues.last).to have_attributes(
+      rating_issue_reference_id: nil,
+      rating_issue_profile_date: nil,
+      issue_category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments"
     )
   end
 end

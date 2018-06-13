@@ -137,7 +137,7 @@ class ExternalApi::BGSService
                            participant_id = #{participant_id}",
                           service: :bgs,
                           name: "claimants.find_all_relationships") do
-      client.claimants.find_all_relationships(participant_id)
+      client.claimants.find_all_relationships(participant_id) || []
     end
   end
 

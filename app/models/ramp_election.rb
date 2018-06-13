@@ -15,6 +15,9 @@ class RampElection < RampReview
       rescue ActiveRecord::RecordInvalid => e
         Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
         Raven.capture_exception(e)
+      rescue VBMS::HTTPError => e
+        # Sometimes VBMS can flake since this job is run nightly. Just log the error and carry on.
+        Raven.capture_exception(e)
       end
     end
   end

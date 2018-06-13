@@ -8,7 +8,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import CaseListSearch from './CaseListSearch';
 import { fullWidth } from './constants';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 const horizontalRuleStyling = css({
   border: 0,

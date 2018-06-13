@@ -16,8 +16,13 @@ describe QueueMapper do
           reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
           assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
           attorney_id: "123",
-          group_name: "DCS" }
+          group_name: "DCS",
+          complexity: :medium,
+          quality: :exceeds_expectations,
+          comment: "do something",
+          deficiencies: [:caselaw, :lay_evidence, :remands_are_not_completed] }
       end
+
       let(:expected_result) do
         { deprod: :IME,
           dedocid: "123456789.1234",
@@ -27,7 +32,13 @@ describe QueueMapper do
           demdusr: "TESTSLOGID",
           deassign: VacolsHelper.local_date_with_utc_timezone,
           deatty: "123",
-          deteam: "DCS" }
+          deteam: "DCS",
+          defdiff: "2",
+          deoq: "4",
+          debmcom: "do something",
+          deqr3: "Y",
+          deqr7: "Y",
+          deqr10: "Y" }
       end
       it { is_expected.to eq expected_result }
     end

@@ -9,7 +9,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Table from '../components/Table';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';

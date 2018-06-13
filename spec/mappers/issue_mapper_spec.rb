@@ -125,7 +125,7 @@ describe IssueMapper do
         context "when valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "withdrawn",
+              disposition: "9",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }
@@ -144,7 +144,7 @@ describe IssueMapper do
         context "when not valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "Advance Allowed in Field",
+              disposition: "A",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }

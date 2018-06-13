@@ -50,6 +50,11 @@ class IntakesController < ApplicationController
   def complete
     intake.complete!(params)
     render json: intake.ui_hash
+  rescue Caseflow::Error::LongAddress => error
+    render json: {
+      error_code: error.error_code,
+      error_data: intake.detail.pending_end_product_description
+    }, status: 400
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,

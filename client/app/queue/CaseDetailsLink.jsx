@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -24,8 +24,8 @@ class CaseDetailsLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${appeal.vacols_id}`}
-        disabled={disabled || appeal.paper_case}
+        to={`/queue/appeals/${appeal.vacolsId}`}
+        disabled={disabled}
         onClick={this.setActiveAppealAndTask}
       >
         {appeal.veteran_full_name} ({appeal.vbms_id})
