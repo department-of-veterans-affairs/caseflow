@@ -57,7 +57,13 @@ class TasksController < ApplicationController
     task = task_class.create(task_params)
 
     return invalid_record_error(task) unless task.valid?
-    render json: { task: task }, status: :created
+    render json: {
+      task:
+        ActiveModelSerializers::SerializableResource.new(
+          JudgeLegacyTask.from_vacols(),
+          each_serializer: ::WorkQueue::TaskSerializer
+        ).as_json
+   }
   end
 
   def update
@@ -127,15 +133,13 @@ class TasksController < ApplicationController
                                    :quality,
                                    :comment,
                                    factors_not_considered: [],
-                                   areas_for_improvement: [],
-                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
-                                            remand_reasons: [:code, :after_certification]])
+                                   areas_for_improvement: [])
       .merge(judge: current_user, task_id: params[:task_id])
   end
 
   def task_params
     params.require("tasks")
-      .permit(:appeal_id, :type, :instructions, :title)
+      .permit(:vacols_id, :type, :instructions, :title)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
