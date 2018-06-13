@@ -10,6 +10,8 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteran_full_name} ({appeal.vbms_id})</React.Fragment>;
+
 class CaseDetailsLink extends React.PureComponent {
   setActiveAppealAndTask = () => {
     this.props.setActiveAppeal(this.props.appeal);
@@ -24,11 +26,10 @@ class CaseDetailsLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${this.props.task.vacolsId}`}
+        to={`/queue/appeals/${appeal.vacols_id}`}
         disabled={disabled}
-        onClick={this.setActiveAppealAndTask}
-      >
-        {appeal.veteran_full_name} ({appeal.vbms_id})
+        onClick={this.props.onClick || this.setActiveAppealAndTask}>
+        {this.props.getLinkText(appeal)}
       </Link>
       {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
         <br />
@@ -43,9 +44,15 @@ class CaseDetailsLink extends React.PureComponent {
 }
 
 CaseDetailsLink.propTypes = {
-  task: PropTypes.object.isRequired,
+  task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  getLinkText: PropTypes.func.isRequired,
+  onClick: PropTypes.func
+};
+
+CaseDetailsLink.defaultProps = {
+  getLinkText
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
