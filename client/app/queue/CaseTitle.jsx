@@ -63,7 +63,7 @@ CaseTitle.propTypes = {
   redirectUrl: PropTypes.string.isRequired,
   vacolsId: PropTypes.string.isRequired,
   taskType: PropTypes.string,
-  analyticsSource: PropTypes.string,
+  analyticsSource: PropTypes.string
 };
 
 CaseTitle.defaultProps = {

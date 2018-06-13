@@ -11,6 +11,7 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
+import Alert from '../components/Alert';
 
 import COPY from '../../COPY.json';
 import {
@@ -18,13 +19,13 @@ import {
   marginBottom,
   marginTop,
   marginRight,
-  PAGE_TITLES,
+  PAGE_TITLES
 } from './constants';
-const constrainWidth = (width) => css({ maxWidth: `${width}rem` });
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
+const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
 
 const twoColumnContainerStyling = css({
   display: 'inline-flex',
@@ -65,8 +66,9 @@ class EvaluateDecisionView extends React.PureComponent {
       task: { attributes: task },
       appealId
     } = this.props;
-    const dateAssigned = moment(task.assigned_on)
-    const daysWorked = moment().startOf('day').diff(dateAssigned, 'days');
+    const dateAssigned = moment(task.assigned_on);
+    const daysWorked = moment().startOf('day').
+      diff(dateAssigned, 'days');
 
     return <React.Fragment>
       <CaseTitle
@@ -87,7 +89,8 @@ class EvaluateDecisionView extends React.PureComponent {
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
       <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}<br />
       <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {}<br />
-      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b> ({COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}<br />
+      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp;
+      ({COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}<br />
 
       <hr {...hrStyling} />
 
@@ -135,10 +138,11 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
         }]} />
 
-      {this.state.caseQuality > 0 && this.state.caseQuality < 3 && <div {...constrainWidth(50)}>
-        Please provide more details about quality of work below. If none of the below
-        apply, please add your thoughts in the comments box below.
-      </div>}
+      {this.state.caseQuality > 0 && this.state.caseQuality < 3 &&
+      <Alert type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
+        Please provide more details about <b>quality of work</b>. If none of these apply to
+        this case, please share <b>additional comments</b> below.
+      </Alert>}
 
       <div {...css(twoColumnContainerStyling, marginTop(4))}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>

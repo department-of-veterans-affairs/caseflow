@@ -143,6 +143,6 @@ CaseSnapshot.propTypes = {
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
-})
+});
 
 export default connect(mapStateToProps)(CaseSnapshot);
