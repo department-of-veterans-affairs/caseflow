@@ -22,7 +22,10 @@ class HearingSchedule::ValidateRoSpreadsheet
     @spreadsheet.sheet(RO_NON_AVAILABILITY_SHEET)
   end
 
-  def ro_non_availability_dates; end
+  def ro_non_availability_dates
+    ro_codes = ro_non_availability_template.row(2).drop(2)
+    ro_name = ro_non_availability_template.row(3).drop(2)
+  end
 
   def validate_ro_non_availability_template; end
 
