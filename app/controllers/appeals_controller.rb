@@ -87,8 +87,7 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
+      appeals
     ).as_json
   end
 end

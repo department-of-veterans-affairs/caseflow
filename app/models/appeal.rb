@@ -42,7 +42,7 @@ class Appeal < ApplicationRecord
     request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
   end
 
-  def serializer
+  def serializer_class
     ::WorkQueue::AppealSerializer
   end
 
