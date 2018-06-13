@@ -14,7 +14,7 @@ describe StartCertificationJob do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc, :has_regional_office)
+    create(:case_with_ssoc)
   end
 
   let(:certification) do
