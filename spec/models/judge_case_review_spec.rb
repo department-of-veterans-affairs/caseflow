@@ -71,20 +71,20 @@ describe JudgeCaseReview do
           expect(vacols_issues.size).to eq 3
 
           expect(vacols_issues.first.issdc).to eq "5"
-          expect(vacols_issues.first.issseq).to eq 1
+          expect(vacols_issues.first.issseq).to eq vacols_issue1.issseq
           expect(vacols_issues.first.issmduser).to eq "CFS456"
 
           expect(vacols_issues.second.issdc).to eq "3"
-          expect(vacols_issues.second.issseq).to eq 2
+          expect(vacols_issues.second.issseq).to eq vacols_issue2.issseq
           expect(vacols_issues.second.issmduser).to eq "CFS456"
 
           expect(vacols_issues.third.issdc).to eq nil
-          expect(vacols_issues.third.issseq).to eq 3
+          expect(vacols_issues.third.issseq).to eq(vacols_issue2.issseq + 1)
           expect(vacols_issues.third.issaduser).to eq "CFS456"
 
-          remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: "2")
+          remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: vacols_issue2.issseq)
           expect(remand_reasons.size).to eq 1
-          expect(remand_reasons.first.rmdissseq).to eq 2
+          expect(remand_reasons.first.rmdissseq).to eq vacols_issue2.issseq
           expect(remand_reasons.first.rmdmdusr).to eq "CFS456"
         end
       end
