@@ -5,7 +5,6 @@ RSpec.feature "Save Certification" do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
     FeatureToggle.enable!(:test_facols)
-    PowerOfAttorney.repository = PowerOfAttorneyRepository
   end
 
   after do
