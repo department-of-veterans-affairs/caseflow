@@ -6,6 +6,7 @@ class Hearings::HearingDayController < ApplicationController
 
   # show schedule days for date range provided
   def index
+    # rubocop:disable Metrics/LineLength
     @start_date = params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(params[:start_date])
     @end_date = params[:end_date].nil? ? Time.zone.today.beginning_of_day : Date.parse(params[:end_date])
     video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)

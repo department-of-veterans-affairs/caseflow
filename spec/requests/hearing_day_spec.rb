@@ -27,8 +27,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     it "Get hearings" do
       hearings
       headers = {
-          "ACCEPT" => "application/json",     # This is what Rails 4 accepts
-          "HTTP_ACCEPT" => "application/json" # This is what Rails 3 accepts
+        "ACCEPT" => "application/json",     # This is what Rails 4 accepts
+        "HTTP_ACCEPT" => "application/json" # This is what Rails 3 accepts
       }
       get "/hearings/hearing_day", params: { start_date: "2017-01-01", end_date: "2017-12-31" }, headers: headers
       expect(response).to have_http_status(:success)
@@ -51,8 +51,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     it "Get hearings" do
       hearings
       headers = {
-          "ACCEPT" => "application/json",     # This is what Rails 4 accepts
-          "HTTP_ACCEPT" => "application/json" # This is what Rails 3 accepts
+        "ACCEPT" => "application/json",     # This is what Rails 4 accepts
+        "HTTP_ACCEPT" => "application/json" # This is what Rails 3 accepts
       }
       get "/hearings/hearing_day", headers: headers
       expect(response).to have_http_status(:success)
