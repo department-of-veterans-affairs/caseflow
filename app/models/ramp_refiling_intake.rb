@@ -87,22 +87,11 @@ class RampRefilingIntake < Intake
 
   def initial_ramp_refiling
     @initial_ramp_refiling ||= RampRefiling.new(
-      veteran_file_number: veteran_file_number,
-      ramp_election: fetch_ramp_election
+      veteran_file_number: veteran_file_number
     )
   end
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
-  end
-
-  def fetch_ramp_election
-    ramp_elections = RampElection.established.where(veteran_file_number: veteran_file_number).all
-
-    # There should only be one RAMP election sent to each veteran
-    # if there was more than one, raise an error so we know about it
-    fail TooManyCompletedRampElections if ramp_elections.length > 1
-
-    ramp_elections.first
   end
 end
