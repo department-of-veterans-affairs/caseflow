@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :case_issue, class: VACOLS::CaseIssue do
     sequence(:isskey)
-    sequence(:issseq)
+
+    issseq { VACOLS::CaseIssue.generate_sequence_id(isskey) }
 
     issprog "01"
     isscode "02"
