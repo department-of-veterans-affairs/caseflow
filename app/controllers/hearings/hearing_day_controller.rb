@@ -6,8 +6,8 @@ class Hearings::HearingDayController < ApplicationController
 
   # show schedule days for date range provided
   def index
-    @start_date = params[:start_date].nil? ? (Date.zone.today - 365.days) : Date.parse(params[:start_date])
-    @end_date = params[:end_date].nil? ? Date.zone.today : Date.parse(params[:end_date])
+    @start_date = params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(params[:start_date])
+    @end_date = params[:end_date].nil? ? Time.zone.today.beginning_of_day : Date.parse(params[:end_date])
     video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
     @hearings = json_hearings(video_and_co)
     @tbhearings = json_tb_hearings(travel_board)
