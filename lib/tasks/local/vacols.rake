@@ -73,6 +73,7 @@ namespace :local do
     desc "Seeds local VACOLS"
     task seed: :environment do
       date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
+      hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
 
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
@@ -80,7 +81,8 @@ namespace :local do
       read_csv(VACOLS::Correspondent, date_shift)
       read_csv(VACOLS::CaseIssue, date_shift)
       read_csv(VACOLS::Note, date_shift)
-      read_csv(VACOLS::CaseHearing, date_shift)
+      read_csv(VACOLS::CaseHearing, hearing_date_shift)
+      read_csv(VACOLS::Actcode, date_shift)
       read_csv(VACOLS::Decass, date_shift)
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)
@@ -158,6 +160,7 @@ namespace :local do
         VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
         sanitizer
       )
+      write_csv(VACOLS::Actcode, VACOLS::Actcode.all, sanitizer)
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
@@ -219,7 +222,7 @@ namespace :local do
       end
     end
 
-    def read_csv(klass, date_shift)
+    def read_csv(klass, date_shift = nil)
       items = []
       klass.delete_all
       CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
@@ -228,7 +231,7 @@ namespace :local do
       end
 
       klass.columns_hash.each do |k, v|
-        if v.type == :date
+        if date_shift && v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)

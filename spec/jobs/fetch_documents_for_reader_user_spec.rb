@@ -46,8 +46,9 @@ describe FetchDocumentsForReaderUserJob do
 
     context "when eFolder exception is thrown" do
       it "raises an error" do
+        msg = "<faultstring>Womp Womp.</faultstring>"
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
-          .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
+          .and_raise(Caseflow::Error::DocumentRetrievalError.new(code: 502, message: msg)).once
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
           .to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -57,7 +58,7 @@ describe FetchDocumentsForReaderUserJob do
     context "when efolder returns 403" do
       it "job does not raise an error" do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
-          .and_raise(Caseflow::Error::EfolderAccessForbidden)
+          .and_raise(Caseflow::Error::EfolderAccessForbidden.new(code: 401, message: "error"))
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
       end
@@ -66,7 +67,7 @@ describe FetchDocumentsForReaderUserJob do
     context "when efolder returns 400" do
       it "job does not raise an error" do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
-          .and_raise(Caseflow::Error::ClientRequestError)
+          .and_raise(Caseflow::Error::ClientRequestError.new(code: 400, message: "error"))
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
       end

@@ -1,28 +1,19 @@
 class CoLocatedAdminAction < Task
-  # TODO: move it to the constants file
-  TITLES = {
-    ihp: "IHP",
-    poa_clarification: "POA clarification",
-    hearing_clarification: "Hearing clarification",
-    aoj: "AOJ",
-    extension: "Extension",
-    missing_hearing_transcripts: "Missing hearing transcripts",
-    unaccredited_rep: "Unaccredited rep",
-    foia: "FOIA",
-    retired_vlj: "Retired VLJ",
-    arneson: "Arneson",
-    new_rep_arguments: "New rep arguments",
-    pending_scanning_vbms: "Pending scanning (VBMS)",
-    substituation_determination: "Substituation determination",
-    address_verification: "Address verification",
-    schedule_hearing: "Schedule hearing",
-    missing_records: "Missing records",
-    other: "Other"
-  }.freeze
-
   after_initialize :set_assigned_to
-  validates :title, inclusion: { in: TITLES.keys.map(&:to_s) }
+  validates :title, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
+
+  class << self
+    def create(params)
+      ActiveRecord::Base.multi_transaction do
+        record = super
+        if record.valid?
+          AppealRepository.update_location!(record.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        end
+        record
+      end
+    end
+  end
 
   private
 

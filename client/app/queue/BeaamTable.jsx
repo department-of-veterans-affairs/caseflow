@@ -37,7 +37,7 @@ class BeaamTable extends React.PureComponent {
           return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
         }
 
-        return <ReaderLink vacolsId={appeal.attributes.vacolsId}
+        return <ReaderLink vacolsId={appeal.attributes.vacols_id}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={appeal} />;
@@ -51,16 +51,14 @@ class BeaamTable extends React.PureComponent {
     columns={this.getQueueColumns}
     rowObjects={_.values(this.props.appeals)}
     getKeyForRow={this.getKeyForRow}
-    bodyStyling={this.tableStyle}
   />;
 }
 
 BeaamTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'tasks', 'appeals');
+const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);

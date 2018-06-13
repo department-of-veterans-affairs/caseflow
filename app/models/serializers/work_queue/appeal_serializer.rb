@@ -47,7 +47,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :vacols_id do
-    object.id
+    object.uuid
   end
 
   attribute :type do

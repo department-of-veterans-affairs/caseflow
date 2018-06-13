@@ -14,22 +14,31 @@ class QueueRepository
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.appeals_from_tasks(tasks)
     vacols_ids = tasks.map(&:vacols_id)
 
     appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                     service: :vacols,
                                     name: "appeals_from_tasks") do
+
+      # Run queries to fetch different types of data so the # of queries doesn't increase with
+      # the # of appeals. Combine that data manually.
       case_records = QueueRepository.appeal_info_query(vacols_ids)
       aod_by_appeal = aod_query(vacols_ids)
       hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
       issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
+      remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
       case_records.map do |case_record|
         appeal = AppealRepository.build_appeal(case_record)
 
         appeal.aod = aod_by_appeal[appeal.vacols_id]
-        appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue) }
+        appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map do |vacols_issue|
+          issue = Issue.load_from_vacols(vacols_issue)
+          issue.remand_reasons = remand_reasons_by_appeal[appeal.vacols_id][issue.vacols_sequence_id] || []
+          issue
+        end
         appeal.hearings = hearings_by_appeal[appeal.vacols_id] || []
 
         appeal
@@ -39,6 +48,7 @@ class QueueRepository
     appeals.map(&:save)
     appeals
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.assign_case_to_attorney!(judge:, attorney:, vacols_id:)
     transaction do
@@ -94,8 +104,25 @@ class QueueRepository
     update_decass_record(decass_record, decass_attrs)
 
     # update location with the judge's slogid
-    VACOLS::Case.find(vacols_id).update_vacols_location!(judge_vacols_user_id)
+    decass_record.update_vacols_location!(judge_vacols_user_id)
     true
+  end
+
+  def self.sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
+    transaction do
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      case location
+      when :bva_dispatch
+        unless decass_record.draft_decision?
+          msg = "The work product is not decision"
+          fail Caseflow::Error::QueueRepositoryError, msg
+        end
+        update_decass_record(decass_record, decass_attrs)
+      when :omo_office
+        fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
+      end
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
+    end
   end
 
   def self.find_decass_record(vacols_id, created_in_vacols_date)

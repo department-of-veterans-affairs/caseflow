@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -29,11 +29,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     ratings: {
       $set: state.ratings || formatRatings(serverIntake.ratings)
     },
-    selectedRatingCount: {
-      $set: state.selectedRatingCount
-    },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };
@@ -48,6 +48,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     isReviewed: false,
     isComplete: false,
     selectedRatingCount: 0,
+    nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -81,6 +82,18 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+    return update(state, {
+      claimantNotVeteran: {
+        $set: action.payload.claimantNotVeteran
+      }
+    });
+  case ACTIONS.SET_CLAIMANT:
+    return update(state, {
+      claimant: {
+        $set: action.payload.claimant
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
@@ -170,6 +183,37 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       selectedRatingCount: {
         $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      }
+    });
+  case ACTIONS.ADD_NON_RATED_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [Object.keys(state.nonRatedIssues).length]: {
+          $set: {
+            category: null,
+            description: null
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_CATEGORY:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          category: {
+            $set: action.payload.category
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_DESCRIPTION:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          description: {
+            $set: action.payload.description
+          }
+        }
       }
     });
   default:

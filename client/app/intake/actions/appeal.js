@@ -1,5 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
+import { formatRatingData } from '../util';
 import { formatDateStringForApi } from '../../util/DateUtil';
 import _ from 'lodash';
 
@@ -25,7 +26,8 @@ export const submitReview = (intakeId, appeal) => (dispatch) => {
 
   const data = {
     docket_type: appeal.docketType,
-    receipt_date: formatDateStringForApi(appeal.receiptDate)
+    receipt_date: formatDateStringForApi(appeal.receiptDate),
+    claimant: appeal.claimant
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
@@ -66,17 +68,7 @@ export const completeIntake = (intakeId, appeal) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = {
-    request_issues:
-      _(appeal.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
+  const data = formatRatingData(appeal);
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
