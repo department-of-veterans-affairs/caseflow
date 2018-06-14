@@ -4,7 +4,9 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
 
   # :nocov:
   class << self
-    def select_tb_with_staff
+    def hearings_for_judge(css_id)
+      id = connection.quote(css_id)
+
       # css_id is stored in the STAFF.SDOMAINID column and corresponds to TBSCHED.tbmem1, tbmem2, tbmem3, tbmem4
       select("(TBSCHED.TBYEAR||'-'||TBSCHED.TBTRIP||'-'||TBSCHED.TBLEG) as tbsched_vdkey",
              :tbmem1,
@@ -32,8 +34,8 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
         .where("tbstdate > ?", 1.year.ago.beginning_of_day)
     end
 
-    def hearing_days_in_date_range(start_date, end_date)
-      select_tb_with_staff.where("tbstdate BETWEEN ? AND ?", start_date, end_date)
+    def load_days_for_range(start_date, end_date)
+      where("tbstdate BETWEEN ? AND ?", start_date, end_date)
     end
   end
 

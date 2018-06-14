@@ -36,7 +36,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   private
 
   def handle_travel_board_hearing_days(start_date, end_date)
-    travel_board_hearing_days = VACOLS::TravelBoardSchedule.hearing_days_in_date_range(start_date, end_date)
+    travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
     tb_master_records.map do |tb_master_record|
