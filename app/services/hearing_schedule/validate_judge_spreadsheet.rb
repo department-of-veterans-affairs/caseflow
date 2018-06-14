@@ -4,6 +4,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   NAME_COLUMN = 2
   CSS_ID_COLUMN = 3
   DATE_COLUMN = 4
+  SEVENTH_EXAMPLE_ROW = [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")].freeze
+  SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
 
   class JudgeDatesNotCorrectFormat < StandardError; end
   class JudgeTemplateNotFollowed < StandardError; end
@@ -33,9 +35,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_non_availability_template
-    unless judge_non_availability_template.column(1)[0] == "Judge Non-Availability Dates" &&
-           judge_non_availability_template.row(7).uniq == [nil, "Jones, Bernard", "BVAJONESB",
-                                                           Date.parse("02/04/2019")] &&
+    unless judge_non_availability_template.column(1)[0] == SPREADSHEET_TITLE &&
+           judge_non_availability_template.row(7).uniq == SEVENTH_EXAMPLE_ROW &&
            judge_non_availability_template.column(5).uniq == [nil]
       fail JudgeTemplateNotFollowed
     end
