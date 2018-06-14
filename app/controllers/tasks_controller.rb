@@ -79,6 +79,7 @@ class TasksController < ApplicationController
     return invalid_record_error(task) unless task.valid?
     if task_class == JudgeCaseAssignmentToAttorney then
       case_assignments = VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", task.vacols_id)
+      puts case_assignments.length
       render json: {
         task:
           ActiveModelSerializers::SerializableResource.new(
@@ -151,7 +152,9 @@ class TasksController < ApplicationController
                                    :quality,
                                    :comment,
                                    factors_not_considered: [],
-                                   areas_for_improvement: [])
+                                   areas_for_improvement: [],
+                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                            remand_reasons: [:code, :after_certification]])
       .merge(judge: current_user, task_id: params[:task_id])
   end
 

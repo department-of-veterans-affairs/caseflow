@@ -251,11 +251,11 @@ RSpec.describe TasksController, type: :controller do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
           judge: user,
           attorney: attorney,
-          vacols_id: "3615398",
+          vacols_id: @appeal.vacols_id,
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -417,6 +417,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :complete, params: { task_id: task_id, tasks: params }
+          puts response.body
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["location"]).to eq "bva_dispatch"
