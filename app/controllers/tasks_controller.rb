@@ -60,8 +60,8 @@ class TasksController < ApplicationController
     render json: {
       task:
         ActiveModelSerializers::SerializableResource.new(
-          JudgeLegacyTask.from_vacols(),
-          each_serializer: ::WorkQueue::TaskSerializer
+          JudgeLegacyTask.from_vacols(VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = "), user),
+          serializer: ::WorkQueue::TaskSerializer
         ).as_json
    }
   end

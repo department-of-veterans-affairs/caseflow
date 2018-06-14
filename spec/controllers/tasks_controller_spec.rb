@@ -93,7 +93,9 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          unless response.status == 201 then
+            fail response.body
+          end
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["status"]).to eq "assigned"
           expect(response_body["task"]["appeal_id"]).to eq appeal.id
