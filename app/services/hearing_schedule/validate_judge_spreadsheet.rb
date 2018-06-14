@@ -22,10 +22,14 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def judge_non_availability_dates
+    non_availability_dates = []
     names = judge_non_availability_template.column(NAME_COLUMN).drop(HEADER_COLUMNS)
     css_ids = judge_non_availability_template.column(CSS_ID_COLUMN).drop(HEADER_COLUMNS)
     dates = judge_non_availability_template.column(DATE_COLUMN).drop(HEADER_COLUMNS)
-    names.zip(css_ids, dates)
+    names.zip(css_ids, dates).each do |row|
+      non_availability_dates.push("name" => row[0], "css_id" => row[1], "date" => row[2])
+    end
+    non_availability_dates
   end
 
   def validate_judge_non_availability_template
@@ -38,17 +42,21 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_non_availability_dates
-    unless judge_non_availability_dates.all? { |date| date[2].instance_of?(Date) }
+    unless judge_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
       fail JudgeDatesNotCorrectFormat
     end
     unless judge_non_availability_dates.uniq == judge_non_availability_dates
       fail JudgeDatesNotUnique
     end
-    unless judge_non_availability_dates.all? { |date| date[2] > @start_date && date[2] < @end_date }
+    unless judge_non_availability_dates.all? do |row|
+      row["date"] > @start_date &&
+      row["date"] < @end_date
+    end
       fail JudgeDatesNotInRange
     end
-    unless judge_non_availability_dates.all? do |date|
-             User.where(css_id: date[1], full_name: date[0].split(", ").reverse.join(" ")).count > 0
+    unless judge_non_availability_dates.all? do |row|
+             User.where(css_id: row["css_id"],
+                        full_name: row["name"].split(", ").reverse.join(" ")).count > 0
            end
       fail JudgeNotInDatabase
     end
