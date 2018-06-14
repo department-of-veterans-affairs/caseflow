@@ -22,4 +22,11 @@ class AmaReview < ApplicationRecord
   def remove_claimants!
     claimants.destroy_all
   end
+
+  private
+
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
 end

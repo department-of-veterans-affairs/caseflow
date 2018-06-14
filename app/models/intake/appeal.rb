@@ -20,10 +20,6 @@ class Appeal < AmaReview
     end
   end
 
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 

@@ -59,10 +59,6 @@ class HigherLevelReview < AmaReview
     )
   end
 
-  def veteran
-    @veteran ||= Veteran.new(file_number: veteran_file_number)
-  end
-
   # TODO: Update with real code and modifier data
   def end_product_code
     "030HLRR"
