@@ -121,6 +121,9 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
+// max length of VACOLS issue description field `ISSDESC`
+export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+
 export const USER_ROLES = {
   ATTORNEY: 'Attorney',
   JUDGE: 'Judge'
