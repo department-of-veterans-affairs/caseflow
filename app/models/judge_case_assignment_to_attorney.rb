@@ -2,7 +2,7 @@ class JudgeCaseAssignmentToAttorney
   include ActiveModel::Model
   include LegacyTaskConcern
 
-  attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by, :type
+  attr_accessor :assigned_to, :task_id, :assigned_by, :type
 
   validates :assigned_by, :assigned_to, presence: true
   validate :assigned_by_role_is_valid
@@ -33,10 +33,6 @@ class JudgeCaseAssignmentToAttorney
   end
 
   private
-
-  def vacols_id
-    super || LegacyAppeal.find(appeal_id).vacols_id
-  end
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"

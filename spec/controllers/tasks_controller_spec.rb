@@ -152,7 +152,7 @@ RSpec.describe TasksController, type: :controller do
         let(:role) { :judge_role }
         let(:params) do
           {
-            "vacols_id": @appeal.vacols_id,
+            "task_id": "#{@appeal.vacols_id}-0000-00-00",
             "assigned_to_id": attorney.id,
             "type": "JudgeCaseAssignmentToAttorney"
           }
@@ -174,7 +174,7 @@ RSpec.describe TasksController, type: :controller do
         context "when appeal is not found" do
           let(:params) do
             {
-              "vacols_id": 4_646_464,
+              "task_id": "4646464-0000-00-00",
               "assigned_to_id": attorney.id,
               "type": "JudgeCaseAssignmentToAttorney"
             }
@@ -189,7 +189,7 @@ RSpec.describe TasksController, type: :controller do
         context "when attorney is not found" do
           let(:params) do
             {
-              "vacols_id": @appeal.vacols_id,
+              "task_id": "#{@appeal.vacols_id}-0000-00-00",
               "assigned_to_id": 7_777_777_777,
               "type": "JudgeCaseAssignmentToAttorney"
             }
