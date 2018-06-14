@@ -12,12 +12,6 @@ class HigherLevelReview < AmaReview
     create_contentions_on_new_end_product!
   end
 
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
-  end
-
   def end_product_description
     end_product_reference_id && end_product_to_establish.description_with_routing
   end

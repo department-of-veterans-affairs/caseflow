@@ -23,6 +23,12 @@ class AmaReview < ApplicationRecord
     claimants.destroy_all
   end
 
+  def create_issues!(request_issues_data:)
+    request_issues.destroy_all unless request_issues.empty?
+
+    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
+  end
+
   private
 
   def veteran
