@@ -1,4 +1,12 @@
 describe QueueRepository do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   context ".assign_case_to_attorney!" do
     before do
       RequestStore.store[:current_user] = judge
