@@ -1,4 +1,4 @@
-describe Appeal, focus do
+describe Appeal do
   before do
     FeatureToggle.enable!(:test_facols)
   end
