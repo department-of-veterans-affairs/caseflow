@@ -504,7 +504,7 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def serializer
+  def serializer_class
     ::WorkQueue::LegacyAppealSerializer
   end
 
