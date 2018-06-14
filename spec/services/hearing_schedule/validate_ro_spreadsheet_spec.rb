@@ -1,4 +1,46 @@
 describe HearingSchedule::ValidateRoSpreadsheet do
+  context "when RO non-availaility dates are out of range" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roOutOfRange.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange)
+    end
+  end
+
+  context "when RO non-availaility dates are duplicated" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roDuplicateDates.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique)
+    end
+  end
+
+  context "when RO non-availaility dates are the wrong format" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roWrongDataType.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat)
+    end
+  end
+
   context "when CO non-availaility dates are out of range" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
@@ -41,7 +83,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
-  context "when CO non-availaility dates valid" do
+  context "when RO spreadsheet is valid" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
         Roo::Spreadsheet.open("spec/support/validRoSpreadsheet.xlsx", extension: :xlsx),

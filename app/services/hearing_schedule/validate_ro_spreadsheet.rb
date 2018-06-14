@@ -23,13 +23,32 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def ro_non_availability_dates
+    non_availability_dates = []
     ro_codes = ro_non_availability_template.row(2).drop(2)
-    ro_name = ro_non_availability_template.row(3).drop(2)
+    ro_names = ro_non_availability_template.row(3).drop(2)
+    ro_codes.zip(ro_names).each_with_index do |row, index|
+      dates = ro_non_availability_template.column(index + 3).drop(3).compact
+      dates.each do |date|
+        non_availability_dates.push("ro_code" => row[0], "ro_name" => row[1], "date" => date)
+      end
+    end
+    non_availability_dates
   end
 
   def validate_ro_non_availability_template; end
 
-  def validate_ro_non_availability_dates; end
+  def validate_ro_non_availability_dates
+    unless ro_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
+      fail RoDatesNotCorrectFormat
+    end
+    unless ro_non_availability_dates.uniq == ro_non_availability_dates
+      fail RoDatesNotUnique
+    end
+    unless ro_non_availability_dates.all? { |row| row["date"] >= @start_date && row["date"] <= @end_date }
+      fail RoDatesNotInRange
+    end
+    true
+  end
 
   def co_non_availability_template
     @spreadsheet.sheet(CO_NON_AVAILABILITY_SHEET)
@@ -57,7 +76,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     unless co_non_availability_dates.uniq == co_non_availability_dates
       fail CoDatesNotUnique
     end
-    unless co_non_availability_dates.all? { |date| date > @start_date && date < @end_date }
+    unless co_non_availability_dates.all? { |date| date >= @start_date && date <= @end_date }
       fail CoDatesNotInRange
     end
     true
