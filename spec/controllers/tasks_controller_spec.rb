@@ -174,7 +174,7 @@ RSpec.describe TasksController, type: :controller do
         context "when appeal is not found" do
           let(:params) do
             {
-              "appeal_id": 4_646_464,
+              "vacols_id": 4_646_464,
               "assigned_to_id": attorney.id,
               "type": "JudgeCaseAssignmentToAttorney"
             }
@@ -189,7 +189,7 @@ RSpec.describe TasksController, type: :controller do
         context "when attorney is not found" do
           let(:params) do
             {
-              "appeal_id": appeal.id,
+              "vacols_id": @appeal.vacols_id,
               "assigned_to_id": 7_777_777_777,
               "type": "JudgeCaseAssignmentToAttorney"
             }
@@ -212,8 +212,9 @@ RSpec.describe TasksController, type: :controller do
     let(:user) { FactoryBot.create(:user) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: staff_user))
 
       FeatureToggle.enable!(:judge_assignment)
     end

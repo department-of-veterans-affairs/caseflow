@@ -3,10 +3,11 @@ module LegacyTaskConcern
 
   included do
     # task ID is vacols_id concatenated with the date assigned
-    validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
+    validates :vacols_id, format: { with: /\A[0-9A-Z]+\Z/i }
+    validates :created_in_vacols_date, format: { with: /\A[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   end
 
-  attr_accessor :issues
+  attr_accessor :issues, :vacols_id, :created_in_vacols_date
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
@@ -28,11 +29,11 @@ module LegacyTaskConcern
     end
   end
 
-  def vacols_id
-    task_id.split("-", 2).first if task_id
+  def task_id
+    "#{vacols_id}-#{created_in_vacols_date}"
   end
 
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date if task_id
+  def task_id=(value)
+    vacols_id, created_in_vacols_date = task_id.split("-", 2)
   end
 end

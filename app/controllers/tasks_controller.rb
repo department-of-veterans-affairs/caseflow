@@ -77,6 +77,18 @@ class TasksController < ApplicationController
     task = task_class.update(task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
+    if task_class == JudgeCaseAssignmentToAttorney then
+      case_assignments = VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", task.vacols_id)
+      render json: {
+        task:
+          ActiveModelSerializers::SerializableResource.new(
+            JudgeLegacyTask.from_vacols(
+              case_assignments.take, current_user),
+            serializer: ::WorkQueue::TaskSerializer
+          ).as_json
+      }
+      return
+    end
     render json: { task: task }, status: 200
   end
 
