@@ -44,6 +44,10 @@ class RampRefiling < RampReview
   end
 
   private
+  # TODO add end product status to ramp_refiling
+  def end_product_status
+    nil
+  end
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
