@@ -1,46 +1,68 @@
 describe AppealHistory do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:original) do
-    Generators::LegacyAppeal.build(
-      vacols_id: "1234567",
-      vbms_id: vbms_id,
-      type: "Original",
-      decision_date: 365.days.ago.to_date,
-      issues: [
-        Generators::Issue.build(codes: %w[02 01]),
-        Generators::Issue.build(codes: %w[02 02]),
-        Generators::Issue.build(codes: %w[02 03])
-      ]
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :type_original,
+        bfcorlid: vbms_id,
+        bfkey: "1234567",
+        bfddec: 365.days.ago.to_date,
+        case_issues:
+          [
+            create(:case_issue, issprog: "02", isscode: "01"),
+            create(:case_issue, issprog: "02", isscode: "02"),
+            create(:case_issue, issprog: "02", isscode: "03")
+          ]
+      )
     )
   end
 
   let(:another_original) do
-    Generators::LegacyAppeal.build(
-      vbms_id: vbms_id,
-      type: "Original",
-      decision_date: 365.days.ago.to_date,
-      issues: [
-        Generators::Issue.build(codes: %w[02 03])
-      ]
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :type_original,
+        bfcorlid: vbms_id,
+        bfddec: 365.days.ago.to_date,
+        case_issues:
+          [
+            create(:case_issue, issprog: "02", isscode: "03")
+          ]
+      )
     )
   end
 
   let(:merged) do
-    Generators::LegacyAppeal.build(
-      vacols_id: "7654321",
-      vbms_id: vbms_id,
-      type: "Original",
-      disposition: "Merged Appeal",
-      decision_date: 500.days.ago.to_date
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :type_original,
+        :disposition_merged,
+        bfkey: "7654322",
+        bfcorlid: vbms_id,
+        bfddec: 500.days.ago.to_date
+      )
     )
   end
 
   let(:another_merged) do
-    Generators::LegacyAppeal.build(
-      vacols_id: "7654320",
-      vbms_id: vbms_id,
-      type: "Original",
-      disposition: "Merged Appeal",
-      decision_date: 500.days.ago.to_date
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :type_original,
+        :disposition_merged,
+        bfkey: "7654321",
+        bfcorlid: vbms_id,
+        bfddec: 500.days.ago.to_date
+      )
     )
   end
 
@@ -83,11 +105,14 @@ describe AppealHistory do
 
     context "matching on folder number for post-remand field dispositions" do
       let(:post_remand) do
-        Generators::LegacyAppeal.build(
-          vacols_id: vacols_id,
-          vbms_id: vbms_id,
-          type: "Post Remand",
-          disposition: "Benefits Granted by AOJ"
+        create(:legacy_appeal, vacols_case:
+          create(
+            :case,
+            :type_post_remand,
+            :disposition_granted_by_aoj,
+            bfcorlid: vbms_id,
+            bfkey: vacols_id
+          )
         )
       end
 
@@ -116,10 +141,13 @@ describe AppealHistory do
 
     context "matching on prior decision date" do
       let(:post_remand) do
-        Generators::LegacyAppeal.build(
-          vbms_id: vbms_id,
-          type: "Post Remand",
-          prior_decision_date: prior_decision_date
+        create(:legacy_appeal, vacols_case:
+          create(
+            :case,
+            :type_post_remand,
+            bfcorlid: vbms_id,
+            bfdpdcn: prior_decision_date
+          )
         )
       end
 
@@ -148,19 +176,22 @@ describe AppealHistory do
 
     context "matching on issues" do
       let(:post_remand) do
-        Generators::LegacyAppeal.build(
-          vbms_id: vbms_id,
-          type: "Post Remand",
-          prior_decision_date: 365.days.ago.to_date,
-          issues: issues
+        create(:legacy_appeal, vacols_case:
+          create(
+            :case,
+            :type_post_remand,
+            bfcorlid: vbms_id,
+            bfdpdcn: 365.days.ago.to_date,
+            case_issues: issues
+          )
         )
       end
 
       context "when there is a single matching parent" do
         let(:issues) do
           [
-            Generators::Issue.build(codes: %w[02 01]),
-            Generators::Issue.build(codes: %w[02 02])
+            create(:case_issue, issprog: "02", isscode: "01"),
+            create(:case_issue, issprog: "02", isscode: "02")
           ]
         end
 
@@ -175,7 +206,9 @@ describe AppealHistory do
 
       context "when there are multiple matching parents" do
         let(:issues) do
-          [Generators::Issue.build(codes: %w[02 03])]
+          [
+            create(:case_issue, issprog: "02", isscode: "03")
+          ]
         end
 
         it "marks the appeal series as incomplete" do
@@ -189,7 +222,9 @@ describe AppealHistory do
 
       context "when there is no matching parent" do
         let(:issues) do
-          [Generators::Issue.build(codes: %w[02 04])]
+          [
+            create(:case_issue, issprog: "02", isscode: "04")
+          ]
         end
 
         it "marks the appeal series as incomplete" do
@@ -204,13 +239,16 @@ describe AppealHistory do
 
     context "merging appeals" do
       let(:merge_target) do
-        Generators::LegacyAppeal.build(
-          vbms_id: vbms_id,
-          type: "Original",
-          issues: [
-            Generators::Issue.build(note: description_1),
-            Generators::Issue.build(note: description_2)
-          ]
+        create(:legacy_appeal, vacols_case:
+          create(
+            :case,
+            :type_original,
+            bfcorlid: vbms_id,
+            case_issues: [
+              create(:case_issue, issdesc: description_1),
+              create(:case_issue, issdesc: description_2)
+            ]
+          )
         )
       end
 
@@ -277,8 +315,8 @@ describe AppealHistory do
 
     let!(:veteran_appeals) do
       [
-        Generators::LegacyAppeal.build(vbms_id: "999887777S"),
-        Generators::LegacyAppeal.build(vbms_id: "999887777S")
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "999887777S")),
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "999887777S"))
       ]
     end
 
