@@ -52,8 +52,9 @@ RSpec.describe TasksController, type: :controller do
     let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: staff_user))
     end
 
     context "Co-located admin action" do
@@ -94,7 +95,7 @@ RSpec.describe TasksController, type: :controller do
         it "should be successful" do
           post :create, params: { tasks: params }
           unless response.status == 201 then
-            fail response.body
+            fail response.to_s
           end
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["status"]).to eq "assigned"
@@ -151,7 +152,7 @@ RSpec.describe TasksController, type: :controller do
         let(:role) { :judge_role }
         let(:params) do
           {
-            "appeal_id": appeal.id,
+            "vacols_id": @appeal.vacols_id,
             "assigned_to_id": attorney.id,
             "type": "JudgeCaseAssignmentToAttorney"
           }
@@ -161,11 +162,13 @@ RSpec.describe TasksController, type: :controller do
           allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
             judge: user,
             attorney: attorney,
-            vacols_id: appeal.vacols_id
+            vacols_id: @appeal.vacols_id
           ).and_return(true)
 
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          unless response.status == 200 then
+            fail "Request failed with status #{response.status}:\n#{response.body}"
+          end
         end
 
         context "when appeal is not found" do
