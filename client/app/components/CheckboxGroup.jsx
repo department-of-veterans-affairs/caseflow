@@ -31,6 +31,7 @@ export default class CheckboxGroup extends React.Component {
       hideLabel,
       values,
       errorMessage,
+      hideErrorMessage,
       getCheckbox
     } = this.props;
 
@@ -51,7 +52,7 @@ export default class CheckboxGroup extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {label || name}
       </legend>
-      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
+      {errorMessage && !hideErrorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
       {options.map((option) => getCheckbox(option, onChange, values))}
     </fieldset>;
   }
@@ -59,7 +60,8 @@ export default class CheckboxGroup extends React.Component {
 
 CheckboxGroup.defaultProps = {
   required: false,
-  getCheckbox: renderCheckbox
+  getCheckbox: renderCheckbox,
+  hideErrorMessage: false
 };
 
 CheckboxGroup.propTypes = {
@@ -77,5 +79,6 @@ CheckboxGroup.propTypes = {
   vertical: PropTypes.bool,
   values: PropTypes.object,
   errorMessage: PropTypes.string,
+  hideErrorMessage: PropTypes.bool,
   getCheckbox: PropTypes.func
 };

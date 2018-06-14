@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
@@ -13,19 +14,20 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import Alert from '../components/Alert';
 
+import { setDecisionOptions } from './QueueActions';
+
 import COPY from '../../COPY.json';
 import {
-  fullWidth,
-  marginBottom,
-  marginTop,
-  marginRight,
-  PAGE_TITLES
+  marginBottom, marginTop,
+  marginRight, paddingLeft,
+  fullWidth, redText, PAGE_TITLES
 } from './constants';
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
+const errorStylingNoTopMargin = css({ '&.usa-input-error': marginTop(0) });
 
 const twoColumnContainerStyling = css({
   display: 'inline-flex',
@@ -35,10 +37,8 @@ const leftColumnStyling = css({
   '@media(min-width: 950px)': setWidth('calc(50% - 2rem)'),
   '@media(max-width: 949px)': setWidth('calc(100% - 2rem)')
 });
-const subHeadStyling = css({
-  lineHeight: 2,
-  paddingLeft: '1rem'
-});
+const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
+const subH3Styling = css(paddingLeft(1), { lineHeight: 1.75 });
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -47,7 +47,8 @@ class EvaluateDecisionView extends React.PureComponent {
     this.state = {
       caseComplexity: null,
       caseQuality: null,
-      additionalFactors: ''
+      additionalFactors: '',
+      areasOfImprovement: {}
     };
   }
 
@@ -58,13 +59,46 @@ class EvaluateDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
-  validateForm = () => true;
+  caseIsDeficient = () => this.state.caseQuality > 0 && this.state.caseQuality < 3;
+
+  validateForm = () => {
+    const {
+      areasOfImprovement,
+      caseComplexity,
+      caseQuality
+    } = this.state;
+
+    if (!areasOfImprovement || !caseComplexity || !caseQuality) {
+      return false;
+    }
+
+    if (this.caseIsDeficient() && _.isEmpty(areasOfImprovement)) {
+      return false;
+    }
+
+    this.props.setDecisionOptions(this.state);
+    return true;
+  };
+
+  setAreasOfImprovement = (event) => {
+    const factor = event.target.name;
+    const newOpts = this.state.areasOfImprovement;
+
+    if (factor in this.state.areasOfImprovement) {
+      delete newOpts[factor]
+    } else {
+      newOpts[factor] = true;
+    }
+
+    this.setState({ areasOfImprovement: newOpts });
+  }
 
   render = () => {
     const {
       appeal: { attributes: appeal },
       task: { attributes: task },
-      appealId
+      appealId,
+      highlight
     } = this.props;
     const dateAssigned = moment(task.assigned_on);
     const daysWorked = moment().startOf('day').
@@ -81,9 +115,7 @@ class EvaluateDecisionView extends React.PureComponent {
       <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
-      <CaseSnapshot
-        appeal={this.props.appeal}
-        task={this.props.task} />
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -100,7 +132,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
         onChange={(caseComplexity) => this.setState({ caseComplexity })}
         value={this.state.caseComplexity}
-        styling={marginBottom(0)}
+        styling={css(marginBottom(0), errorStylingNoTopMargin)}
+        errorMessage={highlight && !this.state.caseComplexity ? "Choose one" : null}
         options={[{
           value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
@@ -120,7 +153,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
         onChange={(caseQuality) => this.setState({ caseQuality })}
         value={this.state.caseQuality}
-        styling={marginBottom(0)}
+        styling={css(marginBottom(0), errorStylingNoTopMargin)}
+        errorMessage={highlight && !this.state.caseQuality ? "Choose one" : null}
         options={[{
           value: '5',
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
@@ -138,19 +172,23 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
         }]} />
 
-      {this.state.caseQuality > 0 && this.state.caseQuality < 3 &&
-      <Alert type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
+      {this.caseIsDeficient() && <Alert type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
         Please provide more details about <b>quality of work</b>. If none of these apply to
         this case, please share <b>additional comments</b> below.
       </Alert>}
 
       <div {...css(twoColumnContainerStyling, marginTop(4))}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
-          <h3>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}</h3>
+          <h3 {...css(headerStyling, { float: this.caseIsDeficient() ? 'left' : '' })}>
+            {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+          </h3>
+          {this.caseIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
           <CheckboxGroup
-            hideLabel vertical
+            hideLabel vertical hideErrorMessage
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={_.noop}
+            onChange={this.setAreasOfImprovement}
+            errorMessage={highlight && this.caseIsDeficient() && _.isEmpty(this.state.areasOfImprovement) ? "true" : null}
+            value={this.state.areasOfImprovement}
             options={[{
               id: 'theory-contention',
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY
@@ -175,7 +213,8 @@ class EvaluateDecisionView extends React.PureComponent {
           <CheckboxGroup
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={_.noop}
+            onChange={this.setAreasOfImprovement}
+            value={this.state.areasOfImprovement}
             options={[{
               id: 'improperly-addressed',
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED
@@ -198,7 +237,7 @@ class EvaluateDecisionView extends React.PureComponent {
       <hr {...hrStyling} />
 
       <h2 {...inlineHeaderStyling}>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL}</h2>
-      <span {...subHeadStyling}>Optional</span>
+      <span {...subH2Styling}>Optional</span>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}</h3>
       <TextareaField
         name="additional-factors"
@@ -216,7 +255,12 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId]
+  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  highlight: state.ui.highlightFormItems
 });
 
-export default connect(mapStateToProps)(decisionViewBase(EvaluateDecisionView));
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setDecisionOptions
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(EvaluateDecisionView));
