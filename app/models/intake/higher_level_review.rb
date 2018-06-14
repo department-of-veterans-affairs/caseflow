@@ -1,4 +1,4 @@
-class HigherLevelReview < ApplicationRecord
+class HigherLevelReview < AmaReview
   include EstablishesEndProduct
 
   validate :validate_receipt_date
@@ -10,22 +10,13 @@ class HigherLevelReview < ApplicationRecord
     validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
-
+  
   AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
 
   attr_reader :saving_review
 
   def start_review!
     @saving_review = true
-  end
-
-  def create_claimants!(claimant_data:)
-    claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
   end
 
   def create_end_product_and_contentions!

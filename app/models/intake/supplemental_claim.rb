@@ -1,4 +1,4 @@
-class SupplementalClaim < ApplicationRecord
+class SupplementalClaim < AmaReview
   include EstablishesEndProduct
 
   has_many :request_issues, as: :review_request
@@ -13,15 +13,6 @@ class SupplementalClaim < ApplicationRecord
 
   def start_review!
     @saving_review = true
-  end
-
-  def create_claimants!(claimant_data:)
-    claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
   end
 
   def create_end_product_and_contentions!
