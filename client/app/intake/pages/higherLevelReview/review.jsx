@@ -7,7 +7,8 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
-import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
+import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
+import { submitReview } from '../../actions/ama';
 import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -87,7 +88,7 @@ const SelectClaimantConnected = connect(
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview).then(
+    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview, 'higherLevelReview').then(
       () => this.props.history.push('/finish')
     );
   }
