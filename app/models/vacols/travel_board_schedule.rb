@@ -15,22 +15,13 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
              :tbmem4,
              :tbro,
              :tbstdate,
-             :tbenddate,
-             :sdomainid)
-        .joins(<<-SQL)
-        JOIN vacols.staff ON
-        staff.sattyid = tbmem1 OR
-        staff.sattyid = tbmem2 OR
-        staff.sattyid = tbmem3 OR
-        staff.sattyid = tbmem4
-      SQL
-    end
-
-    def hearings_for_judge(css_id)
-      id = connection.quote(css_id)
-
-      # css_id is stored in the STAFF.SDOMAINID column and corresponds to TBSCHED.tbmem1, tbmem2, tbmem3, tbmem4
-      select_tb_with_staff.where("staff.sdomainid = #{id}")
+             :tbenddate)
+        .joins("join vacols.staff on
+                staff.sattyid = tbmem1 OR
+                staff.sattyid = tbmem2 OR
+                staff.sattyid = tbmem3 OR
+                staff.sattyid = tbmem4")
+        .where("staff.sdomainid = #{id}")
         .where("tbstdate > ?", 1.year.ago.beginning_of_day)
     end
 
