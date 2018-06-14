@@ -3,19 +3,18 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
   self.table_name = "vacols.tbsched"
 
   class << self
-
     def select_tb_with_staff
       # css_id is stored in the STAFF.SDOMAINID column and corresponds to TBSCHED.tbmem1, tbmem2, tbmem3, tbmem4
       select("(TBSCHED.TBYEAR||'-'||TBSCHED.TBTRIP||'-'||TBSCHED.TBLEG) as tbsched_vdkey",
-        :tbmem1,
-        :tbmem2,
-        :tbmem3,
-        :tbmem4,
-        :tbro,
-        :tbstdate,
-        :tbenddate,
-        :sdomainid)
-      .joins(<<-SQL)
+             :tbmem1,
+             :tbmem2,
+             :tbmem3,
+             :tbmem4,
+             :tbro,
+             :tbstdate,
+             :tbenddate,
+             :sdomainid)
+        .joins(<<-SQL)
         JOIN vacols.staff ON
         staff.sattyid = tbmem1 OR
         staff.sattyid = tbmem2 OR

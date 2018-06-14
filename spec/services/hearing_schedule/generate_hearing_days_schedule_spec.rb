@@ -108,14 +108,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
 
     context "Travelboard hearing days" do
-  
       let(:travel_board_schedules) do
         [
           create(:travel_board_schedule),
           create(:travel_board_schedule, tbstdate: Date.parse("2018-06-18"), tbenddate: Date.parse("2018-06-22")),
           create(:travel_board_schedule, tbro: "RO03", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
           create(:travel_board_schedule, tbro: "RO17", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
-          create(:travel_board_schedule, tbro: "RO21", tbstdate: Date.parse("2018-08-13"), tbenddate: Date.parse("2018-08-17")),
+          create(:travel_board_schedule, tbro: "RO21", tbstdate: Date.parse("2018-08-13"), tbenddate: Date.parse("2018-08-17"))
 
         ]
       end
@@ -125,13 +124,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           schedule_period
         )
       end
-  
+
       subject { generate_hearing_days_schedule_removed_tb }
-       
+
       it "travel board hearing days removed" do
         travel_board_schedules.each do |tb_schedule|
           dates = (tb_schedule[:tbstdate]..tb_schedule[:tbenddate]).to_a
-          expect(dates.map {|date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
+          expect(dates.map { |date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
         end
       end
     end

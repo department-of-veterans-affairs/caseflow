@@ -5,7 +5,7 @@ module TravelBoardScheduleMapper
         {
           ro:  tb_master_record[:tbro],
           start_date: tb_master_record[:tbstdate],
-          end_date: tb_master_record[:tbenddate],
+          end_date: tb_master_record[:tbenddate]
         }.merge(fetch_users ? { travel_board_member: User.where(css_id: tb_master_record[:sdomainid]) } : {})
       end
     end
