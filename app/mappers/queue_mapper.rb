@@ -6,6 +6,7 @@ module QueueMapper
     modifying_user: :demdusr,
     reassigned_to_judge_date: :dereceive,
     assigned_to_attorney_date: :deassign,
+    deadline_date: :dedeadline,
     attorney_id: :deatty,
     group_name: :deteam,
     complexity: :defdiff,
