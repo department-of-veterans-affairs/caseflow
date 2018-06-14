@@ -131,9 +131,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       it "travel board hearing days removed" do
         travel_board_schedules.each do |tb_schedule|
           dates = (tb_schedule[:tbstdate]..tb_schedule[:tbenddate]).to_a
-          binding.pry
-
-          dates.each {|date| expect(subject.ros[tb_schedule[:tbro]][:available_days].include?(date)).not_to eq true }
+          expect(dates.map {|date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
         end
       end
     end
