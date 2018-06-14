@@ -1,9 +1,6 @@
 class HigherLevelReview < AmaReview
   validate :validate_receipt_date
 
-  has_many :request_issues, as: :review_request
-  has_many :claimants, as: :review_request
-
   with_options if: :saving_review do
     validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }

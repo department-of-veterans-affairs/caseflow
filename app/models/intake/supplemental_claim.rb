@@ -1,7 +1,4 @@
 class SupplementalClaim < AmaReview
-  has_many :request_issues, as: :review_request
-  has_many :claimants, as: :review_request
-
   validate :validate_receipt_date
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
 

@@ -2,9 +2,6 @@ class Appeal < AmaReview
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
   validate :validate_receipt_date_within_range
 
-  has_many :request_issues, as: :review_request
-  has_many :claimants, as: :review_request
-
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
   def document_fetcher
