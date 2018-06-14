@@ -15,7 +15,7 @@ class BeaamTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getCaseDetailsLink = (appeal) =>
-    <CaseDetailsLink task={{ vacolsId: appeal.attributes.vacolsId }} appeal={appeal} />;
+    <CaseDetailsLink task={null} appeal={appeal} />;
 
   getQueueColumns = () => {
     const columns = [{

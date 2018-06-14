@@ -73,7 +73,7 @@ class AppealsController < ApplicationController
   end
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def file_number_not_found_error
@@ -87,8 +87,7 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
+      appeals
     ).as_json
   end
 end
