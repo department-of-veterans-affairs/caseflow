@@ -17,7 +17,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
     @ros = filter_non_available_ro_days
 
-    handle_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
   end
 
   def filter_non_availability_days(start_date, end_date)
@@ -35,7 +35,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   private
 
-  def handle_travel_board_hearing_days(start_date, end_date)
+  def filter_travel_board_hearing_days(start_date, end_date)
     travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
