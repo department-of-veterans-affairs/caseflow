@@ -8,8 +8,16 @@ class HearingDay
       HearingDayRepository.create_vacols_hearing!(hearing_hash)
     end
 
+    def update_hearing_day(hearing, hearing_hash)
+      HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
+    end
+
     def load_days_for_range(start_date, end_date)
       HearingDayRepository.load_days_for_range(start_date, end_date)
+    end
+
+    def find_hearing_day(hearing_type, hearing_key)
+      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
     end
   end
 end

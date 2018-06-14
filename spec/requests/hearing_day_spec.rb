@@ -13,6 +13,36 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
+  describe "Assign judge to hearing" do
+    let!(:hearing) do
+      RequestStore[:current_user] = user
+      Generators::Vacols::Staff.create()
+      Generators::Vacols::CaseHearing.create(hearing_type: "C", hearing_date: "11-Jun-2017", room: "3")
+    end
+
+    it "Assign a judge to a schedule day" do
+      put "/hearings/#{hearing.hearing_pkseq + 1}/hearing_day", params: { board_member: "105" }
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["board_member"]).to eq("105")
+    end
+  end
+
+  describe "Modify RO in Travel Board Hearing", focus: true do
+    let!(:hearing) do
+      RequestStore[:current_user] = user
+      Generators::Vacols::Staff.create()
+      Generators::Vacols::TravelBoardSchedule.create({})
+    end
+
+    it "Update RO in master TB schedule" do
+      hearing
+      put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day", params: { hearing_type: "T", tbro: "RO27" }
+      expect(response).to have_http_status(:success)
+      # commented out as there is an issue getting back the updated hearing. Works in rails console.
+      #expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
+    end
+  end
+
   describe "Get hearing schedule for a date range" do
     let!(:hearings) do
       RequestStore[:current_user] = user

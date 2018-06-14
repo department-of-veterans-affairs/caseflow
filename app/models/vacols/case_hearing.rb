@@ -44,7 +44,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     staff_id: :mduser,
     room: :room,
     hearing_date: :hearing_date,
-    hearing_type: :hearing_type
+    hearing_type: :hearing_type,
+    board_member: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
