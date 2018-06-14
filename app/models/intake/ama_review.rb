@@ -29,4 +29,17 @@ class AmaReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def validate_receipt_date_not_before_ama
+    errors.add(:receipt_date, "before_ama") if receipt_date < AMA_BEGIN_DATE
+  end
+
+  def validate_receipt_date_not_in_future
+    errors.add(:receipt_date, "in_future") if Time.zone.today < receipt_date
+  end
+
+  def validate_receipt_date
+    return unless receipt_date
+    validate_receipt_date_not_before_ama
+    validate_receipt_date_not_in_future
+  end
 end
