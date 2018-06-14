@@ -1,6 +1,8 @@
 class AmaReview < ApplicationRecord
   include EstablishesEndProduct
 
+  validate :validate_receipt_date
+
   AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
 
   self.abstract_class = true
