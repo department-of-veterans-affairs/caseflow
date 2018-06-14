@@ -409,7 +409,8 @@ RSpec.feature "Queue" do
         expect(page).not_to have_content("Hearing preference")
 
         expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL} CAVC/i)
-        expect(page).to have_content("Power of Attorney: #{appeal.representative}")
+        expect(page).to have_content("Power of Attorney")
+        expect(page).to have_content(appeal.representative)
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
     end
@@ -421,7 +422,6 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Veteran Details")
         expect(page).to have_content("The veteran is the appellant.")
@@ -439,7 +439,6 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Appellant Details")
         expect(page).to have_content("Veteran Details")
