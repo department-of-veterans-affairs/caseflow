@@ -49,8 +49,7 @@ class Reader::AppealController < Reader::ApplicationController
 
   def json_appeal(appeal)
     ActiveModelSerializers::SerializableResource.new(
-      appeal,
-      serializer: appeal.serializer
+      appeal
     ).as_json
   end
 
