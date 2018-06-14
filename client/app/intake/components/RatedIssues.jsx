@@ -1,19 +1,17 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { setIssueSelected } from '../../actions/common';
-import Checkbox from '../../../components/Checkbox';
-import { formatDateStr } from '../../../util/DateUtil';
+import Checkbox from '../../components/Checkbox';
+import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
+import pluralize from 'pluralize';
 
-class RatedIssues extends React.PureComponent {
+export class RatedIssuesUnconnected extends React.PureComponent {
   onCheckIssue = (profileDate, issueId) => (checked) => this.props.setIssueSelected(profileDate, issueId, checked)
 
   render() {
 
-    const { supplementalClaim } = this.props;
+    const { reviewState } = this.props;
 
-    const ratedIssuesSections = _.map(supplementalClaim.ratings, (rating) => {
+    const ratedIssuesSections = _.map(reviewState.ratings, (rating) => {
       const ratedIssueCheckboxes = _.map(rating.issues, (issue) => {
         return (
           <Checkbox
@@ -44,14 +42,9 @@ class RatedIssues extends React.PureComponent {
   }
 }
 
-const RatedIssuesConnected = connect(
-  ({ supplementalClaim, intake }) => ({
-    intakeId: intake.id,
-    supplementalClaim
-  }),
-  (dispatch) => bindActionCreators({
-    setIssueSelected
-  }, dispatch)
-)(RatedIssues);
-
-export default RatedIssuesConnected;
+export class RatedIssueCounter extends React.PureComponent {
+  render = () =>
+    <div className="cf-selected-issues">
+      <span>{ this.props.selectedRatingCount }</span> rated { pluralize('issue', this.props.selectedRatingCount) }
+    </div>
+}
