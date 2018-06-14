@@ -1,6 +1,4 @@
 class HigherLevelReview < AmaReview
-  include EstablishesEndProduct
-
   validate :validate_receipt_date
 
   has_many :request_issues, as: :review_request
@@ -9,14 +7,6 @@ class HigherLevelReview < AmaReview
   with_options if: :saving_review do
     validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
-  end
-  
-  AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
-
-  attr_reader :saving_review
-
-  def start_review!
-    @saving_review = true
   end
 
   def create_end_product_and_contentions!

@@ -1,19 +1,9 @@
 class SupplementalClaim < AmaReview
-  include EstablishesEndProduct
-
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
 
   validate :validate_receipt_date
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
-
-  AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
-
-  attr_reader :saving_review
-
-  def start_review!
-    @saving_review = true
-  end
 
   def create_end_product_and_contentions!
     return nil if contention_descriptions_to_create.empty?
