@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import IssueList from './components/IssueList';
 import BareList from '../components/BareList';
-import { boldText, TASK_ACTIONS } from './constants';
+import { boldText } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import StringUtil from '../util/StringUtil';
@@ -22,7 +21,7 @@ const noTopBottomMargin = css({
   marginBottom: '1rem'
 });
 
-export default class AppealDetail extends React.PureComponent {
+export default class CaseHearingsDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
 
   getHearingAttrs = (hearing) => {
@@ -89,28 +88,11 @@ export default class AppealDetail extends React.PureComponent {
     {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
   </React.Fragment>;
 
-  getListElements = () => {
+  render = () => {
     const listElements = [{
-      label: 'Power of Attorney',
-      value: this.getAppealAttr('power_of_attorney')
-    }, {
-      label: 'Regional Office',
-      valueFunction: () => {
-        const {
-          city,
-          key
-        } = this.getAppealAttr('regional_office');
-
-        return `${city} (${key.replace('RO', '')})`;
-      }
+      label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
+      valueFunction: this.getHearingInfo
     }];
-
-    if (this.getAppealAttr('hearings').length) {
-      listElements.splice(2, 0, {
-        label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
-        valueFunction: this.getHearingInfo
-      });
-    }
 
     return <BareList
       ListElementComponent="ul"
@@ -120,23 +102,14 @@ export default class AppealDetail extends React.PureComponent {
           paddingBottom: '1.5rem',
           paddingTop: '1rem',
           borderBottom: '1px solid grey'
+        },
+        '> li:last-child': {
+          borderBottom: 0
         }
       })} />;
   };
-
-  componentDidMount = () => {
-    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.VIEW_APPEAL_INFO);
-  }
-
-  render = () => <div>
-    <h2 {...css({ marginBottom: '1rem' })}>Appeal Summary</h2>
-    {this.getListElements()}
-    <h2>Issues</h2>
-    <IssueList appeal={_.pick(this.props.appeal.attributes, 'issues')} />
-  </div>;
 }
 
-AppealDetail.propTypes = {
-  analyticsSource: PropTypes.string.isRequired,
+CaseHearingsDetail.propTypes = {
   appeal: PropTypes.object.isRequired
 };

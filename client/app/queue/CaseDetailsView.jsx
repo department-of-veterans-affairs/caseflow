@@ -1,3 +1,4 @@
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -6,37 +7,40 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import AppealDetail from './AppealDetail';
 import AppellantDetail from './AppellantDetail';
+import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
-import TabWindow from '../components/TabWindow';
-import { CATEGORIES } from './constants';
+import IssueList from './components/IssueList';
+import StickyNavContentArea from './StickyNavContentArea';
+import { CATEGORIES, TASK_ACTIONS } from './constants';
+import { COLORS } from '../constants/AppConstants';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
-class QueueDetailView extends React.PureComponent {
+// TODO: Pull this horizontal rule styling out somewhere.
+const horizontalRuleStyling = css({
+  border: 0,
+  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+  marginTop: '3rem',
+  marginBottom: '3rem'
+});
+
+// TODO: Move this out to its own component when it gets complex.
+const PowerOfAttorneyDetail = ({ appeal }) => <p>{appeal.attributes.power_of_attorney}</p>;
+
+class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.clearActiveAppealAndTask();
   }
 
   componentDidMount = () => {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+
     if (!this.props.breadcrumbs.length) {
       this.props.resetBreadcrumbs(this.props.appeal.attributes.veteran_full_name, this.props.vacolsId);
     }
-  }
-
-  tabs = () => {
-    const appeal = this.props.appeal;
-
-    return [{
-      label: 'Appeal',
-      page: <AppealDetail appeal={appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
-    }, {
-      label: `Appellant (${appeal.attributes.appellant_full_name || appeal.attributes.veteran_full_name})`,
-      page: <AppellantDetail appeal={appeal} analyticsSource={CATEGORIES.QUEUE_TASK} />
-    }];
   }
 
   render = () => <AppSegment filledBackground>
@@ -48,13 +52,18 @@ class QueueDetailView extends React.PureComponent {
       task={this.props.task}
       userRole={this.props.userRole}
     />
-    <TabWindow
-      name="queue-tabwindow"
-      tabs={this.tabs()} />
+    <hr {...horizontalRuleStyling} />
+    <StickyNavContentArea>
+      <IssueList title="Issues" appeal={_.pick(this.props.appeal.attributes, 'issues')} />
+      <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
+      { this.props.appeal.attributes.hearings.length &&
+        <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
+      <AppellantDetail title="About the Veteran" appeal={this.props.appeal} />
+    </StickyNavContentArea>
   </AppSegment>;
 }
 
-QueueDetailView.propTypes = {
+CaseDetailsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   featureToggles: PropTypes.object,
   userRole: PropTypes.string
@@ -73,4 +82,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetBreadcrumbs
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueDetailView);
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);
