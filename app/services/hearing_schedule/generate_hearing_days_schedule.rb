@@ -17,7 +17,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
     @ros = filter_non_available_ro_days
 
-    self.handle_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    handle_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
   end
 
   def filter_non_availability_days(start_date, end_date)

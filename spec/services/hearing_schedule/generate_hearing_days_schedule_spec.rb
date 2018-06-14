@@ -102,7 +102,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
       it "remove non-available_days" do
         subject.ros.each do |key, value|
-          value[:available_days].each { |date| expect((ro_non_available_days[key] || []).include?(date)).not_to eq true }
+          includes_ro_days = value[:available_days].map do |date|
+            (ro_non_available_days[key] || []).include?(date)
+          end
+
+          expect(includes_ro_days.any?).to eq false
         end
       end
     end
@@ -112,9 +116,12 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
         [
           create(:travel_board_schedule),
           create(:travel_board_schedule, tbstdate: Date.parse("2018-06-18"), tbenddate: Date.parse("2018-06-22")),
-          create(:travel_board_schedule, tbro: "RO03", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
-          create(:travel_board_schedule, tbro: "RO17", tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
-          create(:travel_board_schedule, tbro: "RO21", tbstdate: Date.parse("2018-08-13"), tbenddate: Date.parse("2018-08-17"))
+          create(:travel_board_schedule, tbro: "RO03",
+                                         tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
+          create(:travel_board_schedule, tbro: "RO17",
+                                         tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
+          create(:travel_board_schedule, tbro: "RO21",
+                                         tbstdate: Date.parse("2018-08-13"), tbenddate: Date.parse("2018-08-17"))
 
         ]
       end
