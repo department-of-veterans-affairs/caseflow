@@ -7,17 +7,23 @@ class HearingSchedule::GenerateHearingDaysSchedule
   attr_reader :available_days
   attr_reader :ros
 
-  def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {})
+  def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {}, ro_allocations = [])
     @co_non_availability_days = co_non_availability_days
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
     @ro_non_available_days = ro_non_available_days
-
+    
     # handle RO information
     @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
     @ros = filter_non_available_ro_days
 
+    assign_ro_hearing_day_allocations(ro_allocations)
     filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+  end
+
+  def assign_ro_hearing_day_allocations(ro_allocations)
+    binding.pry
+    # @ros.map { |ro_key, information| }
   end
 
   def filter_non_availability_days(start_date, end_date)

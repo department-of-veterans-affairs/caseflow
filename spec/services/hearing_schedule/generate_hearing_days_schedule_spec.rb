@@ -19,6 +19,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
   end
 
+  let(:ro_allocations) do
+    [
+      create(:allocation),
+      create(:allocation, regional_office: "RO17", allocated_days: 118),
+      create(:allocation, regional_office: "RO61", allocated_days: 66),
+      create(:allocation, regional_office: "RO18", allocated_days: 61),
+      create(:allocation, regional_office: "RO01", allocated_days: 24),
+      create(:allocation, regional_office: "RO13", allocated_days: 6),
+      create(:allocation, regional_office: "RO55", allocated_days: 6)
+    ]
+  end
+
   let(:ro_non_available_days) do
     {
       "RO01" => ro_one_non_available_days,
@@ -140,6 +152,17 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           expect(dates.map { |date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
         end
       end
+    end
+  end
+
+  context "RO hearing days allocation" do
+    let(:generate_hearing_days_schedule) do
+      HearingSchedule::GenerateHearingDaysSchedule.new(
+        schedule_period,
+        co_non_available_days,
+        ro_non_available_days,
+        ro_allocations
+      
     end
   end
 end
