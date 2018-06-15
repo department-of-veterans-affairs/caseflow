@@ -501,7 +501,8 @@ RSpec.feature "Queue" do
 
       click_on "#{task.veteran_full_name} (#{task.vbms_id})"
 
-      expect(page).to have_content("Prepared by #{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}")
+      preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
