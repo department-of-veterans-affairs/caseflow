@@ -553,6 +553,10 @@ class RegionalOffice
       result
     end
 
+    def ros_with_hearings
+      CITIES.select { |_key, value| value[:hold_hearings] }
+    end
+
     # Returns RegionalOffice objects for each RO that has the passed station code
     def for_station(station_key)
       [STATIONS[station_key]].flatten.map do |regional_office_key|

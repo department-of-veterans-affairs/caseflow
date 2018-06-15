@@ -41,6 +41,34 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
+  context "when RO isn't in the system" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roNotInSystem.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoNotInSystem)
+    end
+  end
+
+  context "when RO is missing" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roNotListed.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoHearingListDoesNotMatch)
+    end
+  end
+
   context "when CO non-availaility dates are out of range" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
