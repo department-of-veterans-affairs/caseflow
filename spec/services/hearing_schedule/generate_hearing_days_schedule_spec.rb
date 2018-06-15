@@ -21,13 +21,12 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   let(:ro_allocations) do
     [
-      create(:allocation),
-      create(:allocation, regional_office: "RO17", allocated_days: 118),
-      create(:allocation, regional_office: "RO61", allocated_days: 66),
-      create(:allocation, regional_office: "RO18", allocated_days: 61),
-      create(:allocation, regional_office: "RO01", allocated_days: 24),
-      create(:allocation, regional_office: "RO13", allocated_days: 6),
-      create(:allocation, regional_office: "RO55", allocated_days: 6)
+      create(:allocation, regional_office: "RO17", allocated_days: 118, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO61", allocated_days: 66, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO18", allocated_days: 61, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO22", allocated_days: 55, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO01", allocated_days: 24, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO55", allocated_days: 6, schedule_period: schedule_period)
     ]
   end
 
@@ -127,13 +126,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       let(:travel_board_schedules) do
         [
           create(:travel_board_schedule),
-          create(:travel_board_schedule, tbstdate: Date.parse("2018-06-18"), tbenddate: Date.parse("2018-06-22")),
-          create(:travel_board_schedule, tbro: "RO03",
-                                         tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
+          create(:travel_board_schedule, tbro: "RO17",
+                                         tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08")),
           create(:travel_board_schedule, tbro: "RO17",
                                          tbstdate: Date.parse("2018-07-09"), tbenddate: Date.parse("2018-07-13")),
-          create(:travel_board_schedule, tbro: "RO21",
-                                         tbstdate: Date.parse("2018-08-13"), tbenddate: Date.parse("2018-08-17"))
+          create(:travel_board_schedule, tbro: "RO18",
+                                         tbstdate: Date.parse("2018-08-27"), tbenddate: Date.parse("2018-08-31")),
+          create(:travel_board_schedule, tbro: "RO01",
+                                         tbstdate: Date.parse("2018-04-23"), tbenddate: Date.parse("2018-04-27")),
+          create(:travel_board_schedule, tbro: "RO55",
+                                         tbstdate: Date.parse("2018-04-09"), tbenddate: Date.parse("2018-04-13")),
+          create(:travel_board_schedule, tbro: "RO22",
+                                         tbstdate: Date.parse("2018-05-14"), tbenddate: Date.parse("2018-05-18"))
 
         ]
       end
@@ -156,13 +160,21 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "RO hearing days allocation" do
+    before do
+      ro_allocations
+    end
+
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
         schedule_period,
         co_non_available_days,
-        ro_non_available_days,
-        ro_allocations
-      
+        ro_non_available_days
+      )
+    end
+
+    it "travel board hearing days removed" do
+      generate_hearing_days_schedule
+      # binding.pry
     end
   end
 end

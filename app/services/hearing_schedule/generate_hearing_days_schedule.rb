@@ -7,23 +7,23 @@ class HearingSchedule::GenerateHearingDaysSchedule
   attr_reader :available_days
   attr_reader :ros
 
-  def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {}, ro_allocations = [])
+  MULTIPLE_ROOM_ROS = %w(RO17 RO18)
+  MULTIPLE_NUM_OF_ROOMS = 2
+  DEFAULT_NUM_OF_ROOMS = 1
+
+  def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {})
     @co_non_availability_days = co_non_availability_days
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
     @ro_non_available_days = ro_non_available_days
     
     # handle RO information
-    @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
+    # @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
+    @ros = assign_ro_hearing_day_allocations(RegionalOffice::CITIES, schedule_period.allocations)
     @ros = filter_non_available_ro_days
-
-    assign_ro_hearing_day_allocations(ro_allocations)
-    filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
-  end
-
-  def assign_ro_hearing_day_allocations(ro_allocations)
-    binding.pry
-    # @ros.map { |ro_key, information| }
+    @ros = filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    
+    allocate_hearing_days_to_ros
   end
 
   def filter_non_availability_days(start_date, end_date)
@@ -39,7 +39,24 @@ class HearingSchedule::GenerateHearingDaysSchedule
     business_days
   end
 
+  def allocate_hearing_days_to_ros
+    binding.pry
+    
+  end
+
   private
+
+  def assign_ro_hearing_day_allocations(ro_cities, ro_allocations)
+    ro_allocations.reduce({}) do |acc, allocation|
+      acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge({
+        allocated_days: allocation.allocated_days,
+        available_days: @available_days,
+        num_of_rooms: MULTIPLE_ROOM_ROS.include?(allocation.regional_office) ?
+          MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS 
+      })
+      acc
+    end
+  end
 
   def filter_travel_board_hearing_days(start_date, end_date)
     travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
@@ -63,9 +80,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
   end
 
-  def assign_available_days_to_ros(ro_cities)
-    ro_cities.each_key { |ro_key| ro_cities[ro_key][:available_days] = @available_days }
-  end
+  # def assign_available_days_to_ros(ro_cities)
+  #   ro_cities.each_key { |ro_key| ro_cities[ro_key][:available_days] = @available_days }
+  # end
 
   # Filters out the non-available RO days from the board available days for
   # each RO.
