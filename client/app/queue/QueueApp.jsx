@@ -23,7 +23,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
-import QueueDetailView from './QueueDetailView';
+import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -69,7 +69,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <CaseDetailsView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
