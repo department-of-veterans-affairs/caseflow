@@ -16,6 +16,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # handle RO information
     @ros = assign_available_days_to_ros(RegionalOffice::CITIES)
     @ros = filter_non_available_ro_days
+
+    filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
   end
 
   def filter_non_availability_days(start_date, end_date)
@@ -32,6 +34,16 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   private
+
+  def filter_travel_board_hearing_days(start_date, end_date)
+    travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
+    tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
+
+    tb_master_records.map do |tb_master_record|
+      tb_days = (tb_master_record[:start_date]..tb_master_record[:end_date]).to_a
+      @ros[tb_master_record[:ro]][:available_days] -= tb_days
+    end
+  end
 
   def weekend?(day)
     day.saturday? || day.sunday?
@@ -63,7 +75,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   def filter_non_available_ro_days
     @ros.each_key do |ro_key|
-      @ros[ro_key][:available_days] = @ros[ro_key][:available_days] - (@ro_non_available_days[ro_key] || [])
+      @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key] || [])
     end
   end
 end

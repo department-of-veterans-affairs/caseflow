@@ -10,7 +10,8 @@ export const COLORS = {
   ...COMMON_COLORS,
   GOLD_LIGHTEST: '#FFF1D2',
   GOLD_LIGHT: '#F9C642',
-  GREY_BACKGROUND: '#f9f9f9'
+  GREY_BACKGROUND: '#f9f9f9',
+  PRIMARY: '#0071bc'
 };
 
 export const LOGO_COLORS = {
