@@ -16,7 +16,7 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Assign judge to hearing" do
     let!(:hearing) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create()
+      Generators::Vacols::Staff.create
       Generators::Vacols::CaseHearing.create(hearing_type: "C", hearing_date: "11-Jun-2017", room: "3")
     end
 
@@ -30,16 +30,17 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Modify RO in Travel Board Hearing", focus: true do
     let!(:hearing) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create()
+      Generators::Vacols::Staff.create
       Generators::Vacols::TravelBoardSchedule.create({})
     end
 
     it "Update RO in master TB schedule" do
       hearing
-      put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day", params: { hearing_type: "T", tbro: "RO27" }
+      put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day",
+          params: { hearing_type: "T", tbro: "RO27" }
       expect(response).to have_http_status(:success)
       # commented out as there is an issue getting back the updated hearing. Works in rails console.
-      #expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
+      # expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
     end
   end
 

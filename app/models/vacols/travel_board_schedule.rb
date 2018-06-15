@@ -5,10 +5,10 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
   attribute :tbleg, :integer
 
   COLUMN_NAMES = {
-      tbyear: :tbyear,
-      tbtrip: :tbtrip,
-      tbleg: :tbleg,
-      tbro: :tbro
+    tbyear: :tbyear,
+    tbtrip: :tbtrip,
+    tbleg: :tbleg,
+    tbro: :tbro
   }.freeze
 
   # :nocov:
@@ -46,7 +46,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
                           service: :vacols,
                           name: "update_hearing") do
       VACOLS::TravelBoardSchedule.where(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
-          .update_all(attrs.merge(tbmoduser: current_user_slogid, tbmodtime: VacolsHelper.local_time_with_utc_timezone))
+        .update_all(attrs.merge(tbmoduser: current_user_slogid, tbmodtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
@@ -64,5 +64,4 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
     slogid = RequestStore.store[:current_user].vacols_uniq_id
     slogid.nil? ? "" : slogid.upcase
   end
-
 end

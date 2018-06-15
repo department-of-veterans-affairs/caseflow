@@ -40,7 +40,7 @@ class Hearings::HearingDayController < ApplicationController
 
     HearingDay.update_hearing_day(hearing, params)
     render json: {
-        hearing: hearing.respond_to?(:hearing_type) ? json_hearings(hearing) : json_tb_hearings(hearing)
+      hearing: hearing.respond_to?(:hearing_type) ? json_hearings(hearing) : json_tb_hearings(hearing)
     }, status: :ok
   end
 
