@@ -228,12 +228,14 @@ class EvaluateDecisionView extends React.PureComponent {
         this case, please share <b>additional comments</b> below.
       </Alert>}
 
-      <div {...css(twoColumnContainerStyling, marginTop(4))}>
+      <div {...css(setWidth('100%'), marginTop(4))}>
+        <h3 {...css(headerStyling, { float: this.caseQualityIsDeficient() ? 'left' : '' })}>
+          {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+        </h3>
+        {this.caseQualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
+      </div>
+      <div {...twoColumnContainerStyling}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
-          <h3 {...css(headerStyling, { float: this.caseQualityIsDeficient() ? 'left' : '' })}>
-            {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-          </h3>
-          {this.caseQualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
           <CheckboxGroup
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
@@ -242,7 +244,7 @@ class EvaluateDecisionView extends React.PureComponent {
             value={this.state.areasOfImprovement}
             options={this.getAreasOfImprovement().slice(0, 6)} />
         </div>
-        <div className="cf-push-left" {...marginTop(2)}>
+        <div className="cf-push-left">
           <CheckboxGroup
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
