@@ -31,7 +31,7 @@ export default class CheckboxGroup extends React.Component {
       hideLabel,
       values,
       errorMessage,
-      hideErrorMessage,
+      errorState,
       getCheckbox
     } = this.props;
 
@@ -41,7 +41,7 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += '-inline';
     }
 
-    if (errorMessage) {
+    if (errorState || errorMessage) {
       fieldClasses += ' usa-input-error';
     }
 
@@ -52,7 +52,7 @@ export default class CheckboxGroup extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {label || name}
       </legend>
-      {errorMessage && !hideErrorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
+      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
       {options.map((option) => getCheckbox(option, onChange, values))}
     </fieldset>;
   }
@@ -79,6 +79,6 @@ CheckboxGroup.propTypes = {
   vertical: PropTypes.bool,
   values: PropTypes.object,
   errorMessage: PropTypes.string,
-  hideErrorMessage: PropTypes.bool,
+  errorState: PropTypes.bool,
   getCheckbox: PropTypes.func
 };

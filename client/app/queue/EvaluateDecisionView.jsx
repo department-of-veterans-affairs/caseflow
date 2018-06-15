@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
+import StringUtil from '../util/StringUtil';
+import scrollToComponent from 'react-scroll-to-component';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -52,6 +54,15 @@ class EvaluateDecisionView extends React.PureComponent {
     };
   }
 
+  // componentDidMount = () => this.setState(
+  //   _.pick(this.props.taskOptions, _.keys(this.state))
+  // );
+  componentDidMount = () => {
+    const newState = _.pick(this.props.taskOptions, _.keys(this.state));
+    console.table(newState);
+    this.setState(newState);
+  }
+
   getPageName = () => PAGE_TITLES.EVALUATE;
 
   getBreadcrumb = () => ({
@@ -59,7 +70,16 @@ class EvaluateDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
-  caseIsDeficient = () => this.state.caseQuality > 0 && this.state.caseQuality < 3;
+  caseQualityIsDeficient = () => this.state.caseQuality > 0 && this.state.caseQuality < 3;
+
+  // todo: consoldate w/IssueRemandReasonOptions.scrollTo
+  // moving these into DecisionViewBase didn't work for some reason :\
+  scrollTo = (dest =this, opts) => scrollToComponent(dest, _.defaults(opts, {
+    align: 'top',
+    duration: 1500,
+    ease: 'outCube',
+    offset: -10
+  }));
 
   validateForm = () => {
     const {
@@ -68,11 +88,18 @@ class EvaluateDecisionView extends React.PureComponent {
       caseQuality
     } = this.state;
 
-    if (!areasOfImprovement || !caseComplexity || !caseQuality) {
+    if (!caseComplexity) {
+      this.scrollTo(this.caseComplexityLabel);
       return false;
     }
 
-    if (this.caseIsDeficient() && _.isEmpty(areasOfImprovement)) {
+    if (!caseQuality) {
+      this.scrollTo(this.caseQualityLabel);
+      return false;
+    }
+
+    if (this.caseQualityIsDeficient() && _.isEmpty(areasOfImprovement)) {
+      this.scrollTo(this.deficientCaseQualityAlert);
       return false;
     }
 
@@ -101,6 +128,7 @@ class EvaluateDecisionView extends React.PureComponent {
       highlight
     } = this.props;
     const dateAssigned = moment(task.assigned_on);
+    const decisionSubmitted = moment(task.previous_task.assigned_on);
     const daysWorked = moment().startOf('day').
       diff(dateAssigned, 'days');
 
@@ -120,13 +148,15 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
       <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}<br />
-      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {}<br />
+      <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}<br />
       <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp;
       ({COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}<br />
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}</h2>
+      <h2 {...headerStyling} ref={(node) => this.caseComplexityLabel = node}>
+        {COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
+      </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
@@ -147,7 +177,9 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}</h2>
+      <h2 {...headerStyling} ref={(node) => this.caseQualityLabel = node}>
+        {COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
+      </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
@@ -172,40 +204,43 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
         }]} />
 
-      {this.caseIsDeficient() && <Alert type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
+      {this.caseQualityIsDeficient() && <Alert ref={(node) => this.deficientCaseQualityAlert = node}
+        type="info"
+        scrollOnAlert={false}
+        styling={qualityOfWorkAlertStyling}>
         Please provide more details about <b>quality of work</b>. If none of these apply to
         this case, please share <b>additional comments</b> below.
       </Alert>}
 
       <div {...css(twoColumnContainerStyling, marginTop(4))}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
-          <h3 {...css(headerStyling, { float: this.caseIsDeficient() ? 'left' : '' })}>
+          <h3 {...css(headerStyling, { float: this.caseQualityIsDeficient() ? 'left' : '' })}>
             {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
           </h3>
-          {this.caseIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
+          {this.caseQualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
           <CheckboxGroup
-            hideLabel vertical hideErrorMessage
+            hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={this.setAreasOfImprovement}
-            errorMessage={highlight && this.caseIsDeficient() && _.isEmpty(this.state.areasOfImprovement) ? "true" : null}
+            errorState={highlight && this.caseQualityIsDeficient() && _.isEmpty(this.state.areasOfImprovement)}
             value={this.state.areasOfImprovement}
             options={[{
-              id: 'theory-contention',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY
             }, {
-              id: 'case-law',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW
             }, {
-              id: 'statue-regulation',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE
             }, {
-              id: 'admin-procedure',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN
             }, {
-              id: 'relevant-records',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT
             }, {
-              id: 'lay-evidence',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY),
               label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY
             }]} />
         </div>
@@ -216,19 +251,19 @@ class EvaluateDecisionView extends React.PureComponent {
             onChange={this.setAreasOfImprovement}
             value={this.state.areasOfImprovement}
             options={[{
-              id: 'improperly-addressed',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED),
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED
             }, {
-              id: 'findings-not-supported',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED),
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED
             }, {
-              id: 'due-process',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS),
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS
             }, {
-              id: 'incomplete-remands',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS),
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS
             }, {
-              id: 'errors',
+              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS),
               label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
             }]} />
         </div>
@@ -256,7 +291,8 @@ EvaluateDecisionView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
   task: state.queue.loadedQueue.tasks[ownProps.appealId],
-  highlight: state.ui.highlightFormItems
+  highlight: state.ui.highlightFormItems,
+  taskOptions: state.queue.stagedChanges.taskDecision.opts
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

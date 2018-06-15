@@ -72,8 +72,8 @@ export const TASK_ACTIONS = {
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
 export const JUDGE_DECISION_TYPES = {
-  DISPATCH: 'Dispatch',
-  OMO_REQUEST: 'OMORequest'
+  DISPATCH: 'dispatch',
+  OMO_REQUEST: 'omo_request'
 };
 
 export const JUDGE_DECISION_OPTIONS = [{
