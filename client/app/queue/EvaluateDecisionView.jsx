@@ -107,6 +107,27 @@ class EvaluateDecisionView extends React.PureComponent {
     return true;
   };
 
+  getAreasOfImprovement = () => {
+    const opts = [
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY,
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW,
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE,
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN,
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT,
+      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY,
+      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED,
+      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED,
+      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS,
+      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS,
+      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
+    ];
+
+    return opts.map((opt) => ({
+      id: StringUtil.parameterize(opt),
+      label: opt
+    }));
+  }
+
   setAreasOfImprovement = (event) => {
     const factor = event.target.name;
     const newOpts = this.state.areasOfImprovement;
@@ -224,25 +245,7 @@ class EvaluateDecisionView extends React.PureComponent {
             onChange={this.setAreasOfImprovement}
             errorState={highlight && this.caseQualityIsDeficient() && _.isEmpty(this.state.areasOfImprovement)}
             value={this.state.areasOfImprovement}
-            options={[{
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY),
-              label: COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY
-            }]} />
+            options={this.getAreasOfImprovement().slice(0, 6)} />
         </div>
         <div className="cf-push-left" {...marginTop(2)}>
           <CheckboxGroup
@@ -250,22 +253,7 @@ class EvaluateDecisionView extends React.PureComponent {
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={this.setAreasOfImprovement}
             value={this.state.areasOfImprovement}
-            options={[{
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED),
-              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED),
-              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS),
-              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS),
-              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS
-            }, {
-              id: StringUtil.parameterize(COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS),
-              label: COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
-            }]} />
+            options={this.getAreasOfImprovement().slice(6)} />
         </div>
       </div>
 
