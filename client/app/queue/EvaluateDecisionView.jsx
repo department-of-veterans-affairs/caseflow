@@ -54,14 +54,9 @@ class EvaluateDecisionView extends React.PureComponent {
     };
   }
 
-  // componentDidMount = () => this.setState(
-  //   _.pick(this.props.taskOptions, _.keys(this.state))
-  // );
-  componentDidMount = () => {
-    const newState = _.pick(this.props.taskOptions, _.keys(this.state));
-    console.table(newState);
-    this.setState(newState);
-  }
+  componentDidMount = () => this.setState(
+    _.pick(this.props.taskOptions, _.keys(this.state))
+  );
 
   getPageName = () => PAGE_TITLES.EVALUATE;
 
@@ -74,7 +69,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
-  scrollTo = (dest =this, opts) => scrollToComponent(dest, _.defaults(opts, {
+  scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
     align: 'top',
     duration: 1500,
     ease: 'outCube',
@@ -90,50 +85,50 @@ class EvaluateDecisionView extends React.PureComponent {
 
     if (!caseComplexity) {
       this.scrollTo(this.caseComplexityLabel);
+
       return false;
     }
 
     if (!caseQuality) {
       this.scrollTo(this.caseQualityLabel);
+
       return false;
     }
 
     if (this.caseQualityIsDeficient() && _.isEmpty(areasOfImprovement)) {
       this.scrollTo(this.deficientCaseQualityAlert);
+
       return false;
     }
 
     this.props.setDecisionOptions(this.state);
+
     return true;
   };
 
-  getAreasOfImprovement = () => {
-    const opts = [
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY,
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW,
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE,
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN,
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT,
-      COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY,
-      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED,
-      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED,
-      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS,
-      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS,
-      COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
-    ];
-
-    return opts.map((opt) => ({
-      id: StringUtil.parameterize(opt),
-      label: opt
-    }));
-  }
+  getAreasOfImprovement = () => [
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY,
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW,
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE,
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN,
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT,
+    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY,
+    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED,
+    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED,
+    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS,
+    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS,
+    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
+  ].map((opt) => ({
+    id: StringUtil.parameterize(opt),
+    label: opt
+  }));
 
   setAreasOfImprovement = (event) => {
     const factor = event.target.name;
     const newOpts = this.state.areasOfImprovement;
 
     if (factor in this.state.areasOfImprovement) {
-      delete newOpts[factor]
+      delete newOpts[factor];
     } else {
       newOpts[factor] = true;
     }
@@ -184,7 +179,7 @@ class EvaluateDecisionView extends React.PureComponent {
         onChange={(caseComplexity) => this.setState({ caseComplexity })}
         value={this.state.caseComplexity}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseComplexity ? "Choose one" : null}
+        errorMessage={highlight && !this.state.caseComplexity ? 'Choose one' : null}
         options={[{
           value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
@@ -207,7 +202,7 @@ class EvaluateDecisionView extends React.PureComponent {
         onChange={(caseQuality) => this.setState({ caseQuality })}
         value={this.state.caseQuality}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseQuality ? "Choose one" : null}
+        errorMessage={highlight && !this.state.caseQuality ? 'Choose one' : null}
         options={[{
           value: '5',
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
