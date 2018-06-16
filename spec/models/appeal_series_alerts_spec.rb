@@ -27,7 +27,8 @@ describe AppealSeriesAlerts do
         bfddec: decision_date,
         bfdc: disposition,
         bfmpro: status,
-        case_hearings: hearings
+        case_hearings: hearings,
+        bfso: "F"
       )
     )
   end
@@ -46,7 +47,7 @@ describe AppealSeriesAlerts do
 
   context "#all" do
     context "form9_needed alert" do
-      it "includes an alert", focus: true do
+      it "includes an alert" do
         alert = alerts.find { |a| a[:type] == :form9_needed }
         expect(alert).to_not be_nil
         expect(alert[:details][:due_date]).to eq(55.days.from_now.to_date)
@@ -99,13 +100,8 @@ describe AppealSeriesAlerts do
       # Save appeal so hearings can be associated to it
       before { appeal.save! }
       let(:certification_date) { 3.days.ago }
-      let!(:hearing) do
-        Generators::Hearing.build(
-          appeal_id: appeal.id,
-          date: hearing_date,
-          disposition: :held,
-          hold_open: 30
-        )
+      let(:hearings) do
+        [build(:case_hearing, :disposition_held, hearing_date: hearing_date, holddays: 30)]
       end
       let(:hearing_date) { 1.day.ago }
 

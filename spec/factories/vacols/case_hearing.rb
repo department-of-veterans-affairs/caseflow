@@ -3,7 +3,6 @@ FactoryBot.define do
     hearing_type "V"
     hearing_date { Time.zone.today }
     room 1
-    sequence(:vdkey, 1_000_000)
 
     trait :disposition_held do
       hearing_disp "H"
@@ -22,12 +21,13 @@ FactoryBot.define do
     end
 
 
-    # after(:build) do |hearing, _evaluator|
-    #   # For video hearings we need to build the master record.
-    #   # binding.pry
-    #   if hearing.hearing_type == "V"
-    #     create(:case_hearing, hearing_type: "C", hearing_pkseq: hearing.vdkey + "RO16")
-    #   end
-    # end
+    after(:build) do |hearing, _evaluator|
+      # For video hearings we need to build the master record.
+      if hearing.hearing_type == "V"
+        master_record = create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO13")
+        # For some reason the returned record's sequence is one less than what is actually saved.
+        hearing.vdkey = master_record.hearing_pkseq + 1
+      end
+    end
   end
 end
