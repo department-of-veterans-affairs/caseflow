@@ -3,7 +3,6 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay
-
   # hearing types - may be better as separate class
   VIDEO = "V".freeze
   TRAVEL_BOARD = "T".freeze
