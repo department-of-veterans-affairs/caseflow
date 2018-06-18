@@ -62,19 +62,6 @@ class RemandReasonRepository
     end
   end
 
-  def self.remand_reason_from_vacols_remand_reason(reason)
-    {
-      code: reason.rmdval,
-      after_certification: reason.rmddev.eql?("R2")
-    }
-  end
-
-  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
-    VACOLS::RemandReason.load_remand_reasons(vacols_id, vacols_sequence_id).map do |reason|
-      remand_reason_from_vacols_remand_reason(reason)
-    end
-  end
-
   def self.update_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
     existing_remand_reasons = VACOLS::RemandReason.load_remand_reasons(vacols_id, vacols_sequence_id)
       .pluck(:rmdval)
