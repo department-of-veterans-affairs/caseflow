@@ -122,7 +122,6 @@ class AppealSeries < ApplicationRecord
   end
 
   def fetch_docket
-    binding.pry
     return unless active? && %w[original post_remand].include?(type_code) && form9_date && !aod
     DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
   end

@@ -43,6 +43,7 @@ describe AppealSeries do
       bfssoc2: ssoc_date2,
       bfd19: form9_date,
       certification_date: certification_date,
+      bfdrodec: 1.day.ago,
       bfddec: decision_date,
       bfdc: disposition,
       bfcurloc: location_code,
@@ -276,7 +277,7 @@ describe AppealSeries do
     end
 
     context "when it is in cavc status" do
-      let(:status) { "CAVC" }
+      let(:status) { "CAV" }
       it { is_expected.to eq(:cavc) }
     end
   end
@@ -387,6 +388,10 @@ describe AppealSeries do
     end
 
     context "when the appeal is aod" do
+      let(:latest_case) do
+        create(:case, :aod)
+      end
+
       it "does not have a docket" do
         expect(subject).to be_nil
       end
@@ -402,12 +407,14 @@ describe AppealSeries do
     end
   end
 
-  context "#docket_hash", focus: true do
+  context "#docket_hash" do
     subject { series.docket_hash }
 
-    before { DocketSnapshot.create }
+    context "when the case is aod" do
+      let(:latest_case) do
+        create(:case, :aod)
+      end
 
-    context "when the docket is nil" do
       it "returns nil" do
         expect(subject).to be_nil
       end
