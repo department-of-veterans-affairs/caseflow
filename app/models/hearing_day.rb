@@ -4,9 +4,10 @@
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay
 
-  VIDEO = "V"
-  TRAVEL_BOARD = "T"
-  CENTRAL_OFFICE = "C"
+  # hearing types - may be better as separate class
+  VIDEO = "V".freeze
+  TRAVEL_BOARD = "T".freeze
+  CENTRAL_OFFICE = "C".freeze
 
   class << self
     def create_hearing_day(hearing_hash)

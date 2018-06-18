@@ -7,7 +7,8 @@ RSpec.describe "Hearing Schedule", type: :request do
 
   describe "Create a schedule slot" do
     it "Create one schedule" do
-      post "/hearings/hearing_day", params: { hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "7-Jun-2018", room: "1" }
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::CENTRAL_OFFICE,
+                                              hearing_date: "7-Jun-2018", room: "1" }
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["room"]).to eq("1")
     end
@@ -17,7 +18,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearing) do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create
-      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "11-Jun-2017", room: "3")
+      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::CENTRAL_OFFICE,
+                                             hearing_date: "11-Jun-2017", room: "3")
     end
 
     it "Assign a judge to a schedule day" do
