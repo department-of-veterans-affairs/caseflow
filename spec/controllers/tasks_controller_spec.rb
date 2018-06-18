@@ -52,9 +52,8 @@ RSpec.describe TasksController, type: :controller do
     let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
-      @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
     end
 
     context "Co-located admin action" do
@@ -94,9 +93,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          unless response.status == 201 then
-            fail response.to_s
-          end
+          expect(response.status).to eq 201
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["status"]).to eq "assigned"
           expect(response_body["task"]["appeal_id"]).to eq appeal.id
@@ -152,7 +149,7 @@ RSpec.describe TasksController, type: :controller do
         let(:role) { :judge_role }
         let(:params) do
           {
-            "task_id": "#{@appeal.vacols_id}-0000-00-00",
+            "appeal_id": appeal.id,
             "assigned_to_id": attorney.id,
             "type": "JudgeCaseAssignmentToAttorney"
           }
@@ -162,19 +159,17 @@ RSpec.describe TasksController, type: :controller do
           allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
             judge: user,
             attorney: attorney,
-            vacols_id: @appeal.vacols_id
+            vacols_id: appeal.vacols_id
           ).and_return(true)
 
           post :create, params: { tasks: params }
-          unless response.status == 200 then
-            fail "Request failed with status #{response.status}:\n#{response.body}"
-          end
+          expect(response.status).to eq 201
         end
 
         context "when appeal is not found" do
           let(:params) do
             {
-              "task_id": "4646464-0000-00-00",
+              "appeal_id": 4_646_464,
               "assigned_to_id": attorney.id,
               "type": "JudgeCaseAssignmentToAttorney"
             }
@@ -189,7 +184,7 @@ RSpec.describe TasksController, type: :controller do
         context "when attorney is not found" do
           let(:params) do
             {
-              "task_id": "#{@appeal.vacols_id}-0000-00-00",
+              "appeal_id": appeal.id,
               "assigned_to_id": 7_777_777_777,
               "type": "JudgeCaseAssignmentToAttorney"
             }
@@ -212,9 +207,8 @@ RSpec.describe TasksController, type: :controller do
     let(:user) { FactoryBot.create(:user) }
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
-      @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
 
       FeatureToggle.enable!(:judge_assignment)
     end
@@ -251,11 +245,11 @@ RSpec.describe TasksController, type: :controller do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
           judge: user,
           attorney: attorney,
-          vacols_id: @appeal.vacols_id,
+          vacols_id: "3615398",
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
+        patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -440,7 +434,6 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :complete, params: { task_id: task_id, tasks: params }
-          puts response.body
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
           expect(response_body["task"]["location"]).to eq "bva_dispatch"
