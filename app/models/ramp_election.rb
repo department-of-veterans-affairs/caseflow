@@ -7,6 +7,8 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
+  class BGSEndProductSyncError < StandardError; end
+
   def self.sync_all!
     RampElection.active.each do |ramp_election|
       begin
@@ -15,6 +17,13 @@ class RampElection < RampReview
       rescue ActiveRecord::RecordInvalid => e
         Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
         Raven.capture_exception(e)
+      rescue VBMS::HTTPError => e
+        # Sometimes VBMS/BGS can flake since this job is run nightly. Just log the error and carry on.
+        Raven.capture_exception(e)
+      rescue BGS::ShareError => e
+        Raven.capture_exception(
+          BGSEndProductSyncError.new(e.message + "\n\n ramp_election_id: #{ramp_election.id}")
+        )
       end
     end
   end

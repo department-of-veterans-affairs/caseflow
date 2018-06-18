@@ -11,4 +11,9 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :document_id
   attribute :assigned_by_first_name
   attribute :assigned_by_last_name
+  attribute :previous_task do
+    {
+      assigned_on: object.assigned_at
+    }
+  end
 end

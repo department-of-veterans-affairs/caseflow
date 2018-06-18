@@ -127,7 +127,9 @@ class TasksController < ApplicationController
                                    :quality,
                                    :comment,
                                    factors_not_considered: [],
-                                   areas_for_improvement: [])
+                                   areas_for_improvement: [],
+                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                            remand_reasons: [:code, :after_certification]])
       .merge(judge: current_user, task_id: params[:task_id])
   end
 

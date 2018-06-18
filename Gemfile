@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :development do
+group :stubbed, :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -163,3 +163,5 @@ gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
 
 gem "holidays", "~> 6.4"
+
+gem "roo", "~> 2.7"

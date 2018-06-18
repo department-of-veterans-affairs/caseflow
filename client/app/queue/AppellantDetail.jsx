@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText, TASK_ACTIONS } from './constants';
+import { boldText } from './constants';
 import COPY from '../../COPY.json';
 import { DateString } from '../util/DateUtil';
 
@@ -44,7 +44,7 @@ export default class AppellantDetail extends React.PureComponent {
 
   veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
 
-  getDetails = ({ nameField, genderField, dobField, addressField, relationField }) => {
+  getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
       label: 'Name',
       value: this.getAppealAttr(nameField)
@@ -74,6 +74,14 @@ export default class AppellantDetail extends React.PureComponent {
         value: this.formatAddress(addressField)
       });
     }
+    if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {
+      const { city, key } = this.getAppealAttr(regionalOfficeField);
+
+      details.push({
+        label: 'Regional Office',
+        value: `${city} (${key.replace('RO', '')})`
+      });
+    }
 
     const getDetailField = ({ label, value }) => () => <React.Fragment>
       <span {...boldText}>{label}:</span> {value}
@@ -81,10 +89,6 @@ export default class AppellantDetail extends React.PureComponent {
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
-
-  componentDidMount = () => {
-    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.VIEW_APPELLANT_INFO);
-  }
 
   render = () => {
     let appellantDetails;
@@ -99,7 +103,8 @@ export default class AppellantDetail extends React.PureComponent {
             nameField: 'veteran_full_name',
             genderField: 'veteran_gender',
             dobField: 'veteran_date_of_birth',
-            addressField: 'appellant_address'
+            addressField: 'appellant_address',
+            regionalOfficeField: 'regional_office'
           })}
         </ul>
       </React.Fragment>;
@@ -122,7 +127,8 @@ export default class AppellantDetail extends React.PureComponent {
           {this.getDetails({
             nameField: 'veteran_full_name',
             genderField: 'veteran_gender',
-            dobField: 'veteran_date_of_birth'
+            dobField: 'veteran_date_of_birth',
+            regionalOfficeField: 'regional_office'
           })}
         </ul>
       </React.Fragment>;
@@ -136,6 +142,5 @@ export default class AppellantDetail extends React.PureComponent {
 }
 
 AppellantDetail.propTypes = {
-  analyticsSource: PropTypes.string.isRequired,
   appeal: PropTypes.object.isRequired
 };

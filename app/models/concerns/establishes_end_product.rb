@@ -1,18 +1,7 @@
 module EstablishesEndProduct
-  # Requires external dependencies:
-  # end_product_reference_id
-  # receipt_date
-  # end_product_code
-  # end_product_modifier
-  # end_product_station
-  # veteran
-  # established_at
-  # established_at=
-
   extend ActiveSupport::Concern
 
   class EstablishedEndProductNotFound < StandardError; end
-  class InvalidEndProductError < StandardError; end
 
   module ClassMethods
     def established
@@ -29,16 +18,12 @@ module EstablishesEndProduct
   end
 
   def establish_end_product!
-    fail InvalidEndProductError unless end_product_to_establish.valid?
+    end_product_establishment.perform!
 
-    establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      update!(
-        end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
-      )
-    end
-  rescue VBMS::HTTPError => error
-    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+    update!(
+      end_product_reference_id: end_product_establishment.reference_id,
+      established_at: Time.zone.now
+    )
   end
 
   def end_product_active?
@@ -86,10 +71,15 @@ module EstablishesEndProduct
     )
   end
 
-  def establish_claim_in_vbms(end_product)
-    VBMSService.establish_claim!(
-      claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+  def end_product_establishment
+    @end_product_establishment ||= EndProductEstablishment.new(
+      veteran: veteran,
+      reference_id: end_product_reference_id,
+      claim_date: receipt_date,
+      code: end_product_code,
+      valid_modifiers: [end_product_modifier],
+      station: "397",
+      cached_status: end_product_status
     )
   end
 
