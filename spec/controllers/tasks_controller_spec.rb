@@ -288,9 +288,6 @@ RSpec.describe TasksController, type: :controller do
             vacols_id: @appeal.vacols_id,
             created_in_vacols_date: "2018-04-18".to_date
           ).and_return(true)
-          ca = VACOLS::CaseAssignment.find_by(bfkey: @appeal.vacols_id)
-          ca.bfcurloc = @staff_user.slogid
-          ca.save
           today = Time.utc(2018, 4, 18)
           yesterday = Time.utc(2018, 4, 17)
           FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: today)
