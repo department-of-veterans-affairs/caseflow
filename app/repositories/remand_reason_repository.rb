@@ -9,20 +9,6 @@ class RemandReasonRepository
     VACOLS::RemandReason.delete_remand_reasons!(vacols_id, vacols_sequence_id, **kwargs)
   end
 
-  # :nocov:
-  def self.remand_reason_from_vacols_remand_reason(reason)
-    {
-      code: reason.rmdval,
-      after_certification: reason.rmddev.eql?("R2")
-    }
-  end
-
-  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
-    VACOLS::RemandReason.load_remand_reasons(vacols_id, vacols_sequence_id).map do |reason|
-      remand_reason_from_vacols_remand_reason(reason)
-    end
-  end
-
   # Returns remand reasons grouped by brieff.bfkey and the issue sequence id. For example:
   # {"465400"=>{},
   #  "1074694"=>
@@ -59,6 +45,20 @@ class RemandReasonRepository
 
         obj[vacols_id][issue_sequence_id] = formatted_reasons
       end
+    end
+  end
+
+  # :nocov:
+  def self.remand_reason_from_vacols_remand_reason(reason)
+    {
+      code: reason.rmdval,
+      after_certification: reason.rmddev.eql?("R2")
+    }
+  end
+
+  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
+    VACOLS::RemandReason.load_remand_reasons(vacols_id, vacols_sequence_id).map do |reason|
+      remand_reason_from_vacols_remand_reason(reason)
     end
   end
 
