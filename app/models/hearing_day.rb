@@ -4,9 +4,9 @@
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay
   HEARING_TYPES = {
-      video: "V",
-      travel: "T",
-      central_office: "C"
+    video: "V",
+    travel: "T",
+    central_office: "C"
   }.freeze
 
   class << self
