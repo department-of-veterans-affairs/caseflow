@@ -52,7 +52,7 @@ RSpec.describe TasksController, type: :controller do
     let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
@@ -154,16 +154,24 @@ RSpec.describe TasksController, type: :controller do
             "type": "JudgeCaseAssignmentToAttorney"
           }
         end
+        before do
+          @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
+        end
 
         it "should be successful" do
+          params = {
+            "appeal_id": @appeal.id,
+            "assigned_to_id": attorney.id,
+            "type": "JudgeCaseAssignmentToAttorney"
+          }
           allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
             judge: user,
             attorney: attorney,
-            vacols_id: appeal.vacols_id
+            vacols_id: @appeal.vacols_id
           ).and_return(true)
 
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          expect(response.status).to eq 200
         end
 
         context "when appeal is not found" do
@@ -240,16 +248,19 @@ RSpec.describe TasksController, type: :controller do
           "type": "JudgeCaseAssignmentToAttorney"
         }
       end
+      before do
+        @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
+      end
 
       it "should be successful" do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
           judge: user,
           attorney: attorney,
-          vacols_id: "3615398",
+          vacols_id: @appeal.vacols_id,
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
-        patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
+        patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
         expect(response.status).to eq 200
       end
 
@@ -270,9 +281,6 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when there is more than one decass record for the appeal" do
-        before do
-          @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
-        end
         it "should return the one created last" do
           allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
             judge: user,
