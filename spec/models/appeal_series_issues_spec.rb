@@ -40,7 +40,16 @@ describe AppealSeriesIssues do
 
   let(:original_issues) do
     [
-      create(:case_issue, :disposition_remanded, issseq: 1, issdcls: 6.months.ago),
+      create(
+        :case_issue,
+        :disposition_remanded,
+        issseq: 1,
+        issdcls: 6.months.ago,
+        issprog: "02",
+        isscode: "15",
+        isslev1: "03",
+        isslev2: "5252"
+      ),
       create(
         :case_issue,
         :disposition_allowed,
@@ -55,7 +64,7 @@ describe AppealSeriesIssues do
   end
 
   let(:post_remand_issues) do
-    [create(:case_issue, issseq: 1,issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
+    [create(:case_issue, issseq: 1, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
   end
 
   let(:cavc_decision) do
@@ -72,7 +81,7 @@ describe AppealSeriesIssues do
   context "#all" do
     subject { combined_issues }
 
-    context "when an issue spans a remand", focus: true do
+    context "when an issue spans a remand" do
       it "combines issues together" do
         expect(subject.length).to eq(2)
         expect(subject.first[:description]).to eq(
