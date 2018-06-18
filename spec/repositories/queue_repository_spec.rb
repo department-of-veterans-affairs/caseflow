@@ -1,4 +1,118 @@
 describe QueueRepository do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  context ".assign_case_to_attorney!" do
+    before do
+      RequestStore.store[:current_user] = judge
+      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    end
+
+    subject do
+      QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+    end
+
+    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "SAMD456", station_id: User::BOARD_STATION_ID) }
+    let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
+
+    let!(:judge_staff) do
+      create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
+    end
+    let!(:attorney_staff) do
+      create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id)
+    end
+
+    context "when vacols ID is valid" do
+      let(:vacols_id) { vacols_case.bfkey }
+
+      it "should assign a case to attorney" do
+        expect(vacols_case.bfcurloc).to eq judge_staff.slogid
+        expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
+        subject
+        expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
+        expect(vacols_case.bfattid).to eq attorney_staff.sattyid
+        decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
+        expect(decass.present?).to eq true
+        expect(decass.deatty).to eq attorney_staff.sattyid
+        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.deadusr).to eq judge_staff.slogid
+        expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
+        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+      end
+    end
+
+    context "when vacols ID is not valid" do
+      let(:vacols_id) { "09647474" }
+
+      it "should raise ActiveRecord::RecordNotFound" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  context ".reassign_case_to_attorney!" do
+    before do
+      RequestStore.store[:current_user] = judge
+      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    end
+
+    subject do
+      QueueRepository.reassign_case_to_attorney!(
+        judge: judge,
+        attorney: attorney,
+        vacols_id: vacols_case.bfkey,
+        created_in_vacols_date: date_added
+      )
+    end
+
+    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
+    let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
+    let!(:judge_staff) do
+      create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
+    end
+    let!(:attorney_staff) do
+      create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id)
+    end
+
+    context "when vacols ID and date added are valid" do
+      let(:date_added) { "2018-04-18".to_date }
+      let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
+
+      it "should assign a case to attorney" do
+        expect(vacols_case.bfcurloc).to eq judge_staff.slogid
+        expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 1
+        subject
+        expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
+        expect(vacols_case.bfattid).to eq attorney_staff.sattyid
+        decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
+        expect(decass.present?).to eq true
+        expect(decass.deatty).to eq attorney_staff.sattyid
+        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.demdusr).to eq judge_staff.slogid
+        expect(decass.deadtim).to eq date_added
+        expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
+        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+      end
+    end
+
+    context "when vacols ID and date added are not valid" do
+      let(:date_added) { "2018-04-18".to_date }
+      let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: "2014-04-18".to_date) }
+
+      it "should raise Caseflow::Error::QueueRepositoryError" do
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+      end
+    end
+  end
+
   context ".filter_duplicate_tasks" do
     subject { QueueRepository.filter_duplicate_tasks(tasks) }
 
