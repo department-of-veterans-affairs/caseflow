@@ -10,9 +10,9 @@ class UserRepository
 
     # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
-    def vacols_role(css_id)
+    def vacols_roles(css_id)
       staff_record = staff_record_by_css_id(css_id)
-      role_based_on_staff_fields(staff_record) if staff_record
+      roles_based_on_staff_fields(staff_record) if staff_record
     end
 
     def can_access_task?(css_id, vacols_id)
@@ -52,14 +52,15 @@ class UserRepository
 
     private
 
-    def role_based_on_staff_fields(staff_record)
+    def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj
       when "J"
-        "Judge"
+        ["Judge"]
       when "A"
-        staff_record.sattyid ? "Attorney" : "Judge"
+        staff_record.sattyid ? ["Attorney", "Judge"] : ["Judge"]
       when nil
-        "Attorney" if staff_record.sattyid
+        ["Attorney"] if staff_record.sattyid
+        ["Colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
       end
     end
 
