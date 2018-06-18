@@ -2,7 +2,7 @@ class LegacyTask
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  ATTRS = [:id, :appeal_id, :assigned_to, :due_on, :assigned_at, :docket_name,
+  ATTRS = [:id, :appeal_id, :assigned_to, :due_on, :assigned_at, :docket_name, :previous_task,
            :docket_date, :added_by, :task_id, :type, :document_id, :assigned_by].freeze
 
   attr_accessor(*ATTRS)

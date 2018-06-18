@@ -70,11 +70,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def self.create_unassigned_hearing(hearing_hash)
-    # No data stored in Caseflow DB for initial implementation
-    repository.create_vacols_hearing!(hearing_hash)
-  end
-
   def regional_office_timezone
     HearingMapper.timezone(regional_office_key)
   end
