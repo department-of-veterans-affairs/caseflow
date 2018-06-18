@@ -19,16 +19,16 @@ import {
   saveEditedAppealIssue
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
-import { getUndecidedIssues } from './utils';
 import {
   fullWidth,
+  marginBottom,
+  marginLeft,
   PAGE_TITLES,
   USER_ROLES,
   ISSUE_DISPOSITIONS
 } from './constants';
+import { getUndecidedIssues } from './utils';
 
-const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
-const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
 const tableStyling = css({
   '& tr': {
     borderBottom: 'none'
