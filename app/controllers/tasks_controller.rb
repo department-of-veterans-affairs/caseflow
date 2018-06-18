@@ -59,11 +59,7 @@ class TasksController < ApplicationController
     return invalid_record_error(task) unless task.valid?
     if task_class == JudgeCaseAssignmentToAttorney then
       render json: {
-        task:
-          ActiveModelSerializers::SerializableResource.new(
-            AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user),
-            serializer: ::WorkQueue::TaskSerializer
-          ).as_json
+        task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
       }
       return
     end
@@ -77,11 +73,7 @@ class TasksController < ApplicationController
     return invalid_record_error(task) unless task.valid?
     if task_class == JudgeCaseAssignmentToAttorney then
       render json: {
-        task:
-          ActiveModelSerializers::SerializableResource.new(
-            AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user),
-            serializer: ::WorkQueue::TaskSerializer
-          ).as_json
+        task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
       }
       return
     end
@@ -171,6 +163,13 @@ class TasksController < ApplicationController
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::TaskSerializer
+    ).as_json
+  end
+
+  def json_task(task)
+    ActiveModelSerializers::SerializableResource.new(
+      task,
+      serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end
