@@ -21,8 +21,7 @@ describe AppealHistory do
             create(:case_issue, issprog: "02", isscode: "02"),
             create(:case_issue, issprog: "02", isscode: "03")
           ]
-      )
-    )
+      ))
   end
 
   let(:another_original) do
@@ -36,8 +35,7 @@ describe AppealHistory do
           [
             create(:case_issue, issprog: "02", isscode: "03")
           ]
-      )
-    )
+      ))
   end
 
   let(:merged) do
@@ -49,8 +47,7 @@ describe AppealHistory do
         bfkey: "7654322",
         bfcorlid: vbms_id,
         bfddec: 500.days.ago.to_date
-      )
-    )
+      ))
   end
 
   let(:another_merged) do
@@ -62,8 +59,7 @@ describe AppealHistory do
         bfkey: "7654321",
         bfcorlid: vbms_id,
         bfddec: 500.days.ago.to_date
-      )
-    )
+      ))
   end
 
   let(:history) { AppealHistory.new(vbms_id: vbms_id) }
@@ -112,8 +108,7 @@ describe AppealHistory do
             :disposition_granted_by_aoj,
             bfcorlid: vbms_id,
             bfkey: vacols_id
-          )
-        )
+          ))
       end
 
       context "when there is a matching parent" do
@@ -147,8 +142,7 @@ describe AppealHistory do
             :type_post_remand,
             bfcorlid: vbms_id,
             bfdpdcn: prior_decision_date
-          )
-        )
+          ))
       end
 
       context "when there is a single matching parent" do
@@ -183,8 +177,7 @@ describe AppealHistory do
             bfcorlid: vbms_id,
             bfdpdcn: 365.days.ago.to_date,
             case_issues: issues
-          )
-        )
+          ))
       end
 
       context "when there is a single matching parent" do
@@ -248,8 +241,7 @@ describe AppealHistory do
               create(:case_issue, issdesc: description_1),
               create(:case_issue, issdesc: description_2)
             ]
-          )
-        )
+          ))
       end
 
       context "when there is a matching issue" do

@@ -29,8 +29,7 @@ describe AppealSeriesAlerts do
         bfmpro: status,
         case_hearings: hearings,
         bfso: "F"
-      )
-    )
+      ))
   end
 
   let(:series) { AppealSeries.create(appeals: [appeal]) }

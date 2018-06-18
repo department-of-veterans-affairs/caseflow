@@ -17,25 +17,23 @@ describe AppealSeriesIssues do
 
   let(:original) do
     create(:legacy_appeal, vacols_case: create(
-        :case,
-        :type_original,
-        :disposition_remanded,
-        bfkey: vacols_id,
-        bfddec: 6.months.ago,
-        case_issues: original_issues
-      )
-    )
+      :case,
+      :type_original,
+      :disposition_remanded,
+      bfkey: vacols_id,
+      bfddec: 6.months.ago,
+      case_issues: original_issues
+    ))
   end
 
   let(:post_remand) do
     create(:legacy_appeal, vacols_case: create(
-        :case,
-        :type_post_remand,
-        :disposition_remanded,
-        bfddec: 6.months.ago,
-        case_issues: post_remand_issues
-      )
-    )
+      :case,
+      :type_post_remand,
+      :disposition_remanded,
+      bfddec: 6.months.ago,
+      case_issues: post_remand_issues
+    ))
   end
 
   let(:original_issues) do

@@ -20,7 +20,6 @@ FactoryBot.define do
       hearing_disp "N"
     end
 
-
     after(:build) do |hearing, _evaluator|
       # For video hearings we need to build the master record.
       if hearing.hearing_type == "V"
