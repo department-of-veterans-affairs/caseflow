@@ -2,6 +2,8 @@ import { after, css, merge } from 'glamor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
@@ -41,7 +43,7 @@ const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
-export default class CaseSnapshot extends React.PureComponent {
+export class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
       const today = moment();
@@ -129,3 +131,10 @@ CaseSnapshot.propTypes = {
   task: PropTypes.object,
   userRole: PropTypes.string
 };
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'featureToggles', 'userRole'),
+  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+});
+
+export default connect(mapStateToProps)(CaseSnapshot);

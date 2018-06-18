@@ -31,6 +31,7 @@ export default class CheckboxGroup extends React.Component {
       hideLabel,
       values,
       errorMessage,
+      errorState,
       getCheckbox
     } = this.props;
 
@@ -40,7 +41,7 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += '-inline';
     }
 
-    if (errorMessage) {
+    if (errorState || errorMessage) {
       fieldClasses += ' usa-input-error';
     }
 
@@ -59,7 +60,8 @@ export default class CheckboxGroup extends React.Component {
 
 CheckboxGroup.defaultProps = {
   required: false,
-  getCheckbox: renderCheckbox
+  getCheckbox: renderCheckbox,
+  hideErrorMessage: false
 };
 
 CheckboxGroup.propTypes = {
@@ -77,5 +79,6 @@ CheckboxGroup.propTypes = {
   vertical: PropTypes.bool,
   values: PropTypes.object,
   errorMessage: PropTypes.string,
+  errorState: PropTypes.bool,
   getCheckbox: PropTypes.func
 };
