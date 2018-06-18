@@ -32,11 +32,11 @@ class JudgeCaseAssignmentToAttorney
     end
   end
 
-  private
-
   def vacols_id
     super || LegacyAppeal.find(appeal_id).vacols_id
   end
+
+  private
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"

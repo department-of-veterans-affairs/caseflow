@@ -207,7 +207,7 @@ RSpec.describe TasksController, type: :controller do
     let(:user) { FactoryBot.create(:user) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
       FeatureToggle.enable!(:judge_assignment)
@@ -270,6 +270,9 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when there is more than one decass record for the appeal" do
+        before do
+          @appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, staff: @staff_user))
+        end
         it "should return the one created last" do
           allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
             judge: user,
@@ -277,6 +280,9 @@ RSpec.describe TasksController, type: :controller do
             vacols_id: @appeal.vacols_id,
             created_in_vacols_date: "2018-04-18".to_date
           ).and_return(true)
+          ca = VACOLS::CaseAssignment.find_by(bfkey: @appeal.vacols_id)
+          ca.bfcurloc = @staff_user.slogid
+          ca.save
           today = Time.utc(2018, 4, 18)
           yesterday = Time.utc(2018, 4, 17)
           FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: today)

@@ -80,6 +80,7 @@ class TasksController < ApplicationController
     if task_class == JudgeCaseAssignmentToAttorney then
       case_assignments =
         VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", task.vacols_id).sort_by(&:created_at)
+      puts case_assignments.length
       render json: {
         task:
           ActiveModelSerializers::SerializableResource.new(
