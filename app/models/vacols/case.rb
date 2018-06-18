@@ -215,7 +215,9 @@ class VACOLS::Case < VACOLS::Record
 
     # Note: we use conn.quote here from ActiveRecord to deter SQL injection
     location = conn.quote(location)
-    user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
+
+    vacols_user_id = RequestStore.store[:current_user].vacols_uniq_id || ""
+    user_db_id = conn.quote(vacols_user_id.upcase)
     case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",

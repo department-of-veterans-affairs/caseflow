@@ -49,11 +49,18 @@ export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
 export const subHeadTextStyle = css(disabledLinkStyle, {
   fontSize: 'small'
 });
+export const marginTop = (margin) => css({ marginTop: `${margin}rem` });
+export const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
+export const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
+
+export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
-  QUEUE_TASK: 'Queue Task'
+  QUEUE_TASK: 'Queue Task',
+  EVALUATE_DECISION: 'Evaluate Decision'
 };
 
 export const TASK_ACTIONS = {
@@ -65,8 +72,8 @@ export const TASK_ACTIONS = {
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
 export const JUDGE_DECISION_TYPES = {
-  DISPATCH: 'Dispatch',
-  OMO_REQUEST: 'OMORequest'
+  DISPATCH: 'dispatch',
+  OMO_REQUEST: 'omo_request'
 };
 
 export const JUDGE_DECISION_OPTIONS = [{
@@ -114,6 +121,9 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
+// max length of VACOLS issue description field `ISSDESC`
+export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+
 export const USER_ROLES = {
   ATTORNEY: 'Attorney',
   JUDGE: 'Judge'
@@ -127,5 +137,6 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  }
+  },
+  EVALUATE: 'Evaluate Decision'
 };

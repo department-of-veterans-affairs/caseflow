@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import RatedIssueCounter from '../../components/RatedIssueCounter';
-import NonRatedIssues from './nonRatedIssues';
-import RatedIssues from './ratedIssues';
-import { Redirect } from 'react-router-dom';
+import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
+import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
+import { setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import { completeIntake } from '../../actions/ama';
-import { bindActionCreators } from 'redux';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
@@ -53,6 +53,27 @@ class Finish extends React.PureComponent {
     </div>;
   }
 }
+
+const NonRatedIssues = connect(
+  ({ appeal }) => ({
+    nonRatedIssues: appeal.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    addNonRatedIssue,
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssuesUnconnected);
+
+const RatedIssues = connect(
+  ({ appeal, intake }) => ({
+    intakeId: intake.id,
+    reviewState: appeal
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
