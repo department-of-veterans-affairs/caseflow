@@ -7,32 +7,34 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 
+const containingDivStyling = css({
+  borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
+  display: 'block',
+  // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
+  margin: '-2rem -4rem 0 -4rem',
+  padding: '0 0 1.5rem 4rem',
+
+  '& > *': {
+    display: 'inline-block',
+    margin: '0'
+  }
+});
+
 const headerStyling = css({
-  float: 'left',
-  listStyleType: 'none',
-  margin: 0,
-  marginTop: '-2rem'
+  paddingRight: '2.5rem'
 });
 
 const listStyling = css({
-  float: 'left',
   listStyleType: 'none',
-  margin: '-1.5rem 0 0 1rem',
-  padding: 0
+  verticalAlign: 'super',
+  padding: '1rem 0 0 0'
 });
 
 const listItemStyling = css({
-  float: 'left',
-  padding: '0.5rem 1.5rem',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` }
-});
-
-const horizontalRuleStyling = css({
-  border: 0,
-  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
-  clear: 'both',
-  // Offsets the padding from .cf-app-segment--alt to make the hr full width.
-  margin: '4rem -4rem 0 -4rem'
+  display: 'inline',
+  padding: '0.5rem 1.5rem 0.5rem 0',
+  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
 export default class CaseTitle extends React.PureComponent {
@@ -72,11 +74,10 @@ CaseTitle.defaultProps = {
 };
 
 class CaseTitleScaffolding extends React.PureComponent {
-  render = () => <React.Fragment>
+  render = () => <div {...containingDivStyling}>
     <h1 {...headerStyling}>{this.props.heading}</h1>
     <ul {...listStyling}>
       {this.props.children.map((child, i) => <li key={i} {...listItemStyling}>{child}</li>)}
     </ul>
-    <hr {...horizontalRuleStyling} />
-  </React.Fragment>;
+  </div>;
 }
