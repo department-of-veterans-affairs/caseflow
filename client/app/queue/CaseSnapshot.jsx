@@ -30,25 +30,16 @@ const definitionListStyling = css({
   '& dt': merge(
     after({ content: ':' }),
     {
+      color: COLORS.GREY_MEDIUM,
       float: 'left',
       fontSize: '1.5rem',
-      marginRight: '0.5rem'
+      marginRight: '0.5rem',
+      textTransform: 'uppercase'
     }
   )
 });
 
-const aboutListStyling = css({
-  '& dt': {
-    color: COLORS.GREY_MEDIUM,
-    textTransform: 'uppercase'
-  }
-});
-
-const assignmentListStyling = css({
-  '& dt': { fontWeight: 'bold' }
-});
-
-const aboutHeadingStyling = css({
+const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
@@ -107,8 +98,8 @@ export class CaseSnapshot extends React.PureComponent {
   render = () => {
     return <div className="usa-grid" {...snapshotParentContainerStyling}>
       <div className="usa-width-one-fourth">
-        <h3 {...aboutHeadingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
-        <dl {...definitionListStyling} {...aboutListStyling}>
+        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
+        <dl {...definitionListStyling}>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderAppealType(this.props.appeal)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
@@ -117,7 +108,8 @@ export class CaseSnapshot extends React.PureComponent {
         </dl>
       </div>
       <div className="usa-width-one-fourth">
-        <dl {...definitionListStyling} {...assignmentListStyling}>
+        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
+        <dl {...definitionListStyling}>
           {this.taskAssignmentListItems()}
         </dl>
       </div>
