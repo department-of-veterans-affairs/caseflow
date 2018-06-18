@@ -88,6 +88,12 @@ describe RemandReasonRepository do
     it "creates remand reasons" do
       subject
       expect(VACOLS::RemandReason.all.length).to eq(1)
+
+      remand_reason = VACOLS::RemandReason.all.first
+      expect(remand_reason.rmdval).to eq "AB"
+      expect(remand_reason.rmddev).to eq "R2"
+      expect(remand_reason.rmdissseq).to eq 3
+      expect(remand_reason.rmdkey).to eq "123456"
     end
   end
 
@@ -109,6 +115,7 @@ describe RemandReasonRepository do
       it "deletes a specific remand reason" do
         subject
         expect(VACOLS::RemandReason.all.length).to eq(2)
+        expect(VACOLS::RemandReason.all.map(&:rmdval).include?("DI")).to be_falsey
       end
     end
 
