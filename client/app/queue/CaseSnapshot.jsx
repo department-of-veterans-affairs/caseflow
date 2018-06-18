@@ -13,6 +13,7 @@ import { DateString } from '../util/DateUtil';
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'flex',
+  flexWrap: 'wrap',
   lineHeight: '3rem',
   marginTop: '3rem',
   padding: '2rem 0',
@@ -39,6 +40,19 @@ const definitionListStyling = css({
 
 const headingStyling = css({
   marginBottom: '0.5rem'
+});
+
+const snapshotChildResponsiveWrapFixStyling = css({
+  '@media(max-width: 1200px)': {
+    '& > .usa-width-one-half': {
+      borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+      margin: '2rem 3rem 0 3rem',
+      marginRight: '3rem !important',
+      paddingTop: '2rem',
+      width: '100% !important'
+    },
+    '& > div:nth-child(2)': { borderRight: 'none' }
+  }
 });
 
 export default class CaseSnapshot extends React.PureComponent {
@@ -94,7 +108,7 @@ export default class CaseSnapshot extends React.PureComponent {
   };
 
   render = () => {
-    return <div className="usa-grid" {...snapshotParentContainerStyling}>
+    return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <dl {...definitionListStyling}>
