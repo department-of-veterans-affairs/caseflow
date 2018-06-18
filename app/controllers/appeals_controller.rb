@@ -61,13 +61,9 @@ class AppealsController < ApplicationController
                           name: "AppealsController.index") do
 
       # rubocop:disable Lint/HandleExceptions
-      appeals = []
+      appeals = Appeal.where(veteran_file_number: file_number).to_a
       begin
         appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
-      rescue ActiveRecord::RecordNotFound
-      end
-      begin
-        appeals.concat(Appeal.where(veteran_file_number: file_number))
       rescue ActiveRecord::RecordNotFound
       end
       # rubocop:enable Lint/HandleExceptions
