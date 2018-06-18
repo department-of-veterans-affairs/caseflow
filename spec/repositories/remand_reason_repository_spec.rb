@@ -107,7 +107,7 @@ describe RemandReasonRepository do
       let(:kwargs) { { rmdval: "DI" } }
 
       it "deletes a specific remand reason" do
-        RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+        remand_reasons.map(&:save)
         subject
         expect(VACOLS::RemandReason.all.length).to eq(2)
       end
@@ -117,7 +117,7 @@ describe RemandReasonRepository do
       let(:kwargs) { {} }
 
       it "deletes all remand reasons for an issue" do
-        RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
+        remand_reasons.map(&:save)
         subject
         expect(VACOLS::RemandReason.all.length).to eq(0)
       end
