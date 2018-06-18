@@ -29,7 +29,7 @@ class UserRepository
     end
 
     def vacols_group_id(css_id)
-      staff_record_by_css_id(css_id).try(:stitle)
+      staff_record_by_css_id(css_id).try(:stitle) || ""
     end
 
     def vacols_full_name(css_id)

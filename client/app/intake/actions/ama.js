@@ -1,20 +1,17 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatDateStringForApi } from '../../util/DateUtil';
-import { formatRatingData } from '../util';
+import { formatRatingData, prepareReviewData } from '../util';
 import _ from 'lodash';
 
 const analytics = true;
 
-export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
+export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
   });
 
-  const data = {
-    receipt_date: formatDateStringForApi(supplementalClaim.receiptDate)
-  };
+  const data = prepareReviewData(intakeData, intakeType);
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
     then(
@@ -48,13 +45,13 @@ export const submitReview = (intakeId, supplementalClaim) => (dispatch) => {
     );
 };
 
-export const completeIntake = (intakeId, supplementalClaim) => (dispatch) => {
+export const completeIntake = (intakeId, intakeData) => (dispatch) => {
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START,
     meta: { analytics }
   });
 
-  const data = formatRatingData(supplementalClaim);
+  const data = formatRatingData(intakeData);
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(

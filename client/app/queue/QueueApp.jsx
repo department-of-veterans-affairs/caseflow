@@ -22,7 +22,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
-import QueueDetailView from './QueueDetailView';
+import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -55,9 +55,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
@@ -70,7 +68,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <CaseDetailsView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
