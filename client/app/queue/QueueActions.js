@@ -207,24 +207,25 @@ export const taskInitialAssigned = (task) => ({
   }
 });
 
-export const initialAssignTasksToUser = ({ idsOfTasks, assigneeId }) => (dispatch) => {
-  return Promise.all(idsOfTasks.map((taskId) => {
+export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) => {
+  /*
+  return Promise.all(appealIdsOfTasks.map((appealId) => {
     return Promise.resolve('{"task":{"vacols_id":"3662856","type":"JudgeCaseAssignmentToAttorney","assigned_by":{"full_name":"Anjali Abshire","email":null,"roles":["BVAAABSHIRE"],"id":747,"station_id":"101","css_id":"BVAAABSHIRE","selected_regional_office":null,"display_name":"BVAAABSHIRE (VACO)"},"assigned_to":{"id":51,"station_id":"101","css_id":"BVAEERDMAN","full_name":"Ezra Erdman","email":null,"roles":[],"selected_regional_office":null,"display_name":"BVAEERDMAN (VACO)"},"validation_context":null,"errors":{}}}').
       then(JSON.parse).
       then(
         (resp) => {
           dispatch(taskInitialAssigned(resp.task));
         });
-
-    /*
+  })).catch((resp) => console.log('error', resp));
+  */
+  return Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
-      '/tasks', {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', vacols_id: taskId}}}).
+        '/tasks',
+        {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', appeal_id: appealId}}}).
       then(JSON.parse).
       then(
         (resp) => {
           dispatch(taskInitialAssigned(resp.task));
         });
-    */
-  })).
-    catch((resp) => console.log('error', resp));
+  })).catch((resp) => console.log('error', resp));
 };

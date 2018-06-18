@@ -35,10 +35,10 @@ class AssignWidgetPresentational extends React.PureComponent {
     this.state = { statusMessage: null };
   }
 
-  idsOfSelectedTasks = () => {
+  appealIdsOfSelectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
-      (selected, taskId) => (selected ? [taskId] : []));
+      (selected, id) => (selected ? [this.props.tasks[id].attributes.appealId] : []));
   }
 
   handleButtonClick = () => {
@@ -55,7 +55,7 @@ class AssignWidgetPresentational extends React.PureComponent {
       return;
     }
 
-    if (this.idsOfSelectedTasks().length === 0) {
+    if (this.appealIdsOfSelectedTasks().length === 0) {
       this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
           <h3 className="usa-alert-heading">No tasks select</h3>
@@ -67,7 +67,7 @@ class AssignWidgetPresentational extends React.PureComponent {
     }
 
     initialAssignTasksToUser(
-      { idsOfTasks: this.idsOfSelectedTasks(),
+      { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
         assigneeId: selectedAssigneeOfUser[userId] });
   }
 
@@ -98,7 +98,7 @@ class AssignWidgetPresentational extends React.PureComponent {
         <p>&nbsp;</p>
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.idsOfSelectedTasks().length} case(s)`}
+          name={`Assign ${this.appealIdsOfSelectedTasks().length} case(s)`}
           loading={false}
           loadingText="Loading" />
       </div>
