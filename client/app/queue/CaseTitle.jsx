@@ -27,7 +27,7 @@ const headerStyling = css({
 const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
-  padding: '0'
+  padding: '1rem 0 0 0'
 });
 
 const listItemStyling = css({
