@@ -3,54 +3,59 @@ describe AppealSeriesIssues do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:vacols_id) { "12345678" }
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [original, post_remand] }
 
   let(:original) do
-    Generators::LegacyAppeal.build(
-      vacols_id: vacols_id,
-      decision_date: 6.months.ago,
-      disposition: "Remanded",
-      issues: original_issues
+    create(:legacy_appeal, vacols_case: create(
+        :case,
+        :type_original,
+        :disposition_remanded,
+        bfkey: vacols_id,
+        bfddec: 6.months.ago,
+        case_issues: original_issues
+      )
     )
   end
 
   let(:post_remand) do
-    Generators::LegacyAppeal.build(
-      type: "Post Remand",
-      prior_decision_date: 6.months.ago,
-      disposition: "Remanded",
-      issues: post_remand_issues
+    create(:legacy_appeal, vacols_case: create(
+        :case,
+        :type_post_remand,
+        :disposition_remanded,
+        bfddec: 6.months.ago,
+        case_issues: post_remand_issues
+      )
     )
   end
 
   let(:original_issues) do
     [
-      Generators::Issue.build(
-        id: vacols_id,
-        vacols_sequence_id: 1,
-        disposition: :remanded,
-        close_date: 6.months.ago
-      ),
-      Generators::Issue.build(
-        id: vacols_id,
-        vacols_sequence_id: 2,
-        codes: %w[02 15 04 5301],
-        labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
-        disposition: :allowed,
-        close_date: 6.months.ago
+      create(:case_issue, :disposition_remanded, issseq: 1, issdcls: 6.months.ago),
+      create(
+        :case_issue,
+        :disposition_allowed,
+        issseq: 2,
+        issdcls: 6.months.ago,
+        issprog: "02",
+        isscode: "15",
+        isslev1: "04",
+        isslev2: "5301"
       )
     ]
   end
 
   let(:post_remand_issues) do
-    [Generators::Issue.build(
-      id: vacols_id,
-      vacols_sequence_id: 1,
-      disposition: nil,
-      close_date: nil
-    )]
+    [create(:case_issue, issseq: 1,issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
   end
 
   let(:cavc_decision) do
@@ -67,7 +72,7 @@ describe AppealSeriesIssues do
   context "#all" do
     subject { combined_issues }
 
-    context "when an issue spans a remand" do
+    context "when an issue spans a remand", focus: true do
       it "combines issues together" do
         expect(subject.length).to eq(2)
         expect(subject.first[:description]).to eq(
@@ -113,13 +118,14 @@ describe AppealSeriesIssues do
     context "when an appeal was merged" do
       let(:appeals) { [original, merged_appeal] }
       let(:merged_appeal) do
-        Generators::LegacyAppeal.build(
-          type: "Post Remand",
-          prior_decision_date: 6.months.ago,
-          decision_date: 3.months.ago,
-          disposition: "Merged",
-          issues: [Generators::Issue.build(disposition: :merged, close_date: 3.months.ago)]
-        )
+        create(:legacy_appeal, vacols_case: create(
+          :case,
+          :type_post_remand,
+          :disposition_merged,
+          bfddec: 3.months.ago,
+          bfdpdcn: 6.months.ago,
+          case_issues: [create(:case_issue, :disposition_merged, issdcls: 3.months.ago)]
+        ))
       end
 
       it "does not show as a last_action" do

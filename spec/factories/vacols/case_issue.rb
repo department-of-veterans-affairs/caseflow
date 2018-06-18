@@ -26,6 +26,10 @@ FactoryBot.define do
       issdc "3"
     end
 
+    trait :disposition_merged do
+      issdc "M"
+    end
+
     trait :disposition_denied do
       issdc "4"
     end
