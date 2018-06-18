@@ -44,6 +44,7 @@ class Hearings::HearingDayController < ApplicationController
     }, status: :ok
   end
 
+  # :nocov:
   def logo_name
     "Hearing Schedule"
   end

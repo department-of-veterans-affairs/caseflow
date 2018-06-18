@@ -3,10 +3,11 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay
-  # hearing types - may be better as separate class
-  VIDEO = "V".freeze
-  TRAVEL_BOARD = "T".freeze
-  CENTRAL_OFFICE = "C".freeze
+  HEARING_TYPES = {
+      video: "V",
+      travel: "T",
+      central_office: "C"
+  }.freeze
 
   class << self
     def create_hearing_day(hearing_hash)
