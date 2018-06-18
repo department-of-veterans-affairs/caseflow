@@ -37,16 +37,22 @@ const horizontalRuleStyling = css({
 
 export default class CaseTitle extends React.PureComponent {
   render = () => {
-    const { appeal, vacolsId, redirectUrl } = this.props;
+    const {
+      appeal,
+      vacolsId,
+      redirectUrl,
+      taskType,
+      analyticsSource
+    } = this.props;
 
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
       <React.Fragment>Veteran ID: <b>{appeal.attributes.vbms_id}</b></React.Fragment>
       <ReaderLink
         vacolsId={vacolsId}
-        analyticsSource={CATEGORIES.QUEUE_TASK}
+        analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
         redirectUrl={redirectUrl}
         appeal={appeal}
-        taskType="Draft Decision"
+        taskType={taskType}
         message={<React.Fragment>View <AppealDocumentCount appeal={appeal} /> documents</React.Fragment>} />
     </CaseTitleScaffolding>;
   }
@@ -55,7 +61,14 @@ export default class CaseTitle extends React.PureComponent {
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
   redirectUrl: PropTypes.string.isRequired,
-  vacolsId: PropTypes.string.isRequired
+  vacolsId: PropTypes.string.isRequired,
+  taskType: PropTypes.string,
+  analyticsSource: PropTypes.string
+};
+
+CaseTitle.defaultProps = {
+  taskType: 'Draft Decision',
+  analyticsSource: 'queue_task'
 };
 
 class CaseTitleScaffolding extends React.PureComponent {
