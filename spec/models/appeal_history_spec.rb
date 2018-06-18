@@ -44,7 +44,7 @@ describe AppealHistory do
         :case,
         :type_original,
         :disposition_merged,
-        bfkey: "7654322",
+        bfkey: "7654321",
         bfcorlid: vbms_id,
         bfddec: 500.days.ago.to_date
       ))
@@ -56,7 +56,7 @@ describe AppealHistory do
         :case,
         :type_original,
         :disposition_merged,
-        bfkey: "7654321",
+        bfkey: "7654322",
         bfcorlid: vbms_id,
         bfddec: 500.days.ago.to_date
       ))
