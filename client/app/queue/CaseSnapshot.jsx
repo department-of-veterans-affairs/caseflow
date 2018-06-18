@@ -2,6 +2,8 @@ import { after, css, merge } from 'glamor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
@@ -13,6 +15,7 @@ import { DateString } from '../util/DateUtil';
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'flex',
+  flexWrap: 'wrap',
   lineHeight: '3rem',
   marginTop: '3rem',
   padding: '2rem 0',
@@ -41,7 +44,20 @@ const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
-export default class CaseSnapshot extends React.PureComponent {
+const snapshotChildResponsiveWrapFixStyling = css({
+  '@media(max-width: 1200px)': {
+    '& > .usa-width-one-half': {
+      borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+      margin: '2rem 3rem 0 3rem',
+      marginRight: '3rem !important',
+      paddingTop: '2rem',
+      width: '100%'
+    },
+    '& > div:nth-child(2)': { borderRight: 'none' }
+  }
+});
+
+export class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
       const today = moment();
@@ -94,7 +110,7 @@ export default class CaseSnapshot extends React.PureComponent {
   };
 
   render = () => {
-    return <div className="usa-grid" {...snapshotParentContainerStyling}>
+    return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <dl {...definitionListStyling}>
@@ -129,3 +145,10 @@ CaseSnapshot.propTypes = {
   task: PropTypes.object,
   userRole: PropTypes.string
 };
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'featureToggles', 'userRole'),
+  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+});
+
+export default connect(mapStateToProps)(CaseSnapshot);
