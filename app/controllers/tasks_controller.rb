@@ -57,7 +57,7 @@ class TasksController < ApplicationController
     task = task_class.create(task_params)
 
     return invalid_record_error(task) unless task.valid?
-    if task_class == JudgeCaseAssignmentToAttorney then
+    if task_class == JudgeCaseAssignmentToAttorney
       render json: {
         task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
       }
@@ -71,7 +71,7 @@ class TasksController < ApplicationController
     task = task_class.update(task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
-    if task_class == JudgeCaseAssignmentToAttorney then
+    if task_class == JudgeCaseAssignmentToAttorney
       render json: {
         task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
       }

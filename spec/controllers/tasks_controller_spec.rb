@@ -292,9 +292,9 @@ RSpec.describe TasksController, type: :controller do
           yesterday = Time.utc(2018, 4, 17)
           FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: today)
           FactoryBot.create(:decass, defolder: @appeal.vacols_id, deadtim: yesterday)
-          task_id = "#{@appeal.vacols_id}-2018-04-18" 
+          task_id = "#{@appeal.vacols_id}-2018-04-18"
 
-          patch :update, params: { tasks: params, id: task_id}
+          patch :update, params: { tasks: params, id: task_id }
 
           expect(response.status).to eq 200
           body = JSON.parse(response.body)
