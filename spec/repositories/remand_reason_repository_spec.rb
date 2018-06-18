@@ -99,7 +99,7 @@ describe RemandReasonRepository do
     end
 
     context "deletes a specific remand reason" do
-      let(:kwargs) {{ rmdval: "DI" }}
+      let(:kwargs) { { rmdval: "DI" } }
 
       it "deletes a specific remand reason" do
         expect(RemandReasonRepository).to receive(:delete_remand_reasons!)
@@ -110,7 +110,7 @@ describe RemandReasonRepository do
     end
 
     context "deletes all remand reasons for an issue" do
-      let(:kwargs) {{ }}
+      let(:kwargs) { {} }
 
       it "deletes all remand reasons for an issue" do
         expect(RemandReasonRepository).to receive(:delete_remand_reasons!)
