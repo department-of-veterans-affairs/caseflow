@@ -16,7 +16,8 @@ import {
 import {
   deleteAppeal,
   checkoutStagedAppeal,
-  stageAppeal
+  stageAppeal,
+  setCaseReviewActionType
 } from '../QueueActions';
 import {
   dropdownStyling,
@@ -33,6 +34,8 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
       history
     } = this.props;
     const actionType = props.value;
+
+    this.props.setCaseReviewActionType(actionType);
 
     if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
       // this.props.requestSave()...
@@ -82,7 +85,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  resetBreadcrumbs
+  resetBreadcrumbs,
+  setCaseReviewActionType
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown));

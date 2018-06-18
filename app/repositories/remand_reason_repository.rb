@@ -1,5 +1,4 @@
 class RemandReasonRepository
-  # :nocov:
   def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
     BusinessMetrics.record(service: :queue, name: "create_remand_reasons")
     VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
@@ -10,6 +9,7 @@ class RemandReasonRepository
     VACOLS::RemandReason.delete_remand_reasons!(vacols_id, vacols_sequence_id, **kwargs)
   end
 
+  # :nocov:
   def self.remand_reason_from_vacols_remand_reason(reason)
     {
       code: reason.rmdval,
