@@ -32,6 +32,14 @@ class JudgeCaseAssignmentToAttorney
     end
   end
 
+  def vacols_id
+    super || LegacyAppeal.find(appeal_id).vacols_id
+  end
+
+  def last_case_assignment
+    VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", vacols_id).sort_by(&:created_at).last
+  end
+
   private
 
   def assigned_by_role_is_valid
