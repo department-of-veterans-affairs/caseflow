@@ -49,7 +49,7 @@ const snapshotChildResponsiveWrapFixStyling = css({
       margin: '2rem 3rem 0 3rem',
       marginRight: '3rem !important',
       paddingTop: '2rem',
-      width: '100% !important'
+      width: '100%'
     },
     '& > div:nth-child(2)': { borderRight: 'none' }
   }
