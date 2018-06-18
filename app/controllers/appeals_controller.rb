@@ -60,11 +60,17 @@ class AppealsController < ApplicationController
                           service: :queue,
                           name: "AppealsController.index") do
 
+      # rubocop:disable Lint/HandleExceptions
+      appeals = []
       begin
-        appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
+        appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
       rescue ActiveRecord::RecordNotFound
-        appeals = []
       end
+      begin
+        appeals.concat(Appeal.where(veteran_file_number: file_number))
+      rescue ActiveRecord::RecordNotFound
+      end
+      # rubocop:enable Lint/HandleExceptions
 
       render json: {
         appeals: json_appeals(appeals)[:data]
