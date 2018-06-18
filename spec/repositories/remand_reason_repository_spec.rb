@@ -76,13 +76,18 @@ describe RemandReasonRepository do
     subject { RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons) }
     let(:vacols_id) { "123456" }
     let(:vacols_sequence_id) { "3" }
-    let(:remand_reasons) { [{ code: "AB", after_certification: true }] }
+    let(:remand_reasons) do
+      [{
+        rmdval: "AB",
+        rmddev: "R2",
+        rmdmdusr: "TEST1",
+        rmdmdtim: VacolsHelper.local_time_with_utc_timezone
+      }]
+    end
 
     it "creates remand reasons" do
-      expect(RemandReasonRepository).to receive(:create_remand_reasons!)
-        .with("123456", "3", remand_reasons).once
-      expect(BusinessMetrics).to_not receive(:record)
       subject
+      expect(VACOLS::RemandReason.all.length).to eq(1)
     end
   end
 
@@ -102,10 +107,9 @@ describe RemandReasonRepository do
       let(:kwargs) { { rmdval: "DI" } }
 
       it "deletes a specific remand reason" do
-        expect(RemandReasonRepository).to receive(:delete_remand_reasons!)
-          .with("123456", "3", kwargs).once
-        expect(BusinessMetrics).to_not receive(:record)
+        RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
         subject
+        expect(VACOLS::RemandReason.all.length).to eq(2)
       end
     end
 
@@ -113,10 +117,9 @@ describe RemandReasonRepository do
       let(:kwargs) { {} }
 
       it "deletes all remand reasons for an issue" do
-        expect(RemandReasonRepository).to receive(:delete_remand_reasons!)
-          .with("123456", "3", kwargs).once
-        expect(BusinessMetrics).to_not receive(:record)
+        RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
         subject
+        expect(VACOLS::RemandReason.all.length).to eq(0)
       end
     end
   end
