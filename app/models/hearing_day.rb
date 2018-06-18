@@ -3,6 +3,11 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay
+
+  VIDEO = "V"
+  TRAVEL_BOARD = "T"
+  CENTRAL_OFFICE = "C"
+
   class << self
     def create_hearing_day(hearing_hash)
       HearingDayRepository.create_vacols_hearing!(hearing_hash)

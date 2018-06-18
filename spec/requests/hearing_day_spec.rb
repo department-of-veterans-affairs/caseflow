@@ -7,7 +7,7 @@ RSpec.describe "Hearing Schedule", type: :request do
 
   describe "Create a schedule slot" do
     it "Create one schedule" do
-      post "/hearings/hearing_day", params: { hearing_type: "C", hearing_date: "7-Jun-2018", room: "1" }
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "7-Jun-2018", room: "1" }
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["room"]).to eq("1")
     end
@@ -17,7 +17,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearing) do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create
-      Generators::Vacols::CaseHearing.create(hearing_type: "C", hearing_date: "11-Jun-2017", room: "3")
+      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "11-Jun-2017", room: "3")
     end
 
     it "Assign a judge to a schedule day" do
@@ -27,7 +27,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Modify RO in Travel Board Hearing", focus: true do
+  describe "Modify RO in Travel Board Hearing" do
     let!(:hearing) do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create
@@ -37,7 +37,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     it "Update RO in master TB schedule" do
       hearing
       put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day",
-          params: { hearing_type: "T", tbro: "RO27" }
+          params: { hearing_type: HearingDay::TRAVEL_BOARD, tbro: "RO27" }
       expect(response).to have_http_status(:success)
       # commented out as there is an issue getting back the updated hearing. Works in rails console.
       # expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
@@ -48,8 +48,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearings) do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
-        [{ hearing_type: "C", hearing_date: "7-Jun-2017", room: "1" },
-         { hearing_type: "C", hearing_date: "9-Jun-2017", room: "3" }]
+        [{ hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "7-Jun-2017", room: "1" },
+         { hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "9-Jun-2017", room: "3" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
       Generators::Vacols::Staff.create(sattyid: "955")
@@ -72,8 +72,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearings) do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
-        [{ hearing_type: "C", hearing_date: "13-July-2017", room: "1" },
-         { hearing_type: "C", hearing_date: "9-Jun-2018", room: "3" }]
+        [{ hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "13-July-2017", room: "1" },
+         { hearing_type: HearingDay::CENTRAL_OFFICE, hearing_date: "9-Jun-2018", room: "3" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
       Generators::Vacols::Staff.create(sattyid: "955")
