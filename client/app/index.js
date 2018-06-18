@@ -14,7 +14,7 @@ import ManageEstablishClaim from './manageEstablishClaim/index';
 import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
 
 import Hearings from './hearings/index';
-import HearingsSchedule from './hearingsSchedule/index';
+import HearingSchedule from './hearingSchedule/index';
 import Help from './help/index';
 import Error500 from './errors/Error500';
 import Error404 from './errors/Error404';
@@ -46,7 +46,7 @@ const COMPONENTS = {
   Unauthorized,
   StatsContainer,
   Hearings,
-  HearingsSchedule,
+  HearingSchedule,
   PerformanceDegradationBanner,
   Help,
   Queue,

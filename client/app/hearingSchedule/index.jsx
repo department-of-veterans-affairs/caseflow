@@ -8,7 +8,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildSchedule from './containers/BuildSchedule';
 import ScrollToTop from '../components/ScrollToTop';
 
-const HearingsSchedule = ({ hearingSchedule }) => {
+const HearingSchedule = ({ hearingSchedule }) => {
 
   return <BrowserRouter>
     <NavigationBar
@@ -16,10 +16,10 @@ const HearingsSchedule = ({ hearingSchedule }) => {
       userDisplayName={hearingSchedule.userDisplayName}
       dropdownUrls={hearingSchedule.dropdownUrls}
       logoProps={{
-        overlapColor: LOGO_COLORS.HEARING_SCHEDULING.OVERLAP,
-        accentColor: LOGO_COLORS.HEARING_SCHEDULING.ACCENT
+        overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
+        accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT
       }}
-      appName="Hearing Scheduling">
+      appName="Hearing Schedule">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
@@ -39,4 +39,4 @@ const HearingsSchedule = ({ hearingSchedule }) => {
   </BrowserRouter>;
 };
 
-export default HearingsSchedule;
+export default HearingSchedule;
