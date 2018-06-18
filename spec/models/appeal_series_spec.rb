@@ -3,49 +3,76 @@ describe AppealSeries do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
 
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  before do
+    allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }
+    allow(AppealRepository).to receive(:regular_non_aod_docket_count) { 123_456 }
+    allow(AppealRepository).to receive(:docket_counts_by_month) do
+      (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+        {
+          "year" => d.year,
+          "month" => d.month,
+          "cumsum_n" => i * 10_000 + 3456,
+          "cumsum_ready_n" => i * 5000 + 3456
+        }
+      end
+    end
+  end
+
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [latest_appeal] }
   let(:latest_appeal) do
-    Generators::LegacyAppeal.build(
-      type: type,
-      nod_date: nod_date,
-      soc_date: soc_date,
-      ssoc_dates: ssoc_dates,
-      form9_date: form9_date,
+    build(:legacy_appeal, vacols_case: latest_case)
+  end
+
+  let(:latest_case) do
+    create(
+      :case,
+      :assigned,
+      :certified,
+      bfdnod: nod_date,
+      bfdsoc: soc_date,
+      bfssoc1: ssoc_date1,
+      bfssoc2: ssoc_date2,
+      bfd19: form9_date,
       certification_date: certification_date,
-      decision_date: decision_date,
-      disposition: disposition,
-      location_code: location_code,
-      status: status
+      bfddec: decision_date,
+      bfdc: disposition,
+      bfcurloc: location_code,
+      bfmpro: status,
+      bfac: type,
+      bfso: "F",
+      case_issues: latest_appeal_issues
     )
   end
 
-  let(:type) { "Original" }
+  let(:latest_appeal_issues) { [] }
+  let(:type) { "1" }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
-  let(:ssoc_dates) { [] }
+  let(:ssoc_date1) { nil }
+  let(:ssoc_date2) { nil }
   let(:form9_date) { 1.day.ago }
   let(:certification_date) { nil }
   let(:decision_date) { nil }
   let(:disposition) { nil }
   let(:location_code) { "77" }
-  let(:status) { "Advance" }
+  let(:status) { "ADV" }
 
   context "#vacols_ids" do
     subject { series.vacols_ids }
 
     let(:appeals) do
       [
-        Generators::LegacyAppeal.build(
-          vacols_id: "1234567",
-          status: "Active",
-          last_location_change_date: 1.day.ago
-        ),
-        Generators::LegacyAppeal.build(
-          vacols_id: "7654321",
-          status: "Active",
-          last_location_change_date: 2.days.ago
-        )
+        create(:legacy_appeal, vacols_case: create(:case, :status_active, bfkey: "1234567", bfdloout: 1.day.ago)),
+        create(:legacy_appeal, vacols_case: create(:case, :status_active, bfkey: "7654321", bfdloout: 2.days.ago))
       ]
     end
 
@@ -58,16 +85,8 @@ describe AppealSeries do
     context "when there are multiple active appeals" do
       let(:appeals) do
         [
-          Generators::LegacyAppeal.build(
-            vacols_id: "1234567",
-            status: "Active",
-            last_location_change_date: 1.day.ago
-          ),
-          Generators::LegacyAppeal.build(
-            vacols_id: "7654321",
-            status: "Active",
-            last_location_change_date: 2.days.ago
-          )
+          create(:legacy_appeal, vacols_case: create(:case, :status_active, bfkey: "1234567", bfdloout: 1.day.ago)),
+          create(:legacy_appeal, vacols_case: create(:case, :status_active, bfkey: "7654321", bfdloout: 2.days.ago))
         ]
       end
 
@@ -77,16 +96,8 @@ describe AppealSeries do
     context "when there are no active appeals" do
       let(:appeals) do
         [
-          Generators::LegacyAppeal.build(
-            vacols_id: "1234567",
-            status: "Complete",
-            decision_date: 1.day.ago
-          ),
-          Generators::LegacyAppeal.build(
-            vacols_id: "7654321",
-            status: "Complete",
-            decision_date: 2.days.ago
-          )
+          create(:legacy_appeal, vacols_case: create(:case, :status_complete, bfkey: "1234567", bfdloout: 1.day.ago)),
+          create(:legacy_appeal, vacols_case: create(:case, :status_complete, bfkey: "7654321", bfdloout: 2.days.ago))
         ]
       end
 
@@ -102,12 +113,12 @@ describe AppealSeries do
     end
 
     context "when it is in remand status" do
-      let(:status) { "Remand" }
+      let(:status) { "REM" }
       it { is_expected.to eq(:aoj) }
     end
 
     context "when it is in any other status" do
-      let(:status) { "History" }
+      let(:status) { "HIS" }
       it { is_expected.to eq(:bva) }
     end
   end
@@ -115,17 +126,15 @@ describe AppealSeries do
   context "#program" do
     subject { series.program }
 
-    before do
-      latest_appeal.issues << Generators::Issue.build
-    end
+    let(:latest_appeal_issues) { [create(:case_issue, :compensation)] }
 
     context "when there is only one program on appeal" do
       it { is_expected.to eq(:compensation) }
     end
 
     context "when there are multiple programs on appeal" do
-      before do
-        latest_appeal.issues << Generators::Issue.build(codes: %w[07 07 02])
+      let(:latest_appeal_issues) do
+        [create(:case_issue, :compensation), create(:case_issue, issprog: "07", isscode: "07", isslev1: "02")]
       end
 
       it { is_expected.to eq(:multiple) }
@@ -136,9 +145,8 @@ describe AppealSeries do
     subject { series.aoj }
 
     context "when the first issue on appeal has no aoj" do
-      before do
-        latest_appeal.issues << Generators::Issue.build(codes: %w[10 01 02])
-        latest_appeal.issues << Generators::Issue.build
+      let(:latest_appeal_issues) do
+        [create(:case_issue), create(:case_issue, issprog: "10", isscode: "01", isslev1: "02")]
       end
 
       it { is_expected.to eq(:vba) }
@@ -152,7 +160,7 @@ describe AppealSeries do
       it { is_expected.to eq(:pending_certification) }
 
       context "and it has received one or more ssocs" do
-        let(:ssoc_dates) { [1.day.ago] }
+        let(:ssoc_date1) { 1.day.ago }
         it { is_expected.to eq(:pending_certification_ssoc) }
       end
 
@@ -173,7 +181,7 @@ describe AppealSeries do
     end
 
     context "when it is in active status" do
-      let(:status) { "Active" }
+      let(:status) { "ACT" }
       it { is_expected.to eq(:decision_in_progress) }
 
       context "and it is in location 49" do
@@ -198,72 +206,72 @@ describe AppealSeries do
     end
 
     context "when it is in history status" do
-      let(:status) { "Complete" }
+      let(:status) { "HIS" }
 
       context "when decided by the board" do
-        let(:disposition) { "Allowed" }
+        let(:disposition) { "1" }
         it { is_expected.to eq(:bva_decision) }
       end
 
       context "when granted by the aoj" do
-        let(:disposition) { "Advance Allowed in Field" }
+        let(:disposition) { "A" }
         it { is_expected.to eq(:field_grant) }
       end
 
       context "when withdrawn" do
-        let(:disposition) { "Withdrawn" }
+        let(:disposition) { "9" }
         it { is_expected.to eq(:withdrawn) }
       end
 
       context "when ftr" do
-        let(:disposition) { "Advance Failure to Respond" }
+        let(:disposition) { "G" }
         it { is_expected.to eq(:ftr) }
       end
 
       context "when ramp" do
-        let(:disposition) { "RAMP Opt-in" }
+        let(:disposition) { "P" }
         it { is_expected.to eq(:ramp) }
       end
 
       context "when death" do
-        let(:disposition) { "Dismissed, Death" }
+        let(:disposition) { "8" }
         it { is_expected.to eq(:death) }
       end
 
       context "when reconsideration by letter" do
-        let(:disposition) { "Reconsideration by Letter" }
+        let(:disposition) { "R" }
         it { is_expected.to eq(:reconsideration) }
       end
 
       context "when an unmatched merge" do
-        let(:disposition) { "Merged Appeal" }
+        let(:disposition) { "M" }
         it { is_expected.to eq(:merged) }
       end
 
       context "when any other disposition" do
-        let(:disposition) { "Not a real disposition" }
+        let(:disposition) { "Z" }
         it { is_expected.to eq(:other_close) }
       end
     end
 
     context "when it is in remand status" do
-      let(:status) { "Remand" }
+      let(:status) { "REM" }
       let(:decision_date) { 3.days.ago }
       it { is_expected.to eq(:remand) }
 
       context "and it has received a post-decision ssoc" do
-        let(:ssoc_dates) { [1.day.ago] }
+        let(:ssoc_date1) { 1.day.ago }
         it { is_expected.to eq(:remand_ssoc) }
       end
 
       context "and it has a pre-decision ssoc" do
-        let(:ssoc_dates) { [5.days.ago] }
+        let(:ssoc_date1) { 5.days.ago }
         it { is_expected.to eq(:remand) }
       end
     end
 
     context "when it is in motion status" do
-      let(:status) { "Motion" }
+      let(:status) { "MOT" }
       it { is_expected.to eq(:motion) }
     end
 
@@ -284,7 +292,7 @@ describe AppealSeries do
     end
 
     context "when there is no known status" do
-      let(:status) { "Not a real status" }
+      let(:status) { "ZZZ" }
 
       it "returns an empty details hash" do
         expect(subject[:details]).to eq({})
@@ -292,9 +300,10 @@ describe AppealSeries do
     end
 
     context "when it is in remand ssoc status" do
-      let(:status) { "Remand" }
+      let(:status) { "REM" }
       let(:decision_date) { 3.days.ago }
-      let(:ssoc_dates) { [1.year.ago, 1.day.ago] }
+      let(:ssoc_date1) { 1.year.ago }
+      let(:ssoc_date2) { 1.day.ago }
 
       it "returns a details hash with the most recent ssoc" do
         expect(subject[:type]).to eq(:remand_ssoc)
@@ -305,8 +314,8 @@ describe AppealSeries do
     end
 
     context "when it has been decided by the board" do
-      let(:status) { "Remand" }
-      let(:disposition) { "Allowed" }
+      let(:status) { "REM" }
+      let(:disposition) { "1" }
       before do
         latest_appeal.issues << Generators::Issue.build(disposition: :allowed)
         latest_appeal.issues << Generators::Issue.build(disposition: :remanded)
@@ -325,7 +334,7 @@ describe AppealSeries do
     end
 
     context "when it is at VSO" do
-      let(:status) { "Active" }
+      let(:status) { "ACT" }
       let(:location_code) { "55" }
 
       it "returns a details hash with the vso name" do
@@ -370,7 +379,7 @@ describe AppealSeries do
 
     context "when the appeal is post-cavc" do
       before { series.appeals.each { |appeal| appeal.aod = false } }
-      let(:type) { "Court Remand" }
+      let(:type) { "7" }
 
       it "does not have a docket" do
         expect(subject).to be_nil
@@ -393,8 +402,10 @@ describe AppealSeries do
     end
   end
 
-  context "#docket_hash" do
+  context "#docket_hash", focus: true do
     subject { series.docket_hash }
+
+    before { DocketSnapshot.create }
 
     context "when the docket is nil" do
       it "returns nil" do
@@ -407,35 +418,35 @@ describe AppealSeries do
     subject { series.description }
 
     context "when there is a single issue" do
-      before do
-        latest_appeal.issues << Generators::Issue.build
-      end
+      let(:latest_appeal_issues) { [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")] }
 
       it { is_expected.to eq("Service connection, limitation of thigh motion (flexion)") }
     end
 
     context "when that issue is new and materials" do
-      before do
-        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 04 5252])
-      end
+      let(:latest_appeal_issues) { [create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5252")] }
 
       it { is_expected.to eq("Service connection, limitation of thigh motion (flexion)") }
     end
 
     context "when there are multiple issues" do
-      before do
-        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
-        latest_appeal.issues << Generators::Issue.build(vacols_sequence_id: 2)
-        latest_appeal.issues << Generators::Issue.build(codes: %w[02 15 03 9432], vacols_sequence_id: 3)
+      let(:latest_appeal_issues) do
+        [
+          create(:case_issue, issseq: 1, issprog: "02", isscode: "17", isslev1: "02"),
+          create(:case_issue, issseq: 2, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252"),
+          create(:case_issue, issseq: 3, issprog: "02", isscode: "15", isslev1: "03", isslev2: "9432")
+        ]
       end
 
       it { is_expected.to eq("Service connection, limitation of thigh motion (flexion), and 2 others") }
     end
 
     context "when those issues do not have commas" do
-      before do
-        latest_appeal.issues << Generators::Issue.build(codes: %w[02 17 02], vacols_sequence_id: 1)
-        latest_appeal.issues << Generators::Issue.build(codes: %w[02 12 05], vacols_sequence_id: 2)
+      let(:latest_appeal_issues) do
+        [
+          create(:case_issue, issseq: 1, issprog: "02", isscode: "17", isslev1: "02"),
+          create(:case_issue, issseq: 2, issprog: "02", isscode: "12", isslev1: "05")
+        ]
       end
 
       it { is_expected.to eq("100% rating for individual unemployability and 1 other") }
