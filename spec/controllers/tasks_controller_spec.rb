@@ -300,7 +300,6 @@ RSpec.describe TasksController, type: :controller do
           patch :update, params: { tasks: params, id: task_id}
 
           expect(response.status).to eq 200
-          puts response.body
           body = JSON.parse(response.body)
           expect(body["task"]["data"]["attributes"]["task_id"]).to eq task_id
         end
