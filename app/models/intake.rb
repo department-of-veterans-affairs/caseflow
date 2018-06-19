@@ -71,6 +71,11 @@ class Intake < ApplicationRecord
       )
   end
 
+  def self.veteran_name_by_claim_id(claim_id)
+    veteran_file_number = Intake.where(:end_product_reference_id => claim_id)
+    Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
   def pending?
     !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end

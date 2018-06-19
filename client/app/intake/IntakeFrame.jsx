@@ -15,6 +15,7 @@ import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
+import EditPage from './pages/edit';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -90,6 +91,11 @@ class IntakeFrame extends React.PureComponent {
                   path={PAGE_PATHS.COMPLETED}
                   title="Confirmation | Caseflow Intake"
                   component={CompletedPage} />
+                <PageRoute
+                  exact
+                  path='/edit/:claimId'
+                  title="Edit | Caseflow Intake"
+                  component={EditPage} />
               </div>
             </AppSegment>
             <AppSegment styling={textAlignRightStyling}>
