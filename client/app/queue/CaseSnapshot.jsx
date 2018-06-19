@@ -114,6 +114,13 @@ export class CaseSnapshot extends React.PureComponent {
     const {
       appeal: { attributes: appeal }
     } = this.props;
+    let CheckoutDropdown = <React.Fragment />;
+
+    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+      CheckoutDropdown = <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    } else if (this.props.featureToggles.judge_assignment) {
+      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
@@ -136,10 +143,7 @@ export class CaseSnapshot extends React.PureComponent {
         this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {this.props.userRole === USER_ROLES.ATTORNEY ?
-            <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} /> :
-            <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />
-          }
+          {CheckoutDropdown}
         </div>
       }
     </div>;
