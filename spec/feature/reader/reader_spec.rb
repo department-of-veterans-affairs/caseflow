@@ -319,7 +319,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_title("Assignments | Caseflow Reader")
 
-        click_on "New", match: :first
+        find("a[href='/reader/appeal/#{appeal.vacols_id}/documents']").click
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
