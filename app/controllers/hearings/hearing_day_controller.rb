@@ -35,6 +35,16 @@ class Hearings::HearingDayController < ApplicationController
     }, status: :created
   end
 
+  def update
+    return record_not_found unless hearing
+
+    updated_hearing = HearingDay.update_hearing_day(hearing, params)
+    render json: {
+      hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
+    }, status: :ok
+  end
+
+  # :nocov:
   def logo_name
     "Hearing Schedule"
   end
@@ -49,6 +59,23 @@ class Hearings::HearingDayController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_schedule_out_of_service")
   end
 
+  def hearing
+    @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
+  end
+
+  def update_params
+    params.require("hearing").permit(:board_member,
+                                     :representative)
+  end
+
+  def create_params
+    params.require("hearing").permit(:hearing_type,
+                                     :hearing_date,
+                                     :room,
+                                     :board_member,
+                                     :representative)
+  end
+
   def set_application
     RequestStore.store[:application] = "hearings"
   end
@@ -57,6 +84,15 @@ class Hearings::HearingDayController < ApplicationController
     render json:  {
       "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
     }, status: 400
+  end
+
+  def record_not_found
+    render json: {
+      "errors": [
+        "title": "Record Not Found",
+        "detail": "Record with that ID is not found"
+      ]
+    }, status: 404
   end
 
   def json_hearings(hearings)
