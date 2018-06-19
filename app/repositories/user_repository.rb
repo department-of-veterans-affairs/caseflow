@@ -12,7 +12,8 @@ class UserRepository
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
     def vacols_roles(css_id)
       staff_record = staff_record_by_css_id(css_id)
-      roles_based_on_staff_fields(staff_record) if staff_record
+      return roles_based_on_staff_fields(staff_record) if staff_record
+      []
     end
 
     def can_access_task?(css_id, vacols_id)
@@ -57,13 +58,18 @@ class UserRepository
       when "J"
         ["judge"]
       when "A"
-        staff_record.sattyid ? ["attorney", "judge"] : ["judge"]
+        staff_record.sattyid ? %w[attorney judge] : ["judge"]
       when nil
-        return ["attorney"] if staff_record.sattyid
-        return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+        check_other_staff_fields(staff_record)
       else
         []
       end
+    end
+
+    def check_other_staff_fields(staff_record)
+      return ["attorney"] if staff_record.sattyid
+      return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+      []
     end
 
     def staff_record_by_css_id(css_id)

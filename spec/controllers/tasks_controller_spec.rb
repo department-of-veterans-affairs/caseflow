@@ -191,7 +191,7 @@ RSpec.describe TasksController, type: :controller do
           end
 
           it "should not be successful" do
-            allow(Fakes::UserRepository).to receive(:vacols_role).and_return("Judge")
+            allow(Fakes::UserRepository).to receive(:vacols_roles).and_return(["judge"])
             post :create, params: { tasks: params }
             expect(response.status).to eq 400
             response_body = JSON.parse(response.body)
