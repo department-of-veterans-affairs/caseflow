@@ -664,7 +664,6 @@ RSpec.feature "Queue" do
           row = field_options[row_idx]
 
           next unless row
-          next if row.matches_css? ".is-disabled"
 
           row.find(".Select-control").click
 
