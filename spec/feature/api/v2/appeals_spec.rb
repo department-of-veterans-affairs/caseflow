@@ -98,7 +98,7 @@ describe "Appeals API v2", type: :request do
             isscode: "15",
             isslev1: "04",
             isslev2: "5302",
-            issdcls: Time.zone.today - 5.days,
+            issdcls: Time.zone.today - 5.days
           )
         ]
       ))
