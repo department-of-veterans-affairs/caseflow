@@ -142,13 +142,9 @@ RSpec.feature "RAMP Election Intake" do
       click_on "Search"
 
       expect(page).to have_content("Search for Veteran by ID")
-      expect(page).to have_content(
+      expect(page).to_not have_content(
         "A RAMP opt-in with the receipt date 12/02/2017 was already processed"
       )
-
-      error_intake = Intake.last
-      expect(error_intake.completion_status).to eq("error")
-      expect(error_intake.error_code).to eq("ramp_election_already_complete")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
@@ -233,10 +229,9 @@ RSpec.feature "RAMP Election Intake" do
     scenario "Complete intake for RAMP Election form" do
       Fakes::VBMSService.end_product_claim_id = "SHANE9642"
 
-      election = RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: Date.new(2017, 11, 7)
-      )
+      election = create(:ramp_election,
+                        veteran_file_number: "12341234",
+                        notice_date: Date.new(2017, 11, 7))
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
