@@ -57,7 +57,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       Generators::Vacols::Staff.create(sattyid: "955")
     end
 
-    it "Get hearings" do
+    it "Get hearings for specified date range" do
       hearings
       headers = {
         "ACCEPT" => "application/json",     # This is what Rails 4 accepts
@@ -81,7 +81,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       Generators::Vacols::Staff.create(sattyid: "955")
     end
 
-    it "Get hearings" do
+    it "Get hearings for default dates" do
       hearings
       headers = {
         "ACCEPT" => "application/json",     # This is what Rails 4 accepts
@@ -91,6 +91,33 @@ RSpec.describe "Hearing Schedule", type: :request do
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearings"]["data"].size).to be(2)
       expect(JSON.parse(response.body)["tbhearings"]["data"].size).to be(0)
+    end
+  end
+
+  describe "Get hearing schedule for an RO" do
+    let!(:hearings) do
+      RequestStore[:current_user] = user
+      Generators::Vacols::CaseHearing.create(
+        [{ hearing_type: HearingDay::HEARING_TYPES[:central_office], hearing_date: "7-Jun-2017", room: "1",
+         representative: "RO17"},
+         { hearing_type: HearingDay::HEARING_TYPES[:central_office], hearing_date: "9-Jun-2017", room: "3",
+         representative: "RO27"}]
+      )
+      Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
+      Generators::Vacols::Staff.create(sattyid: "955")
+    end
+
+    it "Get hearings for RO" do
+      hearings
+      headers = {
+        "ACCEPT" => "application/json",     # This is what Rails 4 accepts
+        "HTTP_ACCEPT" => "application/json" # This is what Rails 3 accepts
+      }
+      get "/hearings/hearing_day", params: { regional_office: "RO17", start_date: "2017-01-01", end_date: "2017-12-31" },
+          headers: headers
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearings"]["data"].size).to be(1)
+      expect(JSON.parse(response.body)["tbhearings"]["data"].size).to be(1)
     end
   end
 end

@@ -10,7 +10,13 @@ class Hearings::HearingDayController < ApplicationController
     @start_date = params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(params[:start_date])
     # rubocop:enable Metrics/LineLength
     @end_date = params[:end_date].nil? ? Time.zone.today.beginning_of_day : Date.parse(params[:end_date])
-    video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
+    regional_office = params[:regional_office]
+    if regional_office.nil?
+      video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
+    else
+      video_and_co, travel_board = HearingDay.load_days_for_regional_office(regional_office, @start_date, @end_date)
+    end
+
     @hearings = json_hearings(video_and_co)
     @tbhearings = json_tb_hearings(travel_board)
     respond_to do |format|
