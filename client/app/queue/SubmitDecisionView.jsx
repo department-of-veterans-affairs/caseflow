@@ -7,7 +7,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
-  getUndecidedIssues
+  getUndecidedIssues,
+  buildCaseReviewPayload
 } from './utils';
 
 import {
@@ -31,7 +32,7 @@ import Alert from '../components/Alert';
 import {
   fullWidth,
   ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  DECISION_TYPES, USER_ROLES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -101,19 +102,8 @@ class SubmitDecisionView extends React.PureComponent {
       userRole,
       judges
     } = this.props;
-    const params = {
-      data: {
-        tasks: {
-          document_type: decision.type,
-          type: `${userRole}CaseReview`,
-          issues: getUndecidedIssues(issues).map((issue) => _.extend({},
-            _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
-            { disposition: _.capitalize(issue.disposition) })
-          ),
-          ...decision.opts
-        }
-      }
-    };
+
+    const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
       type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
@@ -123,7 +113,7 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/tasks/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/tasks/${taskId}/complete`, payload, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
