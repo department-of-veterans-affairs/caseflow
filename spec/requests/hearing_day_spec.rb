@@ -42,8 +42,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day",
           params: { hearing_type: HearingDay::HEARING_TYPES[:travel], tbro: "RO27" }
       expect(response).to have_http_status(:success)
-      # commented out as there is an issue getting back the updated hearing. Works in rails console.
-      # expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
+      expect(JSON.parse(response.body)["hearing"]["data"]["attributes"]["tbro"]).to eq("RO27")
     end
   end
 

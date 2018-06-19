@@ -38,9 +38,9 @@ class Hearings::HearingDayController < ApplicationController
   def update
     return record_not_found unless hearing
 
-    HearingDay.update_hearing_day(hearing, params)
+    updated_hearing = HearingDay.update_hearing_day(hearing, params)
     render json: {
-      hearing: hearing.respond_to?(:hearing_type) ? json_hearings(hearing) : json_tb_hearings(hearing)
+      hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
     }, status: :ok
   end
 

@@ -45,9 +45,10 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{tbyear}-#{tbtrip}-#{tbleg}",
                           service: :vacols,
                           name: "update_hearing") do
-      VACOLS::TravelBoardSchedule.where(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
-        .update_all(attrs.merge(tbmoduser: self.class.current_user_slogid,
-                                tbmodtime: VacolsHelper.local_time_with_utc_timezone))
+      hearings = VACOLS::TravelBoardSchedule.where(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
+      hearings.update_all(attrs.merge(tbmoduser: self.class.current_user_slogid,
+                                      tbmodtime: VacolsHelper.local_time_with_utc_timezone))
+      hearings[0]
     end
   end
 
