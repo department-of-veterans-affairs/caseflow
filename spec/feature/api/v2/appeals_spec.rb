@@ -45,6 +45,7 @@ describe "Appeals API v2", type: :request do
         bfd19: Time.zone.today - 8.months,
         bfssoc1: Time.zone.today - 7.months,
         bfddec: Time.zone.today - 5.months,
+        remand_return_date: 2.days.ago,
         bfcorlid: "111223333S",
         bfkey: "1234567",
         case_issues: [create(
@@ -55,7 +56,8 @@ describe "Appeals API v2", type: :request do
           isscode: "15",
           isslev1: "03",
           isslev2: "5252"
-        )]
+        )],
+        case_hearings: [build(:case_hearing, :disposition_held, hearing_date: 6.months.ago)]
       ))
     end
 
@@ -71,6 +73,7 @@ describe "Appeals API v2", type: :request do
         bfssoc1: Time.zone.today - 7.months,
         bfssoc2: Time.zone.today - 4.months,
         bfdpdcn: Time.zone.today - 5.months,
+        remand_return_date: 2.days.ago,
         bfcorlid: "111223333S",
         bfkey: "7654321",
         case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
@@ -95,14 +98,6 @@ describe "Appeals API v2", type: :request do
 
     let!(:another_veteran_appeal) do
       create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "333222333S"))
-    end
-
-    let!(:held_hearing) do
-      Generators::Hearing.create(
-        appeal: original,
-        date: 6.months.ago,
-        disposition: :held
-      )
     end
 
     let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
@@ -260,7 +255,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["docket"]["month"]).to eq("2014-05-01")
       expect(json["data"].first["attributes"]["docket"]["docketMonth"]).to eq("2014-02-01")
       expect(json["data"].first["attributes"]["docket"]["eta"]).to be_nil
-
+      binding.pry
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
       expect(event_types).to eq(%w[claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc remand_return])
