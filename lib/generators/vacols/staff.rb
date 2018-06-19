@@ -11,7 +11,7 @@ class Generators::Vacols::Staff
         snamef: nil,
         snamemi: nil,
         snamel: "98 Advance Pending Intake",
-        slogid: "98",
+        slogid: "DSUSER",
         stitle: nil,
         sorg: "98",
         sdept: nil,

@@ -112,6 +112,10 @@ FactoryBot.define do
       bfac "1"
     end
 
+    trait :type_post_remand do
+      bfac "3"
+    end
+
     trait :type_reconsideration do
       bfac "4"
     end
@@ -159,6 +163,10 @@ FactoryBot.define do
 
     trait :disposition_granted_by_aoj do
       bfdc "B"
+    end
+
+    trait :disposition_merged do
+      bfdc "M"
     end
 
     trait :disposition_ramp do
