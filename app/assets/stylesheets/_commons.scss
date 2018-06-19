@@ -1,9 +1,12 @@
+// Dependencies already added by package
 @import 'bourbon';
 @import 'neat';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
-@import 'uswds_rails_overrides/all';
+// End
+
+@import '../../../client/node_modules/uswds/src/stylesheets/all';
+@import '../../../client/node_modules/uswds/src/stylesheets/lib/addons/font-stacks';
 @import 'global/fonts';
+// Local variables
 @import 'variables';
 
 
