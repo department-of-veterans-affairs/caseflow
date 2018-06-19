@@ -18,7 +18,7 @@ class CoLocatedAdminAction < Task
   private
 
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be an attorney") if assigned_by && assigned_by.vacols_role != "Attorney"
+    errors.add(:assigned_by, "has to be an attorney") if assigned_by && assigned_by.attorney_in_vacols?
   end
 
   def set_assigned_to

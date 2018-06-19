@@ -55,12 +55,14 @@ class UserRepository
     def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj
       when "J"
-        ["Judge"]
+        ["judge"]
       when "A"
-        staff_record.sattyid ? ["Attorney", "Judge"] : ["Judge"]
+        staff_record.sattyid ? ["attorney", "judge"] : ["judge"]
       when nil
-        ["Attorney"] if staff_record.sattyid
-        ["Colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+        return ["attorney"] if staff_record.sattyid
+        return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+      else
+        []
       end
     end
 
