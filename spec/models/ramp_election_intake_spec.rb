@@ -171,25 +171,25 @@ describe RampElectionIntake do
                option_selected: "supplemental_claim",
                receipt_date: 38.days.ago,
                established_at: 38.days.ago)
-       end
-       let!(:former_intake) do
-         RampElectionIntake.new(
-           user: user,
-           detail: former_detail,
-           veteran_file_number: veteran_file_number,
-           completed_at: 1.month.ago,
-         )
-       end
-       let(:former_matching_ep) do
-         Generators::EndProduct.build(
-           veteran_file_number: veteran_file_number,
-           bgs_attrs: {
-             claim_type_code: "683SCRRRAMP",
-             claim_receive_date: former_detail.receipt_date.to_formatted_s(:short_date),
-             end_product_type_code: "683"
-           }
-         )
-       end
+      end
+      let!(:former_intake) do
+        RampElectionIntake.new(
+          user: user,
+          detail: former_detail,
+          veteran_file_number: veteran_file_number,
+          completed_at: 1.month.ago
+        )
+      end
+      let(:former_matching_ep) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran_file_number,
+          bgs_attrs: {
+            claim_type_code: "683SCRRRAMP",
+            claim_receive_date: former_detail.receipt_date.to_formatted_s(:short_date),
+            end_product_type_code: "683"
+          }
+        )
+      end
 
       it "closes out legacy appeals" do
         expect(RampClosedAppeal).to receive(:new).with(
@@ -247,14 +247,15 @@ describe RampElectionIntake do
       end
 
       it "doesn't connect to ramp election without an active product" do
-        former_matching_ep = Generators::EndProduct.build(
+        Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
           bgs_attrs: {
             claim_type_code: "683SCRRRAMP",
             claim_receive_date: former_detail.receipt_date.to_formatted_s(:short_date),
             status_type_code: "CAN",
             end_product_type_code: "683"
-          })
+          }
+        )
 
         subject
         expect(intake.reload.error_code).to_not eq("connected_preexisting_ep")

@@ -146,10 +146,11 @@ class RampElectionIntake < Intake
   end
 
   def existing_ramp_election
-    first = RampElection.established.where(
+    first = RampElection.established.find_by(
       veteran_file_number: veteran_file_number,
-      option_selected: detail.option_selected).first
-    first == detail ? nil : first
+      option_selected: detail.option_selected
+    )
+    (first == detail) ? nil : first
   end
 
   def use_existing_ramp_election
