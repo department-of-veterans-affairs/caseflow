@@ -1,4 +1,4 @@
-describe "Appeals API v2", type: :request do
+describe "Appeals API v2", type: :request, focus: true do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -30,7 +30,6 @@ describe "Appeals API v2", type: :request do
     before do
       FeatureToggle.enable!(:appeals_status)
       DocketSnapshot.create
-      post_remand.aod = false
     end
 
     let!(:original) do
@@ -64,6 +63,7 @@ describe "Appeals API v2", type: :request do
     let!(:post_remand) do
       create(:legacy_appeal, vacols_case: create(
         :case,
+        :assigned,
         :type_post_remand,
         :status_active,
         bfdrodec: Time.zone.today - 18.months,
@@ -73,7 +73,6 @@ describe "Appeals API v2", type: :request do
         bfssoc1: Time.zone.today - 7.months,
         bfssoc2: Time.zone.today - 4.months,
         bfdpdcn: Time.zone.today - 5.months,
-        remand_return_date: 2.days.ago,
         bfcorlid: "111223333S",
         bfkey: "7654321",
         case_issues: [create(:case_issue, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252")]
@@ -85,13 +84,22 @@ describe "Appeals API v2", type: :request do
         :case,
         :type_original,
         :status_advance,
+        :aod,
         bfdrodec: Time.zone.today - 12.months,
         bfdnod: Time.zone.today - 6.months,
         bfdsoc: Time.zone.today - 5.months,
         bfcorlid: "111223333S",
         case_issues: [
           create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5301"),
-          create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: "5302")
+          create(
+            :case_issue,
+            :disposition_granted_by_aoj,
+            issprog: "02",
+            isscode: "15",
+            isslev1: "04",
+            isslev2: "5302",
+            issdcls: Time.zone.today - 5.days,
+          )
         ]
       ))
     end
@@ -177,7 +185,7 @@ describe "Appeals API v2", type: :request do
       # tests that reload=true busts cache
       get "/api/v2/appeals?reload=true", headers: headers
       json = JSON.parse(response.body)
-      binding.pry
+
       expect(json["data"].length).to eq(3)
 
       expect(ApiView.count).to eq(3)
@@ -245,7 +253,7 @@ describe "Appeals API v2", type: :request do
       )
       expect(json["data"].first["attributes"]["aod"]).to eq(false)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
-      # expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
+      expect(json["data"].first["attributes"]["alerts"]).to eq([{ "type" => "decision_soon", "details" => {} }])
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]["front"]).to eq(false)
@@ -255,7 +263,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["docket"]["month"]).to eq("2014-05-01")
       expect(json["data"].first["attributes"]["docket"]["docketMonth"]).to eq("2014-02-01")
       expect(json["data"].first["attributes"]["docket"]["eta"]).to be_nil
-      binding.pry
+
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
       expect(event_types).to eq(%w[claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc remand_return])
