@@ -98,13 +98,14 @@ class SubmitDecisionView extends React.PureComponent {
         }
       },
       decision,
+      userRole,
       judges
     } = this.props;
     const params = {
       data: {
         tasks: {
           document_type: decision.type,
-          type: 'AttorneyCaseReview',
+          type: `${userRole}CaseReview`,
           issues: getUndecidedIssues(issues).map((issue) => _.extend({},
             _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
             { disposition: _.capitalize(issue.disposition) })
@@ -265,6 +266,7 @@ const mapStateToProps = (state, ownProps) => {
     },
     ui: {
       highlightFormItems,
+      userRole,
       selectingJudge,
       messages: {
         error
@@ -278,6 +280,7 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     judges,
     error,
+    userRole,
     highlightFormItems,
     selectingJudge
   };
