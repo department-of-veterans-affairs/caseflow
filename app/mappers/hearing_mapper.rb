@@ -21,7 +21,9 @@ module HearingMapper
         room: hearing_info[:room],
         hearing_date: hearing_info[:hearing_date],
         hearing_type: hearing_info[:hearing_type],
-        representative: hearing_info[:representative]
+        representative: hearing_info[:representative],
+        board_member: hearing_info[:board_member],
+        tbro: hearing_info[:tbro]
       }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
     end
 
