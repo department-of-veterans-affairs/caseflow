@@ -44,7 +44,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     staff_id: :mduser,
     room: :room,
     hearing_date: :hearing_date,
-    hearing_type: :hearing_type
+    hearing_type: :hearing_type,
+    board_member: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -146,13 +147,6 @@ class VACOLS::CaseHearing < VACOLS::Record
                           name: "update_hearing") do
       update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
-  end
-
-  private_class_method
-
-  def self.current_user_slogid
-    slogid = RequestStore.store[:current_user].vacols_uniq_id
-    slogid.nil? ? "" : slogid.upcase
   end
 
   private
