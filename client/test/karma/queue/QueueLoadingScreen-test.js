@@ -22,27 +22,27 @@ const serverData = {
   },
   tasks: {
     data: [{
-      id: '111',
+      id: '1',
       attributes: {
-        appeal_id: '1',
+        appeal_id: '111',
         docket_date: '2017-12-28T17:18:20.412Z'
       }
     }, {
-      id: '222',
+      id: '1',
       attributes: {
-        appeal_id: '1',
+        appeal_id: '222',
         docket_date: '2016-10-07T03:15:27.580Z'
       }
     }, {
-      id: '333',
+      id: '2',
       attributes: {
-        appeal_id: '2',
+        appeal_id: '333',
         docket_date: '2015-10-13T06:47:34.155Z'
       }
     }, {
-      id: '444',
+      id: '3',
       attributes: {
-        appeal_id: '3',
+        appeal_id: '444',
         docket_date: '2016-03-01T04:15:51.123Z'
       }
     }]
@@ -54,35 +54,27 @@ describe('QueueLoadingScreen', () => {
     const { tasks: tasksWithAppeals } = associateTasksWithAppeals(serverData);
 
     expect(tasksWithAppeals).to.deep.equal({
-      111: {
-        id: '111',
+      1: {
+        id: '1',
         vacolsId: '1',
         attributes: {
-          appeal_id: '1',
-          docket_date: '2017-12-28T17:18:20.412Z'
-        }
-      },
-      222: {
-        id: '222',
-        vacolsId: '1',
-        attributes: {
-          appeal_id: '1',
+          appeal_id: '222',
           docket_date: '2016-10-07T03:15:27.580Z'
         }
       },
-      333: {
-        id: '333',
+      2: {
+        id: '2',
         vacolsId: '2',
         attributes: {
-          appeal_id: '2',
+          appeal_id: '333',
           docket_date: '2015-10-13T06:47:34.155Z'
         }
       },
-      444: {
-        id: '444',
+      3: {
+        id: '3',
         vacolsId: '3',
         attributes: {
-          appeal_id: '3',
+          appeal_id: '444',
           docket_date: '2016-03-01T04:15:51.123Z'
         }
       }
@@ -98,31 +90,24 @@ describe('QueueLoadingScreen', () => {
     });
 
     expect(sortedTasks).to.deep.equal([{
-      id: '333',
+      id: '2',
       vacolsId: '2',
       attributes: {
-        appeal_id: '2',
+        appeal_id: '333',
         docket_date: '2015-10-13T06:47:34.155Z'
       }
     }, {
-      id: '222',
+      id: '1',
       vacolsId: '1',
       attributes: {
-        appeal_id: '1',
+        appeal_id: '222',
         docket_date: '2016-10-07T03:15:27.580Z'
       }
     }, {
-      id: '111',
-      vacolsId: '1',
-      attributes: {
-        appeal_id: '1',
-        docket_date: '2017-12-28T17:18:20.412Z'
-      }
-    }, {
-      id: '444',
+      id: '3',
       vacolsId: '3',
       attributes: {
-        appeal_id: '3',
+        appeal_id: '444',
         docket_date: '2016-03-01T04:15:51.123Z'
       }
     }]);
