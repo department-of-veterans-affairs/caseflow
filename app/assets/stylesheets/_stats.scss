@@ -1,10 +1,11 @@
 @import 'bourbon';
 @import 'neat';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
-@import 'global/fonts';
+
+@import '../../../client/node_modules/uswds/src/stylesheets/all';
+@import 'variables';
 
 .cf-stats-container {
+
 
   .cf-stats {
     margin-top: 0;
