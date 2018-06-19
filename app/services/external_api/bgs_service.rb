@@ -81,6 +81,8 @@ class ExternalApi::BGSService
         client.address.find_all_by_participant_id(participant_id)
       end
       if bgs_address
+        # Count on addresses being sorted with most recent first if we return a list of addresses.
+        bgs_address = bgs_address[0] if bgs_address.is_a?(Array)
         @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
       end
     end
