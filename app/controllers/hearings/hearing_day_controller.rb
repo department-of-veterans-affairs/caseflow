@@ -5,12 +5,12 @@ class Hearings::HearingDayController < ApplicationController
   # Controller to add and update hearing schedule days.
 
   # show schedule days for date range provided
+  # # rubocop:disable Metrics/MethodLength
   def index
-    # rubocop:disable Metrics/LineLength
-    @start_date = params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(params[:start_date])
-    # rubocop:enable Metrics/LineLength
-    @end_date = params[:end_date].nil? ? Time.zone.today.beginning_of_day : Date.parse(params[:end_date])
-    regional_office = params[:regional_office]
+    @start_date = validate_start_date(params[:start_date])
+    @end_date = validate_end_date(params[:end_date])
+    regional_office = validate_regional_office(params[:regional_office])
+
     if regional_office.nil?
       video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
     else
@@ -31,6 +31,7 @@ class Hearings::HearingDayController < ApplicationController
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Create a hearing schedule day
   def create
@@ -80,6 +81,18 @@ class Hearings::HearingDayController < ApplicationController
                                      :room,
                                      :board_member,
                                      :representative)
+  end
+
+  def validate_start_date(start_date)
+    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
+  end
+
+  def validate_end_date(end_date)
+    end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
+  end
+
+  def validate_regional_office(regional_office)
+    regional_office
   end
 
   def set_application

@@ -84,7 +84,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
-      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?", "VIDEO #{regional_office}", start_date, end_date)
+      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?",
+                                 "VIDEO #{regional_office}", start_date, end_date)
     end
 
     def create_hearing!(hearing_info)
@@ -137,7 +138,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :mduser,
              :mdtime,
              :canceldate)
-      .where("folder_nr is null or folder_nr like ?", "VIDEO %")
+        .where("folder_nr is null or folder_nr like ?", "VIDEO %")
     end
   end
 
