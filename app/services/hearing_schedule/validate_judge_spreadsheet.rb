@@ -50,8 +50,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       fail JudgeDatesNotUnique
     end
     unless judge_non_availability_dates.all? do |row|
-      row["date"] > @start_date &&
-      row["date"] < @end_date
+      row["date"] >= @start_date &&
+      row["date"] <= @end_date
     end
       fail JudgeDatesNotInRange
     end
