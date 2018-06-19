@@ -108,7 +108,7 @@ class AssignWidgetPresentational extends React.PureComponent {
 
 const AssignWidget =
   connect(
-    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isTaskAssignedToUserSelected'),
+    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isTaskAssignedToUserSelected', 'tasks'),
     (dispatch) => bindActionCreators({ setSelectedAssigneeOfUser,
       initialAssignTasksToUser }, dispatch)
   )(AssignWidgetPresentational);
