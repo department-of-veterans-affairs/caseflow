@@ -14,6 +14,15 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       setIssueDescription
     } = this.props;
 
+    let disableAddNonRatedIssue;
+    if (Object.keys(nonRatedIssues).length === 0) {
+      disableAddNonRatedIssue = false;
+    } else {
+      disableAddNonRatedIssue = Boolean(_.reduce(nonRatedIssues, (result, issue) => {
+        return !issue.description ? --result : result
+      }, 0));
+    }
+
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
         <NonRatedIssue
@@ -41,6 +50,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
         name="add-issue"
         onClick={addNonRatedIssue}
         legacyStyling={false}
+        disabled={ disableAddNonRatedIssue }
       >
       + Add issue
       </Button>
@@ -68,11 +78,13 @@ class NonRatedIssue extends React.PureComponent {
           placeholder="Select or enter..."
           options={ISSUE_CATEGORIES}
           value={category}
+          required
           onChange={(event) => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
           value={description}
+          required
           onChange={(event) => this.handleDescriptionChange(event)} />
       </div>
     );
