@@ -244,11 +244,13 @@ RSpec.configure do |config|
     read_csv(VACOLS::Issref, date_shift)
 
     Rails.cache.clear
+    FeatureToggle.redis.flushall
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    FeatureToggle.redis.flushall
   end
 
   # Allows us to use shorthand FactoryBot methods.
