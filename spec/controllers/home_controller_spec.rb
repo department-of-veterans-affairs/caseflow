@@ -9,6 +9,10 @@ RSpec.describe HomeController, type: :controller do
     FeatureToggle.redis.flushall
   end
 
+  after :each do
+    FeatureToggle.redis.flushall
+  end
+
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }
