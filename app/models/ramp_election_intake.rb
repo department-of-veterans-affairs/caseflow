@@ -18,6 +18,9 @@ class RampElectionIntake < Intake
   end
 
   def find_or_build_initial_detail
+    # This is temporary if there are already ramp elections.
+    # It will NOT find existing ramp elections since we can't compare type as we
+    # don't know it yet. Later we will switch to existing matching elections.
     new_intake_ramp_election
   end
 
@@ -34,8 +37,6 @@ class RampElectionIntake < Intake
     return if complete? || pending?
     start_completion!
 
-    # If there is an existing ramp election of the same type. Start using that instead.
-    # Potentially we should be destroying the temporary one here at the same time.
     if existing_ramp_election
       use_existing_ramp_election
     end
