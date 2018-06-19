@@ -38,6 +38,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     this.props.setCaseReviewActionType(actionType);
 
     if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
+      history.push('');
+      history.replace('/queue');
+
       // this.props.requestSave()...
       this.props.deleteAppeal(vacolsId);
       this.props.saveSuccess(sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name));
