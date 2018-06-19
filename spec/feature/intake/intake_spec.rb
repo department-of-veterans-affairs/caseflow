@@ -39,17 +39,6 @@ RSpec.feature "Intake" do
     )
   end
 
-  # let!(:appeal) do
-  #   Generators::LegacyAppeal.build(
-  #     vbms_id: "12341234C",
-  #     issues: issues,
-  #     vacols_record: :ready_to_certify,
-  #     veteran: veteran,
-  #     inaccessible: inaccessible,
-  #     nod_date: 1.year.ago
-  #   )
-  # end
-
   context "As a user with unauthorized role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Not Mail Intake"])
