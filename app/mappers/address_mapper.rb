@@ -11,4 +11,13 @@ module AddressMapper
       zip: bgs_address[:zip_prefix_nbr]
     }
   end
+
+  # TODO: Confirm that the payeen name is coming in with first and last names reversed.
+  def get_name_and_address_from_bgs_info(bgs_info)
+    return {} unless bgs_info
+    {
+      name: bgs_info[:payee_name].gsub(/\s+/, " "),
+      relationship: bgs_info[:payee_type_name]
+    }
+  end
 end

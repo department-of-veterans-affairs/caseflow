@@ -130,6 +130,18 @@ class ExternalApi::BGSService
     end
   end
 
+  def fetch_claimant_info_by_participant_id(participant_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: fetch claimant info: \
+                           participant_id = #{participant_id}",
+                          service: :bgs,
+                          name: "claimants.find_general_information_by_participant_id") do
+      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      get_name_and_address_from_bgs_info(basic_info)
+    end
+  end
+
   def find_all_relationships(participant_id:)
     DBService.release_db_connections
 
