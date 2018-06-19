@@ -17,10 +17,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 
   // todo: Attorneys currently only have one task per appeal, but future users might have multiple
   _.each(tasks, (task) => {
-    task.vacolsId = _(appeals).
-      filter((appeal) => appeal.attributes.vacols_id === task.id).
-      map('attributes.vacols_id').
-      head();
+    task.vacolsId = task.id;
   });
 
   const tasksById = _.keyBy(tasks, 'id');

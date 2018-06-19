@@ -11,7 +11,7 @@ RSpec.describe TasksController, type: :controller do
     FeatureToggle.disable!(:judge_queue)
   end
 
-  describe "GET tasks?user_id=xxx" do
+  describe "GET tasks/xxx" do
     let(:user) { FactoryBot.create(:user) }
     before do
       User.stub = user
@@ -172,6 +172,8 @@ RSpec.describe TasksController, type: :controller do
 
           post :create, params: { tasks: params }
           expect(response.status).to eq 200
+          body = JSON.parse(response.body)
+          expect(body["task"]["data"]["attributes"]["appeal_id"]).to eq @appeal.id
         end
 
         context "when appeal is not found" do
