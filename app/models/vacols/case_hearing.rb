@@ -149,13 +149,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
-  private_class_method
-
-  def self.current_user_slogid
-    slogid = RequestStore.store[:current_user].vacols_uniq_id
-    slogid.nil? ? "" : slogid.upcase
-  end
-
   private
 
   def current_user_css_id
