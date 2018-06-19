@@ -34,12 +34,11 @@ describe RampElectionIntake do
     subject { intake.cancel!(reason: "other", other: "Spelling canceled and cancellation is fun") }
 
     let(:detail) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 5.days.ago,
-        option_selected: "supplemental_claim",
-        receipt_date: 3.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 5.days.ago,
+             option_selected: "supplemental_claim",
+             receipt_date: 3.days.ago)
     end
 
     it "cancels and clears detail values" do
@@ -95,12 +94,11 @@ describe RampElectionIntake do
     subject { intake.complete!({}) }
 
     let(:detail) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 5.days.ago,
-        option_selected: "supplemental_claim",
-        receipt_date: 3.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 5.days.ago,
+             option_selected: "supplemental_claim",
+             receipt_date: 3.days.ago)
     end
 
     let!(:appeals_to_close) do
@@ -162,6 +160,110 @@ describe RampElectionIntake do
 
         expect(intake.reload).to be_success
         expect(intake.error_code).to eq("connected_preexisting_ep")
+      end
+    end
+
+    describe "if there are existing ramp elections" do
+      let(:former_detail) do
+        create(:ramp_election,
+               veteran_file_number: veteran_file_number,
+               notice_date: 40.days.ago,
+               option_selected: "supplemental_claim",
+               receipt_date: 38.days.ago,
+               established_at: 38.days.ago)
+       end
+       let!(:former_intake) do
+         RampElectionIntake.new(
+           user: user,
+           detail: former_detail,
+           veteran_file_number: veteran_file_number,
+           completed_at: 1.month.ago,
+         )
+       end
+       let(:former_matching_ep) do
+         Generators::EndProduct.build(
+           veteran_file_number: veteran_file_number,
+           bgs_attrs: {
+             claim_type_code: "683SCRRRAMP",
+             claim_receive_date: former_detail.receipt_date.to_formatted_s(:short_date),
+             end_product_type_code: "683"
+           }
+         )
+       end
+
+      it "closes out legacy appeals" do
+        expect(RampClosedAppeal).to receive(:new).with(
+          vacols_id: appeals_to_close.first.vacols_id,
+          ramp_election_id: former_detail.id,
+          nod_date: appeals_to_close.first.nod_date
+        ).and_call_original
+
+        expect(RampClosedAppeal).to receive(:new).with(
+          vacols_id: appeals_to_close.last.vacols_id,
+          ramp_election_id: former_detail.id,
+          nod_date: appeals_to_close.last.nod_date
+        ).and_call_original
+
+        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
+          appeal: appeals_to_close.first,
+          user: intake.user,
+          closed_on: Time.zone.today,
+          disposition_code: "P"
+        )
+
+        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
+          appeal: appeals_to_close.last,
+          user: intake.user,
+          closed_on: Time.zone.today,
+          disposition_code: "P"
+        )
+
+        subject
+      end
+
+      it "connects to the existing active end product" do
+        former_matching_ep
+
+        subject
+
+        expect(intake.reload.error_code).to eq("connected_preexisting_ep")
+      end
+
+      it "connects the intake to the existing active ramp election of the same type" do
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail).to eq(former_detail)
+      end
+
+      it "doesn't connect a ramp election of a different type" do
+        detail.update!(option_selected: "higher_level_review")
+
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail).to_not eq(former_detail)
+        expect(intake.detail.established_at).to_not be_nil
+      end
+
+      it "doesn't connect to ramp election without an active product" do
+        former_matching_ep = Generators::EndProduct.build(
+          veteran_file_number: veteran_file_number,
+          bgs_attrs: {
+            claim_type_code: "683SCRRRAMP",
+            claim_receive_date: former_detail.receipt_date.to_formatted_s(:short_date),
+            status_type_code: "CAN",
+            end_product_type_code: "683"
+          })
+
+        subject
+        expect(intake.reload.error_code).to_not eq("connected_preexisting_ep")
+      end
+
+      it "destroys the temporary ramp election" do
+        temporary_ramp_election_id = detail.id
+        subject
+        expect { RampElection.find(temporary_ramp_election_id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -278,12 +380,15 @@ describe RampElectionIntake do
         let!(:ramp_election) do
           RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
         end
+        let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
-        it "saves intake and sets detail to ramp election" do
+        it "saves intake and sets detail to a new ramp election" do
           expect(subject).to be_truthy
 
           expect(intake.started_at).to eq(Time.zone.now)
-          expect(intake.detail).to eq(ramp_election)
+          expect(intake.detail).to eq(new_ramp_election)
+          expect(new_ramp_election).to_not be_nil
+          expect(new_ramp_election.notice_date).to be_nil
         end
       end
 
@@ -325,6 +430,7 @@ describe RampElectionIntake do
         established_at: established_at
       )
     end
+    let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
     let(:education_issue) { Generators::Issue.build(template: :education) }
 
@@ -332,9 +438,8 @@ describe RampElectionIntake do
       let(:end_product_reference_id) { 1 }
       let(:established_at) { Time.zone.now }
 
-      it "adds ramp_election_already_complete and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("ramp_election_already_complete")
+      it "returns true even if there is an existing ramp election" do
+        expect(subject).to eq(true)
       end
     end
 

@@ -18,7 +18,7 @@ class RampElectionIntake < Intake
   end
 
   def find_or_build_initial_detail
-    matching_ramp_election
+    new_intake_ramp_election
   end
 
   def review!(request_params)
@@ -33,6 +33,12 @@ class RampElectionIntake < Intake
   def complete!(_request_params)
     return if complete? || pending?
     start_completion!
+
+    # If there is an existing ramp election of the same type. Start using that instead.
+    # Potentially we should be destroying the temporary one here at the same time.
+    if existing_ramp_election
+      use_existing_ramp_election
+    end
 
     create_or_connect_end_product
 
@@ -120,11 +126,7 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if matching_ramp_election.established?
-      self.error_code = :ramp_election_already_complete
-      @error_data = { receipt_date: matching_ramp_election.receipt_date }
-
-    elsif active_veteran_appeals.empty?
+    if active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
 
     elsif active_compensation_appeals.empty?
@@ -138,8 +140,21 @@ class RampElectionIntake < Intake
     end
   end
 
-  def matching_ramp_election
-    @ramp_election_on_create ||= veteran_ramp_elections.all.first || veteran_ramp_elections.build
+  def new_intake_ramp_election
+    @ramp_election_on_create ||= veteran_ramp_elections.build
+  end
+
+  def existing_ramp_election
+    first = RampElection.established.where(
+      veteran_file_number: veteran_file_number,
+      option_selected: detail.option_selected).first
+    first == detail ? nil : first
+  end
+
+  def use_existing_ramp_election
+    old_detail = detail
+    update! detail: existing_ramp_election
+    old_detail.destroy!
   end
 
   def veteran_ramp_elections

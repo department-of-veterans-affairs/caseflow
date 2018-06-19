@@ -43,7 +43,7 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if matching_end_product
+    return connect_end_product! if matching_end_product && matching_end_product.active?
 
     establish_end_product! && :created
   end
