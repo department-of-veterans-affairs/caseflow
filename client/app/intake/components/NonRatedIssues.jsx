@@ -15,11 +15,12 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
     } = this.props;
 
     let disableAddNonRatedIssue;
+
     if (Object.keys(nonRatedIssues).length === 0) {
       disableAddNonRatedIssue = false;
     } else {
       disableAddNonRatedIssue = Boolean(_.reduce(nonRatedIssues, (result, issue) => {
-        return !issue.description ? --result : result
+        return issue.description ? result : result - 1;
       }, 0));
     }
 
@@ -50,7 +51,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
         name="add-issue"
         onClick={addNonRatedIssue}
         legacyStyling={false}
-        disabled={ disableAddNonRatedIssue }
+        disabled={disableAddNonRatedIssue}
       >
       + Add issue
       </Button>
