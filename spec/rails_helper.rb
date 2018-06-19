@@ -246,7 +246,12 @@ RSpec.configure do |config|
     Rails.cache.clear
   end
 
+  config.before(:each) do
+    FeatureToggle.enable!(:test_facols)
+  end
+
   config.after(:each) do
+    FeatureToggle.disable!(:test_facols)
     Timecop.return
     Rails.cache.clear
   end

@@ -35,6 +35,7 @@ class AppealRepository
 
     cases.map { |case_record| build_appeal(case_record) }
   end
+
   def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
     MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_status_api_attrs",
                           service: :vacols,
