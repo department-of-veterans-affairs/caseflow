@@ -11,7 +11,7 @@ RSpec.describe TasksController, type: :controller do
     FeatureToggle.disable!(:judge_queue)
   end
 
-  describe "GET tasks/xxx" do
+  describe "GET legacy_tasks/xxx" do
     let(:user) { FactoryBot.create(:user) }
     before do
       User.stub = user
