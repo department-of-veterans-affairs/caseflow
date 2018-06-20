@@ -210,17 +210,6 @@ export const taskInitialAssigned = ({task, assigneeId}) => ({
 
 export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) => {
   return Promise.all(appealIdsOfTasks.map((appealId) => {
-    return Promise.resolve('{"task":{"data":{"id":"3662856","type":"attorney_legacy_tasks","attributes":{"assigned_on":"2018-06-19T00:00:00.000Z","due_on":"2018-07-19T00:00:00.000Z","docket_name":"legacy","docket_date":"2012-03-02T00:00:00.000Z","appeal_id":27,"user_id":"BVAAABSHIRE","added_by_name":"Anjali Q Abshire","added_by_css_id":"AABSHIRE","task_id":"3662856-2018-06-19","task_type":null,"document_id":null,"assigned_by_first_name":null,"assigned_by_last_name":null,"previous_task":{"assigned_on":"2018-06-19T00:00:00.000Z"}}}}}').
-      then(JSON.parse).
-      then(
-        (resp) => {
-          const { task: { data: task } } = resp;
-          task.vacolsId = task.id;
-          dispatch(taskInitialAssigned({task, assigneeId}));
-        });
-  }));
-  /*
-  return Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
         '/tasks',
         {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', appeal_id: appealId}}}).
@@ -232,5 +221,4 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
           dispatch(taskInitialAssigned({task, assigneeId}));
         });
   }));
-  */
 };
