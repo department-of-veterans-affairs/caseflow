@@ -86,7 +86,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "type": "CoLocatedAdminAction",
-            "title": "address_verification",
+            "titles": %w[address_verification substituation_determination],
             "instructions": "do this"
           }
         end
@@ -95,10 +95,15 @@ RSpec.describe TasksController, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
           response_body = JSON.parse(response.body)
-          expect(response_body["task"]["status"]).to eq "assigned"
-          expect(response_body["task"]["appeal_id"]).to eq appeal.id
-          expect(response_body["task"]["instructions"]).to eq "do this"
-          expect(response_body["task"]["title"]).to eq "address_verification"
+          expect(response_body["tasks"].first["status"]).to eq "assigned"
+          expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
+          expect(response_body["tasks"].first["instructions"]).to eq "do this"
+          expect(response_body["tasks"].first["title"]).to eq "address_verification"
+
+          expect(response_body["tasks"].second["status"]).to eq "assigned"
+          expect(response_body["tasks"].second["appeal_id"]).to eq appeal.id
+          expect(response_body["tasks"].second["instructions"]).to eq "do this"
+          expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
         end
 
         context "when appeal is not found" do
@@ -106,7 +111,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": 4_646_464,
               "type": "CoLocatedAdminAction",
-              "title": "address_verification"
+              "titles": %w[address_verification substituation_determination]
             }
           end
 

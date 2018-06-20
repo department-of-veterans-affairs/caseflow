@@ -34,10 +34,10 @@ class TasksController < ApplicationController
 
   def create
     return invalid_type_error unless task_class
-    task = task_class.create(task_params)
+    tasks = task_class.create(task_params)
 
-    return invalid_record_error(task) unless task.valid?
-    render json: { task: task }, status: :created
+    tasks.each { |task| return invalid_record_error(task) unless task.valid? }
+    render json: { tasks: tasks }, status: :created
   end
 
   private
@@ -71,7 +71,7 @@ class TasksController < ApplicationController
 
   def task_params
     params.require("tasks")
-      .permit(:appeal_id, :type, :instructions, :title)
+      .permit(:appeal_id, :type, :instructions, titles: [])
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
