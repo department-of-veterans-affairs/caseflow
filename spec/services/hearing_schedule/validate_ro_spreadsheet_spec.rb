@@ -175,7 +175,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed)
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesInRange)
     end
   end
 end
