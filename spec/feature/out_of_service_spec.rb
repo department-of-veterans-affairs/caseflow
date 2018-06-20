@@ -9,10 +9,6 @@ RSpec.feature "Out of Service" do
     FeatureToggle.disable!(:test_facols)
   end
 
-  before do
-    User.user_repository = Fakes::UserRepository
-  end
-
   context "Across all apps" do
     before do
       User.authenticate!(css_id: "BVAAABSHIRE", roles: ["Admin Intake"])
@@ -57,7 +53,7 @@ RSpec.feature "Out of Service" do
       create(:legacy_appeal, vacols_case: create(:case_with_form_9))
     end
 
-    scenario "When out of service is disabled, it shows Check Documents page", focus: true do
+    scenario "When out of service is disabled, it shows Check Documents page" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content("Check Documents")
       expect(page).to_not have_content("Technical Difficulties")
@@ -88,7 +84,7 @@ RSpec.feature "Out of Service" do
       User.authenticate!(roles: ["Reader"])
     end
 
-    scenario "When out of service is disabled, it shows document page", focus: true do
+    scenario "When out of service is disabled, it shows document page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Claims folder details")
       expect(page).to_not have_content("Technical Difficulties")
@@ -102,21 +98,8 @@ RSpec.feature "Out of Service" do
   end
 
   context "Hearing Prep" do
-    before do
-      2.times do
-        create(:case_hearing)
-        Generators::Hearing.build(
-          user: current_user,
-          date: 5.days.from_now,
-          type: "video"
-        )
-      end
-
-      Generators::Hearing.build(
-        user: current_user,
-        type: "central_office",
-        date: Time.zone.now
-      )
+    let!(:vacols_case) do
+      create(:case, case_hearings: [create(:case_hearing, user: current_user)])
     end
 
     after do
@@ -127,7 +110,7 @@ RSpec.feature "Out of Service" do
       User.authenticate!(roles: ["Hearing Prep"])
     end
 
-    scenario "When out of service is disabled, it shows Hearings page", focus: true do
+    scenario "When out of service is disabled, it shows Hearings page" do
       visit "/hearings/dockets"
       expect(page).to have_content("Your Hearing Days")
       expect(page).to_not have_content("Technical Difficulties")

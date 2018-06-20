@@ -2,7 +2,7 @@ require "rails_helper"
 
 User.authentication_service = Fakes::AuthenticationService
 
-describe User, focus: true do
+describe User do
   before do
     FeatureToggle.enable!(:test_facols)
   end

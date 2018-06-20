@@ -4,6 +4,10 @@ FactoryBot.define do
     hearing_date { Time.zone.today }
     room 1
 
+    transient do
+      user nil
+    end
+
     trait :disposition_held do
       hearing_disp "H"
     end
@@ -18,6 +22,15 @@ FactoryBot.define do
 
     trait :disposition_no_show do
       hearing_disp "N"
+    end
+
+    after(:create) do |hearing, evaluator|
+      hearing.hearing_pkseq = hearing.hearing_pkseq + 1
+      hearing.reload
+      if evaluator.user
+        staff = create(:staff, :attorney_judge_role, sdomainid: evaluator.user.css_id)
+        hearing.update(board_member: staff.sattyid)
+      end
     end
 
     after(:build) do |hearing, _evaluator|
