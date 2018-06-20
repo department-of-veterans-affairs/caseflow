@@ -1,4 +1,9 @@
 class AttorneyLegacyTask < LegacyTask
+  # task ID is vacols_id concatenated with the date assigned
+  validates :task_id, format: { with: /\A[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
+  validates :assigned_by, :assigned_to, presence: true
+  validate :assigned_by_role_is_valid
+
   def self.from_vacols(case_assignment, user_id)
     task = super
     task.assigned_at = case_assignment.assigned_to_attorney_date
@@ -45,7 +50,7 @@ class AttorneyLegacyTask < LegacyTask
   private
 
   def vacols_id
-    task_id ? task_id.split("-", 2).first : id
+    task_id ? task_id.split("-", 2).first : LegacyAppeal.find(appeal_id).vacols_id
   end
 
   def created_in_vacols_date
