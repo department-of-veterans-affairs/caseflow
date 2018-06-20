@@ -2,7 +2,7 @@ class JudgeCaseAssignmentToAttorney
   include ActiveModel::Model
   include LegacyTaskConcern
 
-  attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by, :type
+  attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by
 
   validates :assigned_by, :assigned_to, presence: true
   validate :assigned_by_role_is_valid
