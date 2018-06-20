@@ -2,8 +2,11 @@ import { after, css, merge } from 'glamor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
+import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -13,6 +16,7 @@ import { DateString } from '../util/DateUtil';
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'flex',
+  flexWrap: 'wrap',
   lineHeight: '3rem',
   marginTop: '3rem',
   padding: '2rem 0',
@@ -41,7 +45,20 @@ const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
-export default class CaseSnapshot extends React.PureComponent {
+const snapshotChildResponsiveWrapFixStyling = css({
+  '@media(max-width: 1200px)': {
+    '& > .usa-width-one-half': {
+      borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+      margin: '2rem 3rem 0 3rem',
+      marginRight: '3rem !important',
+      paddingTop: '2rem',
+      width: '100%'
+    },
+    '& > div:nth-child(2)': { borderRight: 'none' }
+  }
+});
+
+export class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
       const today = moment();
@@ -94,14 +111,25 @@ export default class CaseSnapshot extends React.PureComponent {
   };
 
   render = () => {
-    return <div className="usa-grid" {...snapshotParentContainerStyling}>
+    const {
+      appeal: { attributes: appeal }
+    } = this.props;
+    let CheckoutDropdown = <React.Fragment />;
+
+    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+      CheckoutDropdown = <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    } else if (this.props.featureToggles.judge_assignment) {
+      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    }
+
+    return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <dl {...definitionListStyling}>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderAppealType(this.props.appeal)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{this.props.appeal.attributes.docket_number}</dd>
+          <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}
         </dl>
       </div>
@@ -112,10 +140,10 @@ export default class CaseSnapshot extends React.PureComponent {
         </dl>
       </div>
       { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(this.props.appeal.attributes.vacols_id) &&
+        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <SelectCheckoutFlowDropdown vacolsId={this.props.appeal.attributes.vacols_id} />
+          {CheckoutDropdown}
         </div>
       }
     </div>;
@@ -129,3 +157,10 @@ CaseSnapshot.propTypes = {
   task: PropTypes.object,
   userRole: PropTypes.string
 };
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'featureToggles', 'userRole'),
+  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+});
+
+export default connect(mapStateToProps)(CaseSnapshot);
