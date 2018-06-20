@@ -7,6 +7,57 @@ describe RemandReasonRepository do
     FeatureToggle.disable!(:test_facols)
   end
 
+  context ".load_remand_reasons_for_appeals" do
+    subject { RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids) }
+
+    let!(:vacols_case1) { create(:case, case_issues: issues1) }
+    let(:issues1) { [create(:case_issue, :disposition_remanded), create(:case_issue, :disposition_remanded)] }
+
+    let!(:vacols_case2) { create(:case, case_issues: issues2) }
+    let(:issues2) { [create(:case_issue, :disposition_allowed)] }
+
+    let!(:vacols_case3) { create(:case, case_issues: issues3) }
+    let(:issues3) do
+      [create(:case_issue, :disposition_remanded),
+       create(:case_issue, :disposition_allowed),
+       create(:case_issue, :disposition_remanded)]
+    end
+
+    let!(:remand_reasons) do
+      [
+        create(:remand_reason,
+               rmdkey: issues1.second.isskey,
+               rmdissseq: issues1.second.issseq,
+               rmdval: "BA", rmddev: "R1"),
+        create(:remand_reason,
+               rmdkey: issues3.first.isskey,
+               rmdissseq: issues3.first.issseq,
+               rmdval: "AA"),
+        create(:remand_reason,
+               rmdkey: issues3.first.isskey,
+               rmdissseq: issues3.first.issseq,
+               rmdval: "AB",
+               rmddev: "R1"),
+        create(:remand_reason, rmdkey: issues3.third.isskey, rmdissseq: issues3.third.issseq, rmdval: "AC")
+      ]
+    end
+
+    let(:vacols_ids) { [vacols_case1.bfkey, vacols_case2.bfkey, vacols_case3.bfkey] }
+
+    let(:result) do
+      { vacols_case1.bfkey => { issues1.second.issseq => [{ code: "BA", after_certification: false }] },
+        vacols_case2.bfkey => {},
+        vacols_case3.bfkey =>
+          { issues3.first.issseq =>
+             [{ code: "AA", after_certification: true }, { code: "AB", after_certification: false }],
+            issues3.third.issseq => [{ code: "AC", after_certification: true }] } }
+    end
+
+    it "should load remand reasons per appeal" do
+      expect(subject).to eq result
+    end
+  end
+
   context ".update_remand_reasons" do
     subject { RemandReasonRepository.update_remand_reasons(record, issue_attrs) }
     let(:record) do

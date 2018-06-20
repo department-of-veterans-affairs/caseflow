@@ -1,6 +1,7 @@
 class VACOLS::RemandReason < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rmdrea"
+  self.primary_key = "rmdkey"
 
   class RemandReasonError < StandardError; end
 

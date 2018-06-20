@@ -57,7 +57,7 @@ class CaseDetailsView extends React.PureComponent {
       <IssueList title="Issues" appeal={_.pick(this.props.appeal.attributes, 'issues')} />
       <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
       { this.props.appeal.attributes.hearings.length &&
-        <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
+      <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
       <AppellantDetail title="About the Veteran" appeal={this.props.appeal} />
     </StickyNavContentArea>
   </AppSegment>;
