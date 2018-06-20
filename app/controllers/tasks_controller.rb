@@ -9,7 +9,7 @@ class TasksController < ApplicationController
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
   end
 
-  ROLES = %w[Judge Attorney].freeze
+  ROLES = %w[judge attorney colocated].freeze
 
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction,
@@ -23,7 +23,8 @@ class TasksController < ApplicationController
   end
 
   def index
-    return invalid_role_error unless ROLES.include?(user.vacols_role)
+    current_role = params[:role] || current_user.vacols_roles.first
+    return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
         render "queue/show"
@@ -31,7 +32,7 @@ class TasksController < ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "TasksController.index") do
-          tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
+          tasks, appeals = WorkQueue.tasks_with_appeals(user, current_role)
           render json: {
             tasks: json_tasks(tasks),
             appeals: json_appeals(appeals)
@@ -57,6 +58,12 @@ class TasksController < ApplicationController
     task = task_class.create(task_params)
 
     return invalid_record_error(task) unless task.valid?
+    if task_class == JudgeCaseAssignmentToAttorney
+      render json: {
+        task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
+      }
+      return
+    end
     render json: { task: task }, status: :created
   end
 
@@ -65,6 +72,12 @@ class TasksController < ApplicationController
     task = task_class.update(task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
+    if task_class == JudgeCaseAssignmentToAttorney
+      render json: {
+        task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
+      }
+      return
+    end
     render json: { task: task }, status: 200
   end
 
@@ -151,6 +164,13 @@ class TasksController < ApplicationController
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::TaskSerializer
+    ).as_json
+  end
+
+  def json_task(task)
+    ActiveModelSerializers::SerializableResource.new(
+      task,
+      serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end
