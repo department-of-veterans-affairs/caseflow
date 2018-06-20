@@ -103,6 +103,9 @@ class SubmitDecisionView extends React.PureComponent {
       judges
     } = this.props;
 
+    // todo: pass additional params for judge checkout:
+    // location, attorney_id, complexity, quality, comment,
+    // factors_not_considered, areas_for_improvement
     const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {

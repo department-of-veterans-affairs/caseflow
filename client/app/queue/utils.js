@@ -111,24 +111,29 @@ export const getUndecidedIssues = (issues) => _.filter(issues, (issue) =>
  * @param {Object} decision
  * @param {String} userRole
  * @param {Array} issues
+ * @param {Object} args
  * @returns {Object}
  */
-export const buildCaseReviewPayload = (decision, userRole, issues) => {
-  const payload = { data: { tasks: { type: `${userRole}CaseReview` } } };
+export const buildCaseReviewPayload = (decision, userRole, issues, args = {}) => {
+  const payload = {
+    data: {
+      tasks: {
+        type: `${userRole}CaseReview`,
+        ...decision.opts
+      }
+    }
+  };
   let issueList = issues;
 
   if (userRole === USER_ROLES.ATTORNEY) {
     issueList = getUndecidedIssues(issues);
 
+    // todo: pass args?
     _.extend(payload.data.tasks, {
-      document_type: decision.type,
-      ...decision.opts
+      document_type: decision.type
     });
   } else {
-    // todo: location, attorney_id, complexity, quality, comment, factors_not_considered, areas_for_improvement
-    _.extend(payload.data.tasks, {
-      ...decision.opts
-    });
+    _.extend(payload.data.tasks, args);
   }
 
   // todo: payload.data.tasks.issues = issues.map()?

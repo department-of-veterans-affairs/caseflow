@@ -42,7 +42,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     this.props.setCaseReviewActionType(actionType);
 
     if (actionType === DECISION_TYPES.JUDGE.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues);
+      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
       this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
