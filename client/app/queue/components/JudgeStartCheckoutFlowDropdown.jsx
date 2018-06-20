@@ -21,8 +21,8 @@ import {
 } from '../QueueActions';
 import {
   dropdownStyling,
-  JUDGE_DECISION_OPTIONS,
-  JUDGE_DECISION_TYPES
+  DECISION_OPTIONS,
+  DECISION_TYPES
 } from '../constants';
 
 // todo: make StartCheckoutFlowDropdownBase
@@ -37,7 +37,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
     this.props.setCaseReviewActionType(actionType);
 
-    if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
+    if (actionType === DECISION_TYPES.JUDGE.OMO_REQUEST) {
       history.push('');
       history.replace('/queue');
 
@@ -66,10 +66,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
   render = () => <SearchableDropdown
     placeholder="Select an action&hellip;"
     name={`start-checkout-flow-${this.props.vacolsId}`}
-    options={JUDGE_DECISION_OPTIONS}
-    hideLabel
-    readOnly={this.props.appeal.attributes.paper_case}
+    options={DECISION_OPTIONS.JUDGE}
     onChange={this.changeRoute}
+    hideLabel
     dropdownStyling={dropdownStyling} />;
 }
 

@@ -67,9 +67,9 @@ export const getDecisionTypeDisplay = (decision = {}) => {
   } = decision;
 
   switch (decisionType) {
-  case DECISION_TYPES.OMO_REQUEST:
+  case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
     return 'OMO';
-  case DECISION_TYPES.DRAFT_DECISION:
+  case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
     return 'Draft Decision';
   default:
     return StringUtil.titleCase(decisionType);
@@ -115,9 +115,10 @@ export const getUndecidedIssues = (issues) => _.filter(issues, (issue) =>
  */
 export const buildCaseReviewPayload = (decision, userRole, issues) => {
   const payload = { data: { tasks: { type: `${userRole}CaseReview` } } };
+  let issueList = issues;
 
   if (userRole === USER_ROLES.ATTORNEY) {
-    issues = getUndecidedIssues(issues);
+    issueList = getUndecidedIssues(issues);
 
     _.extend(payload.data.tasks, {
       document_type: decision.type,
@@ -128,16 +129,15 @@ export const buildCaseReviewPayload = (decision, userRole, issues) => {
     _.extend(payload.data.tasks, {
       ...decision.opts
     });
-    debugger;
   }
 
   // todo: payload.data.tasks.issues = issues.map()?
   _.extend(payload.data.tasks, {
-    issues: issues.map((issue) => _.extend({},
+    issues: issueList.map((issue) => _.extend({},
       _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
       { disposition: _.capitalize(issue.disposition) })
     )
-  })
+  });
 
   return payload;
-}
+};

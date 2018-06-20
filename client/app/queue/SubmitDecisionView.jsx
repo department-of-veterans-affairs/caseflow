@@ -7,7 +7,6 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
-  getUndecidedIssues,
   buildCaseReviewPayload
 } from './utils';
 
@@ -32,7 +31,7 @@ import Alert from '../components/Alert';
 import {
   fullWidth,
   ERROR_FIELD_REQUIRED,
-  DECISION_TYPES, USER_ROLES
+  DECISION_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -79,7 +78,7 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props.decision;
     const requiredParams = ['document_id', 'reviewing_judge_id'];
 
-    if (decisionType === DECISION_TYPES.OMO_REQUEST) {
+    if (decisionType === DECISION_TYPES.ATTORNEY.OMO_REQUEST) {
       requiredParams.push('work_product');
     }
 
@@ -106,7 +105,7 @@ class SubmitDecisionView extends React.PureComponent {
     const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
-      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
+      type: decision.type === DECISION_TYPES.ATTORNEY.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
@@ -199,7 +198,7 @@ class SubmitDecisionView extends React.PureComponent {
         {error.detail}
       </Alert>}
       <hr />
-      {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
+      {decisionType === DECISION_TYPES.ATTORNEY.OMO_REQUEST && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}

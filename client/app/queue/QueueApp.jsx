@@ -150,8 +150,18 @@ class QueueApp extends React.PureComponent {
             exact
             path="/queue/appeals/:vacolsId/submit"
             title={() => {
-              const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
-                'OMO' : 'Draft Decision';
+              let reviewActionType = '';
+              switch (this.props.reviewActionType) {
+                case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
+                  reviewActionType = 'OMO';
+                  break;
+                case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
+                  reviewActionType = 'Draft Decision';
+                  break;
+                case DECISION_TYPES.JUDGE.DISPATCH:
+                  reviewActionType = 'to Dispatch';
+                  break;
+              }
 
               return `Draft Decision | Submit ${reviewActionType}`;
             }}

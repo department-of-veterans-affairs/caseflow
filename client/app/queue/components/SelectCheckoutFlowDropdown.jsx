@@ -17,7 +17,7 @@ import { resetBreadcrumbs } from '../uiReducer/uiActions';
 import {
   dropdownStyling,
   DECISION_TYPES,
-  DRAFT_DECISION_OPTIONS
+  DECISION_OPTIONS
 } from '../constants';
 
 class SelectCheckoutFlowDropdown extends React.PureComponent {
@@ -28,7 +28,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
       appeal: { attributes: { veteran_full_name: vetName } }
     } = this.props;
     const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
+    const route = decisionType === DECISION_TYPES.ATTORNEY.OMO_REQUEST ? 'submit' : 'dispositions';
 
     this.stageAppeal();
 
@@ -53,7 +53,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.vacolsId}`}
     placeholder="Select an action&hellip;"
-    options={DRAFT_DECISION_OPTIONS}
+    options={DECISION_OPTIONS.ATTORNEY}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;

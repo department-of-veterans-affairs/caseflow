@@ -71,31 +71,33 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
-export const JUDGE_DECISION_TYPES = {
-  DISPATCH: 'dispatch',
-  OMO_REQUEST: 'omo_request'
-};
-
-export const JUDGE_DECISION_OPTIONS = [{
-  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-  value: JUDGE_DECISION_TYPES.DISPATCH
-}, {
-  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-  value: JUDGE_DECISION_TYPES.OMO_REQUEST
-}];
-
 export const DECISION_TYPES = {
-  OMO_REQUEST: 'omo_request',
-  DRAFT_DECISION: 'draft_decision'
+  JUDGE: {
+    DISPATCH: 'dispatch',
+    OMO_REQUEST: 'omo_request'
+  },
+  ATTORNEY: {
+    OMO_REQUEST: 'omo_request',
+    DRAFT_DECISION: 'draft_decision'
+  }
 };
 
-export const DRAFT_DECISION_OPTIONS = [{
-  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-  value: DECISION_TYPES.DRAFT_DECISION
-}, {
-  label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
-  value: DECISION_TYPES.OMO_REQUEST
-}];
+export const DECISION_OPTIONS = {
+  JUDGE: [{
+    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+    value: DECISION_TYPES.JUDGE.DISPATCH
+  }, {
+    label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+    value: DECISION_TYPES.JUDGE.OMO_REQUEST
+  }],
+  ATTORNEY: [{
+    label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
+    value: DECISION_TYPES.ATTORNEY.DRAFT_DECISION
+  }, {
+    label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
+    value: DECISION_TYPES.ATTORNEY.OMO_REQUEST
+  }]
+};
 
 export const SEARCH_ERROR_FOR = {
   EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
