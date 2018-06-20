@@ -31,7 +31,8 @@ import Alert from '../components/Alert';
 import {
   fullWidth,
   ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  DECISION_TYPES,
+  USER_ROLES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -106,7 +107,7 @@ class SubmitDecisionView extends React.PureComponent {
 
     const fields = {
       veteran: veteran_full_name,
-      judge: judges[decision.opts.reviewing_judge_id].full_name
+      action: 'drafting'
     };
 
     // eslint-disable-next-line default-case
@@ -118,12 +119,16 @@ class SubmitDecisionView extends React.PureComponent {
       fields.type = 'outside medical opinion (OMO) request';
       break;
     case DECISION_TYPES.JUDGE.DISPATCH:
-      fields.type = '';
+      fields.action = 'reviewing';
+      fields.type = 'decision';
       break;
     }
 
-    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
-    been sent to ${fields.judge} for review.`;
+    let successMsg = `Thank you for ${fields.action} ${fields.veteran}'s ${fields.type}.`;
+
+    if (userRole === USER_ROLES.ATTORNEY) {
+      successMsg += ` It's been sent to ${judges[decision.opts.reviewing_judge_id].full_name} for review.`;
+    }
 
     this.props.requestSave(`/tasks/${taskId}/complete`, payload, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
