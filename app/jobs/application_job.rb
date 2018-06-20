@@ -1,4 +1,6 @@
 class ApplicationJob < ActiveJob::Base
-  include ApplicationAttributes
-  application_attr :intake
+  def application_attr(app_name)
+    # setup debug context
+    Raven.extra_context(application: app_name)
+  end
 end
