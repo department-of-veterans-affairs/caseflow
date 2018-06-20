@@ -218,7 +218,7 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
           task.vacolsId = task.id;
           dispatch(taskInitialAssigned({task, assigneeId}));
         });
-  })).catch((resp) => console.log('error', resp));
+  }));
   /*
   return Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
@@ -231,6 +231,6 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
           task.vacolsId = task.id;
           dispatch(taskInitialAssigned({task, assigneeId}));
         });
-  })).catch((resp) => console.log('error', resp));
+  }));
   */
 };
