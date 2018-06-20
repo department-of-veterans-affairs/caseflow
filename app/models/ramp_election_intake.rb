@@ -39,9 +39,9 @@ class RampElectionIntake < Intake
 
     if existing_ramp_election
       use_existing_ramp_election
+    else
+      create_or_connect_end_product
     end
-
-    create_or_connect_end_product
 
     close_eligible_appeals!
 
