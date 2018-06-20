@@ -75,7 +75,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central_office],
-           hearing_date: Time.zone.today.beginning_of_day - 15.days , room: "1" },
+           hearing_date: Time.zone.today.beginning_of_day - 15.days, room: "1" },
          { hearing_type: HearingDay::HEARING_TYPES[:central_office],
            hearing_date: Time.zone.today.beginning_of_day + 315.days, room: "3" }]
       )
