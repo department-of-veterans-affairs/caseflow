@@ -12,7 +12,7 @@ FactoryBot.define do
       svlj "J"
     end
 
-    trait :attorney_judge_role
+    trait :attorney_judge_role do
       svlj "A"
       sattyid "123"
     end
