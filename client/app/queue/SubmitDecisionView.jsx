@@ -105,10 +105,23 @@ class SubmitDecisionView extends React.PureComponent {
     const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
-      type: decision.type === DECISION_TYPES.ATTORNEY.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
+
+    // eslint-disable-next-line default-case
+    switch (decision.type) {
+    case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
+      fields.type = 'decision';
+      break;
+    case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
+      fields.type = 'outside medical opinion (OMO) request';
+      break;
+    case DECISION_TYPES.JUDGE.DISPATCH:
+      fields.type = '';
+      break;
+    }
+
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 

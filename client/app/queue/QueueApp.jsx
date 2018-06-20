@@ -151,16 +151,18 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:vacolsId/submit"
             title={() => {
               let reviewActionType = '';
+
+              // eslint-disable-next-line default-case
               switch (this.props.reviewActionType) {
-                case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
-                  reviewActionType = 'OMO';
-                  break;
-                case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
-                  reviewActionType = 'Draft Decision';
-                  break;
-                case DECISION_TYPES.JUDGE.DISPATCH:
-                  reviewActionType = 'to Dispatch';
-                  break;
+              case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
+                reviewActionType = 'OMO';
+                break;
+              case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
+                reviewActionType = 'Draft Decision';
+                break;
+              case DECISION_TYPES.JUDGE.DISPATCH:
+                reviewActionType = 'to Dispatch';
+                break;
               }
 
               return `Draft Decision | Submit ${reviewActionType}`;

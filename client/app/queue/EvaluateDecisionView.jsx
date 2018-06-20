@@ -47,10 +47,10 @@ class EvaluateDecisionView extends React.PureComponent {
     super(props);
 
     this.state = {
-      caseComplexity: null,
-      caseQuality: null,
-      additionalFactors: '',
-      areasOfImprovement: {}
+      complexity: null,
+      quality: null,
+      factors_not_considered: '',
+      areas_for_improvement: {}
     };
   }
 
@@ -65,7 +65,7 @@ class EvaluateDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
-  caseQualityIsDeficient = () => this.state.caseQuality > 0 && this.state.caseQuality < 3;
+  qualityIsDeficient = () => this.state.quality > 0 && this.state.quality < 3;
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
@@ -78,25 +78,25 @@ class EvaluateDecisionView extends React.PureComponent {
 
   validateForm = () => {
     const {
-      areasOfImprovement,
-      caseComplexity,
-      caseQuality
+      areas_for_improvement,
+      complexity,
+      quality
     } = this.state;
 
-    if (!caseComplexity) {
-      this.scrollTo(this.caseComplexityLabel);
+    if (!complexity) {
+      this.scrollTo(this.complexityLabel);
 
       return false;
     }
 
-    if (!caseQuality) {
-      this.scrollTo(this.caseQualityLabel);
+    if (!quality) {
+      this.scrollTo(this.qualityLabel);
 
       return false;
     }
 
-    if (this.caseQualityIsDeficient() && _.isEmpty(areasOfImprovement)) {
-      this.scrollTo(this.deficientCaseQualityAlert);
+    if (this.qualityIsDeficient() && _.isEmpty(areas_for_improvement)) {
+      this.scrollTo(this.deficientQualityAlert);
 
       return false;
     }
@@ -125,15 +125,15 @@ class EvaluateDecisionView extends React.PureComponent {
 
   setAreasOfImprovement = (event) => {
     const factor = event.target.name;
-    const newOpts = this.state.areasOfImprovement;
+    const newOpts = this.state.areas_for_improvement;
 
-    if (factor in this.state.areasOfImprovement) {
+    if (factor in this.state.areas_for_improvement) {
       delete newOpts[factor];
     } else {
       newOpts[factor] = true;
     }
 
-    this.setState({ areasOfImprovement: newOpts });
+    this.setState({ areas_for_improvement: newOpts });
   }
 
   render = () => {
@@ -170,16 +170,16 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling} ref={(node) => this.caseComplexityLabel = node}>
+      <h2 {...headerStyling} ref={(node) => this.complexityLabel = node}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
-        onChange={(caseComplexity) => this.setState({ caseComplexity })}
-        value={this.state.caseComplexity}
+        onChange={(complexity) => this.setState({ complexity })}
+        value={this.state.complexity}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseComplexity ? 'Choose one' : null}
+        errorMessage={highlight && !this.state.complexity ? 'Choose one' : null}
         options={[{
           value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
@@ -193,16 +193,16 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling} ref={(node) => this.caseQualityLabel = node}>
+      <h2 {...headerStyling} ref={(node) => this.qualityLabel = node}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
-        onChange={(caseQuality) => this.setState({ caseQuality })}
-        value={this.state.caseQuality}
+        onChange={(quality) => this.setState({ quality })}
+        value={this.state.quality}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseQuality ? 'Choose one' : null}
+        errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
         options={[{
           value: '5',
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
@@ -220,7 +220,7 @@ class EvaluateDecisionView extends React.PureComponent {
           displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
         }]} />
 
-      {this.caseQualityIsDeficient() && <Alert ref={(node) => this.deficientCaseQualityAlert = node}
+      {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}
         type="info"
         scrollOnAlert={false}
         styling={qualityOfWorkAlertStyling}>
@@ -229,10 +229,10 @@ class EvaluateDecisionView extends React.PureComponent {
       </Alert>}
 
       <div {...css(setWidth('100%'), marginTop(4))}>
-        <h3 {...css(headerStyling, { float: this.caseQualityIsDeficient() ? 'left' : '' })}>
+        <h3 {...css(headerStyling, { float: this.qualityIsDeficient() ? 'left' : '' })}>
           {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
         </h3>
-        {this.caseQualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
+        {this.qualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
       </div>
       <div {...twoColumnContainerStyling}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
@@ -240,8 +240,8 @@ class EvaluateDecisionView extends React.PureComponent {
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={this.setAreasOfImprovement}
-            errorState={highlight && this.caseQualityIsDeficient() && _.isEmpty(this.state.areasOfImprovement)}
-            value={this.state.areasOfImprovement}
+            errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
+            value={this.state.areas_for_improvement}
             options={this.getAreasOfImprovement().slice(0, 6)} />
         </div>
         <div className="cf-push-left">
@@ -249,7 +249,7 @@ class EvaluateDecisionView extends React.PureComponent {
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={this.setAreasOfImprovement}
-            value={this.state.areasOfImprovement}
+            value={this.state.areas_for_improvement}
             options={this.getAreasOfImprovement().slice(6)} />
         </div>
       </div>
@@ -263,8 +263,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
-        value={this.state.additionalFactors}
-        onChange={(additionalFactors) => this.setState({ additionalFactors })} />
+        value={this.state.factors_not_considered}
+        onChange={(factors) => this.setState({ factors_not_considered: factors })} />
     </React.Fragment>;
   };
 }
