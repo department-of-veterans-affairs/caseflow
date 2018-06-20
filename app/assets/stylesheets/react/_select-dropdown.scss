@@ -42,7 +42,6 @@
 }
 
 .Select-arrow-zone {
-   @warn "You may have forgotten a unit for #{$font-path}";
   background-image: image-url('arrow-down.svg');
   background-repeat: no-repeat;
   background-position: right 1.3rem center;
