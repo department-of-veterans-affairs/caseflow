@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
+import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -110,6 +111,17 @@ export class CaseSnapshot extends React.PureComponent {
   };
 
   render = () => {
+    const {
+      appeal: { attributes: appeal }
+    } = this.props;
+    let CheckoutDropdown = <React.Fragment />;
+
+    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+      CheckoutDropdown = <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    } else if (this.props.featureToggles.judge_assignment) {
+      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+    }
+
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
@@ -117,7 +129,7 @@ export class CaseSnapshot extends React.PureComponent {
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderAppealType(this.props.appeal)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{this.props.appeal.attributes.docket_number}</dd>
+          <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}
         </dl>
       </div>
@@ -128,10 +140,10 @@ export class CaseSnapshot extends React.PureComponent {
         </dl>
       </div>
       { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(this.props.appeal.attributes.vacols_id) &&
+        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <SelectCheckoutFlowDropdown vacolsId={this.props.appeal.attributes.vacols_id} />
+          {CheckoutDropdown}
         </div>
       }
     </div>;
