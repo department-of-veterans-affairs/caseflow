@@ -2,6 +2,14 @@ require "rails_helper"
 
 RSpec.feature "Out of Service" do
   before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  before do
     User.user_repository = Fakes::UserRepository
   end
 
@@ -46,28 +54,10 @@ RSpec.feature "Out of Service" do
 
     let(:documents) { [nod, soc, form9] }
     let(:appeal_ready) do
-      Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
-    end
-    let(:vacols_record) do
-      {
-        template: :ready_to_certify,
-        type: "Original",
-        file_type: "VVA",
-        representative: "The American Legion",
-        veteran_first_name: "Davy",
-        veteran_last_name: "Crockett",
-        veteran_middle_initial: "X",
-        appellant_first_name: "Susie",
-        appellant_middle_initial: nil,
-        appellant_last_name: "Crockett",
-        appellant_relationship: "Daughter",
-        nod_date: nod.received_at,
-        soc_date: soc.received_at + 4.days,
-        form9_date: form9.received_at
-      }
+      create(:legacy_appeal, vacols_case: create(:case_with_form_9))
     end
 
-    scenario "When out of service is disabled, it shows Check Documents page" do
+    scenario "When out of service is disabled, it shows Check Documents page", focus: true do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content("Check Documents")
       expect(page).to_not have_content("Technical Difficulties")
@@ -88,22 +78,17 @@ RSpec.feature "Out of Service" do
     after do
       Rails.cache.write("reader_out_of_service", false)
     end
-
-    let(:vacols_record) { :remand_decided }
-
     let(:documents) { [] }
 
-    let!(:issues) { [Generators::Issue.build] }
-
     let(:appeal) do
-      Generators::LegacyAppeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
+      create(:legacy_appeal, vacols_case: create(:case, documents: documents, case_issues: [create(:case_issue)]))
     end
 
     let!(:current_user) do
       User.authenticate!(roles: ["Reader"])
     end
 
-    scenario "When out of service is disabled, it shows document page" do
+    scenario "When out of service is disabled, it shows document page", focus: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Claims folder details")
       expect(page).to_not have_content("Technical Difficulties")
@@ -119,6 +104,7 @@ RSpec.feature "Out of Service" do
   context "Hearing Prep" do
     before do
       2.times do
+        create(:case_hearing)
         Generators::Hearing.build(
           user: current_user,
           date: 5.days.from_now,
@@ -141,7 +127,7 @@ RSpec.feature "Out of Service" do
       User.authenticate!(roles: ["Hearing Prep"])
     end
 
-    scenario "When out of service is disabled, it shows Hearings page" do
+    scenario "When out of service is disabled, it shows Hearings page", focus: true do
       visit "/hearings/dockets"
       expect(page).to have_content("Your Hearing Days")
       expect(page).to_not have_content("Technical Difficulties")
