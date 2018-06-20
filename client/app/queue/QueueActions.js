@@ -200,10 +200,11 @@ export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
   }
 });
 
-export const taskInitialAssigned = (task) => ({
+export const taskInitialAssigned = ({task, assigneeId}) => ({
   type: ACTIONS.TASK_INITIAL_ASSIGNED,
   payload: {
-    task
+    task,
+    assigneeId
   }
 });
 
@@ -213,7 +214,9 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
       then(JSON.parse).
       then(
         (resp) => {
-          dispatch(taskInitialAssigned(resp.task));
+          const { task: { data: task } } = resp;
+          task.vacolsId = task.id;
+          dispatch(taskInitialAssigned({task, assigneeId}));
         });
   })).catch((resp) => console.log('error', resp));
   /*
@@ -224,7 +227,9 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
       then(JSON.parse).
       then(
         (resp) => {
-          dispatch(taskInitialAssigned(resp.task));
+          const { task: { data: task } } = resp;
+          task.vacolsId = task.id;
+          dispatch(taskInitialAssigned({task, assigneeId}));
         });
   })).catch((resp) => console.log('error', resp));
   */
