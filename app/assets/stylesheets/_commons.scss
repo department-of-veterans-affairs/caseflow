@@ -5,12 +5,10 @@
 
 @import '../../../client/node_modules/uswds/src/stylesheets/all';
 @import '../../../client/node_modules/uswds/src/stylesheets/lib/addons/font-stacks';
-@import 'global/fonts';
 // Local variables
 @import 'variables';
 
-$font-path: '';
-$image-path: '';
+
 
 html,
 body {
