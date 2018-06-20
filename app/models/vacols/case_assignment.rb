@@ -1,9 +1,22 @@
 class VACOLS::CaseAssignment < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.brieff"
 
   has_one :staff, foreign_key: :slogid, primary_key: :bfcurloc
   has_one :case_decision, foreign_key: :defolder, primary_key: :bfkey
   has_one :correspondent, foreign_key: :stafkey, primary_key: :bfcorkey
+
+  def added_by
+    added_by_name = FullName.new(added_by_first_name,
+                                 added_by_middle_name,
+                                 added_by_last_name).formatted(:readable_full)
+
+    OpenStruct.new(name: added_by_name, css_id: added_by_css_id.presence || "")
+  end
+
+  def assigned_by
+    OpenStruct.new(first_name: assigned_by_first_name, last_name: assigned_by_last_name)
+  end
 
   class << self
     def active_cases_for_user(css_id)
@@ -111,4 +124,5 @@ class VACOLS::CaseAssignment < VACOLS::Record
       end
     end
   end
+  # :nocov:
 end

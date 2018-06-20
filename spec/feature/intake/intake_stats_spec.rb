@@ -91,7 +91,7 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     [:supplemental_claim, :higher_level_review, :higher_level_review_with_hearing, :appeal].each do |type|
-      completed_ramp_election = RampElection.create!(
+      RampElection.create!(
         veteran_file_number: "64205555",
         notice_date: 2.years.ago,
         receipt_date: 1.year.ago,
@@ -100,7 +100,6 @@ RSpec.feature "Intake Stats Dashboard" do
       )
 
       RampRefiling.create!(
-        ramp_election: completed_ramp_election,
         veteran_file_number: "64205555",
         receipt_date: 45.minutes.ago,
         option_selected: type,
@@ -112,7 +111,6 @@ RSpec.feature "Intake Stats Dashboard" do
 
     # Add an "in progress" refiling to make sure it doesn't show up
     RampRefiling.create!(
-      ramp_election: RampElection.last,
       veteran_file_number: "64205555",
       receipt_date: 45.minutes.ago,
       option_selected: :appeal,
@@ -126,7 +124,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Hearing Returned 1")
+    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Informal Conference Returned 1")
     expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Total Returned 2")
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned 50 %")
@@ -135,7 +133,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January (so far)")
     expect(find("#ramp-elections-received")).to have_content("Total 4")
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 1")
+    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Informal Conference 1")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Total Issues 4")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
@@ -154,7 +152,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-refilings-received")).to have_content("RAMP Refilings Received for January (so far)")
     expect(find("#ramp-refilings-received")).to have_content("Total 4")
     expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews 1")
-    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews with Hearing 1")
+    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews with Informal Conference 1")
     expect(find("#ramp-refilings-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-refilings-received")).to have_content("Appeals 1")
 
@@ -164,7 +162,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January 7")
     expect(find("#ramp-elections-sent")).to have_content("Total 0")
     expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Hearing Returned 0")
+    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Informal Conference Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Total Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned ?? %")
@@ -173,7 +171,7 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January 7")
     expect(find("#ramp-elections-received")).to have_content("Total 3")
     expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Hearing 0")
+    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Informal Conference 0")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
 

@@ -5,8 +5,9 @@ import {
   redText,
   DECISION_TYPES
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -16,10 +17,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 
   // todo: Attorneys currently only have one task per appeal, but future users might have multiple
   _.each(tasks, (task) => {
-    task.vacolsId = _(appeals).
-      filter((appeal) => appeal.attributes.vacols_id === task.attributes.appeal_id).
-      map('attributes.vacols_id').
-      head();
+    task.vacolsId = task.id;
   });
 
   const tasksById = _.keyBy(tasks, 'id');
@@ -96,3 +94,14 @@ export const getIssueDiagnosticCodeLabel = (code) => {
 
   return `${code} - ${readableLabel.staff_description}`;
 };
+
+/**
+ * For attorney checkout flow, filter out already-decided issues. Undecided
+ * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ *
+ * @param {Array} issues
+ * @returns {Array}
+ */
+export const getUndecidedIssues = (issues) => _.filter(issues, (issue) =>
+  !issue.disposition || (Number(issue.disposition) && issue.disposition in VACOLS_DISPOSITIONS_BY_ID)
+);

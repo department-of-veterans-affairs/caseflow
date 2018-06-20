@@ -24,7 +24,7 @@ RSpec.feature "RAMP Refiling Intake" do
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,
@@ -125,8 +125,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 
@@ -224,7 +223,6 @@ RSpec.feature "RAMP Refiling Intake" do
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling).to_not be_nil
-      expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
       expect(ramp_refiling.option_selected).to eq("appeal")
       expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
       expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 12, 3))
@@ -280,8 +278,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 
@@ -369,8 +366,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         user: current_user,
         detail: RampRefiling.new(
-          veteran_file_number: "12341234",
-          ramp_election: ramp_election
+          veteran_file_number: "12341234"
         )
       )
 

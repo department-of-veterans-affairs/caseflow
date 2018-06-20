@@ -29,7 +29,7 @@ class HearingWorksheetDocs extends Component {
 
     return <div className="cf-app-segment">
       <Accordion
-        style="bordered"
+        style={this.props.print ? 'borderless' : 'bordered'}
         defaultActiveKey={[accordionTitle]}
       >
         <AccordionSection
@@ -39,7 +39,9 @@ class HearingWorksheetDocs extends Component {
           title={accordionTitle}
         >
           <div>
-            <div {...styling}>{worksheet.cached_number_of_documents} Documents in Claims Folder</div>
+            <div {...styling} className="worksheetDocs">
+              {worksheet.cached_number_of_documents} Documents in Claims Folder
+            </div>
 
             {Object.values(worksheetAppeals).map((appeal, key) => {
 
@@ -55,6 +57,7 @@ class HearingWorksheetDocs extends Component {
                   <Table
                     styling={styling}
                     columns={columns}
+                    getKeyForRow = {(index) => index}
                     rowObjects={[
                       { name: <b>Prior BVA Decision</b>,
                         value: formatDate(appeal.prior_bva_decision_date) },
@@ -71,6 +74,7 @@ class HearingWorksheetDocs extends Component {
                   <Table
                     styling={styling}
                     columns={columns}
+                    getKeyForRow = {(index) => index}
                     rowObjects={[
                       { name: <b>SSOC</b>,
                         value: formatArrayOfDateStrings(appeal.ssoc_dates) },

@@ -6,6 +6,7 @@ import RampElectionPage, { FinishButtons as RampElectionButtons } from './rampEl
 import RampRefilingPage, { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
 import SupplementalClaimPage, { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
 import HigherLevelReviewPage, { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
+import AppealPage, { FinishButtons as AppealButtons } from './appeal/finish';
 import SwitchOnForm from '../components/SwitchOnForm';
 
 class Finish extends React.PureComponent {
@@ -15,7 +16,8 @@ class Finish extends React.PureComponent {
         ramp_election: <RampElectionPage />,
         ramp_refiling: <RampRefilingPage />,
         supplemental_claim: <SupplementalClaimPage />,
-        higher_level_review: <HigherLevelReviewPage />
+        higher_level_review: <HigherLevelReviewPage />,
+        appeal: <AppealPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
@@ -32,7 +34,8 @@ class FinishButtonsUnconnected extends React.PureComponent {
         ramp_election: <RampElectionButtons history={this.props.history} />,
         ramp_refiling: <RampRefilingButtons history={this.props.history} />,
         supplemental_claim: <SupplementalClaimButtons history={this.props.history} />,
-        higher_level_review: <HigherLevelReviewButtons history={this.props.history} />
+        higher_level_review: <HigherLevelReviewButtons history={this.props.history} />,
+        appeal: <AppealButtons history={this.props.history} />
       }}
     />
 }

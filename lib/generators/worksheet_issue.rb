@@ -19,7 +19,7 @@ class Generators::WorksheetIssue
     private
 
     def default_appeal
-      Generators::Appeal.create
+      Generators::LegacyAppeal.create
     end
   end
 end

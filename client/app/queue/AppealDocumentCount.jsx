@@ -11,17 +11,20 @@ class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const appeal = this.props.appeal.attributes;
 
+    if (appeal.paper_case) {
+      return;
+    }
+
     if (!this.props.docCountForAppeal) {
       const requestOptions = {
         withCredentials: true,
-        timeout: true,
-        headers: { 'FILE-NUMBER': appeal.vbms_id }
+        timeout: true
       };
 
-      ApiUtil.get(appeal.number_of_documents_url, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${appeal.vacols_id}/document_count`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
-        this.props.setAppealDocCount(appeal.vacols_id, resp.data.attributes.documents.length);
+        this.props.setAppealDocCount(appeal.vacols_id, resp.document_count);
       });
     }
   }

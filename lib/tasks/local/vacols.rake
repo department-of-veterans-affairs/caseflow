@@ -22,13 +22,13 @@ namespace :local do
       # rubocop:enable Lint/HandleExceptions
     end
 
-    desc "Starts and sets up a dockerized local VACOLS"
-    task setup: :environment do
-      puts "Stopping vacols-db and removing existing volumes"
-      `docker-compose stop vacols-db`
-      `docker-compose rm -f -v vacols-db`
+    # rubocop:disable Metrics/MethodLength
+    def setup_facols(suffix)
+      puts "Stopping vacols-db-#{suffix} and removing existing volumes"
+      `docker-compose stop vacols-db-#{suffix}`
+      `docker-compose rm -f -v vacols-db-#{suffix}`
       puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
-      `docker-compose up vacols-db &> './tmp/vacols.log' &`
+      `docker-compose up vacols-db-#{suffix} &> './tmp/vacols.log' &`
 
       # Loop until setup is complete. At most 10 minutes
       puts "Waiting for the database to be ready"
@@ -45,7 +45,7 @@ namespace :local do
         puts "Updating schema"
         schema_complete = false
         120.times do
-          output = `docker exec --tty -i VACOLS_DB bash -c \
+          output = `docker exec --tty -i VACOLS_DB-#{suffix} bash -c \
           "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
           if !output.include?("SP2-0640: Not connected")
             schema_complete = true
@@ -63,10 +63,17 @@ namespace :local do
         puts "Failed to setup database"
       end
     end
+    # rubocop:enable Metrics/MethodLength
+
+    desc "Starts and sets up a dockerized local VACOLS"
+    task setup: :environment do
+      setup_facols(Rails.env)
+    end
 
     desc "Seeds local VACOLS"
     task seed: :environment do
-      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
+      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
+      hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
 
       read_csv(VACOLS::Case, date_shift)
       read_csv(VACOLS::Folder, date_shift)
@@ -74,7 +81,8 @@ namespace :local do
       read_csv(VACOLS::Correspondent, date_shift)
       read_csv(VACOLS::CaseIssue, date_shift)
       read_csv(VACOLS::Note, date_shift)
-      read_csv(VACOLS::CaseHearing, date_shift)
+      read_csv(VACOLS::CaseHearing, hearing_date_shift)
+      read_csv(VACOLS::Actcode, date_shift)
       read_csv(VACOLS::Decass, date_shift)
       read_csv(VACOLS::Staff, date_shift)
       read_csv(VACOLS::Vftypes, date_shift)
@@ -90,6 +98,7 @@ namespace :local do
         end.css_id
       end
       Functions.grant!("System Admin", users: css_ids)
+      setup_dispatch
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -151,9 +160,11 @@ namespace :local do
         VACOLS::TravelBoardSchedule.where("tbyear > 2016"),
         sanitizer
       )
+      write_csv(VACOLS::Actcode, VACOLS::Actcode.all, sanitizer)
 
       # This must be run after the write_csv line for VACOLS::Case so that the VBMS ids get sanitized.
       vbms_record_from_case(cases, case_descriptors)
+      bgs_record_from_case(cases, case_descriptors)
       sanitizer.errors.each do |error|
         puts Rainbow(error).red
       end
@@ -161,18 +172,44 @@ namespace :local do
 
     private
 
+    def setup_dispatch
+      CreateEstablishClaimTasksJob.perform_now
+      Timecop.freeze(Date.yesterday) do
+        # Tasks prepared on today's date will not be picked up
+        Dispatch::Task.all.each(&:prepare!)
+        # Appeal decisions (decision dates) for partial grants have to be within 3 days
+        CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+          row_hash = row.to_h
+          if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
+            VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)
+          end
+        end
+      end
+    rescue AASM::InvalidTransition
+      Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
+    end
+
+    def bgs_record_from_case(cases, case_descriptors)
+      CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|
+        csv << %w[vbms_id bgs_key]
+        cases.each_with_index do |c, i|
+          csv << [c.bfcorlid, case_descriptors[i]["bgs_key"]]
+        end
+      end
+    end
+
     def vbms_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "vbms_setup.csv"), "wb") do |csv|
         csv << %w[vbms_id documents]
         cases.each_with_index do |c, i|
-          csv << [c.bfcorlid, case_descriptors[i]["vbms_id"]]
+          csv << [c.bfcorlid, case_descriptors[i]["vbms_key"]]
         end
       end
     end
 
     def dateshift_field(items, date_shift, k)
       items.map! do |item|
-        item[k] = item[k] + date_shift if item[k]
+        item[k] = item[k] + date_shift.seconds if item[k]
         item
       end
     end
@@ -185,15 +222,16 @@ namespace :local do
       end
     end
 
-    def read_csv(klass, date_shift)
+    def read_csv(klass, date_shift = nil)
       items = []
       klass.delete_all
       CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
         h = row.to_h
         items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
       end
+
       klass.columns_hash.each do |k, v|
-        if v.type == :datetime
+        if date_shift && v.type == :date
           dateshift_field(items, date_shift, k)
         elsif v.type == :string
           truncate_string(items, v.sql_type, k)

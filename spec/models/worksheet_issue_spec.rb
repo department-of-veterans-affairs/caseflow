@@ -1,6 +1,6 @@
 describe WorksheetIssue do
   context ".create_from_issue" do
-    let(:appeal) { Generators::Appeal.create }
+    let(:appeal) { Generators::LegacyAppeal.create }
     let(:issue) { Generators::Issue.build }
 
     subject { WorksheetIssue.create_from_issue(appeal, issue) }

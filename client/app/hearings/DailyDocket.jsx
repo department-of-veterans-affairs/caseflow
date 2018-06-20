@@ -5,14 +5,16 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CATEGORIES, ACTIONS } from './analytics';
+import { orderTheDocket } from './util/index';
 
-export class DailyDocket extends React.Component {
+export class DailyDocket extends React.PureComponent {
   onclickBackToHearingDays = () => {
     window.analyticsEvent(CATEGORIES.DAILY_DOCKET_PAGE, ACTIONS.GO_BACK_TO_HEARING_DAYS);
   }
 
   render() {
-    const docket = this.props.docket;
+
+    const docket = orderTheDocket(this.props.docket);
 
     return <div>
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
@@ -39,7 +41,7 @@ export class DailyDocket extends React.Component {
           </thead>
           {docket.map((hearing, index) =>
             <DocketHearingRow
-              key={hearing.id}
+              key={`${hearing.vacols_id}-${index}`}
               index={index}
               hearing={hearing}
               hearingDate={this.props.date}

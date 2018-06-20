@@ -1,87 +1,94 @@
-import { css } from 'glamor';
 import pluralize from 'pluralize';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import CaseListSearch from './CaseListSearch';
+import ApiUtil from '../util/ApiUtil';
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import CaseListTable from './CaseListTable';
-import { fullWidth, SEARCH_ERROR_FOR } from './constants';
+import { fullWidth } from './constants';
 
-import { clearCaseListSearch } from './CaseList/CaseListActions';
+import { clearCaseListSearch, onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
 
-const backLinkStyling = css({
-  float: 'left',
-  marginTop: '-3rem'
-});
+import COPY from '../../COPY.json';
 
 class CaseListView extends React.PureComponent {
+  componentWillUnmount = () => this.props.clearCaseListSearch();
+
+  createLoadPromise = () => {
+    if (this.props.appeals.length) {
+      return Promise.resolve();
+    }
+
+    const caseflowVeteranId = this.props.caseflowVeteranId;
+
+    return ApiUtil.get(`/cases/${caseflowVeteranId}`).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
+
+        this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
+      });
+  };
+
+  caseListTable = () => {
+    const appealsCount = this.props.appeals.length;
+
+    if (!appealsCount) {
+      return null;
+    }
+
+    // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
+    // the same for all appeals in the list.
+    const firstAppeal = this.props.appeals[0].attributes;
+    const heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
+        “${firstAppeal.veteran_full_name} (${firstAppeal.vbms_id})”`;
+
+    return <div>
+      <h1 className="cf-push-left" {...fullWidth}>{heading}</h1>
+      <CaseListTable appeals={this.props.appeals} />
+    </div>;
+  }
+
   render() {
-    const body = {
-      heading: null,
-      component: null
-    };
+    const failStatusMessageChildren = <div>
+      Caseflow was unable to load cases.<br />
+      Please <a onClick={this.reload}>refresh the page</a> and try again.
+    </div>;
 
-    const appealsCount = this.props.caseList.receivedAppeals.length;
-
-    if (appealsCount > 0) {
-      // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
-      // the same for all appeals in the list.
-      const firstAppeal = this.props.caseList.receivedAppeals[0];
-
-      body.heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
-          “${firstAppeal.attributes.veteran_full_name} (${firstAppeal.attributes.vbms_id})”`;
-      body.component = <CaseListTable appeals={this.props.caseList.receivedAppeals} />;
-    }
-
-    if (this.props.errorType) {
-      let errorMessage = 'Please enter a valid 9-digit Veteran ID to search for all available cases.';
-
-      switch (this.props.errorType) {
-      case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
-        body.heading = `Invalid Veteran ID “${this.props.queryResultingInError}”`;
-        break;
-      case SEARCH_ERROR_FOR.NO_APPEALS:
-        body.heading = `No cases found for “${this.props.queryResultingInError}”`;
-        break;
-      case SEARCH_ERROR_FOR.UNKNOWN_SERVER_ERROR:
-      default:
-        body.heading = `Server encountered an error searching for “${this.props.queryResultingInError}”`;
-        errorMessage = 'Please retry your search and contact support if errors persist.';
-      }
-
-      body.component = <React.Fragment>
-        <p>{errorMessage}</p>
-        <CaseListSearch elementId="searchBarEmptyList" />
-      </React.Fragment>;
-    }
-
-    return <React.Fragment>
-      <div {...backLinkStyling}>
-        <Link to="/queue" onClick={this.props.clearCaseListSearch}>&lt; Back to Your Queue</Link>
-      </div>
-      <AppSegment filledBackground>
-        <div>
-          <h1 className="cf-push-left" {...fullWidth}>{body.heading}</h1>
-          {body.component}
-        </div>
-      </AppSegment>
-    </React.Fragment>;
+    return <AppSegment filledBackground>
+      <LoadingDataDisplay
+        createLoadPromise={this.createLoadPromise}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+          message: COPY.CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE
+        }}
+        failStatusMessageProps={{ title: COPY.CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE }}
+        failStatusMessageChildren={failStatusMessageChildren}>
+        {this.caseListTable()}
+      </LoadingDataDisplay>
+    </AppSegment>;
   }
 }
 
+CaseListView.propTypes = {
+  caseflowVeteranId: PropTypes.string
+};
+
+CaseListView.defaultProps = {
+  caseflowVeteranId: ''
+};
+
 const mapStateToProps = (state) => ({
-  caseList: state.caseList,
-  errorType: state.caseList.search.errorType,
-  queryResultingInError: state.caseList.search.queryResultingInError,
-  searchQuery: state.caseList.caseListCriteria.searchQuery
+  appeals: state.caseList.receivedAppeals
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearCaseListSearch
+  clearCaseListSearch,
+  onReceiveAppealsUsingVeteranId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);

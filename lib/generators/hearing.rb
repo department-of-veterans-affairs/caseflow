@@ -38,7 +38,7 @@ class Generators::Hearing
       attrs = default_attrs.merge(attrs)
       hearing = ::Hearing.find_or_create_by(vacols_id: attrs[:vacols_id])
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
-      attrs[:appeal_vacols_id] = Appeal.find(attrs[:appeal_id]).vacols_id
+      attrs[:appeal_vacols_id] = LegacyAppeal.find(attrs[:appeal_id]).vacols_id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing.update_attributes(attrs)
 
@@ -58,7 +58,7 @@ class Generators::Hearing
     private
 
     def default_appeal
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, documents: documents)
+      Generators::LegacyAppeal.create(vacols_record: { template: :pending_hearing }, documents: documents)
     end
 
     def documents
@@ -67,7 +67,7 @@ class Generators::Hearing
 
     def default_appeal_id(hearing)
       if hearing.appeal_id
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vacols_record: { template: :pending_hearing },
           vacols_id: hearing.appeal.vacols_id,
           vbms_id: hearing.appeal.vbms_id,

@@ -6,6 +6,13 @@ export const PAGE_PATHS = {
   COMPLETED: '/completed'
 };
 
+export const BOOLEAN_RADIO_OPTIONS = [
+  { value: 'false',
+    displayText: 'No' },
+  { value: 'true',
+    displayText: 'Yes' }
+];
+
 export const ACTIONS = {
   SET_FORM_TYPE: 'SET_FORM_TYPE',
   START_NEW_INTAKE: 'START_NEW_INTAKE',
@@ -13,11 +20,15 @@ export const ACTIONS = {
   FILE_NUMBER_SEARCH_START: 'FILE_NUMBER_SEARCH_START',
   FILE_NUMBER_SEARCH_SUCCEED: 'FILE_NUMBER_SEARCH_SUCCEED',
   FILE_NUMBER_SEARCH_FAIL: 'FILE_NUMBER_SEARCH_FAIL',
+  CLEAR_SEARCH_ERRORS: 'CLEAR_SEARCH_ERRORS',
   SET_OPTION_SELECTED: 'SET_OPTION_SELECTED',
   SET_INFORMAL_CONFERENCE: 'SET_INFORMAL_CONFERENCE',
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
+  SET_CLAIMANT_NOT_VETERAN: 'SET_CLAIMANT_NOT_VETERAN',
+  SET_CLAIMANT: 'SET_CLAIMANT',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
+  SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   SUBMIT_REVIEW_START: 'SUBMIT_REVIEW_START',
   SUBMIT_REVIEW_SUCCEED: 'SUBMIT_REVIEW_SUCCEED',
@@ -32,6 +43,9 @@ export const ACTIONS = {
   CONFIRM_FINISH_INTAKE: 'CONFIRM_FINISH_INTAKE',
   COMPLETE_INTAKE_NOT_CONFIRMED: 'COMPLETE_INTAKE_NOT_CONFIRMED',
   SET_ISSUE_SELECTED: 'SET_ISSUE_SELECTED',
+  ADD_NON_RATED_ISSUE: 'ADD_NON_RATED_ISSUE',
+  SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',
+  SET_ISSUE_DESCRIPTION: 'SET_ISSUE_DESCRIPTION',
   SET_HAS_INELIGIBLE_ISSUE: 'SET_HAS_INELIGIBLE_ISSUE',
   CONFIRM_INELIGIBLE_FORM: 'CONFIRM_INELIGIBLE_FORM',
   CONFIRM_OUTSIDE_CASEFLOW_STEPS: 'CONFIRM_OUTSIDE_CASEFLOW_STEPS',
@@ -102,8 +116,8 @@ export const FORM_TYPES = {
     name: 'Supplemental Claim (VA Form 21-526b)',
     category: 'ama'
   },
-  NOTICE_OF_DISAGREEMENT: {
-    key: 'notice_of_disagreement',
+  APPEAL: {
+    key: 'appeal',
     name: 'Notice of Disagreement (VA Form 10182)',
     category: 'ama'
   }
@@ -131,3 +145,31 @@ export const CANCELLATION_REASONS = {
     name: 'Other'
   }
 };
+
+const issueCategoriesArray = [
+  'Unknown issue category',
+  'Apportionment',
+  'Incarceration Adjustments',
+  'Audit Error Worksheet (DFAS)',
+  'Active Duty Adjustments',
+  'Drill Pay Adjustments',
+  'Character of discharge determinations',
+  'Income/net worth (pension)',
+  'Dependent child - Adopted',
+  'Dependent child - Stepchild',
+  'Dependent child - Biological',
+  'Dependency Spouse - Common law marriage',
+  'Dependency Spouse - Inference of marriage',
+  'Dependency Spouse - Deemed valid marriage',
+  'Military Retired Pay',
+  'Contested Claims (other than apportionment)',
+  'Lack of Qualifying Service',
+  'Other non-rated'
+];
+
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Dropdown" do
   let!(:current_user) { User.authenticate! }
-  let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+  let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
   scenario "Dropdown works on both erb and react pages" do
     User.authenticate!

@@ -33,7 +33,7 @@ describe Form8 do
 
   context "#update_from_appeal" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
     it "populates _initial_ fields with the same values as their counterparts" do
       form8.assign_attributes_from_appeal(appeal)
@@ -48,7 +48,7 @@ describe Form8 do
 
   context "#attributes" do
     let(:form8) { Form8.new }
-    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
+    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 
     it "does not return initial attributes" do
       form8.assign_attributes_from_appeal(appeal)
@@ -270,12 +270,14 @@ describe Form8 do
     end
 
     let(:appeal) do
-      Appeal.new(
+      Generators::LegacyAppeal.build(
         vacols_id: "VACOLS-ID",
         vbms_id: "VBMS-ID",
         appellant_first_name: "Micah",
+        appellant_middle_initial: "A",
         appellant_last_name: "Bobby",
         appellant_relationship: "Brother",
+        veteran_middle_initial: "A",
         veteran_first_name: "Shane",
         veteran_last_name: "Bobby",
         notification_date: (Time.zone.now - 4.days).to_date,
@@ -292,10 +294,10 @@ describe Form8 do
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
-        appellant_name: "Micah Bobby",
+        appellant_name: "Micah A Bobby",
         appellant_relationship: "Brother",
         file_number: "VBMS-ID",
-        veteran_name: "Bobby, Shane",
+        veteran_name: "Bobby, Shane, A",
         insurance_loan_number: "1337",
         service_connection_notification_date: (Time.zone.now - 4.days).to_date,
         increased_rating_notification_date: (Time.zone.now - 4.days).to_date,

@@ -31,7 +31,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_NOTES,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           notes: 'this is my note',
           date: '2017-08-10'
         }
@@ -51,7 +51,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISPOSITION,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           disposition: 'no_show',
           date: '2017-08-10'
         }
@@ -71,7 +71,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_HOLD_OPEN,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           holdOpen: 60,
           date: '2017-08-10'
         }
@@ -91,7 +91,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_AOD,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           aod: 'filed',
           date: '2017-08-10'
         }
@@ -111,7 +111,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_TRANSCRIPT_REQUESTED,
         payload: {
-          hearingIndex: 0,
+          hearingId: 0,
           transcriptRequested: true,
           date: '2017-08-10'
         }
@@ -159,23 +159,6 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_CONTENTIONS, () => {
-    let state;
-
-    beforeEach(() => {
-      state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_CONTENTIONS,
-        payload: {
-          contentions: 'filled'
-        }
-      });
-    });
-
-    it('sets worksheet contentions', () => {
-      expect(state.worksheet.contentions).to.deep.equal('filled');
-    });
-  });
-
   context(Constants.SET_MILITARY_SERVICE, () => {
     let state;
 
@@ -193,37 +176,20 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_EVIDENCE, () => {
+  context(Constants.SET_SUMMARY, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_EVIDENCE,
+        type: Constants.SET_SUMMARY,
         payload: {
-          evidence: 'filled'
+          summary: 'filled'
         }
       });
     });
 
-    it('sets evidence', () => {
-      expect(state.worksheet.evidence).to.deep.equal('filled');
-    });
-  });
-
-  context(Constants.SET_COMMENTS_FOR_ATTORNEY, () => {
-    let state;
-
-    beforeEach(() => {
-      state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_COMMENTS_FOR_ATTORNEY,
-        payload: {
-          commentsForAttorney: 'filled'
-        }
-      });
-    });
-
-    it('sets worksheet comments for attorney', () => {
-      expect(state.worksheet.comments_for_attorney).to.deep.equal('filled');
+    it('sets worksheet summary', () => {
+      expect(state.worksheet.summary).to.deep.equal('filled');
     });
   });
 

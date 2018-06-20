@@ -26,52 +26,39 @@ class DropdownFilter extends React.PureComponent {
   }
 
   render() {
-    const { children, baseCoordinates, name } = this.props;
+    const { children, name } = this.props;
 
-    if (!baseCoordinates) {
-      return null;
-    }
+    const style = {
+      top: '25px',
+      right: 0
+    };
 
-    let style;
+    const rel = {
+      position: 'relative'
+    };
 
-    if (this.state.rootElemWidth) {
-      const TOP_OFFSET = 5;
-      const LEFT_OFFSET = -2;
-
-      style = {
-        top: baseCoordinates.bottom + TOP_OFFSET,
-        left: baseCoordinates.right - this.state.rootElemWidth + LEFT_OFFSET
-      };
-    } else {
-      style = { left: '-99999px' };
-    }
-
-    return <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
-      this.rootElem = rootElem;
-    }}>
-      <div className="cf-clear-filter-row">
-        <button className="cf-text-button" onClick={this.props.clearFilters}
-          disabled={!this.props.isClearEnabled}>
-          <div className="cf-clear-filter-button-wrapper">
-              Clear {name} filter
-          </div>
-        </button>
+    return <div style={rel}>
+      <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
+        this.rootElem = rootElem;
+      }}>
+        <div className="cf-clear-filter-row">
+          <button className="cf-text-button" onClick={this.props.clearFilters}
+            disabled={!this.props.isClearEnabled}>
+            <div className="cf-clear-filter-button-wrapper">
+                Clear {name} filter
+            </div>
+          </button>
+        </div>
+        {React.cloneElement(React.Children.only(children), {
+          dropdownFilterViewListStyle,
+          dropdownFilterViewListItemStyle
+        })}
       </div>
-      {React.cloneElement(React.Children.only(children), {
-        dropdownFilterViewListStyle,
-        dropdownFilterViewListItemStyle
-      })}
     </div>;
   }
 
   componentDidMount() {
     document.addEventListener('click', this.onGlobalClick, true);
-
-    if (this.rootElem) {
-      this.setState({
-        rootElemWidth: this.rootElem.clientWidth
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -93,10 +80,6 @@ class DropdownFilter extends React.PureComponent {
 
 DropdownFilter.propTypes = {
   children: PropTypes.node,
-  baseCoordinates: PropTypes.shape({
-    bottom: PropTypes.number.isRequired,
-    right: PropTypes.number.isRequired
-  }),
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func

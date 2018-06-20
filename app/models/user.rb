@@ -11,7 +11,8 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
+               "Hearing Schedule"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -36,12 +37,24 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
+  def attorney_in_vacols?
+    vacols_roles.include?("attorney")
+  end
+
+  def judge_in_vacols?
+    vacols_roles.include?("judge")
+  end
+
+  def colocated_in_vacols?
+    vacols_roles.include?("colocated")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
   end
 
-  def vacols_role
-    @vacols_role ||= self.class.user_repository.vacols_role(css_id)
+  def vacols_roles
+    @vacols_roles ||= self.class.user_repository.vacols_roles(css_id) || []
   end
 
   def vacols_attorney_id
@@ -147,7 +160,7 @@ class User < ApplicationRecord
     appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
-    appeal_streams = Appeal.fetch_appeal_streams(appeals)
+    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
     appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
 
     appeals.map do |appeal|
@@ -217,10 +230,12 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
+      return AppealRepository if FeatureToggle.enabled?(:test_facols)
       @appeal_repository ||= AppealRepository
     end
 
     def user_repository
+      return UserRepository if FeatureToggle.enabled?(:test_facols)
       @user_repository ||= UserRepository
     end
   end

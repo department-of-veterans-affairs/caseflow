@@ -3,7 +3,7 @@ require "rails_helper"
 describe AddSeriesIdToDocumentsJob do
   context ".perform" do
     let(:appeal) do
-      Generators::Appeal.build
+      Generators::LegacyAppeal.build
     end
 
     let(:series_ids) do

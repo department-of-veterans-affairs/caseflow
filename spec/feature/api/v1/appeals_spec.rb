@@ -3,7 +3,7 @@ describe "Appeals API v1", type: :request do
     before { FeatureToggle.enable!(:appeals_status) }
 
     let!(:resolved_appeal) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_record: {
           template: :remand_decided,
@@ -19,7 +19,7 @@ describe "Appeals API v1", type: :request do
     end
 
     let!(:current_appeal) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
@@ -39,7 +39,7 @@ describe "Appeals API v1", type: :request do
     end
 
     let!(:another_veteran_appeal) do
-      Generators::Appeal.create(vbms_id: "333222333S")
+      Generators::LegacyAppeal.create(vbms_id: "333222333S")
     end
 
     let!(:held_hearing) do
@@ -119,7 +119,7 @@ describe "Appeals API v1", type: :request do
       expect(json["data"].length).to eq(2)
 
       # Make a new appeal and check that it isn't returned because of the cache
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_record: { template: :remand_decided }
       )

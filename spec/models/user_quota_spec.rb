@@ -3,7 +3,7 @@ require "rails_helper"
 class FakeTask < Dispatch::Task
   before_create do
     # Automatically set appeal to make test data setup easier
-    self.appeal ||= Generators::Appeal.create
+    self.appeal ||= Generators::LegacyAppeal.create
   end
 end
 

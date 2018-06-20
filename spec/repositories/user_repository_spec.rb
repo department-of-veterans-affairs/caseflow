@@ -1,39 +1,52 @@
 describe UserRepository do
   context ".vacols_role" do
-    subject { UserRepository.vacols_role("TEST1") }
+    subject { UserRepository.vacols_roles("TEST1") }
 
     context "when a user is an attorney" do
       it "should return an attorney role" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: nil, sattyid: "1234"))
-        expect(subject).to eq "Attorney"
+        expect(subject).to eq ["attorney"]
       end
     end
 
     context "when a user is a judge" do
       it "should return a judge role" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "J"))
-        expect(subject).to eq "Judge"
+        expect(subject).to eq ["judge"]
       end
     end
 
     context "when a user is an acting judge" do
       it "should return a judge role" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "A"))
-        expect(subject).to eq "Judge"
+        expect(subject).to eq ["judge"]
+      end
+    end
+
+    context "when a user is a co-located admin" do
+      it "should return a co-located role" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(stitle: "A1"))
+        expect(subject).to eq ["colocated"]
       end
     end
 
     context "when a user is an acting judge and has an attorney number" do
-      it "should return an attorney role" do
+      it "should return both roles" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "A", sattyid: "1234"))
-        expect(subject).to eq "Attorney"
+        expect(subject).to eq %w[attorney judge]
       end
     end
 
     context "when a user is neither" do
       it "should not return a role" do
         allow(UserRepository).to receive(:staff_record_by_css_id).and_return(OpenStruct.new(svlj: "L"))
-        expect(subject).to eq nil
+        expect(subject).to eq []
+      end
+    end
+    context "when user does not exist in VACOLS" do
+      it "should return nil" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(nil)
+        expect(subject).to eq []
       end
     end
   end
@@ -71,9 +84,9 @@ describe UserRepository do
     end
 
     context "when user does not exist in VACOLS" do
-      it "should raise Caseflow::Error::UserRepositoryError" do
-        allow(UserRepository).to receive(:staff_record_by_css_id).and_raise(Caseflow::Error::UserRepositoryError)
-        expect { subject }.to raise_error(Caseflow::Error::UserRepositoryError)
+      it "should return nil" do
+        allow(UserRepository).to receive(:staff_record_by_css_id).and_return(nil)
+        expect(subject).to eq nil
       end
     end
   end

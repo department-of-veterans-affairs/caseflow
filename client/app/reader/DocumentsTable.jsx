@@ -45,69 +45,8 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 };
 
 class DocumentsTable extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      filterPositions: {
-        tag: {},
-        category: {}
-      }
-    };
-  }
-
   componentDidMount() {
-    this.hasSetScrollPosition = false;
-    this.setFilterIconPositions();
-    window.addEventListener('resize', this.setFilterIconPositions);
-  }
-
-  componentWillUnmount() {
-    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
-    window.removeEventListener('resize', this.setFilterIconPositions);
-  }
-
-  setFilterIconPositions = () => {
-    this.setCategoryFilterIconPosition();
-    this.setTagFilterIconPosition();
-  }
-
-  setCategoryFilterIconPosition = () => {
-    this.setFilterIconPosition('category', this.categoryFilterIcon);
-  }
-
-  setTagFilterIconPosition = () => {
-    this.setFilterIconPosition('tag', this.tagFilterIcon);
-  }
-
-  getTbodyRef = (elem) => this.tbodyElem = elem
-  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
-  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
-  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
-  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
-  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
-
-  getKeyForRow = (index, { isComment, id }) => {
-    return isComment ? `${id}-comment` : id;
-  }
-
-  setFilterIconPosition = (filterType, icon) => {
-    const boundingClientRect = {
-      bottom: icon.getBoundingClientRect().bottom + window.scrollY,
-      right: icon.getBoundingClientRect().right
-    };
-
-    if (this.state.filterPositions[filterType].bottom !== boundingClientRect.bottom ||
-      this.state.filterPositions[filterType].right !== boundingClientRect.right) {
-      this.setState({
-        filterPositions: _.merge(this.state.filterPositions, {
-          [filterType]: _.merge({}, boundingClientRect)
-        })
-      });
-    }
-  }
-
-  componentDidUpdate() {
-    if (!this.hasSetScrollPosition) {
+    if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
       if (this.lastReadIndicatorElem) {
@@ -125,10 +64,22 @@ class DocumentsTable extends React.Component {
           this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
         }
       }
-
-      this.hasSetScrollPosition = true;
     }
-    this.setFilterIconPositions();
+  }
+
+  componentWillUnmount() {
+    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
+  }
+
+  getTbodyRef = (elem) => this.tbodyElem = elem
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
+
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
   }
 
   // eslint-disable-next-line max-statements
@@ -196,7 +147,7 @@ class DocumentsTable extends React.Component {
             handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
 
           {isCategoryDropdownFilterOpen &&
-            <DropdownFilter baseCoordinates={this.state.filterPositions.category}
+            <DropdownFilter
               clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
@@ -248,7 +199,7 @@ class DocumentsTable extends React.Component {
             handleActivate={this.toggleTagDropdownFilterVisiblity}
           />
           {isTagDropdownFilterOpen &&
-            <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
+            <DropdownFilter
               clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}

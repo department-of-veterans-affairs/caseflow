@@ -47,19 +47,21 @@ module Fakes::Data::AppealData
   end
 
   def self.certification_ready_to_certify
+    vacols_case = VACOLS::Case.where(bfcorlid: "701305078S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2010, 10, 13)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2011, 2, 3)),
-      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: Date.new(2016, 6, 27))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19),
+      Generators::Document.build(vbms_document_id: 3, type: "SSOC", received_at: vacols_case.bfssoc1)
     ]
   end
 
   def self.certification_fuzzy_match_documents
+    vacols_case = VACOLS::Case.where(bfcorlid: "783740847S").first
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 9, 30)),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2017, 3, 19)),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2017, 3, 29))
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: vacols_case.bfdnod),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: vacols_case.bfdsoc - 2.days),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: vacols_case.bfd19)
     ]
   end
 
@@ -68,6 +70,12 @@ module Fakes::Data::AppealData
       Generators::Document.build(vbms_document_id: 1, type: "NOD", received_at: Date.new(2015, 4, 9)),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", received_at: Date.new(2011, 1, 14)),
       Generators::Document.build(vbms_document_id: 3, type: "Form 9", received_at: Date.new(2016, 7, 24))
+    ]
+  end
+
+  def self.dispatch_documents
+    [
+      Generators::Document.build(vbms_document_id: 11, type: "BVA Decision")
     ]
   end
 
@@ -89,7 +97,8 @@ module Fakes::Data::AppealData
     "Correspondence",
     "VA 21-4142 Authorization to Disclose Information to VA",
     "VA 21-4138 Statement in Support of Claim",
-    "VA Memo"
+    "VA Memo",
+    "RAMP Opt-in Election"
   ].freeze
 
   def self.redacted_reader_documents
@@ -109,13 +118,15 @@ module Fakes::Data::AppealData
       "static_documents" => static_reader_documents,
       "no_categories" => reader_docs_no_categories,
       "random_documents" => random_reader_documents(1000),
-      "redacted_documents" => redacted_reader_documents
+      "redacted_documents" => redacted_reader_documents,
+      "amc_full_grants" => dispatch_documents,
+      "remands_ready_for_claims_establishment" => dispatch_documents
     }
   end
 
   def self.default_records
     [
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Court Remand",
         vacols_id: "111111",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -145,7 +156,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Remand",
         vacols_id: "222222",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -175,7 +186,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(1000)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Remand",
         vacols_id: "333333",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -210,7 +221,7 @@ module Fakes::Data::AppealData
 
   def self.default_queue_records
     [
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Original",
         vacols_id: "111112",
@@ -232,10 +243,7 @@ module Fakes::Data::AppealData
         appellant_zip: "07932",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Joe",
-        added_by_middle_name: "A",
-        added_by_last_name: "Snuffy",
-        added_by_css_id: "MAPAPPAS",
+        added_by: OpenStruct.new(name: "Joe Snuffy", css_id: "MAPAPPAS"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
         representative: "Virginia Department of Veterans Affairs",
@@ -252,7 +260,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(7)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Post Remand",
         vacols_id: "222221",
@@ -274,10 +282,7 @@ module Fakes::Data::AppealData
         appellant_zip: "36838",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: nil,
-        added_by_middle_name: nil,
-        added_by_last_name: nil,
-        added_by_css_id: nil,
+        added_by: OpenStruct.new(name: nil, css_id: nil),
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
         representative: "No Representative",
@@ -288,21 +293,25 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "Schedular", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: nil,
+            disposition_id: nil,
             vacols_sequence_id: 2,
             codes: %w[06 12 04 8599],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: nil,
+            disposition_id: nil,
             vacols_sequence_id: 3,
             codes: %w[08 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: nil,
+            disposition_id: nil,
             vacols_sequence_id: 4,
             codes: %w[11 15 03 5252],
             labels: ["Compensation", "Service connection", "All Others", "Other peripheral nerve paralysis"],
             note: "PERIPHERAL NEUROPATHY LEFT UPPER EXTREMITY 8599-8515" },
           { disposition: nil,
+            disposition_id: nil,
             vacols_sequence_id: 5,
             codes: %w[05 15 04 7101],
             labels: ["Compensation",
@@ -312,7 +321,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Court Remand",
         vacols_id: "333334",
@@ -334,10 +343,7 @@ module Fakes::Data::AppealData
         appellant_zip: "63873",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Ricky",
-        added_by_middle_name: nil,
-        added_by_last_name: "Tikitembo",
-        added_by_css_id: "HROBERT",
+        added_by: OpenStruct.new(name: "Ricky Tikitembo", css_id: "HROBERT"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
         representative: "One Time Representative",
@@ -357,7 +363,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         type: "Original",
         vacols_id: "533333",
         assigned_to_attorney_date: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -380,10 +386,7 @@ module Fakes::Data::AppealData
         appellant_zip: "32883",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: "Dana",
-        added_by_middle_name: "T",
-        added_by_last_name: "Frey",
-        added_by_css_id: "DFREY",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
         representative: "Agent",
@@ -403,7 +406,7 @@ module Fakes::Data::AppealData
         ],
         documents: static_reader_documents
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Reconsideration",
         vacols_id: "333336",
@@ -418,10 +421,7 @@ module Fakes::Data::AppealData
         veteran_last_name: "Nino",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
-        added_by_first_name: "Demo",
-        added_by_middle_name: nil,
-        added_by_last_name: "More",
-        added_by_css_id: "DMORE",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         regional_office_key: "RO13",
         representative: "Disabled American Veterans",
         issues: [
@@ -439,7 +439,7 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ]
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Remand",
         vacols_id: "333338",
@@ -462,10 +462,7 @@ module Fakes::Data::AppealData
         appellant_zip: "67753",
         appellant_country: "USA",
         docket_number: "13 11-265",
-        added_by_first_name: nil,
-        added_by_middle_name: nil,
-        added_by_last_name: nil,
-        added_by_css_id: nil,
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -484,7 +481,7 @@ module Fakes::Data::AppealData
         ],
         documents: random_reader_documents(25)
       ),
-      Generators::Appeal.build(
+      Generators::LegacyAppeal.build(
         vacols_record: :veteran_is_appellant,
         type: "Clear and Unmistakable Error",
         vacols_id: "883335",
@@ -507,10 +504,7 @@ module Fakes::Data::AppealData
         appellant_zip: "K1M 1C8",
         appellant_country: "CN",
         docket_number: "13 11-265",
-        added_by_first_name: "Jess",
-        added_by_middle_name: "P",
-        added_by_last_name: "Tran",
-        added_by_css_id: "HROBERT",
+        added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO14",
         issues: [
@@ -552,6 +546,46 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ],
         documents: static_reader_documents
+      ),
+      Generators::LegacyAppeal.build(
+        vacols_record: :veteran_is_appellant,
+        file_type: "Paper",
+        type: "Original",
+        vacols_id: "555552",
+        assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
+        reassigned_to_judge_date: "2013-05-31 00:00:00 UTC".to_datetime,
+        assigned_to_location_date: "2013-01-17 00:00:00 UTC".to_datetime,
+        created_at: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_due: "2018-02-13 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        vbms_id: "384920173S",
+        veteran_first_name: "Polly",
+        veteran_middle_initial: "A",
+        veteran_last_name: "Carter",
+        veteran_date_of_birth: "1970-02-14 00:00:00 UTC".to_datetime,
+        veteran_gender: "F",
+        appellant_address_line_1: "303320 Rockwood Rd",
+        appellant_city: "Rennerchester",
+        appellant_state: "AZ",
+        appellant_zip: "71882",
+        appellant_country: "USA",
+        docket_number: "13 11-265",
+        added_by: OpenStruct.new(name: "Enid Rempel", css_id: "EREMPEL"),
+        docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
+        regional_office_key: "RO30",
+        representative: "Virginia Department of Veterans Affairs",
+        issues: [
+          {
+            vacols_sequence_id: 1,
+            codes: %w[02 15 03 7101],
+            labels: ["Compensation",
+                     "Service connection",
+                     "All Others",
+                     "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
+            note: "hypertension secondary to DMII."
+          }
+        ],
+        documents: random_reader_documents(3)
       )
     ].each(&:save)
   end

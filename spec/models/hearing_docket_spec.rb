@@ -5,7 +5,7 @@ describe HearingDocket do
   end
 
   let!(:appeal) do
-    Generators::Appeal.create(vbms_id: "333222333S")
+    Generators::LegacyAppeal.create(vbms_id: "333222333S")
   end
 
   let!(:hearing) do

@@ -1,9 +1,11 @@
 /* eslint-disable max-lines */
 import { css } from 'glamor';
 import _ from 'lodash';
-import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
+import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import COPY from '../../COPY.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -18,7 +20,6 @@ export const ACTIONS = {
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
-  LOAD_APPEAL_DOC_COUNT_FAILURE: 'LOAD_APPEAL_DOC_COUNT_FAILURE',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
   SET_DECISION_OPTIONS: 'SET_DECISION_OPTIONS',
   RESET_DECISION_OPTIONS: 'RESET_DECISION_OPTIONS',
@@ -32,7 +33,11 @@ export const ACTIONS = {
   SAVE_EDITED_APPEAL_ISSUE: 'SAVE_EDITED_APPEAL_ISSUE',
   UPDATE_EDITING_APPEAL_ISSUE: 'UPDATE_EDITING_APPEAL_ISSUE',
   DELETE_EDITING_APPEAL_ISSUE: 'DELETE_EDITING_APPEAL_ISSUE',
-  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE'
+  SET_ATTORNEYS_OF_JUDGE: 'SET_ATTORNEYS_OF_JUDGE',
+  SET_TASKS_AND_APPEALS_OF_ATTORNEY: 'SET_TASKS_AND_APPEALS_OF_ATTORNEY',
+  REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY: 'REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY',
+  ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY',
+  SET_SELECTION_OF_TASK_OF_USER: 'SET_SELECTION_OF_TASK_OF_USER'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -40,11 +45,22 @@ export const redText = css({ color: '#E60000' });
 export const boldText = css({ fontWeight: 'bold' });
 export const fullWidth = css({ width: '100%' });
 export const dropdownStyling = css({ minHeight: 0 });
+export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
+export const subHeadTextStyle = css(disabledLinkStyle, {
+  fontSize: 'small'
+});
+export const marginTop = (margin) => css({ marginTop: `${margin}rem` });
+export const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
+export const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
+
+export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
-  QUEUE_TASK: 'Queue Task'
+  QUEUE_TASK: 'Queue Task',
+  EVALUATE_DECISION: 'Evaluate Decision'
 };
 
 export const TASK_ACTIONS = {
@@ -55,30 +71,38 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
+export const JUDGE_DECISION_TYPES = {
+  DISPATCH: 'dispatch',
+  OMO_REQUEST: 'omo_request'
+};
+
+export const JUDGE_DECISION_OPTIONS = [{
+  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+  value: JUDGE_DECISION_TYPES.DISPATCH
+}, {
+  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+  value: JUDGE_DECISION_TYPES.OMO_REQUEST
+}];
+
 export const DECISION_TYPES = {
-  OMO_REQUEST: 'OMORequest',
-  DRAFT_DECISION: 'DraftDecision'
+  OMO_REQUEST: 'omo_request',
+  DRAFT_DECISION: 'draft_decision'
 };
 
 export const DRAFT_DECISION_OPTIONS = [{
-  label: 'Decision Ready for Review',
+  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
   value: DECISION_TYPES.DRAFT_DECISION
 }, {
-  label: 'OMO Ready for Review',
+  label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
   value: DECISION_TYPES.OMO_REQUEST
 }];
 
 export const SEARCH_ERROR_FOR = {
+  EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
   INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
   NO_APPEALS: 'NO_APPEALS',
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
-
-export const CASE_DISPOSITION_ID_BY_DESCRIPTION = Object.assign({},
-  ...Object.keys(VACOLS_DISPOSITIONS_BY_ID).map((dispositionId) => ({
-    [StringUtil.parameterize(VACOLS_DISPOSITIONS_BY_ID[dispositionId])]: dispositionId
-  }))
-);
 
 export const REMAND_REASONS = Object.assign({},
   ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
@@ -90,9 +114,29 @@ export const REMAND_REASONS = Object.assign({},
 );
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
-  map((val) => StringUtil.parameterize(val));
+  map(StringUtil.parameterize);
 
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
-  parameterizedDispositions
+  Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
+
+// max length of VACOLS issue description field `ISSDESC`
+export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+
+export const USER_ROLES = {
+  ATTORNEY: 'Attorney',
+  JUDGE: 'Judge'
+};
+
+export const PAGE_TITLES = {
+  DISPOSITIONS: {
+    JUDGE: 'Review Dispositions',
+    ATTORNEY: 'Select Dispositions'
+  },
+  REMANDS: {
+    JUDGE: 'Review Remand Reasons',
+    ATTORNEY: 'Select Remand Reasons'
+  },
+  EVALUATE: 'Evaluate Decision'
+};

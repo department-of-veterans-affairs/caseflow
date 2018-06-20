@@ -105,6 +105,23 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         }
       }
     });
+  case ACTIONS.CLEAR_SEARCH_ERRORS:
+    return update(state, {
+      searchErrorCode: {
+        $set: null
+      },
+      searchErrorData: {
+        duplicateReceiptDate: {
+          $set: null
+        },
+        duplicateProcessedBy: {
+          $set: null
+        },
+        veteranMissingFields: {
+          $set: null
+        }
+      }
+    });
   case ACTIONS.CANCEL_INTAKE_START:
     return update(state, {
       requestStatus: {

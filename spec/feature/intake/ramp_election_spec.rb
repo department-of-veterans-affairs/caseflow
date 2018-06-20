@@ -24,7 +24,7 @@ RSpec.feature "RAMP Election Intake" do
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "12341234C",
       issues: issues,
       vacols_record: :ready_to_certify,
@@ -35,14 +35,14 @@ RSpec.feature "RAMP Election Intake" do
   end
 
   let!(:inactive_appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "77776666C",
       vacols_record: :full_grant_decided
     )
   end
 
   let!(:ineligible_appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       vbms_id: "77778888C",
       vacols_record: :activated,
       issues: issues
@@ -53,6 +53,11 @@ RSpec.feature "RAMP Election Intake" do
     VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
       "A duplicate claim for this EP code already exists in CorpDB. Please " \
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
+  end
+
+  let(:long_address_error) do
+    VBMS::HTTPError.new("500", "<ns4:message>The maximum data length for AddressLine1  " \
+      "was not satisfied: The AddressLine1  must not be greater than 20 characters.</ns4:message>")
   end
 
   let!(:current_user) do
@@ -92,6 +97,26 @@ RSpec.feature "RAMP Election Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Ineligible to participate in RAMP: appeal is at the Board")
+    end
+
+    scenario "Search for a veteran already in progress by current user" do
+      visit "/intake"
+
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Opt-In Election Form").click
+      end
+      safe_click ".cf-submit.usa-button"
+
+      RampElectionIntake.new(
+        user: current_user,
+        veteran_file_number: "43214321"
+      ).start!
+
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
     end
 
     scenario "Search for a veteran that has a RAMP election already processed" do
@@ -181,7 +206,7 @@ RSpec.feature "RAMP Election Intake" do
       click_label "confirm-finish"
 
       ## Validate error message when complete intake fails
-      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
       safe_click "button#button-submit-review"
       expect(page).to have_content("Something went wrong")
 
@@ -239,7 +264,7 @@ RSpec.feature "RAMP Election Intake" do
       expect(page).to have_content("Finish processing Higher-Level Review election")
 
       expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
+        appeal: LegacyAppeal.find_or_create_by_vacols_id(appeal.vacols_id),
         user: current_user,
         closed_on: Time.zone.today,
         disposition_code: "P"
@@ -327,6 +352,34 @@ RSpec.feature "RAMP Election Intake" do
       safe_click "button#button-submit-review"
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
+    end
+
+    scenario "Complete intake for RAMP Election form fails due to long address" do
+      allow(VBMSService).to receive(:establish_claim!).and_raise(long_address_error)
+
+      RampElection.create!(
+        veteran_file_number: "12341234",
+        notice_date: Date.new(2017, 11, 7)
+      )
+
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
+      within_fieldset("Which review lane did the veteran select?") do
+        find("label", text: "Higher Level Review with Informal Conference").click
+      end
+
+      fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("The address is too long")
     end
   end
 end

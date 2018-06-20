@@ -34,7 +34,7 @@ describe ExternalApi::EfolderService do
 
   context "#fetch_documents_for" do
     let(:user) { Generators::User.build }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
 
     context "when efolder v2 is not enabled" do
       subject { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
@@ -65,7 +65,7 @@ describe ExternalApi::EfolderService do
 
   context "#efolder_v2_api" do
     let(:user) { Generators::User.create }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
     let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
@@ -253,9 +253,10 @@ describe ExternalApi::EfolderService do
         let(:expected_response) { HTTPI::Response.new(404, [], {}.to_json) }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { subject }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError,
-                            "Failed for #{vbms_id}, user_id: #{user.id}, error: {}, HTTP code: 404")
+          expect { subject }.to(raise_error) do |e|
+            expect(e).to be_a(Caseflow::Error::DocumentRetrievalError)
+            expect(e.message).to eq("Failed for #{vbms_id}, user_id: #{user.id}, error: {}, HTTP code: 404")
+          end
         end
       end
 
@@ -272,8 +273,10 @@ describe ExternalApi::EfolderService do
         let(:expected_response) { HTTPI::Response.new(403, [], { status: "forbidden: sensitive record" }.to_json) }
 
         it "throws Caseflow::Error::EfolderAccessForbidden" do
-          expect { subject }
-            .to raise_error(Caseflow::Error::EfolderAccessForbidden, "403")
+          expect { subject }.to(raise_error) do |e|
+            expect(e).to be_a(Caseflow::Error::EfolderAccessForbidden)
+            expect(e.code).to eq(403)
+          end
         end
       end
 
@@ -281,8 +284,10 @@ describe ExternalApi::EfolderService do
         let(:expected_response) { HTTPI::Response.new(500, [], { status: "terrible error" }.to_json) }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { subject }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, "502")
+          expect { subject }.to(raise_error) do |e|
+            expect(e).to be_a(Caseflow::Error::DocumentRetrievalError)
+            expect(e.code).to eq(502)
+          end
         end
       end
 
@@ -355,7 +360,7 @@ describe ExternalApi::EfolderService do
 
   context "#efolder_v1_api" do
     let(:user) { Generators::User.build }
-    let(:appeal) { Generators::Appeal.build }
+    let(:appeal) { Generators::LegacyAppeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
@@ -504,8 +509,10 @@ describe ExternalApi::EfolderService do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, "404")
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to(raise_error) do |e|
+            expect(e).to be_a(Caseflow::Error::DocumentRetrievalError)
+            expect(e.code).to eq("404")
+          end
         end
       end
     end
@@ -527,7 +534,10 @@ describe ExternalApi::EfolderService do
         it "raises DocumentRetrievalError" do
           allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
           allow(HTTPI).to receive(:get).and_return(http_resp_400).once
-          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err, "400")
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to(raise_error) do |e|
+            expect(e).to be_a(err)
+            expect(e.code).to eq("400")
+          end
         end
       end
     end

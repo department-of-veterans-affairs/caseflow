@@ -1,11 +1,11 @@
 describe AppealRepository do
   before do
-    @old_repo = Appeal.repository
-    Appeal.repository = AppealRepository
+    @old_repo = LegacyAppeal.repository
+    LegacyAppeal.repository = AppealRepository
 
     allow_any_instance_of(ActiveRecord::Relation).to receive(:find).and_return(nil)
   end
-  after { Appeal.repository = @old_repo }
+  after { LegacyAppeal.repository = @old_repo }
 
   let(:correspondent_record) do
     OpenStruct.new(
@@ -56,18 +56,18 @@ describe AppealRepository do
 
   context ".build_appeal" do
     before do
-      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+      allow_any_instance_of(LegacyAppeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     end
 
     subject { AppealRepository.build_appeal(case_record) }
 
     it "returns a new appeal" do
-      is_expected.to be_an_instance_of(Appeal)
+      is_expected.to be_an_instance_of(LegacyAppeal)
     end
   end
 
   context ".load_vacols_data" do
-    let(:appeal) { Appeal.new(vacols_id: "123C") }
+    let(:appeal) { LegacyAppeal.new(vacols_id: "123C") }
     subject { AppealRepository.load_vacols_data(appeal) }
     it do
       expect(AppealRepository).to receive(:set_vacols_values).exactly(1).times
@@ -93,11 +93,11 @@ describe AppealRepository do
   context ".set_vacols_values" do
     before do
       Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+      allow_any_instance_of(LegacyAppeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     end
 
     subject do
-      appeal = Appeal.new
+      appeal = LegacyAppeal.new
       AppealRepository.set_vacols_values(
         appeal: appeal,
         case_record: case_record
@@ -178,21 +178,21 @@ describe AppealRepository do
     end
 
     context "detects VVA folder" do
-      let(:folder_record) { OpenStruct.new(tisubj: "Y") }
+      let(:folder_record) { OpenStruct.new(tisubj2: "Y") }
       it { is_expected.to eq("VVA") }
     end
 
     context "detects paper" do
-      let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj: "other_val") }
+      let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj2: "other_val") }
       it { is_expected.to eq("Paper") }
     end
   end
 
   context "#location_after_dispatch" do
-    before { Appeal.repository = Fakes::AppealRepository }
+    before { LegacyAppeal.repository = Fakes::AppealRepository }
 
     let(:appeal) do
-      Generators::Appeal.build({ vacols_record: vacols_record }.merge(special_issues))
+      Generators::LegacyAppeal.build({ vacols_record: vacols_record }.merge(special_issues))
     end
 
     let(:special_issues) { {} }

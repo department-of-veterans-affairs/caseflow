@@ -32,11 +32,9 @@ class RampElectionIntake < Intake
 
   def complete!(_request_params)
     return if complete? || pending?
-    start_complete!
+    start_completion!
 
-    if ramp_election.create_or_connect_end_product! == :connected
-      update!(error_code: "connected_preexisting_ep")
-    end
+    create_or_connect_end_product
 
     close_eligible_appeals!
 
@@ -84,13 +82,21 @@ class RampElectionIntake < Intake
 
   private
 
+  def create_or_connect_end_product
+    if ramp_election.create_or_connect_end_product! == :connected
+      update!(error_code: "connected_preexisting_ep")
+    end
+  rescue StandardError => e
+    abort_completion!
+    raise e
+  end
+
   def close_eligible_appeals!
-    Appeal.close(
+    LegacyAppeal.close(
       appeals: eligible_appeals,
       user: user,
       closed_on: Time.zone.today,
-      disposition: "RAMP Opt-in",
-      election_receipt_date: ramp_election.receipt_date
+      disposition: "RAMP Opt-in"
     )
   end
 
@@ -110,7 +116,7 @@ class RampElectionIntake < Intake
   end
 
   def active_veteran_appeals
-    @veteran_appeals ||= Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
+    @veteran_appeals ||= LegacyAppeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
   end
 
   def validate_detail_on_start

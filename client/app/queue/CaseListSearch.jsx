@@ -1,7 +1,8 @@
+import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import {
@@ -9,26 +10,35 @@ import {
   fetchAppealsUsingVeteranId,
   setCaseListSearch
 } from './CaseList/CaseListActions';
+
+import CaseSearchErrorMessage from './CaseSearchErrorMessage';
 import SearchBar from '../components/SearchBar';
 
+const alertBoxStyling = css({ marginBottom: '3rem' });
+
 class CaseListSearch extends React.PureComponent {
-  onSubmitSearch = (text) => {
-    if (_.size(text)) {
-      this.props.fetchAppealsUsingVeteranId(text);
-    }
+  onSubmitSearch = (searchQuery) => {
+    /* eslint-disable no-empty-function */
+    // Error cases already handled inside the promise itself.
+    this.props.fetchAppealsUsingVeteranId(searchQuery).then((id) => this.props.history.push(`/cases/${id}`)).
+      catch(() => {});
+    /* eslint-enable no-empty-function */
   }
 
   render() {
-    return <SearchBar
-      id={this.props.elementId}
-      size={this.props.searchSize}
-      onChange={this.props.setCaseListSearch}
-      value={this.props.caseList.caseListCriteria.searchQuery}
-      onClearSearch={this.props.clearCaseListSearch}
-      onSubmit={this.onSubmitSearch}
-      loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
-      submitUsingEnterKey
-    />;
+    return <React.Fragment>
+      <div {...alertBoxStyling}><CaseSearchErrorMessage /></div>
+      <SearchBar
+        id={this.props.elementId}
+        size={this.props.searchSize}
+        onChange={this.props.setCaseListSearch}
+        value={this.props.caseList.caseListCriteria.searchQuery}
+        onClearSearch={this.props.clearCaseListSearch}
+        onSubmit={this.onSubmitSearch}
+        loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
+        submitUsingEnterKey
+      />
+    </React.Fragment>;
   }
 }
 
@@ -52,7 +62,7 @@ const mapStateToProps = (state) => ({
   caseList: state.caseList
 });
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(CaseListSearch);
+)(CaseListSearch));

@@ -2,6 +2,16 @@
 class VACOLS::TravelBoardSchedule < VACOLS::Record
   self.table_name = "vacols.tbsched"
 
+  attribute :tbleg, :integer
+
+  COLUMN_NAMES = {
+    tbyear: :tbyear,
+    tbtrip: :tbtrip,
+    tbleg: :tbleg,
+    tbro: :tbro
+  }.freeze
+
+  # :nocov:
   class << self
     def hearings_for_judge(css_id)
       id = connection.quote(css_id)
@@ -22,6 +32,23 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
                 staff.sattyid = tbmem4")
         .where("staff.sdomainid = #{id}")
         .where("tbstdate > ?", 1.year.ago.beginning_of_day)
+    end
+
+    def load_days_for_range(start_date, end_date)
+      where("tbstdate BETWEEN ? AND ?", start_date, end_date)
+    end
+  end
+
+  def update_hearing!(hearing_info)
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+    attrs.delete(nil)
+    MetricsService.record("VACOLS: update_hearing! #{tbyear}-#{tbtrip}-#{tbleg}",
+                          service: :vacols,
+                          name: "update_hearing") do
+      hearings = VACOLS::TravelBoardSchedule.where(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
+      hearings.update_all(attrs.merge(tbmoduser: self.class.current_user_slogid,
+                                      tbmodtime: VacolsHelper.local_time_with_utc_timezone))
+      hearings[0]
     end
   end
 

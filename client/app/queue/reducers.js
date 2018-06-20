@@ -14,6 +14,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 export const initialState = {
   judges: {},
+  tasks: {},
   loadedQueue: {
     appeals: {},
     tasks: {},
@@ -34,7 +35,9 @@ export const initialState = {
       opts: {}
     }
   },
-  attorneysOfJudge: []
+  attorneysOfJudge: [],
+  tasksAndAppealsOfAttorney: {},
+  isVacolsIdAssignedToUserSelected: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -52,6 +55,9 @@ const workQueueReducer = (state = initialState, action = {}) => {
         loadedUserId: {
           $set: action.payload.userId
         }
+      },
+      tasks: {
+        $merge: action.payload.tasks
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -228,6 +234,56 @@ const workQueueReducer = (state = initialState, action = {}) => {
         $set: action.payload.attorneys
       }
     });
+  case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADING'
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'LOADED',
+            data: _.pick(action.payload, 'tasks', 'appeals')
+          }
+        }
+      },
+      tasks: {
+        $merge: action.payload.tasks
+      }
+    });
+  case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
+    return update(state, {
+      tasksAndAppealsOfAttorney: {
+        [action.payload.attorneyId]: {
+          $set: {
+            state: 'FAILED',
+            error: action.payload.error
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
+    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.vacolsId]: {
+        $set: action.payload.selected
+      }
+    });
+
+    return update(state, {
+      isVacolsIdAssignedToUserSelected: {
+        [action.payload.userId]: {
+          $set: isVacolsIdSelected
+        }
+      }
+    });
+  }
   default:
     return state;
   }

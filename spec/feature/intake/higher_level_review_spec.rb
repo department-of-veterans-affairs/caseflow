@@ -20,12 +20,6 @@ RSpec.feature "Higher Level Review Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
-  end
-
   let(:inaccessible) { false }
 
   let!(:current_user) do
@@ -45,6 +39,24 @@ RSpec.feature "Higher Level Review Intake" do
   end
 
   it "Creates an end product and contentions for it" do
+    # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
+    allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+      first_name: "BOB",
+      last_name: "VANCE",
+      ptcpnt_id: "5382910292",
+      relationship_type: "Spouse"
+    )
+
+    Generators::EndProduct.build(
+      veteran_file_number: "12341234",
+      bgs_attrs: { end_product_type_code: "030" }
+    )
+
+    Generators::EndProduct.build(
+      veteran_file_number: "12341234",
+      bgs_attrs: { end_product_type_code: "031" }
+    )
+
     Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
 
     visit "/intake"
@@ -82,27 +94,58 @@ RSpec.feature "Higher Level Review Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("Bob Vance, Spouse")
+    expect(page).to_not have_content("Cathy Smith, Child")
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
-    expect(page).to have_content("Finish processing")
+    expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/25/2018")
     expect(page).to have_content("Left knee granted")
+    expect(page).to have_button("Establish EP", disabled: true)
+    expect(page).to have_content("0 rated issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(Date.new(2018, 4, 20))
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
+    expect(higher_level_review.claimants.first).to have_attributes(
+      participant_id: "5382910292"
+    )
 
     intake = Intake.find_by(veteran_file_number: "12341234")
 
     find("label", text: "PTSD denied").click
+    expect(page).to have_content("1 rated issue")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("2 rated issues")
+    find("label", text: "Left knee granted").click
+    expect(page).to have_content("1 rated issue")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRAMA - Higher Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher Level Review Rating for Station 397 - ARC"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -113,9 +156,9 @@ RSpec.feature "Higher Level Review Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "030",
+        end_product_modifier: "032",
         end_product_label: "Higher Level Review Rating",
-        end_product_code: "030HLRAMA",
+        end_product_code: "030HLRR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
@@ -125,7 +168,7 @@ RSpec.feature "Higher Level Review Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: "IAMANEPID",
-      contention_descriptions: ["PTSD denied"]
+      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"]
     )
 
     intake.reload
@@ -135,11 +178,18 @@ RSpec.feature "Higher Level Review Intake" do
 
     higher_level_review.reload
     expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
-    expect(higher_level_review.request_issues.count).to eq 1
+    expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: Date.new(2018, 4, 28),
       description: "PTSD denied"
+    )
+
+    expect(higher_level_review.request_issues.last).to have_attributes(
+      rating_issue_reference_id: nil,
+      rating_issue_profile_date: nil,
+      issue_category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments"
     )
   end
 end

@@ -41,7 +41,7 @@ class SearchableDropdown extends Component {
       this.setState({ value: newValue });
     }
 
-    if (this.state.value && value.length < this.state.value.length) {
+    if ((this.state.value && value) && value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {

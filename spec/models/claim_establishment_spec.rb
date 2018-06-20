@@ -1,10 +1,10 @@
 describe ClaimEstablishment do
   let(:appeal_remand) do
-    Generators::Appeal.build(vacols_record: :remand_decided)
+    Generators::LegacyAppeal.build(vacols_record: :remand_decided)
   end
 
   let(:appeal_full_grant) do
-    Generators::Appeal.build(vacols_record: :full_grant_decided)
+    Generators::LegacyAppeal.build(vacols_record: :full_grant_decided)
   end
 
   context ".get_decision_type" do

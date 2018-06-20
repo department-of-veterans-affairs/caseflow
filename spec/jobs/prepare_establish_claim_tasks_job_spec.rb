@@ -9,14 +9,14 @@ describe PrepareEstablishClaimTasksJob do
   end
 
   let!(:appeal_with_decision_document) do
-    Generators::Appeal.create(
+    Generators::LegacyAppeal.create(
       vacols_record: { template: :remand_decided, decision_date: 7.days.ago },
       documents: [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
     )
   end
 
   let!(:appeal_with_failed_document) do
-    Generators::Appeal.create(
+    Generators::LegacyAppeal.create(
       vacols_record: { template: :remand_decided, decision_date: 7.days.ago },
       documents: [Generators::Document.build(
         type: "BVA Decision",
@@ -27,7 +27,7 @@ describe PrepareEstablishClaimTasksJob do
   end
 
   let!(:appeal_without_decision_document) do
-    Generators::Appeal.create(
+    Generators::LegacyAppeal.create(
       vacols_record: :remand_decided,
       documents: [Generators::Document.build(type: "BVA Decision", received_at: 31.days.ago)]
     )

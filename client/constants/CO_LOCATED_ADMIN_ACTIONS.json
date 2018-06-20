@@ -1,0 +1,20 @@
+{
+    "ihp": "IHP",
+    "poa_clarification": "POA clarification",
+    "hearing_clarification": "Hearing clarification",
+    "aoj": "AOJ",
+    "extension": "Extension",
+    "missing_hearing_transcripts": "Missing hearing transcripts",
+    "unaccredited_rep": "Unaccredited rep",
+    "foia": "FOIA",
+    "retired_vlj": "Retired VLJ",
+    "arneson": "Arneson",
+    "new_rep_arguments": "New rep arguments",
+    "pending_scanning_vbms": "Pending scanning (VBMS)",
+    "substituation_determination": "Substituation determination",
+    "address_verification": "Address verification",
+    "schedule_hearing": "Schedule hearing",
+    "missing_records": "Missing records",
+    "other": "Other"
+
+}

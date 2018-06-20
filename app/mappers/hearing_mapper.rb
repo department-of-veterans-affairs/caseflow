@@ -16,7 +16,14 @@ module HearingMapper
         aod: aod_to_vacols_format(hearing_info[:aod]),
         add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
-        representative_name: representative_name_to_vacols_format(hearing_info[:representative_name])
+        representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
+        vacols_id: hearing_info[:vacols_id],
+        room: hearing_info[:room],
+        hearing_date: hearing_info[:hearing_date],
+        hearing_type: hearing_info[:hearing_type],
+        representative: hearing_info[:representative],
+        board_member: hearing_info[:board_member],
+        tbro: hearing_info[:tbro]
       }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
     end
 

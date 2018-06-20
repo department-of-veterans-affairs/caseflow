@@ -18,6 +18,22 @@ describe SupplementalClaimIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    context "intake is already in progress" do
+      it "should not create another intake" do
+        SupplementalClaimIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -25,6 +41,13 @@ describe SupplementalClaimIntake do
       SupplementalClaim.create!(
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
+      )
+    end
+
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
       )
     end
 
@@ -37,6 +60,54 @@ describe SupplementalClaimIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  context "#review!" do
+    subject { intake.review!(params) }
+
+    let(:detail) do
+      SupplementalClaim.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    context "Veteran is claimant" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          claimant: nil
+        )
+      end
+
+      it "adds veteran to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: intake.veteran.participant_id
+        )
+      end
+    end
+
+    context "Claimant is different than Veteran" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          claimant: "1234"
+        )
+      end
+
+      it "adds other relationship to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: "1234"
+        )
+      end
     end
   end
 
@@ -78,6 +149,35 @@ describe SupplementalClaimIntake do
       )
     end
 
+    it "creates end products with incrementing end product modifiers" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: { end_product_type_code: "040" }
+      )
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: detail.receipt_date.to_date,
+          end_product_modifier: "041",
+          end_product_label: "Supplemental Claim Rating",
+          end_product_code: "040SCR",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: intake.veteran.to_vbms_hash
+      )
+    end
+
     context "when no requested issues" do
       let(:params) do
         { request_issues: [] }
@@ -85,6 +185,21 @@ describe SupplementalClaimIntake do
       it "returns nil" do
         expect(Fakes::VBMSService).not_to receive(:establish_claim!)
         expect(Fakes::VBMSService).not_to receive(:create_contentions!)
+      end
+    end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(SupplementalClaim).to receive(
+          :create_end_product_and_contentions!
+        ).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
       end
     end
   end

@@ -1,13 +1,16 @@
-import React from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
-import { onReceiveQueue, onReceiveJudges } from './QueueActions';
-import ApiUtil from '../util/ApiUtil';
+import { bindActionCreators } from 'redux';
+
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
-import _ from 'lodash';
+
+import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
+import { onReceiveQueue, onReceiveJudges } from './QueueActions';
 
 class QueueLoadingScreen extends React.PureComponent {
   loadJudges = () => {
@@ -23,6 +26,14 @@ class QueueLoadingScreen extends React.PureComponent {
     });
   }
 
+  loadRelevantCases = () => {
+    if (this.props.vacolsId) {
+      return this.loadActiveAppeal();
+    }
+
+    return this.loadQueue();
+  }
+
   loadQueue = () => {
     const {
       userId,
@@ -31,25 +42,57 @@ class QueueLoadingScreen extends React.PureComponent {
       appeals
     } = this.props;
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/queue/${userId}`).then((response) => this.props.onReceiveQueue({
-      ...associateTasksWithAppeals(JSON.parse(response.text)),
-      userId
-    }));
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+      this.props.onReceiveQueue({
+        ...associateTasksWithAppeals(JSON.parse(response.text)),
+        userId
+      }));
+  };
+
+  loadActiveAppeal = () => {
+    const {
+      activeAppeal,
+      vacolsId,
+      appeals
+    } = this.props;
+
+    if (activeAppeal) {
+      return Promise.resolve();
+    }
+
+    if (vacolsId in appeals) {
+      this.props.setActiveAppeal(appeals[vacolsId]);
+
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/appeals/${vacolsId}`).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setActiveAppeal(resp.appeal);
+    });
   };
 
   createLoadPromise = () => Promise.all([
-    this.loadQueue(),
+    this.loadRelevantCases(),
     this.loadJudges()
   ]);
 
   reload = () => window.location.reload();
 
   render = () => {
+    // If the current user cannot access queue return early to avoid making the request for queues that would happen
+    // as a result of createLoadPromise().
+    if (!this.props.userCanAccessQueue) {
+      return this.props.children;
+    }
+
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
@@ -75,17 +118,20 @@ class QueueLoadingScreen extends React.PureComponent {
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  vacolsId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue, 'judges'),
+  activeAppeal: state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  onReceiveJudges
+  onReceiveJudges,
+  setActiveAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);

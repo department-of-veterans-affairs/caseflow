@@ -184,13 +184,6 @@ export class PdfFile extends React.PureComponent {
     this.grid = grid;
 
     if (this.grid) {
-      // eslint-disable-next-line react/no-find-dom-node
-      const domNode = ReactDOM.findDOMNode(this.grid);
-
-      // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
-      // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
-      // might be deprecated at some point in the future, but until then this seems like the best we can do.
-      domNode.focus();
       this.grid.recomputeGridSize();
     }
   }
@@ -295,6 +288,16 @@ export class PdfFile extends React.PureComponent {
 
   componentDidUpdate = (prevProps) => {
     if (this.grid && this.props.isVisible) {
+      if (!prevProps.isVisible) {
+        // eslint-disable-next-line react/no-find-dom-node
+        const domNode = ReactDOM.findDOMNode(this.grid);
+
+        // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
+        // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
+        // might be deprecated at some point in the future, but until then this seems like the best we can do.
+        domNode.focus();
+      }
+
       this.grid.recomputeGridSize();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();

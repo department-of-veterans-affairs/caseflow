@@ -7,20 +7,30 @@
 .cf-stats-container {
 
   .cf-stats {
-    margin-top: 20px;
+    margin-top: 0;
+
+    .cf-tab-navigation {
+      margin: 0;
+      margin-bottom: 2em;
+    }
   }
 
   .cf-stats-section {
     @include outer-container;
     margin-bottom: 20px;
-  }
 
-  .cf-stats-active-users {
-    margin-top: 40px;
-  }
+    &.-activity,
+    &.-certification {
+      .bar { fill: $color-primary-alt; }
+    }
 
-  .cf-stats-table {
-    margin-top: 0;
+    &.-timing {
+      .bar { fill: $color-green-light; }
+    }
+
+    &.-missing {
+      .bar { fill: $color-secondary; }
+    }
   }
 
   .cf-stat-panel {

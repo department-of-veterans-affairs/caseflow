@@ -11,7 +11,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:original) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_id: "1234567",
         vacols_record: {
@@ -36,7 +36,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:post_remand) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_id: "7654321",
         vacols_record: {
@@ -65,7 +65,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:another_original) do
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
@@ -96,7 +96,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:another_veteran_appeal) do
-      Generators::Appeal.create(vbms_id: "333222333S")
+      Generators::LegacyAppeal.create(vbms_id: "333222333S")
     end
 
     let!(:held_hearing) do
@@ -168,7 +168,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # Make a new appeal and check that it isn't returned because of the cache
-      Generators::Appeal.create(
+      Generators::LegacyAppeal.create(
         vbms_id: "111223333S",
         vacols_record: { template: :remand_decided }
       )
@@ -207,6 +207,18 @@ describe "Appeals API v2", type: :request do
       expect(json["errors"].first["detail"]).to match("Much random error (Sentry event id: a1b2c3)")
 
       expect(ApiView.count).to eq(0)
+    end
+
+    it "returns 504 when BGS times out" do
+      allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn).and_raise(Errno::ETIMEDOUT)
+
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+      get "/api/v2/appeals", headers: headers
+
+      expect(response.code).to eq("504")
     end
 
     it "returns list of appeals for veteran with SSN" do

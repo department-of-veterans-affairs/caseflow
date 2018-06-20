@@ -33,10 +33,11 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  ISSUE_DESCRIPTION_MAX_LENGTH
 } from './constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -105,7 +106,7 @@ class AddEditIssueView extends React.Component {
           level_1: _.get(issue.codes, 0, null),
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
-          ..._.omit(issue, 'type', 'codes')
+          ..._.pick(issue, 'note', 'program')
         }
       }
     };
@@ -122,10 +123,28 @@ class AddEditIssueView extends React.Component {
       );
     }
 
-    requestPromise.then((resp) =>
-      this.props.saveEditedAppealIssue(this.props.vacolsId, JSON.parse(resp.text))
-    );
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
   };
+
+  updateIssuesFromServer = (response) => {
+    const { appeal: { attributes: appeal } } = this.props;
+    const serverIssues = response.issues;
+
+    const issues = _.map(serverIssues, (issue) => {
+      // preserve locally-updated dispositions
+      const disposition = _.get(
+        _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+        'disposition'
+      );
+
+      return {
+        ...issue,
+        disposition
+      };
+    });
+
+    this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
+  }
 
   deleteIssue = () => {
     const {
@@ -137,13 +156,13 @@ class AddEditIssueView extends React.Component {
     } = this.props;
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
 
-    this.props.hideModal();
+    this.props.hideModal('deleteIssue');
 
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
     ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
-  }
+  };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
     label: getIssueDiagnosticCodeLabel(value),
@@ -174,7 +193,7 @@ class AddEditIssueView extends React.Component {
     }
 
     return false;
-  }
+  };
 
   render = () => {
     const {
@@ -205,13 +224,13 @@ class AddEditIssueView extends React.Component {
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Close',
-            onClick: this.props.hideModal
+            onClick: () => this.props.hideModal('deleteIssue')
           }, {
             classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Delete issue',
             onClick: this.deleteIssue
           }]}
-          closeHandler={this.props.hideModal}>
+          closeHandler={() => this.props.hideModal('deleteIssue')}>
           You are about to permanently delete this issue. To delete please
           click the <strong>"Delete issue"</strong> button or click&nbsp;
           <strong>"Close"</strong> to return to the previous screen.
@@ -228,7 +247,7 @@ class AddEditIssueView extends React.Component {
         linkStyling
         disabled={!issue.vacols_sequence_id}
         styling={noLeftPadding}
-        onClick={this.props.showModal}>
+        onClick={() => this.props.showModal('deleteIssue')}>
         Delete Issue
       </Button>
       <div {...dropdownMarginTop}>
@@ -302,6 +321,7 @@ class AddEditIssueView extends React.Component {
       <TextField
         name="Notes:"
         value={_.get(this.props.issue, 'note', '')}
+        maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };
@@ -320,10 +340,10 @@ AddEditIssueView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  task: state.queue.tasks[ownProps.vacolsId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  modal: state.ui.modal
+  modal: state.ui.modal.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

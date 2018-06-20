@@ -3,8 +3,8 @@ class Fakes::Initializer
     def load!(rails_env: nil)
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      if !rails_env || !rails_env.local?
-        Appeal.repository = Fakes::AppealRepository
+      if !rails_env || !rails_env.development?
+        LegacyAppeal.repository = Fakes::AppealRepository
         AttorneyCaseReview.repository = Fakes::QueueRepository
         Hearing.repository = Fakes::HearingRepository
         HearingDocket.repository = Fakes::HearingRepository
@@ -28,7 +28,7 @@ class Fakes::Initializer
         Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.development? || rails_env.demo? || rails_env.local?
+      if rails_env.stubbed? || rails_env.demo? || rails_env.development?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
@@ -46,7 +46,7 @@ class Fakes::Initializer
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env, app_name: nil)
-      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.development?
+      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed? || rails_env.development?
     end
 
     private
@@ -55,13 +55,11 @@ class Fakes::Initializer
       load!(rails_env: rails_env)
 
       User.authentication_service.vacols_regional_offices = {
-        "DSUSER" => "DSUSER",
-        "RO13" => "RO13"
+        "DSUSER" => "DSUSER", "RO13" => "RO13"
       }
 
       User.authentication_service.user_session = {
-        "id" => "Fake User",
-        "css_id" => "FAKEUSER",
+        "id" => "Fake User", "css_id" => "FAKEUSER",
         "roles" =>
           ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment"],
         "station_id" => "283",
@@ -69,7 +67,13 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
-      return if rails_env.local?
+      # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
+      if rails_env.development?
+        Fakes::BGSService.create_veteran_records
+        Fakes::BGSService.stub_intake_data
+        return
+      end
+
       Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)

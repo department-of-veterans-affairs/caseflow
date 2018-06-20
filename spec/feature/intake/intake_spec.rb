@@ -11,26 +11,31 @@ RSpec.feature "Intake" do
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
-  let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+  before do
+    FeatureToggle.enable!(:test_facols)
   end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let!(:veteran) do
+    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::Appeal.build(
-      vbms_id: "12341234C",
-      issues: issues,
-      vacols_record: :ready_to_certify,
-      veteran: veteran,
-      inaccessible: inaccessible,
-      nod_date: 1.year.ago
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(
+      :case,
+      :status_advance,
+      bfcorlid: "12341234C",
+      case_issues: [create(:case_issue, :compensation)],
+      bfdnod: 1.year.ago
     )
   end
 
@@ -83,6 +88,12 @@ RSpec.feature "Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
+
+      # Test that search errors clear when re-starting intake
+      safe_click "#page-title"
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to_not have_content("Veteran ID not found")
     end
 
     scenario "Search for a veteran but search throws an unhandled exception" do
@@ -104,7 +115,9 @@ RSpec.feature "Intake" do
     end
 
     context "Veteran has too high of a sensitivity level for user" do
-      let(:inaccessible) { true }
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+      end
 
       scenario "Search for a veteran with a sensitivity error" do
         visit "/intake"

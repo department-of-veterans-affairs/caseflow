@@ -12,14 +12,14 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
-  belongs_to :appeal
+  belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views
   has_many :appeal_stream_snapshots
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
-  has_many :appeals, through: :appeal_stream_snapshots
+  has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
   def venue
     self.class.venues[venue_key]
@@ -64,7 +64,7 @@ class Hearing < ApplicationRecord
   end
 
   def update(hearing_hash)
-    transaction do
+    ActiveRecord::Base.multi_transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
       super
     end
@@ -156,15 +156,26 @@ class Hearing < ApplicationRecord
     )
   end
 
+  def fetch_veteran_age
+    veteran_age
+  rescue Module::DelegationError
+    nil
+  end
+
+  def fetch_veteran_sex
+    veteran_sex
+  rescue Module::DelegationError
+    nil
+  end
+
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
                 :user,
+                :summary,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :veteran_age,
-                :veteran_sex,
                 :appellant_city,
                 :appellant_state,
                 :military_service,
@@ -172,7 +183,12 @@ class Hearing < ApplicationRecord
                 :veteran_mi_formatted,
                 :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
-    ).merge(to_hash(current_user_id))
+    ).merge(
+      to_hash(current_user_id)
+    ).merge(
+      veteran_sex: fetch_veteran_sex,
+      veteran_age: fetch_veteran_age
+    )
   end
 
   def appeals_ready_for_hearing
@@ -204,6 +220,7 @@ class Hearing < ApplicationRecord
     end
 
     def repository
+      return HearingRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= HearingRepository
     end
 
@@ -221,7 +238,7 @@ class Hearing < ApplicationRecord
         # who it's assigned to in the db.
         if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
           hearing.update(
-            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
             user: User.find_by(css_id: vacols_record.css_id)
           )
         end

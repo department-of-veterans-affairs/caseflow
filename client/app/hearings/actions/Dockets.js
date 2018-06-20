@@ -84,10 +84,10 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const setNotes = (hearingIndex, notes, date) => ({
+export const setNotes = (hearingId, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
-    hearingIndex,
+    hearingId,
     notes,
     date
   },
@@ -113,10 +113,10 @@ export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS
   }
 });
 
-export const setDisposition = (hearingIndex, disposition, date) => ({
+export const setDisposition = (hearingId, disposition, date) => ({
   type: Constants.SET_DISPOSITION,
   payload: {
-    hearingIndex,
+    hearingId,
     disposition,
     date
   },
@@ -129,19 +129,19 @@ export const setDisposition = (hearingIndex, disposition, date) => ({
   }
 });
 
-export const setHoldOpen = (hearingIndex, holdOpen, date) => ({
+export const setHoldOpen = (hearingId, holdOpen, date) => ({
   type: Constants.SET_HOLD_OPEN,
   payload: {
-    hearingIndex,
+    hearingId,
     holdOpen,
     date
   }
 });
 
-export const setAod = (hearingIndex, aod, date) => ({
+export const setAod = (hearingId, aod, date) => ({
   type: Constants.SET_AOD,
   payload: {
-    hearingIndex,
+    hearingId,
     aod,
     date
   },
@@ -154,10 +154,10 @@ export const setAod = (hearingIndex, aod, date) => ({
   }
 });
 
-export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
+export const setTranscriptRequested = (hearingId, transcriptRequested, date) => ({
   type: Constants.SET_TRANSCRIPT_REQUESTED,
   payload: {
-    hearingIndex,
+    hearingId,
     transcriptRequested,
     date
   },
@@ -166,19 +166,6 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
       category: CATEGORIES.DAILY_DOCKET_PAGE,
       action: ACTIONS.TRANSCRIPT_REQUESTED,
       label: transcriptRequested ? 'checked' : 'unchecked'
-    }
-  }
-});
-
-export const onContentionsChange = (contentions) => ({
-  type: Constants.SET_CONTENTIONS,
-  payload: {
-    contentions
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
     }
   }
 });
@@ -196,23 +183,10 @@ export const onMilitaryServiceChange = (militaryService) => ({
   }
 });
 
-export const onEvidenceChange = (evidence) => ({
-  type: Constants.SET_EVIDENCE,
+export const onSummaryChange = (summary) => ({
+  type: Constants.SET_SUMMARY,
   payload: {
-    evidence
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
-  }
-});
-
-export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
-  type: Constants.SET_COMMENTS_FOR_ATTORNEY,
-  payload: {
-    commentsForAttorney
+    summary
   },
   meta: {
     analytics: {
@@ -334,13 +308,12 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
   let apiRequests = [];
 
   hearingsToSave.forEach((hearing) => {
-    const index = docket.findIndex((x) => x.id === hearing.id);
     const promise = new Promise((resolve) => {
       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
         then(() => {
           dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
             payload: { date,
-              index } });
+              hearingId: hearing.id } });
         },
         () => {
           dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,

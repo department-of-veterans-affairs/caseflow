@@ -9,6 +9,18 @@ import UserQuotaControls from './UserQuotaControls';
 import * as Constants from './constants/index';
 import { getQuotaTotals } from './selectors';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
+
+const workAssignmentsUserIndex = css({
+  float: 'left',
+  width: '1.5em'
+});
+
+const workAssignmentsUser = css({
+  display: 'block',
+  paddingLeft: '1.6em',
+  whiteSpace: 'nowrap'
+});
 
 class ManageEstablishClaim extends React.Component {
   getUserColumns = () => {
@@ -20,8 +32,8 @@ class ManageEstablishClaim extends React.Component {
       {
         header: 'Employee Name',
         valueFunction: (userQuota) => <span>
-          <span className="cf-work-assignments-user-index">{userQuota.index + 1}.</span>
-          <span className="cf-work-assignments-user">{userQuota.userName}</span>
+          <span {...workAssignmentsUserIndex}>{userQuota.index + 1}.</span>
+          <span {...workAssignmentsUser}>{userQuota.userName}</span>
         </span>,
         footer: <strong>Employee Total</strong>
       },

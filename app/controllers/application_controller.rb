@@ -87,20 +87,31 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def can_access_queue?
+    return true if current_user.attorney_in_vacols?
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    false
+  end
+  helper_method :can_access_queue?
+
   def verify_queue_access
+    redirect_to "/unauthorized" unless can_access_queue?
+  end
+
+  def verify_task_completion_access
     # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
+    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
+    return true if feature_enabled?(:queue_phase_two)
     redirect_to "/unauthorized"
     # :nocov:
   end
 
-  def verify_queue_phase_two
+  def verify_task_assignment_access
     # :nocov:
-    return true if feature_enabled?(:queue_phase_two)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
+    # This feature toggle control access of attorneys to create admin actions for co-located users
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
+    # This feature toggle control access of judges to assign cases to attorneys
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
   end
@@ -224,11 +235,11 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? ||
+      Rails.env.stubbed? ||
         Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
-        Rails.env.local?
+        Rails.env.development?
     end
   end
 end

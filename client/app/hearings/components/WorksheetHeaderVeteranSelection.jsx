@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { populateDailyDocket, getDailyDocket,
   setPrepped } from '../actions/Dockets';
-import { getReaderLink } from '../util/index';
+import { getReaderLink, orderTheDocket } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
@@ -78,12 +78,15 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   render() {
 
     const { worksheet, worksheetIssues, dailyDocket } = this.props;
-    const currentDocket = dailyDocket[this.date] || {};
+    let currentDocket = dailyDocket[this.date] || {};
 
     // getting the hearing information from the daily docket for the prepped field
     // in the header
-    const hearingIndex = _.findIndex(currentDocket, { id: worksheet.id });
-    const currentHearing = currentDocket[hearingIndex] || {};
+    const currentHearing = currentDocket[worksheet.id] || {};
+
+    currentDocket = orderTheDocket(currentDocket);
+
+    const docketNotLoaded = _.isEmpty(currentDocket);
 
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
@@ -91,7 +94,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+            placeholder={docketNotLoaded ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
@@ -106,6 +109,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           name={`prep-${currentHearing.id}`}
           label="Hearing Prepped"
           styling={hearingPreppedStyling}
+          disabled={docketNotLoaded}
         />
       </div>
       <div className="cf-push-right">

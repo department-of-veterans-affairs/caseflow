@@ -6,7 +6,7 @@ describe AppealSeries do
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [latest_appeal] }
   let(:latest_appeal) do
-    Generators::Appeal.build(
+    Generators::LegacyAppeal.build(
       type: type,
       nod_date: nod_date,
       soc_date: soc_date,
@@ -36,12 +36,12 @@ describe AppealSeries do
 
     let(:appeals) do
       [
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vacols_id: "1234567",
           status: "Active",
           last_location_change_date: 1.day.ago
         ),
-        Generators::Appeal.build(
+        Generators::LegacyAppeal.build(
           vacols_id: "7654321",
           status: "Active",
           last_location_change_date: 2.days.ago
@@ -58,12 +58,12 @@ describe AppealSeries do
     context "when there are multiple active appeals" do
       let(:appeals) do
         [
-          Generators::Appeal.build(
+          Generators::LegacyAppeal.build(
             vacols_id: "1234567",
             status: "Active",
             last_location_change_date: 1.day.ago
           ),
-          Generators::Appeal.build(
+          Generators::LegacyAppeal.build(
             vacols_id: "7654321",
             status: "Active",
             last_location_change_date: 2.days.ago
@@ -77,12 +77,12 @@ describe AppealSeries do
     context "when there are no active appeals" do
       let(:appeals) do
         [
-          Generators::Appeal.build(
+          Generators::LegacyAppeal.build(
             vacols_id: "1234567",
             status: "Complete",
             decision_date: 1.day.ago
           ),
-          Generators::Appeal.build(
+          Generators::LegacyAppeal.build(
             vacols_id: "7654321",
             status: "Complete",
             decision_date: 2.days.ago
