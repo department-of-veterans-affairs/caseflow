@@ -35,7 +35,7 @@ class Hearings::HearingDayController < ApplicationController
 
   # Create a hearing schedule day
   def create
-    hearing = HearingDay.create_hearing_day(params)
+    hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) unless hearing.valid?
     render json: {
       hearing: json_hearings(hearing)
@@ -45,7 +45,7 @@ class Hearings::HearingDayController < ApplicationController
   def update
     return record_not_found unless hearing
 
-    updated_hearing = HearingDay.update_hearing_day(hearing, params)
+    updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
     render json: {
       hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
     }, status: :ok
@@ -71,16 +71,15 @@ class Hearings::HearingDayController < ApplicationController
   end
 
   def update_params
-    params.require("hearing").permit(:board_member,
-                                     :representative)
+    params.permit(:judge_id, :regional_office)
   end
 
   def create_params
-    params.require("hearing").permit(:hearing_type,
-                                     :hearing_date,
-                                     :room,
-                                     :board_member,
-                                     :representative)
+    params.permit(:hearing_type,
+                  :hearing_date,
+                  :room_info,
+                  :judge_id,
+                  :regional_office)
   end
 
   def validate_start_date(start_date)

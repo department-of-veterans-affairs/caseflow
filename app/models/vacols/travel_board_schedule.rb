@@ -8,7 +8,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
     tbyear: :tbyear,
     tbtrip: :tbtrip,
     tbleg: :tbleg,
-    tbro: :tbro
+    regional_office: :tbro
   }.freeze
 
   # :nocov:

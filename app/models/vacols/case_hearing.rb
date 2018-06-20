@@ -42,10 +42,11 @@ class VACOLS::CaseHearing < VACOLS::Record
     add_on: :addon,
     representative_name: :repname,
     staff_id: :mduser,
+    room_info: :room,
     room: :room,
     hearing_date: :hearing_date,
     hearing_type: :hearing_type,
-    board_member: :board_member
+    judge_id: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -96,7 +97,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil))
       end
     end
 
@@ -132,12 +133,10 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_date,
              :hearing_type,
              :folder_nr,
-             :repname,
              :room,
              :board_member,
              :mduser,
-             :mdtime,
-             :canceldate)
+             :mdtime)
         .where("folder_nr is null or folder_nr like ?", "VIDEO %")
     end
   end
