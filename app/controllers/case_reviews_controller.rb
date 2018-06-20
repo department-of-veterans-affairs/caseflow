@@ -1,6 +1,6 @@
 class CaseReviewsController < ApplicationController
   before_action :verify_queue_access
-  before_action :verify_task_completion_access, only: :complete
+  before_action :verify_case_review_access, only: :complete
 
   CASE_REVIEW_CLASSES = {
     AttorneyCaseReview: AttorneyCaseReview,

@@ -104,7 +104,7 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_task_completion_access
+  def verify_case_review_access
     # :nocov:
     # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
     return true if feature_enabled?(:queue_phase_two)

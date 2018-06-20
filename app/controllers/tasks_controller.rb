@@ -5,7 +5,7 @@ class TasksController < ApplicationController
   ROLES = %w[judge attorney colocated].freeze
 
   TASK_CLASSES = {
-    CoLocatedAdminAction: CoLocatedAdminAction,
+    CoLocatedAdminAction: CoLocatedAdminAction
   }.freeze
 
   def set_application
@@ -21,7 +21,7 @@ class TasksController < ApplicationController
       end
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                              name: "LegacyTasksController.index") do
+                              name: "TasksController.index") do
           tasks, appeals = WorkQueue.tasks_with_appeals(user, current_role)
           render json: {
             tasks: json_tasks(tasks),
