@@ -138,14 +138,11 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'tasks#index'
-
-    post '/appeals/:id/complete', to: 'tasks#complete'
   end
 
-  resources :tasks, only: [:create, :update] do
-    post :complete
-  end
-
+  resources :legacy_tasks, only: [:create, :update]
+  resources :tasks, only: [:create]
+  post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
