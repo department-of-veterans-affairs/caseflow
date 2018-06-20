@@ -86,6 +86,14 @@ class AmaReview < ApplicationRecord
     "397" # TODO: Change to 499 National Work Queue
   end
 
+  def end_product_modifier
+    END_PRODUCT_MODIFIERS.each do |modifier|
+      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
+        return modifier
+      end
+    end
+  end
+
   def validate_receipt_date_not_before_ama
     errors.add(:receipt_date, "before_ama") if receipt_date < AMA_BEGIN_DATE
   end

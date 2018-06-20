@@ -29,10 +29,18 @@ class EndProductEstablishment
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
-      modifier: valid_modifiers.first,
+      modifier: end_product_modifier(valid_modifiers: valid_modifiers),
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
       station_of_jurisdiction: station
     )
+  end
+
+  def end_product_modifier(valid_modifiers:)
+    valid_modifiers.each do |modifier|
+      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
+        return modifier
+      end
+    end
   end
 end

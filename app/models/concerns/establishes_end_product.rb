@@ -77,7 +77,7 @@ module EstablishesEndProduct
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
-      valid_modifiers: [end_product_modifier],
+      valid_modifiers: end_product_modifiers,
       station: "397",
       cached_status: end_product_status
     )
