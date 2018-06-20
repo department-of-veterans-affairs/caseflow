@@ -117,7 +117,7 @@ describe RampElectionIntake do
     let(:second_appeal_attributes) do
       { vacols_id: appeals_to_close.last.vacols_id,
         ramp_election_id: former_detail.id,
-        nod_date: appeals_to_close.last.nod_date}
+        nod_date: appeals_to_close.last.nod_date }
     end
 
     it "closes out the appeals correctly and creates an end product" do
@@ -218,7 +218,7 @@ describe RampElectionIntake do
       end
 
       context "when an EP already exists" do
-        let (:preexisting_ep) do
+        let(:preexisting_ep) do
           Generators::EndProduct.build(
             veteran_file_number: "64205555",
             bgs_attrs: {
