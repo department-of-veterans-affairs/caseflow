@@ -51,7 +51,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoNotInSystem)
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly)
     end
   end
 
@@ -65,7 +65,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoHearingListDoesNotMatch)
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly)
     end
   end
 
@@ -108,6 +108,48 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
     it "returns an error" do
       expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat)
+    end
+  end
+
+  context "when allocation has wrong data type" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationWrongDataType.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat)
+    end
+  end
+
+  context "when allocation has duplicate ROs" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationDuplicateRo.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo)
+    end
+  end
+
+  context "when allocation central office is the wrong location" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationWrongCoLocation.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationCoLocationIncorrect)
     end
   end
 
