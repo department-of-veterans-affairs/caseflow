@@ -1,5 +1,5 @@
 class Appeal < AmaReview
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
+  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :saving_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -17,25 +17,6 @@ class Appeal < AmaReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def create_claimants!(claimant_data:)
-    claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
-  end
-
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
   end
 
   def serializer_class
