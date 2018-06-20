@@ -3,9 +3,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
   SPREADSHEET_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
-  FIRST_HEADER_COLUMN = ["BFREGOFF","RO City,State", "Dates"].freeze
+  FIRST_HEADER_COLUMN = ["BFREGOFF", "RO City,State", "Dates"].freeze
   FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
-
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end

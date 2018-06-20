@@ -137,5 +137,3 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 end
-
-
