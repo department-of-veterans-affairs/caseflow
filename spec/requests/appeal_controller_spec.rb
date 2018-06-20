@@ -1,25 +1,23 @@
-RSpec.describe "Reader Appeal Requests", type: :request do
+RSpec.describe "Reader Appeal Requests", type: :request, focus: true do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:vacols_record) { :remand_decided }
-  let(:appeal) { Generators::LegacyAppeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
+  let(:appeal) do
+    create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "123456789S", case_issues: [create(:case_issue)]))
+  end
   let(:appeal_with_no_issues) do
-    Generators::LegacyAppeal.build(
-      vbms_id: "123456788S", vacols_record: vacols_record, issues: []
-    )
+    create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "123456788S", case_issues: []))
   end
 
   describe "Appeals Find by Veteran ID Endpoint" do
     let(:headers) { { "HTTP_VETERAN_ID": "111225555S" } }
-
-    it "returns not found" do
-      headers["HTTP_VETERAN_ID"] = "22221C"
-      get "/reader/appeal/veteran-id", params: nil, headers: headers
-      expect(response).to have_http_status(:not_found)
-
-      headers["HTTP_VETERAN_ID"] = "22112121xs"
-      get "/reader/appeal/veteran-id", params: nil, headers: headers
-      expect(response).to have_http_status(:not_found)
-    end
 
     it "passes the request " do
       headers["HTTP_VETERAN_ID"] = appeal[:vbms_id]
