@@ -225,7 +225,7 @@ describe "Appeals API v2", type: :request do
       expect(response.code).to eq("504")
     end
 
-    it "returns list of appeals for veteran with SSN", focus: true do
+    it "returns list of appeals for veteran with SSN" do
       headers = {
         "ssn": "111223333",
         "Authorization": "Token token=#{api_key.key_string}"
