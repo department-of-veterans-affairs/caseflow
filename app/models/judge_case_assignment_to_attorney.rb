@@ -43,7 +43,7 @@ class JudgeCaseAssignmentToAttorney
   private
 
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"
+    errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
   end
 
   class << self

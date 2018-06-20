@@ -88,9 +88,8 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
-    role = current_user.vacols_role
-    return true if role == "Attorney"
-    return true if role == "Judge" && feature_enabled?(:judge_queue)
+    return true if current_user.attorney_in_vacols?
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
     false
   end
   helper_method :can_access_queue?
@@ -110,9 +109,9 @@ class ApplicationController < ApplicationBaseController
   def verify_task_assignment_access
     # :nocov:
     # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.vacols_role == "Attorney" && feature_enabled?(:attorney_assignment)
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
     # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.vacols_role == "Judge" && feature_enabled?(:judge_assignment)
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
   end
