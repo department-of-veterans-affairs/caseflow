@@ -21,11 +21,22 @@ module CachedAttributes
   end
 
   def cache_id(attr_name)
-    "#{self.class.name}-#{id}-cached-#{attr_name}"
+    "#{self.class.name}-#{cache_key(attr_name)}-cached-#{attr_name}"
+  end
+
+  def cache_key(attr_name)
+    send(self.class.cache_key(attr_name))
   end
 
   module ClassMethods
+    def cache_key(attr_name)
+      @cache_keys[attr_name]
+    end
+
     def cache_attribute(attr_name, write_options = {}, &get_value)
+      @cache_keys ||= {}
+      @cache_keys[attr_name] = write_options.delete(:cache_key) || :id
+
       define_method "#{attr_name}=" do |value|
         set_cached_value(attr_name, value)
       end
