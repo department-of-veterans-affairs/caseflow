@@ -200,7 +200,7 @@ export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
   }
 });
 
-export const taskInitialAssigned = ({task, assigneeId}) => ({
+export const taskInitialAssigned = ({ task, assigneeId }) => ({
   type: ACTIONS.TASK_INITIAL_ASSIGNED,
   payload: {
     task,
@@ -211,14 +211,18 @@ export const taskInitialAssigned = ({task, assigneeId}) => ({
 export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) => {
   return Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
-        '/tasks',
-        {data: {tasks: {assigned_to_id: assigneeId, type: 'JudgeCaseAssignmentToAttorney', appeal_id: appealId}}}).
+      '/tasks',
+      { data: { tasks: { assigned_to_id: assigneeId,
+        type: 'JudgeCaseAssignmentToAttorney',
+        appeal_id: appealId } } }).
       then(JSON.parse).
       then(
         (resp) => {
           const { task: { data: task } } = resp;
+
           task.vacolsId = task.id;
-          dispatch(taskInitialAssigned({task, assigneeId}));
+          dispatch(taskInitialAssigned({ task,
+            assigneeId }));
         });
   }));
 };

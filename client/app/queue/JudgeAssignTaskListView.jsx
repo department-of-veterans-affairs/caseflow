@@ -28,6 +28,7 @@ import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
+import _ from 'lodash';
 
 class AssignWidgetPresentational extends React.PureComponent {
   constructor(props) {
@@ -42,7 +43,7 @@ class AssignWidgetPresentational extends React.PureComponent {
   }
 
   handleButtonClick = () => {
-    const { userId, selectedAssigneeOfUser, initialAssignTasksToUser } = this.props;
+    const { userId, selectedAssigneeOfUser } = this.props;
 
     if (!selectedAssigneeOfUser[userId]) {
       this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
@@ -66,10 +67,10 @@ class AssignWidgetPresentational extends React.PureComponent {
       return;
     }
 
-    initialAssignTasksToUser(
+    this.props.initialAssignTasksToUser(
       { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
         assigneeId: selectedAssigneeOfUser[userId] }).
-      then(() => this.setState({statusMessage: null})).
+      then(() => this.setState({ statusMessage: null })).
       catch(() =>
         this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
           <div className="usa-alert-body">
@@ -116,13 +117,20 @@ class AssignWidgetPresentational extends React.PureComponent {
 
 const AssignWidget =
   connect(
-    (state) => _.pick(state.queue, 'attorneysOfJudge', 'selectedAssigneeOfUser', 'isTaskAssignedToUserSelected', 'tasks'),
+    (state) => {
+      const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
+
+      return { attorneysOfJudge,
+        selectedAssigneeOfUser,
+        isTaskAssignedToUserSelected,
+        tasks };
+    },
     (dispatch) => bindActionCreators({ setSelectedAssigneeOfUser,
       initialAssignTasksToUser }, dispatch)
   )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {
-  const { attorneys, tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
+  const { tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
   let tableContent;
 
   if (reviewableCount === 0) {
