@@ -71,13 +71,14 @@ class AssignWidgetPresentational extends React.PureComponent {
       { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
         assigneeId: selectedAssigneeOfUser[userId] }).
       then(() => this.setState({ statusMessage: null })).
-      catch(() =>
+      catch(() => {
         this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
           <div className="usa-alert-body">
             <h3 className="usa-alert-heading">Error assigning tasks</h3>
             <p className="usa-alert-text">One or more tasks couldn't be assigned.</p>
           </div>
-        </div> }));
+        </div> });
+      });
   }
 
   render = () => {

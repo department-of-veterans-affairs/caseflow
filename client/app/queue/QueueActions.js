@@ -215,7 +215,7 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
       { data: { tasks: { assigned_to_id: assigneeId,
         type: 'JudgeCaseAssignmentToAttorney',
         appeal_id: appealId } } }).
-      then(JSON.parse).
+      then((resp) => resp.body).
       then(
         (resp) => {
           const { task: { data: task } } = resp;
