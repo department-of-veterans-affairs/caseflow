@@ -1,6 +1,7 @@
 class AmaReview < ApplicationRecord
   include EstablishesEndProduct
 
+  validates :receipt_date, presence: { message: "blank" }, if: :saving_review
   validate :validate_receipt_date
 
   AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze

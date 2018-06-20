@@ -1,5 +1,5 @@
 class Appeal < AmaReview
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :saving_review
+  validates :docket_type, presence: { message: "blank" }, on: :saving_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
