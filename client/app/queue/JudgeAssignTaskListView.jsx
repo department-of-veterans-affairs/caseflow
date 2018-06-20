@@ -38,7 +38,7 @@ class AssignWidgetPresentational extends React.PureComponent {
   appealIdsOfSelectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
-      (selected, id) => (selected ? [this.props.tasks[id].attributes.appealId] : []));
+      (selected, id) => (selected ? [this.props.tasks[id].attributes.appeal_id] : []));
   }
 
   handleButtonClick = () => {

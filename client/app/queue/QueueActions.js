@@ -208,16 +208,15 @@ export const taskInitialAssigned = (task) => ({
 });
 
 export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) => {
-  /*
   return Promise.all(appealIdsOfTasks.map((appealId) => {
-    return Promise.resolve('{"task":{"vacols_id":"3662856","type":"JudgeCaseAssignmentToAttorney","assigned_by":{"full_name":"Anjali Abshire","email":null,"roles":["BVAAABSHIRE"],"id":747,"station_id":"101","css_id":"BVAAABSHIRE","selected_regional_office":null,"display_name":"BVAAABSHIRE (VACO)"},"assigned_to":{"id":51,"station_id":"101","css_id":"BVAEERDMAN","full_name":"Ezra Erdman","email":null,"roles":[],"selected_regional_office":null,"display_name":"BVAEERDMAN (VACO)"},"validation_context":null,"errors":{}}}').
+    return Promise.resolve('{"task":{"data":{"id":"3662856","type":"attorney_legacy_tasks","attributes":{"assigned_on":"2018-06-19T00:00:00.000Z","due_on":"2018-07-19T00:00:00.000Z","docket_name":"legacy","docket_date":"2012-03-02T00:00:00.000Z","appeal_id":27,"user_id":"BVAAABSHIRE","added_by_name":"Anjali Q Abshire","added_by_css_id":"AABSHIRE","task_id":"3662856-2018-06-19","task_type":null,"document_id":null,"assigned_by_first_name":null,"assigned_by_last_name":null,"previous_task":{"assigned_on":"2018-06-19T00:00:00.000Z"}}}}}').
       then(JSON.parse).
       then(
         (resp) => {
           dispatch(taskInitialAssigned(resp.task));
         });
   })).catch((resp) => console.log('error', resp));
-  */
+  /*
   return Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
         '/tasks',
@@ -228,4 +227,5 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
           dispatch(taskInitialAssigned(resp.task));
         });
   })).catch((resp) => console.log('error', resp));
+  */
 };
