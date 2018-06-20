@@ -5,10 +5,6 @@ RSpec.describe HomeController, type: :controller do
     User.user_repository = Fakes::UserRepository
   end
 
-  before :each do
-    FeatureToggle.redis.flushall
-  end
-
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }

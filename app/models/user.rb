@@ -37,12 +37,24 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
+  def attorney_in_vacols?
+    vacols_roles.include?("attorney")
+  end
+
+  def judge_in_vacols?
+    vacols_roles.include?("judge")
+  end
+
+  def colocated_in_vacols?
+    vacols_roles.include?("colocated")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
   end
 
-  def vacols_role
-    @vacols_role ||= self.class.user_repository.vacols_role(css_id)
+  def vacols_roles
+    @vacols_roles ||= self.class.user_repository.vacols_roles(css_id) || []
   end
 
   def vacols_attorney_id
