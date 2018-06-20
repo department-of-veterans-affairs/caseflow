@@ -2,14 +2,14 @@ module HearingDayMapper
   class InvalidRegionalOfficeError < StandardError; end
 
   COLUMN_NAME_REVERSE_MAP = {
-      hearing_type: :hearing_type,
-      hearing_date: :hearing_date,
-      folder_nr: :folder_nr,
-      room: :room_info,
-      board_member: :judge_id,
-      team: :team,
-      mduser: :updated_by,
-      mdtime: :updated_by
+    hearing_type: :hearing_type,
+    hearing_date: :hearing_date,
+    folder_nr: :folder_nr,
+    room: :room_info,
+    board_member: :judge_id,
+    team: :team,
+    mduser: :updated_by,
+    mdtime: :updated_by
   }.freeze
 
   class << self
@@ -31,6 +31,5 @@ module HearingDayMapper
       fail(InvalidRegionalOfficeError) if ro.nil?
       ro.key
     end
-
   end
 end

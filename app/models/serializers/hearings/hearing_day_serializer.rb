@@ -4,7 +4,7 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
   def attributes(attributes)
     hash = super
     hearing_hash =
-        hash.each_with_object({}) { |(k, v), result| result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k]] = v }
+      hash.each_with_object({}) { |(k, v), result| result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k]] = v }
     hearing_hash
   end
 end
