@@ -32,14 +32,18 @@ class JudgeCaseAssignmentToAttorney
     end
   end
 
-  private
-
   def vacols_id
     super || LegacyAppeal.find(appeal_id).vacols_id
   end
 
+  def last_case_assignment
+    VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", vacols_id).sort_by(&:created_at).last
+  end
+
+  private
+
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be a judge") if assigned_by && assigned_by.vacols_role != "Judge"
+    errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
   end
 
   class << self

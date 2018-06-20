@@ -5,7 +5,7 @@ describe CoLocatedAdminAction do
 
   before do
     RequestStore.store[:current_user] = attorney
-    allow_any_instance_of(User).to receive(:vacols_role).and_return("Attorney")
+    allow_any_instance_of(User).to receive(:vacols_roles).and_return(["attorney"])
     FeatureToggle.enable!(:test_facols)
   end
 
@@ -47,7 +47,7 @@ describe CoLocatedAdminAction do
 
     context "when assigned by is not an attorney" do
       before do
-        allow_any_instance_of(User).to receive(:vacols_role).and_return("Judge")
+        allow_any_instance_of(User).to receive(:vacols_roles).and_return(["judge"])
       end
 
       subject do

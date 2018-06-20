@@ -7,7 +7,6 @@ import { css } from 'glamor';
 import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
@@ -70,14 +69,6 @@ class AttorneyTaskTable extends React.PureComponent {
           appeal={this.props.appeals[task.vacolsId]} />;
       }
     }];
-
-    if (this.props.featureToggles.phase_two) {
-      columns.push({
-        header: COPY.CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE,
-        span: this.collapseColumnIfNoDASRecord,
-        valueFunction: (task) => <SelectCheckoutFlowDropdown vacolsId={task.vacolsId} />
-      });
-    }
 
     return columns;
   };
