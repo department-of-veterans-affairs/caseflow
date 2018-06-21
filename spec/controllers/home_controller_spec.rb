@@ -8,6 +8,11 @@ RSpec.describe HomeController, type: :controller do
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }
+
+      before do
+        FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
       it "should redirect to /help" do
         get :index
         expect(response.status).to eq 302
@@ -19,6 +24,11 @@ RSpec.describe HomeController, type: :controller do
       # fakes/user_repository returns "Judge" for role for "BVAAABSHIRE",
       # so this user will not have a personal queue
       let!(:current_user) { User.authenticate!(css_id: "BVAAABSHIRE") }
+
+      before do
+        FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
       it "should redirect to /help" do
         get :index
         expect(response.status).to eq 302
