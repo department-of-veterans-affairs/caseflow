@@ -8,8 +8,12 @@ describe AttorneyLegacyTask do
 
     context "when there is information about the case assignment" do
       let(:case_assignment) do
+        vacols_id = "1111"
+        Fakes::AppealRepository.records[vacols_id] = OpenStruct.new(
+          vacols_id: vacols_id
+        )
         OpenStruct.new(
-          vacols_id: "1111",
+          vacols_id: vacols_id,
           date_due: 1.day.ago,
           assigned_to_attorney_date: 5.days.ago,
           created_at: 6.days.ago,
