@@ -71,14 +71,6 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     RampElectionIntake.create!(
-      veteran_file_number: "1111",
-      completed_at: 2.hours.ago,
-      completion_status: :error,
-      error_code: :ramp_election_already_complete,
-      user: current_user
-    )
-
-    RampElectionIntake.create!(
       veteran_file_number: "2222",
       completed_at: 5.hours.ago,
       completion_status: :error,
