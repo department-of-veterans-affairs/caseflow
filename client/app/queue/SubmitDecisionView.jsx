@@ -96,7 +96,8 @@ class SubmitDecisionView extends React.PureComponent {
     const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
-      type: decision.type === DECISION_TYPES.ATTORNEY.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
+      type: decision.type === DECISION_TYPES.ATTORNEY.DRAFT_DECISION ?
+        'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
