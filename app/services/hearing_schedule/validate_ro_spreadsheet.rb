@@ -2,6 +2,9 @@ class HearingSchedule::ValidateRoSpreadsheet
   RO_NON_AVAILABILITY_SHEET = 0
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
+  HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings and Central Office Hearings".freeze
+  HEARING_ALLOCATION_SHEET_FIRST_HEADER_COLUMN = ["BFREGOFF", "RO City,State", "Dates"].freeze
+  HEARING_ALLOCATION_SHEET_FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end
@@ -133,7 +136,14 @@ class HearingSchedule::ValidateRoSpreadsheet
     }
   end
 
-  def validate_hearing_allocation_template; end
+  def validate_hearing_allocation_template
+    unless ro_non_availability_template.column(1)[0] == RO_NON_AVAILABILITY_TITLE &&
+            ro_non_availability_template.row(5).uniq == RO_NON_AVAILABILITY_FIFTH_EXAMPLE_ROW &&
+            ro_non_availability_template.column(60).uniq == [nil] &&
+            ro_non_availability_template.column(1).uniq == RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN
+       fail RoTemplateNotFollowed
+    end
+  end
 
   def validate_hearing_ro_allocation_days
     unless hearing_ro_allocation_days.all? { |row| row["allocated_days"].is_a?(Numeric) }
