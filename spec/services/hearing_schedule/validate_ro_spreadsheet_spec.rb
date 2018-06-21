@@ -165,17 +165,17 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     it { is_expected.to be true }
   end
 
-  context "when RO non-availaility dates are in range" do
+  context "when RO template not followed" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/roDatesInRange.xlsx", extension: :xlsx),
+        Roo::Spreadsheet.open("spec/support/roTemplateNotFollowed.xlsx", extension: :xlsx),
         Date.parse("01/01/2018"),
         Date.parse("01/06/2018")
       ).validate
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesInRange)
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed)
     end
   end
 end
