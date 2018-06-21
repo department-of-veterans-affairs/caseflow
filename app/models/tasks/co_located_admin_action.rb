@@ -16,6 +16,14 @@ class CoLocatedAdminAction < Task
         records
       end
     end
+
+    def last_created_task
+      sort(&:created_at).last
+    end
+
+    def last_assigned_css_id
+      last_created_task ? last_created_task.user.css_id : nil
+    end
   end
 
   private
@@ -30,4 +38,6 @@ class CoLocatedAdminAction < Task
       station_id: User::BOARD_STATION_ID
     )
   end
+
+
 end
