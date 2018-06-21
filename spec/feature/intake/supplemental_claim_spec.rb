@@ -202,7 +202,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.day,
+      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied"
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(

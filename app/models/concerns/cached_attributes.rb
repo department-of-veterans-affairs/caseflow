@@ -29,6 +29,8 @@ module CachedAttributes
   end
 
   module ClassMethods
+    # rubocop:disable Style/ClassVars
+
     def cache_key(attr_name)
       @@cache_keys[attr_name]
     end
@@ -53,5 +55,6 @@ module CachedAttributes
         set_cached_value(attr_name, value, write_options)
       end
     end
+    # rubocop:enable Style/ClassVars
   end
 end
