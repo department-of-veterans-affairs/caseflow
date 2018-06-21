@@ -7,7 +7,11 @@ describe JudgeLegacyTask do
 
     context "when there is information about the case assignment" do
       let(:case_assignment) do
-        OpenStruct.new(vacols_id: "1111",
+        vacols_id = "1111"
+        Fakes::AppealRepository.records[vacols_id] = OpenStruct.new(
+          vacols_id: vacols_id
+        )
+        OpenStruct.new(vacols_id: vacols_id,
                        date_due: 1.day.ago,
                        reassigned_to_judge_date: reassigned_to_judge_date,
                        docket_date: nil,

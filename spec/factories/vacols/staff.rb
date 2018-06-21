@@ -5,12 +5,16 @@ FactoryBot.define do
     sequence(:sdomainid) { |n| "BVA#{n}" }
 
     trait :attorney_role do
-      svlj "A"
       sattyid "123"
     end
 
     trait :judge_role do
       svlj "J"
+    end
+
+    trait :attorney_judge_role do
+      svlj "A"
+      sattyid "123"
     end
 
     trait :has_location_code do

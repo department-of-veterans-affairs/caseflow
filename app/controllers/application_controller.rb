@@ -9,6 +9,12 @@ class ApplicationController < ApplicationBaseController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
+  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
+    Rails.logger.error "Vacols error occured: #{e.message}"
+    Raven.capture_exception(e)
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
+
   private
 
   def current_user
@@ -88,9 +94,8 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
-    role = current_user.vacols_role
-    return true if role == "Attorney"
-    return true if role == "Judge" && feature_enabled?(:judge_queue)
+    return true if current_user.attorney_in_vacols?
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
     false
   end
   helper_method :can_access_queue?
@@ -99,7 +104,7 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_task_completion_access
+  def verify_case_review_access
     # :nocov:
     # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
     return true if feature_enabled?(:queue_phase_two)
@@ -110,11 +115,17 @@ class ApplicationController < ApplicationBaseController
   def verify_task_assignment_access
     # :nocov:
     # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.vacols_role == "Attorney" && feature_enabled?(:attorney_assignment)
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
     # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.vacols_role == "Judge" && feature_enabled?(:judge_assignment)
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
+  end
+
+  def invalid_record_error(record)
+    render json:  {
+      "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
+    }, status: 400
   end
 
   def set_raven_user
