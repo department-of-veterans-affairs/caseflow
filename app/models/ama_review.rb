@@ -17,11 +17,6 @@ class AmaReview < ApplicationRecord
     receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
   end
 
-  def timely_ratings_cache_key
-    veteran_file_number
-    # veteran_file_number + receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
-  end
-
   def start_review!
     @saving_review = true
   end
@@ -61,6 +56,14 @@ class AmaReview < ApplicationRecord
   end
 
   private
+
+  def timely_ratings_cache_key
+    "#{veteran_file_number}-#{formatted_receipt_date}"
+  end
+
+  def formatted_receipt_date
+    receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
+  end
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
