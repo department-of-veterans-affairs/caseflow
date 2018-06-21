@@ -90,7 +90,7 @@ describe RampElectionIntake do
     end
   end
 
-  context "#complete!", focus: true do
+  context "#complete!" do
     subject { intake.complete!({}) }
 
     let(:detail) do
