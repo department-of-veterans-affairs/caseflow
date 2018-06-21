@@ -45,7 +45,7 @@ FactoryBot.define do
           phone_type_name_two: nil,
           prep_phrase_type: nil,
           province_name: nil,
-          ptcpnt_id: 123456,
+          ptcpnt_id: 123_456,
           ptcpnt_relationship: nil,
           return_code: "SHAR 9999",
           return_message: "Records found.",
