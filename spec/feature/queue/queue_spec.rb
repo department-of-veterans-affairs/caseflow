@@ -192,12 +192,8 @@ RSpec.feature "Queue" do
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
       FeatureToggle.enable!(:case_search_home_page)
-      FeatureToggle.disable!(:queue_phase_two)
-      FeatureToggle.disable!(:judge_queue)
     end
     after do
-      FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
     end
 
@@ -489,6 +485,7 @@ RSpec.feature "Queue" do
     end
 
     after do
+      FeatureToggle.disable!(:judge_queue)
       User.unauthenticate!
       User.authenticate!
     end
