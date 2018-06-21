@@ -10,8 +10,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   class JudgeNotInDatabase < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
-    @spreadsheet_template = HearingSchedule::GetSpreadsheetData.new(spreadsheet).judge_non_availability_template
-    @spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet).judge_non_availability_data
+    get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+    @spreadsheet_template = get_spreadsheet_data.judge_non_availability_template
+    @spreadsheet_data = get_spreadsheet_data.judge_non_availability_data
     @start_date = start_date
     @end_date = end_date
   end
