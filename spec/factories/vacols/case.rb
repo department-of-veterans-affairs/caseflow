@@ -13,11 +13,12 @@ FactoryBot.define do
     trait :assigned do
       transient do
         decass_count 1
-        staff nil
+        user nil
       end
 
       after(:create) do |vacols_case, evaluator|
-        slogid = evaluator.staff.slogid if evaluator.staff
+        staff = create(:staff, user: evaluator.user) if evaluator.user
+        slogid = staff.slogid if staff
         vacols_case.update!(bfcurloc: slogid) if slogid
         create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey, deadusr: slogid ? slogid : "TEST")
       end

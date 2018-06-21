@@ -28,7 +28,7 @@ FactoryBot.define do
       hearing.hearing_pkseq = hearing.hearing_pkseq + 1
       hearing.reload
       if evaluator.user
-        staff = create(:staff, :attorney_judge_role, sdomainid: evaluator.user.css_id)
+        staff = create(:staff, :attorney_judge_role, user: evaluator.user)
         hearing.update(board_member: staff.sattyid)
       end
     end

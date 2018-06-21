@@ -1,8 +1,15 @@
 RSpec.describe UsersController, type: :controller do
   before do
-    Fakes::Initializer.load!
-    User.authenticate!(roles: ["System Admin"])
+    FeatureToggle.enable!(:test_facols)
   end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+  let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
+  let!(:judges) { create_list(:staff, 2, :judge_role) }
 
   describe "GET /users?role=Judge" do
     context "when role is passed" do

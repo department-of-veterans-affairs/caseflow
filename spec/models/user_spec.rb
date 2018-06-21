@@ -1,7 +1,5 @@
 require "rails_helper"
 
-User.authentication_service = Fakes::AuthenticationService
-
 describe User do
   before do
     FeatureToggle.enable!(:test_facols)
@@ -13,7 +11,6 @@ describe User do
 
   let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
   let(:user) { User.from_session(session) }
-  let(:staff) { create(:staff, sdomainid: user.css_id) }
 
   before(:all) do
     Functions.client.del("System Admin")
@@ -201,7 +198,7 @@ describe User do
     end
 
     context "when case is assigned to a user" do
-      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, staff: staff)) }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
 
       it "returns appeal assigned to user" do
         is_expected.to match_array([appeal])
@@ -212,7 +209,7 @@ describe User do
   context "#current_case_assignments_with_views" do
     subject { user.current_case_assignments_with_views[0] }
 
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, staff: staff)) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
 
     it "returns nil when no cases have been viewed" do
       is_expected.to include(

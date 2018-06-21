@@ -1,4 +1,4 @@
-RSpec.describe "Reader Appeal Requests", type: :request, focus: true do
+RSpec.describe "Reader Appeal Requests", type: :request do
   before do
     FeatureToggle.enable!(:test_facols)
   end
