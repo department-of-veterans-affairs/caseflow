@@ -8,11 +8,6 @@ RSpec.describe HomeController, type: :controller do
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }
-
-      before do
-        FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
-      end
-
       it "should redirect to /help" do
         get :index
         expect(response.status).to eq 302
