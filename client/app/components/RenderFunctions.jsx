@@ -341,7 +341,7 @@ export const lockIcon = () =>
     </g>
   </svg>;
 
-export const downloadIcon = (color = COLORS.PRIMARY_ALT) => {
+export const downloadIcon = (color = COLORS.WHITE) => {
   // eslint-disable-next-line class-methods-use-this
   return <svg width="14px" height="19px" viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
