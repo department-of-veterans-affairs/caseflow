@@ -29,6 +29,7 @@ module CachedAttributes
   end
 
   module ClassMethods
+    # Use of class variables is intentional so that we can access them from subclasses
     # rubocop:disable Style/ClassVars
 
     def cache_key(attr_name)
