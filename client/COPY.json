@@ -36,8 +36,8 @@
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
-  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Tasks not found",
-  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
+  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
+  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
