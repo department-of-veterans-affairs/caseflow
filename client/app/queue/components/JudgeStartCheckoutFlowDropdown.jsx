@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -21,8 +22,7 @@ import {
 } from '../QueueActions';
 import {
   dropdownStyling,
-  JUDGE_DECISION_OPTIONS,
-  JUDGE_DECISION_TYPES
+  JUDGE_DECISION_OPTIONS
 } from '../constants';
 
 // todo: make StartCheckoutFlowDropdownBase
@@ -37,7 +37,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
     this.props.setCaseReviewActionType(actionType);
 
-    if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
+    if (actionType === DECISION_TYPES.OMO_REQUEST) {
       history.push('');
       history.replace('/queue');
 

@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
@@ -74,23 +75,13 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
-export const JUDGE_DECISION_TYPES = {
-  DISPATCH: 'dispatch',
-  OMO_REQUEST: 'omo_request'
-};
-
 export const JUDGE_DECISION_OPTIONS = [{
   label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-  value: JUDGE_DECISION_TYPES.DISPATCH
+  value: DECISION_TYPES.DISPATCH
 }, {
   label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-  value: JUDGE_DECISION_TYPES.OMO_REQUEST
+  value: DECISION_TYPES.OMO_REQUEST
 }];
-
-export const DECISION_TYPES = {
-  OMO_REQUEST: 'omo_request',
-  DRAFT_DECISION: 'draft_decision'
-};
 
 export const DRAFT_DECISION_OPTIONS = [{
   label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
