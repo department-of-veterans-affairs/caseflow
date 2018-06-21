@@ -9,9 +9,10 @@ RSpec.describe UsersController, type: :controller do
 
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
-  let!(:judges) { create_list(:staff, 2, :judge_role) }
 
   describe "GET /users?role=Judge" do
+    let!(:judges) { create_list(:staff, 2, :judge_role) }
+
     context "when role is passed" do
       it "should return a list of judges" do
         get :index, params: { role: "Judge" }

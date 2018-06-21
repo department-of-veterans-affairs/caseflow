@@ -52,7 +52,7 @@ RSpec.describe AppealsController, type: :controller do
           Document.new(type: "SSOC", received_at: 7.days.ago)
         ]
       end
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey:  "654321", documents: documents)) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }

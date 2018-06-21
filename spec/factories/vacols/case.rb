@@ -17,8 +17,7 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
-        staff = create(:staff, user: evaluator.user) if evaluator.user
-        slogid = staff.slogid if staff
+        slogid = create(:staff, user: evaluator.user).slogid if evaluator.user
         vacols_case.update!(bfcurloc: slogid) if slogid
         create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey, deadusr: slogid ? slogid : "TEST")
       end

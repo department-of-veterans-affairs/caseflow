@@ -25,6 +25,8 @@ FactoryBot.define do
     end
 
     after(:create) do |hearing, evaluator|
+      # For some reason the returned record's sequence is one less than what is actually saved.
+      # We need to reload the correct record before trying to modify it.
       hearing.hearing_pkseq = hearing.hearing_pkseq + 1
       hearing.reload
       if evaluator.user
