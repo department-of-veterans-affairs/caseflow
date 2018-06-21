@@ -8,7 +8,9 @@ FactoryBot.define do
     vbms_id { vacols_case.bfcorlid }
 
     after(:create) do |legacy_appeal, _evaluator|
-      create(:veteran, file_number: legacy_appeal.veteran_file_number)
+      if !Veteran.find_by(file_number: legacy_appeal.veteran_file_number)
+        create(:veteran, file_number: legacy_appeal.veteran_file_number)
+      end
     end
   end
 end
