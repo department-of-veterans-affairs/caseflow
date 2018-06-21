@@ -3,7 +3,6 @@ class RampElectionIntake < Intake
 
   enum error_code: {
     did_not_receive_ramp_election: "did_not_receive_ramp_election",
-    ramp_election_already_complete: "ramp_election_already_complete",
     no_eligible_appeals: "no_eligible_appeals",
     no_active_compensation_appeals: "no_active_compensation_appeals",
     no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
