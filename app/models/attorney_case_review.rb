@@ -9,8 +9,8 @@ class AttorneyCaseReview < ApplicationRecord
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
 
   enum document_type: {
-    omo_request: "omo_request",
-    draft_decision: "draft_decision"
+    omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
+    draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
 
   def reassign_case_to_judge_in_vacols!
