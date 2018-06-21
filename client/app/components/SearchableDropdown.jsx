@@ -108,7 +108,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} style={this.props.dropdownStyling}>
+    return <div className={dropdownClasses} {...this.props.dropdownStyling}>
       <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>

@@ -92,7 +92,7 @@ class AssignWidgetPresentational extends React.PureComponent {
           onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId,
             assigneeId: option.value })}
           value={selectedOption}
-          dropdownStyling={{ width: '30rem' }} />
+          dropdownStyling={css({ width: '30rem' })} />
         <p>&nbsp;</p>
         <Button
           onClick={this.handleButtonClick}
