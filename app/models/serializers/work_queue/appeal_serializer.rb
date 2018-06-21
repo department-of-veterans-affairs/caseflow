@@ -26,7 +26,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_relationship do
-    "not implemented"
+    object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
   attribute :location_code do
