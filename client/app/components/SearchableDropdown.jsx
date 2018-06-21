@@ -113,7 +113,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className={dropdownClasses} {...dropdownStyling}>
+    return <div className={dropdownClasses} {...dropdownStyling} {...this.props.styling}>
       <label className={labelClasses} htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
@@ -154,7 +154,8 @@ SearchableDropdown.propTypes = {
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
-  dropdownStyling: PropTypes.object
+  dropdownStyling: PropTypes.object,
+  styling: PropTypes.object
 };
 
 export default SearchableDropdown;
