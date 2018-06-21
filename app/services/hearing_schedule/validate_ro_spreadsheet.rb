@@ -4,7 +4,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   HEARING_ALLOCATION_SHEET = 2
   RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
   RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN = ["BFREGOFF", "RO City,State", "Dates"].freeze
-  FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
+  RO_NON_AVAILABILITY_FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end
@@ -63,7 +63,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_ro_non_availability_template
     unless ro_non_availability_template.column(1)[0] == RO_NON_AVAILABILITY_TITLE &&
-           ro_non_availability_template.row(5).uniq == FIFTH_EXAMPLE_ROW &&
+           ro_non_availability_template.row(5).uniq == RO_NON_AVAILABILITY_FIFTH_EXAMPLE_ROW &&
            ro_non_availability_template.column(60).uniq == [nil] &&
            ro_non_availability_template.column(1).uniq == RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN
       fail RoTemplateNotFollowed
