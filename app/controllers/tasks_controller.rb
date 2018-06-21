@@ -33,6 +33,8 @@ class TasksController < ApplicationController
   end
 
   def create
+    return required_parameters_missing([:titles]) if task_params[:titles].blank?
+
     return invalid_type_error unless task_class
     tasks = task_class.create(task_params)
 

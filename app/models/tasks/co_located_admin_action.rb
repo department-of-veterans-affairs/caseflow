@@ -6,7 +6,7 @@ class CoLocatedAdminAction < Task
   class << self
     def create(params)
       ActiveRecord::Base.multi_transaction do
-        records = params.delete("titles").each_with_object([]) do |title, result|
+        records = params.delete(:titles).each_with_object([]) do |title, result|
           result << super(params.merge(title: title))
           result
         end

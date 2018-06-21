@@ -106,6 +106,25 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
         end
 
+        context "when 'titles' is missing" do
+          let(:role) { :attorney_role }
+          let(:params) do
+            {
+              "appeal_id": appeal.id,
+              "type": "CoLocatedAdminAction",
+              "titles": [],
+              "instructions": "do this"
+            }
+          end
+
+          it "should be successful" do
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 400
+            response_body = JSON.parse(response.body)
+            expect(response_body["errors"].first["title"]).to eq "Missing required parameters"
+          end
+        end
+
         context "when appeal is not found" do
           let(:params) do
             {
