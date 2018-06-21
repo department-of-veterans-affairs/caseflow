@@ -1,6 +1,6 @@
 describe Intake do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   class TestIntake < Intake; end
@@ -182,7 +182,7 @@ describe Intake do
     end
 
     let(:another_detail) do
-      build(:ramp_election, veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
+      create(:ramp_election, veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
     end
 
     let!(:intake_with_manual_election) do
@@ -198,7 +198,7 @@ describe Intake do
       )
     end
 
-    it "returns included intakes (canceled, actionable errors that have yet been resolved)" do
+    it "returns included intakes (canceled, actionable errors that have not yet been resolved)" do
       expect(subject).to_not include(completed_intake)
       expect(subject).to include(canceled_intake)
       expect(subject).to include(
