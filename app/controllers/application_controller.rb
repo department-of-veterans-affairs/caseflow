@@ -128,6 +128,15 @@ class ApplicationController < ApplicationBaseController
     }, status: 400
   end
 
+  def required_parameters_missing(array_of_keys)
+    render json: {
+      "errors": [
+        "title": "Missing required parameters",
+        "detail": "Required parameters are missing: #{array_of_keys.join(' ,')}"
+      ]
+    }, status: 400
+  end
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
