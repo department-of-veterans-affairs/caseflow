@@ -7,6 +7,8 @@ class RampElectionIntake < Intake
     no_active_compensation_appeals: "no_active_compensation_appeals",
     no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     no_active_appeals: "no_active_appeals",
+    # This is a legacy error_code from when we only allowed one RAMP election
+    ramp_election_already_complete: "ramp_election_already_complete",
     # This status will be set on successful intakes to signify that we had to
     # connect an existing EP, which in theory, shouldn't happen, but does in practice.
     connected_preexisting_ep: "connected_preexisting_ep"
@@ -36,7 +38,7 @@ class RampElectionIntake < Intake
     return if complete? || pending?
     start_completion!
 
-    if existing_ramp_election
+    if existing_ramp_election_active?
       use_existing_ramp_election
     else
       create_or_connect_end_product
@@ -145,17 +147,21 @@ class RampElectionIntake < Intake
   end
 
   def existing_ramp_election
-    first = RampElection.established.find_by(
+    @existing_ramp_election ||= RampElection.established.where(
       veteran_file_number: veteran_file_number,
       option_selected: detail.option_selected
-    )
-    (first == detail) ? nil : first
+    ).where.not(id: detail_id).first
+  end
+
+  def existing_ramp_election_active?
+    existing_ramp_election && existing_ramp_election.end_product_active?
   end
 
   def use_existing_ramp_election
-    old_detail = detail
-    update! detail: existing_ramp_election
-    old_detail.destroy!
+    transaction do
+      detail.destroy!
+      update!(detail: existing_ramp_election)
+    end
   end
 
   def veteran_ramp_elections

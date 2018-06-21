@@ -119,34 +119,6 @@ RSpec.feature "RAMP Election Intake" do
       expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
     end
 
-    scenario "Search for a veteran that has a RAMP election already processed" do
-      RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: 7.days.ago,
-        receipt_date: 5.days.ago,
-        established_at: 2.days.ago
-      )
-
-      # Validate you're redirected back to the form select page if you haven't started yet
-      visit "/intake/completed"
-      expect(page).to have_content("Welcome to Caseflow Intake!")
-
-      visit "/intake/review-request"
-
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Opt-In Election Form").click
-      end
-      safe_click ".cf-submit.usa-button"
-
-      fill_in "Search small", with: "12341234"
-      click_on "Search"
-
-      expect(page).to have_content("What is the Receipt Date of this form?")
-      expect(page).to_not have_content(
-        "A RAMP opt-in with the receipt date 12/02/2017 was already processed"
-      )
-    end
-
     scenario "Search for a veteran that has received a RAMP election" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
