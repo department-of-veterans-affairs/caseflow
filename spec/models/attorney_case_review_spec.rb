@@ -12,7 +12,7 @@ describe AttorneyCaseReview do
     context "should validate format of the task ID" do
       let(:params) do
         {
-          document_type: "omo_request",
+          document_type: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -60,7 +60,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          document_type: "omo_request",
+          document_type: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -72,7 +72,7 @@ describe AttorneyCaseReview do
       end
 
       it "should create OMO Request record" do
-        expect(subject.document_type).to eq "omo_request"
+        expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"]
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "OMO - IME"
         expect(subject.document_id).to eq "123456789.1234"
@@ -125,7 +125,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          document_type: "draft_decision",
+          document_type: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -145,7 +145,7 @@ describe AttorneyCaseReview do
       end
 
       it "should create DraftDecision record" do
-        expect(subject.document_type).to eq "draft_decision"
+        expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "Decision"
         expect(subject.document_id).to eq "123456789.1234"
@@ -188,7 +188,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          document_type: "omo_request",
+          document_type: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
           reviewing_judge: judge,
           work_product: "OMO - IME",
           document_id: "123456789.1234",
@@ -213,7 +213,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          document_type: "draft_decision",
+          document_type: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -242,7 +242,7 @@ describe AttorneyCaseReview do
 
       let(:params) do
         {
-          document_type: "draft_decision",
+          document_type: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
           reviewing_judge: judge,
           work_product: "Decision",
           document_id: "123456789.1234",
@@ -254,7 +254,7 @@ describe AttorneyCaseReview do
       end
 
       it "should create Draft Decision record" do
-        expect(subject.document_type).to eq "draft_decision"
+        expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "Decision"
         expect(subject.document_id).to eq "123456789.1234"
