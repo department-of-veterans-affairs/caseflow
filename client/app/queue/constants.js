@@ -73,8 +73,8 @@ export const ERROR_FIELD_REQUIRED = 'This field is required';
 
 export const DECISION_TYPES = {
   JUDGE: {
-    DISPATCH: 'dispatch',
-    OMO_REQUEST: 'omo_request'
+    OMO_REQUEST: 'omo_request',
+    DISPATCH: 'dispatch'
   },
   ATTORNEY: {
     OMO_REQUEST: 'omo_request',

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import scrollToComponent from 'react-scroll-to-component';
+import { sprintf } from 'sprintf-js';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -16,7 +17,9 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import Alert from '../components/Alert';
 
-import { setDecisionOptions } from './QueueActions';
+import { deleteAppeal } from './QueueActions';
+import { requestSave } from './uiReducer/uiActions';
+import { buildCaseReviewPayload } from './utils';
 
 import COPY from '../../COPY.json';
 import {
@@ -101,10 +104,26 @@ class EvaluateDecisionView extends React.PureComponent {
       return false;
     }
 
-    this.props.setDecisionOptions(this.state);
-
     return true;
   };
+
+  goToNextStep = () => {
+    const {
+      task: { attributes: task },
+      appeal: { attributes: appeal },
+      decision,
+      userRole,
+      appealId
+    } = this.props;
+    const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+      location: 'bva_dispatch',
+      ...this.state
+    });
+    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+
+    this.props.requestSave(`/case_reviews/${task.task_id}/complete`, payload, successMsg).
+      then(() => this.props.deleteAppeal(appealId));
+  }
 
   getAreasOfImprovement = () => [
     COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY,
@@ -141,7 +160,8 @@ class EvaluateDecisionView extends React.PureComponent {
       appeal: { attributes: appeal },
       task: { attributes: task },
       appealId,
-      highlight
+      highlight,
+      error
     } = this.props;
     const dateAssigned = moment(task.assigned_on);
     const decisionSubmitted = moment(task.previous_task.assigned_on);
@@ -159,6 +179,9 @@ class EvaluateDecisionView extends React.PureComponent {
       <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
+      {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
+        {error.detail}
+      </Alert>}
       <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
       <hr {...hrStyling} />
 
@@ -277,11 +300,15 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
   task: state.queue.loadedQueue.tasks[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
-  taskOptions: state.queue.stagedChanges.taskDecision.opts
+  taskOptions: state.queue.stagedChanges.taskDecision.opts,
+  decision: state.queue.stagedChanges.taskDecision,
+  userRole: state.ui.userRole,
+  error: state.ui.messages.error
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDecisionOptions
+  deleteAppeal,
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(EvaluateDecisionView));

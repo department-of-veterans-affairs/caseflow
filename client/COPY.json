@@ -108,5 +108,6 @@
   "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
-  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS."
+  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision."
 }

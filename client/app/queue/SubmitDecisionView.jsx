@@ -32,24 +32,14 @@ import {
   fullWidth,
   ERROR_FIELD_REQUIRED,
   DECISION_TYPES,
-  USER_ROLES
+  marginBottom,
+  marginTop
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 
-const mediumBottomMargin = css({ marginBottom: '2rem' });
-const smallBottomMargin = css({ marginBottom: '1rem' });
-const noBottomMargin = css({ marginBottom: 0 });
-const noTopMargin = css({ marginTop: 0 });
-
-const radioFieldStyling = css(noBottomMargin, {
-  marginTop: '2rem',
-  '& .question-label': {
-    marginBottom: 0
-  }
+const radioFieldStyling = css(marginBottom(0), marginTop(2), {
+  '& .question-label': marginBottom(0)
 });
-const subHeadStyling = css({ marginBottom: '2rem' });
-const checkboxStyling = css({ marginTop: '1rem' });
-const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
@@ -103,35 +93,15 @@ class SubmitDecisionView extends React.PureComponent {
       judges
     } = this.props;
 
-    // todo: pass additional params for judge checkout:
-    // location, attorney_id, complexity, quality, comment,
-    // factors_not_considered, areas_for_improvement
     const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
+      type: decision.type === DECISION_TYPES.ATTORNEY.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
-      action: 'drafting'
+      judge: judges[decision.opts.reviewing_judge_id].full_name
     };
-
-    // eslint-disable-next-line default-case
-    switch (decision.type) {
-    case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
-      fields.type = 'decision';
-      break;
-    case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
-      fields.type = 'outside medical opinion (OMO) request';
-      break;
-    case DECISION_TYPES.JUDGE.DISPATCH:
-      fields.action = 'reviewing';
-      fields.type = 'decision';
-      break;
-    }
-
-    let successMsg = `Thank you for ${fields.action} ${fields.veteran}'s ${fields.type}.`;
-
-    if (userRole === USER_ROLES.ATTORNEY) {
-      successMsg += ` It's been sent to ${judges[decision.opts.reviewing_judge_id].full_name} for review.`;
-    }
+    const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
+    been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
@@ -190,6 +160,7 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   render = () => {
+    // todo: move to constants?
     const omoTypes = [{
       displayText: 'OMO - VHA',
       value: 'OMO - VHA'
@@ -209,13 +180,13 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionTypeDisplay = getDecisionTypeDisplay(decision);
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Submit {decisionTypeDisplay} for Review
       </h1>
-      <p className="cf-lead-paragraph" {...subHeadStyling}>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+      {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(2))}>
         {error.detail}
       </Alert>}
       <hr />
@@ -234,7 +205,7 @@ class SubmitDecisionView extends React.PureComponent {
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
         value={decisionOpts.overtime || false}
-        styling={css(smallBottomMargin, checkboxStyling)}
+        styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
         label="Document ID:"
@@ -249,7 +220,7 @@ class SubmitDecisionView extends React.PureComponent {
         name="notes"
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
-        styling={textAreaStyling}
+        styling={marginTop(4)}
       />
     </React.Fragment>;
   };

@@ -85,9 +85,7 @@ class QueueApp extends React.PureComponent {
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
 
-  routedEvaluateDecision = (props) => <EvaluateDecisionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
-    {...props.match.params} />;
+  routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
