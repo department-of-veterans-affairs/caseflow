@@ -208,8 +208,8 @@ const initialTaskAssignment = ({ task, assigneeId }) => ({
   }
 });
 
-export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) => {
-  return Promise.all(appealIdsOfTasks.map((appealId) => {
+export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) =>
+  Promise.all(appealIdsOfTasks.map((appealId) => {
     return ApiUtil.post(
       '/legacy_tasks',
       { data: { tasks: { assigned_to_id: assigneeId,
@@ -225,4 +225,3 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
             assigneeId }));
         });
   }));
-};
