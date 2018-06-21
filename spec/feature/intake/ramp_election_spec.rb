@@ -141,7 +141,7 @@ RSpec.feature "RAMP Election Intake" do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      expect(page).to have_content("Search for Veteran by ID")
+      expect(page).to have_content("What is the Receipt Date of this form?")
       expect(page).to_not have_content(
         "A RAMP opt-in with the receipt date 12/02/2017 was already processed"
       )
