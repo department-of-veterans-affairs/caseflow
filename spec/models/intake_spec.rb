@@ -9,7 +9,7 @@ describe Intake do
   let(:veteran_file_number) { "64205050" }
 
   let(:detail) do
-    RampElection.new(veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
+    build(:ramp_election, veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
   end
 
   let(:user) { Generators::User.build }
@@ -182,7 +182,7 @@ describe Intake do
     end
 
     let(:another_detail) do
-      RampElection.new(veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
+      build(:ramp_election, veteran_file_number: "54321", notice_date: Time.zone.now, established_at: Time.zone.now)
     end
 
     let!(:intake_with_manual_election) do
