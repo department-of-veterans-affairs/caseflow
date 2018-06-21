@@ -7,7 +7,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
 
   class RoDatesNotUnique < StandardError; end
-  class RoDatesNotInRange < StandardError; end
   class RoDatesNotCorrectFormat < StandardError; end
   class RoTemplateNotFollowed < StandardError; end
   class RoListedIncorrectly < StandardError; end
@@ -67,7 +66,7 @@ class HearingSchedule::ValidateRoSpreadsheet
            ro_non_availability_template.row(5).uniq == FIFTH_EXAMPLE_ROW &&
            ro_non_availability_template.column(60).uniq == [nil] &&
            ro_non_availability_template.column(1).uniq == FIRST_HEADER_COLUMN
-      fail RoDatesInRange
+      fail RoDatesNotUnique
     end
   end
 
