@@ -8,7 +8,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_full_name do
-    object.claimants[0]. if object.claimants && object.claimants.any?
+    object.claimants[0].name if object.claimants && object.claimants.any?
   end
 
   attribute :appellant_address do
