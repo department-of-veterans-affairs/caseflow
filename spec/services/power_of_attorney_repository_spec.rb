@@ -119,7 +119,7 @@ describe PowerOfAttorneyRepository do
         )
       end
 
-      it "sets the values in VACOLS", focus: true do
+      it "sets the values in VACOLS" do
         vacols_case.representative.reload
         expect(vacols_case.representative.repfirst).to eq(nil)
         expect(vacols_case.representative.repmi).to eq(nil)
@@ -151,7 +151,7 @@ describe PowerOfAttorneyRepository do
         )
       end
 
-      it "sets the values in VACOLS", focus: true do
+      it "sets the values in VACOLS" do
         vacols_case.representative.reload
         expect(vacols_case.representative.repfirst).to eq("Jane")
         expect(vacols_case.representative.repmi).to eq("M")

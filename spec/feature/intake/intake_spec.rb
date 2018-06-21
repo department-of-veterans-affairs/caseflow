@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Intake" do
+RSpec.feature "Intake", focus: true do
   before do
     FeatureToggle.enable!(:intake)
 
