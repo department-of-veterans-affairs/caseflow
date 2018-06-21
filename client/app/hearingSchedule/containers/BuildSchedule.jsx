@@ -1,9 +1,10 @@
 import React from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import COPY from '../../../COPY.json';
-import Button from '../../components/Button';
 import Table from '../../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { downloadIcon } from '../../components/RenderFunctions';
+import { COLORS } from '../../constants/AppConstants';
 
 export class BuildSchedule extends React.Component {
 
@@ -43,14 +44,14 @@ export class BuildSchedule extends React.Component {
         type: 'Judge',
         uploaded: '07/03/2018',
         uploaded_by: 'Justin Madigan',
-        download: <Link name="download">Download</Link>
+        download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
       },
       {
         date: '10/01/2018-03/31/2019',
         type: 'RO/CO',
         uploaded: '07/03/2018',
         uploaded_by: 'Justin Madigan',
-        download: <Link name="download">Download</Link>
+        download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
       }
     ];
 
@@ -58,19 +59,18 @@ export class BuildSchedule extends React.Component {
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
-      <p>
-        <Button
-          name="download-templates"
-          classNames={['usa-button', 'usa-button-outline']}>
-          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
-        </Button>
-        <Link
-          name="upload-files"
-          button="primary"
+      <Link
+          name="download-files"
+          button="secondary"
           target="_blank">
-          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
-        </Link>
-      </p>
+          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
+      </Link>
+      <Link
+        name="upload-files"
+        button="primary"
+        target="_blank">
+        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
+      </Link>
       <div className="cf-help-divider"></div>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
       <Link
