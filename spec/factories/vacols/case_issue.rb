@@ -38,6 +38,10 @@ FactoryBot.define do
       issdc "3"
     end
 
+    trait :disposition_vacated do
+      issdc "5"
+    end
+
     trait :disposition_merged do
       issdc "M"
     end
