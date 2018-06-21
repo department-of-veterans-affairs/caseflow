@@ -8,6 +8,7 @@ import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
+  showErrorMessage,
   resetSuccessMessages,
   resetSaveState
 } from './uiReducer/uiActions';
@@ -31,11 +32,6 @@ import Button from '../components/Button';
 import _ from 'lodash';
 
 class AssignWidgetPresentational extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = { statusMessage: null };
-  }
-
   appealIdsOfSelectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
@@ -46,23 +42,15 @@ class AssignWidgetPresentational extends React.PureComponent {
     const { userId, selectedAssigneeOfUser } = this.props;
 
     if (!selectedAssigneeOfUser[userId]) {
-      this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
-        <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">No assignee selected</h3>
-          <p className="usa-alert-text">Please select someone to assign the tasks to.</p>
-        </div>
-      </div> });
+      this.props.showErrorMessage(
+        {heading: 'No assignee selected', text: 'Please select someone to assign the tasks to.'});
 
       return;
     }
 
     if (this.appealIdsOfSelectedTasks().length === 0) {
-      this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
-        <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">No tasks selected</h3>
-          <p className="usa-alert-text">Please select a task.</p>
-        </div>
-      </div> });
+      this.props.showErrorMessage(
+        {heading: 'No tasks selected', text: 'Please select a task.'});
 
       return;
     }
@@ -70,19 +58,13 @@ class AssignWidgetPresentational extends React.PureComponent {
     this.props.initialAssignTasksToUser(
       { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
         assigneeId: selectedAssigneeOfUser[userId] }).
-      then(() => this.setState({ statusMessage: null })).
-      catch(() => {
-        this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
-          <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">Error assigning tasks</h3>
-            <p className="usa-alert-text">One or more tasks couldn't be assigned.</p>
-          </div>
-        </div> });
-      });
+      then(() => this.props.resetErrorMessages()).
+      catch(() => this.props.showErrorMessage(
+        {heading: 'Error assigning tasks', text: 'One or more tasks couldn\'t be assigned.'}));
   }
 
   render = () => {
-    const { userId, attorneysOfJudge, selectedAssigneeOfUser } = this.props;
+    const { userId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
     const selectedOption =
@@ -92,7 +74,13 @@ class AssignWidgetPresentational extends React.PureComponent {
           value: null };
 
     return <React.Fragment>
-      {this.state.statusMessage}
+      {error &&
+        <div className="usa-alert usa-alert-error" role="alert">
+          <div className="usa-alert-body">
+            <h3 className="usa-alert-heading">{error.heading}</h3>
+            <p className="usa-alert-text">{error.text}</p>
+          </div>
+        </div>}
       <div style={{ display: 'flex',
         alignItems: 'center' }}>
         <p>Assign to:&nbsp;</p>
@@ -120,14 +108,16 @@ const AssignWidget =
   connect(
     (state) => {
       const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
+      const error = state.ui.messages.error;
 
       return { attorneysOfJudge,
         selectedAssigneeOfUser,
         isTaskAssignedToUserSelected,
-        tasks };
+        tasks,
+        error };
     },
     (dispatch) => bindActionCreators({ setSelectedAssigneeOfUser,
-      initialAssignTasksToUser }, dispatch)
+      initialAssignTasksToUser, showErrorMessage, resetErrorMessages }, dispatch)
   )(AssignWidgetPresentational);
 
 const UnassignedCasesPage = (props) => {
