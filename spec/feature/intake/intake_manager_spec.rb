@@ -63,7 +63,7 @@ RSpec.feature "Intake Manager Page" do
       )
 
       visit "/intake/manager"
-sleep 10
+
       expect(find("#table-row-4")).to have_content("1100")
       expect(find("#table-row-4")).to_not have_content(":")
 
