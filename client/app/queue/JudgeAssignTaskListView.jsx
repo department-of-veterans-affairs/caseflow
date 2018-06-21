@@ -81,8 +81,8 @@ class AssignWidgetPresentational extends React.PureComponent {
             <p className="usa-alert-text">{error.text}</p>
           </div>
         </div>}
-      <div style={{ display: 'flex',
-        alignItems: 'center' }}>
+      <div {...css({ display: 'flex',
+        alignItems: 'center' })}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
           name="Assignee"
