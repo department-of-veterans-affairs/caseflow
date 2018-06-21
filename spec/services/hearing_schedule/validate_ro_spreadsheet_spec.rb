@@ -168,7 +168,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
   context "when RO non-availaility dates are in range" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/roDuplicateDates.xlsx", extension: :xlsx),
+        Roo::Spreadsheet.open("spec/support/roDatesInRange.xlsx", extension: :xlsx),
         Date.parse("01/01/2018"),
         Date.parse("01/06/2018")
       ).validate
