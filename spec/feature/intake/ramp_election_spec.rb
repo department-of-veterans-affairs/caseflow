@@ -229,10 +229,6 @@ RSpec.feature "RAMP Election Intake" do
     scenario "Complete intake for RAMP Election form" do
       Fakes::VBMSService.end_product_claim_id = "SHANE9642"
 
-      election = create(:ramp_election,
-                        veteran_file_number: "12341234",
-                        notice_date: Date.new(2017, 11, 7))
-
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
@@ -249,7 +245,7 @@ RSpec.feature "RAMP Election Intake" do
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
 
-      election.reload
+      election = RampElection.find_by(veteran_file_number: "12341234")
       expect(election.option_selected).to eq("higher_level_review_with_hearing")
       expect(election.receipt_date).to eq(Date.new(2017, 11, 7))
 
