@@ -9,6 +9,12 @@ class ApplicationController < ApplicationBaseController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
+  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
+    Rails.logger.error "Vacols error occured: #{e.message}"
+    Raven.capture_exception(e)
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
+
   private
 
   def current_user
@@ -98,7 +104,7 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_task_completion_access
+  def verify_case_review_access
     # :nocov:
     # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
     return true if feature_enabled?(:queue_phase_two)
@@ -114,6 +120,12 @@ class ApplicationController < ApplicationBaseController
     return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
+  end
+
+  def invalid_record_error(record)
+    render json:  {
+      "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
+    }, status: 400
   end
 
   def set_raven_user
