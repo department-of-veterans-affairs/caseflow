@@ -360,7 +360,7 @@ describe RampElectionIntake do
     context "valid to start" do
       context "RAMP election with notice_date exists" do
         let!(:ramp_election) do
-          RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+          create(:ramp_election, veteran_file_number: "64205555", notice_date: 5.days.ago)
         end
         let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
@@ -405,12 +405,11 @@ describe RampElectionIntake do
     let(:established_at) { nil }
     let!(:ramp_appeal) { appeal }
     let!(:ramp_election) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 6.days.ago,
-        end_product_reference_id: end_product_reference_id,
-        established_at: established_at
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 6.days.ago,
+             end_product_reference_id: end_product_reference_id,
+             established_at: established_at)
     end
     let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
