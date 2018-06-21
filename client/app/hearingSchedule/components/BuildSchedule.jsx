@@ -3,12 +3,16 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import PropTypes from 'prop-types';
 import { downloadIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 
-export class BuildSchedule extends React.Component {
+export default class BuildSchedule extends React.Component {
 
   render() {
+    const {
+      pastUploads
+    } = this.props;
 
     const pastUploadsColumns = [
       {
@@ -38,32 +42,25 @@ export class BuildSchedule extends React.Component {
       }
     ];
 
-    const pastUploadsRows = [
-      {
-        date: '10/01/2018-03/31/2019',
-        type: 'Judge',
-        uploaded: '07/03/2018',
-        uploaded_by: 'Justin Madigan',
+    const pastUploadsRows = pastUploads.map((pastUpload) => {
+      return {
+        date: `${pastUpload.startDate} - ${pastUpload.endDate}`,
+        type: pastUpload.type,
+        uploaded: pastUpload.createdAt,
+        uploaded_by: pastUpload.user,
         download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
-      },
-      {
-        date: '10/01/2018-03/31/2019',
-        type: 'RO/CO',
-        uploaded: '07/03/2018',
-        uploaded_by: 'Justin Madigan',
-        download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
-      }
-    ];
+      };
+    });
 
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
       <Link
-          name="download-files"
-          button="secondary"
-          target="_blank">
-          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
+        name="download-files"
+        button="secondary"
+        target="_blank">
+        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
       </Link>
       <Link
         name="upload-files"
@@ -85,4 +82,15 @@ export class BuildSchedule extends React.Component {
   }
 }
 
-export default BuildSchedule;
+BuildSchedule.propTypes = {
+  pastUploads: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.string,
+      user: PropTypes.string,
+      startDate: PropTypes.date,
+      endDate: PropTypes.date,
+      createdAt: PropTypes.date,
+      fileName: PropTypes.string
+    })
+  )
+};
