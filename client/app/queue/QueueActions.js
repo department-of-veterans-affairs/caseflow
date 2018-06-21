@@ -200,7 +200,7 @@ export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
   }
 });
 
-export const taskInitialAssigned = ({ task, assigneeId }) => ({
+export const initialTaskAssignment = ({ task, assigneeId }) => ({
   type: ACTIONS.TASK_INITIAL_ASSIGNED,
   payload: {
     task,
@@ -221,7 +221,7 @@ export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (d
           const { task: { data: task } } = resp;
 
           task.vacolsId = task.id;
-          dispatch(taskInitialAssigned({ task,
+          dispatch(initialTaskAssignment({ task,
             assigneeId }));
         });
   }));
