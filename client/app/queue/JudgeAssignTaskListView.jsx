@@ -48,7 +48,7 @@ class AssignWidgetPresentational extends React.PureComponent {
     if (!selectedAssigneeOfUser[userId]) {
       this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">No assignee</h3>
+          <h3 className="usa-alert-heading">No assignee selected</h3>
           <p className="usa-alert-text">Please select someone to assign the tasks to.</p>
         </div>
       </div> });
@@ -59,7 +59,7 @@ class AssignWidgetPresentational extends React.PureComponent {
     if (this.appealIdsOfSelectedTasks().length === 0) {
       this.setState({ statusMessage: <div className="usa-alert usa-alert-error" role="alert">
         <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">No tasks select</h3>
+          <h3 className="usa-alert-heading">No tasks selected</h3>
           <p className="usa-alert-text">Please select a task.</p>
         </div>
       </div> });
@@ -141,7 +141,7 @@ const UnassignedCasesPage = (props) => {
   } else {
     tableContent = <React.Fragment>
       <h2>Cases to Assign</h2>
-      {featureToggles.judge_assign_cases ? <AssignWidget userId={userId} /> : null}
+      {featureToggles.judge_assign_cases && <AssignWidget userId={userId} />}
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
