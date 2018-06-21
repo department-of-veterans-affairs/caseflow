@@ -158,7 +158,7 @@ RSpec.feature "Intake", focus: true do
     end
 
     scenario "Search for a veteran who's form is already being processed" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
@@ -180,7 +180,7 @@ RSpec.feature "Intake", focus: true do
     end
 
     scenario "Cancel an intake" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!

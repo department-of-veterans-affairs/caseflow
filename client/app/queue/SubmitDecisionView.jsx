@@ -30,10 +30,10 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
