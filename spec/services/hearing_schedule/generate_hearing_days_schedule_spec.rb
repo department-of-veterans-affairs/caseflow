@@ -26,7 +26,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:allocation, regional_office: "RO18", allocated_days: 61, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO22", allocated_days: 55, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO01", allocated_days: 24, schedule_period: schedule_period),
-      create(:allocation, regional_office: "RO55", allocated_days: 6, schedule_period: schedule_period)
+      create(:allocation, regional_office: "RO55", allocated_days: 6, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO02", allocated_days: 3, schedule_period: schedule_period)
     ]
   end
 
@@ -137,7 +138,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           create(:travel_board_schedule, tbro: "RO55",
                                          tbstdate: Date.parse("2018-04-09"), tbenddate: Date.parse("2018-04-13")),
           create(:travel_board_schedule, tbro: "RO22",
-                                         tbstdate: Date.parse("2018-05-14"), tbenddate: Date.parse("2018-05-18"))
+                                         tbstdate: Date.parse("2018-05-14"), tbenddate: Date.parse("2018-05-18")),
+          create(:travel_board_schedule, tbro: "RO02",
+                                        tbstdate: Date.parse("2018-05-14"), tbenddate: Date.parse("2018-05-18")),
+          create(:travel_board_schedule, tbro: "RO02",
+                                        tbstdate: Date.parse("2018-05-21"), tbenddate: Date.parse("2018-05-25"))
 
         ]
       end
