@@ -3,12 +3,12 @@
 class HearingDayRepository
   class << self
     def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
+      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
       VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
     end
 
     def update_vacols_hearing!(hearing, hearing_hash)
-      hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
+      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
       hearing.update_hearing!(hearing_hash) if hearing_hash.present?
     end
 
@@ -24,6 +24,12 @@ class HearingDayRepository
     def load_days_for_range(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
+      [video_and_co, travel_board]
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
+      travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)
       [video_and_co, travel_board]
     end
   end
