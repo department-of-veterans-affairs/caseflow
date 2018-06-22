@@ -3,8 +3,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings and Central Office Hearings".freeze
-  HEARING_ALLOCATION_SHEET_FIRST_HEADER_COLUMN = ["BFREGOFF", "RO City,State", "Dates"].freeze
-  HEARING_ALLOCATION_SHEET_FIFTH_EXAMPLE_ROW = [nil, Date.parse("01/02/2019")].freeze
+  HEARING_ALLOCATION_SHEET_FIRST_SECOND_HEADER_ROW = [nil, "RO City, State", "BFREGOFF", "Number of Hearing Days Allocated in Date Range"].freeze
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end
@@ -19,6 +18,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationRoListedIncorrectly < StandardError; end
   class AllocationDuplicateRo < StandardError; end
   class AllocationCoLocationIncorrect < StandardError; end
+  class AllocationNotFollowed < StandardError; end
+
 
   def initialize(spreadsheet, start_date, end_date)
     @spreadsheet = spreadsheet
@@ -137,11 +138,11 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_hearing_allocation_template
-    unless ro_non_availability_template.column(1)[0] == RO_NON_AVAILABILITY_TITLE &&
-            ro_non_availability_template.row(5).uniq == RO_NON_AVAILABILITY_FIFTH_EXAMPLE_ROW &&
-            ro_non_availability_template.column(60).uniq == [nil] &&
-            ro_non_availability_template.column(1).uniq == RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN
-       fail RoTemplateNotFollowed
+    unless hearing_allocation_template.row(1)[0] == HEARING_ALLOCATION_SHEET_TITLE &&
+           hearing_allocation_template.column(1)[3] == nil  &&
+           hearing_allocation_template.column(5).uniq == [nil] &&
+           hearing_allocation_template.row(2).uniq == HEARING_ALLOCATION_SHEET_FIRST_SECOND_HEADER_ROW
+    fail AllocationNotFollowed
     end
   end
 
