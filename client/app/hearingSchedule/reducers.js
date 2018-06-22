@@ -7,9 +7,7 @@ const reducers = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_PAST_UPLOADS:
     return update(state, {
-      pastUploads: {
-        $set: action.payload.pastUploads
-      }
+      $set: action.payload.pastUploads
     });
   default:
     return state;
