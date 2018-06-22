@@ -28,7 +28,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
       appeal: { attributes: { veteran_full_name: vetName } }
     } = this.props;
     const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.ATTORNEY.OMO_REQUEST ? 'submit' : 'dispositions';
+    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
 
     this.stageAppeal();
 

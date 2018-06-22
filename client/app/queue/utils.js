@@ -67,9 +67,9 @@ export const getDecisionTypeDisplay = (decision = {}) => {
   } = decision;
 
   switch (decisionType) {
-  case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
+  case DECISION_TYPES.OMO_REQUEST:
     return 'OMO';
-  case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
+  case DECISION_TYPES.DRAFT_DECISION:
     return 'Draft Decision';
   default:
     return StringUtil.titleCase(decisionType);

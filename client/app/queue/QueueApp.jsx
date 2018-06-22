@@ -153,13 +153,13 @@ class QueueApp extends React.PureComponent {
 
               // eslint-disable-next-line default-case
               switch (this.props.reviewActionType) {
-              case DECISION_TYPES.ATTORNEY.OMO_REQUEST:
+              case DECISION_TYPES.OMO_REQUEST:
                 reviewActionType = 'OMO';
                 break;
-              case DECISION_TYPES.ATTORNEY.DRAFT_DECISION:
+              case DECISION_TYPES.DRAFT_DECISION:
                 reviewActionType = 'Draft Decision';
                 break;
-              case DECISION_TYPES.JUDGE.DISPATCH:
+              case DECISION_TYPES.DISPATCH:
                 reviewActionType = 'to Dispatch';
                 break;
               }
