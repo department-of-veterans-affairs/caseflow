@@ -11,21 +11,21 @@ export default class Dropdown extends React.Component {
       name,
       options,
       value,
-      defaultText,
+      defaultText
     } = this.props;
 
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
     return <select value={value} onChange={this.onChange} id={name} className="usa-button-outline usa-button">
-        { defaultText && <option defaultValue hidden>{defaultText}</option>}
-        {options.map((option, index) =>
-          <option
-            value={option.value}
-            id={`${name}_${option.value}`}
-            key={index}>{option.displayText}
-          </option>
-        )}
-      </select>;
+      { defaultText && <option defaultValue hidden>{defaultText}</option>}
+      {options.map((option, index) =>
+        <option
+          value={option.value}
+          id={`${name}_${option.value}`}
+          key={index}>{option.displayText}
+        </option>
+      )}
+    </select>;
   }
 }
 
