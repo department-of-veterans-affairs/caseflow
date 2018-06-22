@@ -1,11 +1,11 @@
 describe AppealRepository do
   before do
-    @old_repo = LegacyAppeal.repository
-    LegacyAppeal.repository = AppealRepository
-
-    allow_any_instance_of(ActiveRecord::Relation).to receive(:find).and_return(nil)
+    FeatureToggle.enable!(:test_facols)
   end
-  after { LegacyAppeal.repository = @old_repo }
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
 
   let(:correspondent_record) do
     OpenStruct.new(
@@ -67,7 +67,7 @@ describe AppealRepository do
   end
 
   context ".load_vacols_data" do
-    let(:appeal) { LegacyAppeal.new(vacols_id: "123C") }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     subject { AppealRepository.load_vacols_data(appeal) }
     it do
       expect(AppealRepository).to receive(:set_vacols_values).exactly(1).times
@@ -192,7 +192,7 @@ describe AppealRepository do
     before { LegacyAppeal.repository = Fakes::AppealRepository }
 
     let(:appeal) do
-      Generators::LegacyAppeal.build({ vacols_record: vacols_record }.merge(special_issues))
+      create(:legacy_appeal, vacols_case: create(:case))
     end
 
     let(:special_issues) { {} }
@@ -200,29 +200,40 @@ describe AppealRepository do
     subject { AppealRepository.location_after_dispatch(appeal: appeal) }
 
     context "when appeal is inactive (in 'history status')" do
-      let(:vacols_record) { { status: "Complete" } }
+      let(:appeal) do
+        create(:legacy_appeal, vacols_case: create(:case, :status_complete))
+      end
+
       it { is_expected.to be_nil }
     end
 
     context "when appeal is a partial grant" do
-      let(:vacols_record) { :partial_grant_decided }
+      let(:appeal) do
+        create(:legacy_appeal, vacols_case: create(:case, :status_remand, :disposition_allowed))
+      end
 
       context "when no special issues" do
         it { is_expected.to eq("98") }
       end
 
       context "when vamc is true" do
-        let(:special_issues) { { vamc: true } }
+        let(:appeal) do
+          create(:legacy_appeal, vacols_case: create(:case), vamc: true)
+        end
         it { is_expected.to eq("54") }
       end
 
       context "when national_cemetery_administration is true" do
-        let(:special_issues) { { national_cemetery_administration: true } }
+        let(:appeal) do
+          create(:legacy_appeal, vacols_case: create(:case), national_cemetery_administration: true)
+        end
         it { is_expected.to eq("53") }
       end
 
       context "when a special issue besides vamc and national_cemetery_administration is true" do
-        let(:special_issues) { { radiation: true } }
+        let(:appeal) do
+          create(:legacy_appeal, vacols_case: create(:case), radiation: true)
+        end
         it { is_expected.to eq("50") }
       end
     end
