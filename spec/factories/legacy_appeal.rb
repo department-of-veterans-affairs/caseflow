@@ -10,7 +10,7 @@ FactoryBot.define do
     trait :with_veteran do
       after(:create) do |legacy_appeal, _evaluator|
         create(:veteran, file_number: legacy_appeal.veteran_file_number)
-      end  
+      end
     end
   end
 end
