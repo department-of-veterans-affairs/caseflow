@@ -40,7 +40,7 @@ FactoryBot.define do
       if hearing.hearing_type == "V"
         master_record = create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO13")
         # For some reason the returned record's sequence is one less than what is actually saved.
-        hearing.vdkey = master_record.hearing_pkseq + 1
+        hearing.vdkey = master_record.hearing_pkseq
       end
     end
   end

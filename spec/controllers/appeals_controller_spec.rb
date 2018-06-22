@@ -71,7 +71,7 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET cases/:id" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+    let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do
