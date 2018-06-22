@@ -12,7 +12,7 @@ class Rating
   # If you change this method, you will need
   # to clear cache in prod for your changes to
   # take effect immediately.
-  # See Veteran#cached_serialized_timely_ratings.
+  # See AmaReview#cached_serialized_timely_ratings.
   def ui_hash
     {
       participant_id: participant_id,
