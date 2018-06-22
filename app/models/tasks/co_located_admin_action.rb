@@ -17,12 +17,25 @@ class CoLocatedAdminAction < Task
       end
     end
 
-    def last_created_task
+    def latest_task
       sort(&:created_at).last
     end
 
-    def last_assigned_css_id
+    def last_assignee_css_id
       last_created_task ? last_created_task.user.css_id : nil
+    end
+
+    def next_assignee_css_id
+      last_assignee_css_id ? list_of_assignees[list_of_assignees.index(last_assignee_css_id) + 1] :
+        list_of_assignees[0]
+    end
+
+    def next_assignee
+      User.find_or_create_by(css_id: next_assignee_css_id, station_id: User::BOARD_STATION_ID)
+    end
+
+    def list_of_assignees
+      Constants::CoLocatedTeams::USERS[Rails.current_env]
     end
   end
 
@@ -33,11 +46,6 @@ class CoLocatedAdminAction < Task
   end
 
   def set_assigned_to
-    self.assigned_to = User.find_or_create_by(
-      css_id: Constants::CoLocatedTeams::USERS[Rails.current_env].sample,
-      station_id: User::BOARD_STATION_ID
-    )
+    self.assigned_to = CoLocatedAdminAction.next_assignee
   end
-
-
 end
