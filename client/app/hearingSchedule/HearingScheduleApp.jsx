@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -45,5 +46,10 @@ class HearingScheduleApp extends React.PureComponent {
     </NavigationBar>
   </BrowserRouter>;
 }
+
+HearingScheduleApp.propTypes = {
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array
+};
 
 export default connect()(HearingScheduleApp);
