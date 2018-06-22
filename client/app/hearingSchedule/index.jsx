@@ -5,7 +5,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import BuildSchedule from './containers/BuildSchedule';
+import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 const HearingSchedule = ({ hearingSchedule }) => {
@@ -27,7 +27,7 @@ const HearingSchedule = ({ hearingSchedule }) => {
             exact
             path="/hearings/schedule/build"
             title="Caseflow"
-            component={BuildSchedule} />
+            component={BuildScheduleContainer} />
         </div>
       </AppFrame>
       <Footer

@@ -18,16 +18,16 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          title: :aoj,
+          titles: [:aoj],
           appeal: appeal
         )
       end
       it "creates a co-located task successfully" do
-        expect(subject.valid?).to be true
-        expect(subject.status).to eq "assigned"
-        expect(subject.assigned_at).to_not eq nil
-        expect(subject.assigned_by).to eq attorney
-        expect(subject.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        expect(subject.first.valid?).to be true
+        expect(subject.first.status).to eq "assigned"
+        expect(subject.first.assigned_at).to_not eq nil
+        expect(subject.first.assigned_by).to eq attorney
+        expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
       end
     end
@@ -36,12 +36,12 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          title: :aoj
+          titles: [:aoj]
         )
       end
       it "does not create a co-located task" do
-        expect(subject.valid?).to be false
-        expect(subject.errors.full_messages).to eq ["Appeal can't be blank"]
+        expect(subject.first.valid?).to be false
+        expect(subject.first.errors.full_messages).to eq ["Appeal can't be blank"]
       end
     end
 
@@ -53,13 +53,13 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          title: :aoj,
+          titles: [:aoj],
           appeal: appeal
         )
       end
       it "does not create a co-located task" do
-        expect(subject.valid?).to be false
-        expect(subject.errors.full_messages).to eq ["Assigned by has to be an attorney"]
+        expect(subject.first.valid?).to be false
+        expect(subject.first.errors.full_messages).to eq ["Assigned by has to be an attorney"]
       end
     end
 
@@ -67,13 +67,13 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          title: :test,
+          titles: [:test],
           appeal: appeal
         )
       end
       it "does not create a co-located task" do
-        expect(subject.valid?).to be false
-        expect(subject.errors.full_messages).to eq ["Title is not included in the list"]
+        expect(subject.first.valid?).to be false
+        expect(subject.first.errors.full_messages).to eq ["Title is not included in the list"]
       end
     end
   end
