@@ -169,12 +169,11 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
         Roo::Spreadsheet.open("spec/support/roTemplateNotFollowed.xlsx", extension: :xlsx),
-           Date.parse("01/01/2018"),
+        Date.parse("01/01/2018"),
         Date.parse("01/06/2018")
       ).validate
     end
 
-   
     it "returns an error" do
       expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed)
     end
@@ -189,7 +188,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-     it "returns an error" do
+    it "returns an error" do
       expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationNotFollowed)
     end
   end
