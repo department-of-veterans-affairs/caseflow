@@ -72,7 +72,7 @@ describe Rating do
   context ".fetch_timely" do
     let(:receipt_date) { Time.zone.today }
 
-    subject { Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date ) }
+    subject { Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
 
     let!(:rating) do
       Generators::Rating.build(
