@@ -18,7 +18,7 @@ class HearingDay
       HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
     end
 
-    def load_days(regional_office = nil, start_date, end_date)
+    def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
         HearingDayRepository.load_days_for_range(start_date, end_date)
       else
