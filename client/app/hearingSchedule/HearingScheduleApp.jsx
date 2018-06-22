@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -7,13 +8,19 @@ import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
+import LoadingScreen from './components/LoadingScreen';
 
-const HearingSchedule = ({ hearingSchedule }) => {
-  return <BrowserRouter>
+class HearingScheduleApp extends React.PureComponent {
+
+  buildSchedule = () => <LoadingScreen>
+    <BuildScheduleContainer />
+  </LoadingScreen>;
+
+  render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      userDisplayName={hearingSchedule.userDisplayName}
-      dropdownUrls={hearingSchedule.dropdownUrls}
+      userDisplayName={this.props.userDisplayName}
+      dropdownUrls={this.props.dropdownUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
         accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT
@@ -26,17 +33,17 @@ const HearingSchedule = ({ hearingSchedule }) => {
             exact
             path="/hearings/schedule/build"
             title="Caseflow"
-            component={BuildScheduleContainer}
+            render={this.buildSchedule}
           />
         </div>
       </AppFrame>
       <Footer
         wideApp
         appName="Hearing Scheduling"
-        feedbackUrl={hearingSchedule.feedbackUrl}
+        feedbackUrl={this.props.feedbackUrl}
       />
     </NavigationBar>
   </BrowserRouter>;
-};
+}
 
-export default HearingSchedule;
+export default connect()(HearingScheduleApp);
