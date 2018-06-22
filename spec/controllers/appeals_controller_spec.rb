@@ -1,9 +1,17 @@
 RSpec.describe AppealsController, type: :controller do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   before { User.authenticate!(roles: ["System Admin"]) }
 
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
     let(:veteran_id) { appeal.vbms_id }
 
     context "when request header does not contain Veteran ID" do
@@ -44,7 +52,7 @@ RSpec.describe AppealsController, type: :controller do
           Document.new(type: "SSOC", received_at: 7.days.ago)
         ]
       end
-      let(:appeal) { Generators::LegacyAppeal.create(vacols_id: "654321", documents: documents) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
@@ -63,7 +71,7 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET cases/:id" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "#{ssn}S") }
+    let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do
@@ -117,7 +125,7 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/:id" do
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "0000000000S") }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
 
     it "should succeed" do
       get :show, params: { id: appeal.vacols_id }
@@ -127,7 +135,7 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/:id.json" do
-    let(:appeal) { Generators::LegacyAppeal.create(vbms_id: "0000000000S") }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
 
     it "should succeed" do
       get :show, params: { id: appeal.vacols_id }, as: :json

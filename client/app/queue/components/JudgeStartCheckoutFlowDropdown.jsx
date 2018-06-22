@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -22,8 +23,7 @@ import {
 } from '../QueueActions';
 import {
   dropdownStyling,
-  DECISION_OPTIONS,
-  DECISION_TYPES
+  JUDGE_DECISION_OPTIONS
 } from '../constants';
 
 // todo: make StartCheckoutFlowDropdownBase
@@ -41,7 +41,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
     this.props.setCaseReviewActionType(actionType);
 
-    if (actionType === DECISION_TYPES.JUDGE.OMO_REQUEST) {
+    if (actionType === DECISION_TYPES.OMO_REQUEST) {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
@@ -73,7 +73,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
   render = () => <SearchableDropdown
     placeholder="Select an action&hellip;"
     name={`start-checkout-flow-${this.props.vacolsId}`}
-    options={DECISION_OPTIONS.JUDGE}
+    options={JUDGE_DECISION_OPTIONS}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;

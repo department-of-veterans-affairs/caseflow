@@ -30,12 +30,12 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
-  DECISION_TYPES,
   marginBottom,
-  marginTop
+  marginTop,
+  ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const radioFieldStyling = css(marginBottom(0), marginTop(2), {
   '& .question-label': marginBottom(0)

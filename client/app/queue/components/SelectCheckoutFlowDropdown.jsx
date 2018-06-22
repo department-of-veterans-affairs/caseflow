@@ -16,9 +16,9 @@ import {
 import { resetBreadcrumbs } from '../uiReducer/uiActions';
 import {
   dropdownStyling,
-  DECISION_TYPES,
-  DECISION_OPTIONS
+  DRAFT_DECISION_OPTIONS
 } from '../constants';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 class SelectCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
@@ -53,7 +53,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.vacolsId}`}
     placeholder="Select an action&hellip;"
-    options={DECISION_OPTIONS.ATTORNEY}
+    options={DRAFT_DECISION_OPTIONS}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;

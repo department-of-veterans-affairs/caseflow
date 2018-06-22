@@ -4,11 +4,10 @@ describe RampIssue do
   end
 
   let(:review) do
-    RampElection.create!(
-      veteran_file_number: "64205555",
-      notice_date: 3.days.ago,
-      receipt_date: 2.days.ago
-    )
+    create(:ramp_election,
+           veteran_file_number: "64205555",
+           notice_date: 3.days.ago,
+           receipt_date: 2.days.ago)
   end
 
   let(:description) { nil }
