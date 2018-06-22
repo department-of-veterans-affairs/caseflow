@@ -1,12 +1,15 @@
 class HearingSchedule::ValidateRoSpreadsheet
   RO_NON_AVAILABILITY_SHEET = 0
-  CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
   RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
   RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN = [nil, "BFREGOFF", "RO City, State", "Dates"].freeze
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings and Central Office Hearings".freeze
   HEARING_ALLOCATION_SHEET_FIRST_SECOND_HEADER_ROW = [nil, "RO City, State", "BFREGOFF",
                                                       "Number of Hearing Days Allocated in Date Range"].freeze
+
+  CO_SPREADSHEET_TITLE = "Board Non-Availability Dates and Holidays in Date Range".freeze
+  CO_SPREADSHEET_EXAMPLE_ROW = ["Example", Date.parse("2018/10/31")].freeze
+  CO_SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end
@@ -24,6 +27,9 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationNotFollowed < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
+    get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+    @co_spreadsheet_template = get_spreadsheet_data.co_non_availability_template
+    @co_spreadsheet_data = get_spreadsheet_data.co_non_availability_data
     @spreadsheet = spreadsheet
     @start_date = start_date
     @end_date = end_date
@@ -89,33 +95,22 @@ class HearingSchedule::ValidateRoSpreadsheet
     true
   end
 
-  def co_non_availability_template
-    @spreadsheet.sheet(CO_NON_AVAILABILITY_SHEET)
-  end
-
-  def co_non_availability_dates
-    co_non_availability_template.column(2).drop(3)
-  end
-
   def validate_co_non_availability_template
-    unless co_non_availability_template.row(1)[0] == "Board Non-Availability Dates and Holidays in Date Range" &&
-           co_non_availability_template.column(2)[2] == Date.parse("31/10/2018") &&
-           co_non_availability_template.column(1).uniq == ["Board Non-Availability Dates and Holidays in Date Range",
-                                                           nil, "Example"] &&
-           co_non_availability_template.column(3).uniq == [nil] &&
-           co_non_availability_template.row(1).count == 2
+    unless @co_spreadsheet_template[:title] == CO_SPREADSHEET_TITLE &&
+           @co_spreadsheet_template[:example_row] == CO_SPREADSHEET_EXAMPLE_ROW &&
+           @co_spreadsheet_template[:empty_column] == CO_SPREADSHEET_EMPTY_COLUMN
       fail CoTemplateNotFollowed
     end
   end
 
   def validate_co_non_availability_dates
-    unless co_non_availability_dates.all? { |date| date.instance_of?(Date) }
+    unless @co_spreadsheet_data.all? { |date| date.instance_of?(Date) }
       fail CoDatesNotCorrectFormat
     end
-    unless co_non_availability_dates.uniq == co_non_availability_dates
+    unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
       fail CoDatesNotUnique
     end
-    unless co_non_availability_dates.all? { |date| date >= @start_date && date <= @end_date }
+    unless @co_spreadsheet_data.all? { |date| date >= @start_date && date <= @end_date }
       fail CoDatesNotInRange
     end
     true
