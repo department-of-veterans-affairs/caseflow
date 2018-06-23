@@ -183,11 +183,45 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   );
 };
 
-export const setSelectionOfTaskOfUser = ({ userId, vacolsId, selected }) => ({
+export const setSelectionOfTaskOfUser = ({ userId, taskId, selected }) => ({
   type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
   payload: {
     userId,
-    vacolsId,
+    taskId,
     selected
   }
 });
+
+export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
+  type: ACTIONS.SET_SELECTED_ASSIGNEE_OF_USER,
+  payload: {
+    userId,
+    assigneeId
+  }
+});
+
+const initialTaskAssignment = ({ task, assigneeId }) => ({
+  type: ACTIONS.TASK_INITIAL_ASSIGNED,
+  payload: {
+    task,
+    assigneeId
+  }
+});
+
+export const initialAssignTasksToUser = ({ appealIdsOfTasks, assigneeId }) => (dispatch) =>
+  Promise.all(appealIdsOfTasks.map((appealId) => {
+    return ApiUtil.post(
+      '/legacy_tasks',
+      { data: { tasks: { assigned_to_id: assigneeId,
+        type: 'JudgeCaseAssignmentToAttorney',
+        appeal_id: appealId } } }).
+      then((resp) => resp.body).
+      then(
+        (resp) => {
+          const { task: { data: task } } = resp;
+
+          task.vacolsId = task.id;
+          dispatch(initialTaskAssignment({ task,
+            assigneeId }));
+        });
+  }));
