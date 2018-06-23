@@ -21,24 +21,24 @@ module CachedAttributes
   end
 
   def cache_id(attr_name)
-    "#{self.class.name}-#{cache_key(attr_name)}-cached-#{attr_name}"
+    "#{self.class.name}-#{attribute_cache_key(attr_name)}-cached-#{attr_name}"
   end
 
-  def cache_key(attr_name)
-    send(self.class.cache_key(attr_name))
+  def attribute_cache_key(attr_name)
+    send(self.class.attribute_cache_key(attr_name))
   end
 
   module ClassMethods
     # Use of class variables is intentional so that we can access them from subclasses
     # rubocop:disable Style/ClassVars
 
-    def cache_key(attr_name)
-      @@cache_keys[attr_name]
+    def attribute_cache_key(attr_name)
+      @@attribute_cache_keys[attr_name]
     end
 
     def cache_attribute(attr_name, write_options = {}, &get_value)
-      @@cache_keys ||= {}
-      @@cache_keys[attr_name] = write_options.delete(:cache_key) || :id
+      @@attribute_cache_keys ||= {}
+      @@attribute_cache_keys[attr_name] = write_options.delete(:cache_key) || :id
 
       define_method "#{attr_name}=" do |value|
         set_cached_value(attr_name, value)
