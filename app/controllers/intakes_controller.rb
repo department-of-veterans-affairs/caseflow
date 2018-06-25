@@ -41,7 +41,7 @@ class IntakesController < ApplicationController
 
   def review
     if intake.review!(params)
-      render json: {}
+      render json: intake.ui_hash
     else
       render json: { error_codes: intake.review_errors }, status: 422
     end
