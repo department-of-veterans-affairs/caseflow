@@ -5,7 +5,7 @@ class UserRepository
     end
 
     def user_info_from_vacols(css_id)
-      staff_record = staff_record_by_css_id(css_id)
+      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
 
       {
         uniq_id: vacols_uniq_id(staff_record),
@@ -80,10 +80,6 @@ class UserRepository
       if staff_record
         FullName.new(staff_record.snamef, staff_record.snamemi, staff_record.snamel).formatted(:readable_full)
       end
-    end
-
-    def staff_record_by_css_id(css_id)
-      VACOLS::Staff.find_by(sdomainid: css_id)
     end
     # :nocov:
   end
