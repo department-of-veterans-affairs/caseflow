@@ -9,7 +9,7 @@ class SupplementalClaimIntake < Intake
     super.merge(
       receipt_date: detail.receipt_date,
       end_product_description: detail.end_product_description,
-      ratings: veteran.cached_serialized_timely_ratings
+      ratings: detail.cached_serialized_timely_ratings
     )
   end
 

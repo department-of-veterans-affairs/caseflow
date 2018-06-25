@@ -34,7 +34,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
-      $set: state.ratings || formatRatings(serverIntake.ratings)
+      $set: formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -126,7 +126,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
-    return update(state, {
+    return updateFromServerIntake(update(state, {
       informalConferenceError: {
         $set: null
       },
@@ -144,7 +144,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       informalConferenceError: {
