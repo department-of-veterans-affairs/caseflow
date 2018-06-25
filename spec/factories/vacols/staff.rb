@@ -33,5 +33,11 @@ FactoryBot.define do
     trait :has_location_code do
       slogid "55"
     end
+
+    after(:build) do |staff, evaluator|
+      if evaluator.user && evaluator.user.full_name
+        staff.snamef, staff.snamel = evaluator.user.full_name.split(" ")
+      end
+    end
   end
 end
