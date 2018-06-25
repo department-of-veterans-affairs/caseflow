@@ -1,22 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { css } from 'glamor';
 
 export default class DropdownButton extends React.Component {
   constructor(props) {
     super(props);
-
-    this.wrapperRef = null;
     this.state = {
       menu: false
     };
   }
 
-  setWrapperRef = (node) => this.wrapperRef = node
-
-  onClick = (title) => () => {
-  }
+  onClick = (title) => { }
 
   onMenuClick = () => {
     this.setState((prevState) => ({
@@ -31,8 +25,7 @@ export default class DropdownButton extends React.Component {
     } = this.props;
 
     const dropdownButtonList = () => {
-      return <ul className="cf-dropdown-menu active"
-        aria-labelledby="menu-trigger">
+      return <ul className="cf-dropdown-menu active">
         {lists.map((list, index) =>
           <li key={index}>
             <Link className="usa-button-outline usa-button"
@@ -42,7 +35,7 @@ export default class DropdownButton extends React.Component {
       </ul>;
     };
 
-    return <div ref={this.setWrapperRef} className="cf-dropdown">
+    return <div className="cf-dropdown">
       <a href="#dropdown-menu"
         className="cf-dropdown-trigger usa-button usa-button-outline"
         onClick={this.onMenuClick}>
