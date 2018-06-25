@@ -1,37 +1,64 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { css } from 'glamor';
 
-export default class Dropdown extends React.Component {
-  onChange = (event) => {
-    this.props.onChange(event.target.value);
+export default class DropdownButton extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.wrapperRef = null;
+    this.state = {
+      menu: false
+    };
   }
 
+  setWrapperRef = (node) => this.wrapperRef = node
+
+  onClick = (title) => () => {
+  }
+
+  onMenuClick = () => {
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
   render() {
-    let {
-      name,
-      options,
-      value,
-      defaultText
+    const {
+      label,
+      lists
     } = this.props;
 
-    value = (value === null || typeof value === 'undefined') ? '' : value;
+    const dropdownButtonList = () => {
+      return <ul className="cf-dropdown-menu active"
+        aria-labelledby="menu-trigger">
+        {lists.map((list, index) =>
+          <li key={index}>
+            <Link className="usa-button-outline usa-button"
+              href={list.target}
+              onClick={this.onClick(list.title)}>{list.title}</Link>
+          </li>)}
+      </ul>;
+    };
 
-    return <select value={value} onChange={this.onChange} id={name} className="usa-button-outline usa-button">
-      { defaultText && <option defaultValue hidden>{defaultText}</option>}
-      {options.map((option, index) =>
-        <option
-          value={option.value}
-          id={`${name}_${option.value}`}
-          key={index}>{option.displayText}
-        </option>
-      )}
-    </select>;
+    return <div ref={this.setWrapperRef} className="cf-dropdown">
+      <a href="#dropdown-menu"
+        className="cf-dropdown-trigger usa-button usa-button-outline"
+        onClick={this.onMenuClick}>
+        {label}
+      </a>
+      {this.state.menu && dropdownButtonList() }
+
+    </div>;
   }
 }
 
-Dropdown.propTypes = {
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func,
-  options: PropTypes.array.isRequired,
-  value: PropTypes.string
+DropdownButton.propTypes = {
+  list: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired,
+    target: PropTypes.string
+  })),
+  label: PropTypes.string.isRequired
 };

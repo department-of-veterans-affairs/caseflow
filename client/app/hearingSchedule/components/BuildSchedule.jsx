@@ -44,11 +44,13 @@ export default class BuildSchedule extends React.Component {
     ];
     const downloadOptions = [
       {
-        displayText: 'RO/CO hearings',
-        value: 'RO/CO hearings' },
+        title: 'RO/CO hearings',
+        value: 'RO/CO hearings',
+        target: '/hearings/roco' },
       {
-        displayText: 'Judge Non-availability',
-        value: 'Judge Non-availability' }
+        title: 'Judge Non-availability',
+        value: 'Judge Non-availability',
+        target: '/hearings/judge' }
     ];
 
     const pastUploadsRows = pastUploads.map((pastUpload) => {
@@ -66,10 +68,11 @@ export default class BuildSchedule extends React.Component {
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
       <DropdownButton
-        name="download-files"
-        defaultText={COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
-        options={downloadOptions}
-        value="test" />
+        lists={downloadOptions}
+        onClick={this.handleMenuClick}
+        label={COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
+      />
+
       <Link
         name="upload-files"
         button="primary"
