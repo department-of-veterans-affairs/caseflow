@@ -1,9 +1,5 @@
 class UserRepository
   class << self
-    def staff_records
-      @staff_records ||= {}
-    end
-
     def user_info_from_vacols(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
 
@@ -24,6 +20,7 @@ class UserRepository
       true
     end
 
+    # :nocov:
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first
@@ -34,6 +31,7 @@ class UserRepository
       end
       staff.first.try(:sdomainid)
     end
+    # :nocov:
 
     private
 
