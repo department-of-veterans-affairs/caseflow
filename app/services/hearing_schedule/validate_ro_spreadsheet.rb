@@ -101,20 +101,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     true
   end
 
-  def hearing_ro_allocation_days
-    hearing_allocation_days = []
-    ro_names = hearing_allocation_template.column(2).drop(4)
-    ro_codes = hearing_allocation_template.column(3).drop(4)
-    allocated_days = hearing_allocation_template.column(4).drop(4)
-    ro_names.zip(ro_codes, allocated_days).each do |row|
-      hearing_allocation_days.push("ro_code" => row[1],
-                                   "ro_city" => row[0].split(", ")[0],
-                                   "ro_state" => row[0].split(", ")[1],
-                                   "allocated_days" => row[2])
-    end
-    hearing_allocation_days
-  end
-
   def hearing_co_allocation_days
     {
       location: hearing_allocation_template.row(4)[1],
