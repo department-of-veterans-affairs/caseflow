@@ -50,6 +50,11 @@ class AmaReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def self.veteran_name_by_claim_id(claim_id:)
+    intake_by_claim_id = find_by(end_product_reference_id: claim_id)
+    intake_by_claim_id && Veteran.find_or_create_by_file_number(intake_by_claim_id.veteran_file_number).name
+  end
+
   private
 
   def contention_descriptions_to_create
