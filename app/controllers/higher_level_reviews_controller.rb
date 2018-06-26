@@ -12,10 +12,4 @@ class HigherLevelReviewsController < ApplicationController
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
-
-  def edit
-    render json: {
-      claim_id: params[:claim_id]
-    }
-  end
 end

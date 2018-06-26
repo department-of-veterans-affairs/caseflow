@@ -1,6 +1,12 @@
 class SupplementalClaim < AmaReview
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
 
+  def self.veteran_name_by_claim_id(claim_id:)
+    intake_by_claim_id = self.find_by(end_product_reference_id: claim_id
+    )
+    intake_by_claim_id && Veteran.find_or_create_by_file_number(intake_by_claim_id.veteran_file_number).name
+  end
+
   private
 
   # TODO: Update with real code and modifier data
