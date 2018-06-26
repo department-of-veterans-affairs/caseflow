@@ -62,12 +62,6 @@ class IntakesController < ApplicationController
     }, status: 400
   end
 
-  def edit
-    render json: {
-      claim_id: params[:claim_id]
-    }
-  end
-
   def error
     intake.save_error!(code: params[:error_code])
     render json: {}

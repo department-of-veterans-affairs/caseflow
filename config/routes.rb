@@ -114,7 +114,6 @@ Rails.application.routes.draw do
   root 'home#index'
 
   scope path: '/intake' do
-    get "/:claim_id/edit", to: 'intakes#edit'
     get "/", to: 'intakes#index'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
@@ -126,6 +125,9 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
 
   resources :users, only: [:index]
 
