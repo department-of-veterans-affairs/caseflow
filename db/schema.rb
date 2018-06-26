@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20180626154709) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_viewed_at"
-    t.string "appeal_type"
+    t.string "appeal_type", null: false
     t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
   end
 
@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20180626154709) do
     t.integer "appeal_id"
     t.string "query"
     t.datetime "created_at"
-    t.string "appeal_type"
+    t.string "appeal_type", null: false
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
