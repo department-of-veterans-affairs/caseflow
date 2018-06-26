@@ -8,7 +8,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
     tbyear: :tbyear,
     tbtrip: :tbtrip,
     tbleg: :tbleg,
-    tbro: :tbro
+    regional_office: :tbro
   }.freeze
 
   # :nocov:
@@ -36,6 +36,10 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
 
     def load_days_for_range(start_date, end_date)
       where("tbstdate BETWEEN ? AND ?", start_date, end_date)
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      where("tbro = ? and tbstdate BETWEEN ? AND ?", regional_office, start_date, end_date)
     end
   end
 
