@@ -3,8 +3,7 @@ export const PAGE_PATHS = {
   SEARCH: '/search',
   REVIEW: '/review-request',
   FINISH: '/finish',
-  COMPLETED: '/completed',
-  EDIT: '/edit' //'/edit/:claimId'
+  COMPLETED: '/completed'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [
