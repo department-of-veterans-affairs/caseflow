@@ -16,9 +16,9 @@ import {
 import { resetBreadcrumbs } from '../uiReducer/uiActions';
 import {
   dropdownStyling,
-  DECISION_TYPES,
   DRAFT_DECISION_OPTIONS
 } from '../constants';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 class SelectCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {

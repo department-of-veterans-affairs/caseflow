@@ -32,7 +32,8 @@ import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { DECISION_TYPES, PAGE_TITLES, USER_ROLES } from './constants';
+import { PAGE_TITLES, USER_ROLES } from './constants';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 

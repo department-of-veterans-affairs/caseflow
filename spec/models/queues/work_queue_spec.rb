@@ -1,27 +1,19 @@
 describe WorkQueue do
-  before { WorkQueue.repository = Fakes::QueueRepository }
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
 
   context ".tasks_with_appeals" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 
-    before do
-      Fakes::QueueRepository.appeal_records = [
-        Generators::LegacyAppeal.build(
-          vacols_id: "2222",
-          assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
-          assigned_to_location_date: "2013-05-15 00:00:00 UTC".to_datetime,
-          created_at: "2013-05-15 00:00:00 UTC".to_datetime,
-          date_due: "2018-02-13 00:00:00 UTC".to_datetime,
-          docket_date: "2014-03-25 00:00:00 UTC".to_datetime
-        ),
-        Generators::LegacyAppeal.build(
-          vacols_id: "3333",
-          assigned_to_attorney_date: "2013-05-17 00:00:00 UTC".to_datetime,
-          assigned_to_location_date: "2013-05-15 00:00:00 UTC".to_datetime,
-          created_at: "2013-05-15 00:00:00 UTC".to_datetime,
-          date_due: "2018-02-13 00:00:00 UTC".to_datetime,
-          docket_date: "2014-03-25 00:00:00 UTC".to_datetime
-        )
+    let!(:appeals) do
+      [
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user))
       ]
     end
 

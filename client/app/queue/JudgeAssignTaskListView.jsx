@@ -19,13 +19,16 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser } from './QueueActions';
+import {
+  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
+} from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
+import AssignWidget from '../components/AssignWidget';
 
 const UnassignedCasesPage = (props) => {
-  const reviewableCount = props.tasksAndAppeals.length;
+  const { tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
   let tableContent;
 
   if (reviewableCount === 0) {
@@ -34,7 +37,8 @@ const UnassignedCasesPage = (props) => {
     </StatusMessage>;
   } else {
     tableContent = <React.Fragment>
-      <h2>Unassigned Cases</h2>
+      <h2>Cases to Assign</h2>
+      {featureToggles.judge_assign_cases && <AssignWidget userId={userId} />}
       <JudgeAssignTaskTable {...props} />
     </React.Fragment>;
   }
@@ -121,7 +125,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             <ul className="usa-sidenav-list">
               <li>
                 <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                  Unassigned Cases ({this.unassignedTasksWithAppeals().length})
+                  Cases to Assign ({this.unassignedTasksWithAppeals().length})
                 </NavLink>
               </li>
               {attorneysOfJudge.
@@ -137,11 +141,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
           <PageRoute
             exact
             path={match.url}
-            title="Unassigned Cases | Caseflow"
+            title="Cases to Assign | Caseflow"
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                userId={this.props.userId.toString()} />}
+                userId={this.props.userId.toString()}
+                attorneys={attorneysOfJudge}
+                featureToggles={this.props.featureToggles} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -171,14 +177,20 @@ const mapStateToProps = (state) => {
         tasks: loadedQueueTasks,
         appeals
       }
+    },
+    ui: {
+      featureToggles
     }
   } = state;
 
-  return { attorneysOfJudge,
+  return {
+    attorneysOfJudge,
     tasksAndAppealsOfAttorney,
     tasks,
     loadedQueueTasks,
-    appeals };
+    appeals,
+    featureToggles
+  };
 };
 
 const mapDispatchToProps = (dispatch) => (

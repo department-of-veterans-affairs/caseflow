@@ -41,7 +41,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         let(:params) do
           {
             "type": "AttorneyCaseReview",
-            "document_type": "omo_request",
+            "document_type": Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
             "reviewing_judge_id": judge.id,
             "work_product": "OMO - IME",
             "document_id": "123456789.1234",
@@ -64,7 +64,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         let(:params) do
           {
             "type": "AttorneyCaseReview",
-            "document_type": "draft_decision",
+            "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
             "reviewing_judge_id": judge.id,
             "work_product": "Decision",
             "document_id": "123456789.1234",
@@ -90,7 +90,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         let(:params) do
           {
             "type": "AttorneyCaseReview",
-            "document_type": "omo_request",
+            "document_type": Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
             "work_product": "OMO - IME",
             "document_id": "123456789.1234",
             "overtime": true,

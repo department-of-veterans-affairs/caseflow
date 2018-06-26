@@ -20,13 +20,12 @@ describe RampClosedAppeal do
   end
 
   let(:ramp_election) do
-    RampElection.new(
-      veteran_file_number: appeal.veteran_file_number,
-      option_selected: :higher_level_review,
-      receipt_date: 6.days.ago,
-      end_product_reference_id: end_product.claim_id,
-      established_at: 2.days.ago
-    )
+    build(:ramp_election,
+          veteran_file_number: appeal.veteran_file_number,
+          option_selected: :higher_level_review,
+          receipt_date: 6.days.ago,
+          end_product_reference_id: end_product.claim_id,
+          established_at: 2.days.ago)
   end
 
   let(:ramp_closed_appeal) do
@@ -104,13 +103,12 @@ describe RampClosedAppeal do
     end
 
     let(:ramp_election_canceled_ep) do
-      RampElection.create(
-        veteran_file_number: veteran.file_number,
-        option_selected: :higher_level_review,
-        receipt_date: 6.days.ago,
-        end_product_reference_id: canceled_end_product.claim_id,
-        established_at: 2.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: veteran.file_number,
+             option_selected: :higher_level_review,
+             receipt_date: 6.days.ago,
+             end_product_reference_id: canceled_end_product.claim_id,
+             established_at: 2.days.ago)
     end
 
     let!(:ramp_closed_appeals_canceled_ep) do
