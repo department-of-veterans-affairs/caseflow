@@ -6,11 +6,14 @@ class CoLocatedAdminAction < Task
   class << self
     def create(params)
       ActiveRecord::Base.multi_transaction do
-        record = super
-        if record.valid?
-          AppealRepository.update_location!(record.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        records = params.delete(:titles).each_with_object([]) do |title, result|
+          result << super(params.merge(title: title))
+          result
         end
-        record
+        if records.map(&:valid?).uniq == [true]
+          AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        end
+        records
       end
     end
   end

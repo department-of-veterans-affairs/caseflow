@@ -1,7 +1,15 @@
 require "rails_helper"
 
 RSpec.feature "Login" do
-  let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
   before do
     @old_session = Fakes::AuthenticationService.user_session

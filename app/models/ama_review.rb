@@ -1,5 +1,6 @@
 class AmaReview < ApplicationRecord
   include EstablishesEndProduct
+  include CachedAttributes
 
   validate :validate_receipt_date
 
@@ -11,6 +12,10 @@ class AmaReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+
+  cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
+    receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
+  end
 
   def start_review!
     @saving_review = true
@@ -51,6 +56,14 @@ class AmaReview < ApplicationRecord
   end
 
   private
+
+  def timely_ratings_cache_key
+    "#{veteran_file_number}-#{formatted_receipt_date}"
+  end
+
+  def formatted_receipt_date
+    receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
+  end
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=

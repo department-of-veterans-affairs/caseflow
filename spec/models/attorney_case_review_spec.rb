@@ -9,7 +9,7 @@ describe AttorneyCaseReview do
     let(:vacols_staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let(:case_issues) { [] }
     let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_staff, case_issues: case_issues) }
-    let(:document_type) { "omo_request" }
+    let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }
     let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
     let(:params) do
@@ -49,7 +49,7 @@ describe AttorneyCaseReview do
 
     context "when all parameters are present for OMO Request and Vacols update is successful" do
       it "should create OMO Request record" do
-        expect(subject.document_type).to eq "omo_request"
+        expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"]
         expect(subject.valid?).to eq true
         expect(subject.work_product).to eq "OMO - IME"
         expect(subject.document_id).to eq "123456789.1234"
@@ -90,13 +90,12 @@ describe AttorneyCaseReview do
     end
 
     context "draft decision" do
-      let(:document_type) { "draft_decision" }
+      let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
       let(:work_product) { "Decision" }
       let(:vacated_issue) { FactoryBot.create(:case_issue, :disposition_vacated) }
       let(:remand_reason) { FactoryBot.create(:remand_reason, rmdval: "AB", rmddev: "R2") }
       let(:remanded_issue) { FactoryBot.create(:case_issue, :disposition_remanded, remand_reasons: [remand_reason]) }
       let(:case_issues) { [vacated_issue, remanded_issue] }
-
       let(:issues) do
         [
           { disposition: case_issues[0].issdc,
@@ -150,7 +149,7 @@ describe AttorneyCaseReview do
         let(:issues) { nil }
 
         it "should create Draft Decision record" do
-          expect(subject.document_type).to eq "draft_decision"
+          expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
           expect(subject.valid?).to eq true
           expect(subject.work_product).to eq "Decision"
           expect(subject.document_id).to eq "123456789.1234"
