@@ -58,7 +58,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_ro_non_availability_template
     unless @ro_spreadsheet_template[:title] == RO_NON_AVAILABILITY_TITLE &&
-           # @ro_spreadsheet_template.row(5)[1] == Date.parse("01/02/2019")  &&
+           @ro_spreadsheet_template[:example_row] == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
            @ro_spreadsheet_template[:empty_column] == RO_NON_AVAILABILITY_EMPTY_COLUMN
       fail RoTemplateNotFollowed
     end
