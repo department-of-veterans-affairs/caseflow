@@ -5,7 +5,7 @@ import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setSelectionOfTaskOfUser } from './QueueActions';
+import { setSelectionOfTaskOfUser, reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
 import AssignWidget from '../components/AssignWidget';
 
@@ -39,7 +39,8 @@ const AssignedCasesPage = (props) => {
 
   return <React.Fragment>
     <h2>{attorneyName}'s Cases</h2>
-    {featureToggles.judge_assign_cases && <AssignWidget userId={attorneyId} />}
+    {featureToggles.judge_assign_cases &&
+      <AssignWidget userId={attorneyId} onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
     <JudgeAssignTaskTable
       tasksAndAppeals={
         sortTasks({
@@ -66,4 +67,4 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)))(AssignedCasesPage);
+  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser, reassignTasksToUser }, dispatch)))(AssignedCasesPage);

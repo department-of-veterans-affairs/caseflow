@@ -15,10 +15,10 @@ import Button from '../components/Button';
 import _ from 'lodash';
 
 class AssignWidget extends React.PureComponent {
-  appealIdsOfSelectedTasks = () => {
+  selectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
-      (selected, id) => (selected ? [this.props.tasks[id].attributes.appeal_id] : []));
+      (selected, id) => (selected ? [this.props.tasks[id]] : []));
   }
 
   handleButtonClick = () => {
@@ -32,7 +32,7 @@ class AssignWidget extends React.PureComponent {
       return;
     }
 
-    if (this.appealIdsOfSelectedTasks().length === 0) {
+    if (this.selectedTasks().length === 0) {
       this.props.showErrorMessage(
         { heading: 'No tasks selected',
           text: 'Please select a task.' });
@@ -40,8 +40,8 @@ class AssignWidget extends React.PureComponent {
       return;
     }
 
-    this.props.initialAssignTasksToUser(
-      { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
+    this.props.onTaskAssignment(
+      { tasks: this.selectedTasks(),
         assigneeId: selectedAssigneeOfUser[userId] }).
       then(() => this.props.resetErrorMessages()).
       catch(() => this.props.showErrorMessage(
@@ -82,7 +82,7 @@ class AssignWidget extends React.PureComponent {
         <p>&nbsp;</p>
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.appealIdsOfSelectedTasks().length} case(s)`}
+          name={`Assign ${this.selectedTasks().length} case(s)`}
           loading={false}
           loadingText="Loading" />
       </div>
