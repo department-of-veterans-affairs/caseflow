@@ -15,7 +15,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
     } = this.props;
 
     const disableAddNonRatedIssue = _.some(nonRatedIssues, (issue) => {
-      return !issue.description
+      return !issue.description;
     });
 
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
