@@ -24,6 +24,10 @@ class RampElection < RampReview
         Raven.capture_exception(
           BGSEndProductSyncError.new(e.message + "\n\n ramp_election_id: #{ramp_election.id}")
         )
+      rescue StandardError => e
+        Raven.capture_exception(
+          BGSEndProductSyncError.new(e.message + "\n\n ramp_election_id: #{ramp_election.id}")
+        )
       end
     end
   end
