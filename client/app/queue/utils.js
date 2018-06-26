@@ -128,21 +128,15 @@ export const buildCaseReviewPayload = (decision, userRole, issues, args = {}) =>
   if (userRole === USER_ROLES.ATTORNEY) {
     issueList = getUndecidedIssues(issues);
 
-    // todo: pass args?
-    _.extend(payload.data.tasks, {
-      document_type: decision.type
-    });
+    _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
     _.extend(payload.data.tasks, args);
   }
 
-  // todo: payload.data.tasks.issues = issues.map()?
-  _.extend(payload.data.tasks, {
-    issues: issueList.map((issue) => _.extend({},
-      _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
-      { disposition: _.capitalize(issue.disposition) })
-    )
-  });
+  payload.data.tasks.issues = issueList.map((issue) => _.extend({},
+    _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
+    { disposition: _.capitalize(issue.disposition) }
+  ));
 
   return payload;
 };
