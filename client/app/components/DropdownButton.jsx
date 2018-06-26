@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 
-const dropdownListStyles = css({
-  top: '3rem',
+const dropdownList = css({
+  top: '3.55rem',
   left: '0',
-  width: '12.4em'
+  width: '21.2rem'
 });
-const dropdownBtnStyles = css({
+const dropdownBtn = css({
+  marginRight: '0rem'
+});
+const dropdownBtnContainer = css({
   marginRight: '2rem'
 });
 
@@ -20,7 +23,7 @@ export default class DropdownButton extends React.Component {
     };
   }
 
-  onClick = (title) => {}
+  onClick = () => {}
 
   onMenuClick = () => {
     this.setState((prevState) => ({
@@ -35,7 +38,7 @@ export default class DropdownButton extends React.Component {
     } = this.props;
 
     const dropdownButtonList = () => {
-      return <ul className="cf-dropdown-menu active" {...dropdownListStyles}>
+      return <ul className="cf-dropdown-menu active" {...dropdownList}>
         {lists.map((list, index) =>
           <li key={index}>
             <Link className="usa-button-outline usa-button"
@@ -45,8 +48,9 @@ export default class DropdownButton extends React.Component {
       </ul>;
     };
 
-    return <div className="cf-dropdown" {...dropdownBtnStyles}>
+    return <div className="cf-dropdown" {...dropdownBtnContainer}>
       <a href="#dropdown-menu"
+        {...dropdownBtn}
         className="cf-dropdown-trigger usa-button usa-button-outline"
         onClick={this.onMenuClick}>
         {label}
