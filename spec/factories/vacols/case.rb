@@ -28,7 +28,7 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "TEST_ASSIGNER",
-          dereceive: evaluator.user.vacols_roles.first.eql?("judge") ? Date.today : nil,
+          dereceive: evaluator.user.vacols_roles.first.eql?("judge") ? Time.zone.today : nil,
           deprod: evaluator.work_product
         )
       end
