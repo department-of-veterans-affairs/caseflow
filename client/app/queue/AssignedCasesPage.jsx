@@ -67,4 +67,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser, reassignTasksToUser }, dispatch)))(AssignedCasesPage);
+  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser,
+    reassignTasksToUser }, dispatch)))(AssignedCasesPage);

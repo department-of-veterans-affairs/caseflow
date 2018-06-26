@@ -45,7 +45,8 @@ class AssignWidget extends React.PureComponent {
         assigneeId: selectedAssigneeOfUser[previousAssigneeId],
         previousAssigneeId }).
       then(() => this.props.resetErrorMessages());
-      /*
+
+    /*
       catch(() => this.props.showErrorMessage(
         { heading: 'Error assigning tasks',
           text: 'One or more tasks couldn\'t be assigned.' }));

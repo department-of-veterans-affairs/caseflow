@@ -209,12 +209,12 @@ const initialTaskAssignment = ({ task, assigneeId }) => ({
 });
 
 export const initialAssignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
-  Promise.all(tasks.map((task) => {
+  Promise.all(tasks.map((oldTask) => {
     return ApiUtil.post(
       '/legacy_tasks',
       { data: { tasks: { assigned_to_id: assigneeId,
         type: 'JudgeCaseAssignmentToAttorney',
-        appeal_id: task.attributes.appeal_id } } }).
+        appeal_id: oldTask.attributes.appeal_id } } }).
       then((resp) => resp.body).
       then(
         (resp) => {
@@ -226,7 +226,7 @@ export const initialAssignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
         });
   }));
 
-const taskReassignment = ({task, assigneeId, previousAssigneeId}) => ({
+const taskReassignment = ({ task, assigneeId, previousAssigneeId }) => ({
   type: ACTIONS.TASK_REASSIGNED,
   payload: {
     task,
@@ -236,9 +236,9 @@ const taskReassignment = ({task, assigneeId, previousAssigneeId}) => ({
 });
 
 export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) => (dispatch) =>
-  Promise.all(tasks.map((task) => {
+  Promise.all(tasks.map((oldTask) => {
     return ApiUtil.patch(
-      `/legacy_tasks/${task.attributes.task_id}`,
+      `/legacy_tasks/${oldTask.attributes.task_id}`,
       { data: { tasks: { assigned_to_id: assigneeId } } }).
       then((resp) => resp.body).
       then(
@@ -246,6 +246,8 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
           const { task: { data: task } } = resp;
 
           task.vacolsId = task.id;
-          dispatch(taskReassignment({task, assigneeId, previousAssigneeId}));
+          dispatch(taskReassignment({ task,
+            assigneeId,
+            previousAssigneeId }));
         });
   }));
