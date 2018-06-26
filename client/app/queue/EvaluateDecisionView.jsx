@@ -52,8 +52,9 @@ class EvaluateDecisionView extends React.PureComponent {
     this.state = {
       complexity: null,
       quality: null,
-      factors_not_considered: '',
-      areas_for_improvement: {}
+      factors_not_considered: {},
+      areas_for_improvement: {},
+      comment: ''
     };
   }
 
@@ -271,8 +272,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
-        value={this.state.factors_not_considered}
-        onChange={(factors) => this.setState({ factors_not_considered: factors })} />
+        value={this.state.comment}
+        onChange={(comment) => this.setState({ comment })} />
     </React.Fragment>;
   };
 }
