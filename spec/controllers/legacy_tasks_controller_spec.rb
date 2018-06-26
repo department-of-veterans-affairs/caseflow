@@ -96,7 +96,7 @@ RSpec.describe LegacyTasksController, type: :controller do
         end
 
         it "should not be successful" do
-          allow(Fakes::UserRepository).to receive(:vacols_roles).and_return(["judge"])
+          allow(Fakes::UserRepository).to receive(:user_info_from_vacols).and_return(roles: ["judge"])
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
