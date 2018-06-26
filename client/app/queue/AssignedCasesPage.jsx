@@ -7,10 +7,11 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { setSelectionOfTaskOfUser } from './QueueActions';
 import { sortTasks } from './utils';
+import AssignWidget from '../components/AssignWidget';
 
 const AssignedCasesPage = (props) => {
   const {
-    match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks
+    match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles
   } = props;
   const { attorneyId } = match.params;
 
@@ -38,6 +39,7 @@ const AssignedCasesPage = (props) => {
 
   return <React.Fragment>
     <h2>{attorneyName}'s Cases</h2>
+    {featureToggles.judge_assign_cases && <AssignWidget userId={attorneyId} />}
     <JudgeAssignTaskTable
       tasksAndAppeals={
         sortTasks({
@@ -54,10 +56,12 @@ const AssignedCasesPage = (props) => {
 
 const mapStateToProps = (state) => {
   const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
+  const { featureToggles } = state.ui;
 
   return { tasksAndAppealsOfAttorney,
     attorneysOfJudge,
-    tasks };
+    tasks,
+    featureToggles };
 };
 
 export default connect(
