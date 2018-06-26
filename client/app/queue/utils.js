@@ -130,6 +130,9 @@ export const buildCaseReviewPayload = (decision, userRole, issues, args = {}) =>
 
     _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
+    args.factors_not_considered = _.keys(args.factors_not_considered);
+    args.areas_for_improvement = _.keys(args.areas_for_improvement);
+
     _.extend(payload.data.tasks, args);
   }
 
