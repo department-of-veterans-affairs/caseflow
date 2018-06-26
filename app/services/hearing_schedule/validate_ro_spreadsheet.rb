@@ -145,10 +145,10 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_hearing_co_allocation_days
-    unless @allocation_spreadsheet_co_data[:location] == "Central Office"
+    unless @allocation_spreadsheet_co_data["ro_code"] == "Central Office"
       fail AllocationCoLocationIncorrect
     end
-    unless @allocation_spreadsheet_co_data[:allocated_days].is_a?(Numeric)
+    unless @allocation_spreadsheet_co_data["allocated_days"].is_a?(Numeric)
       fail AllocationNotCorrectFormat
     end
   end

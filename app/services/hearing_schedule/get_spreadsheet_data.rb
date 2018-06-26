@@ -104,8 +104,8 @@ class HearingSchedule::GetSpreadsheetData
 
   def allocation_co_data
     {
-      location: allocation_sheet.row(4)[1],
-      allocated_days: allocation_sheet.row(4)[3]
+      "ro_code" => allocation_sheet.row(4)[1],
+      "allocated_days" => allocation_sheet.row(4)[3]
     }
   end
 end
