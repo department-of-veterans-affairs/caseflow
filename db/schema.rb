@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180626154709) do
+ActiveRecord::Schema.define(version: 20180626152943) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20180626154709) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_viewed_at"
-    t.string "appeal_type", null: false
+    t.string "appeal_type"
     t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
     t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
   end
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20180626154709) do
     t.integer "appeal_id"
     t.string "query"
     t.datetime "created_at"
-    t.string "appeal_type", null: false
+    t.string "appeal_type"
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
