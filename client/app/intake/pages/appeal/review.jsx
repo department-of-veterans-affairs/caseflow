@@ -7,7 +7,8 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
-import { setDocketType, submitReview } from '../../actions/appeal';
+import { setDocketType } from '../../actions/appeal';
+import { submitReview } from '../../actions/ama';
 import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -83,7 +84,7 @@ const SelectClaimantConnected = connect(
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.appeal).then(
+    this.props.submitReview(this.props.intakeId, this.props.appeal, 'appeal').then(
       () => this.props.history.push('/finish')
     );
   }

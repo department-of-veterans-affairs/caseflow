@@ -30,10 +30,10 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const mediumBottomMargin = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -122,7 +122,7 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/tasks/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/case_reviews/${taskId}/complete`, params, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 

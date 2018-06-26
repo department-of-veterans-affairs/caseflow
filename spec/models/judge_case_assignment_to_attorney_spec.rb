@@ -4,7 +4,7 @@ describe JudgeCaseAssignmentToAttorney do
   let(:appeal) { LegacyAppeal.create(vacols_id: "123456") }
 
   before do
-    allow_any_instance_of(User).to receive(:vacols_role).and_return("Judge")
+    allow_any_instance_of(User).to receive(:vacols_roles).and_return(["judge"])
   end
 
   context ".create" do

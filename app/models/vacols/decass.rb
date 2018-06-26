@@ -16,7 +16,8 @@ class VACOLS::Decass < VACOLS::Record
   end
 
   def draft_decision?
-    %w[DEC OTD].include? deprod
+    %w[DEC OTD OTR REM VAC AFI BOT COR DAF DEV DIM DOR
+       DRM DVH INT OTB OTH REA REU RRC SUP VDC VDR VDS VRM].include? deprod
   end
 
   def update(*)

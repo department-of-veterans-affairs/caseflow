@@ -19,7 +19,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
-      $set: state.ratings || formatRatings(serverIntake.ratings)
+      $set: formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -93,7 +93,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
-    return update(state, {
+    return updateFromServerIntake(update(state, {
       receiptDateError: {
         $set: null
       },
@@ -105,7 +105,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       receiptDateError: {

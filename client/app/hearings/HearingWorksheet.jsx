@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
@@ -133,7 +132,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Hearing Summary"
@@ -180,7 +178,6 @@ export class HearingWorksheet extends React.PureComponent {
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
             <div className={wrapperClassNames}>
               {firstWorksheetPage}
-              <PrintPageBreak />
               {secondWorksheetPage}
             </div>}
         </div>
@@ -188,7 +185,6 @@ export class HearingWorksheet extends React.PureComponent {
       {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
-      <PrintPageBreak />
       {secondWorksheetPage}
     </div>
       }

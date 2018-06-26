@@ -19,10 +19,11 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
+import EvaluateDecisionView from './EvaluateDecisionView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
-import QueueDetailView from './QueueDetailView';
+import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
 import AddEditIssueView from './AddEditIssueView';
@@ -31,7 +32,8 @@ import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { DECISION_TYPES, PAGE_TITLES, USER_ROLES } from './constants';
+import { PAGE_TITLES, USER_ROLES } from './constants';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
@@ -55,9 +57,7 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
-    <SearchBar
-      feedbackUrl={this.props.feedbackUrl}
-      shouldUseQueueCaseSearch={this.props.featureToggles.queue_case_search} />
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
@@ -70,7 +70,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
     <Breadcrumbs />
-    <QueueDetailView vacolsId={props.match.params.vacolsId} />
+    <CaseDetailsView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
@@ -86,7 +86,9 @@ class QueueApp extends React.PureComponent {
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
 
-  routedEvaluateDecision = () => <div>Evaluate Decision view</div>;
+  routedEvaluateDecision = (props) => <EvaluateDecisionView
+    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
+    {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
@@ -172,7 +174,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:vacolsId/evaluate"
+            path="/queue/appeals/:appealId/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
         </div>

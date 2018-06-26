@@ -12,20 +12,18 @@ describe RampRefiling do
   let(:receipt_date) { nil }
   let(:appeal_docket) { nil }
 
-  let(:completed_ramp_election) do
-    RampElection.create!(
-      veteran_file_number: "64205555",
-      notice_date: 3.days.ago,
-      receipt_date: 2.days.ago,
-      option_selected: original_election_option,
-      end_product_reference_id: "123",
-      established_at: 1.day.ago
-    )
+  let!(:completed_ramp_election) do
+    create(:ramp_election,
+           veteran_file_number: veteran_file_number,
+           notice_date: 3.days.ago,
+           receipt_date: 2.days.ago,
+           option_selected: original_election_option,
+           end_product_reference_id: "123",
+           established_at: 1.day.ago)
   end
 
   let(:ramp_refiling) do
     RampRefiling.new(
-      ramp_election: completed_ramp_election,
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       option_selected: option_selected,

@@ -28,7 +28,7 @@ jobs:
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
 
       # This is the circleci provided Redis container.
-      - image: circleci/redis:4.0.8
+      - image: circleci/redis:4.0.10
     parallelism: 5
     steps:
       - checkout
@@ -40,9 +40,9 @@ jobs:
       - restore_cache:
           keys:
             - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            
+
       - run: bundle install --path vendor/bundle
-      
+
       - save_cache:
           key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:

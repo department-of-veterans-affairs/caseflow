@@ -502,6 +502,7 @@ ActiveRecord::Schema.define(version: 20180611221431) do
     t.boolean "finalized"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "file_name", null: false
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 

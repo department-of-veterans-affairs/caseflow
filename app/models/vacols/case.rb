@@ -11,6 +11,7 @@ class VACOLS::Case < VACOLS::Record
   has_many   :case_hearings,   foreign_key: :folder_nr
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
+  has_many   :priorloc,        foreign_key: :lockey
 
   class InvalidLocationError < StandardError; end
 
@@ -214,7 +215,9 @@ class VACOLS::Case < VACOLS::Record
 
     # Note: we use conn.quote here from ActiveRecord to deter SQL injection
     location = conn.quote(location)
-    user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
+
+    vacols_user_id = RequestStore.store[:current_user].vacols_uniq_id || ""
+    user_db_id = conn.quote(vacols_user_id.upcase)
     case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",

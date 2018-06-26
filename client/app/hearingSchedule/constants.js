@@ -1,0 +1,3 @@
+export const ACTIONS = {
+  RECEIVE_PAST_UPLOADS: 'RECEIVE_PAST_UPLOADS'
+};

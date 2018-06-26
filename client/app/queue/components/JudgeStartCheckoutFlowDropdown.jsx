@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -16,12 +17,12 @@ import {
 import {
   deleteAppeal,
   checkoutStagedAppeal,
-  stageAppeal
+  stageAppeal,
+  setCaseReviewActionType
 } from '../QueueActions';
 import {
   dropdownStyling,
-  JUDGE_DECISION_OPTIONS,
-  JUDGE_DECISION_TYPES
+  JUDGE_DECISION_OPTIONS
 } from '../constants';
 
 // todo: make StartCheckoutFlowDropdownBase
@@ -34,7 +35,12 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     } = this.props;
     const actionType = props.value;
 
-    if (actionType === JUDGE_DECISION_TYPES.OMO_REQUEST) {
+    this.props.setCaseReviewActionType(actionType);
+
+    if (actionType === DECISION_TYPES.OMO_REQUEST) {
+      history.push('');
+      history.replace('/queue');
+
       // this.props.requestSave()...
       this.props.deleteAppeal(vacolsId);
       this.props.saveSuccess(sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name));
@@ -82,7 +88,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  resetBreadcrumbs
+  resetBreadcrumbs,
+  setCaseReviewActionType
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown));
