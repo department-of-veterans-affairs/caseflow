@@ -849,26 +849,36 @@ RSpec.feature "Queue" do
       )
     end
     let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
-    let!(:judge_staff) do
-      create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id)
-    end
-    let!(:vacols_case) do
-      create(
-        :case,
-        :assigned,
-        user: judge,
-        assigner: attorney,
-        case_issues: [create(:case_issue, :disposition_allowed)],
-        correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
-        work_product: "DEC"
-      )
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id) }
+    let!(:vacols_cases) do
+      [
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_allowed)],
+          correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
+          work_product: "DEC"
+        ),
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_denied)],
+          correspondent: create(:correspondent, snamef: "Armide", snamel: "Forceso"),
+          work_product: "VHA"
+        )
+      ]
     end
 
     scenario "starts dispatch checkout flow" do
-      tasks, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
+      _, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
 
-      task = tasks.find { |t| t.assigned_by.first_name.present? }
-      appeal = appeals.find { |a| a.vacols_id.eql?(task.id) }
+      # get draft decision appeal vacols_id
+      vacols_id = VACOLS::Decass.all.find(&:draft_decision?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
 
       visit "/queue"
 
@@ -897,6 +907,21 @@ RSpec.feature "Queue" do
       click_on "Continue"
 
       expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
+    end
+
+    scenario "completes assign to omo checkout flow" do
+      _, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
+
+      vacols_id = VACOLS::Decass.all.find(&:omo_request?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
+
+      visit "/queue"
+
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
+
+      click_dropdown 1
+
+      expect(page).to have_content("You have successfully submitted an OMO for #{appeal.veteran_full_name}.")
     end
   end
 

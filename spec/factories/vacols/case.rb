@@ -19,8 +19,14 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
-        slogid = create(:staff, user: evaluator.user).slogid if evaluator.user
-        assigner_slogid = create(:staff, user: evaluator.assigner).slogid if evaluator.assigner
+        if evaluator.user
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+        end
+        if evaluator.assigner
+          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
+        end
         vacols_case.update!(bfcurloc: slogid) if slogid
         create_list(
           :decass,
