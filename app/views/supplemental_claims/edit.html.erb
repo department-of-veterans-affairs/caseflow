@@ -2,5 +2,5 @@
   Claim ID: <%= params[:claim_id] %>
 </div>
 <div>
-  Veteran Name: <%= SupplementalClaim.veteran_name_by_claim_id(claim_id: params[:claim_id]) %>
+  Veteran Name: <%= higher_level_review.veteran.name %>
 </div>
