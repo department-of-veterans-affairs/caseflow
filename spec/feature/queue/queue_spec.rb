@@ -859,11 +859,12 @@ RSpec.feature "Queue" do
         user: judge,
         assigner: attorney,
         case_issues: [create(:case_issue, :disposition_allowed)],
-        correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino")
+        correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
+        work_product: "DEC"
       )
     end
 
-    scenario "starts dispatch checkout flow from case detail view" do
+    scenario "starts dispatch checkout flow" do
       tasks, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
 
       task = tasks.find { |t| t.assigned_by.first_name.present? }
@@ -881,14 +882,21 @@ RSpec.feature "Queue" do
 
       click_on "Continue"
       expect(page).to have_content("Choose one")
+      sleep 2
 
-      case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='cf-form-showhide-radio cf-form-radio'][1]//label")
-      case_quality_opts = page.find_all(:xpath, "//fieldset[@class='cf-form-showhide-radio cf-form-radio'][2]//label")
-      binding.pry
+      radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
+      case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
+      case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
 
-      [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).each(&:click) }
+      [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
       # areas of improvement
-      page.find_all(".question-label").sample(2).each(&:click)
+      page.find_all(".question-label").sample(2).each(&:double_click)
+
+      fill_in "additional-factors", with: "this is the note"
+
+      click_on "Continue"
+
+      expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
     end
   end
 

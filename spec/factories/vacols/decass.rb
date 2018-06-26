@@ -7,5 +7,6 @@ FactoryBot.define do
     deadusr "TEST"
     deadtim { Time.current.strftime("%Y-%m-%d") }
     deassign { Time.current.strftime("%Y-%m-%d") }
+    deprod nil
   end
 end

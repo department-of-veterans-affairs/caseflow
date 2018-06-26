@@ -15,6 +15,7 @@ FactoryBot.define do
         decass_count 1
         user nil
         assigner nil
+        work_product nil
       end
 
       after(:create) do |vacols_case, evaluator|
@@ -27,7 +28,8 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "TEST_ASSIGNER",
-          dereceive: evaluator.user.vacols_roles.first.eql?("judge") ? Date.today : nil
+          dereceive: evaluator.user.vacols_roles.first.eql?("judge") ? Date.today : nil,
+          deprod: evaluator.work_product
         )
       end
     end
