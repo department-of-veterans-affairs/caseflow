@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20180626154709) do
     t.datetime "updated_at", null: false
     t.datetime "last_viewed_at"
     t.string "appeal_type", null: false
-    t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
+    t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
   end
 
   create_table "appeals", force: :cascade do |t|
