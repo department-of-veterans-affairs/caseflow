@@ -40,7 +40,7 @@ const AssignedCasesPage = (props) => {
   return <React.Fragment>
     <h2>{attorneyName}'s Cases</h2>
     {featureToggles.judge_assign_cases &&
-      <AssignWidget userId={attorneyId} onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
+      <AssignWidget previousAssigneeId={attorneyId} onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
     <JudgeAssignTaskTable
       tasksAndAppeals={
         sortTasks({

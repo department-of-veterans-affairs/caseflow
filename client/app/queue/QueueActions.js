@@ -226,7 +226,16 @@ export const initialAssignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
         });
   }));
 
-export const reassignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
+const taskReassignment = ({task, assigneeId, previousAssigneeId}) => ({
+  type: ACTIONS.TASK_REASSIGNED,
+  payload: {
+    task,
+    assigneeId,
+    previousAssigneeId
+  }
+});
+
+export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) => (dispatch) =>
   Promise.all(tasks.map((task) => {
     return ApiUtil.patch(
       `/legacy_tasks/${task.attributes.task_id}`,
@@ -237,6 +246,6 @@ export const reassignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
           const { task: { data: task } } = resp;
 
           task.vacolsId = task.id;
-          dispatch();
+          dispatch(taskReassignment({task, assigneeId, previousAssigneeId}));
         });
   }));

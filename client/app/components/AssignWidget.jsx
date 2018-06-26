@@ -17,14 +17,14 @@ import _ from 'lodash';
 class AssignWidget extends React.PureComponent {
   selectedTasks = () => {
     return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
+      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || [],
       (selected, id) => (selected ? [this.props.tasks[id]] : []));
   }
 
   handleButtonClick = () => {
-    const { userId, selectedAssigneeOfUser } = this.props;
+    const { previousAssigneeId, selectedAssigneeOfUser } = this.props;
 
-    if (!selectedAssigneeOfUser[userId]) {
+    if (!selectedAssigneeOfUser[previousAssigneeId]) {
       this.props.showErrorMessage(
         { heading: 'No assignee selected',
           text: 'Please select someone to assign the tasks to.' });
@@ -42,20 +42,23 @@ class AssignWidget extends React.PureComponent {
 
     this.props.onTaskAssignment(
       { tasks: this.selectedTasks(),
-        assigneeId: selectedAssigneeOfUser[userId] }).
-      then(() => this.props.resetErrorMessages()).
+        assigneeId: selectedAssigneeOfUser[previousAssigneeId],
+        previousAssigneeId }).
+      then(() => this.props.resetErrorMessages());
+      /*
       catch(() => this.props.showErrorMessage(
         { heading: 'Error assigning tasks',
           text: 'One or more tasks couldn\'t be assigned.' }));
+      */
   }
 
   render = () => {
-    const { userId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
+    const { previousAssigneeId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
     const selectedOption =
-      selectedAssigneeOfUser[userId] ?
-        options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
+      selectedAssigneeOfUser[previousAssigneeId] ?
+        options.filter((option) => option.value === selectedAssigneeOfUser[previousAssigneeId])[0] :
         { label: 'Select a user',
           value: null };
 
@@ -75,7 +78,7 @@ class AssignWidget extends React.PureComponent {
           hideLabel
           searchable
           options={options}
-          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId,
+          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId: previousAssigneeId,
             assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
