@@ -137,7 +137,7 @@ Rails.application.routes.draw do
     get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id(*rest)', to: 'tasks#index'
+    get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
   resources :legacy_tasks, only: [:create, :update]
