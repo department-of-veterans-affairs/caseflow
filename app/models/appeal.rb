@@ -1,4 +1,8 @@
 class Appeal < AmaReview
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
+
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/

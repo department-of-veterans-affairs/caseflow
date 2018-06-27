@@ -14,7 +14,7 @@ class TasksController < ApplicationController
     return required_parameters_missing([:titles]) if task_params[:titles].blank?
 
     return invalid_type_error unless task_class
-    tasks = task_class.create(task_params)
+    tasks = task_class.create(task_params.merge(appeal_type: "LegacyAppeal"))
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: tasks }, status: :created
