@@ -76,7 +76,7 @@ class AssignWidget extends React.PureComponent {
           onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId: previousAssigneeId,
             assigneeId: option.value })}
           value={selectedOption}
-          styling={css({ width: '30rem' })} />
+          styling={css({ width: '30rem', marginRight: '1rem' })} />
         <p>&nbsp;</p>
         <Button
           onClick={this.handleButtonClick}
