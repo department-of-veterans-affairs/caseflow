@@ -40,20 +40,18 @@ export default class DropdownButton extends React.Component {
         {lists.map((list, index) =>
           <li key={index}>
             <Link className="usa-button-outline usa-button"
-              href={list.target} >{list.title}</Link>
+              href={list.target}>{list.title}</Link>
           </li>)}
       </ul>;
     };
 
     return <div className="cf-dropdown" {...dropdownBtnContainer}>
-      <a href="#dropdown-menu"
-        {...dropdownBtn}
-        className="cf-dropdown-trigger usa-button usa-button-outline"
-        onClick={this.onMenuClick}>
+      <a href="#dropdown" {...dropdownBtn}
+        onClick={this.onMenuClick}
+        className="cf-dropdown-trigger usa-button usa-button-outline">
         {label}
       </a>
       {this.state.menu && dropdownButtonList() }
-
     </div>;
   }
 }
@@ -61,8 +59,7 @@ export default class DropdownButton extends React.Component {
 DropdownButton.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired,
-    target: PropTypes.string
+    target: PropTypes.string.isRequired
   })),
   label: PropTypes.string.isRequired
 };

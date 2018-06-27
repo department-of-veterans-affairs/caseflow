@@ -48,7 +48,7 @@ export default class BuildSchedule extends React.Component {
         title: 'RO/CO hearings',
         target: '/hearings/roco' },
       {
-        title: 'Judge Non-availability',
+        title: 'Judge non-availability',
         target: '/hearings/judge' }
     ];
 
