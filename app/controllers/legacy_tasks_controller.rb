@@ -33,7 +33,11 @@ class LegacyTasksController < ApplicationController
 
     return invalid_record_error(task) unless task.valid?
     render json: {
-      task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
+      task: json_task(AttorneyLegacyTask.from_vacols(
+                        task.last_case_assignment,
+                        LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
+                        current_user
+      ))
     }
   end
 
@@ -42,7 +46,11 @@ class LegacyTasksController < ApplicationController
 
     return invalid_record_error(task) unless task.valid?
     render json: {
-      task: json_task(AttorneyLegacyTask.from_vacols(task.last_case_assignment, current_user))
+      task: json_task(AttorneyLegacyTask.from_vacols(
+                        task.last_case_assignment,
+                        LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
+                        current_user
+      ))
     }
   end
 
