@@ -540,6 +540,7 @@ ActiveRecord::Schema.define(version: 20180627150431) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "appeal_type", null: false
+    t.datetime "placed_on_hold_at"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
