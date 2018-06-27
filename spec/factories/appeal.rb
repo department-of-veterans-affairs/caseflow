@@ -28,5 +28,14 @@ FactoryBot.define do
         issue.save
       end
     end
+
+    transient do
+      documents []
+    end
+
+    after(:build) do |appeal, evaluator|
+      Fakes::VBMSService.document_records ||= {}
+      Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+    end
   end
 end
