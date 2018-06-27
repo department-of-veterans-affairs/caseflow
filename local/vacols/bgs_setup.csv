@@ -21,8 +21,8 @@ vbms_id,bgs_key
 849386058S,
 231439628S,has_rating
 586864247S,has_many_ratings
-750998600S,
-772437875S,
+750998600S,has_supplemental_claim_with_vbms_claim_id
+772437875S,has_higher_level_review_with_vbms_claim_id
 808415990S,
 872958715S,
 992190636S,

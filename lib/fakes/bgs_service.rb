@@ -37,15 +37,22 @@ class Fakes::BGSService
           participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
           issues: [
-            {
-              decision_text: "Left knee"
-            },
-            {
-              decision_text: "PTSD"
-            }
+            { decision_text: "Left knee" },
+            { decision_text: "PTSD" }
           ]
         )
-      end
+      when "has_supplemental_claim_with_vbms_claim_id"
+        claim_id = ""
+        supplemental_claim = SupplementalClaim.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
+      when "has_higher_level_review_with_vbms_claim_id"
+        claim_id = ""
+        higher_level_review = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
     end
   end
 
