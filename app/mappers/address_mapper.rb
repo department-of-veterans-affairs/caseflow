@@ -12,7 +12,6 @@ module AddressMapper
     }
   end
 
-  # TODO: Confirm that the payeen name is coming in with first and last names reversed.
   def get_name_and_address_from_bgs_info(bgs_info)
     return {} unless bgs_info
     {
