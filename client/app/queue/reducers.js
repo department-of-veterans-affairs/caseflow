@@ -37,7 +37,8 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isVacolsIdAssignedToUserSelected: {}
+  isTaskAssignedToUserSelected: {},
+  selectedAssigneeOfUser: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -270,16 +271,60 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
-    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
-      [action.payload.vacolsId]: {
+    const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.taskId]: {
         $set: action.payload.selected
       }
     });
 
     return update(state, {
-      isVacolsIdAssignedToUserSelected: {
+      isTaskAssignedToUserSelected: {
         [action.payload.userId]: {
-          $set: isVacolsIdSelected
+          $set: isTaskSelected
+        }
+      }
+    });
+  }
+  case ACTIONS.SET_SELECTED_ASSIGNEE_OF_USER:
+    return update(state, {
+      selectedAssigneeOfUser: {
+        [action.payload.userId]: {
+          $set: action.payload.assigneeId
+        }
+      }
+    });
+  case ACTIONS.TASK_INITIAL_ASSIGNED: {
+    const vacolsId = action.payload.task.id;
+    const appeal = state.loadedQueue.appeals[vacolsId];
+
+    return update(state, {
+      tasks: {
+        [vacolsId]: {
+          $set: action.payload.task
+        }
+      },
+      loadedQueue: {
+        tasks: {
+          $unset: [vacolsId]
+        },
+        appeals: {
+          $unset: [vacolsId]
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.assigneeId]: {
+          data: {
+            tasks: {
+              [vacolsId]: {
+                $set: action.payload.task
+              }
+            },
+            appeals: {
+              [vacolsId]: {
+                $set: appeal
+              }
+            }
+          }
         }
       }
     });

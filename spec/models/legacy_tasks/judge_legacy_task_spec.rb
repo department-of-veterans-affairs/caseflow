@@ -3,11 +3,21 @@ describe JudgeLegacyTask do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
   context "#from_vacols" do
-    subject { JudgeLegacyTask.from_vacols(case_assignment, User.new(css_id: "USER_ID")) }
+    subject do
+      JudgeLegacyTask.from_vacols(
+        case_assignment,
+        LegacyAppeal.create(vacols_id: "1111"),
+        User.new(css_id: "USER_ID")
+      )
+    end
 
     context "when there is information about the case assignment" do
       let(:case_assignment) do
-        OpenStruct.new(vacols_id: "1111",
+        vacols_id = "1111"
+        Fakes::AppealRepository.records[vacols_id] = OpenStruct.new(
+          vacols_id: vacols_id
+        )
+        OpenStruct.new(vacols_id: vacols_id,
                        date_due: 1.day.ago,
                        reassigned_to_judge_date: reassigned_to_judge_date,
                        docket_date: nil,

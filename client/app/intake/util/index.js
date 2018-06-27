@@ -64,13 +64,16 @@ export const formatRatingData = (intakeState) => {
 
   const nonRatingData = {
     request_issues:
-      _(intakeState.nonRatedIssues).map((issue) => {
-        return {
-          decision_text: issue.description,
-          issue_category: issue.category
-        };
-      }).
-        filter('issue_category')
+      _(intakeState.nonRatedIssues).
+        filter((issue) => {
+          return issue.category && issue.description;
+        }).
+        map((issue) => {
+          return {
+            decision_text: issue.description,
+            issue_category: issue.category
+          };
+        })
   };
 
   const data = {

@@ -18,7 +18,7 @@ RSpec.configure do |config|
     end
     # ActiveRecord::Base.logger = Logger.new($stdout)
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }]
-      .clean_with(:truncation, except: %w[vftypes issref])
+      .clean_with(:deletion, except: %w[vftypes issref])
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean_with(:truncation)
   end
 
@@ -29,7 +29,7 @@ RSpec.configure do |config|
 
   config.before(:each, db_clean: :truncation) do
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-      :truncation, { except: %w[vftypes issref] }
+      :deletion, { except: %w[vftypes issref] }
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
   end
 
@@ -43,7 +43,7 @@ RSpec.configure do |config|
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
       DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].strategy =
-        :truncation, { except: %w[vftypes issref] }
+        :deletion, { except: %w[vftypes issref] }
       DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].strategy = :truncation
     end
   end
@@ -56,7 +56,6 @@ RSpec.configure do |config|
   config.append_after(:each) do
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].clean
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
-
     reset_application!
   end
 end

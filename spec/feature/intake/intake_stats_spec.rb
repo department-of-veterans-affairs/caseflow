@@ -12,40 +12,37 @@ RSpec.feature "Intake Stats Dashboard" do
   scenario "Switching tab intervals" do
     User.authenticate!(roles: ["Admin Intake"])
 
-    RampElection.create!(veteran_file_number: "77776661", notice_date: 1.day.ago)
-    RampElection.create!(veteran_file_number: "77776662", notice_date: 1.day.ago)
+    create(:ramp_election, veteran_file_number: "77776661", notice_date: 1.day.ago)
+    create(:ramp_election, veteran_file_number: "77776662", notice_date: 1.day.ago)
 
-    ramp_election = RampElection.create!(
-      veteran_file_number: "77776663",
-      notice_date: 7.days.ago,
-      receipt_date: 45.minutes.ago,
-      option_selected: :supplemental_claim,
-      established_at: Time.zone.now,
-      end_product_reference_id: "132",
-      end_product_status: "VERY_ACTIVE"
-    )
+    ramp_election = create(:ramp_election,
+                           veteran_file_number: "77776663",
+                           notice_date: 7.days.ago,
+                           receipt_date: 45.minutes.ago,
+                           option_selected: :supplemental_claim,
+                           established_at: Time.zone.now,
+                           end_product_reference_id: "132",
+                           end_product_status: "VERY_ACTIVE")
     # Create an election with multiple issues
     ramp_election.issues.create!(description: "an issue")
     ramp_election.issues.create!(description: "another issue")
     ramp_election.issues.create!(description: "yet another issue")
 
-    RampElection.create!(
-      veteran_file_number: "77776663",
-      notice_date: 5.days.ago,
-      receipt_date: 45.minutes.ago,
-      option_selected: :higher_level_review,
-      established_at: Time.zone.now,
-      end_product_reference_id: "132",
-      end_product_status: "HELLA_ACTIVE"
-    ).issues.create!(description: "this is the only issue here")
+    create(:ramp_election,
+           veteran_file_number: "77776663",
+           notice_date: 5.days.ago,
+           receipt_date: 45.minutes.ago,
+           option_selected: :higher_level_review,
+           established_at: Time.zone.now,
+           end_product_reference_id: "132",
+           end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
 
-    RampElection.create!(
-      veteran_file_number: "77776666",
-      notice_date: 5.days.ago,
-      receipt_date: 2.days.ago,
-      option_selected: :higher_level_review_with_hearing,
-      established_at: Time.zone.now
-    )
+    create(:ramp_election,
+           veteran_file_number: "77776666",
+           notice_date: 5.days.ago,
+           receipt_date: 2.days.ago,
+           option_selected: :higher_level_review_with_hearing,
+           established_at: Time.zone.now)
 
     RampClosedAppeal.create!(
       ramp_election_id: 5,
@@ -60,25 +57,16 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     # RAMP election with no notice date
-    RampElection.create!(
-      veteran_file_number: "77776663",
-      receipt_date: 45.minutes.ago,
-      option_selected: :higher_level_review,
-      established_at: Time.zone.now
-    )
+    create(:ramp_election,
+           veteran_file_number: "77776663",
+           receipt_date: 45.minutes.ago,
+           option_selected: :higher_level_review,
+           established_at: Time.zone.now)
 
     RampElectionIntake.create!(
       veteran_file_number: "1111",
       completed_at: 3.hours.ago,
       completion_status: :success,
-      user: current_user
-    )
-
-    RampElectionIntake.create!(
-      veteran_file_number: "1111",
-      completed_at: 2.hours.ago,
-      completion_status: :error,
-      error_code: :ramp_election_already_complete,
       user: current_user
     )
 
@@ -91,13 +79,12 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     [:supplemental_claim, :higher_level_review, :higher_level_review_with_hearing, :appeal].each do |type|
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 2.years.ago,
-        receipt_date: 1.year.ago,
-        option_selected: :supplemental_claim,
-        established_at: 1.year.ago + 2.days
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 2.years.ago,
+             receipt_date: 1.year.ago,
+             option_selected: :supplemental_claim,
+             established_at: 1.year.ago + 2.days)
 
       RampRefiling.create!(
         veteran_file_number: "64205555",

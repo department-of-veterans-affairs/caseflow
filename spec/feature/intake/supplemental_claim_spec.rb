@@ -28,6 +28,10 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:inaccessible) { false }
 
+  let(:receipt_date) { Date.new(2018, 4, 20) }
+
+  let(:untimely_days) { 372.days }
+
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
@@ -35,11 +39,23 @@ RSpec.feature "Supplemental Claim Intake" do
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: Date.new(2018, 4, 25),
-      profile_date: Date.new(2018, 4, 28),
+      promulgation_date: receipt_date - untimely_days + 1.day,
+      profile_date: receipt_date - untimely_days + 4.days,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
+      ]
+    )
+  end
+
+  let!(:untimely_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - untimely_days,
+      profile_date: receipt_date - untimely_days + 3.days,
+      issues: [
+        { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "def456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
@@ -115,15 +131,16 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_current_path("/intake/finish")
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/25/2018")
+    expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
+    expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 rated issues")
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
 
     expect(supplemental_claim).to_not be_nil
-    expect(supplemental_claim.receipt_date).to eq(Date.new(2018, 4, 20))
+    expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293"
     )
@@ -185,7 +202,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: Date.new(2018, 4, 28),
+      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied"
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(

@@ -4,12 +4,11 @@ describe RampElectionRollback do
   end
 
   let!(:ramp_election) do
-    RampElection.create!(
-      veteran_file_number: "44444444",
-      option_selected: "higher_level_review",
-      receipt_date: 5.days.ago,
-      end_product_reference_id: "EP1234"
-    )
+    create(:ramp_election,
+           veteran_file_number: "44444444",
+           option_selected: "higher_level_review",
+           receipt_date: 5.days.ago,
+           end_product_reference_id: "EP1234")
   end
 
   let(:rollback) do

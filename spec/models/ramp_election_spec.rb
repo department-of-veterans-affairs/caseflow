@@ -13,56 +13,47 @@ describe RampElection do
   let(:end_product_status) { nil }
 
   let(:ramp_election) do
-    RampElection.new(
-      veteran_file_number: veteran_file_number,
-      notice_date: notice_date,
-      option_selected: option_selected,
-      receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
-    )
+    build(:ramp_election,
+          veteran_file_number: veteran_file_number,
+          notice_date: notice_date,
+          option_selected: option_selected,
+          receipt_date: receipt_date,
+          end_product_reference_id: end_product_reference_id,
+          established_at: established_at,
+          end_product_status: end_product_status)
   end
 
   context ".active scope" do
     it "includes any RampElection where end_product_status is nil or not inactive" do
-      RampElection.create!(
-        veteran_file_number: "1",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        end_product_status: "ACTIVE"
-      )
-      RampElection.create!(
-        veteran_file_number: "11",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        established_at: Time.zone.now,
-        end_product_status: "ACTIVE"
-      )
-      RampElection.create!(
-        veteran_file_number: "2",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        end_product_status: EndProduct::INACTIVE_STATUSES.first
-      )
-      RampElection.create!(
-        veteran_file_number: "3",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        established_at: Time.zone.now
-      )
+      create(:ramp_election,
+             veteran_file_number: "1",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             end_product_status: "ACTIVE")
+      create(:ramp_election,
+             veteran_file_number: "11",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             established_at: Time.zone.now,
+             end_product_status: "ACTIVE")
+      create(:ramp_election,
+             veteran_file_number: "2",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             end_product_status: EndProduct::INACTIVE_STATUSES.first)
+      create(:ramp_election,
+             veteran_file_number: "3",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             established_at: Time.zone.now)
       expect(RampElection.active.count).to eq(2)
     end
   end
 
   context ".sync_all!" do
     it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
-      ramp_election1 = RampElection.create!(
-        veteran_file_number: "1"
-      )
-      ramp_election2 = RampElection.create!(
-        veteran_file_number: "2"
-      )
+      ramp_election1 = create(:ramp_election, veteran_file_number: "1")
+      ramp_election2 = create(:ramp_election, veteran_file_number: "2")
       expect(ramp_election1).to receive(:recreate_issues_from_contentions!)
       expect(ramp_election1).to receive(:sync_ep_status!)
       expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
@@ -84,7 +75,7 @@ describe RampElection do
 
     context "when option_selected is nil" do
       it "raises error" do
-        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+        expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
       end
     end
 
@@ -96,7 +87,7 @@ describe RampElection do
         let(:receipt_date) { nil }
 
         it "raises error" do
-          expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+          expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
         end
       end
 
@@ -486,16 +477,15 @@ describe RampElection do
     subject { ramp_election.rollback! }
 
     let!(:ramp_election) do
-      RampElection.create!(
-        veteran_file_number: "44444444",
-        notice_date: 31.days.ago,
-        option_selected: "higher_level_review",
-        receipt_date: 5.days.ago,
-        end_product_reference_id: "1234",
-        established_at: 3.days.ago,
-        end_product_status: "CAN",
-        end_product_status_last_synced_at: Time.zone.now
-      )
+      create(:ramp_election,
+             veteran_file_number: "44444444",
+             notice_date: 31.days.ago,
+             option_selected: "higher_level_review",
+             receipt_date: 5.days.ago,
+             end_product_reference_id: "1234",
+             established_at: 3.days.ago,
+             end_product_status: "CAN",
+             end_product_status_last_synced_at: Time.zone.now)
     end
 
     let!(:ramp_closed_appeals) do
