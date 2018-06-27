@@ -43,15 +43,15 @@ module QueueMapper
   }.freeze
 
   WORK_PRODUCTS = {
-    DEC: "Decision",
-    IME: "OMO - IME",
-    VHA: "OMO - VHA"
+    "DEC" => "Decision",
+    "IME" => "OMO - IME",
+    "VHA" => "OMO - VHA"
   }.freeze
 
   OVERTIME_WORK_PRODUCTS = {
-    OTD: "Decision",
-    OTI: "OMO - IME",
-    OTV: "OMO - VHA"
+    "OTD" => "Decision",
+    "OTI" => "OMO - IME",
+    "OTV" => "OMO - VHA"
   }.freeze
 
   def self.rename_and_validate_decass_attrs(decass_attrs)

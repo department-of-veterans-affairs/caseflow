@@ -3,7 +3,13 @@ describe JudgeLegacyTask do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
   context "#from_vacols" do
-    subject { JudgeLegacyTask.from_vacols(case_assignment, User.new(css_id: "USER_ID")) }
+    subject do
+      JudgeLegacyTask.from_vacols(
+        case_assignment,
+        LegacyAppeal.create(vacols_id: "1111"),
+        User.new(css_id: "USER_ID")
+      )
+    end
 
     context "when there is information about the case assignment" do
       let(:case_assignment) do
