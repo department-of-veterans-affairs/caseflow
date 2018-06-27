@@ -42,13 +42,13 @@ class Fakes::BGSService
           ]
         )
       when "has_supplemental_claim_with_vbms_claim_id"
-        claim_id = ""
+        claim_id = "600118926"
         SupplementalClaim.find_or_create_by!(
           veteran_file_number: veteran.file_number,
           end_product_reference_id: claim_id
         )
       when "has_higher_level_review_with_vbms_claim_id"
-        claim_id = ""
+        claim_id = "600118951"
         HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number,
           end_product_reference_id: claim_id
