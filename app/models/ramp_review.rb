@@ -77,6 +77,10 @@ class RampReview < ApplicationRecord
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
   end
 
+  def valid_modifiers
+    [end_product_modifier]
+  end
+
   def end_product_station
     "397" # AMC
   end

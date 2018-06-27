@@ -24,9 +24,7 @@ class EndProductEstablishment
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
-  def contentions
-    end_product_to_establish.contentions
-  end
+  delegate :contentions, to: :end_product_to_establish
 
   private
 
@@ -42,10 +40,20 @@ class EndProductEstablishment
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
-      modifier: valid_modifiers.first,
+      modifier: end_product_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
       station_of_jurisdiction: station
     )
+  end
+
+  def end_product_modifier
+    return valid_modifiers.first if valid_modifiers.count == 1
+
+    valid_modifiers.each do |modifier|
+      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
+        return modifier
+      end
+    end
   end
 end
