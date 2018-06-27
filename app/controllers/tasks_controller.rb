@@ -2,19 +2,21 @@ class TasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
 
-  ROLES = %w[attorney].freeze
-
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction
   }.freeze
+
+  QUEUES = {
+    attorney: AttorneyQueue
+  }
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def index
-    return invalid_role_error unless ROLES.include?(params[:role])
-    tasks = (params[:role].capitalize + "Queue").constantize.new(user: user).tasks
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
+    tasks = queue_class.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
 
@@ -29,6 +31,10 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def queue_class
+    QUEUES[params[:role].try(:to_sym)]
+  end
 
   def user
     @user ||= User.find(params[:user_id])
