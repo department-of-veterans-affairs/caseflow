@@ -208,7 +208,7 @@ const initialTaskAssignment = ({ task, assigneeId }) => ({
   }
 });
 
-export const initialAssignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
+export const initialAssignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) => (dispatch) =>
   Promise.all(tasks.map((oldTask) => {
     return ApiUtil.post(
       '/legacy_tasks',
@@ -223,6 +223,7 @@ export const initialAssignTasksToUser = ({ tasks, assigneeId }) => (dispatch) =>
           task.vacolsId = task.id;
           dispatch(initialTaskAssignment({ task,
             assigneeId }));
+          dispatch(setSelectionOfTaskOfUser({userId: previousAssigneeId, taskId: task.id, selected: false}));
         });
   }));
 
@@ -249,5 +250,6 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
           dispatch(taskReassignment({ task,
             assigneeId,
             previousAssigneeId }));
+          dispatch(setSelectionOfTaskOfUser({userId: previousAssigneeId, taskId: task.id, selected: false}));
         });
   }));
