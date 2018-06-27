@@ -8,7 +8,7 @@ class TasksController < ApplicationController
 
   QUEUES = {
     attorney: AttorneyQueue
-  }
+  }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
