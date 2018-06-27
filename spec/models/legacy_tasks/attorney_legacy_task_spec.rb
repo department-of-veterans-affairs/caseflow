@@ -3,7 +3,7 @@ describe AttorneyLegacyTask do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
   end
 
-  context "#from_vacols", focus: true do
+  context "#from_vacols" do
     subject do
       AttorneyLegacyTask.from_vacols(
         case_assignment,
