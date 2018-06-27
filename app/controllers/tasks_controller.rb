@@ -18,9 +18,7 @@ class TasksController < ApplicationController
 
     tasks = (current_role.capitalize + "Queue").constantize.new(user: user).tasks
 
-    render json: {
-      tasks: json_tasks(tasks)
-    }
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def create
