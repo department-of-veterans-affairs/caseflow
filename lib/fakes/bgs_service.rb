@@ -43,16 +43,17 @@ class Fakes::BGSService
         )
       when "has_supplemental_claim_with_vbms_claim_id"
         claim_id = ""
-        supplemental_claim = SupplementalClaim.find_or_create_by!(
+        SupplementalClaim.find_or_create_by!(
           veteran_file_number: veteran.file_number,
           end_product_reference_id: claim_id
         )
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = ""
-        higher_level_review = HigherLevelReview.find_or_create_by!(
+        HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number,
           end_product_reference_id: claim_id
         )
+      end
     end
   end
 
