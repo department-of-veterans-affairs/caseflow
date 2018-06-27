@@ -2,7 +2,7 @@ describe RampElectionSyncJob do
   context ".perform" do
     let!(:ramp_election) { create(:ramp_election, :established) }
 
-    it "syncs ramp election", focus: true do
+    it "syncs ramp election" do
       RampElectionSyncJob.perform_now(ramp_election.id)
 
       expect(RequestStore.store[:current_user].id).to eq(User.system_user.id)
