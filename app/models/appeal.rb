@@ -1,4 +1,8 @@
 class Appeal < AmaReview
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
+
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
@@ -21,15 +25,6 @@ class Appeal < AmaReview
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def create_claimants!(claimant_data:)
-    claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
   end
 
   def create_issues!(request_issues_data:)

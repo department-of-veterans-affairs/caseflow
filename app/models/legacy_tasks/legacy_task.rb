@@ -24,14 +24,14 @@ class LegacyTask
   end
   ### Serializer Methods End
 
-  def self.from_vacols(record, user)
+  def self.from_vacols(record, appeal, user)
     new(
       id: record.vacols_id,
       due_on: record.date_due,
       docket_name: "legacy",
       added_by: record.added_by,
       docket_date: record.docket_date,
-      appeal_id: LegacyAppeal.find_or_create_by_vacols_id(record.vacols_id).id,
+      appeal_id: appeal.id,
       assigned_to: user,
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,

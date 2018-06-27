@@ -11,41 +11,6 @@ RSpec.describe TasksController, type: :controller do
     FeatureToggle.disable!(:judge_queue)
   end
 
-  describe "GET tasks/xxx" do
-    let(:user) { FactoryBot.create(:user) }
-    before do
-      User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
-    end
-
-    context "user is an attorney" do
-      let(:role) { :attorney_role }
-
-      it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
-      end
-    end
-
-    context "user is a judge" do
-      let(:role) { :judge_role }
-
-      it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
-      end
-    end
-
-    context "user is neither judge nor attorney" do
-      let(:role) { nil }
-
-      it "should not process the request succesfully" do
-        get :index, params: { user_id: user.id }
-        expect(response.status).to eq 302
-      end
-    end
-  end
-
   describe "POST /tasks" do
     let(:attorney) { FactoryBot.create(:user) }
     let(:user) { FactoryBot.create(:user) }
