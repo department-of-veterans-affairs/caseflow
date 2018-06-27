@@ -329,6 +329,44 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.TASK_REASSIGNED: {
+    const vacolsId = action.payload.task.id;
+    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[vacolsId];
+
+    return update(state, {
+      tasks: {
+        [vacolsId]: {
+          $set: action.payload.task
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.previousAssigneeId]: {
+          data: {
+            tasks: {
+              $unset: [vacolsId]
+            },
+            appeals: {
+              $unset: [vacolsId]
+            }
+          }
+        },
+        [action.payload.assigneeId]: {
+          data: {
+            tasks: {
+              [vacolsId]: {
+                $set: action.payload.task
+              }
+            },
+            appeals: {
+              [vacolsId]: {
+                $set: appeal
+              }
+            }
+          }
+        }
+      }
+    });
+  }
   default:
     return state;
   }
