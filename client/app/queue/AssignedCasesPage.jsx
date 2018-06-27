@@ -5,7 +5,7 @@ import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { setSelectionOfTaskOfUser, reassignTasksToUser } from './QueueActions';
+import { reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
 import AssignWidget from '../components/AssignWidget';
 
@@ -67,5 +67,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  (dispatch) => (bindActionCreators({ setSelectionOfTaskOfUser,
+  (dispatch) => (bindActionCreators({
     reassignTasksToUser }, dispatch)))(AssignedCasesPage);

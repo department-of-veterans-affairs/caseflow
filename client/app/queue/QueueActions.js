@@ -223,7 +223,9 @@ export const initialAssignTasksToUser = ({ tasks, assigneeId, previousAssigneeId
           task.vacolsId = task.id;
           dispatch(initialTaskAssignment({ task,
             assigneeId }));
-          dispatch(setSelectionOfTaskOfUser({userId: previousAssigneeId, taskId: task.id, selected: false}));
+          dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
+            taskId: task.id,
+            selected: false }));
         });
   }));
 
@@ -250,6 +252,8 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
           dispatch(taskReassignment({ task,
             assigneeId,
             previousAssigneeId }));
-          dispatch(setSelectionOfTaskOfUser({userId: previousAssigneeId, taskId: task.id, selected: false}));
+          dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
+            taskId: task.id,
+            selected: false }));
         });
   }));
