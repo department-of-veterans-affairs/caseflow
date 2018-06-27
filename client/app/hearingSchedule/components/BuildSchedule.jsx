@@ -42,6 +42,7 @@ export default class BuildSchedule extends React.Component {
         valueName: 'download'
       }
     ];
+
     const downloadOptions = [
       {
         title: 'RO/CO hearings',
@@ -67,10 +68,8 @@ export default class BuildSchedule extends React.Component {
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
       <DropdownButton
         lists={downloadOptions}
-        onClick={this.handleMenuClick}
         label={COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
       />
-
       <Link
         name="upload-files"
         button="primary"
