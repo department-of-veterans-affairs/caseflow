@@ -3,9 +3,11 @@ class SupplementalClaimsController < ApplicationController
 
   private
 
-  def supplemental_clai
-    @supplemental_clai  ||= SupplementalClaim.find_by!(end_product_reference_id: params[:claim_id])
+  def supplemental_claim
+    @supplemental_claim  ||= SupplementalClaim.find_by!(end_product_reference_id: params[:claim_id])
   end
+
+  helper_method :supplemental_claim
 
   def set_application
     RequestStore.store[:application] = "intake"

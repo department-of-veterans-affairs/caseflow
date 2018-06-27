@@ -21,15 +21,31 @@ class Fakes::BGSService
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
-    end
-  end
+      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
 
-  def self.stub_intake_data
-    veteran = Veteran.find_or_create_by_file_number("375273128")
-    Generators::Rating.build(
-      participant_id: veteran.participant_id
-    )
+      case row_hash["bgs_key"]
+      when "has_rating"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+      when "has_many_ratings"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            {
+              decision_text: "Left knee"
+            },
+            {
+              decision_text: "PTSD"
+            }
+          ]
+        )
+      end
+    end
   end
 
   # rubocop:disable Metrics/MethodLength

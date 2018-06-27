@@ -191,5 +191,11 @@ RSpec.feature "Higher Level Review Intake" do
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments"
     )
+
+    visit "/higher_level_reviews/IAMANEPID/edit"
+    expect(page).to have_content("Veteran Name: Ed Merica")
+
+    visit "/higher_level_reviews/4321/edit"
+    expect(page).to have_content("Page not found")
   end
 end
