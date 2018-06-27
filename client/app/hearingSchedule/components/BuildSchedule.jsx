@@ -45,11 +45,9 @@ export default class BuildSchedule extends React.Component {
     const downloadOptions = [
       {
         title: 'RO/CO hearings',
-        value: 'RO/CO hearings',
         target: '/hearings/roco' },
       {
         title: 'Judge Non-availability',
-        value: 'Judge Non-availability',
         target: '/hearings/judge' }
     ];
 

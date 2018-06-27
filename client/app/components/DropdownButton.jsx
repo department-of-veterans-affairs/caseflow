@@ -23,8 +23,6 @@ export default class DropdownButton extends React.Component {
     };
   }
 
-  onClick = () => {}
-
   onMenuClick = () => {
     this.setState((prevState) => ({
       menu: !prevState.menu
@@ -42,8 +40,7 @@ export default class DropdownButton extends React.Component {
         {lists.map((list, index) =>
           <li key={index}>
             <Link className="usa-button-outline usa-button"
-              href={list.target}
-              onClick={this.onClick(list.title)}>{list.title}</Link>
+              href={list.target} >{list.title}</Link>
           </li>)}
       </ul>;
     };
