@@ -7,7 +7,7 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  class BGSEndProductSyncError < Exception
+  class BGSEndProductSyncError < RuntimeError
     def initialize(error, ramp_election)
       super(error.message + "\n\n ramp_election_id: #{ramp_election.id}").tap do |result|
         result.set_backtrace(error.backtrace)
