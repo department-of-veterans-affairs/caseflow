@@ -17,6 +17,6 @@ const definitionListStyling = css({
   )
 });
 
-export default class CaseDetailsDescriptionList extends React.PureComponent {
-  render = () => <dl {...definitionListStyling}>{this.props.children}</dl>
-}
+const CaseDetailsDescriptionList = (props) => <dl {...definitionListStyling}>{props.children}</dl>;
+
+export default CaseDetailsDescriptionList;
