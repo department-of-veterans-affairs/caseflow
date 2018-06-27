@@ -11,4 +11,12 @@ module AddressMapper
       zip: bgs_address[:zip_prefix_nbr]
     }
   end
+
+  def get_name_and_address_from_bgs_info(bgs_info)
+    return {} unless bgs_info
+    {
+      name: bgs_info[:payee_name] && bgs_info[:payee_name].gsub(/\s+/, " "),
+      relationship: bgs_info[:payee_type_name]
+    }
+  end
 end
