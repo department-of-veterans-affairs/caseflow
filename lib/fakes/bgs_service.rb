@@ -16,6 +16,7 @@ class Fakes::BGSService
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
 
+  # rubocop:disable Metrics/MethodLength
   def self.create_veteran_records
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
@@ -48,7 +49,6 @@ class Fakes::BGSService
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
     [
