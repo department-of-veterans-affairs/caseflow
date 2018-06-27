@@ -287,6 +287,10 @@ class Fakes::BGSService
     get_address_from_bgs_address(address)
   end
 
+  def fetch_claimant_info_by_participant_id(_participant_id)
+    default_claimant_info
+  end
+
   def fetch_file_number_by_ssn(ssn)
     ssn_not_found ? nil : ssn
   end
@@ -391,6 +395,13 @@ class Fakes::BGSService
   # rubocop:enable Metrics/MethodLength
 
   private
+
+  def default_claimant_info
+    {
+      name: "Harry Carey",
+      relationship: "Spouse"
+    }
+  end
 
   def default_power_of_attorney_record
     {
