@@ -81,6 +81,8 @@ class ExternalApi::BGSService
         client.address.find_all_by_participant_id(participant_id)
       end
       if bgs_address
+        # Count on addresses being sorted with most recent first if we return a list of addresses.
+        bgs_address = bgs_address[0] if bgs_address.is_a?(Array)
         @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
       end
     end
@@ -127,6 +129,18 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "rating_profile.find") do
       client.rating_profile.find(participant_id: participant_id, profile_date: profile_date)
+    end
+  end
+
+  def fetch_claimant_info_by_participant_id(participant_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: fetch claimant info: \
+                           participant_id = #{participant_id}",
+                          service: :bgs,
+                          name: "claimants.find_general_information_by_participant_id") do
+      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      get_name_and_address_from_bgs_info(basic_info)
     end
   end
 

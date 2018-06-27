@@ -43,12 +43,12 @@ class AmaReview < ApplicationRecord
   end
 
   def end_product_description
-    end_product_reference_id && end_product_to_establish.description_with_routing
+    end_product_establishment.description
   end
 
-  def pending_end_product_description
+  def end_product_base_modifier
     # This is for EPs not yet created or that failed to create
-    end_product_to_establish.modifier
+    end_product_establishment.valid_modifiers.first
   end
 
   def veteran

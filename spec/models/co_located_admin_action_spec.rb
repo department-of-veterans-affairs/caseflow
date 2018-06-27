@@ -18,17 +18,37 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:aoj],
+          titles: [:aoj, :poa_clarification],
           appeal: appeal
         )
       end
+
       it "creates a co-located task successfully" do
         expect(subject.first.valid?).to be true
         expect(subject.first.status).to eq "assigned"
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
+        expect(subject.first.title).to eq "aoj"
         expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+
+        expect(subject.second.valid?).to be true
+        expect(subject.second.status).to eq "assigned"
+        expect(subject.second.assigned_at).to_not eq nil
+        expect(subject.second.assigned_by).to eq attorney
+        expect(subject.second.title).to eq "poa_clarification"
+        expect(subject.second.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
+
+        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
+
+        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
+
+        # should start from index 0
+        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
       end
     end
 
