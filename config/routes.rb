@@ -128,6 +128,10 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
