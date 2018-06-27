@@ -54,7 +54,6 @@ class CaseDetailsView extends React.PureComponent {
       featureToggles={this.props.featureToggles}
       loadedQueueAppealIds={this.props.loadedQueueAppealIds}
       task={this.props.task}
-      userRole={this.props.userRole}
     />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
@@ -70,12 +69,11 @@ class CaseDetailsView extends React.PureComponent {
 CaseDetailsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
   featureToggles: PropTypes.object,
-  userRole: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
   error: state.ui.messages.error,
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
