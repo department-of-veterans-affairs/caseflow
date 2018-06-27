@@ -6,21 +6,20 @@ class Hearings::HearingDayController < ApplicationController
 
   # show schedule days for date range provided
   def index
-    # rubocop:disable Metrics/LineLength
-    @start_date = params[:start_date].nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(params[:start_date])
-    # rubocop:enable Metrics/LineLength
-    @end_date = params[:end_date].nil? ? Time.zone.today.beginning_of_day : Date.parse(params[:end_date])
-    video_and_co, travel_board = HearingDay.load_days_for_range(@start_date, @end_date)
-    @hearings = json_hearings(video_and_co)
-    @tbhearings = json_tb_hearings(travel_board)
+    @start_date = validate_start_date(params[:start_date])
+    @end_date = validate_end_date(params[:end_date])
+    regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
+
+    video_and_co, travel_board = HearingDay.load_days(@start_date, @end_date, regional_office)
+
     respond_to do |format|
       format.html do
         render "hearings/schedule_index"
       end
       format.json do
         render json: {
-          hearings: @hearings,
-          tbhearings: @tbhearings
+          hearings: json_hearings(video_and_co),
+          tbhearings: json_tb_hearings(travel_board)
         }
       end
     end
@@ -28,7 +27,7 @@ class Hearings::HearingDayController < ApplicationController
 
   # Create a hearing schedule day
   def create
-    hearing = HearingDay.create_hearing_day(params)
+    hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) unless hearing.valid?
     render json: {
       hearing: json_hearings(hearing)
@@ -38,7 +37,7 @@ class Hearings::HearingDayController < ApplicationController
   def update
     return record_not_found unless hearing
 
-    updated_hearing = HearingDay.update_hearing_day(hearing, params)
+    updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
     render json: {
       hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
     }, status: :ok
@@ -64,16 +63,23 @@ class Hearings::HearingDayController < ApplicationController
   end
 
   def update_params
-    params.require("hearing").permit(:board_member,
-                                     :representative)
+    params.permit(:judge_id, :regional_office)
   end
 
   def create_params
-    params.require("hearing").permit(:hearing_type,
-                                     :hearing_date,
-                                     :room,
-                                     :board_member,
-                                     :representative)
+    params.permit(:hearing_type,
+                  :hearing_date,
+                  :room_info,
+                  :judge_id,
+                  :regional_office)
+  end
+
+  def validate_start_date(start_date)
+    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
+  end
+
+  def validate_end_date(end_date)
+    end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
   end
 
   def set_application

@@ -13,14 +13,13 @@ describe RampRefiling do
   let(:appeal_docket) { nil }
 
   let!(:completed_ramp_election) do
-    RampElection.create!(
-      veteran_file_number: veteran_file_number,
-      notice_date: 3.days.ago,
-      receipt_date: 2.days.ago,
-      option_selected: original_election_option,
-      end_product_reference_id: "123",
-      established_at: 1.day.ago
-    )
+    create(:ramp_election,
+           veteran_file_number: veteran_file_number,
+           notice_date: 3.days.ago,
+           receipt_date: 2.days.ago,
+           option_selected: original_election_option,
+           end_product_reference_id: "123",
+           established_at: 1.day.ago)
   end
 
   let(:ramp_refiling) do
