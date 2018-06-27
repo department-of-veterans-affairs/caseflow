@@ -28,7 +28,7 @@ describe Claimant do
   end
 
   context "lazy loading instance attributes from BGS" do
-    let(:claimant) { FactoryBoy.create(:claimant) }
+    let(:claimant) { FactoryBot.create(:claimant) }
 
     context "when claimant exists in BGS" do
       let(:name) { "POTTER HARRY" }
@@ -49,14 +49,14 @@ describe Claimant do
           receive(:fetch_claimant_info_by_participant_id).and_return(claimant_info)
         )
 
-        expect(subject.name).to eq name
-        expect(subject.relationship).to eq relationship_to_veteran
-        expect(subject.address_line_1).to eq address_line_1
-        expect(subject.address_line_2).to eq address_line_2
-        expect(subject.city).to eq city
-        expect(subject.state).to eq state
-        expect(subject.zip).to eq zip_code
-        expect(subject.country).to eq country
+        expect(claimant.name).to eq name
+        expect(claimant.relationship).to eq relationship_to_veteran
+        expect(claimant.address_line_1).to eq address_line_1
+        expect(claimant.address_line_2).to eq address_line_2
+        expect(claimant.city).to eq city
+        expect(claimant.state).to eq state
+        expect(claimant.zip).to eq zip_code
+        expect(claimant.country).to eq country
       end
     end
   end
