@@ -45,10 +45,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser
-  }, dispatch)
-);
+  }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(UnassignedCasesPage);
