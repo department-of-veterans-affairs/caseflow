@@ -56,7 +56,7 @@ RSpec.describe TasksController, type: :controller do
           }
         end
 
-        it "should be successful", focus: true do
+        it "should be successful" do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
           response_body = JSON.parse(response.body)
