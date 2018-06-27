@@ -13,11 +13,8 @@ class TasksController < ApplicationController
   end
 
   def index
-    current_role = params[:role] || current_user.vacols_roles.first
-    return invalid_role_error unless ROLES.include?(current_role)
-
-    tasks = (current_role.capitalize + "Queue").constantize.new(user: user).tasks
-
+    return invalid_role_error unless ROLES.include?(params[:role])
+    tasks = (params[:role].capitalize + "Queue").constantize.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
 

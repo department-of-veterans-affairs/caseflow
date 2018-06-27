@@ -22,7 +22,7 @@ RSpec.describe TasksController, type: :controller do
       create(:colocated_admin_action)
     end
 
-    context "user is an attorney" do
+    context "when user is an attorney" do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
@@ -40,11 +40,22 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    context "user is neither judge nor attorney" do
+    context "when user is an attorney and has no tasks" do
+      let(:role) { :attorney_role }
+
+      it "should process the request succesfully" do
+        get :index, params: { user_id: create(:user).id, role: "attorney" }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 0
+      end
+    end
+
+    context "when user is neither judge nor attorney" do
       let(:role) { nil }
 
       it "should not process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: user.id, role: "unknown" }
         expect(response.status).to eq 302
       end
     end
