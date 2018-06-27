@@ -43,19 +43,17 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if matching_end_product
+    return connect_end_product! if end_product_establishment.preexisting_end_product
 
     establish_end_product! && :created
   end
 
   def end_product_description
-    end_product_reference_id && end_product_to_establish.description_with_routing
+    end_product_establishment.description
   end
 
-  # TODO: rename
-  def pending_end_product_description
-    # This is for EPs not yet created or that failed to create
-    end_product_to_establish.modifier
+  def end_product_base_modifier
+    end_product_establishment.valid_modifiers.first
   end
 
   private
@@ -64,14 +62,9 @@ class RampReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  # Find an end product that has the traits of the end product that should be created.
-  def matching_end_product
-    @matching_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
-  end
-
   def connect_end_product!
     update!(
-      end_product_reference_id: matching_end_product.claim_id,
+      end_product_reference_id: end_product_establishment.preexisting_end_product.claim_id,
       established_at: Time.zone.now
     ) && :connected
   end
@@ -82,6 +75,10 @@ class RampReview < ApplicationRecord
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
+  end
+
+  def valid_modifiers
+    [end_product_modifier]
   end
 
   def end_product_station
