@@ -68,7 +68,7 @@ class CaseDetailsView extends React.PureComponent {
 
 CaseDetailsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  featureToggles: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
