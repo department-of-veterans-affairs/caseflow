@@ -15,6 +15,19 @@ class EndProductEstablishment
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  def description
+    reference_id && end_product_to_establish.description_with_routing
+  end
+
+  # Find an end product that has the traits of the end product that should be created.
+  def preexisting_end_product
+    @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
+  end
+
+  def contentions
+    end_product_to_establish.contentions
+  end
+
   private
 
   def establish_claim_in_vbms(end_product)

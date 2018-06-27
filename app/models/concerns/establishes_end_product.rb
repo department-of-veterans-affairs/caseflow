@@ -59,18 +59,6 @@ module EstablishesEndProduct
     !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
   end
 
-  def end_product_to_establish
-    @end_product_to_establish ||= EndProduct.new(
-      claim_id: end_product_reference_id,
-      claim_date: receipt_date,
-      claim_type_code: end_product_code,
-      modifier: end_product_modifier,
-      suppress_acknowledgement_letter: false,
-      gulf_war_registry: false,
-      station_of_jurisdiction: end_product_station
-    )
-  end
-
   def end_product_establishment
     @end_product_establishment ||= EndProductEstablishment.new(
       veteran: veteran,
