@@ -45,4 +45,8 @@ class Appeal < AmaReview
   def serializer_class
     ::WorkQueue::AppealSerializer
   end
+
+  def docket_number
+    "#{established_at.strftime("%y%m%d")}-#{id}"
+  end
 end
