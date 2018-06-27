@@ -4,10 +4,14 @@ class Reader::DocumentsController < Reader::ApplicationController
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
       format.json do
-        AppealView.find_or_create_by(
+        appeal_view = AppealView.find_by(
           appeal_id: appeal.id,
           user_id: current_user.id
-        ).tap do |t|
+        ) || AppealView.create(
+          appeal: appeal,
+          user_id: current_user.id
+        )
+        appeal_view.tap do |t|
           t.update!(last_viewed_at: Time.zone.now)
         end
         MetricsService.record "Get appeal #{appeal_id} document data" do
