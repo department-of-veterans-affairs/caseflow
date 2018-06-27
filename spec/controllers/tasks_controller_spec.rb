@@ -18,6 +18,7 @@ RSpec.describe TasksController, type: :controller do
       create(:staff, role, sdomainid: user.css_id)
       create(:colocated_admin_action, assigned_by: user)
       create(:colocated_admin_action, assigned_by: user)
+      create(:colocated_admin_action, assigned_by: user, status: "completed")
       create(:colocated_admin_action)
     end
 
@@ -27,8 +28,15 @@ RSpec.describe TasksController, type: :controller do
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
-        response_body = JSON.parse(response_body["tasks"]["data"])
+        response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.second["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
       end
     end
 
