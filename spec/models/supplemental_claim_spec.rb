@@ -114,7 +114,7 @@ describe SupplementalClaim do
       let(:receipt_date) { nil }
 
       it "raises error" do
-        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+        expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
       end
     end
 

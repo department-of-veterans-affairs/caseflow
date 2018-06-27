@@ -5,10 +5,6 @@ RSpec.describe HomeController, type: :controller do
     User.user_repository = Fakes::UserRepository
   end
 
-  before :each do
-    FeatureToggle.redis.flushall
-  end
-
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }
@@ -32,8 +28,16 @@ RSpec.describe HomeController, type: :controller do
 
     context "when visitor is logged in, does not have a personal queue but does have case search access" do
       let!(:current_user) { User.authenticate!(css_id: "BVAAABSHIRE") }
-      it "should land at /" do
+
+      before do
         FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
+      it "should land at /" do
         get :index
         expect(response.status).to eq 200
       end
@@ -53,8 +57,16 @@ RSpec.describe HomeController, type: :controller do
 
     context "when visitor is logged in, has a personal queue and case search access" do
       let!(:current_user) { User.authenticate! }
-      it "should redirect to /queue" do
+
+      before do
         FeatureToggle.enable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:case_search_home_page, users: [current_user.css_id])
+      end
+
+      it "should redirect to /queue" do
         get :index
         expect(response.status).to eq 302
         expect(URI.parse(response.location).path).to eq("/queue")

@@ -13,10 +13,13 @@ FactoryBot.define do
     trait :assigned do
       transient do
         decass_count 1
+        user nil
       end
 
       after(:create) do |vacols_case, evaluator|
-        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+        slogid = create(:staff, user: evaluator.user).slogid if evaluator.user
+        vacols_case.update!(bfcurloc: slogid) if slogid
+        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey, deadusr: slogid ? slogid : "TEST")
       end
     end
 
@@ -112,6 +115,10 @@ FactoryBot.define do
       bfac "1"
     end
 
+    trait :type_post_remand do
+      bfac "3"
+    end
+
     trait :type_reconsideration do
       bfac "4"
     end
@@ -159,6 +166,10 @@ FactoryBot.define do
 
     trait :disposition_granted_by_aoj do
       bfdc "B"
+    end
+
+    trait :disposition_merged do
+      bfdc "M"
     end
 
     trait :disposition_ramp do

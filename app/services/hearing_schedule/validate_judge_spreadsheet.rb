@@ -1,11 +1,7 @@
 class HearingSchedule::ValidateJudgeSpreadsheet
-  JUDGE_NON_AVAILABILITY_SHEET = 0
-  HEADER_COLUMNS = 7
-  NAME_COLUMN = 2
-  CSS_ID_COLUMN = 3
-  DATE_COLUMN = 4
-  SEVENTH_EXAMPLE_ROW = [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")].freeze
   SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
+  SPREADSHEET_EXAMPLE_ROW = [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")].freeze
+  SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   class JudgeDatesNotCorrectFormat < StandardError; end
   class JudgeTemplateNotFollowed < StandardError; end
@@ -14,48 +10,35 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   class JudgeNotInDatabase < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
-    @spreadsheet = spreadsheet
+    get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+    @spreadsheet_template = get_spreadsheet_data.judge_non_availability_template
+    @spreadsheet_data = get_spreadsheet_data.judge_non_availability_data
     @start_date = start_date
     @end_date = end_date
   end
 
-  def judge_non_availability_template
-    @spreadsheet.sheet(JUDGE_NON_AVAILABILITY_SHEET)
-  end
-
-  def judge_non_availability_dates
-    non_availability_dates = []
-    names = judge_non_availability_template.column(NAME_COLUMN).drop(HEADER_COLUMNS)
-    css_ids = judge_non_availability_template.column(CSS_ID_COLUMN).drop(HEADER_COLUMNS)
-    dates = judge_non_availability_template.column(DATE_COLUMN).drop(HEADER_COLUMNS)
-    names.zip(css_ids, dates).each do |row|
-      non_availability_dates.push("name" => row[0], "css_id" => row[1], "date" => row[2])
-    end
-    non_availability_dates
-  end
-
   def validate_judge_non_availability_template
-    unless judge_non_availability_template.column(1)[0] == SPREADSHEET_TITLE &&
-           judge_non_availability_template.row(7).uniq == SEVENTH_EXAMPLE_ROW &&
-           judge_non_availability_template.column(5).uniq == [nil]
+    unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
+           @spreadsheet_template[:example_row] == SPREADSHEET_EXAMPLE_ROW &&
+           @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
       fail JudgeTemplateNotFollowed
     end
   end
 
   def validate_judge_non_availability_dates
-    unless judge_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
+    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
       fail JudgeDatesNotCorrectFormat
     end
-    unless judge_non_availability_dates.uniq == judge_non_availability_dates
+    unless @spreadsheet_data.uniq == @spreadsheet_data
       fail JudgeDatesNotUnique
     end
-    unless judge_non_availability_dates.all? do |row|
-      row["date"] > @start_date &&
-      row["date"] < @end_date
+    unless @spreadsheet_data.all? do |row|
+      row["date"] >= @start_date &&
+      row["date"] <= @end_date
     end
       fail JudgeDatesNotInRange
     end
-    unless judge_non_availability_dates.all? do |row|
+    unless @spreadsheet_data.all? do |row|
              User.where(css_id: row["css_id"],
                         full_name: row["name"].split(", ").reverse.join(" ")).count > 0
            end

@@ -1,13 +1,11 @@
 import React from 'react';
 import _ from 'lodash';
 import StringUtil from '../util/StringUtil';
-import {
-  redText,
-  DECISION_TYPES
-} from './constants';
+import { redText } from './constants';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 export const associateTasksWithAppeals = (serverData = {}) => {
   const {
@@ -17,10 +15,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 
   // todo: Attorneys currently only have one task per appeal, but future users might have multiple
   _.each(tasks, (task) => {
-    task.vacolsId = _(appeals).
-      filter((appeal) => appeal.attributes.vacols_id === task.attributes.appeal_id).
-      map('attributes.vacols_id').
-      head();
+    task.vacolsId = task.id;
   });
 
   const tasksById = _.keyBy(tasks, 'id');

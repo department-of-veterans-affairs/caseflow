@@ -27,7 +27,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
-      $set: state.ratings || formatRatings(serverIntake.ratings)
+      $set: formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -105,7 +105,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
-    return update(state, {
+    return updateFromServerIntake(update(state, {
       docketTypeError: {
         $set: null
       },
@@ -120,7 +120,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       docketTypeError: {

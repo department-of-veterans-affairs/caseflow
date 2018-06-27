@@ -10,7 +10,7 @@ describe HearingDay do
       let(:hearing_hash) do
         { hearing_type: "C",
           hearing_date: VacolsHelper.local_date_with_utc_timezone,
-          room: "1" }
+          room_info: "1" }
       end
 
       it "creates hearing with required attributes" do
@@ -24,9 +24,8 @@ describe HearingDay do
       let(:hearing_hash) do
         { hearing_type: "C",
           hearing_date: VacolsHelper.local_date_with_utc_timezone,
-          representative: "RO89",
-          room: "5",
-          representative_name: "General Counsel" }
+          regional_office: "RO89",
+          room_info: "5" }
       end
 
       it "creates a video hearing" do
@@ -34,7 +33,6 @@ describe HearingDay do
         expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone
         expect(hearing.folder_nr).to eq "VIDEO RO89"
         expect(hearing.room).to eq "5"
-        expect(hearing.repname).to eq "General Counsel"
       end
     end
   end
