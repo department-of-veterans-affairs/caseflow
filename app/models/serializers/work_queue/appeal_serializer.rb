@@ -54,6 +54,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
+    "BEAAM"
   end
 
   attribute :aod do
