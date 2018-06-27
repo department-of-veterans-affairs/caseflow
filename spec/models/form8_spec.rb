@@ -1,4 +1,12 @@
 describe Form8 do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,
@@ -11,17 +19,20 @@ describe Form8 do
                     :_initial_hearing_requested,
                     :_initial_ssoc_required]
 
-  context "#attributes" do
-    let(:form8) do
-      Form8.new(
-        appellant_name: "Brad Pitt",
-        appellant_relationship: "Fancy man",
-        file_number: "1234QWERTY",
-        veteran_name: "Joe Patriot"
-      )
-    end
+  let(:form8) do
+    create(:default_form8)
+  end
 
-    subject { Form8.new(form8.attributes) }
+  let(:appeal) do
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_ssoc)
+  end
+
+  context "#attributes" do
+    subject { form8 }
 
     it do
       is_expected.to have_attributes(appellant_name: "Brad Pitt",
@@ -32,9 +43,6 @@ describe Form8 do
   end
 
   context "#update_from_appeal" do
-    let(:form8) { Form8.new }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
-
     it "populates _initial_ fields with the same values as their counterparts" do
       form8.assign_attributes_from_appeal(appeal)
 
@@ -47,9 +55,6 @@ describe Form8 do
   end
 
   context "#attributes" do
-    let(:form8) { Form8.new }
-    let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
-
     it "does not return initial attributes" do
       form8.assign_attributes_from_appeal(appeal)
       attributes = form8.attributes
@@ -61,7 +66,6 @@ describe Form8 do
   end
 
   context "#update_from_string_params" do
-    let(:form8) { Form8.new }
     it "takes string dates passed by the client and turns them into Date objects for persistence" do
       date_fields = [
         :certification_date,
@@ -85,7 +89,6 @@ describe Form8 do
   end
 
   context "#hearing_on_file" do
-    let(:form8) { Form8.new }
     subject { form8.hearing_on_file }
     before { form8.hearing_transcript_on_file = "Yes" }
 
@@ -101,7 +104,6 @@ describe Form8 do
   end
 
   context "#representative" do
-    let(:form8) { Form8.new }
     subject { form8.representative }
     before { form8.representative_name = "Joe" }
 
@@ -120,7 +122,9 @@ describe Form8 do
   end
 
   context "#remarks_rolled" do
-    let(:appeal) { Form8.new(remarks: "Hello, World") }
+    let(:appeal) do
+      create(:default_form8, remarks: "Hello, World")
+    end
 
     it "rolls over remarks properly" do
       expect(appeal.remarks).to eq("Hello, World")
@@ -183,12 +187,11 @@ describe Form8 do
     subject { form8.remarks_continued }
     let(:line) { "Words\n" }
     let(:form8) do
-      Form8.new(
-        remarks: remarks,
-        service_connection_for: service_connection_for,
-        increased_rating_for: increased_rating_for,
-        other_for: other_for
-      )
+      create(:default_form8,
+             remarks: remarks,
+             service_connection_for: service_connection_for,
+             increased_rating_for: increased_rating_for,
+             other_for: other_for)
     end
 
     context "when no fields roll over" do
@@ -216,7 +219,9 @@ describe Form8 do
   end
 
   context "#service_connection_for_rolled" do
-    let(:form8) { Form8.new(service_connection_for: "one\ntwo\nthree") }
+    let(:form8) do
+      create(:default_form8, service_connection_for: "one\ntwo\nthree")
+    end
 
     it "rolls over properly" do
       expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
@@ -232,15 +237,6 @@ describe Form8 do
   end
 
   context "#pdf_location" do
-    let(:form8) do
-      Form8.new(
-        appellant_name: "Brad Pitt",
-        appellant_relationship: "Fancy man",
-        file_number: "1234QWERTY",
-        veteran_name: "Joe Patriot"
-      )
-    end
-
     let(:path) { form8.pdf_location }
 
     before do
@@ -269,27 +265,40 @@ describe Form8 do
       Timecop.return
     end
 
+    let(:form8) do
+      create(:default_form8, file_number: "VBMS-ID")
+    end
+
     let(:appeal) do
-      Generators::LegacyAppeal.build(
-        vacols_id: "VACOLS-ID",
-        vbms_id: "VBMS-ID",
-        appellant_first_name: "Micah",
-        appellant_middle_initial: "A",
-        appellant_last_name: "Bobby",
-        appellant_relationship: "Brother",
-        veteran_middle_initial: "A",
-        veteran_first_name: "Shane",
-        veteran_last_name: "Bobby",
-        notification_date: (Time.zone.now - 4.days).to_date,
-        soc_date: (Time.zone.now - 4.days).to_date,
-        form9_date: (Time.zone.now - 4.days).to_date,
-        insurance_loan_number: "1337",
-        regional_office_key: "RO37"
-      )
+      create(:legacy_appeal,
+             vacols_case: vacols_case,
+             vbms_id: "VBMS-ID",
+             regional_office_key: "RO37")
+    end
+
+    let(:vacols_case) do
+      create(:case_with_ssoc,
+             bfkey: "VACOLS-ID",
+             bfcorlid: "VBMS-ID",
+             bfdrodec: (Time.zone.now - 4.days).to_date,
+             bfdsoc: (Time.zone.now - 4.days).to_date,
+             bfd19: (Time.zone.now - 4.days).to_date,
+             bfpdnum: "1337",
+             correspondent: correspondent)
+    end
+
+    let(:correspondent) do
+      create(:correspondent,
+             appellant_first_name: "Micah",
+             appellant_middle_initial: "A",
+             appellant_last_name: "Bobby",
+             appellant_relationship: "Brother",
+             snamef: "Shane",
+             snamemi: "A",
+             snamel: "Bobby")
     end
 
     it "creates new form8 with values copied over correctly" do
-      form8 = Form8.new
       form8.assign_attributes_from_appeal(appeal)
 
       expect(form8).to have_attributes(
