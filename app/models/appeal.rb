@@ -27,15 +27,6 @@ class Appeal < AmaReview
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def create_claimants!(claimant_data:)
-    claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(claimant_data)
-  end
-
-  def remove_claimants!
-    claimants.destroy_all
-  end
-
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 

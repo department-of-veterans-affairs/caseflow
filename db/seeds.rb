@@ -168,6 +168,7 @@ class SeedDB
     )
     FactoryBot.create(
       :appeal,
+      :appellant_not_veteran,
       veteran_file_number: "216979849",
       veteran: FactoryBot.create(:veteran),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
