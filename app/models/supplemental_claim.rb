@@ -1,9 +1,6 @@
 class SupplementalClaim < AmaReview
-  validates :receipt_date, presence: { message: "blank" }, if: :saving_review
-
   private
 
-  # TODO: Update with real code and modifier data
   def end_product_code
     "040SCR"
   end

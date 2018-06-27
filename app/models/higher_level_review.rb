@@ -1,12 +1,10 @@
 class HigherLevelReview < AmaReview
   with_options if: :saving_review do
-    validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
   private
 
-  # TODO: Update with real code and modifier data
   def end_product_code
     "030HLRR"
   end

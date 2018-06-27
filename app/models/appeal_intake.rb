@@ -1,4 +1,6 @@
 class AppealIntake < Intake
+  enum error_code: Intake::ERROR_CODES
+
   def find_or_build_initial_detail
     Appeal.new(veteran_file_number: veteran_file_number)
   end
@@ -17,9 +19,9 @@ class AppealIntake < Intake
   end
 
   def review!(request_params)
+    detail.start_review!
     detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
     detail.assign_attributes(request_params.permit(:receipt_date, :docket_type))
-    detail.save(context: :intake_review)
   end
 
   def review_errors

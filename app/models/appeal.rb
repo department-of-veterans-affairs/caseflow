@@ -3,7 +3,7 @@ class Appeal < AmaReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
 
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
+  validates :docket_type, presence: { message: "blank" }, if: :saving_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -21,16 +21,6 @@ class Appeal < AmaReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
   end
 
   def serializer_class
