@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -87,6 +88,11 @@ class AssignWidget extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+AssignWidget.propTypes = {
+  previousAssigneeId: PropTypes.string.isRequired,
+  onTaskAssignment: PropTypes.func.isRequired
+};
 
 export default connect(
   (state) => {
