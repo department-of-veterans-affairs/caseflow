@@ -24,7 +24,7 @@ describe QueueMapper do
       end
 
       let(:expected_result) do
-        { deprod: :IME,
+        { deprod: "IME",
           dedocid: "123456789.1234",
           deatcom: "Require action4",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
@@ -53,7 +53,7 @@ describe QueueMapper do
           modifying_user: "TESTSLOGID" }
       end
       let(:expected_result) do
-        { deprod: :OTI,
+        { deprod: "OTI",
           deatcom: nil,
           dedocid: "123456789.1234",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
@@ -72,7 +72,7 @@ describe QueueMapper do
           modifying_user: "TESTSLOGID" }
       end
       let(:expected_result) do
-        { deprod: :IME,
+        { deprod: "IME",
           dedocid: "123456789.1234",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
           demdtim: VacolsHelper.local_date_with_utc_timezone,
@@ -87,13 +87,13 @@ describe QueueMapper do
     context "when overtime" do
       let(:work_product) { "OMO - VHA" }
       let(:overtime) { true }
-      it { is_expected.to eq :OTV }
+      it { is_expected.to eq "OTV" }
     end
 
     context "when not overtime" do
       let(:work_product) { "OMO - VHA" }
       let(:overtime) { false }
-      it { is_expected.to eq :VHA }
+      it { is_expected.to eq "VHA" }
     end
 
     context "when unrecognized" do
