@@ -1,6 +1,8 @@
 class HearingSchedule::ValidateRoSpreadsheet
   RO_NON_AVAILABILITY_SHEET = 0
   HEARING_ALLOCATION_SHEET = 2
+  RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
+  RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN = [nil, "BFREGOFF", "RO City, State", "Dates"].freeze
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings and Central Office Hearings".freeze
   HEARING_ALLOCATION_SHEET_FIRST_SECOND_HEADER_ROW = [nil, "RO City, State", "BFREGOFF",
                                                       "Number of Hearing Days Allocated in Date Range"].freeze
@@ -68,7 +70,14 @@ class HearingSchedule::ValidateRoSpreadsheet
     non_availability_dates
   end
 
-  def validate_ro_non_availability_template; end
+  def validate_ro_non_availability_template
+    unless ro_non_availability_template.row(1)[2] == RO_NON_AVAILABILITY_TITLE &&
+           ro_non_availability_template.row(5)[1] == Date.parse("01/02/2019")  &&
+           ro_non_availability_template.column(60).uniq == [nil] &&
+           ro_non_availability_template.column(1).uniq == RO_NON_AVAILABILITY_FIRST_HEADER_COLUMN
+      fail RoTemplateNotFollowed
+    end
+  end
 
   def validate_ro_non_availability_dates
     unless ro_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
