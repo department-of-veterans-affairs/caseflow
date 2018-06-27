@@ -9,8 +9,8 @@ class WorkQueue
       vacols_tasks = repository.tasks_for_user(user.css_id)
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
-      tasks = vacols_tasks.map do |task|
-        (role.capitalize + "LegacyTask").constantize.from_vacols(task, user)
+      tasks = vacols_tasks.zip(vacols_appeals).map do |task, appeal|
+        (role.capitalize + "LegacyTask").constantize.from_vacols(task, appeal, user)
       end
       [tasks, vacols_appeals]
     end
