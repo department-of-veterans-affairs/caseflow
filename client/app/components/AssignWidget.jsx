@@ -54,11 +54,7 @@ class AssignWidget extends React.PureComponent {
     const { previousAssigneeId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
-    const selectedOption =
-      selectedAssigneeOfUser[previousAssigneeId] ?
-        options.filter((option) => option.value === selectedAssigneeOfUser[previousAssigneeId])[0] :
-        { label: 'Select a user',
-          value: null };
+    const selectedOption = _.find(options, (option) => option.value === selectedAssigneeOfUser[previousAssigneeId]);
 
     return <React.Fragment>
       {error &&
@@ -76,6 +72,7 @@ class AssignWidget extends React.PureComponent {
           hideLabel
           searchable
           options={options}
+          placeholder="Select a user"
           onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId: previousAssigneeId,
             assigneeId: option.value })}
           value={selectedOption}
