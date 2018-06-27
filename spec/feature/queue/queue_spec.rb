@@ -546,7 +546,7 @@ RSpec.feature "Queue" do
           assigner: attorney,
           case_issues: [create(:case_issue, :disposition_allowed)],
           correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
-          work_product: "DEC"
+          work_product: :draft_decision
         ),
         create(
           :case,
@@ -555,7 +555,7 @@ RSpec.feature "Queue" do
           assigner: attorney,
           case_issues: [create(:case_issue, :disposition_denied)],
           correspondent: create(:correspondent, snamef: "Armide", snamel: "Forceso"),
-          work_product: "VHA"
+          work_product: :omo_request
         )
       ]
     end

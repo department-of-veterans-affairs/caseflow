@@ -8,5 +8,13 @@ FactoryBot.define do
     deadtim { Time.current.strftime("%Y-%m-%d") }
     deassign { Time.current.strftime("%Y-%m-%d") }
     deprod nil
+
+    trait :omo_request do
+      deprod Constants::DecassWorkProductTypes::OMO_REQUEST.sample
+    end
+
+    trait :draft_decision do
+      deprod Constants::DecassWorkProductTypes::DRAFT_DECISION.sample
+    end
   end
 end

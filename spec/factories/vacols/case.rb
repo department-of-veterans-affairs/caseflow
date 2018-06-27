@@ -31,11 +31,11 @@ FactoryBot.define do
         create_list(
           :decass,
           evaluator.decass_count,
+          evaluator.work_product,
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
-          dereceive: (evaluator.user && evaluator.user.vacols_roles.first.eql?("judge")) ? Time.zone.today : nil,
-          deprod: evaluator.work_product
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.first.eql?("judge")) ? Time.zone.today : nil
         )
       end
     end
