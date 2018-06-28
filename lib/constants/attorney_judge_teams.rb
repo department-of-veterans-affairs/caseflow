@@ -4,7 +4,7 @@ module Constants::AttorneyJudgeTeams
   JUDGES = {
     preprod: {
       "BVAJWAGNER" => { attorneys: %w[CASEFLOW_283 CASEFLOW_317] },
-      "CASEFLOW1" => { attorneys: %w[CASEFLOW_317] },
+      "CASEFLOW1" => { attorneys: %w[CASEFLOW_317 CASEFLOW_283 CF_KHAN_397] },
       "BVACPARKER" => { attorneys: %w[CASEFLOW_317 CF_KHAN_397] }
     },
     uat: {
