@@ -12,7 +12,7 @@ import AppellantDetail from './AppellantDetail';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
-import IssueList from './components/IssueList';
+import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -57,7 +57,7 @@ class CaseDetailsView extends React.PureComponent {
     />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
-      <IssueList title="Issues" appeal={_.pick(this.props.appeal.attributes, 'issues')} />
+      <CaseDetailsIssueList title="Issues" issues={this.props.appeal.attributes.issues} />
       <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
       { this.props.appeal.attributes.hearings.length &&
       <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
