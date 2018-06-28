@@ -6,13 +6,26 @@ import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
 
+const singleIssueContainerStyling = css({
+  display: 'inline-block',
+  lineHeight: '3rem',
+  marginBottom: '3rem',
+  verticalAlign: 'top',
+  width: '50%',
+
+  '@media(max-width: 1200px)': { width: '100%' }
+});
+
+const headingStyling = css({
+  lineHeight: '3rem',
+  marginBottom: 0
+});
+
 export default function CaseDetailsIssueList(props) {
   return <React.Fragment>
     {props.issues.map((issue, i) =>
-      <div key={i} {...css({ lineHeight: '3rem',
-        marginBottom: '3rem' })}>
-        <h3 {...css({ lineHeight: '3rem',
-          marginBottom: 0 })}>Issue {1 + i}</h3>
+      <div key={i} {...singleIssueContainerStyling}>
+        <h3 {...headingStyling}>Issue {1 + i}</h3>
         <IssueDetails>{issue}</IssueDetails>
       </div>
     )}
