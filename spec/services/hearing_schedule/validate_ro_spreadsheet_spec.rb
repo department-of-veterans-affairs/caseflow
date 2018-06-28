@@ -55,6 +55,20 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
+  context "when RO template not followed" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roTemplateNotFollowed.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed)
+    end
+  end
+
   context "when RO is missing" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
@@ -153,32 +167,6 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
-  context "when RO spreadsheet is valid" do
-    subject do
-      HearingSchedule::ValidateRoSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/validRoSpreadsheet.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
-      ).validate
-    end
-
-    it { is_expected.to be true }
-  end
-
-  context "when RO template not followed" do
-    subject do
-      HearingSchedule::ValidateRoSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/roTemplateNotFollowed.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
-      ).validate
-    end
-
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed)
-    end
-  end
-
   context "when allocation template is not followed" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
@@ -189,8 +177,20 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
 
     it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationNotFollowed)
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed)
     end
+  end
+
+  context "when RO spreadsheet is valid" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/validRoSpreadsheet.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it { is_expected.to be true }
   end
 
   context "when RO non-availaility dates are not applicable" do
