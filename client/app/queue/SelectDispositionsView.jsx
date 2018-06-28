@@ -79,7 +79,11 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
-  componentDidMount = () => this.props.setDecisionOptions({ work_product: 'Decision' });
+  componentDidMount = () => {
+    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+      this.props.setDecisionOptions({ work_product: 'Decision' });
+    }
+  }
 
   updateIssue = (issueId, attributes) => {
     const { vacolsId } = this.props;

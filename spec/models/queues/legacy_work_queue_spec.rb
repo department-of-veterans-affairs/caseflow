@@ -17,7 +17,7 @@ describe WorkQueue do
       ]
     end
 
-    subject { WorkQueue.tasks_with_appeals(user, role) }
+    subject { LegacyWorkQueue.tasks_with_appeals(user, role) }
 
     context "when it is an attorney" do
       let(:role) { "Attorney" }
