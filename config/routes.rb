@@ -145,7 +145,7 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:create]
+  resources :tasks, only: [:index, :create]
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
