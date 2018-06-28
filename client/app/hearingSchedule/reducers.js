@@ -11,7 +11,9 @@ const reducers = (state = initialState, action = {}) => {
     });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
-      $set: action.payload.fileType
+      fileType: {
+        $set: action.payload.fileType
+      }
     });
   default:
     return state;
