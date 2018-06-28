@@ -9,6 +9,7 @@ import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
+import { buildCaseReviewPayload } from '../utils';
 import {
   requestSave,
   saveSuccess,
@@ -30,20 +31,26 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
     const {
       appeal: { attributes: appeal },
+      task,
       vacolsId,
-      history
+      history,
+      decision,
+      userRole
     } = this.props;
     const actionType = props.value;
 
     this.props.setCaseReviewActionType(actionType);
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      history.push('');
-      history.replace('/queue');
+      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
+      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-      // this.props.requestSave()...
-      this.props.deleteAppeal(vacolsId);
-      this.props.saveSuccess(sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name));
+      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
+        then(() => {
+          this.props.deleteAppeal(vacolsId);
+          history.push('');
+          history.replace('/queue');
+        });
     } else {
       this.props.resetBreadcrumbs(appeal.veteran_full_name, vacolsId);
       this.stageAppeal();
@@ -67,9 +74,8 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     placeholder="Select an action&hellip;"
     name={`start-checkout-flow-${this.props.vacolsId}`}
     options={JUDGE_DECISION_OPTIONS}
-    hideLabel
-    readOnly={this.props.appeal.attributes.paper_case}
     onChange={this.changeRoute}
+    hideLabel
     dropdownStyling={dropdownStyling} />;
 }
 
@@ -79,7 +85,10 @@ JudgeStartCheckoutFlowDropdown.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  changedAppeals: Object.keys(state.queue.stagedChanges.appeals)
+  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
+  decision: state.queue.stagedChanges.taskDecision,
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

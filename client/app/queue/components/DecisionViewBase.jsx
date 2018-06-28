@@ -95,6 +95,7 @@ export default function decisionViewBase(ComponentToWrap) {
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
+      // todo: checkout flow now starts from within case details page--return there on cancel?
       history.push('/queue');
     }
 
