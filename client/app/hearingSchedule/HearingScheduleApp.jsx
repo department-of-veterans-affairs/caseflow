@@ -18,7 +18,9 @@ class HearingScheduleApp extends React.PureComponent {
     <BuildScheduleContainer />
   </LoadingScreen>;
 
-  buildScheduleUpload = () => <BuildScheduleUploadContainer />;
+  buildScheduleUpload = () => <LoadingScreen>
+    <BuildScheduleUploadContainer />
+  </LoadingScreen>;
 
   render = () => <BrowserRouter>
     <NavigationBar

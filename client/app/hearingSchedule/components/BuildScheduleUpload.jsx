@@ -2,6 +2,7 @@ import React from 'react';
 import COPY from '../../../COPY.json';
 import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
 
 const fileTypes = [
@@ -30,6 +31,19 @@ export default class BuildScheduleUpload extends React.Component {
         vertical
         strongLabel
       />
+      <Link
+        name="cancel"
+        to="/hearings/schedule/build">
+        Cancel
+      </Link>
+      <div className="cf-push-right">
+        <Link
+          name="continue"
+          button="primary"
+          to="/hearings/schedule/build/upload">
+          Continue
+        </Link>
+      </div>
     </AppSegment>;
   }
 }
