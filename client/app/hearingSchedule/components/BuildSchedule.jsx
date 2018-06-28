@@ -47,7 +47,7 @@ export default class BuildSchedule extends React.Component {
         date: `${pastUpload.startDate} - ${pastUpload.endDate}`,
         type: pastUpload.type,
         uploaded: pastUpload.createdAt,
-        uploaded_by: pastUpload.user,
+        uploaded_by: pastUpload.userFullName,
         download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
       };
     });
@@ -86,7 +86,7 @@ BuildSchedule.propTypes = {
   pastUploads: PropTypes.arrayOf(
     PropTypes.shape({
       type: PropTypes.string,
-      user: PropTypes.string,
+      userFullName: PropTypes.string,
       startDate: PropTypes.date,
       endDate: PropTypes.date,
       createdAt: PropTypes.date,
