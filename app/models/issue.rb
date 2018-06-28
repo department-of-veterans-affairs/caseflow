@@ -55,8 +55,8 @@ class Issue
     ]
   }.freeze
 
-  def has_codes?
-    codes.length > 0
+  def codes?
+    !codes.empty?
   end
 
   def program
