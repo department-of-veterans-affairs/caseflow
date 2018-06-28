@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import StatusMessage from '../components/StatusMessage';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
@@ -25,26 +23,7 @@ import {
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
-import AssignWidget from '../components/AssignWidget';
-
-const UnassignedCasesPage = (props) => {
-  const { tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
-  let tableContent;
-
-  if (reviewableCount === 0) {
-    tableContent = <StatusMessage title="Tasks not found">
-       Congratulations! You don't have any cases to assign.
-    </StatusMessage>;
-  } else {
-    tableContent = <React.Fragment>
-      <h2>Cases to Assign</h2>
-      {featureToggles.judge_assign_cases && <AssignWidget userId={userId} />}
-      <JudgeAssignTaskTable {...props} />
-    </React.Fragment>;
-  }
-
-  return tableContent;
-};
+import UnassignedCasesPage from './UnassignedCasesPage';
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -145,9 +124,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                userId={this.props.userId.toString()}
-                attorneys={attorneysOfJudge}
-                featureToggles={this.props.featureToggles} />}
+                userId={this.props.userId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
