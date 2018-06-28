@@ -66,12 +66,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_ro_non_availability_dates
-<<<<<<< HEAD
     binding.pry
-    unless ro_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
-=======
     unless @ro_spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
->>>>>>> master
       fail RoDatesNotCorrectFormat
     end
     unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
@@ -83,7 +79,8 @@ class HearingSchedule::ValidateRoSpreadsheet
     unless validate_ros_with_hearings(@ro_spreadsheet_data)
       fail RoListedIncorrectly
     end
-    unless ro_non_availability_dates.row(4)[3] == "N/A"
+    date = @ro_spreadsheet_data.map { |row| row["date"] }[0..3]
+    unless date.uniq == "N/A"
       fail RoDatesNotApplicable
     end
     true
