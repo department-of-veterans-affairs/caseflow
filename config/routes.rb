@@ -96,6 +96,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule/build', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/build/upload', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"

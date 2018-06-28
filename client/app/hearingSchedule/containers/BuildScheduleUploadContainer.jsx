@@ -3,7 +3,9 @@ import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
   render() {
-    return <BuildScheduleUpload />;
+    return <BuildScheduleUpload
+      fileType="RO/CO"
+    />;
   }
 }
 
