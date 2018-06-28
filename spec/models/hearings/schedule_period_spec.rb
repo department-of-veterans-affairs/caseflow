@@ -1,4 +1,4 @@
-describe SchedulePeriod do
+describe Hearings::SchedulePeriod do
   let(:schedule_period) { create(:ro_schedule_period) }
 
   context "spreadsheet" do
