@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { onReceivePastUploads } from '../actions';
+import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 
@@ -12,25 +13,11 @@ class LoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return this.props.onReceivePastUploads({
-      pastUploads: [
-        {
-          startDate: '10/01/2018',
-          endDate: '03/31/2019',
-          type: 'Judge',
-          createdAt: '07/03/2018',
-          user: 'Justin Madigan',
-          fileName: 'fake file name'
-        },
-        {
-          startDate: '10/01/2018',
-          endDate: '03/31/2019',
-          type: 'RO/CO',
-          createdAt: '07/03/2018',
-          user: 'Justin Madigan',
-          fileName: 'fake file name'
-        }
-      ]
+    return ApiUtil.get('/hearings/schedule_periods.json').then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
+
+      this.props.onReceivePastUploads({ pastUploads: schedulePeriods });
     });
   };
 

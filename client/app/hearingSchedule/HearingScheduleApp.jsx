@@ -14,7 +14,7 @@ import LoadingScreen from './components/LoadingScreen';
 class HearingScheduleApp extends React.PureComponent {
 
   buildSchedule = () => <LoadingScreen>
-    <BuildScheduleContainer />
+    <BuildScheduleContainer {...this.props} />
   </LoadingScreen>;
 
   render = () => <BrowserRouter>
