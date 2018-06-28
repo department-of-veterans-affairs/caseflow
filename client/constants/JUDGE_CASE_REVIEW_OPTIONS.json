@@ -25,7 +25,7 @@
   "AREAS_FOR_IMPROVEMENT": {
     "issues_are_not_addressed": "Did not properly identify and address before the Board",
     "findings_are_not_supported": "Findings are not supported by adequate reasons, bases",
-    "process_violations": "Did not adequatley address due process violations",
+    "process_violations": "Did not adequately address due process violations",
     "remands_are_not_completed": "Remands not complete, legally sufficient or require necessary development",
     "grammar_errors": "Major or frequent spelling, grammar, typographical, usage, formatting errors"
   }
