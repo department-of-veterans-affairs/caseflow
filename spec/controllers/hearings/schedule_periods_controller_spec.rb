@@ -1,5 +1,5 @@
 RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
-  let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
+  let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_schedule_period) { create(:judge_schedule_period) }
 
