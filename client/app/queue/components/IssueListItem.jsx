@@ -25,7 +25,7 @@ export default class IssueListItem extends React.PureComponent {
   </td>;
 
   render = () => {
-    // Fall back on legacy issue list item if this is a legacy issues.
+    // Fall back on legacy issue list item if this is a legacy issue.
     if (this.props.issue.program) {
       return <LegacyIssueListItem {...this.props} />
     }
