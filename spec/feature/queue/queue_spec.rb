@@ -561,7 +561,7 @@ RSpec.feature "Queue" do
     end
 
     scenario "starts dispatch checkout flow" do
-      _, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
 
       # get draft decision appeal vacols_id
       vacols_id = VACOLS::Decass.all.find(&:draft_decision?).defolder
@@ -597,7 +597,7 @@ RSpec.feature "Queue" do
     end
 
     scenario "completes assign to omo checkout flow" do
-      _, appeals = WorkQueue.tasks_with_appeals(judge, "judge")
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
 
       vacols_id = VACOLS::Decass.all.find(&:omo_request?).defolder
       appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
