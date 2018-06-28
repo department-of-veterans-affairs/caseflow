@@ -192,4 +192,18 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationNotFollowed)
     end
   end
+
+  context "when RO non-availaility dates are not applicable" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/RoDatesNotApplicable.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns an error" do
+      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotApplicable)
+    end
+  end
 end

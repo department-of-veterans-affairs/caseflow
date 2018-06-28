@@ -15,6 +15,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   class RoDatesNotInRange < StandardError; end
   class RoDatesNotCorrectFormat < StandardError; end
   class RoTemplateNotFollowed < StandardError; end
+  class RoDatesNotApplicable < StandardError; end
   class RoListedIncorrectly < StandardError; end
   class CoDatesNotUnique < StandardError; end
   class CoDatesNotInRange < StandardError; end
@@ -80,6 +81,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_ro_non_availability_dates
+    binding.pry
     unless ro_non_availability_dates.all? { |row| row["date"].instance_of?(Date) }
       fail RoDatesNotCorrectFormat
     end
@@ -91,6 +93,9 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
     unless validate_ros_with_hearings(ro_non_availability_dates)
       fail RoListedIncorrectly
+    end
+    unless ro_non_availability_dates.row(4)[3] == "N/A"
+      fail RoDatesNotApplicable
     end
     true
   end
