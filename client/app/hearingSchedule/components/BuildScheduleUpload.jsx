@@ -7,11 +7,11 @@ import RadioField from '../../components/RadioField';
 const fileTypes = [
   {
     value: 'ro/co',
-    displayText: 'RO and CO hearings'
+    displayText: <div>RO and CO hearings</div>
   },
   {
     value: 'judge',
-    displayText: 'Judge non-availability'
+    displayText: <div>Judge non-availability</div>
   }
 ];
 
@@ -28,6 +28,7 @@ export default class BuildScheduleUpload extends React.Component {
         onChange={this.props.onFileTypeChange}
         required
         vertical
+        strongLabel
       />
     </AppSegment>;
   }
