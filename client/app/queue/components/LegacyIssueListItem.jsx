@@ -25,7 +25,7 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-export function dispositionLabelForDescription(disposition) {
+export const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
   return disposition ? `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}` : null;
 };
