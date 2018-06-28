@@ -1,6 +1,12 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
 
+def click_dropdown(opt_idx, container = page)
+  dropdown = container.find(".Select-control")
+  dropdown.click
+  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
+end
+
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
@@ -504,6 +510,108 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "loads judge checkout views" do
+    before do
+      FeatureToggle.enable!(:test_facols)
+      FeatureToggle.enable!(:judge_queue)
+      FeatureToggle.enable!(:judge_assignment)
+      User.unauthenticate!
+      User.authenticate!(css_id: "BVAAABSHIRE")
+      RequestStore[:current_user] = judge
+    end
+
+    after do
+      FeatureToggle.disable!(:test_facols)
+      FeatureToggle.disable!(:judge_queue)
+      FeatureToggle.disable!(:judge_assignment)
+      User.unauthenticate!
+      User.authenticate!
+    end
+
+    let!(:attorney) do
+      User.create(
+        css_id: "BVASCASPER1",
+        station_id: User::BOARD_STATION_ID,
+        full_name: "Bendytoots Cumbersnatch"
+      )
+    end
+    let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id) }
+    let!(:vacols_cases) do
+      [
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_allowed)],
+          correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
+          work_product: :draft_decision
+        ),
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_denied)],
+          correspondent: create(:correspondent, snamef: "Armide", snamel: "Forceso"),
+          work_product: :omo_request
+        )
+      ]
+    end
+
+    scenario "starts dispatch checkout flow" do
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
+
+      # get draft decision appeal vacols_id
+      vacols_id = VACOLS::Decass.all.find(&:draft_decision?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
+
+      visit "/queue"
+
+      # TODO: appeal vbms_id ends w/S. better way to strip?
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
+
+      click_dropdown 0
+
+      click_on "Continue"
+      expect(page).to have_content("Evaluate Decision")
+
+      click_on "Continue"
+      expect(page).to have_content("Choose one")
+      sleep 2
+
+      radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
+      case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
+      case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+
+      [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
+      # areas of improvement
+      page.find_all(".question-label").sample(2).each(&:double_click)
+
+      fill_in "additional-factors", with: "this is the note"
+
+      click_on "Continue"
+
+      expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
+    end
+
+    scenario "completes assign to omo checkout flow" do
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
+
+      vacols_id = VACOLS::Decass.all.find(&:omo_request?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
+
+      visit "/queue"
+
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
+
+      click_dropdown 1
+
+      expect(page).to have_content("You have successfully submitted an OMO for #{appeal.veteran_full_name}.")
+    end
+  end
+
   context "pop breadcrumb" do
     scenario "goes back from submit decision view" do
       appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
@@ -511,16 +619,12 @@ RSpec.feature "Queue" do
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
       sleep 1
-      safe_click(".Select-control")
-      safe_click("div[id$='--option-0']")
+      click_dropdown 0
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.issues.length)
 
-      issue_rows.each do |row|
-        row.find(".Select-control").click
-        row.find("div[id$='--option-2']").click
-      end
+      issue_rows.each { |row| click_dropdown 2, row }
 
       click_on "Continue"
 
