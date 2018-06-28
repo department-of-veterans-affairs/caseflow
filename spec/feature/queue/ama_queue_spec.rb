@@ -1,5 +1,4 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
 
 RSpec.feature "AmaQueue" do
   before do

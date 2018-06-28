@@ -38,6 +38,6 @@ class Appeal < AmaReview
   end
 
   def docket_number
-    "#{established_at.strftime("%y%m%d")}-#{id}"
+    "#{established_at.strftime('%y%m%d')}-#{id}"
   end
 end
