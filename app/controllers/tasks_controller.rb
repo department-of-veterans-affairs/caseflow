@@ -6,8 +6,18 @@ class TasksController < ApplicationController
     CoLocatedAdminAction: CoLocatedAdminAction
   }.freeze
 
+  QUEUES = {
+    attorney: AttorneyQueue
+  }.freeze
+
   def set_application
     RequestStore.store[:application] = "queue"
+  end
+
+  def index
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
+    tasks = queue_class.new(user: user).tasks
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def create
@@ -21,6 +31,15 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def queue_class
+    QUEUES[params[:role].try(:to_sym)]
+  end
+
+  def user
+    @user ||= User.find(params[:user_id])
+  end
+  helper_method :user
 
   def invalid_role_error
     render json: {
@@ -49,5 +68,12 @@ class TasksController < ApplicationController
       .permit(:appeal_id, :type, :instructions, titles: [])
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
+    ).as_json
   end
 end

@@ -86,9 +86,7 @@ class QueueApp extends React.PureComponent {
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
 
-  routedEvaluateDecision = (props) => <EvaluateDecisionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/submit`}
-    {...props.match.params} />;
+  routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
@@ -151,8 +149,20 @@ class QueueApp extends React.PureComponent {
             exact
             path="/queue/appeals/:vacolsId/submit"
             title={() => {
-              const reviewActionType = this.props.reviewActionType === DECISION_TYPES.OMO_REQUEST ?
-                'OMO' : 'Draft Decision';
+              let reviewActionType = '';
+
+              // eslint-disable-next-line default-case
+              switch (this.props.reviewActionType) {
+              case DECISION_TYPES.OMO_REQUEST:
+                reviewActionType = 'OMO';
+                break;
+              case DECISION_TYPES.DRAFT_DECISION:
+                reviewActionType = 'Draft Decision';
+                break;
+              case DECISION_TYPES.DISPATCH:
+                reviewActionType = 'to Dispatch';
+                break;
+              }
 
               return `Draft Decision | Submit ${reviewActionType}`;
             }}
