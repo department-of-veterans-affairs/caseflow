@@ -93,7 +93,7 @@ class QueueHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Queue Feedback" src="/assets/help/reader-feedback-75045f5ee4ecb0633a0e797d5503adc72258e6b2e7a784758c9b3b5082a7a1ea.png" />
+        <img className="cf-help-image" alt="Queue Feedback" src="/assets/help/reader-feedback.jpg" />
       </p>
 
     </div>;
