@@ -73,11 +73,9 @@ CaseTitle.defaultProps = {
   analyticsSource: 'queue_task'
 };
 
-class CaseTitleScaffolding extends React.PureComponent {
-  render = () => <div {...containingDivStyling}>
-    <h1 {...headerStyling}>{this.props.heading}</h1>
-    <ul {...listStyling}>
-      {this.props.children.map((child, i) => <li key={i} {...listItemStyling}>{child}</li>)}
-    </ul>
-  </div>;
-}
+const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
+  <h1 {...headerStyling}>{props.heading}</h1>
+  <ul {...listStyling}>
+    {props.children.map((child, i) => <li key={i} {...listItemStyling}>{child}</li>)}
+  </ul>
+</div>;
