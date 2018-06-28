@@ -14,8 +14,10 @@ class LoadingScreen extends React.PureComponent {
     }
 
     return ApiUtil.get('/hearings/schedule_periods.json').then((response) => {
-      const resp = JSON.parse(response.text);
-      this.props.onReceivePastUploads({pastUploads: resp.schedule_periods });
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
+
+      this.props.onReceivePastUploads({ pastUploads: schedulePeriods });
     });
   };
 

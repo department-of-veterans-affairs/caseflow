@@ -14,7 +14,7 @@ class Hearings::SchedulePeriod < ApplicationRecord
 
   def to_hash
     serializable_hash(
-      methods: [:user_full_name]
+      methods: [:user_full_name, :type]
     )
   end
 end
