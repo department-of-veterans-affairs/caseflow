@@ -40,7 +40,7 @@ export default class BuildSchedule extends React.Component {
       {
         header: 'Uploaded by',
         align: 'left',
-        valueName: 'uploaded_by'
+        valueName: 'uploadedBy'
       },
       {
         header: '',
@@ -53,7 +53,7 @@ export default class BuildSchedule extends React.Component {
       date: `${formatDate(pastUpload.startDate)} - ${formatDate(pastUpload.endDate)}`,
       type: schedulePeriodMapper[pastUpload.type],
       uploaded: formatDate(pastUpload.createdAt),
-      uploaded_by: pastUpload.userFullName,
+      uploadedBy: pastUpload.userFullName,
       download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
     }));
 
