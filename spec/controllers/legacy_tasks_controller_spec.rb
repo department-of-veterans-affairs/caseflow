@@ -11,7 +11,7 @@ RSpec.describe LegacyTasksController, type: :controller do
     FeatureToggle.disable!(:judge_queue)
   end
 
-  describe "GET tasks/xxx" do
+  describe "GET legacy_tasks/xxx" do
     let(:user) { create(:user) }
     before do
       User.stub = user
