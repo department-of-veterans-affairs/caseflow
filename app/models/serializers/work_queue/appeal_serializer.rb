@@ -58,7 +58,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    "not implemented"
+    object.advance_on_docket
   end
 
   attribute :docket_number do
@@ -82,15 +82,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :power_of_attorney do
-    "not implemented"
+
   end
 
   attribute :regional_office do
-    {
-      key: "not implemented",
-      city: "not implemented",
-      state: "not implemented"
-    }
   end
 
   attribute :caseflow_veteran_id do
