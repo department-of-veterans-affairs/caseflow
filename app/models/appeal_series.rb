@@ -86,7 +86,7 @@ class AppealSeries < ApplicationRecord
   # rubocop:disable CyclomaticComplexity
   def description
     ordered_issues = latest_appeal.issues
-      .select(&:has_codes?)
+      .select(&:codes?)
       .sort do |a, b|
         dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
 

@@ -36,7 +36,7 @@ class AppealSeriesIssues
 
   def all
     unmerged_issues_with_cavc_decisions_preloaded
-      .select(&:has_codes?)
+      .select(&:codes?)
       .group_by(&:type_hash)
       .map do |_type_hash, issues|
         last_action = last_action_for_issues(issues)
