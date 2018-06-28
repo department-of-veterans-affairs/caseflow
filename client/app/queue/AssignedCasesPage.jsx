@@ -49,7 +49,8 @@ const AssignedCasesPage = (props) => {
         }).
           map((task) => ({
             task,
-            appeal: appeals[task.vacolsId] }))
+            appeal: appeals[task.appealId]
+          }))
       }
       userId={attorneyId} />
   </React.Fragment>;

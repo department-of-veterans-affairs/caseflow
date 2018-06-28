@@ -67,13 +67,13 @@ export const setBreadcrumbs = (...crumbs) => (dispatch) => {
   dispatch(pushBreadcrumb(...crumbs));
 };
 
-export const resetBreadcrumbs = (vetName, vacolsId) => (dispatch) => {
+export const resetBreadcrumbs = (vetName, appealId) => (dispatch) => {
   dispatch(setBreadcrumbs({
     breadcrumb: 'Your Queue',
     path: '/queue'
   }, {
     breadcrumb: vetName,
-    path: `/queue/appeals/${vacolsId}`
+    path: `/queue/appeals/${appealId}`
   }));
 };
 

@@ -19,10 +19,10 @@ export const onReceiveJudges = (judges) => ({
   }
 });
 
-export const setAppealDocCount = (vacolsId, docCount) => ({
+export const setAppealDocCount = (appealId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    vacolsId,
+    appealId,
     docCount
   }
 });
@@ -220,7 +220,7 @@ export const initialAssignTasksToUser = ({ tasks, assigneeId, previousAssigneeId
         (resp) => {
           const { task: { data: task } } = resp;
 
-          task.vacolsId = task.id;
+          task.appealId = task.id;
           dispatch(initialTaskAssignment({ task,
             assigneeId }));
           dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
@@ -248,7 +248,7 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
         (resp) => {
           const { task: { data: task } } = resp;
 
-          task.vacolsId = task.id;
+          task.appealId = task.id;
           dispatch(taskReassignment({ task,
             assigneeId,
             previousAssigneeId }));

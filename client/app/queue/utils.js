@@ -16,9 +16,8 @@ export const associateTasksWithAppeals = (serverData = {}) => {
     tasks: { data: tasks }
   } = serverData;
 
-  // todo: Attorneys currently only have one task per appeal, but future users might have multiple
   _.each(tasks, (task) => {
-    task.vacolsId = task.id;
+    task.appealId = task.id;
   });
 
   const tasksById = _.keyBy(tasks, 'id');
@@ -40,7 +39,7 @@ export const associateTasksWithAppeals = (serverData = {}) => {
 */
 export const sortTasks = ({ tasks = {}, appeals = {} }) => {
   const partitionedTasks = _.partition(tasks, (task) =>
-    appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
+    appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
   );
 
   _.each(partitionedTasks, _.sortBy('attributes.docket_date'));

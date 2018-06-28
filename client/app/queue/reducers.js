@@ -89,7 +89,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
-        [action.payload.vacolsId]: {
+        [action.payload.appealId]: {
           $set: action.payload.docCount
         }
       }
@@ -294,33 +294,33 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.TASK_INITIAL_ASSIGNED: {
-    const vacolsId = action.payload.task.id;
-    const appeal = state.loadedQueue.appeals[vacolsId];
+    const appealId = action.payload.task.id;
+    const appeal = state.loadedQueue.appeals[appealId];
 
     return update(state, {
       tasks: {
-        [vacolsId]: {
+        [appealId]: {
           $set: action.payload.task
         }
       },
       loadedQueue: {
         tasks: {
-          $unset: [vacolsId]
+          $unset: [appealId]
         },
         appeals: {
-          $unset: [vacolsId]
+          $unset: [appealId]
         }
       },
       tasksAndAppealsOfAttorney: {
         [action.payload.assigneeId]: {
           data: {
             tasks: {
-              [vacolsId]: {
+              [appealId]: {
                 $set: action.payload.task
               }
             },
             appeals: {
-              [vacolsId]: {
+              [appealId]: {
                 $set: appeal
               }
             }
@@ -330,12 +330,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   }
   case ACTIONS.TASK_REASSIGNED: {
-    const vacolsId = action.payload.task.id;
-    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[vacolsId];
+    const appealId = action.payload.task.id;
+    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
 
     return update(state, {
       tasks: {
-        [vacolsId]: {
+        [appealId]: {
           $set: action.payload.task
         }
       },
@@ -343,22 +343,22 @@ const workQueueReducer = (state = initialState, action = {}) => {
         [action.payload.previousAssigneeId]: {
           data: {
             tasks: {
-              $unset: [vacolsId]
+              $unset: [appealId]
             },
             appeals: {
-              $unset: [vacolsId]
+              $unset: [appealId]
             }
           }
         },
         [action.payload.assigneeId]: {
           data: {
             tasks: {
-              [vacolsId]: {
+              [appealId]: {
                 $set: action.payload.task
               }
             },
             appeals: {
-              [vacolsId]: {
+              [appealId]: {
                 $set: appeal
               }
             }

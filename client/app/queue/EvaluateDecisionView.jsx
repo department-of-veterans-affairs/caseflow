@@ -163,7 +163,7 @@ class EvaluateDecisionView extends React.PureComponent {
     return <React.Fragment>
       <CaseTitle
         heading={appeal.veteran_full_name}
-        vacolsId={appealId}
+        appealId={appealId}
         appeal={this.props.appeal}
         analyticsSource="evaluate_decision"
         taskType="Dispatch"
