@@ -323,7 +323,7 @@ dd {
 
 .cf-dropdown-trigger {
   cursor: pointer;
-  background-color: $color-white;
+  background-color: $color-gray-dark;
 
   &::after {
     background: image-url('arrow-down.svg') 50% 100% no-repeat;
