@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
+import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
@@ -45,12 +46,14 @@ class CaseDetailsView extends React.PureComponent {
 
   render = () => <AppSegment filledBackground>
     <CaseTitle appeal={this.props.appeal} vacolsId={this.props.vacolsId} redirectUrl={window.location.pathname} />
+    {this.props.error && <Alert title={this.props.error.title} type="error">
+      {this.props.error.detail}
+    </Alert>}
     <CaseSnapshot
       appeal={this.props.appeal}
       featureToggles={this.props.featureToggles}
       loadedQueueAppealIds={this.props.loadedQueueAppealIds}
       task={this.props.task}
-      userRole={this.props.userRole}
     />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
@@ -65,13 +68,13 @@ class CaseDetailsView extends React.PureComponent {
 
 CaseDetailsView.propTypes = {
   vacolsId: PropTypes.string.isRequired,
-  featureToggles: PropTypes.object,
-  userRole: PropTypes.string
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
+  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
+  error: state.ui.messages.error,
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
 });
