@@ -55,6 +55,10 @@ class Issue
     ]
   }.freeze
 
+  def has_codes?
+    codes.length > 0
+  end
+
   def program
     PROGRAMS[codes[0]]
   end
