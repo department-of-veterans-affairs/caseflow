@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20180628195002) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advance_on_docket", default: false
+    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 

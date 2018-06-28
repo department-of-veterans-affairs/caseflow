@@ -30,7 +30,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :location_code do
-    "not implemented"
+    "Not supported for BEAAM appeals"
   end
 
   attribute :veteran_full_name do
@@ -58,7 +58,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    object.advance_on_docket
+    object.advanced_on_docket
   end
 
   attribute :docket_number do
@@ -82,7 +82,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :power_of_attorney do
-
+    object.representative_name
   end
 
   attribute :regional_office do
