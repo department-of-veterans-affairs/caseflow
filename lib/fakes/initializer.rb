@@ -13,7 +13,7 @@ class Fakes::Initializer
         PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
         User.appeal_repository = Fakes::AppealRepository
         User.user_repository = Fakes::UserRepository
-        WorkQueue.repository = Fakes::QueueRepository
+        LegacyWorkQueue.repository = Fakes::QueueRepository
       end
     end
 
@@ -70,7 +70,6 @@ class Fakes::Initializer
       # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
       if rails_env.development?
         Fakes::BGSService.create_veteran_records
-        Fakes::BGSService.stub_intake_data
         return
       end
 
