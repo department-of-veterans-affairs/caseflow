@@ -25,6 +25,7 @@ export default class BuildScheduleUpload extends React.Component {
         name={COPY.HEARING_SCHEDULE_UPLOAD_PAGE_SUB_HEADER}
         options={fileTypes}
         value={this.props.fileType}
+        onChange={this.props.onFileTypeChange}
         required
         vertical
       />
@@ -33,5 +34,6 @@ export default class BuildScheduleUpload extends React.Component {
 }
 
 BuildScheduleUpload.propTypes = {
-  fileType: PropTypes.string
+  fileType: PropTypes.string,
+  onFileTypeChange: PropTypes.func
 };

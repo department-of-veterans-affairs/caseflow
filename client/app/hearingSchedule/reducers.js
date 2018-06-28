@@ -9,6 +9,10 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       $set: action.payload.pastUploads
     });
+  case ACTIONS.FILE_TYPE_CHANGE:
+    return update(state, {
+      $set: action.payload.fileType
+    });
   default:
     return state;
   }
