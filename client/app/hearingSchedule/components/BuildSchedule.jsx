@@ -6,6 +6,7 @@ import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
+import DropdownButton from '../../components/DropdownButton';
 import { downloadIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 
@@ -20,6 +21,17 @@ export default class BuildSchedule extends React.Component {
     const {
       pastUploads
     } = this.props;
+
+    const downloadOptions = [
+      {
+        title: 'RO/CO hearings',
+        target: '/hearings/roco'
+      },
+      {
+        title: 'Judge non-availability',
+        target: '/hearings/judge'
+      }
+    ];
 
     const pastUploadsColumns = [
       {
@@ -61,12 +73,10 @@ export default class BuildSchedule extends React.Component {
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
-      <Link
-        name="download-files"
-        button="secondary"
-        target="_blank">
-        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
-      </Link>
+      <DropdownButton
+        lists={downloadOptions}
+        label={COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
+      />
       <Link
         name="upload-files"
         button="primary"

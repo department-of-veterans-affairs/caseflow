@@ -9,7 +9,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    current_role = params[:role] || current_user.vacols_roles.first
+    current_role = params[:role] || user.vacols_roles.first
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
@@ -18,7 +18,7 @@ class LegacyTasksController < ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
-          tasks, appeals = WorkQueue.tasks_with_appeals(user, current_role)
+          tasks, appeals = LegacyWorkQueue.tasks_with_appeals(user, current_role)
           render json: {
             tasks: json_tasks(tasks),
             appeals: json_appeals(appeals)
@@ -71,7 +71,7 @@ class LegacyTasksController < ApplicationController
   def json_task(task)
     ActiveModelSerializers::SerializableResource.new(
       task,
-      serializer: ::WorkQueue::TaskSerializer
+      serializer: ::WorkQueue::LegacyTaskSerializer
     ).as_json
   end
 
@@ -85,7 +85,7 @@ class LegacyTasksController < ApplicationController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
-      each_serializer: ::WorkQueue::TaskSerializer
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
     ).as_json
   end
 end

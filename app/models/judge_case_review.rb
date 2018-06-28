@@ -4,8 +4,8 @@ class JudgeCaseReview < ApplicationRecord
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :task_id, presence: true
-  validates :location, :complexity, :quality, presence: true, if: :bva_dispatch?
+  validates :task_id, :location, presence: true
+  validates :complexity, :quality, presence: true, if: :bva_dispatch?
 
   enum location: {
     omo_office: "omo_office",

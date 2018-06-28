@@ -124,7 +124,11 @@ class ExternalApi::VBMSService
   def self.establish_claim!(veteran_hash:, claim_hash:)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::EstablishClaim.new(veteran_hash, claim_hash)
+    request = VBMS::Requests::EstablishClaim.new(
+      veteran_hash,
+      claim_hash,
+      v5: FeatureToggle.enabled?(:claims_service_v5)
+    )
 
     send_and_log_request(veteran_hash[:file_number], request, FeatureToggle.enabled?(:vbms_include_user))
   end
@@ -132,7 +136,10 @@ class ExternalApi::VBMSService
   def self.fetch_contentions(claim_id:)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::ListContentions.new(claim_id)
+    request = VBMS::Requests::ListContentions.new(
+      claim_id,
+      v5: FeatureToggle.enabled?(:claims_service_v5)
+    )
 
     send_and_log_request(claim_id, request)
   end
@@ -143,7 +150,8 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::CreateContentions.new(
       veteran_file_number: veteran_file_number,
       claim_id: claim_id,
-      contentions: contention_descriptions
+      contentions: contention_descriptions,
+      v5: FeatureToggle.enabled?(:claims_service_v5)
     )
 
     send_and_log_request(claim_id, request)

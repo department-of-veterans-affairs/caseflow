@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -15,16 +16,16 @@ import Button from '../components/Button';
 import _ from 'lodash';
 
 class AssignWidget extends React.PureComponent {
-  appealIdsOfSelectedTasks = () => {
+  selectedTasks = () => {
     return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.userId] || [],
-      (selected, id) => (selected ? [this.props.tasks[id].attributes.appeal_id] : []));
+      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || [],
+      (selected, id) => (selected ? [this.props.tasks[id]] : []));
   }
 
   handleButtonClick = () => {
-    const { userId, selectedAssigneeOfUser } = this.props;
+    const { previousAssigneeId, selectedAssigneeOfUser } = this.props;
 
-    if (!selectedAssigneeOfUser[userId]) {
+    if (!selectedAssigneeOfUser[previousAssigneeId]) {
       this.props.showErrorMessage(
         { heading: 'No assignee selected',
           text: 'Please select someone to assign the tasks to.' });
@@ -32,7 +33,7 @@ class AssignWidget extends React.PureComponent {
       return;
     }
 
-    if (this.appealIdsOfSelectedTasks().length === 0) {
+    if (this.selectedTasks().length === 0) {
       this.props.showErrorMessage(
         { heading: 'No tasks selected',
           text: 'Please select a task.' });
@@ -40,9 +41,10 @@ class AssignWidget extends React.PureComponent {
       return;
     }
 
-    this.props.initialAssignTasksToUser(
-      { appealIdsOfTasks: this.appealIdsOfSelectedTasks(),
-        assigneeId: selectedAssigneeOfUser[userId] }).
+    this.props.onTaskAssignment(
+      { tasks: this.selectedTasks(),
+        assigneeId: selectedAssigneeOfUser[previousAssigneeId],
+        previousAssigneeId }).
       then(() => this.props.resetErrorMessages()).
       catch(() => this.props.showErrorMessage(
         { heading: 'Error assigning tasks',
@@ -50,14 +52,10 @@ class AssignWidget extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
+    const { previousAssigneeId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
-    const selectedOption =
-      selectedAssigneeOfUser[userId] ?
-        options.filter((option) => option.value === selectedAssigneeOfUser[userId])[0] :
-        { label: 'Select a user',
-          value: null };
+    const selectedOption = _.find(options, (option) => option.value === selectedAssigneeOfUser[previousAssigneeId]);
 
     return <React.Fragment>
       {error &&
@@ -75,20 +73,27 @@ class AssignWidget extends React.PureComponent {
           hideLabel
           searchable
           options={options}
-          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId,
+          placeholder="Select a user"
+          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId: previousAssigneeId,
             assigneeId: option.value })}
           value={selectedOption}
-          styling={css({ width: '30rem' })} />
+          styling={css({ width: '30rem',
+            marginRight: '1rem' })} />
         <p>&nbsp;</p>
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.appealIdsOfSelectedTasks().length} case(s)`}
+          name={`Assign ${this.selectedTasks().length} case(s)`}
           loading={false}
           loadingText="Loading" />
       </div>
     </React.Fragment>;
   }
 }
+
+AssignWidget.propTypes = {
+  previousAssigneeId: PropTypes.string.isRequired,
+  onTaskAssignment: PropTypes.func.isRequired
+};
 
 export default connect(
   (state) => {

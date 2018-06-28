@@ -222,7 +222,7 @@ describe User do
 
     context "has hash with view" do
       before do
-        AppealView.create(user_id: user.id, appeal_id: appeal.id)
+        AppealView.create(user_id: user.id, appeal: appeal)
       end
 
       it do
