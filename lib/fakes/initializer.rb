@@ -13,7 +13,7 @@ class Fakes::Initializer
         PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
         User.appeal_repository = Fakes::AppealRepository
         User.user_repository = Fakes::UserRepository
-        WorkQueue.repository = Fakes::QueueRepository
+        LegacyWorkQueue.repository = Fakes::QueueRepository
       end
     end
 
