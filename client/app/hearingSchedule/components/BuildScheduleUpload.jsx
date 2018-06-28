@@ -23,7 +23,7 @@ export default class BuildScheduleUpload extends React.Component {
       <p>{COPY.HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS}</p>
       <div className="cf-help-divider"></div>
       <RadioField
-        name={COPY.HEARING_SCHEDULE_UPLOAD_PAGE_SUB_HEADER}
+        name={COPY.HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER}
         options={fileTypes}
         value={this.props.fileType}
         onChange={this.props.onFileTypeChange}
