@@ -10,6 +10,7 @@ const singleIssueContainerStyling = css({
   display: 'inline-block',
   lineHeight: '3rem',
   marginBottom: '3rem',
+  paddingRight: '3rem',
   verticalAlign: 'top',
   width: '50%',
 
