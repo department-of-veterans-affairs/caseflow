@@ -135,14 +135,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
 
     context "RO-non avaiable days not provided" do
-      # subject { generate_hearing_days_schedule_removed_ro_na }
+      before do
+        ro_allocations
+      end
+  
+      subject { generate_hearing_days_schedule_removed_ro_na }
       let(:ro_non_available_days) do
         {
           "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 25)
         }
       end
       
-      it "remove non-available_days" do
+      it "throws an ro non-avaiable days not provided" do
         expect{ subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::RoNonAvailableDaysNotProvided)
       end
     end
