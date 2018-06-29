@@ -123,7 +123,7 @@ RSpec.feature "Out of Service" do
     end
   end
 
-  context "Hearing Schedule", focus: true do
+  context "Hearing Schedule" do
     after do
       Rails.cache.write("hearing_schedule_out_of_service", false)
     end

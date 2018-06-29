@@ -17,7 +17,7 @@ class LoadingScreen extends React.PureComponent {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
       const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
 
-      this.props.onReceivePastUploads({ pastUploads: schedulePeriods });
+      this.props.onReceivePastUploads(schedulePeriods);
     });
   };
 
