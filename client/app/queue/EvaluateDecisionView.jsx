@@ -83,6 +83,7 @@ class EvaluateDecisionView extends React.PureComponent {
   validateForm = () => {
     const {
       areas_for_improvement,
+      factors_not_considered,
       complexity,
       quality
     } = this.state;
@@ -99,7 +100,7 @@ class EvaluateDecisionView extends React.PureComponent {
       return false;
     }
 
-    if (this.qualityIsDeficient() && _.isEmpty(areas_for_improvement)) {
+    if (this.qualityIsDeficient() && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
       this.scrollTo(this.deficientQualityAlert);
 
       return false;
