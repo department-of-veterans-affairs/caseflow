@@ -4,7 +4,6 @@
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
-  include CachedAttributes
 
   bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
                     :address_line1, :address_line2, :address_line3, :city,
@@ -28,10 +27,6 @@ class Veteran < ApplicationRecord
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
   validates :state, presence: true, if: :country_requires_state?, on: :bgs
-
-  cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
-    timely_ratings.map(&:ui_hash)
-  end
 
   # TODO: get middle initial from BGS
   def name
@@ -105,8 +100,8 @@ class Veteran < ApplicationRecord
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
 
-  def timely_ratings
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
+  def timely_ratings(from_date:)
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
   end
 
   def participant_id

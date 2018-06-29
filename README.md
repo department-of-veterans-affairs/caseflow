@@ -1,5 +1,5 @@
 # Caseflow
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
 Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
 
@@ -293,8 +293,11 @@ Rails.cache.write("certification_out_of_service", true)
 # enable for dispatch only
 Rails.cache.write("dispatch_out_of_service", true)
 
-# enable for hearings only
+# enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
+
+# enable for hearing schedule only
+Rails.cache.write("hearing_schedule_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)

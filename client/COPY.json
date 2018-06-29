@@ -20,13 +20,14 @@
   "CASE_LIST_TABLE_DUE_DATE_COLUMN_TITLE": "Due Date",
   "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
-  "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Reader Documents",
+  "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
   "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Total days waiting",
   "CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
+  "CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
   "CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
   "CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
   "CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
@@ -35,8 +36,8 @@
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
-  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Tasks not found",
-  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any tasks for you.",
+  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
+  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
@@ -50,7 +51,7 @@
   "JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
   "JUDGE_QUEUE_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
   "JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
-  "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Docs in Claims Folder",
+  "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
@@ -65,11 +66,34 @@
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
 
+  "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
+  "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
+  "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
+  "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Were there any areas of improvement?",
+
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
+
+  "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
+  "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",
   "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
 
   "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
   "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
-  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS."
+  "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
+
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER": "Welcome to Caseflow Hearing Schedule!",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK": "Upload files",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER": "Upload History",
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule"
 }

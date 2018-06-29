@@ -1,6 +1,12 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
 
+def click_dropdown(opt_idx, container = page)
+  dropdown = container.find(".Select-control")
+  dropdown.click
+  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
+end
+
 RSpec.feature "Queue" do
   before do
     Fakes::Initializer.load!
@@ -192,12 +198,8 @@ RSpec.feature "Queue" do
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
       FeatureToggle.enable!(:case_search_home_page)
-      FeatureToggle.disable!(:queue_phase_two)
-      FeatureToggle.disable!(:judge_queue)
     end
     after do
-      FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:queue_phase_two)
       FeatureToggle.disable!(:case_search_home_page)
     end
 
@@ -409,7 +411,8 @@ RSpec.feature "Queue" do
         expect(page).not_to have_content("Hearing preference")
 
         expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL} CAVC/i)
-        expect(page).to have_content("Power of Attorney: #{appeal.representative}")
+        expect(page).to have_content("Power of Attorney")
+        expect(page).to have_content(appeal.representative)
         expect(page).to have_content("Regional Office: #{appeal_ro.city} (#{appeal_ro.key.sub('RO', '')})")
       end
     end
@@ -421,7 +424,6 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Veteran Details")
         expect(page).to have_content("The veteran is the appellant.")
@@ -439,7 +441,6 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        find("#queue-tabwindow-tab-1").click
 
         expect(page).to have_content("Appellant Details")
         expect(page).to have_content("Veteran Details")
@@ -490,6 +491,7 @@ RSpec.feature "Queue" do
     end
 
     after do
+      FeatureToggle.disable!(:judge_queue)
       User.unauthenticate!
       User.authenticate!
     end
@@ -502,19 +504,20 @@ RSpec.feature "Queue" do
 
       click_on "#{task.veteran_full_name} (#{task.vbms_id})"
 
-      expect(page).to have_content("Prepared by #{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}")
+      preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
 
-  context "loads decision views" do
-    scenario "starts checkout flow from table view" do
+  context "loads attorney checkout views" do
+    scenario "starts checkout flow from case detail view" do
       appeal = vacols_appeals.first
       visit "/queue"
 
-      dropdown = page.find("#table-row-#{appeal.vacols_id}").find(".Select-control")
-      dropdown.click
-      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-0']").click
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+
+      click_dropdown 0
 
       expect(page).to have_content "Select Dispositions"
 
@@ -526,9 +529,9 @@ RSpec.feature "Queue" do
       expect(cancel_modal.matches_css?(".active")).to eq true
       cancel_modal.find(".usa-button-warning").click
 
-      dropdown = page.find("#table-row-#{appeal.vacols_id}").find(".Select-control")
-      dropdown.click
-      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-1']").click
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+
+      click_dropdown 1
 
       expect(page).to have_content "Submit OMO for Review"
 
@@ -545,8 +548,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-1']")
+        click_dropdown 1
 
         expect(page).to have_link("Your Queue", href: "/queue")
         expect(page).to have_link(appeal.veteran_full_name, href: "/queue/appeals/#{appeal.vacols_id}")
@@ -565,8 +567,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
+        click_dropdown 0
 
         expect(page).to have_content("Select Dispositions")
 
@@ -574,10 +575,7 @@ RSpec.feature "Queue" do
         expect(table_rows.length).to eq(appeal.issues.length)
 
         # do not select all dispositions
-        table_rows[0..0].each do |row|
-          row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
-        end
+        table_rows[0..0].each { |row| click_dropdown 1, row }
 
         click_on "Continue"
 
@@ -587,10 +585,7 @@ RSpec.feature "Queue" do
         end
 
         # select all dispositions
-        table_rows.each do |row|
-          row.find(".Select-control").click
-          row.find("div[id$='--option-2']").click
-        end
+        table_rows.each { |row| click_dropdown 2, row }
 
         click_on "Continue"
 
@@ -602,8 +597,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
+        click_dropdown 0
 
         expect(page).to have_content("Select Dispositions")
 
@@ -616,8 +610,7 @@ RSpec.feature "Queue" do
           # changing options at the top of the form affects what options are enabled further down
           next if row.matches_css? ".is-disabled"
 
-          row.find(".Select-control").click
-          row.find("div[id$='--option-1']").click
+          click_dropdown 1, row
           row.find(".Select-value-label").text
         end
         fill_in "Notes:", with: "this is the note"
@@ -636,8 +629,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click ".Select-control"
-        safe_click "div[id$='--option-0']"
+        click_dropdown 0
 
         expect(page).to have_content "Select Dispositions"
 
@@ -664,7 +656,6 @@ RSpec.feature "Queue" do
           row = field_options[row_idx]
 
           next unless row
-          next if row.matches_css? ".is-disabled"
 
           row.find(".Select-control").click
 
@@ -684,8 +675,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click ".Select-control"
-        safe_click "div[id$='--option-0']"
+        click_dropdown 0
 
         expect(page).to have_content "Select Dispositions"
 
@@ -700,8 +690,7 @@ RSpec.feature "Queue" do
         field_values = fields.map do |row|
           next if row.matches_css? ".is-disabled"
 
-          row.find(".Select-control").click
-          row.find("div[id$='--option-0']").click
+          click_dropdown 0, row
           row.find(".Select-value-label").text
         end
         fill_in "Notes:", with: "added issue"
@@ -726,8 +715,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
+        click_dropdown 0
 
         expect(page).to have_content("Select Dispositions")
 
@@ -761,8 +749,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-1']")
+        click_dropdown 1
 
         expect(page).to have_content("Submit OMO for Review")
 
@@ -772,8 +759,7 @@ RSpec.feature "Queue" do
         fill_in "notes", with: "notes"
 
         safe_click("#select-judge")
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-1']")
+        click_dropdown 1
         expect(page).to have_content("Andrew Mackenzie")
 
         click_on "Continue"
@@ -792,8 +778,7 @@ RSpec.feature "Queue" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        safe_click(".Select-control")
-        safe_click("div[id$='--option-0']")
+        click_dropdown 0
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
@@ -822,8 +807,7 @@ RSpec.feature "Queue" do
         fill_in "notes", with: "this is a decision note"
 
         safe_click "#select-judge"
-        safe_click ".Select-control"
-        safe_click "div[id$='--option-1']"
+        click_dropdown 1
         expect(page).to have_content("Andrew Mackenzie")
 
         click_on "Continue"
@@ -839,6 +823,108 @@ RSpec.feature "Queue" do
     end
   end
 
+  context "loads judge checkout views" do
+    before do
+      FeatureToggle.enable!(:test_facols)
+      FeatureToggle.enable!(:judge_queue)
+      FeatureToggle.enable!(:judge_assignment)
+      User.unauthenticate!
+      User.authenticate!(css_id: "BVAAABSHIRE")
+      RequestStore[:current_user] = judge
+    end
+
+    after do
+      FeatureToggle.disable!(:test_facols)
+      FeatureToggle.disable!(:judge_queue)
+      FeatureToggle.disable!(:judge_assignment)
+      User.unauthenticate!
+      User.authenticate!
+    end
+
+    let!(:attorney) do
+      User.create(
+        css_id: "BVASCASPER1",
+        station_id: User::BOARD_STATION_ID,
+        full_name: "Bendytoots Cumbersnatch"
+      )
+    end
+    let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id) }
+    let!(:vacols_cases) do
+      [
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_allowed)],
+          correspondent: create(:correspondent, snamef: "Jeffy", snamel: "Veterino"),
+          work_product: :draft_decision
+        ),
+        create(
+          :case,
+          :assigned,
+          user: judge,
+          assigner: attorney,
+          case_issues: [create(:case_issue, :disposition_denied)],
+          correspondent: create(:correspondent, snamef: "Armide", snamel: "Forceso"),
+          work_product: :omo_request
+        )
+      ]
+    end
+
+    scenario "starts dispatch checkout flow" do
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
+
+      # get draft decision appeal vacols_id
+      vacols_id = VACOLS::Decass.all.find(&:draft_decision?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
+
+      visit "/queue"
+
+      # TODO: appeal vbms_id ends w/S. better way to strip?
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
+
+      click_dropdown 0
+
+      click_on "Continue"
+      expect(page).to have_content("Evaluate Decision")
+
+      click_on "Continue"
+      expect(page).to have_content("Choose one")
+      sleep 2
+
+      radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
+      case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
+      case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+
+      [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
+      # areas of improvement
+      page.find_all(".question-label").sample(2).each(&:double_click)
+
+      fill_in "additional-factors", with: "this is the note"
+
+      click_on "Continue"
+
+      expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
+    end
+
+    scenario "completes assign to omo checkout flow" do
+      _, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
+
+      vacols_id = VACOLS::Decass.all.find(&:omo_request?).defolder
+      appeal = appeals.find { |a| a.vacols_id.eql?(vacols_id) }
+
+      visit "/queue"
+
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
+
+      click_dropdown 1
+
+      expect(page).to have_content("You have successfully submitted an OMO for #{appeal.veteran_full_name}.")
+    end
+  end
+
   context "pop breadcrumb" do
     scenario "goes back from submit decision view" do
       appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
@@ -846,16 +932,12 @@ RSpec.feature "Queue" do
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
       sleep 1
-      safe_click(".Select-control")
-      safe_click("div[id$='--option-0']")
+      click_dropdown 0
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.issues.length)
 
-      issue_rows.each do |row|
-        row.find(".Select-control").click
-        row.find("div[id$='--option-2']").click
-      end
+      issue_rows.each { |row| click_dropdown 2, row }
 
       click_on "Continue"
 
@@ -866,30 +948,6 @@ RSpec.feature "Queue" do
 
       expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions")
       expect(page).not_to have_content("Select Dispositions > Submit")
-    end
-  end
-
-  context "when beaam appeals are turned on" do
-    before do
-      FeatureToggle.enable!(:queue_beaam_appeals)
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_beaam_appeals)
-    end
-
-    let!(:appeals) do
-      [
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Joe" })),
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Bob" })),
-        create(:appeal, veteran: create(:veteran, bgs_veteran_record: { first_name: "Pal" }))
-      ]
-    end
-
-    scenario "going to the root beaam appeal page, shows a beaam appeal" do
-      visit "/queue/beaam"
-
-      expect(page).to have_content("Pal")
     end
   end
 end

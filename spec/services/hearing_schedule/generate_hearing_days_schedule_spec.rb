@@ -54,8 +54,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     subject { generate_hearing_days_schedule.available_days }
 
     it "has available hearing days" do
-      # total 130 weekdays - (15 N/A days + 3 holidays) = 112
-      expect(subject.count).to be 112
+      # total 110 weekdays - (15 N/A days + 4 holidays) = 91
+      expect(subject.count).to be 91
     end
 
     it "removes weekends" do
@@ -98,24 +98,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
     it "removes holidays" do
       expect(subject.find { |day| federal_holidays.include?(day) }).to eq nil
-    end
-  end
-
-  context "verify ro available days" do
-    let(:generate_hearing_days_schedule_removed_ro_na) do
-      HearingSchedule::GenerateHearingDaysSchedule.new(
-        schedule_period,
-        co_non_available_days,
-        no_ro_non_available_days
-      )
-    end
-
-    context "RO available days" do
-      subject { generate_hearing_days_schedule_removed_ro_na }
-
-      it "assigns ros to initial available days" do
-        subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
-      end
     end
   end
 

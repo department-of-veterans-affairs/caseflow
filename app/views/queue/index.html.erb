@@ -2,7 +2,7 @@
   <%= react_component("Queue", props: {
     userDisplayName: current_user.display_name,
     userId: current_user.id,
-    userRole: current_user.vacols_role,
+    userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     userCanAccessQueue: can_access_queue?,
     dropdownUrls: dropdown_urls,
@@ -10,7 +10,8 @@
     buildDate: build_date,
     featureToggles: {
       phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
-      judge_assignment: FeatureToggle.enabled?(:judge_assignment, user: current_user)
+      judge_assignment: FeatureToggle.enabled?(:judge_assignment, user: current_user),
+      judge_assign_cases: FeatureToggle.enabled?(:judge_assign_cases, user: current_user)
     }
   }) %>
 <% end %>

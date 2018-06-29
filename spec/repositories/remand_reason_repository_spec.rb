@@ -1,4 +1,63 @@
 describe RemandReasonRepository do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  context ".load_remand_reasons_for_appeals" do
+    subject { RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids) }
+
+    let!(:vacols_case1) { create(:case, case_issues: issues1) }
+    let(:issues1) { [create(:case_issue, :disposition_remanded), create(:case_issue, :disposition_remanded)] }
+
+    let!(:vacols_case2) { create(:case, case_issues: issues2) }
+    let(:issues2) { [create(:case_issue, :disposition_allowed)] }
+
+    let!(:vacols_case3) { create(:case, case_issues: issues3) }
+    let(:issues3) do
+      [create(:case_issue, :disposition_remanded),
+       create(:case_issue, :disposition_allowed),
+       create(:case_issue, :disposition_remanded)]
+    end
+
+    let!(:remand_reasons) do
+      [
+        create(:remand_reason,
+               rmdkey: issues1.second.isskey,
+               rmdissseq: issues1.second.issseq,
+               rmdval: "BA", rmddev: "R1"),
+        create(:remand_reason,
+               rmdkey: issues3.first.isskey,
+               rmdissseq: issues3.first.issseq,
+               rmdval: "AA"),
+        create(:remand_reason,
+               rmdkey: issues3.first.isskey,
+               rmdissseq: issues3.first.issseq,
+               rmdval: "AB",
+               rmddev: "R1"),
+        create(:remand_reason, rmdkey: issues3.third.isskey, rmdissseq: issues3.third.issseq, rmdval: "AC")
+      ]
+    end
+
+    let(:vacols_ids) { [vacols_case1.bfkey, vacols_case2.bfkey, vacols_case3.bfkey] }
+
+    let(:result) do
+      { vacols_case1.bfkey => { issues1.second.issseq => [{ code: "BA", after_certification: false }] },
+        vacols_case2.bfkey => {},
+        vacols_case3.bfkey =>
+          { issues3.first.issseq =>
+             [{ code: "AA", after_certification: true }, { code: "AB", after_certification: false }],
+            issues3.third.issseq => [{ code: "AC", after_certification: true }] } }
+    end
+
+    it "should load remand reasons per appeal" do
+      expect(subject).to eq result
+    end
+  end
+
   context ".update_remand_reasons" do
     subject { RemandReasonRepository.update_remand_reasons(record, issue_attrs) }
     let(:record) do
@@ -60,6 +119,63 @@ describe RemandReasonRepository do
       it "deletes existing remand reasons" do
         expect(RemandReasonRepository).to receive(:delete_remand_reasons!)
         subject
+      end
+    end
+  end
+
+  context ".create_remand_reasons!" do
+    subject { RemandReasonRepository.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons) }
+    let(:vacols_id) { "123456" }
+    let(:vacols_sequence_id) { "3" }
+    let(:remand_reasons) do
+      [{
+        rmdval: "AB",
+        rmddev: "R2",
+        rmdmdusr: "TEST1",
+        rmdmdtim: VacolsHelper.local_time_with_utc_timezone
+      }]
+    end
+
+    it "creates remand reasons" do
+      subject
+      expect(VACOLS::RemandReason.all.length).to eq(1)
+
+      remand_reason = VACOLS::RemandReason.all.first
+      expect(remand_reason.rmdval).to eq "AB"
+      expect(remand_reason.rmddev).to eq "R2"
+      expect(remand_reason.rmdissseq).to eq 3
+      expect(remand_reason.rmdkey).to eq "123456"
+    end
+  end
+
+  context ".delete_remand_reasons!" do
+    subject { RemandReasonRepository.delete_remand_reasons!(vacols_id, vacols_sequence_id, **kwargs) }
+    let(:vacols_id) { "123456" }
+    let(:vacols_sequence_id) { "3" }
+    let!(:remand_reasons) do
+      [
+        create(:remand_reason),
+        create(:remand_reason, rmdval: "DI"),
+        create(:remand_reason, rmdval: "AA")
+      ]
+    end
+
+    context "deletes a specific remand reason" do
+      let(:kwargs) { { rmdval: "DI" } }
+
+      it "deletes a specific remand reason" do
+        subject
+        expect(VACOLS::RemandReason.all.length).to eq(2)
+        expect(VACOLS::RemandReason.all.map(&:rmdval).include?("DI")).to be_falsey
+      end
+    end
+
+    context "deletes all remand reasons for an issue" do
+      let(:kwargs) { {} }
+
+      it "deletes all remand reasons for an issue" do
+        subject
+        expect(VACOLS::RemandReason.all.length).to eq(0)
       end
     end
   end

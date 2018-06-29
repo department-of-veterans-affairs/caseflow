@@ -154,9 +154,25 @@ class SeedDB
   end
 
   def create_beaam_appeals
-    FactoryBot.create(:appeal, veteran_file_number: "209179363", veteran: FactoryBot.create(:veteran))
-    FactoryBot.create(:appeal, veteran_file_number: "767574947", veteran: FactoryBot.create(:veteran))
-    FactoryBot.create(:appeal, veteran_file_number: "216979849", veteran: FactoryBot.create(:veteran))
+    FactoryBot.create(
+      :appeal,
+      veteran_file_number: "209179363",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
+    )
+    FactoryBot.create(
+      :appeal,
+      veteran_file_number: "767574947",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
+    )
+    FactoryBot.create(
+      :appeal,
+      :appellant_not_veteran,
+      veteran_file_number: "216979849",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+    )
   end
 
   def clean_db
