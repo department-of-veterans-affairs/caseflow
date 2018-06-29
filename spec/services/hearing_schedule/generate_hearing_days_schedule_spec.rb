@@ -6,6 +6,17 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
     end
   end
+  let(:ro_one_non_available_days) do
+    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 8).map do |date|
+      create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO01")
+    end
+  end
+
+  let(:ro_three_non_available_days) do
+    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 11).map do |date|
+      create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO03")
+    end
+  end
 
   let(:ro_allocations) do
     [
