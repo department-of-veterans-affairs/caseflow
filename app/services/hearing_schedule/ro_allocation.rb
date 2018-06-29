@@ -30,6 +30,7 @@ module HearingSchedule::RoAllocation
 
     def validate_available_days(allocated_days, available_days, num_of_rooms)
 
+      # raise error if there are not enough avaiable days
       raise NotEnoughAvailableDays unless allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
 
       allocated_days.each_key do |ro_key|
@@ -79,8 +80,8 @@ module HearingSchedule::RoAllocation
       allocated_days
     end
 
-    def get_monthly_allocations(grouped_monthly_dates, available_days, monthly_allocated_days, num_of_rooms)
-      resorted_monthly_dates = sort_monthly_order(grouped_monthly_dates.keys).map {|month| [month, monthly_allocated_days[month]]}.to_h
+    def get_monthly_allocations(grouped_monthly_avail_dates, available_days, monthly_allocated_days, num_of_rooms)
+      resorted_monthly_dates = sort_monthly_order(grouped_monthly_avail_dates.keys).map {|month| [month, monthly_allocated_days[month]]}.to_h
       valid_resorted_months = validate_available_days(resorted_monthly_dates, available_days, num_of_rooms)
       distribute_days_evenly(valid_resorted_months, available_days, num_of_rooms)
     end
