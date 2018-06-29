@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Hearing Schedule", type: :request do
   let!(:user) do
-    User.authenticate!(roles: ["Hearing Schedule", "Reader"])
+    User.authenticate!(roles: ["Build HearSched"])
   end
 
   describe "Create a schedule slot" do
