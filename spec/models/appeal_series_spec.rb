@@ -31,6 +31,16 @@ describe AppealSeries do
   let(:location_code) { "77" }
   let(:status) { "Advance" }
 
+  # Sometimes there are empty issues in VACOLS; we should ignore these issues
+  before do
+    latest_appeal.issues << Generators::Issue.build(
+      codes: [],
+      labels: [],
+      disposition: nil,
+      close_date: nil
+    )
+  end
+
   context "#vacols_ids" do
     subject { series.vacols_ids }
 

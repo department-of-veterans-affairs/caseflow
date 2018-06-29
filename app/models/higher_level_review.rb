@@ -8,7 +8,20 @@ class HigherLevelReview < AmaReview
 
   private
 
-  # TODO: Update with real code and modifier data
+  def special_issues
+    return [] unless same_office
+    [{ code: "SSR", narrative: "Same Station Review" }]
+  end
+
+  def create_contentions_in_vbms
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: end_product_reference_id,
+      contention_descriptions: contention_descriptions_to_create,
+      special_issues: special_issues
+    )
+  end
+
   def end_product_code
     "030HLRR"
   end
