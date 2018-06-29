@@ -11,7 +11,7 @@ describe IssueMapper do
         level_1: "01",
         level_2: "03",
         level_3: nil,
-        note: "another one",
+        note: "k" * 120,
         vacols_user_id: "TEST1"
       }
     end
@@ -28,7 +28,7 @@ describe IssueMapper do
           isslev1: "01",
           isslev2: "03",
           isslev3: nil,
-          issdesc: "another one",
+          issdesc: "k" * 100,
           issaduser: "TEST1",
           issadtime: VacolsHelper.local_time_with_utc_timezone
         }
@@ -59,7 +59,7 @@ describe IssueMapper do
           isslev1: "01",
           isslev2: "03",
           isslev3: nil,
-          issdesc: "another one",
+          issdesc: "k" * 100,
           issmduser: "TEST1",
           issmdtime: VacolsHelper.local_time_with_utc_timezone
         }
@@ -125,7 +125,7 @@ describe IssueMapper do
         context "when valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "withdrawn",
+              disposition: "9",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }
@@ -144,7 +144,7 @@ describe IssueMapper do
         context "when not valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "Advance Allowed in Field",
+              disposition: "A",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }

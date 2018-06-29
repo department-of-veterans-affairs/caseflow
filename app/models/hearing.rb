@@ -64,7 +64,7 @@ class Hearing < ApplicationRecord
   end
 
   def update(hearing_hash)
-    transaction do
+    ActiveRecord::Base.multi_transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
       super
     end

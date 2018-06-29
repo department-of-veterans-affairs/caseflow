@@ -11,7 +11,8 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
+               "Hearing Schedule"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -36,24 +37,36 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
-  def vacols_uniq_id
-    @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
+  def attorney_in_vacols?
+    vacols_roles.include?("attorney")
   end
 
-  def vacols_role
-    @vacols_role ||= self.class.user_repository.vacols_role(css_id)
+  def judge_in_vacols?
+    vacols_roles.include?("judge")
+  end
+
+  def colocated_in_vacols?
+    vacols_roles.include?("colocated")
+  end
+
+  def vacols_uniq_id
+    @vacols_uniq_id ||= user_info[:uniq_id]
+  end
+
+  def vacols_roles
+    @vacols_roles ||= user_info[:roles] || []
   end
 
   def vacols_attorney_id
-    @vacols_attorney_id ||= self.class.user_repository.vacols_attorney_id(css_id)
+    @vacols_attorney_id ||= user_info[:attorney_id]
   end
 
   def vacols_group_id
-    @vacols_group_id ||= self.class.user_repository.vacols_group_id(css_id)
+    @vacols_group_id ||= user_info[:group_id]
   end
 
   def vacols_full_name
-    @vacols_full_name ||= self.class.user_repository.vacols_full_name(css_id)
+    @vacols_full_name ||= user_info[:full_name]
   rescue Caseflow::Error::UserRepositoryError
     nil
   end
@@ -164,6 +177,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def user_info
+    @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
+  end
 
   def get_appeal_stream_hearings(appeal_streams)
     appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|

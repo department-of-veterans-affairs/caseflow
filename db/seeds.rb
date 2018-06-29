@@ -153,6 +153,28 @@ class SeedDB
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
   end
 
+  def create_beaam_appeals
+    FactoryBot.create(
+      :appeal,
+      veteran_file_number: "209179363",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
+    )
+    FactoryBot.create(
+      :appeal,
+      veteran_file_number: "767574947",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
+    )
+    FactoryBot.create(
+      :appeal,
+      :appellant_not_veteran,
+      veteran_file_number: "216979849",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+    )
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -163,6 +185,7 @@ class SeedDB
     # create them in all envs
     create_annotations
     create_tags
+    create_beaam_appeals
 
     return if Rails.env.development?
 

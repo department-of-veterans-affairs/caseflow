@@ -5,6 +5,7 @@ class Generators::Issue
     def default_attrs
       {
         disposition: "Allowed",
+        disposition_id: "1",
         close_date: 7.days.ago,
         codes: %w[02 15 03 5252],
         labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"],

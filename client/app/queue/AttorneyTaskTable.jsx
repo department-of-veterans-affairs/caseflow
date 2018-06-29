@@ -7,12 +7,11 @@ import { css } from 'glamor';
 import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import { CATEGORIES, redText, disabledLinkStyle } from './constants';
-import COPY from '../../../COPY.json';
+import { CATEGORIES, redText } from './constants';
+import COPY from '../../COPY.json';
 
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
@@ -64,10 +63,6 @@ class AttorneyTaskTable extends React.PureComponent {
           return null;
         }
 
-        if (this.getAppealForTask(task, 'paper_case')) {
-          return <span {...disabledLinkStyle}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK}</span>;
-        }
-
         return <ReaderLink vacolsId={task.vacolsId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
@@ -75,35 +70,52 @@ class AttorneyTaskTable extends React.PureComponent {
       }
     }];
 
-    if (this.props.featureToggles.phase_two) {
-      columns.push({
-        header: COPY.CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE,
-        span: this.collapseColumnIfNoDASRecord,
-        valueFunction: (task) => <SelectCheckoutFlowDropdown vacolsId={task.vacolsId} />
-      });
-    }
-
     return columns;
   };
 
-  render = () => <Table
-    columns={this.getQueueColumns}
-    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
-    getKeyForRow={this.getKeyForRow}
-    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
-    bodyStyling={this.tableStyle}
-  />;
+  render = () => {
+    const { appeals, loadedQueueTasks, tasks } = this.props;
+    const taskWithId = {};
+
+    for (const id of Object.keys(loadedQueueTasks)) {
+      taskWithId[id] = tasks[id];
+    }
+
+    return <Table
+      columns={this.getQueueColumns}
+      rowObjects={sortTasks({ appeals,
+        tasks: taskWithId })}
+      getKeyForRow={this.getKeyForRow}
+      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
+      bodyStyling={this.tableStyle} />;
+  }
 }
 
 AttorneyTaskTable.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired,
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue.loadedQueue, 'tasks', 'appeals'),
-  ..._.pick(state.ui, 'featureToggles')
-});
+const mapStateToProps = (state) => {
+  const {
+    queue: {
+      loadedQueue: {
+        tasks: loadedQueueTasks,
+        appeals
+      },
+      tasks
+    },
+    ui: {
+      featureToggles
+    }
+  } = state;
+
+  return { loadedQueueTasks,
+    appeals,
+    tasks,
+    featureToggles };
+};
 
 export default connect(mapStateToProps)(AttorneyTaskTable);

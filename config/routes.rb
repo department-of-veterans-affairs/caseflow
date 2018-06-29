@@ -86,15 +86,20 @@ Rails.application.routes.draw do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
-  resources :beam_appeals, only: [:index]
+  resources :beaam_appeals, only: [:index]
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
+    resources :hearing_day, only: [:index]
+    resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule/build', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
+  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
 
   resources :hearings, only: [:update]
 
@@ -106,6 +111,8 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
+  get 'queue/help' => 'help#queue'
+
 
   root 'home#index'
 
@@ -121,23 +128,25 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id(*rest)', to: 'tasks#index'
-
-    post '/appeals/:id/complete', to: 'tasks#complete'
+    get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
-  resources :tasks, only: [:create, :update] do
-    post :complete
-  end
-
+  resources :legacy_tasks, only: [:create, :update]
+  resources :tasks, only: [:index, :create]
+  post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

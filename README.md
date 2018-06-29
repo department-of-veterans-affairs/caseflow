@@ -1,5 +1,5 @@
 # Caseflow
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
 Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
 
@@ -115,36 +115,33 @@ brew services stop postgresql
 brew services stop redis
 ```
 
-Start all containers
-```
-docker-compose up -d
-# run without -d to start your environment and view container logging in the foreground
+## Setup shortcuts
 
-docker-compose ps
-# this shows you the status of all of your dependencies
+To rapidly set up your local development (and testing) environment, you can run:
+```
+bundle exec rake local:build
 ```
 
-Turning off dependencies
-```
-# this stops all containers
-docker-compose down
+The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
-# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
-docker-compose down -v
-```
+## Debugging FACOLS setup
+Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
 
-## Setup your Database Schema
+1) Running `rake local:vacols:setup` logs out:
 ```
-rake [RAILS_ENV=<test|development|stubbed>] db:setup
-rake [RAILS_ENV=<test|development|stubbed>] db:seed
-
-# setup local VACOLS (FACOLS)
-RAILS_ENV=test rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:seed
+[36mVACOLS_DB-development     |[0m tail: cannot open '/u01/app/oracle/diag/rdbms/bvap/BVAP/trace/alert_BVAP.log' for reading: No such file or directory
+[36mVACOLS_DB-development     |[0m tail: no files remaining
+[36mVACOLS_DB-development exited with code 1
 ```
+Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
 
-Note you'll need to setup both the test and development databases, but only need to seed the development database.
+2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
+
+If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
+```
+bundle exec rake local:destroy
+bundle exec rake local:build
+```
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
@@ -212,6 +209,13 @@ From this view you can start a new task and go through the flow of establishing 
 To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
 
 ### Environment variables
+
+First you'll need to install ansible-vault and credstash.
+```sh
+pip install ansible-vault
+pip install credstash
+```
+For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash)
 
 We'll need to obtain the Ansible vault password using credstash:
 

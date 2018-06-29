@@ -42,15 +42,17 @@ class QueueLoadingScreen extends React.PureComponent {
       appeals
     } = this.props;
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/queue/${userId}`).then((response) => this.props.onReceiveQueue({
-      ...associateTasksWithAppeals(JSON.parse(response.text)),
-      userId
-    }));
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+      this.props.onReceiveQueue({
+        ...associateTasksWithAppeals(JSON.parse(response.text)),
+        userId
+      }));
   };
 
   loadActiveAppeal = () => {
@@ -116,12 +118,13 @@ class QueueLoadingScreen extends React.PureComponent {
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  vacolsId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue, 'judges'),
-  ...state.caseDetail.activeAppeal,
+  activeAppeal: state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
 

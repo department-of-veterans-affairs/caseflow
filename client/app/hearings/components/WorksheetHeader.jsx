@@ -10,6 +10,7 @@ import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../ac
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
+import ReactTooltip from 'react-tooltip';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -105,24 +106,26 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VLJ</h5>
-          <div>{worksheet.user ? worksheet.user.full_name : ''}</div>
+          <div className="cf-hearings-headers">{worksheet.user ? worksheet.user.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>HEARING TYPE</h5>
-          <div>{worksheet.request_type}</div>
+          <div className="cf-hearings-headers">{worksheet.request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>REGIONAL OFFICE</h5>
-          <div>{worksheet.regional_office_name}</div>
+          <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>DATE</h5>
-          <div>{moment(worksheet.date).format('ddd l')}</div>
+          <div className="cf-hearings-headers">{moment(worksheet.date).format('ddd l')}</div>
         </div>
         {worksheet.date && new Date(worksheet.date) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h5>HEARING DISPOSTION</h5>
-            <div className={dispositionClassNames}>{getDisposition(worksheet.disposition)}</div>
+            <h5>HEARING DISPOSITION</h5>
+            <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
+              {getDisposition(worksheet.disposition)}
+            </div>
           </div>
         }
       </div>
@@ -131,13 +134,19 @@ class WorksheetHeader extends React.PureComponent {
         <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN NAME</h5>
-          <div><b>{worksheet.veteran_mi_formatted}</b></div>
+          <div className="cf-hearings-headers"><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
+
+        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="copy-vbms-id" />
+
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
+          {!this.props.print &&
           <div {...copyButtonStyling}>
             <CopyToClipboard text={worksheet.sanitized_vbms_id}>
               <button
+                data-for="copy-vbms-id"
+                data-tip="Click to copy to clipboard"
                 name="Copy Veteran ID"
                 className={['usa-button-outline cf-copy-to-clipboard']}>
                 {worksheet.sanitized_vbms_id}
@@ -145,33 +154,40 @@ class WorksheetHeader extends React.PureComponent {
               </button>
             </CopyToClipboard>
           </div>
+          }
+          {this.props.print &&
+         <div className="cf-hearings-headers">
+           {worksheet.sanitized_vbms_id}
+         </div>
+          }
         </div>
+
         <div className="cf-hearings-worksheet-data-cell">
           <h5>AGE</h5>
-          <div className={veteranClassNames}>{worksheet.veteran_age}</div>
+          <div className={classNames('cf-hearings-headers', veteranClassNames)}>{worksheet.veteran_age}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>GENDER</h5>
-          <div>{getVeteranGender(worksheet.veteran_sex)}</div>
+          <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_sex)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell" />
         <div className="cf-hearings-worksheet-data-cell">
           <h5>APPELLANT NAME</h5>
-          <div>{appellant}</div>
+          <div className="cf-hearings-headers">{appellant}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>CITY/STATE</h5>
-          <div>{worksheet.appellant_city && worksheet.appellant_state ?
+          <div className="cf-hearings-headers">{worksheet.appellant_city && worksheet.appellant_state ?
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>REPRESENTATIVE ORG.</h5>
-          <div>{worksheet.representative}</div>
+          <div className="cf-hearings-headers">{worksheet.representative}</div>
         </div>
       </div>
 
-      <form className="cf-hearings-worksheet-form">
-        <div {...firstColumnStyling} className="cf-push-left">
+      <form className="cf-hearings-worksheet-form cf-hearings-form-headers">
+        <div {...firstColumnStyling} className="cf-push-left cf-hearings-form-headers">
           <WorksheetFormEntry
             name="Representative Name"
             value={worksheet.representative_name}
@@ -182,7 +198,7 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondColumnStyling} className="cf-push-right">
+        <div {...secondColumnStyling} className="cf-push-right cf-hearings-form-headers">
           <WorksheetFormEntry
             name="Witness (W)/Observer (O) and Additional Details"
             value={worksheet.witness}
@@ -193,7 +209,7 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondRowStyling} className="cf-push-left">
+        <div {...secondRowStyling} className="cf-push-left cf-hearings-form-head">
           <WorksheetFormEntry
             name="Periods and circumstances of service"
             value={worksheet.military_service}

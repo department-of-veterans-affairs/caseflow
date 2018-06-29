@@ -57,19 +57,18 @@ module IssueMapper
         # skip only if the key is not passed, if the key is passed and the value is nil - include that
         next unless issue_attrs.keys.include? k
         issue_attrs[k] = disposition_to_vacols_format(issue_attrs[k]) if k == :disposition
+        issue_attrs[k] = issue_attrs[k][0..99] if k == :note && issue_attrs[k]
         result[COLUMN_NAMES[k]] = issue_attrs[k]
         result
       end
     end
 
     def disposition_to_vacols_format(disposition)
-      inverted_dispositions = Constants::VACOLS_DISPOSITIONS_BY_ID.map { |k, v| [v.parameterize.underscore, k] }.to_h
-      code = inverted_dispositions[disposition]
-
-      unless ALLOWED_DISPOSITION_CODES.include? code
-        fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{disposition}"
+      unless ALLOWED_DISPOSITION_CODES.include? disposition
+        readable_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[disposition]
+        fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{readable_disposition} (#{disposition})"
       end
-      code
+      disposition
     end
   end
 end

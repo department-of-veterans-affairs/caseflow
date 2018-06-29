@@ -2,9 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
 import AutoSave from '../components/AutoSave';
@@ -17,6 +15,7 @@ import WorksheetFooter from './components/WorksheetFooter';
 import LoadingScreen from '../components/LoadingScreen';
 import CFRichTextEditor from '../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
+import Button from '../components/Button';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -133,7 +132,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
-
       <form className="cf-hearings-worksheet-form">
         <WorksheetFormEntry
           name="Hearing Summary"
@@ -180,7 +178,6 @@ export class HearingWorksheet extends React.PureComponent {
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
             <div className={wrapperClassNames}>
               {firstWorksheetPage}
-              <PrintPageBreak />
               {secondWorksheetPage}
             </div>}
         </div>
@@ -188,17 +185,17 @@ export class HearingWorksheet extends React.PureComponent {
       {this.props.print &&
     <div className={printWrapperClassNames}>
       {firstWorksheetPage}
-      <PrintPageBreak />
       {secondWorksheetPage}
     </div>
       }
       {!this.props.print &&
         <div className="cf-push-right">
-          <Link
+          <Button
+            classNames={['usa-button-outline']}
+            name="Save as PDF"
             onClick={this.openPdf(worksheet, worksheetIssues)}
-            button="secondary">
-          Save as PDF
-          </Link>
+            aria-label="Save as PDF"
+          />
         </div>
       }
     </div>;

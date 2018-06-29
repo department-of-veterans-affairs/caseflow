@@ -8,6 +8,61 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
+    bfregoff "RO18"
+
+    trait :assigned do
+      transient do
+        decass_count 1
+        user nil
+        assigner nil
+        work_product nil
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.user
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+        end
+        if evaluator.assigner
+          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
+        end
+        vacols_case.update!(bfcurloc: slogid) if slogid
+        create_list(
+          :decass,
+          evaluator.decass_count,
+          evaluator.work_product,
+          defolder: vacols_case.bfkey,
+          deadusr: slogid ? slogid : "TEST",
+          demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil
+        )
+      end
+    end
+
+    transient do
+      # Pass an array of built (not created) case_hearings to associate with this appeal
+      case_hearings []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_hearings.each do |case_hearing|
+          case_hearing.update!(folder_nr: vacols_case.bfkey)
+        end
+      end
+    end
+
+    transient do
+      case_issues []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_issues.each do |case_issue|
+          case_issue.isskey = vacols_case.bfkey
+          case_issue.issseq = VACOLS::CaseIssue.generate_sequence_id(vacols_case.bfkey)
+          case_issue.save
+        end
+      end
+    end
+
     transient do
       documents []
       nod_document []
@@ -73,12 +128,20 @@ FactoryBot.define do
       end
     end
 
-    trait :original do
-      bfac 1
+    trait :type_original do
+      bfac "1"
     end
 
-    trait :reconsideration do
-      bfac 4
+    trait :type_post_remand do
+      bfac "3"
+    end
+
+    trait :type_reconsideration do
+      bfac "4"
+    end
+
+    trait :type_cavc_remand do
+      bfac "7"
     end
 
     trait :certified do
@@ -90,13 +153,91 @@ FactoryBot.define do
       bf41stat { certification_date }
     end
 
-    trait :has_regional_office do
-      bfregoff "RO18"
+    trait :status_active do
+      bfmpro "ACT"
+    end
+
+    trait :status_remand do
+      bfmpro "REM"
+    end
+
+    trait :status_complete do
+      bfmpro "HIS"
+    end
+
+    trait :status_advance do
+      bfmpro "ADV"
+    end
+
+    trait :disposition_allowed do
+      bfdc "1"
+    end
+
+    trait :disposition_remanded do
+      bfdc "3"
+    end
+
+    trait :disposition_vacated do
+      bfdc "5"
+    end
+
+    trait :disposition_granted_by_aoj do
+      bfdc "B"
+    end
+
+    trait :disposition_merged do
+      bfdc "M"
+    end
+
+    trait :disposition_ramp do
+      bfdc "P"
+    end
+
+    trait :representative_american_legion do
+      bfso "A"
+    end
+
+    trait :video_hearing_requested do
+      bfdocind "V"
+    end
+
+    trait :central_office_hearing do
+      bfhr "1"
+    end
+
+    trait :travel_board_hearing do
+      bfhr "2"
+    end
+
+    trait :aod do
+      after(:create) do |vacols_case, _evaluator|
+        create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
+      end
+    end
+
+    transient do
+      remand_return_date nil
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.remand_return_date
+          create(:priorloc, lockey: vacols_case.bfkey, locstto: "96", locdout: evaluator.remand_return_date)
+        end
+      end
+    end
+
+    transient do
+      staff nil
+    end
+
+    after(:build) do |vacols_case, evaluator|
+      if evaluator.staff
+        vacols_case.bfcurloc = evaluator.staff.slogid
+      end
     end
 
     after(:build) do |vacols_case, evaluator|
       Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[vacols_case.bfcorlid] =
+      Fakes::VBMSService.document_records[vacols_case.bfcorlid.gsub(/[^0-9]/, "")] =
         evaluator.documents + evaluator.nod_document + evaluator.soc_document +
         evaluator.form9_document + evaluator.ssoc_documents + evaluator.decision_document
     end

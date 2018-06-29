@@ -1,3 +1,4 @@
+# Hearing Prep repository.
 class HearingRepository
   class << self
     # :nocov:

@@ -107,10 +107,12 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
+
+    RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+    Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
   end
 
   after do
@@ -125,17 +127,6 @@ RSpec.feature "Reader" do
 
   let!(:current_user) do
     User.authenticate!(roles: ["Reader"])
-  end
-
-  context "User on blacklist" do
-    before do
-      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
-    end
-
-    scenario "it redirects to unauthorized" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Unauthorized")
-    end
   end
 
   context "Short list of documents" do
@@ -328,7 +319,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_title("Assignments | Caseflow Reader")
 
-        click_on "New", match: :first
+        find("a[href='/reader/appeal/#{appeal.vacols_id}/documents']").click
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")

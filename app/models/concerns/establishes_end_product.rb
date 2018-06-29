@@ -1,18 +1,7 @@
 module EstablishesEndProduct
-  # Requires external dependencies:
-  # end_product_reference_id
-  # receipt_date
-  # end_product_code
-  # end_product_modifier
-  # end_product_station
-  # veteran
-  # established_at
-  # established_at=
-
   extend ActiveSupport::Concern
 
   class EstablishedEndProductNotFound < StandardError; end
-  class InvalidEndProductError < StandardError; end
 
   module ClassMethods
     def established
@@ -29,16 +18,12 @@ module EstablishesEndProduct
   end
 
   def establish_end_product!
-    fail InvalidEndProductError unless end_product_to_establish.valid?
+    end_product_establishment.perform!
 
-    establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      update!(
-        end_product_reference_id: result.claim_id,
-        established_at: Time.zone.now
-      )
-    end
-  rescue VBMS::HTTPError => error
-    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+    update!(
+      end_product_reference_id: end_product_establishment.reference_id,
+      established_at: Time.zone.now
+    )
   end
 
   def end_product_active?
@@ -74,22 +59,15 @@ module EstablishesEndProduct
     !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
   end
 
-  def end_product_to_establish
-    @end_product_to_establish ||= EndProduct.new(
-      claim_id: end_product_reference_id,
+  def end_product_establishment
+    @end_product_establishment ||= EndProductEstablishment.new(
+      veteran: veteran,
+      reference_id: end_product_reference_id,
       claim_date: receipt_date,
-      claim_type_code: end_product_code,
-      modifier: end_product_modifier,
-      suppress_acknowledgement_letter: false,
-      gulf_war_registry: false,
-      station_of_jurisdiction: end_product_station
-    )
-  end
-
-  def establish_claim_in_vbms(end_product)
-    VBMSService.establish_claim!(
-      claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      code: end_product_code,
+      valid_modifiers: valid_modifiers,
+      station: "397",
+      cached_status: end_product_status
     )
   end
 

@@ -1,2 +1,0 @@
-class OMORequest < AttorneyCaseReview
-end

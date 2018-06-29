@@ -9,12 +9,18 @@ class SupplementalClaimIntake < Intake
     super.merge(
       receipt_date: detail.receipt_date,
       end_product_description: detail.end_product_description,
-      ratings: veteran.cached_serialized_timely_ratings
+      ratings: detail.cached_serialized_timely_ratings
     )
+  end
+
+  def cancel_detail!
+    detail.remove_claimants!
+    super
   end
 
   def review!(request_params)
     detail.start_review!
+    detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
     detail.update(request_params.permit(:receipt_date))
   end
 

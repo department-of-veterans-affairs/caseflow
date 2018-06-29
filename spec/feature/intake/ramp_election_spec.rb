@@ -55,13 +55,18 @@ RSpec.feature "RAMP Election Intake" do
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
   end
 
+  let(:long_address_error) do
+    VBMS::HTTPError.new("500", "<ns4:message>The maximum data length for AddressLine1  " \
+      "was not satisfied: The AddressLine1  must not be greater than 20 characters.</ns4:message>")
+  end
+
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
   context "RAMP Election" do
     scenario "Search for a veteran with an no active appeals" do
-      RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
+      create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
 
       visit "/intake"
 
@@ -78,7 +83,7 @@ RSpec.feature "RAMP Election Intake" do
     end
 
     scenario "Search for a veteran with an ineligible appeal" do
-      RampElection.create!(veteran_file_number: "77778888", notice_date: 5.days.ago)
+      create(:ramp_election, veteran_file_number: "77778888", notice_date: 5.days.ago)
 
       visit "/intake"
 
@@ -114,40 +119,8 @@ RSpec.feature "RAMP Election Intake" do
       expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
     end
 
-    scenario "Search for a veteran that has a RAMP election already processed" do
-      RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: 7.days.ago,
-        receipt_date: 5.days.ago,
-        established_at: 2.days.ago
-      )
-
-      # Validate you're redirected back to the form select page if you haven't started yet
-      visit "/intake/completed"
-      expect(page).to have_content("Welcome to Caseflow Intake!")
-
-      visit "/intake/review-request"
-
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Opt-In Election Form").click
-      end
-      safe_click ".cf-submit.usa-button"
-
-      fill_in "Search small", with: "12341234"
-      click_on "Search"
-
-      expect(page).to have_content("Search for Veteran by ID")
-      expect(page).to have_content(
-        "A RAMP opt-in with the receipt date 12/02/2017 was already processed"
-      )
-
-      error_intake = Intake.last
-      expect(error_intake.completion_status).to eq("error")
-      expect(error_intake.error_code).to eq("ramp_election_already_complete")
-    end
-
     scenario "Search for a veteran that has received a RAMP election" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 5.days.ago)
 
       # Validate you're redirected back to the search page if you haven't started yet
       visit "/intake/completed"
@@ -173,7 +146,7 @@ RSpec.feature "RAMP Election Intake" do
     end
 
     scenario "Start intake and go back and edit option" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
@@ -228,11 +201,6 @@ RSpec.feature "RAMP Election Intake" do
     scenario "Complete intake for RAMP Election form" do
       Fakes::VBMSService.end_product_claim_id = "SHANE9642"
 
-      election = RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: Date.new(2017, 11, 7)
-      )
-
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
@@ -249,7 +217,7 @@ RSpec.feature "RAMP Election Intake" do
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
 
-      election.reload
+      election = RampElection.find_by(veteran_file_number: "12341234")
       expect(election.option_selected).to eq("higher_level_review_with_hearing")
       expect(election.receipt_date).to eq(Date.new(2017, 11, 7))
 
@@ -324,10 +292,7 @@ RSpec.feature "RAMP Election Intake" do
     scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
       allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
-      RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: Date.new(2017, 11, 7)
-      )
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
@@ -347,6 +312,31 @@ RSpec.feature "RAMP Election Intake" do
       safe_click "button#button-submit-review"
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
+    end
+
+    scenario "Complete intake for RAMP Election form fails due to long address" do
+      allow(VBMSService).to receive(:establish_claim!).and_raise(long_address_error)
+
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
+      within_fieldset("Which review lane did the veteran select?") do
+        find("label", text: "Higher Level Review with Informal Conference").click
+      end
+
+      fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("The address is too long")
     end
   end
 end

@@ -1,17 +1,17 @@
 RSpec.describe AppealsController, type: :controller do
   before do
     FeatureToggle.enable!(:test_facols)
-    User.authenticate!(roles: ["System Admin"])
   end
 
-  after { FeatureToggle.disable!(:test_facols) }
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
 
-  let(:ssn) { Generators::Random.unique_ssn }
-  let(:vbms_id) { "#{ssn}S" }
+  before { User.authenticate!(roles: ["System Admin"]) }
 
   describe "GET appeals" do
-    let(:vacols_case) { FactoryBot.create(:case, bfcorlid: vbms_id, bfregoff: "RO18") }
-    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:ssn) { Generators::Random.unique_ssn }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
     let(:veteran_id) { appeal.vbms_id }
 
     context "when request header does not contain Veteran ID" do
@@ -46,8 +46,13 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/appeal_id/document_count" do
     context "when appeal has documents" do
-      let(:vacols_case) { FactoryBot.create(:case_with_soc, bfcorlid: vbms_id, bfregoff: "RO18") }
-      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:documents) do
+        [
+          Document.new(type: "SSOC", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 7.days.ago)
+        ]
+      end
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
@@ -65,9 +70,8 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET cases/:id" do
-    before { FactoryBot.create(:veteran, file_number: ssn) }
-    let(:vacols_case) { FactoryBot.create(:case, bfcorlid: vbms_id, bfregoff: "RO18") }
-    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:ssn) { Generators::Random.unique_ssn }
+    let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do
@@ -117,6 +121,26 @@ RSpec.describe AppealsController, type: :controller do
     end
 
     context "when requesting json response" do
+    end
+  end
+
+  describe "GET appeals/:id" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+
+    it "should succeed" do
+      get :show, params: { id: appeal.vacols_id }
+
+      assert_response :success
+    end
+  end
+
+  describe "GET appeals/:id.json" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+
+    it "should succeed" do
+      get :show, params: { id: appeal.vacols_id }, as: :json
+
+      assert_response :success
     end
   end
 end
