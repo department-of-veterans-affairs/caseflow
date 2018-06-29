@@ -112,7 +112,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
   end
 
-  context "filter available days" do
+  context "verify ro available days" do
 
     let(:generate_hearing_days_schedule_removed_ro_na) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
@@ -177,6 +177,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
 
     context "Travelboard hearing days" do
+      before do
+        ro_allocations
+      end
+
       let(:travel_board_schedules) do
         [
           create(:travel_board_schedule),
@@ -211,6 +215,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       subject { generate_hearing_days_schedule_removed_tb }
 
       it "travel board hearing days removed" do
+        
         travel_board_schedules.each do |tb_schedule|
           dates = (tb_schedule[:tbstdate]..tb_schedule[:tbenddate]).to_a
           expect(dates.map { |date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
