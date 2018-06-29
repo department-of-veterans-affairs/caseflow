@@ -36,8 +36,8 @@ export default function CaseDetailsIssueList(props) {
 const IssueDetails = (props) => {
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
-  const descriptionCodes = [issue.type, codes.shift()];
-  const diagnosticCode = codes.pop();
+  const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;
+  const descriptionCodes = [issue.type, ...codes];
 
   return <CaseDetailsDescriptionList>
     <ProgramListItem>{issue.program}</ProgramListItem>
