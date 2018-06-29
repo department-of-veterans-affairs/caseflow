@@ -46,10 +46,10 @@ export default class BuildSchedule extends React.Component {
     const downloadOptions = [
       {
         title: 'RO/CO hearings',
-        target: '/hearings/roco' },
+        target: '/ROAssignmentTemplate.xlsx'},
       {
         title: 'Judge non-availability',
-        target: '/hearings/judge' }
+        target: '/JudgeAssignmentTemplate.xlsx' }
     ];
 
     const pastUploadsRows = pastUploads.map((pastUpload) => {
