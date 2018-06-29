@@ -3,7 +3,7 @@ class HearingScheduleController < ApplicationController
   before_action :verify_hearing_schedule_access
 
   def set_application
-    RequestStore.store[:application] = "Hearing Schedule"
+    RequestStore.store[:application] = "hearing_schedule"
   end
 
   def index
