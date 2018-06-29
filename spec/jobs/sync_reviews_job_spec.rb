@@ -1,5 +1,5 @@
 describe SyncReviewsJob do
-  context ".perform", focus: true do
+  context ".perform" do
     let!(:ramp_election_more_recently_synced) do
       create(:ramp_election, :established, end_product_status_last_synced_at: 1.day.ago)
     end
