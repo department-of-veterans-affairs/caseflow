@@ -88,7 +88,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
       end
       add_allocated_days_and_format(grouped_shuffled_monthly_dates, ro_key)
     end
-
   end
 
   def allocate_hearing_days_to_individual_ro(monthly_allocations,
@@ -99,12 +98,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       if allocated_days > 0
         if num_of_rooms < allocated_days
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = num_of_rooms
-            .times.map { |room_num| { room_num: room_num + 1 } }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = Array(num_of_rooms) { |room_num| { room_num: room_num + 1 } }
           allocated_days -= num_of_rooms
         else
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = allocated_days
-            .times.map { |room_num| { room_num: room_num + 1 } }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = Array(allocated_days) { |room_num| { room_num: room_num + 1 } }
           allocated_days -= allocated_days
         end
       end

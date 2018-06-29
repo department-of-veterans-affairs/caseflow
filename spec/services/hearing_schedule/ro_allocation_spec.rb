@@ -1,5 +1,7 @@
 describe HearingSchedule::RoAllocation do
-  let(:ro_allocation) { Class.new { include HearingSchedule::RoAllocation } }
+  let(:ro_allocation) do
+    Class.new { include HearingSchedule::RoAllocation }
+  end
 
   context ".sort_monthly_order" do
     subject { ro_allocation.sort_monthly_order(months) }
@@ -23,27 +25,32 @@ describe HearingSchedule::RoAllocation do
   context ".validate_available_days" do
     let(:allocated_days) do
       { [4, 2018] => 10, [9, 2018] => 21, [5, 2018] => 21,
-        [8, 2018] => 22, [6, 2018] => 22, [7, 2018] => 21 } end
+        [8, 2018] => 22, [6, 2018] => 22, [7, 2018] => 21 }
+    end
     let(:available_days) do
       { [4, 2018] => 12, [5, 2018] => 20, [6, 2018] => 19,
-        [7, 2018] => 17, [8, 2018] => 20, [9, 2018] => 16 } end
+        [7, 2018] => 17, [8, 2018] => 20, [9, 2018] => 16 }
+    end
     let(:num_of_rooms) { 1 }
     subject { ro_allocation.validate_available_days(allocated_days, available_days, num_of_rooms) }
 
     context "raise exception due to not enough available days" do
       let(:available_days) do
         { [4, 2018] => 15, [5, 2018] => 21, [6, 2018] => 19,
-          [7, 2018] => 17, [8, 2018] => 20, [9, 2018] => 16 } end
+          [7, 2018] => 17, [8, 2018] => 20, [9, 2018] => 16 }
+      end
       it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
     end
 
     context "move allocated days" do
       let(:allocated_days) do
         { [4, 2018] => 14, [9, 2018] => 12, [5, 2018] => 20,
-          [8, 2018] => 20, [6, 2018] => 19, [7, 2018] => 17 } end
-      it {
+          [8, 2018] => 20, [6, 2018] => 19, [7, 2018] => 17 }
+      end
+      it do
         expect(subject).to eq([4, 2018] => 12, [9, 2018] => 14, [5, 2018] => 20,
-                              [8, 2018] => 20, [6, 2018] => 19, [7, 2018] => 17) }
+                              [8, 2018] => 20, [6, 2018] => 19, [7, 2018] => 17)
+      end
     end
 
     context "odd days" do
@@ -65,41 +72,48 @@ describe HearingSchedule::RoAllocation do
   context ".distribute_days_evenly" do
     let(:allocated_days) do
       { [4, 2018] => 11, [9, 2018] => 21, [5, 2018] => 22,
-        [8, 2018] => 23, [6, 2018] => 21, [7, 2018] => 20 } end
+        [8, 2018] => 23, [6, 2018] => 21, [7, 2018] => 20 }
+    end
     let(:available_days) do
       { [4, 2018] => 9, [5, 2018] => 19, [6, 2018] => 19,
-        [7, 2018] => 17, [8, 2018] => 21, [9, 2018] => 17 } end
+        [7, 2018] => 17, [8, 2018] => 21, [9, 2018] => 17 }
+    end
     let(:num_of_rooms) { 2 }
     subject { ro_allocation.distribute_days_evenly(allocated_days, available_days, num_of_rooms) }
 
     context "for two rooms" do
-      it {
+      it do
         expect(subject).to eq([4, 2018] => 12, [9, 2018] => 20, [5, 2018] => 22,
-                              [8, 2018] => 24, [6, 2018] => 20, [7, 2018] => 20) }
+                              [8, 2018] => 24, [6, 2018] => 20, [7, 2018] => 20)
+      end
       it { expect(subject.values.inject(:+)).to eq(118) }
     end
 
     context "for miltiple three rooms" do
       let(:num_of_rooms) { 3 }
 
-      it {
+      it do
         expect(subject).to eq([4, 2018] => 12, [9, 2018] => 21, [5, 2018] => 24,
-                              [8, 2018] => 21, [6, 2018] => 21, [7, 2018] => 19) }
+                              [8, 2018] => 21, [6, 2018] => 21, [7, 2018] => 19)
+      end
       it { expect(subject.values.inject(:+)).to eq(118) }
     end
 
     context "for miltiple three rooms" do
       let(:allocated_days) do
         { [4, 2018] => 0, [9, 2018] => 1, [5, 2018] => 1,
-          [8, 2018] => 0, [6, 2018] => 1, [7, 2018] => 0 } end
+          [8, 2018] => 0, [6, 2018] => 1, [7, 2018] => 0 }
+      end
       let(:available_days) do
         { [4, 2018] => 9, [5, 2018] => 19, [6, 2018] => 19,
-          [7, 2018] => 17, [8, 2018] => 21, [9, 2018] => 17 } end
+          [7, 2018] => 17, [8, 2018] => 21, [9, 2018] => 17 }
+      end
       let(:num_of_rooms) { 1 }
 
-      it {
+      it do
         expect(subject).to eq([4, 2018] => 0, [9, 2018] => 1, [5, 2018] => 1,
-                              [8, 2018] => 0, [6, 2018] => 1, [7, 2018] => 0) }
+                              [8, 2018] => 0, [6, 2018] => 1, [7, 2018] => 0)
+      end
       it { expect(subject.values.inject(:+)).to eq(3) }
     end
   end

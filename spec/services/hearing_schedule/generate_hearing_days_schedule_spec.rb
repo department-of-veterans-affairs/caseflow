@@ -214,11 +214,15 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     let(:monthly_weights) do
       { [4, 2018] => 0.16666666666666666, [5, 2018] => 0.16666666666666666,
         [6, 2018] => 0.16666666666666666, [7, 2018] => 0.16666666666666666, [8, 2018] => 0.16666666666666666,
-        [9, 2018] => 0.16666666666666666 } end
+        [9, 2018] => 0.16666666666666666 }
+    end
     let(:allocated_days) { 118.0 }
     subject { generate_hearing_days_schedule.monthly_distributed_weights(monthly_weights, allocated_days) }
 
-    it { expect(subject).to eq([4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20, [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20) }
+    it do
+      expect(subject).to eq([4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20,
+                            [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20)
+    end
     it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
 
     context "for a few months" do
@@ -243,7 +247,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
     context "allocated days to ros" do
       it "assigned as rooms" do
-        allocations = ro_allocations.reduce({}) { |acc, ro| acc[ro.regional_office] = ro.allocated_days; acc }
+        allocations = ro_allocations.reduce({}) do |acc, ro|
+          acc[ro.regional_office] = ro.allocated_days
+          acc
+        end
 
         expect(subject.keys).to eq(allocations.keys)
 

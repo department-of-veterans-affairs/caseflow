@@ -1,5 +1,7 @@
 describe HearingSchedule::RoDistribution do
-  let(:ro_distribution) { Class.new { include HearingSchedule::RoDistribution } }
+  let(:ro_distribution) do
+    Class.new { include HearingSchedule::RoDistribution }
+  end
 
   context ".montly_percentage_for_period" do
     let(:start_date) { Date.parse("2018-04-15") }
@@ -8,14 +10,20 @@ describe HearingSchedule::RoDistribution do
     subject { ro_distribution.montly_percentage_for_period(start_date, end_date) }
 
     context "second half of 2018 fiscal year" do
-      it { expect(subject).to eq ({ [4, 2018] => 51.724137931034484, [5, 2018] => 100.0, [6, 2018] => 100.0, [7, 2018] => 100.0, [8, 2018] => 100.0 }) }
+      it do
+        expect(subject).to eq([4, 2018] => 51.724137931034484, [5, 2018] => 100.0, [6, 2018] => 100.0,
+                              [7, 2018] => 100.0, [8, 2018] => 100.0)
+      end
     end
 
     context "first half of 2019 fiscal year" do
       let(:start_date) { Date.parse("2018-09-01") }
       let(:end_date) { Date.parse("2019-03-31") }
 
-      it { expect(subject).to eq([9, 2018] => 100.0, [10, 2018] => 100.0, [11, 2018] => 100.0, [12, 2018] => 100.0, [1, 2019] => 100.0, [2, 2019] => 100.0, [3, 2019] => 100.0) }
+      it do
+        expect(subject).to eq([9, 2018] => 100.0, [10, 2018] => 100.0, [11, 2018] => 100.0,
+                              [12, 2018] => 100.0, [1, 2019] => 100.0, [2, 2019] => 100.0, [3, 2019] => 100.0)
+      end
     end
 
     context "includes end of month" do
@@ -35,8 +43,14 @@ describe HearingSchedule::RoDistribution do
     end
 
     context "six month full percentage" do
-      let(:monthly_percentages) { { [4, 2018] => 100.0, [5, 2018] => 100.0, [6, 2018] => 100.0, [7, 2018] => 100.0, [8, 2018] => 100.0 } }
-      it { expect(subject).to eq([4, 2018] => 0.2, [5, 2018] => 0.2, [6, 2018] => 0.2, [7, 2018] => 0.2, [8, 2018] => 0.2) }
+      let(:monthly_percentages) do
+        { [4, 2018] => 100.0, [5, 2018] => 100.0, [6, 2018] => 100.0,
+          [7, 2018] => 100.0, [8, 2018] => 100.0 }
+      end
+      it do
+        expect(subject).to eq([4, 2018] => 0.2, [5, 2018] => 0.2, [6, 2018] => 0.2,
+                              [7, 2018] => 0.2, [8, 2018] => 0.2)
+      end
     end
 
     context "six month 100 percentage" do

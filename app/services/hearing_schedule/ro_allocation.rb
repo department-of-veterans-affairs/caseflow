@@ -41,8 +41,6 @@ module HearingSchedule::RoAllocation
 
         i = 0
         while diff != 0
-          puts "#{allocated_days[allocated_days_keys[i]]} #{available_days[available_days_keys[i]]}"
-
           if allocated_days[allocated_days_keys[i]] < available_days[available_days_keys[i]]
             allocated_days[ro_key] -= 1
             allocated_days[available_days_keys[i]] += 1
