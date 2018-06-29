@@ -100,6 +100,7 @@ class EvaluateDecisionView extends React.PureComponent {
       return false;
     }
 
+    // eslint-disable-next-line camelcase
     if (this.qualityIsDeficient() && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
       this.scrollTo(this.deficientQualityAlert);
 
