@@ -28,8 +28,11 @@ const horizontalRuleStyling = css({
   marginBottom: '3rem'
 });
 
-// TODO: Move this out to its own component when it gets complex.
-const PowerOfAttorneyDetail = ({ appeal }) => <p>{appeal.attributes.power_of_attorney}</p>;
+const PowerOfAttorneyDetail = ({ appeal }) => {
+  const poa = appeal.attributes.power_of_attorney;
+
+  return <p>{poa.representative_type} - {poa.representative_name}</p>;
+};
 
 class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
