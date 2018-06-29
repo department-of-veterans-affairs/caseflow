@@ -6,8 +6,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
     end
   end
-
   let(:ro_one_non_available_days) do
+    get_unique_dates_for_ro_between("RO01", schedule_period, 8)
     get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 8).map do |date|
       create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO01")
     end
@@ -18,6 +18,12 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO03")
     end
   end
+
+  # let(:non_st_petes_availalbe_days) do
+  #   [
+  #     create(:ro_non_availability, regional_office: "RO17", date: Date.parse("2018"))
+  #   ]
+  # end
 
   let(:ro_allocations) do
     [
@@ -33,8 +39,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   let(:ro_non_available_days) do
     {
-      "RO01" => ro_one_non_available_days,
-      "RO03" => ro_three_non_available_days
+      "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 25),
+      "RO61" => get_unique_dates_for_ro_between("RO61", schedule_period, 15),
+      "RO18" => get_unique_dates_for_ro_between("RO18", schedule_period, 10),
+      "RO22" => get_unique_dates_for_ro_between("RO22", schedule_period, 18),
+      "RO01" => get_unique_dates_for_ro_between("RO01", schedule_period, 20),
+      "RO55" => get_unique_dates_for_ro_between("RO55", schedule_period, 25),
+      "RO02" => get_unique_dates_for_ro_between("RO02", schedule_period, 20)
     }
   end
 
@@ -111,7 +122,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       it "assigns ros to initial available days" do
         subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
       end
-
+      
       it "remove non-available_days" do
         subject.ros.each do |key, value|
           includes_ro_days = value[:available_days].map do |date|
@@ -120,6 +131,19 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
           expect(includes_ro_days.any?).to eq false
         end
+      end
+    end
+
+    context "RO-non avaiable days not provided" do
+      # subject { generate_hearing_days_schedule_removed_ro_na }
+      let(:ro_non_available_days) do
+        {
+          "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 25)
+        }
+      end
+      
+      it "remove non-available_days" do
+        expect{ subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::RoNonAvailableDaysNotProvided)
       end
     end
 
@@ -164,6 +188,25 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
   end
 
+  context ".monthly_distributed_weights" do
+    let(:monthly_weights) { {[4, 2018]=>0.16666666666666666, [5, 2018]=>0.16666666666666666, 
+      [6, 2018]=>0.16666666666666666, [7, 2018]=>0.16666666666666666, [8, 2018]=>0.16666666666666666, 
+      [9, 2018]=>0.16666666666666666} }
+    let(:allocated_days) { 118.0 }
+    subject { generate_hearing_days_schedule.monthly_distributed_weights(monthly_weights, allocated_days) }
+
+    it { expect(subject).to eq({[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20}) }
+    it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
+
+    context "for a few months" do
+      let(:monthly_weights) { {[8, 2018]=>0.5, [9, 2018]=>0.5} }
+      let(:allocated_days) { 3.0 }
+
+      it { expect(subject).to eq({[8, 2018]=>2, [9, 2018]=>1}) }
+      it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
+    end
+  end
+
   context "RO hearing days allocation" do
     before do
       ro_allocations
@@ -177,9 +220,24 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       )
     end
 
-    it "travel board hearing days removed" do
-      generate_hearing_days_schedule
-      # binding.pry
+    subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
+
+    context "allocated days to ros" do
+      it "assigned as rooms" do
+        allocations = ro_allocations.reduce({}) {|acc, ro| acc[ro.regional_office] = ro.allocated_days; acc}
+
+        expect(subject.keys).to eq(allocations.keys)
+                
+        subject.each_key do |ro_key|
+          room_sum = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
+            acc[k] = acc[k] || 0
+            acc[k] += v.values.map{ |a| a.size }.inject(:+)
+            acc
+          end.values.inject(:+)
+          
+          expect(room_sum).to eq(allocations[ro_key])
+        end
+      end
     end
   end
 end

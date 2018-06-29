@@ -5,6 +5,9 @@
 
 class HearingSchedule::GenerateHearingDaysSchedule
   include HearingSchedule::RoAllocation
+  include HearingSchedule::RoDistribution
+  
+  class RoNonAvailableDaysNotProvided < StandardError; end
 
 
   attr_reader :available_days
@@ -17,14 +20,15 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {})
     @amortized = 0
     @co_non_availability_days = co_non_availability_days
+    @schedule_period = schedule_period
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
     @ro_non_available_days = ro_non_available_days
     
     # handle RO information
     assign_and_filter_ro_days(schedule_period)
-    
-    allocate_hearing_days_to_ros(schedule_period.start_date, schedule_period.end_date)
+    # allocate_hearing_days_to_ros(schedule_period.start_date, schedule_period.end_date)
+
     json = @ros.map {|k, v| [k, { hearing_days: v[:allocated_days], allocated_dates: v[:allocated_dates] }] }.to_h.to_json
 
     File.open("public/temp.json","w") do |f|
@@ -51,6 +55,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
     business_days
   end
 
+  def monthly_distributed_weights(monthly_weights, allocated_days)
+    monthly_weights.map do |month, weight|
+      [month, distribute(weight, allocated_days)]
+    end.to_h
+  end
+
   def distribute(percentage, total)
     real = (percentage * total) + @amortized
     natural = real.round
@@ -59,74 +69,56 @@ class HearingSchedule::GenerateHearingDaysSchedule
     natural
   end
 
-  def montly_percentage_for_period(start_date, end_date)
-    # FIX THIS! number of days is incorrect here
-    (start_date..end_date).group_by { |d| [d.month, d.year] }.map do |group|
-      [group[0], ((group.last.last - group.last.first).to_f / 
-        (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f) * 100]
-    end.to_h
-  end
-
-  def weight_by_percentages(monthly_percentages)
-    percenrage_sum = monthly_percentages.map {|_k,v| v}.inject(:+)
-    monthly_percentages.map {|date, num| [date, (num / percenrage_sum) ] }.to_h
-  end
-
-  def shuffle_grouped_monthly_dates(grouped_monthly_dates)
-    grouped_monthly_dates.map do |ro_key, dates|
-      [ro_key, dates.shuffle.reduce({}) { |acc, date| acc[date] = []; acc }]
-    end.to_h
-  end
-
-  def monthly_distributed_weights(monthly_weights, allocated_days)
-    monthly_weights.map do |month, weight|
-      [month, distribute(weight, allocated_days)]
-    end.to_h
-  end
-
-  def allocate_hearing_days_to_ros(start_date, end_date)
+  def allocate_hearing_days_to_ros
     @amortized = 0
 
-    monthly_percentages = montly_percentage_for_period(start_date, end_date) 
-    monthly_weights = weight_by_percentages(monthly_percentages) 
+    start_date = @schedule_period.start_date
+    end_date = @schedule_period.end_date
+
+    monthly_percentages = self.class.montly_percentage_for_period(start_date, end_date)
+    monthly_weights = self.class.weight_by_percentages(monthly_percentages)
 
     @ros.each_key do |ro_key|
+
       monthly_allocated_days = monthly_distributed_weights(monthly_weights, @ros[ro_key][:allocated_days]) 
 
-      grouped_monthly_dates = @ros[ro_key][:available_days].group_by { |d| [d.month, d.year] }
-      ro_available_days = grouped_monthly_dates.map{|k,v| [k, v.size]}.to_h
+
+      grouped_monthly_avail_dates = @ros[ro_key][:available_days].group_by { |d| [d.month, d.year] }
+
+      ro_available_days = grouped_monthly_avail_dates.map{|k,v| [k, v.size]}.to_h
       num_of_rooms = @ros[ro_key][:num_of_rooms]
 
       # binding.pry if ro_key == "RO18" or ro_key == "RO17"
 
-      monthly_allocations = self.class.get_monthly_allocations(grouped_monthly_dates, ro_available_days, monthly_allocated_days, num_of_rooms) 
-      grouped_shuffled_montly_dates = shuffle_grouped_monthly_dates(grouped_monthly_dates)
+      monthly_allocations = self.class.get_monthly_allocations(grouped_monthly_avail_dates, ro_available_days, monthly_allocated_days, num_of_rooms) 
+      grouped_shuffled_monthly_dates = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
 
       date_index = 0
       while(monthly_allocations.values.inject(:+) != 0)
-        allocate_hearing_days_to_individual_ro(monthly_allocations, grouped_shuffled_montly_dates, num_of_rooms, date_index)
+        allocate_hearing_days_to_individual_ro(monthly_allocations, grouped_shuffled_monthly_dates, num_of_rooms, date_index)
         date_index += 1
       end
-      @ros[ro_key][:allocated_dates] = grouped_shuffled_montly_dates.map{ |k,v| v.to_a.sort.to_h  }
+      # {[4, 2018]=>12, [9, 2018]=>20, [5, 2018]=>22, [8, 2018]=>22, [6, 2018]=>22, [7, 2018]=>20}
+      @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates.reduce({}) { |acc, (k, v)| acc[k] = v.to_a.sort.to_h; acc}
     end
   end
 
-  def allocate_hearing_days_to_individual_ro(monthly_allocations, grouped_shuffled_montly_dates, num_of_rooms, date_index)
+  def allocate_hearing_days_to_individual_ro(monthly_allocations, grouped_shuffled_monthly_dates, num_of_rooms, date_index)
     monthly_allocations.each_key do |month|
       allocated_days = monthly_allocations[month]
-      monthly_date_keys = grouped_shuffled_montly_dates[month].keys
+      monthly_date_keys = grouped_shuffled_monthly_dates[month].keys
 
       if allocated_days > 0
         if (num_of_rooms < allocated_days)
-          grouped_shuffled_montly_dates[month][monthly_date_keys[date_index]] = num_of_rooms.times.map {|room_num| "room #{room_num + 1}" }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = num_of_rooms.times.map {|room_num| { room_num: room_num + 1 } }
           allocated_days -= num_of_rooms
         else
-          grouped_shuffled_montly_dates[month][monthly_date_keys[date_index]] = allocated_days.times.map {|room_num| "room #{room_num + 1}" }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = allocated_days.times.map {|room_num| {room_num: room_num + 1 } }
           allocated_days -= allocated_days
         end
       end
 
-      monthly_allocations[month] = allocated_days 
+      monthly_allocations[month] = allocated_days
     end
   end
 
@@ -138,7 +130,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
         allocated_days: allocation.allocated_days,
         available_days: @available_days,
         num_of_rooms: MULTIPLE_ROOM_ROS.include?(allocation.regional_office) ?
-          MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS 
+          MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS
       })
       acc
     end
@@ -185,7 +177,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   def filter_non_available_ro_days
     @ros.each_key do |ro_key|
-      @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key] || [])
+      raise RoNonAvailableDaysNotProvided, "Non-availability days not provided for #{ro_key}" unless @ro_non_available_days[ro_key]
+      @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key].map {|ro_na| ro_na.date } || [])
     end
   end
 end
