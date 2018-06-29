@@ -17,7 +17,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   class RoDatesNotInRange < StandardError; end
   class RoDatesNotCorrectFormat < StandardError; end
   class RoTemplateNotFollowed < StandardError; end
-  class RoDatesNotApplicable < StandardError; end
   class RoListedIncorrectly < StandardError; end
   class CoDatesNotUnique < StandardError; end
   class CoDatesNotInRange < StandardError; end
