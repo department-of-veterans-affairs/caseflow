@@ -16,17 +16,15 @@ RSpec.feature "AmaQueue" do
   context "loads appellant detail view" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:default_power_of_attorney_record).and_return(
-        {
-          file_number: "633792224",
-          power_of_attorney:
-            {
-              legacy_poa_cd: "3QQ",
-              nm: poa_name,
-              org_type_nm: "POA Attorney",
-              ptcpnt_id: "600153863"
-            },
-          ptcpnt_id: "600085544"
-        }
+        file_number: "633792224",
+        power_of_attorney:
+          {
+            legacy_poa_cd: "3QQ",
+            nm: poa_name,
+            org_type_nm: "POA Attorney",
+            ptcpnt_id: "600153863"
+          },
+        ptcpnt_id: "600085544"
       )
     end
 
