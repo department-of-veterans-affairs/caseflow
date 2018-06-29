@@ -7,7 +7,9 @@ const reducers = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_PAST_UPLOADS:
     return update(state, {
-      $set: action.payload.pastUploads
+      pastUploads: {
+        $set: action.payload.pastUploads
+      }
     });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
