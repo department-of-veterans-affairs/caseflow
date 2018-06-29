@@ -7,8 +7,7 @@ module HearingSchedule::RoDistribution
     def montly_percentage_for_period(start_date, end_date)
       # FIX THIS! number of days is incorrect here
       (start_date..end_date).group_by { |d| [d.month, d.year] }.map do |group|
-        [group[0], ((group.last.last - group.last.first).to_f /
-          (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f) * 100]
+        [group[0], ((group.last.last - group.last.first).to_f / (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f) * 100]
       end.to_h
     end
 

@@ -2,20 +2,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   let(:schedule_period) { create(:ro_schedule_period) }
 
   let(:co_non_available_days) do
-    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-}    ).map do |date|
+    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 15).map do |date|
       create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
-    end
-  end
-  let(:ro_one_non_available_days) do
-    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 8).map do |date|
-      create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO01")
-    end
-  end
-
-  let(:ro_three_non_available_days) do
-    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 11).map do |date|
-      create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: "RO03")
     end
   end
 
@@ -214,7 +202,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       subject { generate_hearing_days_schedule_removed_tb }
 
       it "travel board hearing days removed" do
-
         travel_board_schedules.each do |tb_schedule|
           dates = (tb_schedule[:tbstdate]..tb_schedule[:tbenddate]).to_a
           expect(dates.map { |date| subject.ros[tb_schedule[:tbro]][:available_days].include?(date) }.any?).to eq false
@@ -224,21 +211,21 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context ".monthly_distributed_weights" do
-    let(:monthly_weights) do 
+    let(:monthly_weights) do
       { [4, 2018] => 0.16666666666666666, [5, 2018] => 0.16666666666666666,
-                             [6, 2018] => 0.16666666666666666, [7, 2018] => 0.16666666666666666, [8, 2018] => 0.16666666666666666,
-                             [9, 2018] => 0.16666666666666666 } end
+        [6, 2018] => 0.16666666666666666, [7, 2018] => 0.16666666666666666, [8, 2018] => 0.16666666666666666,
+        [9, 2018] => 0.16666666666666666 } end
     let(:allocated_days) { 118.0 }
     subject { generate_hearing_days_schedule.monthly_distributed_weights(monthly_weights, allocated_days) }
 
-    it { expect(subject).to eq({ [4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20, [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20 }) }
+    it { expect(subject).to eq([4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20, [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20) }
     it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
 
     context "for a few months" do
       let(:monthly_weights) { { [8, 2018] => 0.5, [9, 2018] => 0.5 } }
       let(:allocated_days) { 3.0 }
 
-      it { expect(subject).to eq({ [8, 2018] => 2, [9, 2018] => 1 }) }
+      it { expect(subject).to eq([8, 2018] => 2, [9, 2018] => 1) }
       it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
     end
   end
@@ -263,7 +250,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
         subject.each_key do |ro_key|
           rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
             acc[k] = acc[k] || 0
-            acc[k] += v.values.map { |a| a.size }.inject(:+)
+            acc[k] += v.values.map(&:size).inject(:+)
             acc
           end
 
@@ -279,5 +266,4 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       end
     end
   end
-
 end

@@ -58,7 +58,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
       acc[k] = v.to_a.sort.to_h
       acc
     end
-    @ros.each_key { |ro_key| @ros[ro_key] = @ros[ro_key].except!(:available_days) }
   end
 
   def allocate_hearing_days_to_ros
@@ -70,7 +69,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     @ros.each_key do |ro_key|
       monthly_allocated_days = monthly_distributed_weights(monthly_weights, @ros[ro_key][:allocated_days])
-
       grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
 
       ro_available_days = grouped_monthly_avail_dates.map { |k, v| [k, v.size] }.to_h
@@ -90,6 +88,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       end
       add_allocated_days_and_format(grouped_shuffled_monthly_dates, ro_key)
     end
+
   end
 
   def allocate_hearing_days_to_individual_ro(monthly_allocations,
