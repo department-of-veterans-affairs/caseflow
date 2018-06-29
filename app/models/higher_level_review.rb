@@ -4,20 +4,29 @@ class HigherLevelReview < AmaReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
+  END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
+
   private
 
-  # TODO: Update with real code and modifier data
+  def special_issues
+    return [] unless same_office
+    [{ code: "SSR", narrative: "Same Station Review" }]
+  end
+
+  def create_contentions_in_vbms
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: end_product_reference_id,
+      contention_descriptions: contention_descriptions_to_create,
+      special_issues: special_issues
+    )
+  end
+
   def end_product_code
     "030HLRR"
   end
 
-  END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
-
-  def end_product_modifier
-    END_PRODUCT_MODIFIERS.each do |modifier|
-      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
-        return modifier
-      end
-    end
+  def valid_modifiers
+    END_PRODUCT_MODIFIERS
   end
 end

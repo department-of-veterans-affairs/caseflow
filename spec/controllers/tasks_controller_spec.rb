@@ -12,35 +12,50 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "GET tasks/xxx" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      create(:staff, role, sdomainid: user.css_id)
+      create(:colocated_admin_action, assigned_by: user)
+      create(:colocated_admin_action, assigned_by: user)
+      create(:colocated_admin_action, assigned_by: user, status: "completed")
+      create(:colocated_admin_action)
     end
 
-    context "user is an attorney" do
+    context "when user is an attorney" do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.second["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
       end
     end
 
-    context "user is a judge" do
-      let(:role) { :judge_role }
+    context "when user is an attorney and has no tasks" do
+      let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: create(:user).id, role: "attorney" }
         expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 0
       end
     end
 
-    context "user is neither judge nor attorney" do
+    context "when user is neither judge nor attorney" do
       let(:role) { nil }
 
       it "should not process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: user.id, role: "unknown" }
         expect(response.status).to eq 302
       end
     end

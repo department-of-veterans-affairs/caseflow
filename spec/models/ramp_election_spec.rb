@@ -50,18 +50,27 @@ describe RampElection do
     end
   end
 
-  context ".sync_all!" do
-    it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
-      ramp_election1 = create(:ramp_election, veteran_file_number: "1")
-      ramp_election2 = create(:ramp_election, veteran_file_number: "2")
-      expect(ramp_election1).to receive(:recreate_issues_from_contentions!)
-      expect(ramp_election1).to receive(:sync_ep_status!)
-      expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
-      expect(Rails.logger).to receive(:error)
-      expect(Raven).to receive(:capture_exception)
-      allow(RampElection).to receive(:active).and_return([ramp_election1, ramp_election2])
+  context "#sync!" do
+    subject { ramp_election.sync! }
 
-      RampElection.sync_all!
+    it "calls recreate_issues_from_contentions! and sync_ep_status!" do
+      expect(ramp_election).to receive(:recreate_issues_from_contentions!)
+      expect(ramp_election).to receive(:sync_ep_status!)
+
+      subject
+    end
+
+    context "when error is raised" do
+      before do
+        expect(ramp_election).to receive(:sync_ep_status!).and_raise(ActiveRecord::RecordInvalid)
+      end
+
+      it "sends error to sentry but does not re-raise" do
+        expect(ramp_election).to receive(:recreate_issues_from_contentions!)
+        expect(Raven).to receive(:capture_exception)
+
+        subject
+      end
     end
   end
 
