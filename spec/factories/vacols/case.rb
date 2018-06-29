@@ -14,12 +14,29 @@ FactoryBot.define do
       transient do
         decass_count 1
         user nil
+        assigner nil
+        work_product nil
       end
 
       after(:create) do |vacols_case, evaluator|
-        slogid = create(:staff, user: evaluator.user).slogid if evaluator.user
+        if evaluator.user
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+        end
+        if evaluator.assigner
+          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
+        end
         vacols_case.update!(bfcurloc: slogid) if slogid
-        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey, deadusr: slogid ? slogid : "TEST")
+        create_list(
+          :decass,
+          evaluator.decass_count,
+          evaluator.work_product,
+          defolder: vacols_case.bfkey,
+          deadusr: slogid ? slogid : "TEST",
+          demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil
+        )
       end
     end
 

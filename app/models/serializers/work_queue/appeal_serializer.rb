@@ -1,6 +1,6 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
-    []
+    object.request_issues
   end
 
   attribute :hearings do
@@ -54,7 +54,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    "not implemented"
+    "BEAAM"
   end
 
   attribute :aod do
@@ -62,19 +62,19 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :docket_number do
-    "not implemented"
+    object.docket_number
   end
 
   attribute :status do
-    "not implemented"
+    nil
   end
 
   attribute :decision_date do
-    "not implemented"
+    nil
   end
 
   attribute :certification_date do
-    "not implemented"
+    nil
   end
 
   attribute :paper_case do
