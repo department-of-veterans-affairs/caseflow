@@ -44,7 +44,7 @@ class HearingScheduleApp extends React.PureComponent {
           <PageRoute
             exact
             path="/hearings/schedule/build/upload"
-            title="Caseflow Hearing Schedule"
+            title="Upload Files"
             render={this.buildScheduleUpload}
           />
         </div>
