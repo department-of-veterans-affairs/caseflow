@@ -55,6 +55,10 @@ class Issue
     ]
   }.freeze
 
+  def codes?
+    !codes.empty?
+  end
+
   def program
     PROGRAMS[codes[0]]
   end

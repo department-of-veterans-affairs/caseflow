@@ -2,10 +2,12 @@ class TasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
 
-  ROLES = %w[judge attorney colocated].freeze
-
   TASK_CLASSES = {
     CoLocatedAdminAction: CoLocatedAdminAction
+  }.freeze
+
+  QUEUES = {
+    attorney: AttorneyQueue
   }.freeze
 
   def set_application
@@ -13,36 +15,26 @@ class TasksController < ApplicationController
   end
 
   def index
-    current_role = params[:role] || current_user.vacols_roles.first
-    return invalid_role_error unless ROLES.include?(current_role)
-    respond_to do |format|
-      format.html do
-        render "queue/show"
-      end
-      format.json do
-        MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                              name: "TasksController.index") do
-          tasks, appeals = WorkQueue.tasks_with_appeals(user, current_role)
-          render json: {
-            tasks: json_tasks(tasks),
-            appeals: json_appeals(appeals)
-          }
-        end
-      end
-    end
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
+    tasks = queue_class.new(user: user).tasks
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def create
     return required_parameters_missing([:titles]) if task_params[:titles].blank?
 
     return invalid_type_error unless task_class
-    tasks = task_class.create(task_params)
+    tasks = task_class.create(task_params.merge(appeal_type: "LegacyAppeal"))
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: tasks }, status: :created
   end
 
   private
+
+  def queue_class
+    QUEUES[params[:role].try(:to_sym)]
+  end
 
   def user
     @user ||= User.find(params[:user_id])
@@ -76,13 +68,6 @@ class TasksController < ApplicationController
       .permit(:appeal_id, :type, :instructions, titles: [])
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
-  end
-
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
-    ).as_json
   end
 
   def json_tasks(tasks)

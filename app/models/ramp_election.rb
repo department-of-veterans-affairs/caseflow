@@ -7,23 +7,10 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  class BGSEndProductSyncError < StandardError; end
-
-  def self.sync_all!
-    RampElection.active.each do |ramp_election|
-      begin
-        ramp_election.recreate_issues_from_contentions!
-        ramp_election.sync_ep_status!
-      rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
-        Raven.capture_exception(e)
-      rescue VBMS::HTTPError => e
-        # Sometimes VBMS/BGS can flake since this job is run nightly. Just log the error and carry on.
-        Raven.capture_exception(e)
-      rescue BGS::ShareError => e
-        Raven.capture_exception(
-          BGSEndProductSyncError.new(e.message + "\n\n ramp_election_id: #{ramp_election.id}")
-        )
+  class BGSEndProductSyncError < RuntimeError
+    def initialize(error, ramp_election)
+      super(error.message + "\n\n ramp_election_id: #{ramp_election.id}").tap do |result|
+        result.set_backtrace(error.backtrace)
       end
     end
   end
@@ -49,12 +36,12 @@ class RampElection < RampReview
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    end_product_to_establish.contentions
+    end_product_establishment.contentions
 
     transaction do
       issues.destroy_all
 
-      end_product_to_establish.contentions.each do |contention|
+      end_product_establishment.contentions.each do |contention|
         issues.create!(contention: contention)
       end
     end
@@ -79,6 +66,13 @@ class RampElection < RampReview
 
       ramp_closed_appeals.destroy_all
     end
+  end
+
+  def sync!
+    recreate_issues_from_contentions!
+    sync_ep_status!
+  rescue StandardError => e
+    Raven.capture_exception(BGSEndProductSyncError.new(e, self))
   end
 
   private
