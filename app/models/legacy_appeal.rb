@@ -186,7 +186,6 @@ class LegacyAppeal < ApplicationRecord
     load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
-  attr_accessor :work_product
   def work_product
     # TODO: use QueueRepository.find_decass_record? cache_attribute?
     VACOLS::Decass.where(defolder: vacols_id).pluck(:deprod).first

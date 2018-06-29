@@ -75,9 +75,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     const {
       appeal: { attributes: appeal }
     } = this.props;
-    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(appeal.work_product)
-      ? JUDGE_DECISION_OPTIONS.OMO_REQUEST
-      : JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
+    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(appeal.work_product) ?
+      JUDGE_DECISION_OPTIONS.OMO_REQUEST :
+      JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
 
     return <SearchableDropdown
       placeholder="Select an action&hellip;"
