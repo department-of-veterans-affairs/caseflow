@@ -1,7 +1,4 @@
-class Hearings::HearingDayController < ApplicationController
-  before_action :verify_access
-  before_action :check_hearing_schedule_out_of_service
-
+class Hearings::HearingDayController < HearingScheduleController
   # Controller to add and update hearing schedule days.
 
   # show schedule days for date range provided
@@ -14,7 +11,7 @@ class Hearings::HearingDayController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render "hearings/schedule_index"
+        render "hearing_schedule/index"
       end
       format.json do
         render json: {
@@ -43,20 +40,7 @@ class Hearings::HearingDayController < ApplicationController
     }, status: :ok
   end
 
-  # :nocov:
-  def logo_name
-    "Hearing Schedule"
-  end
-
   private
-
-  def verify_access
-    verify_authorized_roles("Hearing Schedule")
-  end
-
-  def check_hearing_schedule_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("hearing_schedule_out_of_service")
-  end
 
   def hearing
     @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
@@ -80,10 +64,6 @@ class Hearings::HearingDayController < ApplicationController
 
   def validate_end_date(end_date)
     end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
   end
 
   def invalid_record_error(hearing)
