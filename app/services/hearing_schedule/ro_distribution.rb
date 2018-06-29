@@ -19,7 +19,10 @@ module HearingSchedule::RoDistribution
 
     def shuffle_grouped_monthly_dates(grouped_monthly_dates)
       grouped_monthly_dates.map do |ro_key, dates|
-        [ro_key, dates.shuffle.reduce({}) { |acc, date| acc[date] = []; acc }]
+        [ro_key, dates.shuffle.reduce({}) do |acc, date|
+          acc[date] = []
+          acc
+        end]
       end.to_h
     end
   end

@@ -29,7 +29,8 @@ module HearingSchedule::RoAllocation
 
     def validate_available_days(allocated_days, available_days, num_of_rooms)
       # raise error if there are not enough avaiable days
-      fail NotEnoughAvailableDays unless allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
+      fail NotEnoughAvailableDays unless
+        allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
 
       allocated_days.each_key do |ro_key|
         next unless allocated_days[ro_key] > (available_days[ro_key] * num_of_rooms)

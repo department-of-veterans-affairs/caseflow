@@ -9,7 +9,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   class RoNonAvailableDaysNotProvided < StandardError; end
 
-  attr_reader :available_days, :co_non_availability_days
+  attr_reader :available_days
   attr_reader :ros
 
   MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
@@ -27,11 +27,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # handle RO information
     assign_and_filter_ro_days(schedule_period)
 
-    json = @ros.map { |k, v| [k, { hearing_days: v[:allocated_days], allocated_dates: v[:allocated_dates] }] }.to_h.to_json
+    # json = @ros.map { |k, v| [k, { hearing_days: v[:allocated_days], allocated_dates: v[:allocated_dates] }] }.to_h.to_json
 
-    File.open("public/temp.json", "w") do |f|
-      f.write(json)
-    end
+    # File.open("public/temp.json", "w") do |f|
+    #   f.write(json)
+    # end
   end
 
   def assign_and_filter_ro_days(schedule_period)
@@ -70,10 +70,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days_to_ros
     @amortized = 0
 
-    start_date = @schedule_period.start_date
-    end_date = @schedule_period.end_date
-
-    monthly_percentages = self.class.montly_percentage_for_period(start_date, end_date)
+    monthly_percentages = self.class.montly_percentage_for_period(@schedule_period.start_date, @schedule_period.end_date)
     monthly_weights = self.class.weight_by_percentages(monthly_percentages)
 
     @ros.each_key do |ro_key|
@@ -86,16 +83,22 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       # binding.pry if ro_key == "RO18" or ro_key == "RO17"
 
-      monthly_allocations = self.class.get_monthly_allocations(grouped_monthly_avail_dates, ro_available_days, monthly_allocated_days, num_of_rooms)
+      monthly_allocations = self.class.get_monthly_allocations(
+        grouped_monthly_avail_dates, ro_available_days, monthly_allocated_days, num_of_rooms
+      )
       grouped_shuffled_monthly_dates = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
 
       date_index = 0
       while monthly_allocations.values.inject(:+) != 0
-        allocate_hearing_days_to_individual_ro(monthly_allocations, grouped_shuffled_monthly_dates, num_of_rooms, date_index)
+        allocate_hearing_days_to_individual_ro(
+          monthly_allocations, grouped_shuffled_monthly_dates, num_of_rooms, date_index
+        )
         date_index += 1
       end
-      # {[4, 2018]=>12, [9, 2018]=>20, [5, 2018]=>22, [8, 2018]=>22, [6, 2018]=>22, [7, 2018]=>20}
-      @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates.reduce({}) { |acc, (k, v)| acc[k] = v.to_a.sort.to_h; acc }
+      @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates.reduce({}) do |acc, (k, v)|
+        acc[k] = v.to_a.sort.to_h
+        acc
+      end
     end
   end
 
@@ -106,10 +109,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       if allocated_days > 0
         if num_of_rooms < allocated_days
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = num_of_rooms.times.map { |room_num| { room_num: room_num + 1 } }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = num_of_rooms
+            .times.map { |room_num| { room_num: room_num + 1 } }
           allocated_days -= num_of_rooms
         else
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = allocated_days.times.map { |room_num| { room_num: room_num + 1 } }
+          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] = allocated_days
+            .times.map { |room_num| { room_num: room_num + 1 } }
           allocated_days -= allocated_days
         end
       end
@@ -125,8 +130,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
         available_days: @available_days,
-        num_of_rooms: MULTIPLE_ROOM_ROS.include?(allocation.regional_office) ?
-          MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS
+        num_of_rooms: MULTIPLE_ROOM_ROS.include?(allocation.regional_office) ? MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS
       )
       acc
     end
