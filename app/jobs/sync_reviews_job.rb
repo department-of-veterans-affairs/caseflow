@@ -3,7 +3,7 @@ class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
 
-  DEFAULT_EP_LIMIT = 50
+  DEFAULT_EP_LIMIT = 100
 
   def perform(args = {})
     RequestStore.store[:application] = "intake"
