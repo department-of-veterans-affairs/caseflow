@@ -58,14 +58,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
       acc[k] = v.to_a.sort.to_h
       acc
     end
-    @ros.each_key {|ro_key| @ros[ro_key] = @ros[ro_key].except!(:available_days) }
+    @ros.each_key { |ro_key| @ros[ro_key] = @ros[ro_key].except!(:available_days) }
   end
 
   def allocate_hearing_days_to_ros
     @amortized = 0
 
     monthly_percentages = self.class.montly_percentage_for_period(@schedule_period.start_date,
-      @schedule_period.end_date)
+                                                                  @schedule_period.end_date)
     monthly_weights = self.class.weight_by_percentages(monthly_percentages)
 
     @ros.each_key do |ro_key|
@@ -93,7 +93,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocate_hearing_days_to_individual_ro(monthly_allocations,
-      grouped_shuffled_monthly_dates, num_of_rooms, date_index)
+                                             grouped_shuffled_monthly_dates, num_of_rooms, date_index)
     monthly_allocations.each_key do |month|
       allocated_days = monthly_allocations[month]
       monthly_date_keys = grouped_shuffled_monthly_dates[month].keys
@@ -162,10 +162,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def co_not_available?(day)
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
   end
-
-  # def assign_available_days_to_ros(ro_cities)
-  #   ro_cities.each_key { |ro_key| ro_cities[ro_key][:available_days] = @available_days }
-  # end
 
   # Filters out the non-available RO days from the board available days for
   # each RO.
