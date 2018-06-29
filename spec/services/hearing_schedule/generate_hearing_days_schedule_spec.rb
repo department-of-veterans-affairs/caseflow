@@ -42,6 +42,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     }
   end
 
+  let(:no_ro_non_available_days) do
+    {
+      "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 0),
+      "RO61" => get_unique_dates_for_ro_between("RO61", schedule_period, 0),
+      "RO18" => get_unique_dates_for_ro_between("RO18", schedule_period, 0),
+      "RO22" => get_unique_dates_for_ro_between("RO22", schedule_period, 0),
+      "RO01" => get_unique_dates_for_ro_between("RO01", schedule_period, 0),
+      "RO55" => get_unique_dates_for_ro_between("RO55", schedule_period, 0),
+      "RO02" => get_unique_dates_for_ro_between("RO02", schedule_period, 0)
+    }
+  end
+
   let(:generate_hearing_days_schedule) do
     HearingSchedule::GenerateHearingDaysSchedule.new(
       schedule_period,
@@ -101,6 +113,26 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "filter available days" do
+
+    let(:generate_hearing_days_schedule_removed_ro_na) do
+      HearingSchedule::GenerateHearingDaysSchedule.new(
+        schedule_period,
+        co_non_available_days,
+        no_ro_non_available_days
+      )
+    end
+
+    context "RO available days" do
+      subject { generate_hearing_days_schedule_removed_ro_na }
+
+      it "assigns ros to initial available days" do
+        subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
+      end
+    end
+  end
+
+  context "filter available days" do
+
     let(:generate_hearing_days_schedule_removed_ro_na) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
         schedule_period,
@@ -170,7 +202,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
       let(:generate_hearing_days_schedule_removed_tb) do
         HearingSchedule::GenerateHearingDaysSchedule.new(
-          schedule_period
+          schedule_period,
+          {},
+          no_ro_non_available_days
         )
       end
 
@@ -205,10 +239,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "RO hearing days allocation" do
-    before do
-      ro_allocations
-    end
-
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
         schedule_period,

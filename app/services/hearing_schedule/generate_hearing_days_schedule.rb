@@ -10,7 +10,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   class RoNonAvailableDaysNotProvided < StandardError; end
 
 
-  attr_reader :available_days
+  attr_reader :available_days, :co_non_availability_days
   attr_reader :ros
 
   MULTIPLE_ROOM_ROS = %w(RO17 RO18)
@@ -27,7 +27,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     
     # handle RO information
     assign_and_filter_ro_days(schedule_period)
-    # allocate_hearing_days_to_ros(schedule_period.start_date, schedule_period.end_date)
 
     json = @ros.map {|k, v| [k, { hearing_days: v[:allocated_days], allocated_dates: v[:allocated_dates] }] }.to_h.to_json
 
@@ -140,10 +139,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
     travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
     
-    tb_master_records.map do |tb_master_record|
-      tb_days = (tb_master_record[:start_date]..tb_master_record[:end_date]).to_a
-      @ros[tb_master_record[:ro]][:available_days] -= tb_days
-    end
+    tb_master_records.select {|tb_master_record| @ros.keys.include?(tb_master_record[:ro]) }
+      .map do |tb_master_record|
+        tb_days = (tb_master_record[:start_date]..tb_master_record[:end_date]).to_a
+        @ros[tb_master_record[:ro]][:available_days] -= tb_days
+      end
     @ros
   end
 
