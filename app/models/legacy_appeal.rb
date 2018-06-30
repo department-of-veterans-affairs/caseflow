@@ -39,14 +39,14 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number
+  vacols_attr_accessor :docket_number, :docket_date
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :date_due
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
@@ -251,7 +251,13 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_ramp?
-    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+    (
+      (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva) ||
+      (
+        (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && 
+        !hearing_held && !aod && !cavc
+      )
+    ) && !appellant_first_name
   end
 
   def compensation_issues

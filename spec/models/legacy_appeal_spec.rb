@@ -1007,14 +1007,62 @@ describe LegacyAppeal do
 
     let(:location_code) { nil }
 
-    context "is false if status is not advance or remand" do
-      let!(:vacols_case) { create(:case, :status_active) }
-      it { is_expected.to be_falsey }
+    context "if status is not advance or remand" do
+      let(:docket_date) { "2016-01-01" }
+      let(:hearing_code) { "4" }
+      let(:type_code) { "6" }
+      let(:aod) { nil }
+
+      let!(:vacols_case) do
+        create(:case, :status_active, (aod ? :aod : :type_original),
+          bfd19: docket_date,
+          bfha: hearing_code,
+          bfac: type_code
+        )
+      end
+
+      context "when other qualifying criteria are met" do
+        it { is_expected.to be_truthy }
+      end
+
+      context "when docket date is before 2016" do
+        let(:docket_date) { "2015-12-31" }
+        it { is_expected.to be_falsey }
+      end
+
+      context "when a hearing was held" do
+        let(:hearing_code) { "2" }
+        it { is_expected.to be_falsey }
+      end
+
+      context "when advance on docket" do
+        let(:aod) { true }
+        it { is_expected.to be_falsey }
+      end
+
+      context "when CAVC" do
+        let(:type_code) { "7" }
+        it { is_expected.to be_falsey }
+      end
     end
 
     context "status is remand" do
-      let!(:vacols_case) { create(:case, :status_remand) }
+      let(:correspondent) { create(:correspondent) }
+      let!(:vacols_case) { create(:case, :status_remand, correspondent: correspondent) }
       it { is_expected.to be_truthy }
+
+      context "when appellant is not the veteran" do
+        let(:correspondent) do
+          create(
+            :correspondent,
+            appellant_first_name: "David",
+            appellant_middle_initial: "D",
+            appellant_last_name: "Schwimmer"
+          )
+        end
+
+        it { is_expected.to be_falsey }
+      end
     end
 
     context "status is advance" do
