@@ -75,6 +75,10 @@ class RampElection < RampReview
     Raven.capture_exception(BGSEndProductSyncError.new(e, self))
   end
 
+  def self.order_by_sync_priority
+    active.order("end_product_status_last_synced_at IS NOT NULL, end_product_status_last_synced_at ASC")
+  end
+
   private
 
   def validate_receipt_date

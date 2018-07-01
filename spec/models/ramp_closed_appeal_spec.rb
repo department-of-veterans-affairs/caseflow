@@ -138,12 +138,6 @@ describe RampClosedAppeal do
                     ])
 
       RequestStore[:current_user] = user
-
-      FeatureToggle.enable!(:reclose_ramp_appeals_script)
-    end
-
-    after do
-      FeatureToggle.disable!(:reclose_ramp_appeals_script)
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do
