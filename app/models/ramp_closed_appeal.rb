@@ -51,9 +51,7 @@ class RampClosedAppeal < ApplicationRecord
       RampClosedAppeal.find_by(vacols_id: appeal.vacols_id)
     end
 
-    if FeatureToggle.enabled?(:reclose_ramp_appeals_script)
-      appeals_to_reclose.each(&:reclose!)
-    end
+    appeals_to_reclose.each(&:reclose!)
 
     appeals_to_reclose
   end
