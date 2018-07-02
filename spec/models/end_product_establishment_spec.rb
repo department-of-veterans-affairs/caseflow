@@ -81,5 +81,4 @@ describe EndProductEstablishment do
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
     end
   end
-
 end

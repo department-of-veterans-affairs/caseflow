@@ -100,7 +100,7 @@ class RampReview < ApplicationRecord
       claim_date: receipt_date,
       code: end_product_code,
       valid_modifiers: [end_product_modifier],
-      station: "397",  # AMC
+      station: "397", # AMC
       cached_status: end_product_status
     )
   end

@@ -33,7 +33,7 @@ class HigherLevelReview < AmaReview
       claim_date: receipt_date,
       code: "030HLRR",
       valid_modifiers: END_PRODUCT_MODIFIERS,
-      station: "397",  # AMC
+      station: "397", # AMC
       cached_status: end_product_status
     )
   end
