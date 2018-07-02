@@ -136,6 +136,30 @@ describe AppealRepository do
       )
     end
 
+    context "bfha set to value not represent a held hearing" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfha: "3"
+        )
+      end
+
+      it { is_expected.to have_attributes(hearing_held: false) }
+    end
+
+    context "bfha set to nil" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfha: nil
+        )
+      end
+
+      it { is_expected.to have_attributes(hearing_held: false) }
+    end
+
     context "No appellant listed" do
       let(:correspondent_record) do
         OpenStruct.new(
