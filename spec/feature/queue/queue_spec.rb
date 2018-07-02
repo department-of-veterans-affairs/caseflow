@@ -8,71 +8,64 @@ def click_dropdown(opt_idx, container = page)
 end
 
 RSpec.feature "Queue" do
+  let(:user_no_role) { FactoryBot.create(:user) }
+  let(:attorney_user) { FactoryBot.create(:user) }
+  let(:judge_user) { FactoryBot.create(:user, full_name: "Christa McAuliffe") }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+
   before do
-    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
+    FeatureToggle.enable!(:test_facols)
+
+    User.authenticate!(user: attorney_user)
   end
 
   after do
+    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_phase_two)
   end
 
-  let(:documents) do
+  let!(:appeals) do
     [
-      Generators::Document.create(
-        filename: "My BVA Decision",
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: 6,
-        category_procedural: true,
-        tags: [
-          Generators::Tag.create(text: "New Tag1"),
-          Generators::Tag.create(text: "New Tag2")
-        ],
-        description: Generators::Random.word_characters(50)
-      ),
-      Generators::Document.create(
-        filename: "My Form 9",
-        type: "Form 9",
-        received_at: 5.days.ago,
-        vbms_document_id: 4,
-        category_medical: true,
-        category_other: true
-      ),
-      Generators::Document.create(
-        filename: "My NOD",
-        type: "NOD",
-        received_at: 1.day.ago,
-        vbms_document_id: 3
-      )
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :docs_in_vbms,
+          :assigned,
+          bfcurloc: vacols_atty.slogid,
+          correspondent: FactoryBot.create(
+            :correspondent,
+            appellant_first_name: "Not",
+            appellant_middle_initial: "D",
+            appellant_last_name: "Veteran"
+            )
+          )
+        ),
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :paper_case,
+          :assigned,
+          bfcurloc: vacols_atty.slogid
+          )
+        )
     ]
-  end
-  let(:vacols_record) { :remand_decided }
-  let(:appeals) do
-    [
-      Generators::LegacyAppeal.build(
-        vbms_id: "123456789S",
-        vacols_record: vacols_record,
-        documents: documents
-      ),
-      Generators::LegacyAppeal.build(
-        vbms_id: "115555555S",
-        vacols_record: vacols_record,
-        documents: documents,
-        issues: []
-      )
-    ]
-  end
-  let!(:issues) { [Generators::Issue.build] }
-  let! :attorney_user do
-    User.authenticate!(roles: ["System Admin"])
   end
 
-  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
+  let!(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+  
+  # TODO: Is vacols_appeals any different than appeals?
+  let!(:vacols_appeals) { QueueRepository.appeals_from_tasks(vacols_tasks) }
+
 
   context "queue case search for appeals using veteran id" do
     let(:appeal) { appeals.first }
+    let(:paper_appeal) { appeals.last }
     let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
     let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
 
@@ -97,7 +90,7 @@ RSpec.feature "Queue" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(page).to_not have_content("1 case found for")
       end
     end
 
@@ -124,7 +117,7 @@ RSpec.feature "Queue" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(page).to_not have_content("1 case found for")
       end
     end
 
@@ -172,16 +165,14 @@ RSpec.feature "Queue" do
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
-
-        expect(page).not_to have_content "Select an action"
       end
 
       scenario "found appeal is paper case" do
         visit "/queue"
-        fill_in "searchBar", with: "384920173S"
+        fill_in "searchBar", with: paper_appeal.sanitized_vbms_id
         click_on "Search"
 
-        expect(page).to have_content("1 case found for “Polly A Carter (384920173)”")
+        expect(page).to have_content("1 case found for “#{paper_appeal.veteran_full_name} (#{paper_appeal.sanitized_vbms_id})”")
         expect(page).to have_content(COPY::IS_PAPER_CASE)
       end
     end
@@ -195,8 +186,7 @@ RSpec.feature "Queue" do
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
 
     before do
-      User.unauthenticate!
-      User.authenticate!(css_id: "BVAAABSHIRE")
+      User.authenticate!(user: user_no_role)
       FeatureToggle.enable!(:case_search_home_page)
     end
     after do
@@ -350,14 +340,14 @@ RSpec.feature "Queue" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
-      vet_not_appellant = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
+      vet_not_appellant = appeals.reject { |a| a.appellant_first_name.nil? }.first
       vna_appeal_row = find("tbody").find("#table-row-#{vet_not_appellant.vacols_id}")
       first_cell = vna_appeal_row.find_all("td").first
 
-      expect(first_cell).to have_content("#{vet_not_appellant.veteran_full_name} (#{vet_not_appellant.vbms_id})")
+      expect(first_cell).to have_content("#{vet_not_appellant.veteran_full_name} (#{vet_not_appellant.sanitized_vbms_id})")
       expect(first_cell).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
 
-      paper_case = vacols_appeals.select { |a| a.file_type.eql? "Paper" }.first
+      paper_case = appeals.select { |a| a.file_type.eql? "Paper" }.first
       pc_appeal_row = find("tbody").find("#table-row-#{paper_case.vacols_id}")
       first_cell = pc_appeal_row.find_all("td").first
 
@@ -367,10 +357,10 @@ RSpec.feature "Queue" do
   end
 
   context "loads attorney task detail views" do
-    before do
-      User.unauthenticate!
-      User.authenticate!(roles: ["System Admin"])
-    end
+    # before do
+    #   User.unauthenticate!
+    #   User.authenticate!(roles: ["System Admin"])
+    # end
 
     context "loads appeal summary view" do
       scenario "appeal has hearing" do
@@ -379,7 +369,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         expect(page).to have_content("Select an action")
 
@@ -406,7 +396,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         expect(page).not_to have_content("Hearing preference")
 
@@ -424,7 +414,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         expect(page).to have_content("Veteran Details")
         expect(page).to have_content("The veteran is the appellant.")
@@ -441,7 +431,7 @@ RSpec.feature "Queue" do
 
         visit "/queue"
 
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         expect(page).to have_content("Appellant Details")
         expect(page).to have_content("Veteran Details")
@@ -458,7 +448,7 @@ RSpec.feature "Queue" do
         appeal = vacols_appeals.first
         visit "/queue"
 
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         sleep 1
         expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
@@ -467,7 +457,7 @@ RSpec.feature "Queue" do
 
         # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
         expect(page).to have_content("Caseflow> Reader")
-        expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.vbms_id})")
+        expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})")
 
         click_on "Caseflow"
         expect(page.current_path).to eq "/queue"
@@ -478,7 +468,7 @@ RSpec.feature "Queue" do
       scenario "from appellant details page" do
         appeal = vacols_appeals.first
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         expect(page).to have_content("Disposition: 1 - Allowed")
       end
     end
@@ -503,7 +493,7 @@ RSpec.feature "Queue" do
       task = vacols_tasks.select { |a| a.assigned_by.first_name.present? }.first
       visit "/queue"
 
-      click_on "#{task.veteran_full_name} (#{task.vbms_id})"
+      click_on "#{task.veteran_full_name} (#{task.sanitized_vbms_id})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
