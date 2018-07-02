@@ -253,10 +253,7 @@ class LegacyAppeal < ApplicationRecord
   def eligible_for_ramp?
     (
       (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva) ||
-      (
-        (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && 
-        !hearing_held && !aod && !cavc
-      )
+      eligible_for_ramp_at_bva?
     ) && !appellant_first_name
   end
 
@@ -544,6 +541,12 @@ class LegacyAppeal < ApplicationRecord
   # Used for serialization
   def regional_office_hash
     regional_office.to_h
+  end
+
+  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
+  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
+  def eligible_for_ramp_at_bva?
+    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
   end
 
   class << self

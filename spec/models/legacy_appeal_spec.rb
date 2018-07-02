@@ -1015,10 +1015,9 @@ describe LegacyAppeal do
 
       let!(:vacols_case) do
         create(:case, :status_active, (aod ? :aod : :type_original),
-          bfd19: docket_date,
-          bfha: hearing_code,
-          bfac: type_code
-        )
+               bfd19: docket_date,
+               bfha: hearing_code,
+               bfac: type_code)
       end
 
       context "when other qualifying criteria are met" do
