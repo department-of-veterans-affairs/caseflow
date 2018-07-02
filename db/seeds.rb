@@ -156,6 +156,7 @@ class SeedDB
   def create_beaam_appeals
     FactoryBot.create(
       :appeal,
+      advanced_on_docket: true,
       veteran_file_number: "209179363",
       veteran: FactoryBot.create(:veteran),
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
