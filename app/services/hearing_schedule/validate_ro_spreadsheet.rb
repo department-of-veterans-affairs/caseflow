@@ -71,7 +71,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
       fail RoDatesNotUnique
     end
-    unless @ro_spreadsheet_data.all? { |row| row["date"] >= @start_date && row["date"] <= @end_date }
+    unless @ro_spreadsheet_data.all? { |row| row["date"] == "N/A" || (row["date"] >= @start_date && row["date"] <= @end_date) }
       fail RoDatesNotInRange
     end
     unless validate_ros_with_hearings(@ro_spreadsheet_data)
