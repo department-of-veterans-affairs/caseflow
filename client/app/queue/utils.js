@@ -30,6 +30,7 @@ export const associateTasksWithAppeals = (serverData: Object = {}) => {
     appeals: appealsById,
     tasks: tasksById
   };
+}
 
 /*
 * Sorting hierarchy:
@@ -108,14 +109,8 @@ export const getUndecidedIssues = (issues: Array<Object>) => _.filter(issues, (i
   !issue.disposition || (Number(issue.disposition) && issue.disposition in VACOLS_DISPOSITIONS_BY_ID)
 );
 
-/**
- * @param {Object} decision
- * @param {String} userRole
- * @param {Array} issues
- * @param {Object} args
- * @returns {Object}
- */
-export const buildCaseReviewPayload = (decision, userRole, issues, args = {}) => {
+export const buildCaseReviewPayload =
+  (decision: Object, userRole: string, issues: Array<Object>, args: Object = {}): Object => {
   const payload = {
     data: {
       tasks: {
