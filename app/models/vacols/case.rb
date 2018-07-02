@@ -209,7 +209,12 @@ class VACOLS::Case < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
-    return unless location
+    unless location
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. Unfortunately, " +
+        "I can't throw an exception here because code may depend on this method failing silently. Please validate " +
+        "before passing it to this method."
+      return
+    end
 
     conn = self.class.connection
 
