@@ -15,6 +15,20 @@ class HigherLevelReview < AmaReview
     end_product_establishment.valid_modifiers.first
   end
 
+  def special_issues
+    return [] unless same_office
+    [{ code: "SSR", narrative: "Same Station Review" }]
+  end
+
+  def create_contentions_in_vbms
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: end_product_reference_id,
+      contention_descriptions: contention_descriptions_to_create,
+      special_issues: special_issues
+    )
+  end
+
   def establish_end_product!
     end_product_establishment.perform!
 
