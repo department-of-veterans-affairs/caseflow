@@ -76,7 +76,16 @@ module HearingSchedule::RoAllocation
       allocated_days
     end
 
-    def get_monthly_allocations(grouped_monthly_avail_dates, available_days, monthly_allocated_days, num_of_rooms)
+    # Evens out the monthly allocated days that best divide by the number of rooms provided.
+    #  
+    # Monlthly allocated days is converted to:
+    # {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20} 
+    # 
+    # {[4, 2018]=>20, [9, 2018]=>20, [5, 2018]=>20, [8, 2018]=>18, [6, 2018]=>20, [7, 2018]=>20}
+    #
+    def evenly_distribute_monthly_allocations(grouped_monthly_avail_dates, monthly_allocated_days, num_of_rooms)
+      available_days = grouped_monthly_avail_dates.map { |k, v| [k, v.size] }.to_h
+
       resorted_monthly_dates = sort_monthly_order(grouped_monthly_avail_dates.keys).map { |month| [month, monthly_allocated_days[month]] }.to_h
       valid_resorted_months = validate_available_days(resorted_monthly_dates, available_days, num_of_rooms)
       distribute_days_evenly(valid_resorted_months, available_days, num_of_rooms)

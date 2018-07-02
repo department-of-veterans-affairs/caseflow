@@ -1,5 +1,5 @@
 describe HearingSchedule::GenerateHearingDaysSchedule do
-  let(:schedule_period) { create(:ro_schedule_period) }
+  let(:schedule_period) { create(:ro_schedule_period, start_date: Date.parse("2018-04-01"), end_date: Date.parse("2018-09-30")) }
 
   let(:co_non_available_days) do
     get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 15).map do |date|
