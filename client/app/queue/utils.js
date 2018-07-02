@@ -111,7 +111,6 @@ export const getUndecidedIssues = (issues: Array<Object>) => _.filter(issues, (i
 
 export const buildCaseReviewPayload =
   (decision: Object, userRole: string, issues: Array<Object>, args: Object = {}): Object => {
-  userRole.foo;
   const payload = {
     data: {
       tasks: {
