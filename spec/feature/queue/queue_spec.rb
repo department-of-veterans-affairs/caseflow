@@ -4,7 +4,7 @@ require "rails_helper"
 def click_dropdown(opt_idx, container = page)
   dropdown = container.find(".Select-control")
   dropdown.click
-  yield
+  yield if block_given?
   dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
 end
 
