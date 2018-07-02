@@ -56,10 +56,12 @@ class ClaimsFolderDetails extends React.PureComponent {
                 <b>Docket Number</b><br />
                 <span>{appeal.docket_number}</span>
               </div>
-              <div>
-                <b>Regional Office</b><br />
-                <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
-              </div>
+              {appeal.regional_office &&
+                <div>
+                  <b>Regional Office</b><br />
+                  <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
+                </div>
+              }
             </div>
             <div id="claims-folder-issues" {...issueStyling}>
               <b>Issues</b><br />
