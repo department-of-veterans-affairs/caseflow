@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,14 +12,8 @@ import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
 import COPY from '../../COPY.json';
-import type { State, LoadedQueueAppeals, LoadedQueueTasks, Tasks } from './reducers';
 
-class AttorneyTaskTable extends React.PureComponent<{|
-  loadedQueueTasks: LoadedQueueTasks,
-  appeals: LoadedQueueAppeals,
-  tasks: Tasks,
-  featureToggles: Object
-|}> {
+class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.vacolsId];
@@ -105,12 +98,7 @@ AttorneyTaskTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state: State): {|
-  loadedQueueTasks: LoadedQueueTasks,
-  appeals: LoadedQueueAppeals,
-  tasks: Tasks,
-  featureToggles: Object
-|} => {
+const mapStateToProps = (state) => {
   const {
     queue: {
       loadedQueue: {

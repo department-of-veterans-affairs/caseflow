@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -36,8 +35,6 @@ import {
   ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
-import type { State, Task } from './reducers';
-import type { UiStateError } from './uiReducer/uiReducer';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const radioFieldStyling = css(marginBottom(0), marginTop(2), {
@@ -45,22 +42,7 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
-class SubmitDecisionView extends React.PureComponent<{|
-  appeal: Object,
-  task: Task,
-  decision: Object,
-  judges: {[string] : Object},
-  error: ?UiStateError,
-  highlightFormItems: boolean,
-  selectingJudge: boolean,
-  vacolsId: string,
-  nextStep: string,
-  setDecisionOptions: Function,
-  resetDecisionOptions: Function,
-  setSelectingJudge: Function,
-  requestSave: Function,
-  deleteAppeal: Function
-|}> {
+class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
@@ -250,15 +232,7 @@ SubmitDecisionView.propTypes = {
   nextStep: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state: State, ownProps: Object): {|
-  appeal: Object,
-  task: Task,
-  decision: Object,
-  judges: {[string] : Object},
-  error: ?UiStateError,
-  highlightFormItems: boolean,
-  selectingJudge: boolean
-|} => {
+const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
       stagedChanges: {
