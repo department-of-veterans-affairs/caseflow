@@ -32,7 +32,7 @@ RSpec.feature "Queue" do
         :legacy_appeal,
         :with_veteran,
         vacols_case: FactoryBot.create(
-          :case,
+          :case_with_form_9,
           :docs_in_vbms,
           :assigned,
           bfcurloc: vacols_atty.slogid,
@@ -51,12 +51,19 @@ RSpec.feature "Queue" do
           :case,
           :paper_case,
           :assigned,
-          bfcurloc: vacols_atty.slogid
+          bfcurloc: vacols_atty.slogid,
+          correspondent: FactoryBot.create(
+            :correspondent,
+            sdob: Time.zone.today - (365 * 50),
+            sgender: "F"
+            )
           )
         )
     ]
   end
 
+  # Fakes::QueueRepository.tasks_for_user() returns array of LegacyAppeal objects.
+  # QueueRepository.tasks_for_user() returns array of VACOLS::CaseAssignment objects.
   let!(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
   
   # TODO: Is vacols_appeals any different than appeals?
@@ -357,12 +364,8 @@ RSpec.feature "Queue" do
   end
 
   context "loads attorney task detail views" do
-    # before do
-    #   User.unauthenticate!
-    #   User.authenticate!(roles: ["System Admin"])
-    # end
-
     context "loads appeal summary view" do
+      # TODO: This test is not passing.
       scenario "appeal has hearing" do
         appeal = vacols_appeals.reject { |a| a.hearings.empty? }.first
         hearing = appeal.hearings.first
@@ -410,15 +413,13 @@ RSpec.feature "Queue" do
 
     context "loads appellant detail view" do
       scenario "veteran is the appellant" do
-        appeal = vacols_appeals.first
+        appeal = vacols_appeals.last
 
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         expect(page).to have_content("Veteran Details")
-        expect(page).to have_content("The veteran is the appellant.")
-
         expect(page).to have_content("She/Her")
         # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
@@ -444,6 +445,7 @@ RSpec.feature "Queue" do
     end
 
     context "links to reader" do
+      before { Functions.grant!("Reader", users: [attorney_user.css_id]) }
       scenario "from appellant details page" do
         appeal = vacols_appeals.first
         visit "/queue"
@@ -465,8 +467,9 @@ RSpec.feature "Queue" do
     end
 
     context "displays issue dispositions" do
+      # TODO: This test is not passing
       scenario "from appellant details page" do
-        appeal = vacols_appeals.first
+        appeal = appeals.first
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         expect(page).to have_content("Disposition: 1 - Allowed")
@@ -474,22 +477,18 @@ RSpec.feature "Queue" do
     end
   end
 
+  # TODO: Stopped before this test.
   context "loads judge task detail views" do
     before do
-      User.unauthenticate!
-      User.authenticate!(css_id: "BVAAABSHIRE")
+      User.authenticate!(user: judge_user)
       FeatureToggle.enable!(:judge_queue)
     end
 
     after do
       FeatureToggle.disable!(:judge_queue)
-      User.unauthenticate!
-      User.authenticate!
     end
 
     scenario "displays who prepared task" do
-      vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
-
       task = vacols_tasks.select { |a| a.assigned_by.first_name.present? }.first
       visit "/queue"
 

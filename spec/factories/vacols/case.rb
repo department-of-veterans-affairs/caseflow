@@ -230,7 +230,7 @@ FactoryBot.define do
     trait :paper_case do
       after(:build) do |vacols_case, _evaluator|
         vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
-        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2.eq?("Y")
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
       end
     end
 
