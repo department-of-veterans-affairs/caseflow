@@ -46,7 +46,7 @@ export default class DropdownButton extends React.Component {
     };
 
     return <div className="cf-dropdown" {...dropdownBtnContainer}>
-      <a href="#dropdown" {...dropdownBtn}
+      <a {...dropdownBtn}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-outline">
         {label}

@@ -1458,14 +1458,6 @@ describe LegacyAppeal do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
 
-    context "#power_of_attorney(load_bgs_record: false)" do
-      subject { appeal.power_of_attorney(load_bgs_record: false) }
-
-      it "returns poa without fetching BGS values if desired" do
-        is_expected.to have_attributes(bgs_representative_type: nil, bgs_representative_name: nil)
-      end
-    end
-
     context "#power_of_attorney.bgs_representative_address" do
       subject { appeal.power_of_attorney.bgs_representative_address }
 
