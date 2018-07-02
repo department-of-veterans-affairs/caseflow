@@ -134,12 +134,13 @@ class QueueLoadingScreen extends React.PureComponent<{|
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  vacolsId: PropTypes.string
 };
 
 const mapStateToProps = (state: State) => ({
   judges: state.queue.judges,
-  ...state.caseDetail.activeAppeal,
+  activeAppeal: state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
 

@@ -195,7 +195,8 @@ class Intake < ApplicationRecord
       veteran_file_number: veteran_file_number,
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
-      completed_at: completed_at
+      completed_at: completed_at,
+      relationships: FeatureToggle.enabled?(:intakeAma) && veteran && veteran.relationships
     }
   end
 

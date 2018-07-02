@@ -1,5 +1,14 @@
 describe PowerOfAttorney do
-  let(:power_of_attorney) { PowerOfAttorney.new(vacols_id: "123C", file_number: "VBMS-ID") }
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let!(:vacols_case) { create(:case, :representative_american_legion) }
+  let(:power_of_attorney) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
 
   it "returns vacols values" do
     expect(power_of_attorney.vacols_representative_name).to eq "The American Legion"

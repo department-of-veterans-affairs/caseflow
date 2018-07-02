@@ -59,15 +59,19 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "queue_case_search",
-          enable_all: true
-        },
-        {
           feature: "judge_queue",
           enable_all: true
         },
         {
           feature: "judge_assignment",
+          enable_all: true
+        },
+        {
+          feature: "queue_beaam_appeals",
+          enable_all: true
+        },
+        {
+          feature: "judge_assign_cases",
           enable_all: true
         }
   ]

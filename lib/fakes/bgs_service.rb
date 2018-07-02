@@ -16,23 +16,47 @@ class Fakes::BGSService
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
 
+  # rubocop:disable Metrics/MethodLength
   def self.create_veteran_records
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+
+      case row_hash["bgs_key"]
+      when "has_rating"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+      when "has_many_ratings"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "Left knee" },
+            { decision_text: "PTSD" }
+          ]
+        )
+      when "has_supplemental_claim_with_vbms_claim_id"
+        claim_id = "600118926"
+        SupplementalClaim.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
+      when "has_higher_level_review_with_vbms_claim_id"
+        claim_id = "600118951"
+        HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
+      end
     end
   end
 
-  def self.stub_intake_data
-    veteran = Veteran.find_or_create_by_file_number("375273128")
-    Generators::Rating.build(
-      participant_id: veteran.participant_id
-    )
-  end
-
-  # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
     [
@@ -263,6 +287,10 @@ class Fakes::BGSService
     get_address_from_bgs_address(address)
   end
 
+  def fetch_claimant_info_by_participant_id(_participant_id)
+    default_claimant_info
+  end
+
   def fetch_file_number_by_ssn(ssn)
     ssn_not_found ? nil : ssn
   end
@@ -304,7 +332,7 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/MethodLength
-  def find_all_relationships(_participant_id:)
+  def find_all_relationships(*)
     [
       {
         authzn_change_clmant_addrs_ind: nil,
@@ -367,6 +395,13 @@ class Fakes::BGSService
   # rubocop:enable Metrics/MethodLength
 
   private
+
+  def default_claimant_info
+    {
+      name: "Harry Carey",
+      relationship: "Spouse"
+    }
+  end
 
   def default_power_of_attorney_record
     {

@@ -91,6 +91,20 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setClaimantNotVeteran = (claimantNotVeteran) => ({
+  type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
+  payload: {
+    claimantNotVeteran
+  }
+});
+
+export const setClaimant = (claimant) => ({
+  type: ACTIONS.SET_CLAIMANT,
+  payload: {
+    claimant
+  }
+});
+
 export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
   payload: {

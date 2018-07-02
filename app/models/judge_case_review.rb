@@ -4,7 +4,8 @@ class JudgeCaseReview < ApplicationRecord
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
 
-  validates :location, :complexity, :quality, :task_id, presence: true
+  validates :task_id, :location, presence: true
+  validates :complexity, :quality, presence: true, if: :bva_dispatch?
 
   enum location: {
     omo_office: "omo_office",
@@ -23,22 +24,27 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: judge.vacols_uniq_id
+        modifying_user: modifying_user
       }
     )
+  end
+
+  def modifying_user
+    judge.vacols_uniq_id
   end
 
   class << self
     attr_writer :repository
 
-    def create(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = super
+        record = create(params)
         if record.valid?
           MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
                                 service: :vacols,
                                 name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
+            record.update_issue_dispositions! if record.bva_dispatch?
           end
         end
         record

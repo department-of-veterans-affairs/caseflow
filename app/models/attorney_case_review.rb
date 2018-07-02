@@ -9,15 +9,9 @@ class AttorneyCaseReview < ApplicationRecord
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
 
   enum document_type: {
-    omo_request: "omo_request",
-    draft_decision: "draft_decision"
+    omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
+    draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
-
-  attr_accessor :issues
-
-  def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
-  end
 
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
@@ -31,26 +25,14 @@ class AttorneyCaseReview < ApplicationRecord
         document_id: document_id,
         overtime: overtime,
         note: note,
-        modifying_user: attorney.vacols_uniq_id,
+        modifying_user: modifying_user,
         reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
   end
 
-  def update_issue_dispositions!
-    (issues || []).each do |issue_attrs|
-      Issue.update_in_vacols!(
-        vacols_id: vacols_id,
-        vacols_sequence_id: issue_attrs[:vacols_sequence_id],
-        issue_attrs: {
-          vacols_user_id: attorney.vacols_uniq_id,
-          disposition: issue_attrs[:disposition],
-          disposition_date: VacolsHelper.local_date_with_utc_timezone,
-          readjudication: issue_attrs[:readjudication],
-          remand_reasons: issue_attrs[:remand_reasons]
-        }
-      )
-    end
+  def modifying_user
+    attorney.vacols_uniq_id
   end
 
   class << self

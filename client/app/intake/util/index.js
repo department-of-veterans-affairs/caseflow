@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -35,6 +36,19 @@ export const formatRatings = (ratings) => {
   }), 'profile_date');
 };
 
+export const formatRelationships = (relationships) => {
+  return relationships.map((relationship) => {
+    const first = _.capitalize(relationship.first_name);
+    const last = _.capitalize(relationship.last_name);
+    const type = _.capitalize(relationship.relationship_type);
+
+    return {
+      value: relationship.participant_id,
+      displayText: `${first} ${last}, ${type}`
+    };
+  });
+};
+
 export const formatRatingData = (intakeState) => {
   const ratingData = {
     request_issues:
@@ -50,13 +64,16 @@ export const formatRatingData = (intakeState) => {
 
   const nonRatingData = {
     request_issues:
-      _(intakeState.nonRatedIssues).map((issue) => {
-        return {
-          decision_text: issue.description,
-          issue_category: issue.category
-        };
-      }).
-        filter('issue_category')
+      _(intakeState.nonRatedIssues).
+        filter((issue) => {
+          return issue.category && issue.description;
+        }).
+        map((issue) => {
+          return {
+            decision_text: issue.description,
+            issue_category: issue.category
+          };
+        })
   };
 
   const data = {
@@ -64,4 +81,32 @@ export const formatRatingData = (intakeState) => {
   };
 
   return data;
+};
+
+export const prepareReviewData = (intakeData, intakeType) => {
+  switch (intakeType) {
+  case 'appeal':
+    return {
+      docket_type: intakeData.docketType,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  case 'supplementalClaim':
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  case 'higherLevelReview':
+    return {
+      informal_conference: intakeData.informalConference,
+      same_office: intakeData.sameOffice,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  default:
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  }
 };

@@ -44,6 +44,13 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
+      )
+    end
+
     it "cancels and deletes the Higher Level Review record created" do
       subject
 
@@ -53,6 +60,58 @@ describe HigherLevelReviewIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  context "#review!" do
+    subject { intake.review!(params) }
+
+    let(:detail) do
+      HigherLevelReview.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    context "Veteran is claimant" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: nil
+        )
+      end
+
+      it "adds veteran to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: intake.veteran.participant_id
+        )
+      end
+    end
+
+    context "Claimant is different than Veteran" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: "1234"
+        )
+      end
+
+      it "adds other relationship to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: "1234"
+        )
+      end
     end
   end
 
@@ -92,8 +151,30 @@ describe HigherLevelReviewIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: intake.detail.end_product_reference_id,
-        contention_descriptions: ["decision text"]
+        contention_descriptions: ["decision text"],
+        special_issues: []
       )
+    end
+
+    context "when same office is requested" do
+      let(:detail) do
+        HigherLevelReview.create!(
+          veteran_file_number: "64205555",
+          receipt_date: 3.days.ago,
+          same_office: true
+        )
+      end
+
+      it "adds same office to special issues" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: intake.detail.veteran_file_number,
+          claim_id: intake.detail.end_product_reference_id,
+          contention_descriptions: ["decision text"],
+          special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
+        )
+      end
     end
 
     context "when no requested issues" do

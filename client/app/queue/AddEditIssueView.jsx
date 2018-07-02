@@ -34,7 +34,8 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  ISSUE_DESCRIPTION_MAX_LENGTH
 } from './constants';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -347,6 +348,7 @@ class AddEditIssueView extends React.Component<{|
       <TextField
         name="Notes:"
         value={_.get(this.props.issue, 'note', '')}
+        maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };

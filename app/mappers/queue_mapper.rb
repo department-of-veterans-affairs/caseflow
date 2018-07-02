@@ -6,6 +6,7 @@ module QueueMapper
     modifying_user: :demdusr,
     reassigned_to_judge_date: :dereceive,
     assigned_to_attorney_date: :deassign,
+    deadline_date: :dedeadline,
     attorney_id: :deatty,
     group_name: :deteam,
     complexity: :defdiff,
@@ -42,15 +43,15 @@ module QueueMapper
   }.freeze
 
   WORK_PRODUCTS = {
-    DEC: "Decision",
-    IME: "OMO - IME",
-    VHA: "OMO - VHA"
+    "DEC" => "Decision",
+    "IME" => "OMO - IME",
+    "VHA" => "OMO - VHA"
   }.freeze
 
   OVERTIME_WORK_PRODUCTS = {
-    OTD: "Decision",
-    OTI: "OMO - IME",
-    OTV: "OMO - VHA"
+    "OTD" => "Decision",
+    "OTI" => "OMO - IME",
+    "OTV" => "OMO - VHA"
   }.freeze
 
   def self.rename_and_validate_decass_attrs(decass_attrs)

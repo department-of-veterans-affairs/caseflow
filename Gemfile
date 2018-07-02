@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b4d61f190ac8f6f397db245a257a89238970a224"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :development do
+group :stubbed, :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -163,3 +163,5 @@ gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
 
 gem "holidays", "~> 6.4"
+
+gem "roo", "~> 2.7"

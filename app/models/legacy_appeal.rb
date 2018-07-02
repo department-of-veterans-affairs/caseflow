@@ -7,6 +7,9 @@ class LegacyAppeal < ApplicationRecord
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -504,7 +507,7 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def serializer
+  def serializer_class
     ::WorkQueue::LegacyAppealSerializer
   end
 
@@ -600,13 +603,14 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:)
+    def reopen(appeals:, user:, disposition:, safeguards: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
-            disposition: disposition
+            disposition: disposition,
+            safeguards: safeguards
           )
         end
       end
@@ -697,7 +701,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -718,7 +722,8 @@ class LegacyAppeal < ApplicationRecord
 
         repository.reopen_undecided_appeal!(
           appeal: appeal,
-          user: user
+          user: user,
+          safeguards: safeguards
         )
       end
     end
