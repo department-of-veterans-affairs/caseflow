@@ -15,7 +15,7 @@ class QueueRepository
       end
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def appeals_from_tasks(tasks)
       vacols_ids = tasks.map(&:vacols_id)
 
@@ -30,7 +30,6 @@ class QueueRepository
         hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
         issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
         remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
-        work_product_types = VACOLS::Decass.where(defolder: vacols_ids).pluck(:defolder, :deprod).to_h
 
         case_records.map do |case_record|
           appeal = AppealRepository.build_appeal(case_record)
@@ -42,7 +41,6 @@ class QueueRepository
             issue
           end
           appeal.hearings = hearings_by_appeal[appeal.vacols_id] || []
-          appeal.work_product = work_product_types[appeal.vacols_id] || ""
 
           appeal
         end
@@ -51,7 +49,7 @@ class QueueRepository
       appeals.map(&:save)
       appeals
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)

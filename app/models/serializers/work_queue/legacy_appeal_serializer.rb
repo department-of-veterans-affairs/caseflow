@@ -56,7 +56,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :paper_case do
     object.file_type.eql? "Paper"
   end
-  attribute :work_product
 
   attribute :power_of_attorney do
     # TODO: change this to use our more sophisticated poa data fetching mechanism
