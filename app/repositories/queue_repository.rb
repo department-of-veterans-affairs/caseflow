@@ -15,8 +15,7 @@ class QueueRepository
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def appeals_from_tasks(tasks)
       vacols_ids = tasks.map(&:vacols_id)
 
@@ -52,8 +51,7 @@ class QueueRepository
       appeals.map(&:save)
       appeals
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)

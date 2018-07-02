@@ -67,6 +67,10 @@ class LegacyAppeal < ApplicationRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
+  cache_attribute :work_product do
+    VACOLS::Decass.where(defolder: vacols_id).pluck(:deprod).first
+  end
+
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
@@ -184,11 +188,6 @@ class LegacyAppeal < ApplicationRecord
     @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
 
     load_bgs_record ? @poa.load_bgs_record! : @poa
-  end
-
-  def work_product
-    # TODO: use QueueRepository.find_decass_record? cache_attribute?
-    VACOLS::Decass.where(defolder: vacols_id).pluck(:deprod).first
   end
 
   attr_writer :hearings
