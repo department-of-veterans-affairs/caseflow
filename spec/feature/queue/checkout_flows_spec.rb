@@ -3,6 +3,7 @@ require "rails_helper"
 def click_dropdown(opt_idx, container = page)
   dropdown = container.find(".Select-control")
   dropdown.click
+  yield if block_given?
   dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
 end
 
@@ -10,6 +11,7 @@ RSpec.feature "Checkout flows" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
+    RequestStore[:current_user] = judge
   end
 
   after do
@@ -66,6 +68,7 @@ RSpec.feature "Checkout flows" do
   let! :attorney_user do
     User.authenticate!(roles: ["System Admin"])
   end
+  let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
 
   let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
   let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
@@ -409,7 +412,7 @@ RSpec.feature "Checkout flows" do
       )
     end
     let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
-    let!(:judge_staff) { create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: judge.css_id, sdomainid: judge.css_id) }
     let!(:vacols_cases) do
       [
         create(
@@ -445,7 +448,11 @@ RSpec.feature "Checkout flows" do
       # TODO: appeal vbms_id ends w/S. better way to strip?
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
 
-      click_dropdown 0
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+      end
 
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
@@ -466,7 +473,7 @@ RSpec.feature "Checkout flows" do
 
       click_on "Continue"
 
-      expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
     end
 
     scenario "completes assign to omo checkout flow" do
@@ -479,9 +486,13 @@ RSpec.feature "Checkout flows" do
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
 
-      click_dropdown 1
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
+      end
 
-      expect(page).to have_content("You have successfully submitted an OMO for #{appeal.veteran_full_name}.")
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
     end
   end
 end
