@@ -41,7 +41,7 @@ JSCHULIST,,,,,Jamir,O,Schulist,JSCHULIST,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,V,,,,,
 37,,,,,,,37 Diary Control File,37,,37,,,,,,,,,,,,,ABERGSTRO,1994-04-05,SBARTELL,2017-05-31,,,,,,,,,,I,,,,,,,,,,,
 38,,,,,,,38 Awaiting Video Hearing,38,,38,,,,,,,,,,,,,SBARTELL,2002-10-24,SBARTELL,2002-10-24,,,,,,,,,,A,,,,,,,,,,,
 39,,,,,,,39 AG Abeyance,39,,39,,,,,,,,,,,,,ABERGSTRO,1994-04-05,SBARTELL,2012-06-05,,,,,,,,,,A,,,,,,,,,,,
-LLEBSACK,,,,,Lyda,S,Lebsack,LLEBSACK,SSENGER,LLEBSACK,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
+LLEBSACK,,,,,Lyda,S,Lebsack,LLEBSACK,A1,LLEBSACK,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
 40,,,,,,,40 Huntington Resource Center,40,,40,,,,,,,,,,,,,SBARTELL,2003-06-20,SBARTELL,2015-03-19,,,,,,,,,,I,,,,,,,,,,,
 41,,,,,,,41 Timeliness Audit - 01B,41,,41,,,,,,,,,,,,,ABERGSTRO,1994-04-05,BFEENEY,1995-07-13,,,,,,,,,,I,,,,,,,,,,,
 42,,,,,,,42 Nashville Resource Center,42,,42,,,,,,,,,,,,,SBARTELL,2003-07-28,SBARTELL,2015-03-19,,,,,Quisquam totam sit nemo accusantium deleniti culpa ipsa ex.,,,,,I,,,,,,,,,,,
@@ -52,8 +52,8 @@ LLEBSACK,,,,,Lyda,S,Lebsack,LLEBSACK,SSENGER,LLEBSACK,,,,,,,,,,,,,SBARTELL,2012-
 47,,,,,,,47 Safe: IVM/CoPay files,47,,47,,,,,,,,,,,,,ABERGSTRO,1994-04-05,SBARTELL,2016-10-14,,,,,,,,,,A,,,,,,,,,,,
 48,,,,,,,48 Quality Review,48,,48,,,,,,,,,,,,,CF,1995-04-12,BFEENEY,1995-07-13,,,,,,,,,,A,,,,,,,,,,,
 49,,,,,,,49 Stayed Appeal,49,,49,,,,,,,,,,,,,SBARTELL,2003-09-26,SBARTELL,2017-10-30,,,,,,,,,,I,,,,,,,,,,,
-TEBERT,,,,,Taylor,C,Ebert,TEBERT,SSENGER,TEBERT,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
-AABBOTT,,,,,Alayna,E,Abbott,AABBOTT,SSENGER,AABBOTT,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
+TEBERT,,,,,Taylor,C,Ebert,TEBERT,A1,TEBERT,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
+AABBOTT,,,,,Alayna,E,Abbott,AABBOTT,A1,AABBOTT,,,,,,,,,,,,,SBARTELL,2012-12-01,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
 50,,,,,,,50 Remand RO,50,,50,,,,,,,,,,,,,ABERGSTRO,1994-04-05,BFEENEY,1995-07-13,,,,,,,,,,A,,,,,,,,,,,
 51,,,,,,,51 Remand VAMC,51,,51,,,,,,,,,,,,,SBARTELL,2008-06-27,,,,,,,,,,,,A,,,,,,,,,,,
 52,,,,,,,52 Remand General Counsel,52,,52,,,,,,,,,,,,,SBARTELL,2010-08-27,,,,,,,,,,,,A,,,,,,,,,,,
@@ -63,7 +63,7 @@ AABBOTT,,,,,Alayna,E,Abbott,AABBOTT,SSENGER,AABBOTT,,,,,,,,,,,,,SBARTELL,2012-12
 57,,,,,,,57 Hearing Branch,57,,57,,,,,,,,,,,,,SBARTELL,1996-04-02,SBARTELL,1996-04-02,0,0,0,0,,,,,,A,,,,,,,,,,,
 58,,,,,,,58 Admin Quality Review,58,,58,,,,,,,,,,,,,SBARTELL,2005-03-15,SBARTELL,2011-02-08,,,,,,,,,,I,,,,,,,,,,,
 59,,,,,,,59 Advance on Docket Office,59,,59,,,,,,,,,,,,,SBARTELL,2012-02-15,,,,,,,,,,,,A,,,,,,,,,,,
-KMOSCISKI,,,,,Keyon,N,Mosciski,KMOSCISKI,SSENGER,KMOSCISKI,,,,,,,,,,,,,SBARTELL,2016-11-16,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
+KMOSCISKI,,,,,Keyon,N,Mosciski,KMOSCISKI,A1,KMOSCISKI,,,,,,,,,,,,,SBARTELL,2016-11-16,SBARTELL,2017-10-17,,,,,,,,,,I,,,,,,,,,,,
 60,,,,,,,60 Litigation Support,60,,60,,,,,,,,,,,,,ABERGSTRO,1994-04-05,BFEENEY,1995-07-13,,,,,,,,,,A,,,,,,,,,,,
 61,,,,,,,61 Attorney Fee Motion,61,,61,,,,,,,,,,,,,ABERGSTRO,1994-04-05,SBARTELL,2017-05-31,,,,,,,,,,I,,,,,,,,,,,
 62,,,,,,,62 LS Monitoring,62,,62,,,,,,,,,,,,,SBARTELL,2015-11-17,,,,,,,,,,,,A,,,,,,,,,,,
@@ -105,8 +105,8 @@ KMOSCISKI,,,,,Keyon,N,Mosciski,KMOSCISKI,SSENGER,KMOSCISKI,,,,,,,,,,,,,SBARTELL,
 993,,,,,,,Three-Member Reconsideration,993,MPAUCEK,99-993,,,,,,,,,,,,,BFEENEY,1995-08-01,WLANGOSH,1998-05-07,0,0,0,0,,,,,,,,,,,,,,993,J,,
 996,,,,,,,Six-Member Reconsideration,996,99-996*,99-996,BDCOUNSEL,,,,,,,,,,,,BFEENEY,1995-08-02,WLANGOSH,1996-11-13,0,0,0,0,,,,,,,,,,,,,,996,J,,
 999,,,,,,,Recon by Letter,999,99-999*,99-999,,,,,,,,,,,,,ABERGSTRO,1994-04-12,SBARTELL,1996-03-22,,,,,,,,,,,,,,,,,,999,J,,
-SSENGER,,,,,Shannon,X,Senger,SSENGER,AX,SSENGER,SSENGER,,,,,,,,,,(503) 056-8879,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,1,0,14,2,,,,,,I,,,,,,,,,,,
-FMARKS,,,,,Fannie,L,Marks,FMARKS,AX,FMARKS,FMARKS,,,,,,,,,,1-758-842-7379,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,0,0,0,5,,,,,,I,,,,,,,,,,,
+SSENGER,,,,,Shannon,X,Senger,SSENGER,AX,A1,A1,,,,,,,,,,(503) 056-8879,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,1,0,14,2,,,,,,I,,,,,,,,,,,
+FMARKS,,,,,Fannie,L,Marks,FMARKS,AX,A2,A2,,,,,,,,,,1-758-842-7379,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,0,0,0,5,,,,,,I,,,,,,,,,,,
 RBAUCH,,,,,Robin,O,Bauch,RBAUCH,AX,RBAUCH,RBAUCH,,,,,,,,,,512-360-1255,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,0,0,7,0,,,,,,I,,,,,,,,,,,
 SCORWIN,,,,,Sammy,H,Corwin,SCORWIN,AX,SCORWIN,SCORWIN,,,,,,,,,,1-163-321-1023 x2195,,WLANGOSH,1995-09-26,SBARTELL,2012-12-01,0,0,2,2,,,,,,I,,,,,,,,,,,
 EHAMILL,,,,,Ellis,M,Hamill,EHAMILL,EHAMILL,EHAMILL,EHAMILL,,,,,,,,,,,,WLANGOSH,1997-07-02,,,0,0,0,0,,,,,,I,,,,,,,,,,,
@@ -172,7 +172,7 @@ EEMARD2,,,,,Elbert,I,Emard,EEMARD2,SBODE,,BDCOUNSEL,,,,,,,,,,,1-542-976-6538 x25
 CRODRIGUE,,,,,Casimir,X,Rodriguez,CRODRIGUE,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 GDACH,,,,,Gayle,R,Dach,GDACH,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,556,,,1433,,,
 OWALSH,,,,,Orrin,O,Walsh,OWALSH,SBODE,21-350,BDCOUNSEL,,,,,,,,,6724,,,ABERGSTRO,1994-05-31,WLANGOSH,1995-09-23,,,,,,,,,,A,,,,,448,,,350,,,BVAOWALSH
-HLABADIE1,,,,,Haley,L,Labadie,HLABADIE1,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHLABADIE1
+HLABADIE1,,,,,Haley,L,Labadie,HLABADIE1,A1,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHLABADIE1
 ABERGSTRO,,,,,Arden,E,Bergstrom,ABERGSTRO,,,,,,,,,,,,,,,AKUVALIS,1994-02-28,ABERGSTRO,1995-07-20,,,,,,,,,,I,,,,,,,,,,,
 PSPORER,,,,,Pierce,N,Sporer,PSPORER,AHUDSON,18-444,BDCOUNSEL,,,,,,,,,2373,,,SBARTELL,,WLANGOSH,1996-12-04,,,,,,,,,,I,,,,,,,,444,,,
 JZEMLAK,,,,,Jamar,C,Zemlak,JZEMLAK,OPR,,CDLEGCLK,,,,,,,,,,1-985-791-0171 x267,,,,,,,,,,,,,,,I,,,,,,,,,,,
@@ -248,7 +248,7 @@ LLITTLE,,,,,Leon,J,Little,LLITTLE,SBODE,13-559,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,199
 AMCGLYNN,,,,,Antonina,R,McGlynn,AMCGLYNN,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,805,,,815,A,,BVAAMCGLYNN
 SSCHUSTER,,,,,Sherman,S,Schuster,SSCHUSTER,SBODE,06-611,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1997-07-02,WLANGOSH,1997-07-02,0,0,0,0,,,,,,A,,,,,679,,,611,J,,BVASSCHUSTER
 SRYAN,,,,,Sherman,M,Ryan,SRYAN,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,799,,,
-AHESSEL1,,,,,Abelardo,P,Hessel,AHESSEL1,SSENGER,,DSP,,,,,,,,,,1-922-685-3783 x584,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAAHESSEL1
+AHESSEL1,,,,,Abelardo,P,Hessel,AHESSEL1,A2,,DSP,,,,,,,,,,1-922-685-3783 x584,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAAHESSEL1
 BPARKER1,,,,,Bailee,L,Parker,BPARKER1,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1204,,,
 KAUER,,,,,Kaitlyn,R,Auer,KAUER,SBODE,,BDCOUNSEL,,,,,,,,,,,1-480-475-0245,,,,,,,,,,,,,,I,,,,,386,,,1336,,,
 AMAYER,,,,,Mariane,A,Mills,AMAYER,SBODE,,BDCOUNSEL,,,,,,,,,,,303-780-7442,,,,,,,,,,,,,,I,,,,,167,,,1278,,,
@@ -284,7 +284,7 @@ RGAYLORD,,,,,Rudolph,N,Gaylord,RGAYLORD,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,
 TZIEME,,,,,Tobin,R,Zieme,TZIEME,MHALEY,,INTERN,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,938,,,
 BRATH,,,,,Bailee,Z,Rath,BRATH,OPR,67-85,MPS,,,,,,,,,,,,ABERGSTRO,1994-05-18,WLANGOSH,1995-09-29,0,0,664,21,,,,,,A,,,,,,,,,,,BVABRATH
 FDAVIS,,,,,Freddy,B,Davis,FDAVIS,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
-VWALTER,,,,,Virginie,B,Walter,VWALTER,SSENGER,,DSP,,,,,,,,,,481.063.0282,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAVWALTER
+VWALTER,,,,,Virginie,B,Walter,VWALTER,A1,,DSP,,,,,,,,,,481.063.0282,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAVWALTER
 AQUITZON,,,,,America,N,Quitzon,AQUITZON,OPR,,REV,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAAQUITZON
 LZBONCAK,,,,,Laila,J,Zboncak,LZBONCAK,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,365,,,1543,,,BVALZBONCAK
 CKASSULKE1,,,,,Chasity,R,Kassulke,CKASSULKE1,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,805,,,1197,,,
@@ -361,7 +361,7 @@ NLEHNER,,,,,Nigel,A,Lehner,NLEHNER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,
 HBAILEY,,,,,Hassan,H,Bailey,HBAILEY,AIRS,,AIRS,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,A,,
 LSCHNEIDE,,,,,Lupe,U,Schneider,LSCHNEIDE,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 JSENGER,,,,,Jolie,Q,Senger,JSENGER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-NRUTHERFO,,,,,Nico,Z,Rutherford,NRUTHERFO,FMARKS,,ADDMOD,,,,,,,,,,(954) 499-6327 x793,,,,,,,,,,,,,,,I,,,,,,,,,,,
+NRUTHERFO,,,,,Nico,Z,Rutherford,NRUTHERFO,A2,,ADDMOD,,,,,,,,,,(954) 499-6327 x793,,,,,,,,,,,,,,,I,,,,,,,,,,,
 LSCHROEDE,,,,,Laurie,Y,Schroeder,LSCHROEDE,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,966,,,
 ACASSIN,,,,,Amos,B,Cassin,ACASSIN,SBODE,01-439,BDCOUNSEL,,,,,,,,,6990,,,SBARTELL,,ACASSIN,1995-10-02,,,,,,,,,,I,,,,,,,,439,,,
 JBATZ,,,,,Jacinthe,S,Batz,JBATZ,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,805,,,1193,,,BVAJBATZ
@@ -393,7 +393,7 @@ EWILLMS,,,,,Eugene,B,Willms,EWILLMS,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,
 LSTIEDEMA,,,,,Lurline,V,Stiedemann,LSTIEDEMA,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,944,,,
 LLEUSCHKE,,,,,Leanna,N,Leuschke,LLEUSCHKE,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 RKLOCKO,,,,,Ramona,C,Klocko,RKLOCKO,DV-DIR,68-47,AMC,,,,,,,,,3045,,,ABERGSTRO,1994-05-18,WLANGOSH,1996-03-06,3,3,275,569,,,,,,A,,,,,,,,,,,BVARKLOCKO
-DHARBER2,,,,,Donavon,B,Harber,DHARBER2,SSENGER,,DSP,,,,,,,,,,(826) 889-5005 x600,,,,,,,,,,,,,,,I,,,,,,,,,,,
+DHARBER2,,,,,Donavon,B,Harber,DHARBER2,A1,,DSP,,,,,,,,,,(826) 889-5005 x600,,,,,,,,,,,,,,,I,,,,,,,,,,,
 HMARVIN1,,,,,Herminia,W,Marvin,HMARVIN1,MHALEY,08-023,BDCOUNSEL,,,,,,,,,7738,,,ABERGSTRO,1994-05-27,WLANGOSH,1995-11-30,,,,,,,,,,I,,,,,,,,023,J,,
 EBERNHARD,,,,,Evelyn,R,Bernhard,EBERNHARD,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,805,,,1565,,,
 OSTANTON,,,,,Olen,V,Stanton,OSTANTON,AHUDSON,03-466,BDCOUNSEL,,,,,,,,,,,,CF,1995-06-23,WLANGOSH,1996-06-07,0,0,0,0,,,,,,I,,,,,,,,466,,,
@@ -600,7 +600,7 @@ TBARTOLET,,,,,Thora,U,Bartoletti,TBARTOLET,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A
 ATERRY,,,,,Austen,A,Terry,ATERRY,MPAUCEK,,DIR,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,A,,
 TZEMLAK,,,,,Terence,X,Zemlak,TZEMLAK,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1381,,,
 JJACOBS,,,,,Jakayla,Q,Jacobs,JJACOBS,MED ADV,MED ADV,CHAIR,,,,,,,,,,,,ABERGSTRO,1995-07-06,ABERGSTRO,1995-07-06,0,0,0,0,,,,,,I,,,,,,,,,,,
-KROOB,,,,,Kailyn,O,Roob,KROOB,SSENGER,,DSP,,,,,,,,,,(207) 998-5609,,,,,,,,,,,,,,,I,,,,,,,,,,,
+KROOB,,,,,Kailyn,O,Roob,KROOB,A1,,DSP,,,,,,,,,,(207) 998-5609,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SHEGMANN,,,,,Sylvia,U,Hegmann,SHEGMANN,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 RSTREICH,,,,,Rowan,N,Streich,RSTREICH,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,511,,,1620,,,BVARSTREICH
 ASWIFT1,,,,,Amely,Z,Swift,ASWIFT1,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
@@ -748,7 +748,7 @@ CRUSSEL,,,,,Cameron,N,Russel,CRUSSEL,CRUSSEL,CRUSSEL,CRUSSEL,,,,,,,,,,,,SBARTELL
 AHUDSON,,,,,Arlene,G,Hudson,AHUDSON,AHUDSON,AHUDSON,AHUDSON,,,,,,,,,,,,SBARTELL,1995-09-22,SBARTELL,1995-09-23,-7,5,-43,49,,,,,,I,,,,,,,,,,,
 MPAUCEK,,,,,Michael,K,Paucek,MPAUCEK,MPAUCEK,MPAUCEK,MPAUCEK,,,,,,,,,,,,ABERGSTRO,1996-02-05,ABERGSTRO,1996-02-05,0,0,-19,20,,,,,,I,,,,,,,,,,,
 JLEANNON,,,,,Jayme,D,Leannon,JLEANNON,MHALEY,06-517,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1995-12-15,WLANGOSH,1996-06-07,0,0,0,0,,,,,,I,,,,,,,,517,,,
-HHUELS,,,,,Hobart,Y,Huels,HHUELS,FMARKS,64-11,CHIEF,,,,,,,,,,662.321.6179 x9738,,SBARTELL,,WLANGOSH,1997-07-30,2,2,35,15,,,,,,I,,,,,,,,,,,
+HHUELS,,,,,Hobart,Y,Huels,HHUELS,A2,64-11,CHIEF,,,,,,,,,,662.321.6179 x9738,,SBARTELL,,WLANGOSH,1997-07-30,2,2,35,15,,,,,,I,,,,,,,,,,,
 PRUECKER,,,,,Prince,R,Ruecker,PRUECKER,SBODE,,BSCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,386,,,1955,,,BVAPRUECKER
 GKUHN,,,,,Guillermo,P,Kuhn,GKUHN,CRUSSEL,17-416,BDCOUNSEL,,,,,,,,,7429,,,ABERGSTRO,1994-06-01,WLANGOSH,1995-09-26,,,,,,,,,,I,,,,,,,,416,,,
 PRATKE,,,,,Patsy,C,Ratke,PRATKE,01-CHR,,STATSPT,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,A,,
@@ -788,7 +788,7 @@ LKUTCH,,,,,Lee,W,Kutch,LKUTCH,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 KKREIGER,,,,,Kiera,B,Kreiger,KKREIGER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 CHEGMANN,,,,,Crawford,L,Hegmann,CHEGMANN,OPR,,CDLEGCLK,,,,,,,,,,250-542-0379,,,,,,,,,,,,,,,I,,,,,,,,,,,
 KHELLER,,,,,Katrine,I,Heller,KHELLER,011W,,CHAIR,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
-MPOLLICH,,,,,Matilde,L,Pollich,MPOLLICH,SSENGER,,COMPASST,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
+MPOLLICH,,,,,Matilde,L,Pollich,MPOLLICH,A1,,COMPASST,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 EREMPEL,,,,,Euna,D,Rempel,EREMPEL,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAEREMPEL
 HCHRISTIA,,,,,Heather,T,Christiansen,HCHRISTIA,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 GERNSER,,,,,George,K,Ernser,GERNSER,SBODE,17-183,BDCOUNSEL,,,,,,,,,1615,,,ABERGSTRO,1994-05-31,GERNSER,1996-07-16,,,,,,,,,,A,,,,,,,,183,J,,BVAGERNSER
@@ -810,7 +810,7 @@ HDICKI,,,,,Hulda,C,Dicki,HDICKI,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,4
 CFRANECKI,,,,,Clare,Q,Franecki,CFRANECKI,SUP,,HRG,,,,,,,,,,1-822-001-3587 x4709,,,,,,,,,,,,,,,A,,,,,,,,,A,,BVACFRANECKI
 XHANE,,,,,Xavier,U,Hane,XHANE,A2-87,67-87,CDLEGCLK,,,,,,,,,,610.804.6320 x9747,,SBARTELL,,WLANGOSH,1997-03-31,2,2,15,15,,,,,,I,,,,,,,,,,,
 CSWANIAWS,,,,,Cameron,I,Swaniawski,CSWANIAWS,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1481,,,
-EJACOBI,,,,,Eloisa,H,Jacobi,EJACOBI,SUP,,DSP,,,,,,,,,,1-642-517-2036,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAEJACOBI
+EJACOBI,,,,,Eloisa,H,Jacobi,EJACOBI,A2,,DSP,,,,,,,,,,1-642-517-2036,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAEJACOBI
 KWATSICA,,,,,Kristian,X,Watsica,KWATSICA,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 JKESSLER,,,,,Jamir,C,Kessler,JKESSLER,SUP,,HRG,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 VO'HARA,,,,,Verona,K,O'Hara,VO'HARA,SUP,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
@@ -879,7 +879,7 @@ CBEIER,,,,,Celestino,X,Beier,CBEIER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,
 VHACKETT,,,,,Vena,L,Hackett,VHACKETT,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,659,,,
 LCARROLL,,,,,Wendy,M,Thompson,LCARROLL,SUP,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAWTHOMPSON
 KMAGGIO,,,,,Kelsie,N,Maggio,KMAGGIO,SBODE,06-592,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1997-02-07,WLANGOSH,1997-02-07,0,0,0,0,,,,,,A,,,,,374,,,592,A,,BVAKMAGGIO
-HSTEUBER,,,,,Halie,K,Steuber,HSTEUBER,SSENGER,,DSP,,,,,,,,,,431.472.6555,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHSTEUBER
+HSTEUBER,,,,,Halie,K,Steuber,HSTEUBER,A2,,DSP,,,,,,,,,,431.472.6555,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHSTEUBER
 TBERGSTRO,,,,,Tyshawn,D,Bergstrom,TBERGSTRO,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 CCRIST,,,,,Corbin,C,Crist,CCRIST,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,386,,,1721,,,BVACCRIST
 CPARISIAN,,,,,Chester,D,Parisian,CPARISIAN,SBODE,05-045,BDCOUNSEL,,,,,,,,,0162,,,ABERGSTRO,1994-05-27,WLANGOSH,1995-09-28,,,,,,,,,,I,,,,,,,,045,,,
@@ -935,7 +935,7 @@ MBRADTKE1,,,,,Maxine,X,Bradtke,MBRADTKE1,VFW,,VFW,,,,,,,,,,,,,,,,,,,,,,,,,V,,,,,
 AMULLER,,,,,Alena,K,Muller,AMULLER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAAMULLER
 RCREMIN2,,,,,Reid,T,Cremin,RCREMIN2,SBODE,16-450,BDCOUNSEL,,,,,,,,,,,,CF,1995-06-28,WLANGOSH,1998-02-11,0,0,0,0,,,,,,A,,,,,805,,,450,J,,BVARCREMIN2
 NROGAHN,,,,,Nicolas,D,Rogahn,NROGAHN,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-JNICOLAS,,,,,Jarod,S,Nicolas,JNICOLAS,SSENGER,,DSP,,,,,,,,,,435.312.4882,,,,,,,,,,,,,,,I,,,,,,,,,,,
+JNICOLAS,,,,,Jarod,S,Nicolas,JNICOLAS,A1,,DSP,,,,,,,,,,435.312.4882,,,,,,,,,,,,,,,I,,,,,,,,,,,
 MPADBERG,,,,,Marcel,T,Padberg,MPADBERG,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAMPADBERG
 EFRAMI1,,,,,Ernie,U,Frami,EFRAMI1,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,448,,,1047,A,,BVAEFRAMI1
 JDECKOW,,,,,Jamarcus,C,Deckow,JDECKOW,CRUSSEL,12-140,BDCOUNSEL,,,,,,,,,1644,,,ABERGSTRO,1994-05-31,WLANGOSH,1996-11-05,,,,,,,,,,I,,,,,,,,140,,,
@@ -957,7 +957,7 @@ ABOGISICH2,,,,,Angelina,F,Bogisich,ABOGISICH2,SBODE,,INTERN,,,,,,,,,,,,,,,,,,,,,
 DMARKS,,,,,Davonte,P,Marks,DMARKS,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 ASTROSIN,,,,,Abdiel,T,Strosin,ASTROSIN,AHUDSON,04-630,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1998-05-14,WLANGOSH,1998-05-14,0,0,0,0,,,,,,I,,,,,,,,630,,,
 MKEELING,,,,,Melyssa,F,Keeling,MKEELING,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1183,,,
-LMURRAY,,,,,Lenore,Q,Murray,LMURRAY,SSENGER,,DSP,,,,,,,,,,(934) 237-4077 x00388,,,,,,,,,,,,,,,I,,,,,,,,,,,
+LMURRAY,,,,,Lenore,Q,Murray,LMURRAY,A1,,DSP,,,,,,,,,,(934) 237-4077 x00388,,,,,,,,,,,,,,,I,,,,,,,,,,,
 JLINDGREN1,,,,,Jo,W,Lindgren,JLINDGREN1,01-CH,,CHAIR,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 DAUER,,,,,Dovie,K,Auer,DAUER,VVA,,VVA,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SHARVEY,,,,,Sharon,E,Harvey,SHARVEY,MPAUCEK,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,386,,,1144,A,,BVASHARVEY
@@ -1013,7 +1013,7 @@ LREICHEL,,,,,Loyal,R,Reichel,LREICHEL,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A
 JGAYLORD1,,,,,Jakob,A,Gaylord,JGAYLORD1,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAJGAYLORD1
 LSCHUMM,,,,,Linnie,Z,Schumm,LSCHUMM,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 MHILLS,,,,,Marques,C,Hills,MHILLS,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,V,,,,,,,,,,,BVAMHILLS
-KMILLS,,,,,Karianne,B,Mills,KMILLS,SSENGER,,DSP,,,,,,,,,,706-562-3978 x7123,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAKMILLS
+KMILLS,,,,,Karianne,B,Mills,KMILLS,A2,,DSP,,,,,,,,,,706-562-3978 x7123,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAKMILLS
 TFEENEY,,,,,Tristin,C,Feeney,TFEENEY,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 DMCLAUGHL,,,,,Darrel,J,McLaughlin,DMCLAUGHL,OPR,,MPS,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,BVADMCLAUGHL
 LKOSS,,,,,Lorenza,M,Koss,LKOSS,SBODE,,BDCOUNSEL,,,,,,,,,,368-868-0010,,,,,,,,,,,,,,,A,,,,,805,,,1464,,,BVALKOSS
@@ -1117,7 +1117,7 @@ CSCHMIDT1,,,,,Clarabelle,Z,Schmidt,CSCHMIDT1,SBODE,20-285,BDCOUNSEL,,,,,,,,,7011
 LTURNER,,,,,Lizzie,D,Turner,LTURNER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 HRUNOLFSD,,,,,Harmony,Y,Runolfsdottir,HRUNOLFSD,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 CJACOBS,,,,,Caitlyn,H,Jacobs,CJACOBS,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
-RHARRIS,,,,,Rashawn,F,Harris,RHARRIS,SSENGER,67-75,DSP,,,,,,,,,,1-491-769-0901 x7660,,SBARTELL,,WLANGOSH,1997-04-17,6,6,192,3,,,,,,I,,,,,,,,,,,
+RHARRIS,,,,,Rashawn,F,Harris,RHARRIS,A1,67-75,DSP,,,,,,,,,,1-491-769-0901 x7660,,SBARTELL,,WLANGOSH,1997-04-17,6,6,192,3,,,,,,I,,,,,,,,,,,
 JEICHMANN,,,,,Justyn,O,Eichmann,JEICHMANN,MHALEY,18-072,BDCOUNSEL,,,,,,,,,1734,,,ABERGSTRO,1994-05-27,WLANGOSH,1995-11-30,4,4,6,4,,,,,,I,,,,,,,,072,J,,
 JRAYNOR,,,,,Jimmie,U,Raynor,JRAYNOR,SUP,,HRG,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,A,,BVAJRAYNOR
 ASCHUSTER,,,,,Amara,O,Schuster,ASCHUSTER,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1140,,,
@@ -1310,7 +1310,7 @@ DPACOCHA,,,,,Dejah,D,Pacocha,DPACOCHA,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A
 JHUDSON3,,,,,Jacky,D,Hudson,JHUDSON3,MHALEY,21-449,BDCOUNSEL,,,,,,,,,4649,,,SBARTELL,,WLANGOSH,1995-09-23,,,,,,,,,,I,,,,,,,,449,,,
 DZIEMANN,,,,,Davin,X,Ziemann,DZIEMANN,SBODE,,BDCOUNSEL,,,,,,,,,,,1-835-034-9714 x86860,,,,,,,,,,,,,,A,,,,,370,,,1275,,,BVADZIEMANN
 MMORAR,,,,,Makenna,Z,Morar,MMORAR,SBODE,13-606,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1997-03-25,WLANGOSH,1997-09-16,0,0,0,0,,,,,,I,,,,,,,,606,,,
-NGLEICHNE,,,,,Nelda,X,Gleichner,NGLEICHNE,SSENGER,,ADDMOD,,,,,,,,,,421.767.3910,,,,,,,,,,,,,,,I,,,,,,,,,,,
+NGLEICHNE,,,,,Nelda,X,Gleichner,NGLEICHNE,A1,,ADDMOD,,,,,,,,,,421.767.3910,,,,,,,,,,,,,,,I,,,,,,,,,,,
 JAUFDERHA,,,,,Justina,G,Aufderhar,JAUFDERHA,MHALEY,14-044,BDCOUNSEL,,,,,,,,,5042,,,ABERGSTRO,1994-05-27,WLANGOSH,1995-11-30,,,,,,,,,,I,,,,,,,,044,J,,
 VMORISSET,,,,,Verlie,A,Morissette,VMORISSET,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAVMORISSET
 JULLRICH,,,,,Jewell,O,Ullrich,JULLRICH,AIRS,AIRS,AIRS,,,,,,,,,,,,SBARTELL,,ABERGSTRO,1995-07-07,,,,,,,,,,I,,,,,,,,,,,
@@ -1518,7 +1518,7 @@ EGAYLORD,,,,,Estelle,E,Gaylord,EGAYLORD,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,
 XGUTKOWSK,,,,,Xander,B,Gutkowski,XGUTKOWSK,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 WLESCH,,,,,Winona,Q,Lesch,WLESCH,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 MSTIEDEMA,,,,,Alexzander,O,White,MSTIEDEMA,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1120,,,
-BMITCHELL1,,,,,Barton,S,Mitchell,BMITCHELL1,SSENGER,,DSP,,,,,,,,,,908-576-6595 x9307,,,,,,,,,,,,,,,A,,,,,,,,,,,BVABMITCHELL1
+BMITCHELL1,,,,,Barton,S,Mitchell,BMITCHELL1,A2,,DSP,,,,,,,,,,908-576-6595 x9307,,,,,,,,,,,,,,,A,,,,,,,,,,,BVABMITCHELL1
 JFISHER1,,,,,Jerome,R,Fisher,JFISHER1,MHALEY,,INTERN,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,775,,,
 JKUNZE,,,,,Jailyn,G,Kunze,JKUNZE,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,668,,,
 QMARVIN,,,,,Quinton,C,Marvin,QMARVIN,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,556,,,855,A,,BVAQMARVIN
@@ -1719,7 +1719,7 @@ EORTIZ,,,,,Estella,M,Ortiz,EORTIZ,SBODE,,BDCOUNSEL,,,,,,,,,,616-026-4590,(907) 2
 JRODRIGUE,,,,,Janelle,N,Rodriguez,JRODRIGUE,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,739,,,
 KHEANEY,,,,,Karson,T,Heaney,KHEANEY,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,679,,,1467,,,BVAKHEANEY
 RHICKLE,,,,,Rashad,J,Hickle,RHICKLE,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-MHILPERT,,,,,Maybelle,Z,Hilpert,MHILPERT,SSENGER,,DSP,,,,,,,,,,664.492.6812,,,,,,,,,,,,,,,I,,,,,,,,,,,
+MHILPERT,,,,,Maybelle,Z,Hilpert,MHILPERT,A1,,DSP,,,,,,,,,,664.492.6812,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SSPINKA,,,,,Sheridan,A,Spinka,SSPINKA,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVASSPINKA
 EWIEGAND,,,,,Emmett,Q,Wiegand,EWIEGAND,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 KWHITE1,,,,,Katrine,S,White,KWHITE1,64-77,64-77,CDLEGCLK,,,,,,,,,6669,,,ABERGSTRO,1994-05-18,WLANGOSH,1996-01-22,35,78,98,0,,,,,,I,,,,,,,,,,,
@@ -1776,7 +1776,7 @@ FWIZA,,,,,Freida,A,Wiza,FWIZA,SUP-24,68-24,ADDMOD,,,,,,,,,5945,667.835.6193 x923
 CMANN,,,,,Corene,I,Mann,CMANN,01C3,01C3,CHAIR,,,,,,,,,,,,SBARTELL,,WLANGOSH,1996-01-25,,,,,,,,,,I,,,,,,,,,,,
 KDACH,,,,,Kattie,O,Dach,KDACH,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 CROSENBAU,,,,,Cathrine,D,Rosenbaum,CROSENBAU,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-FKRIS,,,,,Francesca,Y,Kris,FKRIS,SSENGER,,DSP,,,,,,,,,,(808) 907-9706,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAFKRIS
+FKRIS,,,,,Francesca,Y,Kris,FKRIS,A2,,DSP,,,,,,,,,,(808) 907-9706,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAFKRIS
 CBERGE,,,,,Conrad,S,Berge,CBERGE,SUP,,CDLEGCLK,,,,,,,,,,1-564-709-8685 x7959,,,,,,,,,,,,,,,I,,,,,,,,,,,
 DO'CONNER,,,,,Declan,X,O'Conner,DO'CONNER,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,511,,,1194,A,,BVADO'CONNER
 SHINTZ,,,,,Sylvia,S,Hintz,SHINTZ,SBODE,,BDCOUNSEL,,,,,,,,,,,480.336.3776,,,,,,,,,,,,,,A,,,,,370,,,1313,,,BVASHINTZ
@@ -1813,7 +1813,7 @@ EHACKETT,,,,,Elmira,O,Hackett,EHACKETT,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,
 DWAELCHI,,,,,Dario,S,Waelchi,DWAELCHI,SUP,,CDLEGCLK,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 RROHAN,,,,,Reymundo,C,Rohan,RROHAN,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,V,,,,,,,,,,,BVARROHAN
 GBOTSFORD1,,,,,Gaylord,A,Botsford,GBOTSFORD1,A3-63,68-63,ADDMOD,,,,,,,,,5706,519-686-1590 x264,,ABERGSTRO,1994-05-18,WLANGOSH,1996-06-07,0,0,46,8,,,,,,I,,,,,,,,,,,
-ISTANTON,,,,,Ilene,X,Stanton,ISTANTON,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
+ISTANTON,,,,,Ilene,X,Stanton,ISTANTON,A1,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 EBORER1,,,,,Estel,F,Borer,EBORER1,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 EFRAMI,,,,,Elinor,Y,Frami,EFRAMI,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAEFRAMI
 SHEATHCOT,,,,,Sean,E,Heathcote,SHEATHCOT,A2-20,67-20,ADDMOD,,,,,,,,,,(602) 922-6121 x740,,SBARTELL,,WLANGOSH,1995-09-29,5,5,61,3,,,,,,I,,,,,,,,,,,
@@ -1821,7 +1821,7 @@ PBERNIER,,,,,Parker,E,Bernier,PBERNIER,AHUDSON,,INTERN,,,,,,,,,,,,,,,,,,,,,,,,,I
 UCROOKS,,,,,Ursula,K,Crooks,UCROOKS,MPAUCEK,06-525,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1996-01-19,SBARTELL,1998-01-08,0,0,0,0,,,,,,I,,,,,,,,525,A,,
 JHANE,,,,,Jeffery,H,Hane,JHANE,DIR-12,66-12,CHIEF,,,,,,,,,,,,SBARTELL,,WLANGOSH,1997-12-02,2,2,42,12,,,,,,I,,,,,,,,,,,
 VMURAZIK,,,,,Vicenta,K,Murazik,VMURAZIK,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAVMURAZIK
-WWALSH,,,,,Webster,M,Walsh,WWALSH,SSENGER,64-115,CDLEGCLK,,,,,,,,,,805-681-2755 x236,,ABERGSTRO,1994-05-18,WLANGOSH,1998-04-15,11,11,56,3,,,,,,I,,,,,,,,,,,
+WWALSH,,,,,Webster,M,Walsh,WWALSH,A1,64-115,CDLEGCLK,,,,,,,,,,805-681-2755 x236,,ABERGSTRO,1994-05-18,WLANGOSH,1998-04-15,11,11,56,3,,,,,,I,,,,,,,,,,,
 DKERTZMAN,,,,,Delbert,E,Kertzmann,DKERTZMAN,VBA,,VBA,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 THOMENICK1,,,,,Tanner,C,Homenick,THOMENICK1,A1-55,64-55,CDLEGCLK,,,,,,,,,,772-993-7685 x734,,ABERGSTRO,1995-07-13,WLANGOSH,1995-09-29,0,0,31,0,,,,,,I,,,,,,,,,,,
 SHIRTHE,,,,,Stephan,W,Hirthe,SHIRTHE,SBODE,06-556,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1996-07-24,WLANGOSH,1996-07-24,0,0,0,0,,,,,,A,,,,,556,,,556,J,,BVASHIRTHE
@@ -1838,11 +1838,11 @@ BBLOCK,,,,,Bernhard,N,Block,BBLOCK,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,
 JKUNDE,,,,,Jaime,N,Kunde,JKUNDE,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,919,,,
 RREYNOLDS,,,,,Reginald,E,Reynolds,RREYNOLDS,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,374,,,1397,,,BVARREYNOLDS
 TCRUICKSH,,,,,Tremaine,N,Cruickshank,TCRUICKSH,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,374,,,1507,,,BVATCRUICKSH
-MFARRELL,,,,,Maryjane,G,Farrell,MFARRELL,SSENGER,,DSP,,,,,,,,,,1-606-921-3821,,,,,,,,,,,,,,,A,,,,,,,,803,,,BVAMFARRELL
+MFARRELL,,,,,Maryjane,G,Farrell,MFARRELL,A1,,DSP,,,,,,,,,,1-606-921-3821,,,,,,,,,,,,,,,A,,,,,,,,803,,,BVAMFARRELL
 AMARKS,,,,,Ahmad,P,Marks,AMARKS,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAAMARKS
 RQUIGLEY,,,,,Robert,F,Quigley,RQUIGLEY,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 ACONNELLY1,,,,,Amalia,B,Connelly,ACONNELLY1,01C2,,CHAIR,,,,,,,,,,408.647.0772 x95034,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAACONNELLY1
-SHODKIEWI,,,,,Sheridan,T,Hodkiewicz,SHODKIEWI,SSENGER,,DSP,,,,,,,,,,146.470.7674,,,,,,,,,,,,,,,A,,,,,,,,,,,BVASHODKIEWI
+SHODKIEWI,,,,,Sheridan,T,Hodkiewicz,SHODKIEWI,A1,,DSP,,,,,,,,,,146.470.7674,,,,,,,,,,,,,,,A,,,,,,,,,,,BVASHODKIEWI
 EAUER,,,,,Effie,Y,Auer,EAUER,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,669,,,
 TKUVALIS,,,,,Tracey,Q,Kuvalis,TKUVALIS,SBODE,,BDCOUNSEL,,,,,,,,,,,(662) 849-5985,,,,,,,,,,,,,,A,,,,,448,,,1324,,,BVATKUVALIS
 RRITCHIE,,,ROADMIN,,Rosalyn,Z,Ritchie,RRITCHIE,MIS,,MIS,,,,,,,,,,,,,,SBARTELL,2012-09-28,,,,,,,,,,A,,,,,,,,,,,
@@ -1868,7 +1868,7 @@ DSWIFT1,,,,,Catharine,T,Williamson,DSWIFT1,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,
 ED'AMORE,,,,,Enrico,I,D'Amore,ED'AMORE,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 MSCHULIST,,,,,Markus,H,Schulist,MSCHULIST,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAMSCHULIST
 WKLING,,,,,Willa,W,Kling,WKLING,VBA,,VBA,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-LCRIST,,,,,Lavina,T,Crist,LCRIST,SSENGER,,DSP,,,,,,,,,,423.826.6811 x5284,,,,,,,,,,,,,,,I,,,,,,,,,,,
+LCRIST,,,,,Lavina,T,Crist,LCRIST,A1,,DSP,,,,,,,,,,423.826.6811 x5284,,,,,,,,,,,,,,,I,,,,,,,,,,,
 ASWIFT2,,,,,Autumn,H,Swift,ASWIFT2,SBODE,,BDCOUNSEL,,,,,,,,,,,578.425.4170,,,,,,,,,,,,,,A,,,,,616,,,1303,,,BVAASWIFT2
 AAUER1,,,,,Aurelie,K,Auer,AAUER1,AML,,AML,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 MLANG,,,,,Mackenzie,Z,Lang,MLANG,VFW,,VFW,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
@@ -1892,7 +1892,7 @@ DCHAMPLIN1,,,,,Davion,Q,Champlin,DCHAMPLIN1,VBA,,VBA,,,,,,,,,,,,,,,,,,,,,,,,,A,,
 DTILLMAN,,,,,Demario,E,Tillman,DTILLMAN,SBODE,,BDCOUNSEL,,,,,,,,,,,781.687.8361 x51585,,,,,,,,,,,,,,A,,,,,511,,,1309,,,BVADTILLMAN
 SULLRICH,,,,,Soledad,M,Ullrich,SULLRICH,AIRS,AIRS,AIRS,,,,,,,,,,,,SBARTELL,,WLANGOSH,1998-05-28,,,,,,,,,,I,,,,,,,,,,,
 ESPINKA,,,,,Earnest,R,Spinka,ESPINKA,MPAUCEK,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,1842,,,BVAESPINKA
-EBARTON,,,,,Erik,E,Barton,EBARTON,SSENGER,,ADDMOD,,,,,,,,,,920.208.3213,,,,,,,,,,,,,,,I,,,,,,,,,,,
+EBARTON,,,,,Erik,E,Barton,EBARTON,A1,,ADDMOD,,,,,,,,,,920.208.3213,,,,,,,,,,,,,,,I,,,,,,,,,,,
 RLEFFLER,,,,,Rose,J,Leffler,RLEFFLER,SBODE,12-422,BDCOUNSEL,,,,,,,,,9049,,,SBARTELL,,WLANGOSH,1995-09-26,,,,,,,,,,I,,,,,511,,,422,A,,
 GWINTHEIS,,,,,Garth,Z,Wintheiser,GWINTHEIS,WB,,TRANS,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAGWINTHEIS
 JO'HARA,,,,,Jovanny,N,O'Hara,JO'HARA,MIS,MIS,COMPASST,,,,,,,,,,,,SBARTELL,,JO'HARA,1997-10-09,,,,,,,,,,I,,,,,,,,,,,
@@ -1989,7 +1989,7 @@ GWILLIAMS,,,,,Garfield,U,Williamson,GWILLIAMS,MPAUCEK,,BDCOUNSEL,,,,,,,,,,,,,,,,
 DSCHUSTER,,,,,Dwight,P,Schuster,DSCHUSTER,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,616,,,1071,,,BVADSCHUSTER
 DFEENEY1,,,,,Delta,P,Feeney,DFEENEY1,SBODE,13-491,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1995-09-19,WLANGOSH,1995-09-23,0,0,0,0,,,,,,I,,,,,,,,491,,,
 KKLING,,,,,Kayleigh,X,Kling,KKLING,MHALEY,06-527,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1996-01-23,WLANGOSH,1996-06-07,0,0,0,0,,,,,,I,,,,,,,,527,,,
-LSPORER,,,,,Lia,E,Sporer,LSPORER,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVALSPORER
+LSPORER,,,,,Lia,E,Sporer,LSPORER,A1,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVALSPORER
 RALTENWER,,,,,Ron,Y,Altenwerth,RALTENWER,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 AKOHLER,,,,,Amalia,A,Kohler,AKOHLER,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,365,,,1656,,,BVAAKOHLER
 NFADEL,,,,,Noah,G,Fadel,NFADEL,01C2,,COR,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1611,,,
@@ -2056,9 +2056,9 @@ CMORAR,,,,,Clementine,J,Morar,CMORAR,SBODE,11-414,BDCOUNSEL,,,,,,,,,7158,,,ABERG
 ESTEHR,,,,,Elwin,U,Stehr,ESTEHR,SBODE,13-520,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1995-12-15,WLANGOSH,1995-12-15,0,0,0,0,,,,,,I,,,,,,,,520,,,
 FERDMAN,,,,,Fleta,E,Erdman,FERDMAN,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,365,,,1150,,,BVAFERDMAN
 DKILBACK,,,,,Douglas,O,Kilback,DKILBACK,A2-64,67-64,CDLEGCLK,,,,,,,,,,638.608.5940 x598,,SBARTELL,,WLANGOSH,1995-09-29,3,3,42,17,,,,,,I,,,,,,,,,,,
-ACARTWRIG,,,,,Alexandria,J,Cartwright,ACARTWRIG,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAACARTWRIG
+ACARTWRIG,,,,,Alexandria,J,Cartwright,ACARTWRIG,A2,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAACARTWRIG
 CHALEY,,,,,Cary,N,Haley,CHALEY,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
-BDACH,,,,,Breanne,D,Dach,BDACH,SSENGER,,DSP,,,,,,,,,,1-998-191-6949 x9915,,,,,,,,,,,,,,,A,,,,,,,,,,,BVABDACH
+BDACH,,,,,Breanne,D,Dach,BDACH,A2,,DSP,,,,,,,,,,1-998-191-6949 x9915,,,,,,,,,,,,,,,A,,,,,,,,,,,BVABDACH
 AWAELCHI,,,,,Austyn,M,Waelchi,AWAELCHI,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 CLITTEL,,,,,Celestine,T,Littel,CLITTEL,SBODE,04-550,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1996-06-11,WLANGOSH,1996-06-11,0,0,0,0,,,,,,A,,,,,511,,,550,J,,BVACLITTEL
 FLEMKE,,,,,Francis,V,Lemke,FLEMKE,OPR,OPR,MPS,,,,,,,,,,,,WLANGOSH,1997-12-18,WLANGOSH,1997-12-18,0,0,2,0,,,,,,A,,,,,,,,,,,BVAFLEMKE
@@ -2213,7 +2213,7 @@ MCASPER,,,,,Melyssa,V,Casper,MCASPER,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,
 HHOWE,,,,,Holly,K,Howe,HHOWE,SBODE,,BDCOUNSEL,,,,,,,,,,,820-686-4571 x48670,,,,,,,,,,,,,,A,,,,,386,,,1269,,,BVAHHOWE
 DBARTON,,,,,Dominic,D,Barton,DBARTON,SBODE,13-573,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1996-10-30,SBARTELL,1998-01-13,0,0,0,0,,,,,,I,,,,,,,,573,,,
 JSCHMIDT1,,,,,Jedediah,E,Schmidt,JSCHMIDT1,OPR,,CDLEGCLK,,,,,,,,,,220.063.6388,,,,,,,,,,,,,,,I,,,,,,,,,,,
-BKAUTZER,,,,,Berneice,K,Kautzer,BKAUTZER,SSENGER,,DSP,,,,,,,,,,1-713-348-2387,,,,,,,,,,,,,,,I,,,,,,,,,,,
+BKAUTZER,,,,,Berneice,K,Kautzer,BKAUTZER,A1,,DSP,,,,,,,,,,1-713-348-2387,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SGRANT,,,,,Shayna,J,Grant,SGRANT,SBODE,01-289,BDCOUNSEL,,,,,,,,,7138,,,ABERGSTRO,1994-05-31,WLANGOSH,1998-03-11,,,,,,,,,,I,,,,,365,,,289,A,,
 WSTROSIN1,,,,,Winona,L,Strosin,WSTROSIN1,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,767,,,
 DYUNDT,,,,,Delphine,I,Yundt,DYUNDT,EHAMILL,01C,CHAIR,,,,,,,,,7274,695.715.4324 x11753,,SBARTELL,,ABERGSTRO,1996-07-05,2,2,3,4,,,,,,I,,,,,,,,,,,
@@ -2238,7 +2238,7 @@ MGUTKOWSK,,,,,Mittie,A,Gutkowski,MGUTKOWSK,MHALEY,04-440,BDCOUNSEL,,,,,,,,,2512,
 BDACH1,,,,,Brandt,U,Dach,BDACH1,WB,,TRANS,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 TKESSLER,,,,,Torrey,H,Kessler,TKESSLER,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,645,,,
 KPOUROS,,,,,Katrina,S,Pouros,KPOUROS,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
-JCRONA,,,,,Julia,A,Crona,JCRONA,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAJCRONA
+JCRONA,,,,,Julia,A,Crona,JCRONA,A1,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAJCRONA
 LMRAZ,,,,,Lilyan,T,Mraz,LMRAZ,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 AKIEHN,,,,,Adriana,X,Kiehn,AKIEHN,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SBLANDA,,,,,Seamus,X,Blanda,SBLANDA,MPAUCEK,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,1094,J,,BVASBLANDA
@@ -2246,7 +2246,7 @@ YBREITENB,,,,,Yolanda,H,Breitenberg,YBREITENB,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,
 ADUBUQUE1,,,,,Augusta,O,DuBuque,ADUBUQUE1,MHALEY,05-148,BDCOUNSEL,,,,,,,,,7697,,,ABERGSTRO,1994-05-31,WLANGOSH,1995-11-30,0,0,4,0,,,,,,I,,,,,,,,148,J,,
 VBEER,,,,,Violet,F,Beer,VBEER,SBODE,,BDCOUNSEL,,,,,,,,,,,407.339.9914,,,,,,,,,,,,,,A,,,,,370,,,1351,,,BVAVBEER
 HSCHOWALT,,,,,Hortense,C,Schowalter,HSCHOWALT,MHALEY,13-379,BDCOUNSEL,,,,,,,,,8159,,,ABERGSTRO,1994-05-31,WLANGOSH,1998-03-27,,,,,,,,,,I,,,,,,,,379,,,
-LHOPPE,,,,,Lauretta,O,Hoppe,LHOPPE,SSENGER,,DSP,,,,,,,,,,876.168.9434,,,,,,,,,,,,,,,I,,,,,,,,,,,
+LHOPPE,,,,,Lauretta,O,Hoppe,LHOPPE,A1,,DSP,,,,,,,,,,876.168.9434,,,,,,,,,,,,,,,I,,,,,,,,,,,
 SLABADIE,,,,,Samson,J,Labadie,SLABADIE,CRUSSEL,01-301,BDCOUNSEL,,,,,,,,,9980,,,SBARTELL,,WLANGOSH,1998-01-20,,,,,,,,,,I,,,,,,,,301,A,,
 VWINTHEIS,,,,,Vincenza,U,Wintheiser,VWINTHEIS,MHALEY,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,835,,,
 LSCHAEFER,,,,,Lillian,I,Schaefer,LSCHAEFER,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1089,,,
@@ -2287,7 +2287,7 @@ NBEDNAR,,,,,Nedra,W,Bednar,NBEDNAR,AIRS,,AIRS,,,,,,,,,,1-791-431-9168,,,,,,,,,,,
 AZEMLAK1,,,,,Adriel,N,Zemlak,AZEMLAK1,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1015,,,
 GGAYLORD,,,,,Garett,Z,Gaylord,GGAYLORD,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,370,,,1233,,,
 AMARKS2,,,,,Amani,V,Marks,AMARKS2,OPR,,CDLEGCLK,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
-LVONRUEDE,,,,,Lavon,W,VonRueden,LVONRUEDE,FMARKS,,DSP,,,,,,,,,,(136) 794-8084 x4975,,,,,,,,,,,,,,,I,,,,,,,,,,,
+LVONRUEDE,,,,,Lavon,W,VonRueden,LVONRUEDE,A2,,DSP,,,,,,,,,,(136) 794-8084 x4975,,,,,,,,,,,,,,,I,,,,,,,,,,,
 CGULGOWSK,,,,,Chloe,F,Gulgowski,CGULGOWSK,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,556,,,1726,,,BVACGULGOWSK
 JHUDSON1,,,,,Javonte,R,Hudson,JHUDSON1,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 NSCHROEDE,,,,,Nikki,X,Schroeder,NSCHROEDE,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,386,,,1745,,,
@@ -2301,7 +2301,7 @@ NGULGOWSK,,,,,Nettie,R,Gulgowski,NGULGOWSK,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,
 BQUITZON,,,,,Bailey,C,Quitzon,BQUITZON,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,1718,,,
 ISTANTON,,,,,Larue,F,Haley,ISTANTON,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 FSAUER,,,,,Fleta,L,Sauer,FSAUER,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,877,,,
-TSHIELDS,,,ROADMIN,,Trey,R,Shields,TSHIELDS,SSENGER,,DSP,,,,,,,,,,214.903.8839,,,,SBARTELL,2012-09-28,,,,,,,,,,A,,,,,,,,,A,,BVATSHIELDS
+TSHIELDS,,,ROADMIN,,Trey,R,Shields,TSHIELDS,A1,,DSP,,,,,,,,,,214.903.8839,,,,SBARTELL,2012-09-28,,,,,,,,,,A,,,,,,,,,A,,BVATSHIELDS
 GLEANNON,,,,,Geovany,U,Leannon,GLEANNON,VBA,,VBA,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 JLUBOWITZ,,,,,Jewell,T,Lubowitz,JLUBOWITZ,MHALEY,06-349,BDCOUNSEL,,,,,,,,,0481,,,ABERGSTRO,1994-05-31,WLANGOSH,1997-04-18,,,,,,,,,,I,,,,,,,,349,,,
 VGREENHOL,,,,,Victoria,L,Greenholt,VGREENHOL,MHALEY,,INTERN,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,853,,,
@@ -2646,7 +2646,7 @@ BWOLFF,,,,,Betty,Z,Wolff,BWOLFF,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,6
 DEFFERTZ,,,,,Dessie,U,Effertz,DEFFERTZ,VBA,,VBA,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 DDAUGHERT,,,,,Donavon,V,Daugherty,DDAUGHERT,DAV,,DAV,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 MBLICK1,,,,,Mattie,O,Blick,MBLICK1,AHUDSON,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,655,,,
-NMCDERMOT,,,,,Nakia,Q,McDermott,NMCDERMOT,SSENGER,,DSP,,,,,,,,,,(188) 363-7277 x008,,,,,,,,,,,,,,,A,,,,,,,,,,,BVANMCDERMOT
+NMCDERMOT,,,,,Nakia,Q,McDermott,NMCDERMOT,A1,,DSP,,,,,,,,,,(188) 363-7277 x008,,,,,,,,,,,,,,,A,,,,,,,,,,,BVANMCDERMOT
 JFEENEY,,,,,Joyce,K,Feeney,JFEENEY,MHALEY,,INTERN,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,932,,,
 BKSHLERIN,,,,,Braxton,R,Kshlerin,BKSHLERIN,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 IHAGENES,,,,,Ignacio,L,Hagenes,IHAGENES,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
@@ -3049,7 +3049,7 @@ TSTEUBER,,,,,Theo,C,Steuber,TSTEUBER,01-CH,,CHAIR,,,,,,,,,,1-340-130-9381,,,,,,,
 DSATTERFI,,,,,Dwight,E,Satterfield,DSATTERFI,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,448,,,1502,,,
 HJOHNSON,,,,,Helmer,F,Johnson,HJOHNSON,OMO,,CHAIR,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHJOHNSON
 CHANE,,,,,Candida,H,Hane,CHANE,SBODE,13-595,BDCOUNSEL,,,,,,,,,,,,WLANGOSH,1997-02-26,SBARTELL,1998-01-13,0,0,0,0,,,,,,A,,,,,370,,,595,J,,BVACHANE
-HREINGER1,,,,,Harmony,Z,Reinger,HREINGER1,SSENGER,,DSP,,,,,,,,,,741-436-6144,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHREINGER1
+HREINGER1,,,,,Harmony,Z,Reinger,HREINGER1,A1,,DSP,,,,,,,,,,741-436-6144,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAHREINGER1
 LNADER,,,,,Lenna,P,Nader,LNADER,VFW,,VFW,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 CGAYLORD,,,,,Caroline,Q,Gaylord,CGAYLORD,VFW,,VFW,,,,,,,,,,,,,,,,,,,,,,,,,V,,,,,,,,,,,
 WSANFORD,,,,,Wilmer,Q,Sanford,WSANFORD,AIRS,,AIRS,,,,,,,,,,1-174-383-4390 x107,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAWSANFORD
@@ -3082,7 +3082,7 @@ FABSHIRE1,,,,,Franco,D,Abshire,FABSHIRE1,SBODE,13-247,BDCOUNSEL,,,,,,,,,3445,,,S
 VLOWE,,,,,Vella,W,Lowe,VLOWE,SUP,,DSP,,,,,,,,,,967-834-7740 x295,,,,,,,,,,,,,,,A,,,,,,,,,,,BVAVLOWE
 HHAUCK,,,,,Harley,K,Hauck,HHAUCK,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,
 LVON,,,,,Leann,Y,Von,LVON,CRUSSEL,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,649,,,
-LHOWELL1,,,,,Lesly,K,Howell,LHOWELL1,SSENGER,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVALHOWELL1
+LHOWELL1,,,,,Lesly,K,Howell,LHOWELL1,A2,,DSP,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,,,,,,,BVALHOWELL1
 SSHANAHAN,,,,,Sunny,A,Shanahan,SSHANAHAN,SBODE,,BDCOUNSEL,,,,,,,,,,,,,,,,,,,,,,,,,A,,,,,511,,,1377,,,BVASSHANAHAN
 KGRIMES,,,,,Kyleigh,D,Grimes,KGRIMES,SUP,,CDLEGCLK,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,
 JHAMILL,,,,,Jamir,H,Hamill,JHAMILL,DV-DIR,,AMC,,,,,,,,,,,,,,,,,,,,,,,,,I,,,,,,,,,,,

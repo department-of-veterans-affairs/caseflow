@@ -273,9 +273,10 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
         });
       },
       (response) => {
-        const responseObject = JSON.parse(response.response.text);
+        const errors = response.response.type === 'application/json' ?
+          JSON.parse(response.response.text).errors[0].detail : null;
 
-        dispatch(showErrorMessage('annotation', responseObject.errors[0].detail));
+        dispatch(showErrorMessage('annotation', errors));
         dispatch({
           type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
           payload: {
@@ -319,9 +320,10 @@ export const createAnnotation = (annotation) => (dispatch) => {
         });
       },
       (response) => {
-        const responseObject = JSON.parse(response.response.text);
+        const errors = response.response.type === 'application/json' ?
+          JSON.parse(response.response.text).errors[0].detail : null;
 
-        dispatch(showErrorMessage('annotation', responseObject.errors[0].detail));
+        dispatch(showErrorMessage('annotation', errors));
         dispatch({
           type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
           payload: {

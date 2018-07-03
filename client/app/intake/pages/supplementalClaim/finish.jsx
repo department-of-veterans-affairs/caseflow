@@ -1,14 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import TabWindow from '../../../components/TabWindow';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssues from './nonRatedIssues';
-import RatedIssues from './ratedIssues';
-import { connect } from 'react-redux';
-import { completeIntake } from '../../actions/supplementalClaim';
+import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
+import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
+import { setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
+import { completeIntake } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -22,14 +22,6 @@ class Finish extends React.PureComponent {
       completeIntakeErrorData
     } = this.props;
 
-    const tabs = [{
-      label: 'Rated issues',
-      page: <RatedIssues />
-    }, {
-      label: 'Non-rated issues',
-      page: <NonRatedIssues />
-    }];
-
     switch (supplementalClaimStatus) {
     case INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
@@ -41,7 +33,7 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Finish processing { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+      <h1>Identify issues on { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
@@ -50,18 +42,38 @@ class Finish extends React.PureComponent {
       }
 
       <p>
-        Select or enter the issue(s) that best match the form you are processing.
-        If the Veteran listed any non-rated issues, use the "Non-rated issues" tab,
-        and Caseflow will establish a non-rated EP for any non-rated issue(s).
+        Please select all the issues that best match the Veteran's request on the form.
+        The list below includes issues claimed by the Veteran in the last year.
+        If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <TabWindow
-        name="supplemental-claim-tabwindow"
-        tabs={tabs} />
+      <RatedIssues />
+      <NonRatedIssues />
 
     </div>;
   }
 }
+
+const NonRatedIssues = connect(
+  ({ supplementalClaim }) => ({
+    nonRatedIssues: supplementalClaim.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    addNonRatedIssue,
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssuesUnconnected);
+
+const RatedIssues = connect(
+  ({ supplementalClaim, intake }) => ({
+    intakeId: intake.id,
+    reviewState: supplementalClaim
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
@@ -80,8 +92,9 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={!this.props.supplementalClaim.selectedRatingCount}
     >
-      Establish claim
+      Establish EP
     </Button>;
 }
 
@@ -96,11 +109,18 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
+const RatedIssueCounterConnected = connect(
+  ({ supplementalClaim }) => ({
+    selectedRatingCount: supplementalClaim.selectedRatingCount
+  })
+)(RatedIssueCounter);
+
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
+      <RatedIssueCounterConnected />
     </div>
 }
 

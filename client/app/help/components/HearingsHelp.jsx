@@ -58,7 +58,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Hearing Access" src="/assets/help/hearing-access-aed4b8cb3441957305a4d61040ddf0d148339f6109f6ea11e1bd5181e841eea5.png" />
+        <img className="cf-help-image" alt="Hearing Access" src="/assets/help/hearing-access.jpg" />
       </p>
 
       <p>Once the email is drafted, attach a copy of your latest “VA Privacy and Information Security Awareness and Rules of Behavior” training certificate and forward the email to your supervisor for approval. If approved, your supervisor should forward the request to your station’s IRM team and/or ISO for entry into CSEM. You will receive an email notice once access is granted.

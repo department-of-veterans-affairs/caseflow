@@ -7,6 +7,7 @@ import { getWorksheet } from '../actions/Dockets';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import { SERVER_ERROR_CODES } from '../constants/constants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
 import { getQueryParams } from '../../util/QueryParamsUtil';
@@ -22,7 +23,7 @@ export class HearingWorksheetContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.worksheetServerError && ((!nextProps.fetchingWorksheet &&
+    if (!nextProps.worksheetServerError.errors && ((!nextProps.fetchingWorksheet &&
         !nextProps.worksheet) || (this.props.hearingId !== nextProps.hearingId))) {
       this.props.getWorksheet(nextProps.hearingId);
     }
@@ -51,7 +52,18 @@ export class HearingWorksheetContainer extends React.Component {
 
   render() {
 
-    if (this.props.worksheetServerError) {
+    const { worksheetServerError } = this.props;
+
+    /* handling 404 error messages */
+    if (worksheetServerError.errors &&
+        worksheetServerError.errors[0] &&
+        worksheetServerError.errors[0].code === SERVER_ERROR_CODES.VACOLS_RECORD_DOES_NOT_EXIST) {
+      return <StatusMessage
+        title="No hearing held">
+          The Veteran was scheduled for a hearing, however, their case was<br />
+          removed from the Daily Docket before the hearing date.
+      </StatusMessage>;
+    } else if (worksheetServerError.errors) {
       return <StatusMessage
         title="Unable to load the worksheet">
           It looks like Caseflow was unable to load the worksheet.<br />

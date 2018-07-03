@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -34,13 +34,16 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
-      $set: state.ratings || formatRatings(serverIntake.ratings)
+      $set: formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
     endProductDescription: {
       $set: serverIntake.end_product_description
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };
@@ -53,10 +56,14 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     informalConferenceError: null,
     sameOffice: null,
     sameOfficeError: null,
+    claimantNotVeteran: null,
+    claimant: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
+    selectedRatingCount: 0,
+    nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -98,6 +105,18 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+    return update(state, {
+      claimantNotVeteran: {
+        $set: action.payload.claimantNotVeteran
+      }
+    });
+  case ACTIONS.SET_CLAIMANT:
+    return update(state, {
+      claimant: {
+        $set: action.payload.claimant
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -107,7 +126,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
-    return update(state, {
+    return updateFromServerIntake(update(state, {
       informalConferenceError: {
         $set: null
       },
@@ -125,7 +144,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       informalConferenceError: {
@@ -186,6 +205,40 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
                 $set: action.payload.isSelected
               }
             }
+          }
+        }
+      },
+      selectedRatingCount: {
+        $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      }
+    });
+  case ACTIONS.ADD_NON_RATED_ISSUE:
+    return update(state, {
+      nonRatedIssues: {
+        [Object.keys(state.nonRatedIssues).length]: {
+          $set: {
+            category: null,
+            description: null
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_CATEGORY:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          category: {
+            $set: action.payload.category
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_DESCRIPTION:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          description: {
+            $set: action.payload.description
           }
         }
       }

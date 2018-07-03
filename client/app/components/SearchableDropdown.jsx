@@ -41,7 +41,7 @@ class SearchableDropdown extends Component {
       this.setState({ value: newValue });
     }
 
-    if (this.state.value && value.length < this.state.value.length) {
+    if ((this.state.value && value) && value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {
@@ -63,10 +63,11 @@ class SearchableDropdown extends Component {
       readOnly,
       creatable,
       creatableOptions,
-      searchable
+      searchable,
+      styling
     } = this.props;
 
-    const dropdownStyling = css({
+    const dropdownStyling = css(styling, {
       '& .Select-menu-outer': this.props.dropdownStyling
     });
 
@@ -154,7 +155,8 @@ SearchableDropdown.propTypes = {
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
-  dropdownStyling: PropTypes.object
+  dropdownStyling: PropTypes.object,
+  styling: PropTypes.object
 };
 
 export default SearchableDropdown;

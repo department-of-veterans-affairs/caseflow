@@ -9,6 +9,12 @@ class ApplicationController < ApplicationBaseController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
+  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
+    Rails.logger.error "Vacols error occured: #{e.message}"
+    Raven.capture_exception(e)
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
+
   private
 
   def current_user
@@ -87,31 +93,48 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def can_access_queue?
+    return true if current_user.attorney_in_vacols?
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    false
+  end
+  helper_method :can_access_queue?
+
   def verify_queue_access
-    # :nocov:
-    return true if feature_enabled?(:queue_welcome_gate)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
-    redirect_to "/unauthorized"
-    # :nocov:
+    redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_queue_phase_two
+  def verify_case_review_access
     # :nocov:
+    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
     return true if feature_enabled?(:queue_phase_two)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
     redirect_to "/unauthorized"
     # :nocov:
   end
 
-  def verify_queue_phase_three
+  def verify_task_assignment_access
     # :nocov:
-    return true if feature_enabled?(:queue_phase_three)
-    code = Rails.cache.read(:queue_access_code)
-    return true if params[:code] && code && params[:code] == code
+    # This feature toggle control access of attorneys to create admin actions for co-located users
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
+    # This feature toggle control access of judges to assign cases to attorneys
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
     redirect_to "/unauthorized"
     # :nocov:
+  end
+
+  def invalid_record_error(record)
+    render json:  {
+      "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
+    }, status: 400
+  end
+
+  def required_parameters_missing(array_of_keys)
+    render json: {
+      "errors": [
+        "title": "Missing required parameters",
+        "detail": "Required parameters are missing: #{array_of_keys.join(' ,')}"
+      ]
+    }, status: 400
   end
 
   def set_raven_user
@@ -233,11 +256,11 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? ||
+      Rails.env.stubbed? ||
         Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
-        Rails.env.local?
+        Rails.env.development?
     end
   end
 end

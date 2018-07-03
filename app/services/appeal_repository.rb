@@ -155,7 +155,7 @@ class AppealRepository
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-      hearing_held: !case_record.bfha.nil?,
+      hearing_held: %w[1 2 6].include?(case_record.bfha),
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
@@ -168,7 +168,8 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum
+      docket_number: folder_record.tinum,
+      docket_date: case_record.bfd19
     )
 
     appeal
@@ -216,7 +217,7 @@ class AppealRepository
   def self.folder_type_from(folder_record)
     if %w[Y 1 0].include?(folder_record.tivbms)
       "VBMS"
-    elsif folder_record.tisubj == "Y"
+    elsif folder_record.tisubj2 == "Y"
       "VVA"
     else
       "Paper"
@@ -262,6 +263,10 @@ class AppealRepository
     appeal.case_record.update_vacols_location!(location)
   end
 
+  def self.update_location!(appeal, location)
+    appeal.case_record.update_vacols_location!(location)
+  end
+
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
     return unless appeal.active?
@@ -272,6 +277,18 @@ class AppealRepository
 
     # By default, we route the appeal to ARC
     "98"
+  end
+
+  # Finds appeals in the set of vacols_ids passed that have been reopened after
+  # being closed for RAMP
+  def self.find_ramp_reopened_appeals(vacols_ids)
+    VACOLS::Case
+      .where(bfkey: vacols_ids)
+      .where([
+               "bfdc IS NULL OR (bfdc != 'P' AND (bfmpro != 'HIS' OR bfdc NOT IN (?)))",
+               VACOLS::Case::BVA_DISPOSITION_CODES
+             ])
+      .map { |case_record| build_appeal(case_record) }
   end
 
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
@@ -353,6 +370,10 @@ class AppealRepository
       # (It's a VACOLS thing)
       follow_up_appeal_key = "#{case_record.bfkey}P"
 
+      # Remands can be reopened, which means there will already be a post-remand case.
+      # Check for that, and if the post-remand case exists, skip the post-remand creation
+      return if VACOLS::Case.find_by(bfkey: follow_up_appeal_key)
+
       follow_up_case = VACOLS::Case.create!(
         case_record.remand_clone_attributes.merge(
           bfkey: follow_up_appeal_key,
@@ -400,7 +421,7 @@ class AppealRepository
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def self.reopen_undecided_appeal!(appeal:, user:)
+  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
 
@@ -410,13 +431,16 @@ class AppealRepository
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
-    fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
 
-    previous_location = case_record.previous_location
-    fail AppealNotValidToReopen unless previous_location
-    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_location
+    if safeguards
+      fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+    end
 
-    adv_status = previous_location == "77"
+    previous_active_location = case_record.previous_active_location
+    fail AppealNotValidToReopen unless previous_active_location
+    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
+
+    adv_status = previous_active_location == "77"
     fail AppealNotValidToReopen unless adv_status ^ (close_disposition == "9")
 
     bfmpro = adv_status ? "ADV" : "ACT"
@@ -432,7 +456,7 @@ class AppealRepository
         bfattid: nil
       )
 
-      case_record.update_vacols_location!(previous_location)
+      case_record.update_vacols_location!(previous_active_location)
 
       folder_record.update_attributes!(
         ticukey: "ACTIVE",
@@ -462,9 +486,9 @@ class AppealRepository
     fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
     fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
 
-    previous_location = case_record.previous_location
-    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_location
-    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_location)
+    previous_active_location = case_record.previous_active_location
+    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_active_location
+    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
     fail AppealNotValidToReopen unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
@@ -472,7 +496,7 @@ class AppealRepository
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "REM")
 
-      case_record.update_vacols_location!(previous_location)
+      case_record.update_vacols_location!(previous_active_location)
 
       folder_record.update_attributes!(
         ticukey: "REMAND",
@@ -520,6 +544,7 @@ class AppealRepository
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,
                           name: "active_cases_for_user") do
+
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)

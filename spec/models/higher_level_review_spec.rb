@@ -4,7 +4,7 @@ describe HigherLevelReview do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
@@ -142,7 +142,7 @@ describe HigherLevelReview do
       let(:receipt_date) { nil }
 
       it "raises error" do
-        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+        expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
       end
     end
 
@@ -161,7 +161,7 @@ describe HigherLevelReview do
           date: receipt_date.to_date,
           end_product_modifier: "030",
           end_product_label: "Higher Level Review Rating",
-          end_product_code: "030HLRAMA",
+          end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false
         },

@@ -2,6 +2,7 @@
 # and all documents for these cases in VBMS and store them
 class FetchDocumentsForReaderUserJob < ApplicationJob
   queue_as :low_priority
+  application_attr :reader
 
   # if a user has experienced more than DOCUMENT_FAILURE_COUNT, we consider this job as failed
   DOCUMENT_FAILURE_COUNT = 5
@@ -49,7 +50,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
         Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
 
         # signal to efolder X to fetch and save all documents
-        appeal.saved_documents
+        appeal.document_fetcher.find_or_create_documents!
         @counts[:appeals_successful] += 1
       rescue Caseflow::Error::EfolderAccessForbidden
         Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"

@@ -1,6 +1,8 @@
+// @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
+import type { UiState } from '../types';
 
 const initialSaveState = {
   savePending: false,
@@ -16,7 +18,12 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  modal: false
+  modal: {
+    cancelCheckout: false,
+    deleteIssue: false
+  },
+  featureToggles: {},
+  userRole: ''
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -35,16 +42,18 @@ const setSuccessMessageState = (state, message) => setMessageState(state, messag
 const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
 const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
 
-const setModalState = (state, visibility) => update(state, {
+const setModalState = (state, visibility, modalType) => update(state, {
   modal: {
-    $set: visibility
+    [modalType]: {
+      $set: visibility
+    }
   }
 });
 
-const showModal = (state) => setModalState(state, true);
-const hideModal = (state) => setModalState(state, false);
+const showModal = (state, modalType) => setModalState(state, true, modalType);
+const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
-const workQueueUiReducer = (state = initialState, action = {}) => {
+const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) => {
   switch (action.type) {
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
@@ -120,9 +129,19 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.HIDE_SUCCESS_MESSAGE:
     return hideSuccessMessage(state);
   case ACTIONS.SHOW_MODAL:
-    return showModal(state);
+    return showModal(state, action.payload.modalType);
   case ACTIONS.HIDE_MODAL:
-    return hideModal(state);
+    return hideModal(state, action.payload.modalType);
+  case ACTIONS.SET_FEATURE_TOGGLES:
+    return update(state, {
+      featureToggles: {
+        $set: action.payload.featureToggles
+      }
+    });
+  case ACTIONS.SET_USER_ROLE:
+    return update(state, {
+      userRole: { $set: action.payload.userRole }
+    });
   default:
     return state;
   }

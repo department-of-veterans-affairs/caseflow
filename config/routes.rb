@@ -86,13 +86,21 @@ Rails.application.routes.draw do
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 
+  resources :beaam_appeals, only: [:index]
+
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
+    resources :hearing_day, only: [:index]
+    resources :schedule_periods, only: [:index]
+    resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule/build', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
+  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
 
   resources :hearings, only: [:update]
 
@@ -104,9 +112,10 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
+  get 'queue/help' => 'help#queue'
 
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
+
+  root 'home#index'
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
@@ -120,29 +129,25 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
+
   resources :users, only: [:index]
+
+  get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id', to: 'tasks#index'
-
-    post '/appeals/:task_id/complete', to: 'tasks#complete'
-    post '/appeals', to: 'tasks#create'
-    patch '/appeals/:task_id', to: 'tasks#update'
-
-    # Our single page app requires us to keep the old routes around for a while since we are not guaranteed that
-    # everybody who uses our app will have the latest version of the app. Remove these legacy routes after PR related
-    # to caseflow issue #5309 is deployed.
-    # -------------
-    get '/tasks/:vacols_id', to: 'queue#index'
-    get '/tasks/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    # -------------
-
-    post '/tasks/:task_id/complete', to: 'tasks#complete'
-    resources :tasks, only: [:create, :update]
+    get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+
+  resources :legacy_tasks, only: [:create, :update]
+  resources :tasks, only: [:index, :create]
+  post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

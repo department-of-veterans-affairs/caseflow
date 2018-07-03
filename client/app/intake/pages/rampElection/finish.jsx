@@ -81,9 +81,9 @@ class Finish extends React.PureComponent {
     const steps = [
       <span>
         Upload the RAMP Election form to the VBMS eFolder and ensure the
-        Document Type is <b>Correspondence</b>.
+        Document Type is <b>RAMP Opt-in Election</b>.
       </span>,
-      <span>Update the Subject Line with "Ramp Election".</span>
+      <span>Update the Subject Line with <b>RAMP Election</b>.</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>

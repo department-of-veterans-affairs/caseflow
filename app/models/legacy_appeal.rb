@@ -7,10 +7,10 @@ class LegacyAppeal < ApplicationRecord
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
-
-  after_save :save_to_appeals
-  before_destroy :destroy_appeal
 
   class UnknownLocationError < StandardError; end
 
@@ -30,7 +30,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
-  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
+  vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date, :ssoc_dates
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
@@ -39,20 +39,19 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number
+  vacols_attr_accessor :docket_number, :docket_date
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :date_due
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
-  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by_first_name,
-                :added_by_middle_name, :added_by_last_name, :added_by_css_id, :created_at, :document_id,
-                :assigned_by_first_name, :assigned_by_last_name
+  attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
+                :created_at, :document_id, :assigned_by
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -110,42 +109,19 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
 
   LOCATION_CODES = {
-    remand_returned_to_bva: "96"
+    remand_returned_to_bva: "96",
+    bva_dispatch: "30",
+    omo_office: "20",
+    caseflow: "CASEFLOW"
   }.freeze
 
-  BVA_DISPOSITIONS = [
-    "Allowed", "Remanded", "Denied", "Vacated", "Denied", "Vacated",
-    "Dismissed, Other", "Dismissed, Death", "Withdrawn"
-  ].freeze
-
-  attr_writer :ssoc_dates
-  def ssoc_dates
-    @ssoc_dates ||= []
+  def document_fetcher
+    @document_fetcher ||= DocumentFetcher.new(
+      appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
+    )
   end
 
-  attr_writer :documents
-  def documents
-    @documents ||= fetch_documents!(save: false)
-  end
-
-  # This method fetches documents and saves their metadata
-  # in the database
-  attr_writer :saved_documents
-  def saved_documents
-    @saved_documents ||= fetch_documents!(save: true)
-  end
-
-  def number_of_documents
-    documents.size
-  end
-
-  def number_of_documents_url
-    if document_service == ExternalApi::EfolderService
-      ExternalApi::EfolderService.efolder_files_url
-    else
-      "/queue/docs_for_dev"
-    end
-  end
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -204,10 +180,8 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney(load_bgs_record: true)
+  def power_of_attorney
     @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
-
-    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings
@@ -275,7 +249,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_ramp?
-    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+    (
+      (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva) ||
+      eligible_for_ramp_at_bva?
+    ) && !appellant_first_name
   end
 
   def compensation_issues
@@ -379,57 +356,6 @@ class LegacyAppeal < ApplicationRecord
     LegacyAppeal.certify(self)
   end
 
-  def fetch_documents!(save:)
-    save ? find_or_create_documents! : fetched_documents
-  end
-
-  def find_or_create_documents_v2!
-    AddSeriesIdToDocumentsJob.perform_now(self)
-
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          create_new_document!(document, ids)
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
-  def find_or_create_documents!
-    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
-                                                                  user: RequestStore.store[:current_user])
-    ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids)
-      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
-    end
-
-    fetched_documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          document.save!
-          document
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
-      end
-    end
-  end
-
   # These three methods are used to decide whether the appeal is processed
   # as a partial grant, remand, or full grant when dispatching it.
   def partial_grant_on_dispatch?
@@ -459,7 +385,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def decided_by_bva?
-    !active? && BVA_DISPOSITIONS.include?(disposition)
+    !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
 
   def merged?
@@ -582,42 +508,11 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def manifest_vbms_fetched_at
-    fetch_documents_from_service!
-    @manifest_vbms_fetched_at
-  end
-
-  def manifest_vva_fetched_at
-    fetch_documents_from_service!
-    @manifest_vva_fetched_at
+  def serializer_class
+    ::WorkQueue::LegacyAppealSerializer
   end
 
   private
-
-  def save_to_appeals
-    appeal = Appeal.find(attributes["id"])
-    appeal.update!(attributes)
-  rescue ActiveRecord::RecordNotFound
-    Appeal.create!(attributes)
-  end
-
-  def destroy_appeal
-    Appeal.find(attributes["id"]).destroy!
-  end
-
-  def create_new_document!(document, ids)
-    document.save!
-
-    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
-    previous_documents = Document.where(series_id: document.series_id).order(:id)
-      .where.not(vbms_document_id: ids)
-
-    if previous_documents.count > 0
-      document.copy_metadata_from_document(previous_documents.last)
-    end
-
-    document
-  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
@@ -641,33 +536,15 @@ class LegacyAppeal < ApplicationRecord
     end.sort_by(&:received_at)
   end
 
-  def fetch_documents_from_service!
-    return if @fetched_documents
-
-    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
-
-    @fetched_documents = doc_struct[:documents]
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
-    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
-  end
-
-  def fetched_documents
-    fetch_documents_from_service!
-    @fetched_documents
-  end
-
-  def document_service
-    @document_service ||=
-      if %w[reader queue hearings].include?(RequestStore.store[:application])
-        EFolderService
-      else
-        VBMSService
-      end
-  end
-
   # Used for serialization
   def regional_office_hash
     regional_office.to_h
+  end
+
+  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
+  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
+  def eligible_for_ramp_at_bva?
+    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
   end
 
   class << self
@@ -708,18 +585,18 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
+      return AppealRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, election_receipt_date:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
-          next unless close_appeal.nod_date < election_receipt_date
           close_single(
             appeal: close_appeal,
             user: user,
@@ -733,13 +610,14 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:)
+    def reopen(appeals:, user:, disposition:, safeguards: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
-            disposition: disposition
+            disposition: disposition,
+            safeguards: safeguards
           )
         end
       end
@@ -799,6 +677,12 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
+    def bva_dispositions
+      VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
+        Constants::VACOLS_DISPOSITIONS_BY_ID[code]
+      end
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
@@ -824,7 +708,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -845,7 +729,8 @@ class LegacyAppeal < ApplicationRecord
 
         repository.reopen_undecided_appeal!(
           appeal: appeal,
-          user: user
+          user: user,
+          safeguards: safeguards
         )
       end
     end

@@ -1,66 +1,94 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :issues do
-    object.issues.map do |issue|
-      ActiveModelSerializers::SerializableResource.new(
-        issue,
-        serializer: ::WorkQueue::IssueSerializer
-      ).as_json[:data][:attributes]
-    end
+    object.request_issues
   end
 
   attribute :hearings do
-    object.hearings.map do |hearing|
+    []
+  end
+
+  attribute :appellant_full_name do
+    object.claimants[0].name if object.claimants && object.claimants.any?
+  end
+
+  attribute :appellant_address do
+    if object.claimants && object.claimants.any?
+      primary_appellant = object.claimants[0]
       {
-        held_by: hearing.user.present? ? hearing.user.full_name : "",
-        date: hearing.date,
-        type: hearing.type,
-        id: hearing.id,
-        disposition: hearing.disposition
+        address_line_1: primary_appellant.address_line_1,
+        address_line_2: primary_appellant.address_line_2,
+        city: primary_appellant.city,
+        state: primary_appellant.state,
+        zip: primary_appellant.zip,
+        country: primary_appellant.country
       }
     end
   end
 
-  attribute :appellant_full_name do
-    object.appellant_name
+  attribute :appellant_relationship do
+    object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
-  attribute :appellant_address do
-    {
-      address_line_1: object.appellant_address_line_1,
-      address_line_2: object.appellant_address_line_2,
-      city: object.appellant_city,
-      state: object.appellant_state,
-      zip: object.appellant_zip,
-      country: object.appellant_country
-    }
+  attribute :location_code do
+    "Not supported for BEAAM appeals"
   end
 
-  attribute :appellant_relationship
-  attribute :location_code
-  attribute :veteran_full_name
-  attribute :veteran_date_of_birth
-  attribute :veteran_gender
+  attribute :veteran_full_name do
+    object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
+  end
+
+  attribute :veteran_date_of_birth do
+    object.veteran ? object.veteran.date_of_birth : "Cannot locate"
+  end
+
+  attribute :veteran_gender do
+    object.veteran ? object.veteran.sex : "Cannot locate"
+  end
+
   attribute :vbms_id do
-    object.sanitized_vbms_id
+    object.veteran_file_number
   end
-  attribute :vacols_id
-  attribute :type
-  attribute :aod
-  attribute :docket_number
-  attribute :status
-  attribute :decision_date
-  attribute :certification_date
+
+  attribute :vacols_id do
+    object.uuid
+  end
+
+  attribute :type do
+    "BEAAM"
+  end
+
+  attribute :aod do
+    object.advanced_on_docket
+  end
+
+  attribute :docket_number do
+    object.docket_number
+  end
+
+  attribute :status do
+    nil
+  end
+
+  attribute :decision_date do
+    nil
+  end
+
+  attribute :certification_date do
+    nil
+  end
+
+  attribute :paper_case do
+    false
+  end
 
   attribute :power_of_attorney do
-    # TODO: change this to use our more sophisticated poa data fetching mechanism
-    object.representative
+    object.representative_name
   end
 
   attribute :regional_office do
-    {
-      key: object.regional_office.key,
-      city: object.regional_office.city,
-      state: object.regional_office.state
-    }
+  end
+
+  attribute :caseflow_veteran_id do
+    object.veteran ? object.veteran.id : nil
   end
 end

@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "07a398fb0102ad93684f5423e73be68ba97c74d2"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b4d61f190ac8f6f397db245a257a89238970a224"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -89,7 +89,7 @@ gem "redis-namespace"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-group :production, :staging, :ssh_forwarding, :local, :test do
+group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   gem "ruby-oci8"
@@ -100,7 +100,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :development, :test, :local do
+group :stubbed, :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -138,9 +138,12 @@ group :development, :test, :local do
 
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
+
+  # Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
+  gem "factory_bot_rails", "~> 4.8"
 end
 
-group :development do
+group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
@@ -158,3 +161,7 @@ gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength
+
+gem "holidays", "~> 6.4"
+
+gem "roo", "~> 2.7"

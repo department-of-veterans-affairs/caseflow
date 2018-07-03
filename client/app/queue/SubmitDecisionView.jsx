@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { getDecisionTypeDisplay } from './utils';
+import {
+  getDecisionTypeDisplay,
+  buildCaseReviewPayload
+} from './utils';
 
 import {
   setDecisionOptions,
@@ -24,29 +27,19 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-import RequiredIndicator from '../components/RequiredIndicator';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  marginBottom,
+  marginTop,
+  ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-const mediumBottomMargin = css({ marginBottom: '2rem' });
-const smallBottomMargin = css({ marginBottom: '1rem' });
-const noBottomMargin = css({ marginBottom: 0 });
-const noTopMargin = css({ marginTop: 0 });
-
-const radioFieldStyling = css(noBottomMargin, {
-  marginTop: '2rem',
-  '& .question-label': {
-    marginBottom: 0
-  }
+const radioFieldStyling = css(marginBottom(0), marginTop(2), {
+  '& .question-label': marginBottom(0)
 });
-const subHeadStyling = css({ marginBottom: '2rem' });
-const checkboxStyling = css({ marginTop: '1rem' });
-const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
@@ -96,29 +89,22 @@ class SubmitDecisionView extends React.PureComponent {
         }
       },
       decision,
+      userRole,
       judges
     } = this.props;
-    const params = {
-      data: {
-        tasks: {
-          type: decision.type,
-          issues: _.map(issues, (issue) => _.pick(issue,
-            ['disposition', 'vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']
-          )),
-          ...decision.opts
-        }
-      }
-    };
+
+    const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
-      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
+      type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
+        'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/queue/appeals/${taskId}/complete`, params, successMsg).
+    this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
       then(() => this.props.deleteAppeal(vacolsId));
   };
 
@@ -166,7 +152,7 @@ class SubmitDecisionView extends React.PureComponent {
     }
 
     return <div className={fieldClasses}>
-      <label>Submit to judge: <RequiredIndicator /></label>
+      <label>Submit to judge:</label>
       {shouldDisplayError && <span className="usa-input-error-message">
         {ERROR_FIELD_REQUIRED}
       </span>}
@@ -175,6 +161,7 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   render = () => {
+    // todo: move to constants?
     const omoTypes = [{
       displayText: 'OMO - VHA',
       value: 'OMO - VHA'
@@ -194,13 +181,13 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionTypeDisplay = getDecisionTypeDisplay(decision);
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Submit {decisionTypeDisplay} for Review
       </h1>
-      <p className="cf-lead-paragraph" {...subHeadStyling}>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+      {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(2))}>
         {error.detail}
       </Alert>}
       <hr />
@@ -210,7 +197,6 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
-        required
         options={omoTypes}
         styling={radioFieldStyling}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
@@ -220,12 +206,11 @@ class SubmitDecisionView extends React.PureComponent {
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
         value={decisionOpts.overtime || false}
-        styling={css(smallBottomMargin, checkboxStyling)}
+        styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
         label="Document ID:"
         name="document_id"
-        required
         errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
@@ -236,7 +221,7 @@ class SubmitDecisionView extends React.PureComponent {
         name="notes"
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
-        styling={textAreaStyling}
+        styling={marginTop(4)}
       />
     </React.Fragment>;
   };
@@ -247,14 +232,41 @@ SubmitDecisionView.propTypes = {
   nextStep: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
-  decision: state.queue.stagedChanges.taskDecision,
-  judges: state.queue.judges,
-  error: state.ui.messages.error,
-  ..._.pick(state.ui, 'highlightFormItems', 'selectingJudge')
-});
+const mapStateToProps = (state, ownProps) => {
+  const {
+    queue: {
+      stagedChanges: {
+        appeals: {
+          [ownProps.vacolsId]: appeal
+        },
+        taskDecision: decision
+      },
+      tasks: {
+        [ownProps.vacolsId]: task
+      },
+      judges
+    },
+    ui: {
+      highlightFormItems,
+      userRole,
+      selectingJudge,
+      messages: {
+        error
+      }
+    }
+  } = state;
+
+  return {
+    appeal,
+    task,
+    decision,
+    judges,
+    error,
+    userRole,
+    highlightFormItems,
+    selectingJudge
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,

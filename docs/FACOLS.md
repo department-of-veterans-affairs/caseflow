@@ -46,7 +46,7 @@ To add a new case:
    - When this finishes running, you might (but are unlikely to) see red-text explaining that there may be PII in the data you pulled. If this is the case, we may need to white-list or fake out another field. Coordinate with Mark and Chris to make this happen.
 1) Run the following to import the dumped data into FACOLS:
    ```
-   RAILS_ENV=local rake local:vacols:seed
+   rake local:vacols:seed
    ```
 1) Check in the resulting changes to the dumped-data CSVs.
 
@@ -77,7 +77,7 @@ When adding a new table you must add code to sanitize any potential PII. Unfortu
 1) Dump and seed the data:
    ```
    RAILS_ENV=ssh_forwarding rake local:vacols:dump_data
-   RAILS_ENV=local rake local:vacols:seed
+   rake local:vacols:seed
    ```
 1) Check the resulting CSV updates into git.
 1) Whitelist fields with detected PII. When sanitization is run, we examine all white-listed fields for PII, including emails, phone numbers, sentences, and vet ids. If any field matches any of these RegExs then we print it in red at the end of the dump data job. This can alert you to a possible leak. To respond, you should either, stop white-listing the field if it is actually PII, or add the field to a special white-list for fields that detect PII but don't actually contain it. This white-list is in the `ignore_pii_in_fields` method.

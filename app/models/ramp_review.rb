@@ -1,6 +1,4 @@
 class RampReview < ApplicationRecord
-  include EstablishesEndProduct
-
   belongs_to :user
 
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
@@ -28,6 +26,10 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  def established?
+    !!established_at
+  end
+
   # Allows us to enable certain validations only when saving the review
   def start_review!
     @saving_review = true
@@ -43,37 +45,88 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if matching_end_product
+    return connect_end_product! if end_product_establishment.preexisting_end_product
 
     establish_end_product! && :created
   end
 
   def end_product_description
-    end_product_reference_id && end_product_to_establish.description_with_routing
+    end_product_establishment.description
   end
 
-  # TODO: rename
-  def pending_end_product_description
-    # This is for EPs not yet created or that failed to create
-    end_product_to_establish.modifier
+  def end_product_base_modifier
+    end_product_establishment.valid_modifiers.first
+  end
+
+  def end_product_active?
+    sync_ep_status! && cached_status_active?
+  end
+
+  def end_product_canceled?
+    sync_ep_status! && end_product_status == "CAN"
+  end
+
+  def sync_ep_status!
+    # There is no need to sync end_product_status if the status
+    # is already inactive since an EP can never leave that state
+    return true unless cached_status_active?
+
+    update!(
+      end_product_status: end_product_establishment.result.status_type_code,
+      end_product_status_last_synced_at: Time.zone.now
+    )
+  end
+
+  def establish_end_product!
+    end_product_establishment.perform!
+
+    update!(
+      end_product_reference_id: end_product_establishment.reference_id,
+      established_at: Time.zone.now
+    )
+  end
+
+  class << self
+    def established
+      where.not(established_at: nil)
+    end
+
+    def active
+      # We only know the set of inactive EP statuses
+      # We also only know the EP status after fetching it from BGS
+      # Therefore, our definition of active is when the EP is either
+      #   not known or not known to be inactive
+      established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
   end
 
   private
+
+  def end_product_establishment
+    @end_product_establishment ||= EndProductEstablishment.new(
+      veteran: veteran,
+      reference_id: end_product_reference_id,
+      claim_date: receipt_date,
+      code: end_product_code,
+      valid_modifiers: [end_product_modifier],
+      station: "397", # AMC
+      cached_status: end_product_status
+    )
+  end
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  # Find an end product that has the traits of the end product that should be created.
-  def matching_end_product
-    @matching_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
-  end
-
   def connect_end_product!
     update!(
-      end_product_reference_id: matching_end_product.claim_id,
+      end_product_reference_id: end_product_establishment.preexisting_end_product.claim_id,
       established_at: Time.zone.now
     ) && :connected
+  end
+
+  def cached_status_active?
+    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
   end
 
   def end_product_code
@@ -82,10 +135,6 @@ class RampReview < ApplicationRecord
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
-  end
-
-  def end_product_station
-    "397" # AMC
   end
 
   def validate_receipt_date_not_before_ramp

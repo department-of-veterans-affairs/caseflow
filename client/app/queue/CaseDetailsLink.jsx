@@ -1,19 +1,16 @@
-import { css } from 'glamor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import COPY from '../../COPY.json';
+import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 
-const subHeadStyle = css({
-  fontSize: 'small',
-  color: COMMON_COLORS.GREY_MEDIUM
-});
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteran_full_name} ({appeal.vbms_id})</React.Fragment>;
 
 class CaseDetailsLink extends React.PureComponent {
   setActiveAppealAndTask = () => {
@@ -22,25 +19,40 @@ class CaseDetailsLink extends React.PureComponent {
   }
 
   render() {
+    const {
+      appeal: { attributes: appeal },
+      disabled
+    } = this.props;
+
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${this.props.task.vacolsId}`}
-        disabled={!this.props.task.attributes.task_id}
-        onClick={this.setActiveAppealAndTask}
-      >
-        {this.props.appeal.attributes.veteran_full_name} ({this.props.appeal.attributes.vbms_id})
+        to={`/queue/appeals/${appeal.vacols_id}`}
+        disabled={disabled}
+        onClick={this.props.onClick || this.setActiveAppealAndTask}>
+        {this.props.getLinkText(appeal)}
       </Link>
-      {!_.isNull(_.get(this.props.appeal.attributes, 'appellant_full_name')) && <React.Fragment>
+      {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
         <br />
-        <span {...subHeadStyle}>Veteran is not the appellant</span>
+        <span {...subHeadTextStyle}>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
+      </React.Fragment>}
+      {appeal.paper_case && <React.Fragment>
+        <br />
+        <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}
     </React.Fragment>;
   }
 }
 
 CaseDetailsLink.propTypes = {
-  task: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired
+  task: PropTypes.object,
+  appeal: PropTypes.object.isRequired,
+  disabled: PropTypes.bool,
+  getLinkText: PropTypes.func.isRequired,
+  onClick: PropTypes.func
+};
+
+CaseDetailsLink.defaultProps = {
+  getLinkText
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

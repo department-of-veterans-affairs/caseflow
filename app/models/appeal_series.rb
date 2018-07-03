@@ -1,6 +1,5 @@
 class AppealSeries < ApplicationRecord
   has_many :appeals, class_name: "LegacyAppeal", dependent: :nullify
-  has_many :legacy_appeals, class_name: "Appeal", dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
   # TODO: Replace these hardcoded values with dynamic data
@@ -40,7 +39,7 @@ class AppealSeries < ApplicationRecord
   end
 
   def program
-    programs = appeals.flat_map { |appeal| appeal.issues.map(&:program) }.uniq
+    programs = appeals.flat_map { |appeal| appeal.issues.map(&:program) }.reject(&:nil?).uniq
 
     (programs.length > 1) ? :multiple : programs.first
   end
@@ -86,13 +85,15 @@ class AppealSeries < ApplicationRecord
 
   # rubocop:disable CyclomaticComplexity
   def description
-    ordered_issues = latest_appeal.issues.sort do |a, b|
-      dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
+    ordered_issues = latest_appeal.issues
+      .select(&:codes?)
+      .sort do |a, b|
+        dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
 
-      next dc_comparison unless dc_comparison == 0
+        next dc_comparison unless dc_comparison == 0
 
-      a.vacols_sequence_id <=> b.vacols_sequence_id
-    end
+        a.vacols_sequence_id <=> b.vacols_sequence_id
+      end
 
     return "VA needs to record issues" if ordered_issues.empty?
 

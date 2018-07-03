@@ -209,6 +209,18 @@ describe "Appeals API v2", type: :request do
       expect(ApiView.count).to eq(0)
     end
 
+    it "returns 504 when BGS times out" do
+      allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn).and_raise(Errno::ETIMEDOUT)
+
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+      get "/api/v2/appeals", headers: headers
+
+      expect(response.code).to eq("504")
+    end
+
     it "returns list of appeals for veteran with SSN" do
       headers = {
         "ssn": "111223333",

@@ -42,23 +42,37 @@ class QueueLoadingScreen extends React.PureComponent {
       appeals
     } = this.props;
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/queue/${userId}`).then((response) => this.props.onReceiveQueue({
-      ...associateTasksWithAppeals(JSON.parse(response.text)),
-      userId
-    }));
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+      this.props.onReceiveQueue({
+        ...associateTasksWithAppeals(JSON.parse(response.text)),
+        userId
+      }));
   };
 
   loadActiveAppeal = () => {
-    if (this.props.activeAppeal) {
+    const {
+      activeAppeal,
+      vacolsId,
+      appeals
+    } = this.props;
+
+    if (activeAppeal) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/appeals/${this.props.vacolsId}`).then((response) => {
+    if (vacolsId in appeals) {
+      this.props.setActiveAppeal(appeals[vacolsId]);
+
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/appeals/${vacolsId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveAppeal(resp.appeal);
@@ -73,6 +87,12 @@ class QueueLoadingScreen extends React.PureComponent {
   reload = () => window.location.reload();
 
   render = () => {
+    // If the current user cannot access queue return early to avoid making the request for queues that would happen
+    // as a result of createLoadPromise().
+    if (!this.props.userCanAccessQueue) {
+      return this.props.children;
+    }
+
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
@@ -98,12 +118,13 @@ class QueueLoadingScreen extends React.PureComponent {
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  vacolsId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue, 'judges'),
-  ...state.caseDetail.activeAppeal,
+  activeAppeal: state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
 

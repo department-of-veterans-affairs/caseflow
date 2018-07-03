@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
+import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
+
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
-import COPY from '../../../COPY.json';
+import COPY from '../../COPY.json';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { setBreadcrumbs } from './uiReducer/uiActions';
@@ -29,21 +29,19 @@ class CaseListTable extends React.PureComponent {
     this.props.setActiveAppeal(appeal);
     this.props.setBreadcrumbs({
       breadcrumb: sprintf(COPY.BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.attributes.veteran_full_name),
-      path: '/queue'
+      path: window.location.pathname
     });
   }
 
   getColumns = () => [
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (appeal) => <span>
-        <Link
-          to={`/queue/appeals/${appeal.attributes.vacols_id}`}
-          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)}
-        >
-          {appeal.attributes.docket_number}
-        </Link>
-      </span>
+      valueFunction: (appeal) => <React.Fragment>
+        <CaseDetailsLink
+          appeal={appeal}
+          getLinkText={() => appeal.attributes.docket_number}
+          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)} />
+      </React.Fragment>
     },
     {
       header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,

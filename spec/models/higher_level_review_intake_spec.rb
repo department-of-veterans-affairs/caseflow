@@ -18,6 +18,22 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    context "intake is already in progress by same user" do
+      it "should not create another intake" do
+        HigherLevelReviewIntake.new(
+          user: user,
+          veteran_file_number: veteran_file_number
+        ).start!
+
+        expect(intake).to_not be_nil
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -25,6 +41,13 @@ describe HigherLevelReviewIntake do
       HigherLevelReview.create!(
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
+      )
+    end
+
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
       )
     end
 
@@ -37,11 +60,68 @@ describe HigherLevelReviewIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  context "#review!" do
+    subject { intake.review!(params) }
+
+    let(:detail) do
+      HigherLevelReview.create!(
+        veteran_file_number: "64205555",
+        receipt_date: 3.days.ago
+      )
+    end
+
+    context "Veteran is claimant" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: nil
+        )
+      end
+
+      it "adds veteran to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: intake.veteran.participant_id
+        )
+      end
+    end
+
+    context "Claimant is different than Veteran" do
+      let(:params) do
+        ActionController::Parameters.new(
+          receipt_date: 1.day.ago,
+          informal_conference: false,
+          same_office: false,
+          claimant: "1234"
+        )
+      end
+
+      it "adds other relationship to claimants" do
+        subject
+
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimants.first).to have_attributes(
+          participant_id: "1234"
+        )
+      end
     end
   end
 
   context "#complete!" do
     subject { intake.complete!(params) }
+
+    before do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
 
     let(:params) do
       { request_issues: [
@@ -57,9 +137,6 @@ describe HigherLevelReviewIntake do
     end
 
     it "completes the intake and creates an end product" do
-      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-
       subject
 
       expect(intake.reload).to be_success
@@ -74,17 +151,89 @@ describe HigherLevelReviewIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: intake.detail.end_product_reference_id,
-        contention_descriptions: ["decision text"]
+        contention_descriptions: ["decision text"],
+        special_issues: []
       )
+    end
+
+    context "when same office is requested" do
+      let(:detail) do
+        HigherLevelReview.create!(
+          veteran_file_number: "64205555",
+          receipt_date: 3.days.ago,
+          same_office: true
+        )
+      end
+
+      it "adds same office to special issues" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: intake.detail.veteran_file_number,
+          claim_id: intake.detail.end_product_reference_id,
+          contention_descriptions: ["decision text"],
+          special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
+        )
+      end
     end
 
     context "when no requested issues" do
       let(:params) do
         { request_issues: [] }
       end
-      it "returns nil" do
+
+      it "does not establish claim" do
         expect(Fakes::VBMSService).not_to receive(:establish_claim!)
         expect(Fakes::VBMSService).not_to receive(:create_contentions!)
+
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "when EPs with conflicting modifiers exist" do
+      let!(:existing_eps) do
+        %w[040 030 031 033].map do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: "64205555",
+            bgs_attrs: { end_product_type_code: modifier }
+          )
+        end
+      end
+
+      it "creates end products with incrementing end product modifiers" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: detail.receipt_date.to_date,
+            end_product_modifier: "032",
+            end_product_label: "Higher Level Review Rating",
+            end_product_code: "030HLRR",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: intake.veteran.to_vbms_hash
+        )
+      end
+    end
+
+    context "if end product creation fails" do
+      let(:unknown_error) do
+        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
+      end
+
+      it "clears pending status" do
+        allow_any_instance_of(HigherLevelReview).to receive(
+          :create_end_product_and_contentions!
+        ).and_raise(unknown_error)
+
+        expect { subject }.to raise_exception
+        expect(intake.completion_status).to be_nil
       end
     end
   end

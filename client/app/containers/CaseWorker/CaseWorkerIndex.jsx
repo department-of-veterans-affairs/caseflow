@@ -12,6 +12,13 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import HeaderMessage from './HeaderMessage';
 import { formatDate } from '../../util/DateUtil';
+import { css } from 'glamor';
+
+const taskWrapper = css({
+  paddingBottom: '20px',
+  marginBottom: '20px',
+  borderBottom: '1px solid #d6d7d9'
+});
 
 export default class CaseWorkerIndex extends BaseForm {
   constructor(props) {
@@ -87,7 +94,7 @@ export default class CaseWorkerIndex extends BaseForm {
 
         <AppFrame>
           <div className="cf-app-segment cf-app-segment--alt">
-            <div className="usa-width-one-whole task-start-wrapper">
+            <div className="usa-width-one-whole" {...taskWrapper}>
               <div className="cf-left-side">
                 <h1>Your Work Assignments</h1>
                 <HeaderMessage

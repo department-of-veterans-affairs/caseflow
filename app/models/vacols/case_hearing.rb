@@ -1,8 +1,10 @@
 class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"
+  self.sequence_name = "hearsched_pkseq"
 
   attribute :hearing_date, :datetime
+  validates :hearing_type, :hearing_date, :room, presence: true, on: :create
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
@@ -39,7 +41,12 @@ class VACOLS::CaseHearing < VACOLS::Record
     transcript_requested: :tranreq,
     add_on: :addon,
     representative_name: :repname,
-    staff_id: :mduser
+    staff_id: :mduser,
+    room_info: :room,
+    room: :room,
+    hearing_date: :hearing_date,
+    hearing_type: :hearing_type,
+    judge_id: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -73,6 +80,27 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
+    def load_days_for_range(start_date, end_date)
+      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date)
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?",
+                                 "VIDEO #{regional_office}", start_date, end_date)
+    end
+
+    def create_hearing!(hearing_info)
+      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
+      attrs.except!(nil)
+      MetricsService.record("VACOLS: create_hearing!",
+                            service: :vacols,
+                            name: "create_hearing") do
+        create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                           adduser: current_user_slogid,
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil))
+      end
+    end
+
     private
 
     def select_hearings
@@ -99,6 +127,18 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+
+    def select_schedule_days
+      select(:hearing_pkseq,
+             :hearing_date,
+             :hearing_type,
+             :folder_nr,
+             :room,
+             :board_member,
+             :mduser,
+             :mdtime)
+        .where("folder_nr is null or folder_nr like ?", "VIDEO %")
+    end
   end
 
   def master_record_type
@@ -110,11 +150,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
   private
+
+  def current_user_css_id
+    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  end
 
   def update_hearing_action
     brieff.update(bfha: HearingMapper.bfha_vacols_code(self))
@@ -123,10 +167,6 @@ class VACOLS::CaseHearing < VACOLS::Record
   def create_or_update_diaries
     create_or_update_abeyance_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
-  end
-
-  def current_user_css_id
-    @css_id ||= RequestStore.store[:current_user].css_id.upcase
   end
 
   def case_id

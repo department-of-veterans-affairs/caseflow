@@ -70,7 +70,7 @@ class SeedDB
     tasks[2].review!
     tasks[2].complete!(status: :routed_to_arc)
 
-    # assigning and moving the task to complete for 
+    # assigning and moving the task to complete for
     # user at index 3
     5.times do |index|
       task = EstablishClaim.assign_next_to!(@users[3])
@@ -81,7 +81,7 @@ class SeedDB
 
     task = EstablishClaim.assign_next_to!(@users[4])
 
-    # assigning and moving the task to complete for 
+    # assigning and moving the task to complete for
     # user at index 5
     3.times do |index|
       task = EstablishClaim.assign_next_to!(@users[5])
@@ -153,18 +153,42 @@ class SeedDB
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
   end
 
+  def create_beaam_appeals
+    FactoryBot.create(
+      :appeal,
+      advanced_on_docket: true,
+      veteran_file_number: "209179363",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
+    )
+    FactoryBot.create(
+      :appeal,
+      veteran_file_number: "767574947",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
+    )
+    FactoryBot.create(
+      :appeal,
+      :appellant_not_veteran,
+      veteran_file_number: "216979849",
+      veteran: FactoryBot.create(:veteran),
+      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+    )
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
 
   def seed
     clean_db
-    # Annotations and tags don't come from VACOLS, so our seeding should 
+    # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
     create_annotations
     create_tags
+    create_beaam_appeals
 
-    return if Rails.env.local? 
+    return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
     # a VACOLS copy locally.

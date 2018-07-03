@@ -14,20 +14,47 @@ class Fakes::BGSService
   cattr_accessor :rating_issue_records
   attr_accessor :client
 
-  ID_TO_RAISE_ERROR = "ERROR-ID".freeze
-
+  # rubocop:disable Metrics/MethodLength
   def self.create_veteran_records
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      if %w[veteran_exists].include?(row_hash["bgs_key"])
-        Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+
+      case row_hash["bgs_key"]
+      when "has_rating"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+      when "has_many_ratings"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "Left knee" },
+            { decision_text: "PTSD" }
+          ]
+        )
+      when "has_supplemental_claim_with_vbms_claim_id"
+        claim_id = "600118926"
+        SupplementalClaim.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
+      when "has_higher_level_review_with_vbms_claim_id"
+        claim_id = "600118951"
+        HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          end_product_reference_id: claim_id
+        )
       end
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
     [
@@ -250,12 +277,14 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
-    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
-
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address
 
     get_address_from_bgs_address(address)
+  end
+
+  def fetch_claimant_info_by_participant_id(_participant_id)
+    default_claimant_info
   end
 
   def fetch_file_number_by_ssn(ssn)
@@ -298,7 +327,77 @@ class Fakes::BGSService
     { rating_issues: rating_issues }
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def find_all_relationships(*)
+    [
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: "Y",
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "02171972",
+        date_of_death: "03072014",
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: nil,
+        fiduciary: nil,
+        file_number: "123456789",
+        first_name: "BOB",
+        gender: "M",
+        last_name: "VANCE",
+        middle_name: "D",
+        poa: "DISABLED AMERICAN VETERANS",
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "5382910292",
+        relationship_begin_date: nil,
+        relationship_end_date: nil,
+        relationship_type: "Spouse",
+        ssn: "123456789",
+        ssn_verified_ind: "Unverified",
+        terminate_reason: nil
+      },
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: nil,
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "04121995",
+        date_of_death: nil,
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: "cathy@gmail.com",
+        fiduciary: nil,
+        file_number: nil,
+        first_name: "CATHY",
+        gender: nil,
+        last_name: "SMITH",
+        middle_name: nil,
+        poa: nil,
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "1129318238",
+        relationship_begin_date: "08121999",
+        relationship_end_date: nil,
+        relationship_type: "Child",
+        ssn: nil,
+        ssn_verified_ind: nil,
+        terminate_reason: nil
+      }
+    ]
+  end
+  # rubocop:enable Metrics/MethodLength
+
   private
+
+  def default_claimant_info
+    {
+      name: "Harry Carey",
+      relationship: "Spouse"
+    }
+  end
 
   def default_power_of_attorney_record
     {

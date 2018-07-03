@@ -15,6 +15,7 @@ import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { DISPOSITION_OPTIONS } from '../constants/constants';
 
 const textareaStyling = css({
   '@media only screen and (max-width : 1024px)': {
@@ -33,15 +34,6 @@ const issueCountStyling = css({
   paddingTop: '5px',
   paddingBottom: '5px'
 });
-
-const dispositionOptions = [{ value: 'held',
-  label: 'Held' },
-{ value: 'no_show',
-  label: 'No Show' },
-{ value: 'cancelled',
-  label: 'Cancelled' },
-{ value: 'postponed',
-  label: 'Postponed' }];
 
 const holdOption = (days, hearingDate) => ({
   value: days,
@@ -62,18 +54,23 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
+const selectedValue = (selected) => selected ? selected.value : null;
+
 export class DocketHearingRow extends React.PureComponent {
 
-  setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
+  setDisposition = (selected) =>
+    this.props.setDisposition(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
-  setHoldOpen = ({ value }) => this.props.setHoldOpen(this.props.index, value, this.props.hearingDate);
+  setHoldOpen = (selected) =>
+    this.props.setHoldOpen(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
-  setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
+  setAod = (selected) =>
+    this.props.setAod(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
-    this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+    this.props.setTranscriptRequested(this.props.hearing.id, value, this.props.hearingDate);
 
-  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
+  setNotes = (event) => this.props.setNotes(this.props.hearing.id, event.target.value, this.props.hearingDate);
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
@@ -117,8 +114,8 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               id={`${hearing.id}-prep`}
               onChange={this.preppedOnChange}
-              key={index}
-              value={hearing.prepped}
+              key={`${hearing.id}`}
+              value={hearing.prepped || false}
               name={`${hearing.id}-prep`}
               hideLabel
               {...preppedCheckboxStyling}
@@ -155,11 +152,11 @@ export class DocketHearingRow extends React.PureComponent {
             {hearing.representative_name}
           </span>
         </td>
-        <td className="cf-hearings-docket-actions" rowSpan="3">
+        <td className="cf-hearings-docket-actions" colSpan="3">
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}-disposition`}
-            options={dispositionOptions}
+            options={DISPOSITION_OPTIONS}
             onChange={this.setDisposition}
             value={hearing.disposition}
             searchable={false}
@@ -180,14 +177,6 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable={false}
           />
-          <div className="transcriptRequested">
-            <Checkbox
-              label="Transcript Requested"
-              name={`${hearing.id}.transcript_requested`}
-              value={hearing.transcript_requested}
-              onChange={this.setTranscriptRequested}
-            />
-          </div>
         </td>
       </tr>
       <tr>
@@ -196,7 +185,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
+            <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
             <div {...textareaStyling}>
               <Textarea
                 id={`${hearing.id}.notes`}
@@ -208,6 +197,15 @@ export class DocketHearingRow extends React.PureComponent {
             </div>
           </div>
         </td>
+        <td className="transcriptCell">
+          <div className="transcriptRequested">
+            <Checkbox
+              label="Transcript Requested"
+              name={`${hearing.id}.transcript_requested`}
+              value={hearing.transcript_requested}
+              onChange={this.setTranscriptRequested}
+            />
+          </div></td>
       </tr>
     </tbody>;
   }

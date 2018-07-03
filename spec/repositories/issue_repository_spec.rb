@@ -39,41 +39,9 @@ describe IssueRepository do
       end
     end
 
-    context "when disposition is changed to remanded" do
-      let(:initial_disposition) { nil }
-      let(:disposition) { "Remanded" }
-      let(:readjudication) { nil }
-      let(:remand_reasons) do
-        [{
-          rmdval: "AB",
-          rmddev: "R2",
-          rmdmdusr: "TEST1",
-          rmdmdtim: VacolsHelper.local_time_with_utc_timezone
-        }]
-      end
-
-      it "creates remand reasons" do
-        expect(IssueRepository).to receive(:create_remand_reasons!)
-          .with("123456", "3", remand_reasons).once
-        expect(BusinessMetrics).to_not receive(:record)
-        subject
-      end
-    end
-
-    context "when disposition is not changed to remanded" do
-      let(:initial_disposition) { "3" }
-      let(:disposition) { "Remanded" }
-      let(:readjudication) { nil }
-
-      it "does not create remand reasons" do
-        expect(IssueRepository).to_not receive(:create_remand_reasons!)
-        subject
-      end
-    end
-
     context "when disposition is changed to vacated and readjudication is selected" do
       let(:initial_disposition) { nil }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { true }
       let(:result_params) do
         {
@@ -97,7 +65,7 @@ describe IssueRepository do
 
     context "when disposition is changed to vacated and readjudication is not selected" do
       let(:initial_disposition) { nil }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { false }
 
       it "does not create a duplicate issue" do
@@ -108,7 +76,7 @@ describe IssueRepository do
 
     context "when disposition is not changed but readjudication is selected" do
       let(:initial_disposition) { "5" }
-      let(:disposition) { "Vacated" }
+      let(:disposition) { "5" }
       let(:readjudication) { true }
 
       it "does not create a duplicate issue" do

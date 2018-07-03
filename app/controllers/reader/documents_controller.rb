@@ -1,13 +1,11 @@
 class Reader::DocumentsController < Reader::ApplicationController
-  EXCEPTIONS = [Caseflow::Error::EfolderError].freeze
-
   # rubocop:disable Metrics/MethodLength
   def index
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
       format.json do
         AppealView.find_or_create_by(
-          appeal_id: appeal.id,
+          appeal: appeal,
           user_id: current_user.id
         ).tap do |t|
           t.update!(last_viewed_at: Time.zone.now)
@@ -22,8 +20,9 @@ class Reader::DocumentsController < Reader::ApplicationController
         end
       end
     end
-  rescue *EXCEPTIONS => e
-    respond_to_doc_retrieval_error(e)
+  rescue StandardError => e
+    raise e unless e.class.method_defined? :serialize_response
+    render e.serialize_response
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -34,29 +33,18 @@ class Reader::DocumentsController < Reader::ApplicationController
   private
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(appeal_id)
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
   end
   helper_method :appeal
 
   def annotations
-    appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
+    appeal.document_fetcher.find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
   end
 
-  def fetched_at_format
-    "%D %l:%M%P %Z"
-  end
-
-  # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
-  def manifest_vva_fetched_at
-    appeal.manifest_vva_fetched_at.strftime(fetched_at_format) if appeal.manifest_vva_fetched_at
-  end
-
-  def manifest_vbms_fetched_at
-    appeal.manifest_vbms_fetched_at.strftime(fetched_at_format) if appeal.manifest_vbms_fetched_at
-  end
+  delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
 
   def documents
-    document_ids = appeal.saved_documents.map(&:id)
+    document_ids = appeal.document_fetcher.find_or_create_documents!.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
@@ -64,16 +52,12 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = appeal.saved_documents.map do |document|
+    @documents = appeal.document_fetcher.find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags
       end
     end
-  end
-
-  def respond_to_doc_retrieval_error(e)
-    render json: { "errors": ["status": e.message, "title": e.to_s, "detail": e.message] }, status: e.message
   end
 
   def appeal_id

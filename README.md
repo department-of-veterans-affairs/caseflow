@@ -1,5 +1,5 @@
 # Caseflow
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
 Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
 
@@ -10,7 +10,9 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ## Setup
 Install dependencies via Homebrew:
 
-    brew install chromedriver rbenv nvm yarn
+    brew install rbenv nvm yarn
+    brew tap caskroom/cask
+    brew cask install chromedriver
 
 Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
 - Run `mkdir ~/.nvm`
@@ -29,10 +31,6 @@ Then run the following:
     gem install bundler
 
 *NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`.
-
-You need to have Chromedriver running to run the Capybara tests. Let `brew` tell you how to do that:
-
-    brew info chromedriver
 
 Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
@@ -117,40 +115,40 @@ brew services stop postgresql
 brew services stop redis
 ```
 
-Start all containers
-```
-docker-compose up -d
-# run without -d to start your environment and view container logging in the foreground
+## Setup shortcuts
 
-docker-compose ps
-# this shows you the status of all of your dependencies
+To rapidly set up your local development (and testing) environment, you can run:
+```
+bundle exec rake local:build
 ```
 
-Turning off dependencies
-```
-# this stops all containers
-docker-compose down
+The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
-# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
-docker-compose down -v
-```
+## Debugging FACOLS setup
+Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
 
-## Setup your Database Schema
+1) Running `rake local:vacols:setup` logs out:
 ```
-rake [RAILS_ENV=<local|test|development>] db:setup
-rake [RAILS_ENV=<local|test|development>] db:seed
+[36mVACOLS_DB-development     |[0m tail: cannot open '/u01/app/oracle/diag/rdbms/bvap/BVAP/trace/alert_BVAP.log' for reading: No such file or directory
+[36mVACOLS_DB-development     |[0m tail: no files remaining
+[36mVACOLS_DB-development exited with code 1
+```
+Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
 
-# setup local VACOLS (FAKOLS)
-rake [RAILS_ENV=<local|test|development>] local:vacols:setup
-rake [RAILS_ENV=<local|test|development>] local:vacols:seed
+2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
+
+If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
+```
+bundle exec rake local:destroy
+bundle exec rake local:build
 ```
 
 ## Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
-2) `RAILS_ENV=local rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
-3) `rails s -e local` to start the server connected to local VACOLS or `rails c -e local` to start the rails console connected to local VACOLS.
+2) `rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+3) `rails s` to start the server connected to local VACOLS or `rails c` to start the rails console connected to local VACOLS.
 
 ## Certification Test Scenarios
 
@@ -212,6 +210,13 @@ To test the app connected to external dependencies, you'll need to set up Oracle
 
 ### Environment variables
 
+First you'll need to install ansible-vault and credstash.
+```sh
+pip install ansible-vault
+pip install credstash
+```
+For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash)
+
 We'll need to obtain the Ansible vault password using credstash:
 
 ```sh
@@ -251,6 +256,16 @@ what roles they have and therefore what pages they can access. To add new users 
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
 
+To use intake features as the users, you'll need to toggle two features in a
+rails console `rails c`:
+
+```
+[1] FeatureToggle.enable!(:intakeAma)
+=> true
+[2] FeatureToggle.enable!(:intake)
+=> true
+```
+
 This page also contains links to different parts of the site to make dev-ing faster. Please
 add more links and users as needed.
 
@@ -259,25 +274,6 @@ add more links and users as needed.
 To run the test suite:
 
     rake
-
-### Parallelized tests
-You'll be able to get through the tests a lot faster if you put all your CPUs to work.
-Parallel test categories are split up by category:
-- `unit`: Any test that isn't a feature test, since these are :lightning: fast
-- `other`: Any feature test that is not in a subfolder
-- CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
-
-To set your environment up for parallel testing run:
-
-    rake spec:parallel:setup
-
-To run the test suite in parallel:
-
-    rake spec:parallel
-
-You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
-
-    rake spec:parallel:CATEGORY
 
 ## Feature Toggle and Functions
 
@@ -297,8 +293,11 @@ Rails.cache.write("certification_out_of_service", true)
 # enable for dispatch only
 Rails.cache.write("dispatch_out_of_service", true)
 
-# enable for hearings only
+# enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
+
+# enable for hearing schedule only
+Rails.cache.write("hearing_schedule_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)

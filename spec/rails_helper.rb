@@ -8,6 +8,7 @@ require File.expand_path("../../config/environment", __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "spec_helper"
+require "fake_date_helper"
 require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
@@ -35,7 +36,7 @@ require "timeout"
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-# ActiveRecord::Migration.maintain_test_schema!
+ActiveRecord::Migration.maintain_test_schema!
 
 require "capybara"
 require "capybara/rspec"
@@ -116,17 +117,22 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!(css_id: nil, roles: nil)
+    def authenticate!(css_id: nil, roles: nil, user: nil)
       Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
-      self.stub = User.from_session(
-        "user" =>
-          { "id" => css_id || "DSUSER",
-            "name" => "Lauren Roth",
-            "station_id" => "283",
-            "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-      )
+      if user.nil?
+        user = User.from_session(
+          "user" =>
+            { "id" => css_id || "DSUSER",
+              "name" => "Lauren Roth",
+              "station_id" => "283",
+              "email" => "test@example.com",
+              "roles" => roles || ["Certify Appeal"] }
+        )
+      end
+
+      RequestStore.store[:current_user] = user
+      self.stub = user
     end
 
     def tester!(roles: nil)
@@ -178,6 +184,40 @@ def current_user
   User.current_user
 end
 
+# Utility functions for reading CSV data
+def dateshift_field(items, date_shift, k)
+  items.map! do |item|
+    item[k] = item[k] + date_shift if item[k]
+    item
+  end
+end
+
+def truncate_string(items, sql_type, k)
+  max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
+  items.map! do |item|
+    item[k] = item[k][0..max_index] if item[k]
+    item
+  end
+end
+
+def read_csv(klass, date_shift)
+  items = []
+  klass.delete_all
+  CSV.foreach(Rails.root.join("local/vacols", klass.name + "_dump.csv"), headers: true) do |row|
+    h = row.to_h
+    items << klass.new(row.to_h) if klass.primary_key.nil? || !h[klass.primary_key].nil?
+  end
+  klass.columns_hash.each do |k, v|
+    if v.type == :datetime
+      dateshift_field(items, date_shift, k)
+    elsif v.type == :string
+      truncate_string(items, v.sql_type, k)
+    end
+  end
+
+  klass.import(items)
+end
+
 # Setup fakes
 LegacyAppeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
@@ -196,6 +236,14 @@ RSpec.configure do |config|
   end
   config.before(:all) do
     User.unauthenticate!
+
+    # We need the VFTYPES and ISSREF tables to do any queries for issues. This code is borrowed from the
+    # local:vacols:seed rake task to load all of our dumped data for the VFTYPES and ISSREF tables.
+    date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)
+
+    read_csv(VACOLS::Vftypes, date_shift)
+    read_csv(VACOLS::Issref, date_shift)
+
     Rails.cache.clear
   end
 
@@ -203,6 +251,9 @@ RSpec.configure do |config|
     Timecop.return
     Rails.cache.clear
   end
+
+  # Allows us to use shorthand FactoryBot methods.
+  config.include FactoryBot::Syntax::Methods
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -325,4 +376,5 @@ end
 
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
+  config.include FakeDateHelper
 end
