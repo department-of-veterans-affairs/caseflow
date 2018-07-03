@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -14,8 +14,21 @@ import {
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import _ from 'lodash';
+import type { AttorneysOfJudge, SelectedAssigneeOfUser, IsTaskAssignedToUserSelected, Tasks, UiStateError } from '../queue/types';
 
-class AssignWidget extends React.PureComponent {
+class AssignWidget extends React.PureComponent<{|
+  previousAssigneeId: string,
+  onTaskAssignment: Function,
+  attorneysOfJudge: AttorneysOfJudge,
+  selectedAssigneeOfUser: SelectedAssigneeOfUser,
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  tasks: Tasks,
+  error: ?UiStateError,
+  setSelectedAssigneeOfUser: Function,
+  initialAssignTasksToUser: Function,
+  showErrorMessage: (UiStateError) => void,
+  resetErrorMessages: Function
+|}> {
   selectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || [],
@@ -27,16 +40,16 @@ class AssignWidget extends React.PureComponent {
 
     if (!selectedAssigneeOfUser[previousAssigneeId]) {
       this.props.showErrorMessage(
-        { heading: 'No assignee selected',
-          text: 'Please select someone to assign the tasks to.' });
+        { title: 'No assignee selected',
+          detail: 'Please select someone to assign the tasks to.' });
 
       return;
     }
 
     if (this.selectedTasks().length === 0) {
       this.props.showErrorMessage(
-        { heading: 'No tasks selected',
-          text: 'Please select a task.' });
+        { title: 'No tasks selected',
+          detail: 'Please select a task.' });
 
       return;
     }
@@ -47,8 +60,8 @@ class AssignWidget extends React.PureComponent {
         previousAssigneeId }).
       then(() => this.props.resetErrorMessages()).
       catch(() => this.props.showErrorMessage(
-        { heading: 'Error assigning tasks',
-          text: 'One or more tasks couldn\'t be assigned.' }));
+        { title: 'Error assigning tasks',
+          detail: 'One or more tasks couldn\'t be assigned.' }));
   }
 
   render = () => {
@@ -61,8 +74,8 @@ class AssignWidget extends React.PureComponent {
       {error &&
         <div className="usa-alert usa-alert-error" role="alert">
           <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">{error.heading}</h3>
-            <p className="usa-alert-text">{error.text}</p>
+            <h3 className="usa-alert-heading">{error.title}</h3>
+            <p className="usa-alert-text">{error.detail}</p>
           </div>
         </div>}
       <div {...css({ display: 'flex',
@@ -90,24 +103,25 @@ class AssignWidget extends React.PureComponent {
   }
 }
 
-AssignWidget.propTypes = {
-  previousAssigneeId: PropTypes.string.isRequired,
-  onTaskAssignment: PropTypes.func.isRequired
+const mapStateToProps = (state) => {
+  const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
+  const error = state.ui.messages.error;
+
+  return {
+    attorneysOfJudge,
+    selectedAssigneeOfUser,
+    isTaskAssignedToUserSelected,
+    tasks,
+    error
+  };
 };
 
 export default connect(
-  (state) => {
-    const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
-    const error = state.ui.messages.error;
-
-    return { attorneysOfJudge,
-      selectedAssigneeOfUser,
-      isTaskAssignedToUserSelected,
-      tasks,
-      error };
-  },
-  (dispatch) => bindActionCreators({ setSelectedAssigneeOfUser,
+  mapStateToProps,
+  (dispatch) => bindActionCreators({
+    setSelectedAssigneeOfUser,
     initialAssignTasksToUser,
     showErrorMessage,
-    resetErrorMessages }, dispatch)
+    resetErrorMessages
+  }, dispatch)
 )(AssignWidget);
