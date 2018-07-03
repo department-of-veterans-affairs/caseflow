@@ -6,9 +6,9 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
-import * as caseDetailReducer from './CaseDetail/CaseDetailReducer';
+import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
-import * as uiReducer from './uiReducer/uiReducer';
+import uiReducer from './uiReducer/uiReducer';
 import type { QueueState, CaseDetailState, UiState } from './types';
 
 // TODO: Remove this when we move entirely over to the appeals search.
