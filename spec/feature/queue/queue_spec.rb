@@ -4,6 +4,7 @@ require "rails_helper"
 def click_dropdown(opt_idx, container = page)
   dropdown = container.find(".Select-control")
   dropdown.click
+  yield if block_given?
   dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
 end
 
@@ -485,24 +486,50 @@ RSpec.feature "Queue" do
 
   context "loads judge task detail views" do
     before do
+      FeatureToggle.enable!(:test_facols)
+      FeatureToggle.enable!(:judge_queue)
+      FeatureToggle.enable!(:judge_assignment)
       User.unauthenticate!
       User.authenticate!(css_id: "BVAAABSHIRE")
-      FeatureToggle.enable!(:judge_queue)
+      RequestStore[:current_user] = judge
     end
 
     after do
+      FeatureToggle.disable!(:test_facols)
       FeatureToggle.disable!(:judge_queue)
+      FeatureToggle.disable!(:judge_assignment)
       User.unauthenticate!
       User.authenticate!
     end
 
-    scenario "displays who prepared task" do
-      vacols_tasks = Fakes::QueueRepository.tasks_for_user current_user.css_id
+    let!(:attorney) do
+      User.create(
+        css_id: "BVASCASPER1",
+        station_id: User::BOARD_STATION_ID,
+        full_name: "Archibald Franzduke"
+      )
+    end
+    let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: judge.css_id, sdomainid: judge.css_id) }
+    let!(:vacols_case) do
+      create(
+        :case,
+        :assigned,
+        user: judge,
+        assigner: attorney,
+        correspondent: create(:correspondent, snamef: "Feffy", snamel: "Smeterino"),
+        document_id: "1234567890"
+      )
+    end
 
-      task = vacols_tasks.select { |a| a.assigned_by.first_name.present? }.first
+    scenario "displays who prepared task" do
+      tasks, appeals = LegacyWorkQueue.tasks_with_appeals(judge, "judge")
+
+      task = tasks.first
+      appeal = appeals.first
       visit "/queue"
 
-      click_on "#{task.veteran_full_name} (#{task.vbms_id})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id.sub('S', '')})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
@@ -849,7 +876,7 @@ RSpec.feature "Queue" do
       )
     end
     let!(:judge) { User.create(css_id: "BVAAABSHIRE", station_id: User::BOARD_STATION_ID) }
-    let!(:judge_staff) { create(:staff, :judge_role, slogid: "BVAAABSHIRE", sdomainid: judge.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: judge.css_id, sdomainid: judge.css_id) }
     let!(:vacols_cases) do
       [
         create(
@@ -885,7 +912,11 @@ RSpec.feature "Queue" do
       # TODO: appeal vbms_id ends w/S. better way to strip?
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
 
-      click_dropdown 0
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+      end
 
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
@@ -906,7 +937,7 @@ RSpec.feature "Queue" do
 
       click_on "Continue"
 
-      expect(page).to have_content("Thank you for reviewing #{appeal.veteran_full_name}'s decision.")
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
     end
 
     scenario "completes assign to omo checkout flow" do
@@ -919,9 +950,13 @@ RSpec.feature "Queue" do
 
       click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id[0..-2]})"
 
-      click_dropdown 1
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
+      end
 
-      expect(page).to have_content("You have successfully submitted an OMO for #{appeal.veteran_full_name}.")
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
     end
   end
 

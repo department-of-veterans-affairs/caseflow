@@ -10,11 +10,11 @@ FactoryBot.define do
     deprod nil
 
     trait :omo_request do
-      deprod Constants::DecassWorkProductTypes::OMO_REQUEST.sample
+      deprod Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].sample
     end
 
     trait :draft_decision do
-      deprod Constants::DecassWorkProductTypes::DRAFT_DECISION.sample
+      deprod Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].sample
     end
   end
 end
