@@ -9,71 +9,10 @@ import { ACTIONS } from './constants';
 import * as caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import * as uiReducer from './uiReducer/uiReducer';
+import type { QueueState, CaseDetailState, UiState } from './types';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
-
-export type DeprecatedTask = {
-  id: string
-};
-
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-
-export type Task = {
-  id: string,
-  vacolsId: string,
-  attributes: {
-    added_by_css_id: string,
-    added_by_name: string,
-    appeal_id: string,
-    assigned_by_first_name: string,
-    assigned_by_last_name: string,
-    assigned_on: string,
-    docket_date: string,
-    docket_name: string,
-    document_id: string,
-    due_on: string,
-    task_id: string,
-    task_type: string,
-    user_id: string
-  }
-};
-
-export type Tasks = { [string]: Task };
-
-export type LoadedQueueAppeals = { [string]: Object };
-
-export type TasksAndAppealsOfAttorney = {
-  [string]: {
-    state: string,
-    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals},
-    error: {status: number, response: Object}
-  }
-};
-
-export type AttorneysOfJudge = Array<Object>;
-
-export type QueueState = {
-  judges: Object,
-  tasks: Tasks,
-  loadedQueue: {
-    appeals: LoadedQueueAppeals,
-    tasks: LoadedQueueTasks,
-    loadedUserId: string
-  },
-  editingIssue: Object,
-  docCountForAppeal: {[string]: Object},
-  stagedChanges: {
-    appeals: {[string]: Object},
-    taskDecision: {
-      type: '',
-      opts: {}
-    }
-  },
-  attorneysOfJudge: AttorneysOfJudge,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
-};
 
 export const initialState = {
   judges: {},
@@ -436,11 +375,11 @@ const workQueueReducer = (state = initialState, action = {}) => {
 };
 
 export type State = {
-  caseDetail: caseDetailReducer.CaseDetailState,
+  caseDetail: CaseDetailState,
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
-  ui: uiReducer.UiState
+  ui: UiState
 };
 
 const rootReducer = combineReducers({

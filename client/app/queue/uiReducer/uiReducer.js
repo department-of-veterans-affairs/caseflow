@@ -2,31 +2,11 @@
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
+import type { UiState } from '../types';
 
 const initialSaveState = {
   savePending: false,
   saveSuccessful: null
-};
-
-export type UiStateError = {detail: string, title: string}
-
-export type UiState = {
-  selectingJudge: boolean,
-  breadcrumbs: Array<Object>,
-  highlightFormItems: boolean,
-  messages: {
-    success: ?string,
-    error: ?UiStateError
-  },
-  saveState: {
-    savePending: boolean,
-    saveSuccessful: ?boolean
-  },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
-  featureToggles: Object
 };
 
 export const initialState = {
