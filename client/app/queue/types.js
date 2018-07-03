@@ -87,3 +87,11 @@ export type QueueState = {
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
   isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
 };
+
+export type State = {
+  caseDetail: CaseDetailState,
+  caseList: Object,
+  caseSelect: Object,
+  queue: QueueState,
+  ui: UiState
+};

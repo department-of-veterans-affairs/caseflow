@@ -374,14 +374,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
 };
 
-export type State = {
-  caseDetail: CaseDetailState,
-  caseList: Object,
-  caseSelect: Object,
-  queue: QueueState,
-  ui: UiState
-};
-
 const rootReducer = combineReducers({
   caseDetail: caseDetailReducer,
   caseList: caseListReducer,
