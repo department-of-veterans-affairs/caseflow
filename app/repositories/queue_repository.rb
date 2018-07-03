@@ -156,7 +156,7 @@ class QueueRepository
 
     def update_location_to_attorney(vacols_id, attorney)
       vacols_case = VACOLS::Case.find(vacols_id)
-      fail "Attorney #{attorney.id} has a falsy vacols_uniq_id" unless attorney.vacols_uniq_id
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{attorney.vacols_uniq_id}\"" unless attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
     end
