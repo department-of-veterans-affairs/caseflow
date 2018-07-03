@@ -46,20 +46,20 @@ class HearingSchedule::GenerateHearingDaysSchedule
     business_days
   end
 
-  # Distributes the allocated days through out the scheduled period months based  
+  # Distributes the allocated days through out the scheduled period months based
   # on the weights (weights are calcuated based on the number of days in that period
   # for the month).
-  # 
-  # Decimal values are currenly converted to a full day for allocated days. 118.5 -> 119 
+  #
+  # Decimal values are currenly converted to a full day for allocated days. 118.5 -> 119
   #
   # Schedule period of (2018-Apr-01, 2018-Sep-30), allocated_days of (118.0) returns ->
   #   {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20}
   #
-  def monthly_distributed_days(ro_key)
+  def monthly_distributed_days(allocated_days)
     monthly_percentages = self.class.montly_percentage_for_period(@schedule_period.start_date,
                                                                   @schedule_period.end_date)
     self.class.weight_by_percentages(monthly_percentages).map do |month, weight|
-      [month, distribute(weight, @ros[ro_key][:allocated_days])]
+      [month, distribute(weight, allocated_days)]
     end.to_h
   end
 
@@ -73,14 +73,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   private
 
-  # 
+  #
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
     grouped_shuffled_monthly_dates = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
 
     monthly_allocations = self.class.evenly_distribute_monthly_allocations(
       grouped_monthly_avail_dates,
-      monthly_distributed_days(ro_key),
+      monthly_distributed_days(@ros[ro_key][:allocated_days]),
       @ros[ro_key][:num_of_rooms]
     )
 
@@ -119,7 +119,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   # grouped_shuffled_monthly_dates: is a hash with months as keys and date has with rooms array value
   # as values.
-  # 
+  #
   # rooms array is initally empty.
   #
   # Sample grouped_shuffled_monthly_dates -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}

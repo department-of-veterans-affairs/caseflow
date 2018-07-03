@@ -4,10 +4,9 @@ module HearingSchedule::RoDistribution
   end
 
   module ClassMethods
-    
     # Assigns a percentage for each month based on the number of days selected in the schedule period
     #
-    # For example: 
+    # For example:
     # (2018-Jan-01, 2018-Jun-30)
     # returns -> {[1, 2018]=>100.0, [2, 2018]=>100.0, [3, 2018]=>100.0, [4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
     #

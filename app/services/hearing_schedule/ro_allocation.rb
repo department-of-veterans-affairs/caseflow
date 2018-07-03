@@ -77,10 +77,10 @@ module HearingSchedule::RoAllocation
     end
 
     # Evens out the monthly allocated days that best divide by the number of rooms provided.
-    #  
+    #
     # Monlthly allocated days is converted to:
-    # {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20} 
-    # 
+    # {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20}
+    #
     # {[4, 2018]=>20, [9, 2018]=>20, [5, 2018]=>20, [8, 2018]=>18, [6, 2018]=>20, [7, 2018]=>20}
     #
     def evenly_distribute_monthly_allocations(grouped_monthly_avail_dates, monthly_allocated_days, num_of_rooms)
