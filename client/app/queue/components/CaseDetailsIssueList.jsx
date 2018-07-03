@@ -59,29 +59,33 @@ const ProgramListItem = (props) => <DescriptionListItem label="Program">
   {props.children ? ISSUE_INFO[props.children].description : null}
 </DescriptionListItem>;
 
+const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
+  if (codes.length && levels) {
+    const code = codes.shift();
+    const innerLevel = levels[code];
+
+    if (!innerLevel) {
+      return descriptions;
+    }
+
+    if (descriptions.length) {
+      descriptions.push(<br />);
+    }
+    descriptions.push(innerLevel.description);
+
+    return getDescriptionsFromCodes(innerLevel.levels, codes, descriptions);
+  }
+
+  return descriptions;
+};
+
 const IssueDescriptionsListItem = (props) => {
   if (!props.program || !props.children) {
     return null;
   }
 
-  const codes = props.children.slice();
-  let levels = ISSUE_INFO[props.program].levels;
-
-  // Recurse through ISSUE_INFO to get descriptions for the list of codes.
-  const descriptions = codes.reduce((elements, code) => {
-    if (elements.length) {
-      elements.push(<br key={code} />);
-    }
-
-    const descr = levels[code].description;
-
-    levels = levels[code].levels;
-
-    return [elements, descr];
-  }, []);
-
   return <DescriptionListItem label="Issue" styling={css({ display: 'table-cell' })}>
-    {descriptions}
+    {getDescriptionsFromCodes(ISSUE_INFO[props.program].levels, props.children.slice())}
   </DescriptionListItem>;
 };
 
