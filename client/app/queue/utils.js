@@ -30,7 +30,7 @@ export const associateTasksWithAppeals = (serverData: Object = {}) => {
     appeals: appealsById,
     tasks: tasksById
   };
-}
+};
 
 /*
 * Sorting hierarchy:
