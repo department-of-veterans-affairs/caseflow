@@ -68,7 +68,7 @@ export type UiState = {
   featureToggles: Object
 };
 
-export type IsTaskAssignedToUserSelected = {[string]: {[string]: {[string]: boolean}}};
+export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?{[string]: boolean}}};
 
 export type QueueState = {
   judges: Object,
