@@ -79,8 +79,8 @@ export type QueueState = {
   stagedChanges: {
     appeals: {[string]: Object},
     taskDecision: {
-      type: '',
-      opts: {}
+      type: string,
+      opts: Object
     }
   },
   attorneysOfJudge: AttorneysOfJudge,
