@@ -5,7 +5,8 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
+import RatedIssuesUnconnected from '../../components/RatedIssues';
+import IssueCounter from '../../components/IssueCounter';
 import { setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import { completeIntake } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
@@ -82,7 +83,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.higherLevelReview.selectedRatingCount}
+      disabled={!this.props.higherLevelReview.issueCount}
     >
       Establish EP
     </Button>;
@@ -99,11 +100,11 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
-const RatedIssueCounterConnected = connect(
+const IssueCounterConnected = connect(
   ({ higherLevelReview }) => ({
-    selectedRatingCount: higherLevelReview.selectedRatingCount
+    issueCount: higherLevelReview.issueCount
   })
-)(RatedIssueCounter);
+)(IssueCounter);
 
 const RatedIssues = connect(
   ({ higherLevelReview, intake }) => ({
@@ -120,7 +121,7 @@ export class FinishButtons extends React.PureComponent {
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
-      <RatedIssueCounterConnected />
+      <IssueCounterConnected />
     </div>
 }
 

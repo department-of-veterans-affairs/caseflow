@@ -62,7 +62,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
-    selectedRatingCount: 0,
+    issueCount: 0,
     nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -83,6 +83,38 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   if (!state.isStarted) {
     return state;
   }
+
+  const selectedIssues = _(state.nonRatedIssues).
+    filter((issue) => {
+      return issue.category && issue.description;
+    }).value().length + _(state.ratings).
+      map((rating) => {
+        return _.map(rating.issues, (issue) => {
+          return _.merge(issue, { profile_date: rating.profile_date });
+        });
+      }).
+      flatten().
+      filter('isSelected').value().length;
+
+  const nonRatedIssueCounter = () => {
+    let descriptionCounter = !state.nonRatedIssues[action.payload.issueId].description && state.nonRatedIssues[action.payload.issueId].category ? 1 : 0
+    let categoryCounter = state.nonRatedIssues[action.payload.issueId].description ? 1 : 0
+
+    console.log("description num::", descriptionCounter)
+    console.log("category num::", categoryCounter)
+
+    if (!action.payload.category && !action.payload.description) {
+      return -1
+    }
+
+    if (action.payload.description) {
+      return 1
+    }
+
+    if (action.payload.category) {
+      return 1
+    }
+  };
 
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
@@ -208,8 +240,8 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           }
         }
       },
-      selectedRatingCount: {
-        $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      issueCount: {
+        $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
   case ACTIONS.ADD_NON_RATED_ISSUE:
@@ -231,6 +263,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
             $set: action.payload.category
           }
         }
+      },
+      issueCount: {
+        $set: selectedIssues + nonRatedIssueCounter()
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -241,6 +276,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
             $set: action.payload.description
           }
         }
+      },
+      issueCount: {
+        $set: selectedIssues + nonRatedIssueCounter()
       }
     });
   default:

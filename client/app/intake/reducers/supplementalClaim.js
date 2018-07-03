@@ -41,7 +41,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
-    selectedRatingCount: 0,
+    issueCount: 0,
     nonRatedIssues: { },
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -163,8 +163,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           }
         }
       },
-      selectedRatingCount: {
-        $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      issueCount: {
+        $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
   case ACTIONS.ADD_NON_RATED_ISSUE:

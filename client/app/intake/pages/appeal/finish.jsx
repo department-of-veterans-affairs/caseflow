@@ -5,7 +5,8 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import { RatedIssuesUnconnected, RatedIssueCounter } from '../../components/RatedIssues';
+import RatedIssuesUnconnected from '../../components/RatedIssues';
+import IssueCounter from '../../components/IssueCounter';
 import { setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/common';
 import { completeIntake } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
@@ -92,7 +93,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.appeal.selectedRatingCount}
+      disabled={!this.props.appeal.issueCount}
     >
       Establish appeal
     </Button>;
@@ -109,18 +110,18 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
-const RatedIssueCounterConnected = connect(
+const IssueCounterConnected = connect(
   ({ appeal }) => ({
-    selectedRatingCount: appeal.selectedRatingCount
+    issueCount: appeal.issueCount
   })
-)(RatedIssueCounter);
+)(IssueCounter);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
-      <RatedIssueCounterConnected />
+      <IssueCounterConnected />
     </div>
 }
 
