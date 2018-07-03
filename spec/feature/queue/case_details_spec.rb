@@ -180,7 +180,7 @@ RSpec.feature "Case details" do
         appeal = vacols_appeals.first
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-        expect(page).to have_content("Disposition: 1 - Allowed")
+        expect(page.document.text).to match(/Disposition 1 - Allowed/i)
       end
     end
   end
