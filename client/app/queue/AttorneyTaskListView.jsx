@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,8 +20,19 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+import type { State, Tasks, LoadedQueueTasks, LoadedQueueAppeals } from './reducers';
 
-class AttorneyTaskListView extends React.PureComponent {
+class AttorneyTaskListView extends React.PureComponent<{
+  loadedQueueTasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  messages: Object,
+  showErrorMessage: Function,
+  resetSaveState: Function,
+  resetSuccessMessages: Function,
+  resetErrorMessages: Function,
+  clearCaseSelectSearch: Function
+}> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -72,7 +84,14 @@ AttorneyTaskListView.propTypes = {
   appeals: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: State): {|
+  appeals: LoadedQueueAppeals,
+  loadedQueueTasks: LoadedQueueTasks,
+  tasks: Tasks,
+  messages: Object,
+  taskDecision: Object,
+  judges: Object
+|} => {
   const {
     queue: {
       loadedQueue: {

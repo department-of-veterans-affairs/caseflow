@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,9 +8,15 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
+import type { State, Tasks, AttorneysOfJudge, TasksAndAppealsOfAttorney } from './reducers';
 import AssignWidget from '../components/AssignWidget';
 
-const AssignedCasesPage = (props) => {
+const AssignedCasesPage = (props: {|
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneysOfJudge: AttorneysOfJudge,
+  tasks: Tasks,
+  match: {params: {attorneyId: string}}
+|}) => {
   const {
     match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles
   } = props;
@@ -55,7 +62,11 @@ const AssignedCasesPage = (props) => {
   </React.Fragment>;
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: State): {|
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneysOfJudge: AttorneysOfJudge,
+  tasks: Tasks
+|} => {
   const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
   const { featureToggles } = state.ui;
 
