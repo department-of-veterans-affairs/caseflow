@@ -1,5 +1,4 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
 
 def click_dropdown(opt_idx, container = page)
   dropdown = container.find(".Select-control")
@@ -134,9 +133,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content("The veteran is the appellant.")
 
         expect(page).to have_content("She/Her")
-        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
-        # rubocop:enable Style/FormatStringToken
         expect(page).to have_content("The veteran is the appellant.")
       end
 
@@ -241,5 +238,3 @@ RSpec.feature "Case details" do
     end
   end
 end
-
-# rubocop:enable Style/FormatString

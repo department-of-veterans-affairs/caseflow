@@ -1,5 +1,4 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
 
 def click_dropdown(opt_idx, container = page)
   dropdown = container.find(".Select-control")
@@ -486,5 +485,3 @@ RSpec.feature "Checkout flows" do
     end
   end
 end
-
-# rubocop:enable Style/FormatString

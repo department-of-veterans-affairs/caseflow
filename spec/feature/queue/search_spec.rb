@@ -1,12 +1,6 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
 
-def click_dropdown(opt_idx, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-end
-
 RSpec.feature "Search" do
   before do
     Fakes::Initializer.load!
