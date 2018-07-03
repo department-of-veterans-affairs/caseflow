@@ -90,7 +90,7 @@ export type QueueState = {
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssigneeOfUser: SelectedAssigneeOfUser,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isVacolsIdAssignedToUserSelected: IsTaskAssignedToUserSelected
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
 };
 
 export type State = {

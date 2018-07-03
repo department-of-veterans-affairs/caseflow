@@ -14,7 +14,9 @@ import {
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import _ from 'lodash';
-import type { AttorneysOfJudge, SelectedAssigneeOfUser, IsTaskAssignedToUserSelected, Tasks, UiStateError } from '../queue/types';
+import type {
+  AttorneysOfJudge, SelectedAssigneeOfUser, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
+} from '../queue/types';
 
 class AssignWidget extends React.PureComponent<{|
   previousAssigneeId: string,
@@ -103,7 +105,7 @@ class AssignWidget extends React.PureComponent<{|
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
   const error = state.ui.messages.error;
 
