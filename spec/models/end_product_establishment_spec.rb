@@ -70,7 +70,7 @@ describe EndProductEstablishment do
         let(:reference_id) { "not matching" }
 
         it "raises EstablishedEndProductNotFound error" do
-          expect { subject }.to raise_error(EndProductEstablishmentA::EstablishedEndProductNotFound)
+          expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
         end
       end
     end
