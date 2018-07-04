@@ -1,6 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatRatingData, prepareReviewData } from '../util';
+import { formatIssues, prepareReviewData } from '../util';
 import _ from 'lodash';
 
 const analytics = true;
@@ -60,7 +60,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = formatRatingData(intakeData);
+  const data = formatIssues(intakeData);
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(

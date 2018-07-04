@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
+import { getReceiptDateError, formatRatings, formatIssues, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -84,35 +84,24 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     return state;
   }
 
-  const selectedIssues = _(state.nonRatedIssues).
-    filter((issue) => {
-      return issue.category && issue.description;
-    }).value().length + _(state.ratings).
-      map((rating) => {
-        return _.map(rating.issues, (issue) => {
-          return _.merge(issue, { profile_date: rating.profile_date });
-        });
-      }).
-      flatten().
-      filter('isSelected').value().length;
+  const selectedIssues = formatIssues(state).request_issues
+  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0
 
   const nonRatedIssueCounter = () => {
-    let descriptionCounter = !state.nonRatedIssues[action.payload.issueId].description && state.nonRatedIssues[action.payload.issueId].category ? 1 : 0
-    let categoryCounter = state.nonRatedIssues[action.payload.issueId].description ? 1 : 0
+    let currentIssue = state.nonRatedIssues[action.payload.issueId]
+    let descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0
+    let categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0
 
-    console.log("description num::", descriptionCounter)
-    console.log("category num::", categoryCounter)
-
-    if (!action.payload.category && !action.payload.description) {
+    if (selectedIssueCount && !action.payload.category && !action.payload.description) {
       return -1
     }
 
     if (action.payload.description) {
-      return 1
+      return descriptionCounter
     }
 
     if (action.payload.category) {
-      return 1
+      return categoryCounter
     }
   };
 
@@ -265,7 +254,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       },
       issueCount: {
-        $set: selectedIssues + nonRatedIssueCounter()
+        $set: selectedIssueCount + nonRatedIssueCounter()
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -278,7 +267,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       },
       issueCount: {
-        $set: selectedIssues + nonRatedIssueCounter()
+        $set: selectedIssueCount + nonRatedIssueCounter()
       }
     });
   default:

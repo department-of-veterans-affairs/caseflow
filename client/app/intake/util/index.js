@@ -49,7 +49,7 @@ export const formatRelationships = (relationships) => {
   });
 };
 
-export const formatRatingData = (intakeState) => {
+export const formatIssues = (intakeState) => {
   const ratingData = {
     request_issues:
       _(intakeState.ratings).
