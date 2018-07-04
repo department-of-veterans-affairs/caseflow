@@ -88,16 +88,22 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
+  def validate_co_non_availability_dates_formats
+    @co_spreadsheet_data.all? do |date|
+      date.instance_of?(Date) || date == "N/A"
+    end
+  end
+
+  def validate_co_non_availability_dates_in_range
+    @co_spreadsheet_data.all? do |date|
+      date == "N/A" || (date >= @start_date && date <= @end_date)
+    end
+  end
+
   def validate_co_non_availability_dates
-    unless @co_spreadsheet_data.all? { |date| date.instance_of?(Date) }
-      fail CoDatesNotCorrectFormat
-    end
-    unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
-      fail CoDatesNotUnique
-    end
-    unless @co_spreadsheet_data.all? { |date| date >= @start_date && date <= @end_date }
-      fail CoDatesNotInRange
-    end
+    fail CoDatesNotCorrectFormat unless validate_co_non_availability_dates_formats
+    fail CoDatesNotUnique unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
+    fail CoDatesNotInRange unless validate_co_non_availability_dates_in_range
     true
   end
 
