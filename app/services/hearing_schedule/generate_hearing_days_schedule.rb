@@ -8,9 +8,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   include HearingSchedule::RoDistribution
 
   class RoNonAvailableDaysNotProvided < StandardError; end
+  class NoDaysAvailableForRO < StandardError; end
 
-  attr_reader :available_days
-  attr_reader :ros
+  attr_reader :available_days, :ros
 
   MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
   MULTIPLE_NUM_OF_ROOMS = 2
@@ -73,12 +73,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   private
 
-  #
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
     grouped_shuffled_monthly_dates = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
 
-    monthly_allocations = self.class.evenly_distribute_monthly_allocations(
+    monthly_allocations = self.class.validate_and_evenly_distribute_monthly_allocations(
       grouped_monthly_avail_dates,
       monthly_distributed_days(@ros[ro_key][:allocated_days]),
       @ros[ro_key][:num_of_rooms]
@@ -128,11 +127,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
                                              grouped_shuffled_monthly_dates, num_of_rooms, date_index)
     # looping through all the monthly allocations
     monthly_allocations.each_key do |month|
-      allocated_days = monthly_allocations[month]
-      monthly_date_keys = grouped_shuffled_monthly_dates[month].keys
+      next if grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
 
-      if allocated_days > 0
-        if num_of_rooms <= allocated_days
+      allocated_days = monthly_allocations[month]
+      monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys
+      
+      if allocated_days > 0 &&
+         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
+        if (num_of_rooms <= allocated_days)
           # there are enough allocation days for the rooms avaiable, allocate the
           # to the number of rooms avaiable for the day
           grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
@@ -209,10 +211,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   def filter_non_available_ro_days
     @ros.each_key do |ro_key|
-      unless @ro_non_available_days[ro_key]
-        fail RoNonAvailableDaysNotProvided, "Non-availability days not provided for #{ro_key}"
-      end
+      fail RoNonAvailableDaysNotProvided, "Non-availability days not provided for #{ro_key}" unless @ro_non_available_days[ro_key]
       @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key].map(&:date) || [])
+      fail NoDaysAvailableForRO, "No available days for #{ro_key}" if @ros[ro_key][:available_days].empty?
     end
   end
 end
