@@ -40,15 +40,12 @@ export const associateTasksWithAppeals = (serverData: Object = {}) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: {[string]: Object}}) => {
-  const partitionedTasks = _.partition(tasks, (task) =>
+export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: {[string]: Object}}) => _(tasks).
+  partition((task) =>
     appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
-  );
-
-  _.each(partitionedTasks, _.reverse);
-
-  return partitionedTasks[0].concat(partitionedTasks[1]);
-};
+  ).
+  flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
+  value()
 
 export const renderAppealType = (appeal: {attributes: {aod: string, type: string}}) => {
   const {
