@@ -115,7 +115,6 @@ RSpec.feature "Search" do
 
       it "page displays table of results" do
         expect(page).to have_content("1 case found for")
-        byebug
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
