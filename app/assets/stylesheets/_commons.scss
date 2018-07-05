@@ -338,6 +338,12 @@ dd {
   &:hover {
     text-decoration: none;
   }
+
+  &.usa-button {
+    &::after {
+      background: image-url('icons/icon-down-arrow.svg') 50% 100% no-repeat;
+    }
+  }
 }
 
 // Quick fix to property count lint

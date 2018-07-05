@@ -155,7 +155,7 @@ class AppealRepository
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-      hearing_held: !case_record.bfha.nil?,
+      hearing_held: %w[1 2 6].include?(case_record.bfha),
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
@@ -168,7 +168,8 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum
+      docket_number: folder_record.tinum,
+      docket_date: case_record.bfd19
     )
 
     appeal

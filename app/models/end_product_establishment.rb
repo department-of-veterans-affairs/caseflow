@@ -1,6 +1,8 @@
 class EndProductEstablishment
   include ActiveModel::Model
 
+  class EstablishedEndProductNotFound < StandardError; end
+
   attr_accessor :veteran, :reference_id, :claim_date, :code, :valid_modifiers, :station, :cached_status
 
   class InvalidEndProductError < StandardError; end
@@ -13,6 +15,11 @@ class EndProductEstablishment
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  end
+
+  # Fetch the resulting end product from the reference_id
+  def result
+    @result ||= fetch_result
   end
 
   def description
@@ -45,6 +52,17 @@ class EndProductEstablishment
       gulf_war_registry: false,
       station_of_jurisdiction: station
     )
+  end
+
+  def fetch_result
+    return nil unless reference_id
+
+    result = veteran.end_products.find do |end_product|
+      end_product.claim_id == reference_id
+    end
+
+    fail EstablishedEndProductNotFound unless result
+    result
   end
 
   def end_product_modifier
