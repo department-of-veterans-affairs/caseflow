@@ -83,6 +83,26 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
+export const nonRatedIssueCounter = (state, action) => {
+  const selectedIssues = formatIssues(state).request_issues;
+  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0;
+  const currentIssue = state.nonRatedIssues[action.payload.issueId];
+  const descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0;
+  const categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0;
+
+  if (selectedIssueCount && !action.payload.category && !action.payload.description) {
+    return selectedIssueCount - 1;
+  }
+
+  if (action.payload.description) {
+    return selectedIssueCount + descriptionCounter;
+  }
+
+  if (action.payload.category) {
+    return selectedIssueCount + categoryCounter;
+  }
+}
+
 export const prepareReviewData = (intakeData, intakeType) => {
   switch (intakeType) {
   case 'appeal':

@@ -17,7 +17,7 @@ export default class RatedIssuesUnconnected extends React.PureComponent {
             label={issue.decision_text}
             name={issue.reference_id}
             key={issue.reference_id}
-            value={issue.isSelected}
+            value={issue.isSelected || false}
             onChange={this.onCheckIssue(rating.profile_date, issue.reference_id)}
             unpadded
           />

@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -186,6 +186,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
             $set: action.payload.category
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -196,6 +199,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
             $set: action.payload.description
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   default:

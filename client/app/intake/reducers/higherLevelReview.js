@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatIssues, formatRelationships } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -83,27 +83,6 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   if (!state.isStarted) {
     return state;
   }
-
-  const selectedIssues = formatIssues(state).request_issues
-  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0
-
-  const nonRatedIssueCounter = () => {
-    let currentIssue = state.nonRatedIssues[action.payload.issueId]
-    let descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0
-    let categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0
-
-    if (selectedIssueCount && !action.payload.category && !action.payload.description) {
-      return -1
-    }
-
-    if (action.payload.description) {
-      return descriptionCounter
-    }
-
-    if (action.payload.category) {
-      return categoryCounter
-    }
-  };
 
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
@@ -254,7 +233,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       },
       issueCount: {
-        $set: selectedIssueCount + nonRatedIssueCounter()
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -267,7 +246,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       },
       issueCount: {
-        $set: selectedIssueCount + nonRatedIssueCounter()
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   default:

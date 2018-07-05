@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships } from '../util';
+import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -204,6 +204,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             $set: action.payload.category
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -214,6 +217,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             $set: action.payload.description
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   default:
