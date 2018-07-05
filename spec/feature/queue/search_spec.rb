@@ -7,7 +7,15 @@ RSpec.feature "Search" do
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
-  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+  let!(:appeal) do
+    FactoryBot.create(
+      :legacy_appeal,
+      :with_veteran,
+      veteran_first_name: "Lowell",
+      veteran_last_name: "Wood",
+      vacols_case: FactoryBot.create(:case)
+    )
+  end
 
   before do
     FeatureToggle.enable!(:queue_phase_two)
@@ -102,7 +110,7 @@ RSpec.feature "Search" do
           :legacy_appeal,
           vacols_case: FactoryBot.create(
             :case,
-            folder: FactoryBot.create(:folder, :paper_case)
+            folder: FactoryBot.build(:folder, :paper_case)
           )
         )
       end
