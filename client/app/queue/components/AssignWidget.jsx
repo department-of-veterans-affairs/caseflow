@@ -7,16 +7,16 @@ import {
   resetErrorMessages,
   showErrorMessage,
   setSelectedAssignee
-} from '../queue/uiReducer/uiActions';
+} from '../uiReducer/uiActions';
 import {
   initialAssignTasksToUser
-} from '../queue/QueueActions';
-import SearchableDropdown from '../components/SearchableDropdown';
-import Button from '../components/Button';
+} from '../QueueActions';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
-} from '../queue/types';
+} from '../types';
 
 type Props = {|
   // Parameters
