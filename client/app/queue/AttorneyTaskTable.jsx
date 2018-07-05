@@ -64,7 +64,7 @@ class AttorneyTaskTable extends React.PureComponent {
         diff(moment(task.attributes.assigned_on), 'days');
 
       return <React.Fragment>
-        {daysWaiting} {pluralize('days', daysWaiting)} - <DateString date={task.attributes.due_on} />
+        {daysWaiting} {pluralize('day', daysWaiting)} - <DateString date={task.attributes.due_on} />
       </React.Fragment>;
     },
     span: this.collapseColumnIfNoDASRecord
