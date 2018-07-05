@@ -60,8 +60,8 @@ class CaseDetailsView extends React.PureComponent {
       <CaseDetailsIssueList
         title="Issues"
         isLegacyAppeal={this.props.appeal.attributes.is_legacy_appeal}
-        issues={this.props.appeal.attributes.issues} 
-        />
+        issues={this.props.appeal.attributes.issues}
+      />
       <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
       { this.props.appeal.attributes.hearings.length &&
       <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }

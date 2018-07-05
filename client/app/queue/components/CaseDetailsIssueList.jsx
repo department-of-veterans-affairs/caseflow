@@ -27,8 +27,8 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        { props.isLegacyAppeal ? 
-          <LegacyIssueDetails>{issue}</LegacyIssueDetails> : 
+        { props.isLegacyAppeal ?
+          <LegacyIssueDetails>{issue}</LegacyIssueDetails> :
           <AmaIssueDetails>{issue}</AmaIssueDetails>
         }
       </div>
