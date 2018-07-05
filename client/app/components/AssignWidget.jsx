@@ -33,8 +33,8 @@ class AssignWidget extends React.PureComponent<{|
 |}> {
   selectedTasks = () => {
     return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || [],
-      (selected, id) => (selected ? [this.props.tasks[id]] : []));
+      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
+      (selected, id) => (selected ? [this.props.tasks[1]] : []));
   }
 
   handleButtonClick = () => {
