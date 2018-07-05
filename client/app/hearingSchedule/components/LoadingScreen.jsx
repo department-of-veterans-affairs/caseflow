@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { onReceivePastUploads } from '../actions';
+import { onReceivePastUploads, onReceiveHearingSchedule } from '../actions';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
@@ -21,9 +21,30 @@ class LoadingScreen extends React.PureComponent {
     });
   };
 
-  createLoadPromise = () => Promise.all([
-    this.loadPastUploads()
-  ]);
+  loadHearingSchedule = () => {
+    if (!_.isEmpty(this.props.hearingSchedule)) {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get('/hearings/hearing_day.json').then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const hearingDays = _.keyBy(resp["hearings"], 'id');
+
+      this.props.onReceiveHearingSchedule(hearingDays);
+    });
+  };
+
+  createLoadPromise = () => {
+    if (this.props.children.type.WrappedComponent.name == "ListScheduleContainer") {
+      return Promise.all([
+        this.loadHearingSchedule()
+      ]);
+    }else {
+       return Promise.all([
+        this.loadPastUploads()
+      ]);
+    }
+  }
 
   render = () => {
     const loadingDataDisplay = <LoadingDataDisplay
@@ -45,7 +66,8 @@ class LoadingScreen extends React.PureComponent {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceivePastUploads
+  onReceivePastUploads,
+  onReceiveHearingSchedule
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen);

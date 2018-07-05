@@ -1,12 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import { BrowserRouter } from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
-import { LOGO_COLORS } from '../constants/AppConstants';
+import {LOGO_COLORS} from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
@@ -16,14 +16,15 @@ import LoadingScreen from './components/LoadingScreen';
 class HearingScheduleApp extends React.PureComponent {
 
   buildSchedule = () => <LoadingScreen>
-    <BuildScheduleContainer />
+    <BuildScheduleContainer/>
   </LoadingScreen>;
 
-    listSchedule = () => <LoadingScreen>
-        <ListScheduleContainer />
-    </LoadingScreen>;
   buildScheduleUpload = () => <LoadingScreen>
-    <BuildScheduleUploadContainer />
+    <BuildScheduleUploadContainer/>
+  </LoadingScreen>;
+
+  listSchedule = () => <LoadingScreen>
+    <ListScheduleContainer/>
   </LoadingScreen>;
 
   render = () => <BrowserRouter>
@@ -37,7 +38,7 @@ class HearingScheduleApp extends React.PureComponent {
       }}
       appName="Hearing Schedule">
       <AppFrame wideApp>
-        <ScrollToTop />
+        <ScrollToTop/>
         <div className="cf-wide-app">
           <PageRoute
             exact
@@ -45,12 +46,12 @@ class HearingScheduleApp extends React.PureComponent {
             title="Caseflow Hearing Schedule"
             render={this.buildSchedule}
           />
-            <PageRoute
-                exact
-                path="/hearings/schedule_periods"
-                title="Caseflow"
-                render={this.listSchedule}
-            />
+          <PageRoute
+            exact
+            path="/hearings/schedule_periods"
+            title="Caseflow"
+            render={this.listSchedule}
+          />
           <PageRoute
             exact
             path="/hearings/schedule/build/upload"

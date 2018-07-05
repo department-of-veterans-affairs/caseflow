@@ -1,109 +1,73 @@
 import React from 'react';
 import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import {formatDate} from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import DropdownButton from '../../components/DropdownButton';
-import { downloadIcon } from '../../components/RenderFunctions';
-import { COLORS } from '../../constants/AppConstants';
-
-const schedulePeriodMapper = {
-  RoSchedulePeriod: 'RO/CO',
-  JudgeSchedulePeriod: 'Judge'
-};
 
 export default class ListSchedule extends React.Component {
 
   render() {
     const {
-      pastUploads
+      hearingSchedule
     } = this.props;
 
-    const downloadOptions = [
-      {
-        title: 'RO/CO Oscar hearings',
-        target: '/ROAssignmentTemplate.xlsx'
-      },
-      {
-        title: 'Judge non-availability',
-        target: '/JudgeAssignmentTemplate.xlsx'
-      }
-    ];
-
-    const pastUploadsColumns = [
+    const hearingScheduleColumns = [
       {
         header: 'Date',
         align: 'left',
-        valueName: 'date'
+        valueName: 'hearingDate'
       },
       {
         header: 'Type',
         align: 'left',
-        valueName: 'type'
+        valueName: 'hearingType'
       },
       {
-        header: 'Uploaded',
+        header: 'Regional Office',
         align: 'left',
-        valueName: 'uploaded'
+        valueName: 'regionalOffice'
       },
       {
-        header: 'Uploaded by',
+        header: 'Room',
         align: 'left',
-        valueName: 'uploadedBy'
+        valueName: 'room'
       },
       {
-        header: '',
+        header: 'VLJ',
         align: 'left',
-        valueName: 'download'
+        valueName: 'vlj'
       }
     ];
 
-    const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
-      date: `${formatDate(pastUpload.startDate)} - ${formatDate(pastUpload.endDate)}`,
-      type: schedulePeriodMapper[pastUpload.type],
-      uploaded: formatDate(pastUpload.createdAt),
-      uploadedBy: pastUpload.userFullName,
-      download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
-    }));
+    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
+        hearingDate: `${formatDate(hearingDay.hearingDate)}`,
+        hearingType: hearingDay.hearingType,
+        regionalOffice: hearingDay.folderNr,
+        room: hearingDay.roomInfo,
+        vlj: hearingDay.judgeId
+      }
+    ));
 
     return <AppSegment filledBackground>
-      <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
-      <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
-      <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
-      <DropdownButton
-        lists={downloadOptions}
-        label={COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK}
-      />
-      <Link
-        name="upload-files"
-        button="primary"
-        target="_blank">
-        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
-      </Link>
-      <div className="cf-help-divider"></div>
-      <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
-      <Link
-        name="view-schedule">
-        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
-        columns={pastUploadsColumns}
-        rowObjects={pastUploadsRows}
-        summary="past-uploads"
+        columns={hearingScheduleColumns}
+        rowObjects={hearingScheduleRows}
+        summary="hearing-schedule"
       />
     </AppSegment>;
   }
 }
 
 ListSchedule.propTypes = {
-  pastUploads: PropTypes.shape({
-    type: PropTypes.string,
-    userFullName: PropTypes.string,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-    createdAt: PropTypes.string,
-    fileName: PropTypes.string
+  hearingSchedule: PropTypes.shape({
+    hearingDate: PropTypes.string,
+    hearingType: PropTypes.string,
+    folderNr: PropTypes.string,
+    roomInfo: PropTypes.string,
+    judgeId: PropTypes.string,
+    updatedOn: PropTypes.string,
+    updatedBy: PropTypes.string
   })
 };

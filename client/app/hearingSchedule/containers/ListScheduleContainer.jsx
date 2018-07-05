@@ -1,18 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ListSchedule from '../components/ListSchedule';
+import { onReceiveHearingSchedule } from '../actions'
 
 export class ListScheduleContainer extends React.Component {
+  componentDidMount = () => {
+
+  }
 
   render() {
     return <ListSchedule
-      pastUploads={this.props.pastUploads}
+      hearingSchedule={this.props.hearingSchedule}
     />;
   }
 }
 
 const mapStateToProps = (state) => ({
-  pastUploads: state.pastUploads
+  hearingSchedule: state.hearingSchedule
 });
 
 export default connect(mapStateToProps)(ListScheduleContainer);

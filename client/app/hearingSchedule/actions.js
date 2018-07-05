@@ -13,3 +13,10 @@ export const onFileTypeChange = (fileType) => ({
     fileType
   }
 });
+
+export const onReceiveHearingSchedule = (hearingSchedule) => ({
+  type: ACTIONS.RECEIVE_HEARING_SCHEDULE,
+  payload: {
+    hearingSchedule
+  }
+});
