@@ -434,7 +434,7 @@ ActiveRecord::Schema.define(version: 20180705173803) do
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
-    t.string "partial_closure_issue_ids", array: true
+    t.string "partial_closure_issue_sequence_ids", array: true
     t.datetime "closed_on"
   end
 
