@@ -19,13 +19,16 @@ import type {
 } from '../queue/types';
 
 class AssignWidget extends React.PureComponent<{|
+  // Parameters
   previousAssigneeId: string,
   onTaskAssignment: Function,
+  // From state
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssigneeOfUser: SelectedAssigneeOfUser,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   tasks: Tasks,
   error: ?UiStateError,
+  // Action creators
   setSelectedAssigneeOfUser: Function,
   initialAssignTasksToUser: Function,
   showErrorMessage: (UiStateError) => void,
