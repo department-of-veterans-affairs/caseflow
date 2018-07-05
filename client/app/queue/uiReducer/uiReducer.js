@@ -11,7 +11,6 @@ const initialSaveState = {
 
 export const initialState = {
   selectingJudge: false,
-  breadcrumbs: [],
   highlightFormItems: false,
   messages: {
     success: null,
@@ -58,24 +57,6 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       selectingJudge: { $set: action.payload.selectingJudge }
-    });
-  case ACTIONS.PUSH_BREADCRUMB:
-    return update(state, {
-      breadcrumbs: {
-        $push: action.payload.crumbs
-      }
-    });
-  case ACTIONS.POP_BREADCRUMB:
-    return update(state, {
-      breadcrumbs: {
-        $set: _.dropRight(state.breadcrumbs, action.payload.crumbsToDrop)
-      }
-    });
-  case ACTIONS.RESET_BREADCRUMBS:
-    return update(state, {
-      breadcrumbs: {
-        $set: []
-      }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {

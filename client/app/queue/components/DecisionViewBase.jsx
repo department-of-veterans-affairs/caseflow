@@ -6,8 +6,6 @@ import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
 import {
-  pushBreadcrumb,
-  popBreadcrumb,
   highlightInvalidFormItems,
   showModal,
   hideModal
@@ -17,7 +15,6 @@ import {
   resetDecisionOptions
 } from '../QueueActions';
 
-import Breadcrumbs from './BreadcrumbManager';
 import DecisionViewFooter from './DecisionViewFooter';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Modal from '../../components/Modal';
@@ -37,25 +34,6 @@ export default function decisionViewBase(ComponentToWrap) {
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref })
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
-
-    updateBreadcrumbs = () => {
-      if (!this.state.wrapped.getBreadcrumb) {
-        return;
-      }
-
-      const breadcrumb = this.state.wrapped.getBreadcrumb();
-      const renderedCrumbs = _.map(this.props.breadcrumbs, 'path');
-      const newCrumbIdx = renderedCrumbs.indexOf(breadcrumb.path);
-
-      if (newCrumbIdx === -1) {
-        this.props.pushBreadcrumb(breadcrumb);
-      } else if (newCrumbIdx < (renderedCrumbs.length - 1)) {
-        // if returning to an earlier page, remove later crumbs
-        const crumbsToPop = renderedCrumbs.length - (newCrumbIdx + 1);
-
-        this.props.popBreadcrumb(crumbsToPop);
-      }
-    };
 
     getFooterButtons = () => {
       const cancelButton = {
@@ -100,20 +78,11 @@ export default function decisionViewBase(ComponentToWrap) {
     }
 
     goToPrevStep = () => {
-      const { breadcrumbs, prevStep } = this.props;
+      const { prevStep } = this.props;
       const prevStepHook = _.get(this.state.wrapped, 'goToPrevStep');
 
       if (!prevStepHook || prevStepHook()) {
-        // If the wrapped component has no prevStep prop, return to the
-        // path of the previous page (the penultimate breadcrumb)
-        const prevStepCrumb = breadcrumbs[breadcrumbs.length - 2];
-        const prevStepUrl = prevStep || prevStepCrumb.path;
-
-        if (!prevStep) {
-          this.props.popBreadcrumb();
-        }
-
-        return this.props.history.push(prevStepUrl);
+        return this.props.history.push(prevStep);
       }
     };
 
@@ -146,8 +115,6 @@ export default function decisionViewBase(ComponentToWrap) {
     };
 
     componentDidUpdate = (prevProps) => {
-      this.updateBreadcrumbs();
-
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
           this.props.history.push(this.getNextStepUrl());
@@ -158,7 +125,6 @@ export default function decisionViewBase(ComponentToWrap) {
     }
 
     render = () => <React.Fragment>
-      <Breadcrumbs />
       {this.props.cancelCheckoutModal && <div className="cf-modal-scroll">
         <Modal
           title="Are you sure you want to cancel?"
@@ -187,13 +153,10 @@ export default function decisionViewBase(ComponentToWrap) {
 
   const mapStateToProps = (state) => ({
     cancelCheckoutModal: state.ui.modal.cancelCheckout,
-    ..._.pick(state.ui, 'breadcrumbs'),
     ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful'),
     stagedAppeals: _.keys(state.queue.stagedChanges.appeals)
   });
   const mapDispatchToProps = (dispatch) => bindActionCreators({
-    pushBreadcrumb,
-    popBreadcrumb,
     highlightInvalidFormItems,
     showModal,
     hideModal,

@@ -12,7 +12,6 @@ import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
-import { setBreadcrumbs } from './uiReducer/uiActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -25,14 +24,6 @@ const labelForLocation = (locationCode) => {
 class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
-  setActiveAppealAndBreadcrumbs = (appeal) => {
-    this.props.setActiveAppeal(appeal);
-    this.props.setBreadcrumbs({
-      breadcrumb: sprintf(COPY.BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.attributes.veteran_full_name),
-      path: window.location.pathname
-    });
-  }
-
   getColumns = () => [
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
@@ -40,7 +31,7 @@ class CaseListTable extends React.PureComponent {
         <CaseDetailsLink
           appeal={appeal}
           getLinkText={() => appeal.attributes.docket_number}
-          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)} />
+          onClick={() => this.props.setActiveAppeal(appeal)} />
       </React.Fragment>
     },
     {
@@ -81,8 +72,7 @@ CaseListTable.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal,
-  setBreadcrumbs
+  setActiveAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);

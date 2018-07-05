@@ -318,18 +318,11 @@ RSpec.feature "Search" do
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
 
-      it "clicking on back breadcrumb from detail view sends us to search results page" do
+      it "clicking on caseflow link from detail view sends us to empty search home page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
 
-        click_on sprintf(COPY::BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.veteran_full_name)
-        expect(page).to have_content("1 case found for")
-        expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-        expect(page.current_path).to match(/^\/cases\/\d+$/)
-      end
-
-      it "clicking on back breadcrumb sends us to empty search home page", skip: "the test is non-deterministic" do
-        page.find("h1").find("a").click
+        click_on "Caseflow"
         expect(page).to have_content(search_homepage_title)
         expect(page).to have_content(search_homepage_subtitle)
         expect(page.current_path).to eq("/")

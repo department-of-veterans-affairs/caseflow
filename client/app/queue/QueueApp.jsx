@@ -14,7 +14,6 @@ import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
-import Breadcrumbs from './components/BreadcrumbManager';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
@@ -69,7 +68,6 @@ class QueueApp extends React.PureComponent {
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
-    <Breadcrumbs />
     <CaseDetailsView vacolsId={props.match.params.vacolsId} />
   </QueueLoadingScreen>;
 

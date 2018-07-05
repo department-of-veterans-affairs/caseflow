@@ -51,11 +51,6 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.vacolsId}/dispositions`
-  });
-
   getNextStepUrl = () => {
     const {
       vacolsId,
