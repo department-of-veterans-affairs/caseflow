@@ -31,7 +31,7 @@ FactoryBot.define do
     end
 
     trait :co_located_role do
-      stitle ["A1", "A2"].sample
+      stitle %w[A1 A2].sample
       sactive "A"
     end
 
