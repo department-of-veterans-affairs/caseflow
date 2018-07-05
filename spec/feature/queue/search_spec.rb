@@ -2,74 +2,26 @@ require "rails_helper"
 # rubocop:disable Style/FormatString
 
 RSpec.feature "Search" do
+  let(:attorney_user) { FactoryBot.create(:user) }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+  let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
+  let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
+  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+
   before do
-    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
+    FeatureToggle.enable!(:test_facols)
+
+    User.authenticate!(user: attorney_user)
   end
 
   after do
+    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_phase_two)
   end
 
-  let(:documents) do
-    [
-      Generators::Document.create(
-        filename: "My BVA Decision",
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: 6,
-        category_procedural: true,
-        tags: [
-          Generators::Tag.create(text: "New Tag1"),
-          Generators::Tag.create(text: "New Tag2")
-        ],
-        description: Generators::Random.word_characters(50)
-      ),
-      Generators::Document.create(
-        filename: "My Form 9",
-        type: "Form 9",
-        received_at: 5.days.ago,
-        vbms_document_id: 4,
-        category_medical: true,
-        category_other: true
-      ),
-      Generators::Document.create(
-        filename: "My NOD",
-        type: "NOD",
-        received_at: 1.day.ago,
-        vbms_document_id: 3
-      )
-    ]
-  end
-  let(:vacols_record) { :remand_decided }
-  let(:appeals) do
-    [
-      Generators::LegacyAppeal.build(
-        vbms_id: "123456789S",
-        vacols_record: vacols_record,
-        documents: documents
-      ),
-      Generators::LegacyAppeal.build(
-        vbms_id: "115555555S",
-        vacols_record: vacols_record,
-        documents: documents,
-        issues: []
-      )
-    ]
-  end
-  let!(:issues) { [Generators::Issue.build] }
-  let! :attorney_user do
-    User.authenticate!(roles: ["System Admin"])
-  end
-
-  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
-
   context "queue case search for appeals using veteran id" do
-    let(:appeal) { appeals.first }
-    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
-    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
-
     context "when invalid Veteran ID input" do
       before do
         visit "/queue"
@@ -91,20 +43,20 @@ RSpec.feature "Search" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(page).to_not have_content("1 case found for")
       end
     end
 
     context "when no appeals found" do
       before do
         visit "/queue"
-        fill_in "searchBar", with: veteran_id_with_no_appeals
+        fill_in "searchBar", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals)
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -118,7 +70,7 @@ RSpec.feature "Search" do
 
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
-        expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+        expect(page).to_not have_content("1 case found for")
       end
     end
 
@@ -135,14 +87,18 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar produces another error" do
-        fill_in "searchBar", with: veteran_id_with_no_appeals
+        fill_in "searchBar", with: veteran_with_no_appeals.file_number
         click_on "Search"
 
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+        )
       end
     end
 
     context "when one appeal found" do
+      let!(:paper_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :paper_case)) }
+
       before do
         visit "/queue"
         fill_in "searchBar", with: appeal.sanitized_vbms_id
@@ -166,33 +122,31 @@ RSpec.feature "Search" do
       it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
-
         expect(page).not_to have_content "Select an action"
       end
 
       scenario "found appeal is paper case" do
         visit "/queue"
-        fill_in "searchBar", with: "384920173S"
+        fill_in "searchBar", with: paper_appeal.sanitized_vbms_id
         click_on "Search"
 
-        expect(page).to have_content("1 case found for “Polly A Carter (384920173)”")
+        expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::IS_PAPER_CASE)
       end
     end
   end
 
   context "case search from home page" do
-    let(:appeal) { appeals.first }
-    let!(:veteran_id_with_no_appeals) { Generators::Random.unique_ssn }
-    let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
 
+    let(:non_queue_user) { FactoryBot.create(:user) }
+
     before do
-      User.unauthenticate!
-      User.authenticate!(css_id: "BVAAABSHIRE")
       FeatureToggle.enable!(:case_search_home_page)
+      User.authenticate!(user: non_queue_user)
     end
+
     after do
       FeatureToggle.disable!(:case_search_home_page)
     end
@@ -236,13 +190,13 @@ RSpec.feature "Search" do
     context "when no appeals found" do
       before do
         visit "/"
-        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_id_with_no_appeals)
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -284,9 +238,11 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: veteran_id_with_no_appeals
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_id_with_no_appeals))
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+        )
       end
 
       it "clicking on the x in the search bar returns browser to queue list page" do
