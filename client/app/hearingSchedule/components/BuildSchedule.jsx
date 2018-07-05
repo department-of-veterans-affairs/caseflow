@@ -80,7 +80,7 @@ export default class BuildSchedule extends React.Component {
       <Link
         name="upload-files"
         button="primary"
-        target="_blank">
+        to="/hearings/schedule/build/upload">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
       </Link>
       <div className="cf-help-divider"></div>
