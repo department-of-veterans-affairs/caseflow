@@ -27,13 +27,20 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        <IssueDetails>{issue}</IssueDetails>
+        { props.isLegacyAppeal ? 
+          <LegacyIssueDetails>{issue}</LegacyIssueDetails> : 
+          <AmaIssueDetails>{issue}</AmaIssueDetails>
+        }
       </div>
     )}
   </React.Fragment>;
 }
 
-const IssueDetails = (props) => {
+const AmaIssueDetails = (props) => <CaseDetailsDescriptionList>
+  <dt>Description</dt><dd>{props.children.description}</dd>
+</CaseDetailsDescriptionList>;
+
+const LegacyIssueDetails = (props) => {
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
   const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;
@@ -45,8 +52,6 @@ const IssueDetails = (props) => {
     <IssueDiagnosticCodeListItem>{diagnosticCode}</IssueDiagnosticCodeListItem>
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
-    {/* Following items should only appear for AMA appeals */}
-    <IssueDescriptionListItem>{issue.description}</IssueDescriptionListItem>
   </CaseDetailsDescriptionList>;
 };
 
@@ -99,8 +104,4 @@ const IssueNoteListItem = (props) => <DescriptionListItem label="Note" styling={
 
 const IssueDispositionListItem = (props) => <DescriptionListItem label="Disposition">
   {dispositionLabelForDescription(props.children)}
-</DescriptionListItem>;
-
-const IssueDescriptionListItem = (props) => <DescriptionListItem label="Description">
-  {props.children}
 </DescriptionListItem>;
