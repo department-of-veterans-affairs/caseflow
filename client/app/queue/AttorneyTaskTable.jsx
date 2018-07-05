@@ -53,6 +53,7 @@ class AttorneyTaskTable extends React.PureComponent {
     span: this.collapseColumnIfNoDASRecord
   }, {
     header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
+    tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
     valueFunction: (task) => {
       if (!task.attributes.task_id) {
         return null;
