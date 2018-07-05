@@ -18,7 +18,7 @@ import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../queue/types';
 
-class AssignWidget extends React.PureComponent<{|
+type Props = {|
   // Parameters
   previousAssigneeId: string,
   onTaskAssignment: Function,
@@ -33,7 +33,9 @@ class AssignWidget extends React.PureComponent<{|
   initialAssignTasksToUser: Function,
   showErrorMessage: (UiStateError) => void,
   resetErrorMessages: Function
-|}> {
+|};
+
+class AssignWidget extends React.PureComponent<Props> {
   selectedTasks = () => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
