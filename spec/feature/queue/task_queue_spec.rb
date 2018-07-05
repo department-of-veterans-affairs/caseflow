@@ -34,7 +34,12 @@ RSpec.feature "Task queue" do
     FactoryBot.create(
       :legacy_appeal,
       :with_veteran,
-      vacols_case: FactoryBot.create(:case, :paper_case, :assigned, user: attorney_user)
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        user: attorney_user,
+        folder: FactoryBot.build(:folder, :paper_case)
+      )
     )
   end
 
