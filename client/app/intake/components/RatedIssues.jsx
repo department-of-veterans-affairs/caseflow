@@ -2,9 +2,8 @@ import React from 'react';
 import Checkbox from '../../components/Checkbox';
 import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
-import pluralize from 'pluralize';
 
-export class RatedIssuesUnconnected extends React.PureComponent {
+export default class RatedIssuesUnconnected extends React.PureComponent {
   onCheckIssue = (profileDate, issueId) => (checked) => this.props.setIssueSelected(profileDate, issueId, checked)
 
   render() {
@@ -18,7 +17,7 @@ export class RatedIssuesUnconnected extends React.PureComponent {
             label={issue.decision_text}
             name={issue.reference_id}
             key={issue.reference_id}
-            value={issue.isSelected}
+            value={issue.isSelected || false}
             onChange={this.onCheckIssue(rating.profile_date, issue.reference_id)}
             unpadded
           />
@@ -40,11 +39,4 @@ export class RatedIssuesUnconnected extends React.PureComponent {
       { ratedIssuesSections }
     </div>;
   }
-}
-
-export class RatedIssueCounter extends React.PureComponent {
-  render = () =>
-    <div className="cf-selected-issues">
-      <span>{ this.props.selectedRatingCount }</span> rated { pluralize('issue', this.props.selectedRatingCount) }
-    </div>
 }
