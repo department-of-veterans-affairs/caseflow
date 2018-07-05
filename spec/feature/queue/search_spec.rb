@@ -7,15 +7,7 @@ RSpec.feature "Search" do
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
-  let!(:appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      veteran_first_name: "Lowell",
-      veteran_last_name: "Wood",
-      vacols_case: FactoryBot.create(:case)
-    )
-  end
+  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
 
   before do
     FeatureToggle.enable!(:queue_phase_two)
@@ -123,6 +115,7 @@ RSpec.feature "Search" do
 
       it "page displays table of results" do
         expect(page).to have_content("1 case found for")
+        byebug
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
