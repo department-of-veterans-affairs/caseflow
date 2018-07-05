@@ -97,7 +97,15 @@ RSpec.feature "Search" do
     end
 
     context "when one appeal found" do
-      let!(:paper_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :paper_case)) }
+      let!(:paper_appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          vacols_case: FactoryBot.create(
+            :case,
+            folder: FactoryBot.create(:folder, :paper_case)
+          )
+        )
+      end
 
       before do
         visit "/queue"
@@ -241,7 +249,7 @@ RSpec.feature "Search" do
         fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
