@@ -99,7 +99,5 @@
 
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
-  "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
-
-  "ASSIGN_WIDGET_OTHER": "Other"
+  "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?"
 }
