@@ -5,48 +5,43 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
 import UploadDateSelector from './UploadDateSelector';
+import { SPREADSHEET_TYPES } from '../constants';
 
 export default class BuildScheduleUpload extends React.Component {
 
   getRoCoDisplay = () => {
-    if (this.props.fileType === 'ro/co') {
-      return <div>RO and CO hearings
-        <UploadDateSelector
-          startDate={this.props.roCoStartDate}
-          endDate={this.props.roCoEndDate}
-          onStartDateChange={this.props.onRoCoStartDateChange}
-          onEndDateChange={this.props.onRoCoEndDateChange}
-        />
-      </div>;
-    }
-
-    return <div>RO and CO hearings</div>;
+    return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
+      { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
+      <UploadDateSelector
+        startDate={this.props.roCoStartDate}
+        endDate={this.props.roCoEndDate}
+        onStartDateChange={this.props.onRoCoStartDateChange}
+        onEndDateChange={this.props.onRoCoEndDateChange}
+      /> }
+    </div>;
   };
 
   getJudgeDisplay = () => {
-    if (this.props.fileType === 'judge') {
-      return <div>Judge non-availability
-        <UploadDateSelector
-          startDate={this.props.judgeStartDate}
-          endDate={this.props.judgeEndDate}
-          onStartDateChange={this.props.onJudgeStartDateChange}
-          onEndDateChange={this.props.onJudgeEndDateChange}
-        />
-      </div>;
-    }
-
-    return <div>Judge non-availability</div>;
+    return <div>{ SPREADSHEET_TYPES.JudgeSchedulePeriod.display }
+      { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
+      <UploadDateSelector
+        startDate={this.props.judgeStartDate}
+        endDate={this.props.judgeEndDate}
+        onStartDateChange={this.props.onJudgeStartDateChange}
+        onEndDateChange={this.props.onJudgeEndDateChange}
+      /> }
+    </div>;
   };
 
   render() {
 
     const fileTypes = [
       {
-        value: 'ro/co',
+        value: SPREADSHEET_TYPES.RoSchedulePeriod.value,
         displayText: this.getRoCoDisplay()
       },
       {
-        value: 'judge',
+        value: SPREADSHEET_TYPES.JudgeSchedulePeriod.value,
         displayText: this.getJudgeDisplay()
       }
     ];
