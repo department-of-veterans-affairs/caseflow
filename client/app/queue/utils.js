@@ -45,7 +45,7 @@ export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: 
     appeals[task.vacolsId].attributes.aod || appeals[task.vacolsId].attributes.type === 'Court Remand'
   ).
   flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
-  value()
+  value();
 
 export const renderAppealType = (appeal: {attributes: {aod: string, type: string}}) => {
   const {
