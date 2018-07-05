@@ -17,9 +17,6 @@ import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../queue/types';
-import { ASSIGN_WIDGET_OTHER } from '../../COPY.json';
-
-const OTHER = 'OTHER';
 
 class AssignWidget extends React.PureComponent<{|
   // Parameters
@@ -75,9 +72,8 @@ class AssignWidget extends React.PureComponent<{|
   render = () => {
     const { previousAssigneeId, attorneysOfJudge, selectedAssignee, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() })).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
+      value: attorney.id.toString() }));
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
-    const showOtherSearchBox = selectedAssignee === OTHER;
 
     return <React.Fragment>
       {error &&
@@ -102,8 +98,6 @@ class AssignWidget extends React.PureComponent<{|
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
-        {showOtherSearchBox &&
-          <p>Enter the name of an attorney or judge:</p>}
         <Button
           onClick={this.handleButtonClick}
           name={`Assign ${this.selectedTasks().length} case(s)`}
