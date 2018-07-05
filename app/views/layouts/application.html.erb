@@ -61,7 +61,9 @@
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
     <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
     <script>
-      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>").install();
+      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
+        release: '1234'
+      }).install();
       <% if current_user && current_user.authenticated? %>
         Raven.setUserContext({
           email: "<%= current_user.email %>",
