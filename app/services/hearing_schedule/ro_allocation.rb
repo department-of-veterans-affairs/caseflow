@@ -26,26 +26,43 @@ module HearingSchedule::RoAllocation
       ordered_months << months[i] if months.size.odd?
       ordered_months
     end
-
+    # Validates the current allocated days based on the avaiable days for each 
+    # month in the schedule periods. Also evens out the monthly allocated days
+    # based on the available days.
+    # 
+    # For Example:
+    # allocated days:
+    #   { [1, 2018] => 20, [2, 2018] => 10, [6, 2018] => 30 }
+    # available_days:
+    #   { [1, 2018] => 10, [2, 2018] => 10, [6, 2018] => 10 }
+    # num_of_rooms: 2
+    # returns:
+    #   { [1, 2018] => 20, [2, 2018] => 20, [6, 2018] => 20 }
+    #
+    # Raises NotEnoughAvailableDays if there not not enough avaiable days based
+    # on the allocated days and rooms avaiable.
+    #
     def validate_available_days(allocated_days, available_days, num_of_rooms)
       # raise error if there are not enough avaiable days
       fail NotEnoughAvailableDays unless
         allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
 
       allocated_days.each_key do |month|
-        # next if get_available_days(available_days, month) == 0
-        next unless get_available_days(available_days, month) == 0
-          (allocated_days[month] > (get_available_days(available_days, month) * num_of_rooms))
-        diff = allocated_days[month] - get_available_days(available_days, month)
+        # skipping if allocated days meets the avaiable days critiera
+        next if allocated_days[month] <= (get_available_days(available_days, month) * num_of_rooms)
 
-        available_days_keys = available_days.keys.sort
+        diff = allocated_days[month] - get_available_days(available_days, month)
         allocated_days_keys = allocated_days.keys.sort
 
         i = 0
-        while diff != 0
-          if allocated_days[allocated_days_keys[i]] < available_days[available_days_keys[i]]
+
+        while diff > 0
+          if allocated_days[allocated_days_keys[i]] <
+              (get_available_days(available_days, allocated_days_keys[i]) * num_of_rooms) &&
+              allocated_days_keys[i] != month
+            
             allocated_days[month] -= 1
-            allocated_days[available_days_keys[i]] += 1
+            allocated_days[allocated_days_keys[i]] += 1
             diff -= 1
           end
 

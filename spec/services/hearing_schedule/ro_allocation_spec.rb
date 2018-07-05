@@ -67,6 +67,22 @@ describe HearingSchedule::RoAllocation do
 
       it { expect(subject).to eq([1, 2018] => 20, [2, 2018] => 30, [6, 2018] => 20) }
     end
+
+    context "multiple number of rooms with available month not provided" do
+      let(:allocated_days) { { [1, 2018] => 20, [2, 2018] => 30, [6, 2018] => 20 } }
+      let(:available_days) { { [1, 2018] => 15, [2, 2018] => 22 } }
+      let(:num_of_rooms) { 2 }
+
+      it { expect(subject).to eq([1, 2018] => 30, [2, 2018] => 40, [6, 2018] => 0) }
+    end
+
+    context "multiple number of rooms with available multi months not provided" do
+      let(:allocated_days) { { [1, 2018] => 20, [2, 2018] => 20, [6, 2018] => 20 } }
+      let(:available_days) { { [1, 2018] => 30 } }
+      let(:num_of_rooms) { 2 }
+
+      it { expect(subject).to eq([1, 2018] => 60, [2, 2018] => 0, [6, 2018] => 0) }
+    end
   end
 
   context ".distribute_days_evenly" do
@@ -89,7 +105,7 @@ describe HearingSchedule::RoAllocation do
       it { expect(subject.values.inject(:+)).to eq(118) }
     end
 
-    context "for miltiple three rooms" do
+    context "for multiple three rooms with nearly full allocated days" do
       let(:num_of_rooms) { 3 }
 
       it do
@@ -99,7 +115,7 @@ describe HearingSchedule::RoAllocation do
       it { expect(subject.values.inject(:+)).to eq(118) }
     end
 
-    context "for miltiple three rooms" do
+    context "for multiple three rooms with low allocated days" do
       let(:allocated_days) do
         { [4, 2018] => 0, [9, 2018] => 1, [5, 2018] => 1,
           [8, 2018] => 0, [6, 2018] => 1, [7, 2018] => 0 }
