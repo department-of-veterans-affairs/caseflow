@@ -11,6 +11,10 @@ task :security_caseflow do
   puts "running bundle-audit to check for insecure dependencies..."
   exit!(1) unless ShellCommand.run("bundle-audit update")
 
+  # Set time zone when running in Circle CI environment.
+  # TODO: Remove this when we stop calling Time.zone... below.
+  Time.zone = "Eastern Time (US & Canada)"
+
   # Only ignore this vulnerability for a week.
   audit_cmd = "bundle-audit check --ignore CVE-2016-10545"
   if Time.zone.local(2018, 7, 5) < Time.zone.today - 1.week
