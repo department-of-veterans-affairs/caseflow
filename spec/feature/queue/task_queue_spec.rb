@@ -1,88 +1,78 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
+  let(:attorney_user) { FactoryBot.create(:user) }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
+  let!(:simple_appeal) do
+    FactoryBot.create(
+      :legacy_appeal,
+      :with_veteran,
+      vacols_case: FactoryBot.create(:case, :assigned, user: attorney_user)
+    )
+  end
+
+  let!(:non_veteran_claimant_appeal) do
+    FactoryBot.create(
+      :legacy_appeal,
+      :with_veteran,
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        user: attorney_user,
+        correspondent: FactoryBot.create(
+          :correspondent,
+          appellant_first_name: "Not",
+          appellant_middle_initial: "D",
+          appellant_last_name: "Veteran"
+        )
+      )
+    )
+  end
+
+  let!(:paper_appeal) do
+    FactoryBot.create(
+      :legacy_appeal,
+      :with_veteran,
+      vacols_case: FactoryBot.create(:case, :paper_case, :assigned, user: attorney_user)
+    )
+  end
+
+  let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+
   before do
-    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
+    FeatureToggle.enable!(:test_facols)
+
+    User.authenticate!(user: attorney_user)
   end
 
   after do
+    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_phase_two)
   end
 
-  let(:documents) do
-    [
-      Generators::Document.create(
-        filename: "My BVA Decision",
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: 6,
-        category_procedural: true,
-        tags: [
-          Generators::Tag.create(text: "New Tag1"),
-          Generators::Tag.create(text: "New Tag2")
-        ],
-        description: Generators::Random.word_characters(50)
-      ),
-      Generators::Document.create(
-        filename: "My Form 9",
-        type: "Form 9",
-        received_at: 5.days.ago,
-        vbms_document_id: 4,
-        category_medical: true,
-        category_other: true
-      ),
-      Generators::Document.create(
-        filename: "My NOD",
-        type: "NOD",
-        received_at: 1.day.ago,
-        vbms_document_id: 3
-      )
-    ]
-  end
-  let(:vacols_record) { :remand_decided }
-  let(:appeals) do
-    [
-      Generators::LegacyAppeal.build(
-        vbms_id: "123456789S",
-        vacols_record: vacols_record,
-        documents: documents
-      ),
-      Generators::LegacyAppeal.build(
-        vbms_id: "115555555S",
-        vacols_record: vacols_record,
-        documents: documents,
-        issues: []
-      )
-    ]
-  end
-  let!(:issues) { [Generators::Issue.build] }
-  let! :attorney_user do
-    User.authenticate!(roles: ["System Admin"])
-  end
+  context "attorney user with assigned tasks" do
+    before { visit "/queue" }
 
-  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
-
-  context "loads queue table view" do
-    scenario "table renders row per task" do
-      visit "/queue"
-
+    it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
 
-      vet_not_appellant = vacols_appeals.reject { |a| a.appellant_first_name.nil? }.first
-      vna_appeal_row = find("tbody").find("#table-row-#{vet_not_appellant.vacols_id}")
+    it "displays special text indicating an assigned case has a claimant who is not the Veteran" do
+      vna_appeal_row = find("tbody").find("#table-row-#{non_veteran_claimant_appeal.vacols_id}")
       first_cell = vna_appeal_row.find_all("td").first
-
-      expect(first_cell).to have_content("#{vet_not_appellant.veteran_full_name} (#{vet_not_appellant.vbms_id})")
+      expect(first_cell).to have_content(
+        "#{non_veteran_claimant_appeal.veteran_full_name} (#{non_veteran_claimant_appeal.sanitized_vbms_id})"
+      )
       expect(first_cell).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
+    end
 
-      paper_case = vacols_appeals.select { |a| a.file_type.eql? "Paper" }.first
-      pc_appeal_row = find("tbody").find("#table-row-#{paper_case.vacols_id}")
+    it "displays special text indicating an assigned case has paper documents" do
+      pc_appeal_row = find("tbody").find("#table-row-#{paper_appeal.vacols_id}")
       first_cell = pc_appeal_row.find_all("td").first
-
-      expect(first_cell).to have_content("#{paper_case.veteran_full_name} (#{paper_case.vbms_id.delete('S')})")
+      expect(first_cell).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
       expect(first_cell).to have_content(COPY::IS_PAPER_CASE)
     end
   end
