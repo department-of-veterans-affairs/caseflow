@@ -130,6 +130,19 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
+
+    visit "/intake/review-request"
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      expect(find("label", text: "Yes", match: :prefer_exact)).to be_checked
+    end
+
+    expect(find("label", text: "Baz Qux, Child", match: :prefer_exact)).to be_checked
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_current_path("/intake/finish")
+
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
