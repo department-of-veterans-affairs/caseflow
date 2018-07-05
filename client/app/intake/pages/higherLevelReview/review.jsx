@@ -12,6 +12,7 @@ import { submitReview } from '../../actions/ama';
 import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import { convertBooleanToRadioOption } from '../../util';
 
 class Review extends React.PureComponent {
   render() {
@@ -20,10 +21,13 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
+      setReceiptDate,
       informalConference,
       informalConferenceError,
+      setInformalConference,
       sameOffice,
-      sameOfficeError
+      sameOfficeError,
+      setSameOffice
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -41,7 +45,7 @@ class Review extends React.PureComponent {
         name="receipt-date"
         label="What is the Receipt Date of this form?"
         value={receiptDate}
-        onChange={this.props.setReceiptDate}
+        onChange={setReceiptDate}
         errorMessage={receiptDateError}
         strongLabel
       />
@@ -52,9 +56,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setInformalConference}
+        onChange={setInformalConference}
         errorMessage={informalConferenceError}
-        value={informalConference}
+        value={informalConference !== null ? informalConference.toString() : null}
       />
 
       <RadioField
@@ -63,9 +67,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setSameOffice}
+        onChange={setSameOffice}
         errorMessage={sameOfficeError}
-        value={sameOffice}
+        value={sameOffice !== null ? sameOffice.toString() : null}
       />
 
       <SelectClaimantConnected />

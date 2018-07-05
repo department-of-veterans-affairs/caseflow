@@ -2,6 +2,10 @@ import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
+export const convertBooleanToRadioOption = (bool) => {
+  bool === false || bool === null ? 'false' : 'true'
+}
+
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
 );

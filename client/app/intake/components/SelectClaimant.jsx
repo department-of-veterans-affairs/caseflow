@@ -12,7 +12,7 @@ export default class SelectClaimant extends React.PureComponent {
       relationships
     } = this.props;
 
-    let showClaimants = claimantNotVeteran === 'true';
+    let showClaimants = ['true', true].includes(claimantNotVeteran);
 
     const claimantLabel = 'Please select the claimant listed on the form. ' +
     'If you do not see the claimant, you will need to add it through SHARE, ' +
@@ -40,7 +40,7 @@ export default class SelectClaimant extends React.PureComponent {
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={setClaimantNotVeteran}
-        value={claimantNotVeteran}
+        value={claimantNotVeteran !== null ? claimantNotVeteran.toString() : null}
       />
 
       { showClaimants && claimantOptions() }
