@@ -192,10 +192,9 @@ export const setSelectionOfTaskOfUser = ({ userId, taskId, selected }) => ({
   }
 });
 
-export const setSelectedAssigneeOfUser = ({ userId, assigneeId }) => ({
-  type: ACTIONS.SET_SELECTED_ASSIGNEE_OF_USER,
+export const setSelectedAssignee = ({ assigneeId }) => ({
+  type: ACTIONS.SET_SELECTED_ASSIGNEE,
   payload: {
-    userId,
     assigneeId
   }
 });

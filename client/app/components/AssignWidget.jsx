@@ -8,14 +8,14 @@ import {
   showErrorMessage
 } from '../queue/uiReducer/uiActions';
 import {
-  setSelectedAssigneeOfUser,
+  setSelectedAssignee,
   initialAssignTasksToUser
 } from '../queue/QueueActions';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, SelectedAssigneeOfUser, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
+  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../queue/types';
 
 class AssignWidget extends React.PureComponent<{|
@@ -24,12 +24,12 @@ class AssignWidget extends React.PureComponent<{|
   onTaskAssignment: Function,
   // From state
   attorneysOfJudge: AttorneysOfJudge,
-  selectedAssigneeOfUser: SelectedAssigneeOfUser,
+  selectedAssignee: string,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   tasks: Tasks,
   error: ?UiStateError,
   // Action creators
-  setSelectedAssigneeOfUser: Function,
+  setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
   showErrorMessage: (UiStateError) => void,
   resetErrorMessages: Function
@@ -41,9 +41,9 @@ class AssignWidget extends React.PureComponent<{|
   }
 
   handleButtonClick = () => {
-    const { previousAssigneeId, selectedAssigneeOfUser } = this.props;
+    const { previousAssigneeId, selectedAssignee } = this.props;
 
-    if (!selectedAssigneeOfUser[previousAssigneeId]) {
+    if (!selectedAssignee) {
       this.props.showErrorMessage(
         { title: 'No assignee selected',
           detail: 'Please select someone to assign the tasks to.' });
@@ -61,7 +61,7 @@ class AssignWidget extends React.PureComponent<{|
 
     this.props.onTaskAssignment(
       { tasks: this.selectedTasks(),
-        assigneeId: selectedAssigneeOfUser[previousAssigneeId],
+        assigneeId: selectedAssignee,
         previousAssigneeId }).
       then(() => this.props.resetErrorMessages()).
       catch(() => this.props.showErrorMessage(
@@ -70,10 +70,11 @@ class AssignWidget extends React.PureComponent<{|
   }
 
   render = () => {
-    const { previousAssigneeId, attorneysOfJudge, selectedAssigneeOfUser, error } = this.props;
+    const { previousAssigneeId, attorneysOfJudge, selectedAssignee, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() }));
-    const selectedOption = _.find(options, (option) => option.value === selectedAssigneeOfUser[previousAssigneeId]);
+      value: attorney.id.toString() })).concat({ label: 'Other', value: 'OTHER' });
+    const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
+    console.log(selectedAssignee);
 
     return <React.Fragment>
       {error &&
@@ -92,8 +93,7 @@ class AssignWidget extends React.PureComponent<{|
           searchable
           options={options}
           placeholder="Select a user"
-          onChange={(option) => this.props.setSelectedAssigneeOfUser({ userId: previousAssigneeId,
-            assigneeId: option.value })}
+          onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem',
             marginRight: '1rem' })} />
@@ -109,12 +109,12 @@ class AssignWidget extends React.PureComponent<{|
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, selectedAssigneeOfUser, isTaskAssignedToUserSelected, tasks } = state.queue;
-  const error = state.ui.messages.error;
+  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks } = state.queue;
+  const { selectedAssignee, messages: { error } } = state.ui;
 
   return {
     attorneysOfJudge,
-    selectedAssigneeOfUser,
+    selectedAssignee,
     isTaskAssignedToUserSelected,
     tasks,
     error
@@ -124,7 +124,7 @@ const mapStateToProps = (state: State) => {
 export default connect(
   mapStateToProps,
   (dispatch) => bindActionCreators({
-    setSelectedAssigneeOfUser,
+    setSelectedAssignee,
     initialAssignTasksToUser,
     showErrorMessage,
     resetErrorMessages
