@@ -110,7 +110,7 @@ export default class Modal extends React.Component {
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
     >
-    <ScrollLock />
+      <ScrollLock />
       <div className="cf-modal-body" id={id || ''}>
         <button
           type="button"
