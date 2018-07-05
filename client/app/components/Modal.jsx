@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import ScrollLock from 'react-scrolllock';
 import { closeSymbolHtml } from './RenderFunctions';
 import Button from './Button';
 import _ from 'lodash';
@@ -110,6 +110,7 @@ export default class Modal extends React.Component {
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
     >
+    <ScrollLock />
       <div className="cf-modal-body" id={id || ''}>
         <button
           type="button"
