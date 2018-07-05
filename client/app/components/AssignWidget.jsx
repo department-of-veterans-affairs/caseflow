@@ -90,6 +90,7 @@ class AssignWidget extends React.PureComponent<{|
       <div {...css({
         display: 'flex',
         alignItems: 'center',
+        flexWrap: 'wrap',
         '& > *': { marginRight: '1rem' }})}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
