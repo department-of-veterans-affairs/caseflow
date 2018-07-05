@@ -15,7 +15,7 @@ const schedulePeriodMapper = {
   JudgeSchedulePeriod: 'Judge'
 };
 
-export default class BuildSchedule extends React.Component {
+export default class ListSchedule extends React.Component {
 
   render() {
     const {
@@ -24,7 +24,7 @@ export default class BuildSchedule extends React.Component {
 
     const downloadOptions = [
       {
-        title: 'RO/CO hearings',
+        title: 'RO/CO Oscar hearings',
         target: '/ROAssignmentTemplate.xlsx'
       },
       {
@@ -86,8 +86,7 @@ export default class BuildSchedule extends React.Component {
       <div className="cf-help-divider"></div>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
       <Link
-        name="view-schedule"
-        href={'/hearings/schedule_periods'}>
+        name="view-schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
@@ -98,7 +97,7 @@ export default class BuildSchedule extends React.Component {
   }
 }
 
-BuildSchedule.propTypes = {
+ListSchedule.propTypes = {
   pastUploads: PropTypes.shape({
     type: PropTypes.string,
     userFullName: PropTypes.string,
