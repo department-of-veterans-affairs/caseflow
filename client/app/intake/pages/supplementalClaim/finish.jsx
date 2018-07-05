@@ -7,7 +7,13 @@ import CancelButton from '../../components/CancelButton';
 import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
 import RatedIssuesUnconnected from '../../components/RatedIssues';
 import IssueCounter from '../../components/IssueCounter';
-import { completeIntake, setIssueSelected, addNonRatedIssue, setIssueCategory, setIssueDescription } from '../../actions/ama';
+import {
+  completeIntake,
+  setIssueSelected,
+  addNonRatedIssue,
+  setIssueCategory,
+  setIssueDescription
+} from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';

@@ -101,7 +101,7 @@ export const nonRatedIssueCounter = (state, action) => {
   if (action.payload.category) {
     return selectedIssueCount + categoryCounter;
   }
-}
+};
 
 export const prepareReviewData = (intakeData, intakeType) => {
   switch (intakeType) {
