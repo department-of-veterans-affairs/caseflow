@@ -5,10 +5,10 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import {
   resetErrorMessages,
-  showErrorMessage
+  showErrorMessage,
+  setSelectedAssignee
 } from '../queue/uiReducer/uiActions';
 import {
-  setSelectedAssignee,
   initialAssignTasksToUser
 } from '../queue/QueueActions';
 import SearchableDropdown from '../components/SearchableDropdown';
