@@ -119,7 +119,8 @@ class AppealRepository
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
-    outcoder_record = folder_record.outcoder
+    # Only fetch outcoder (VACOLS::Staff) if the foreign key (:tiocuser) isn't nil
+    outcoder_record = folder_record.outcoder if folder_record.tiocuser?
 
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
