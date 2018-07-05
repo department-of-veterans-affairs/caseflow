@@ -102,6 +102,8 @@ class AssignWidget extends React.PureComponent<{|
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
+        {showOtherSearchBox &&
+          <p>Enter the name of an attorney or judge:</p>}
         <Button
           onClick={this.handleButtonClick}
           name={`Assign ${this.selectedTasks().length} case(s)`}
