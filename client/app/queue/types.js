@@ -22,7 +22,8 @@ export type Task = {
     due_on: string,
     task_id: string,
     task_type: string,
-    user_id: string
+    user_id: string,
+    work_product: string
   }
 };
 
