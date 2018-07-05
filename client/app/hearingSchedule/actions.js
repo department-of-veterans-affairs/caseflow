@@ -6,3 +6,10 @@ export const onReceivePastUploads = (pastUploads) => ({
     pastUploads
   }
 });
+
+export const onFileTypeChange = (fileType) => ({
+  type: ACTIONS.FILE_TYPE_CHANGE,
+  payload: {
+    fileType
+  }
+});
