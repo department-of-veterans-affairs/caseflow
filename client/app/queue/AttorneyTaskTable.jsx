@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
+import pluralize from 'pluralize';
 
 import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
@@ -63,7 +64,7 @@ class AttorneyTaskTable extends React.PureComponent {
         diff(moment(task.attributes.assigned_on), 'days');
 
       return <React.Fragment>
-        {daysWaiting} days - <DateString date={task.attributes.due_on} />
+        {daysWaiting} {pluralize('days', daysWaiting)} - <DateString date={task.attributes.due_on} />
       </React.Fragment>;
     },
     span: this.collapseColumnIfNoDASRecord
