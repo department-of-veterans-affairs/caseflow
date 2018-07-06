@@ -3,7 +3,34 @@ class RampClosedAppeal < ApplicationRecord
 
   belongs_to :ramp_election
 
+  attr_writer :user
+
   delegate :established_at, to: :ramp_election
+
+  # If an appeal was only partially closed (because it contained some ineligible issues)
+  # then we record the issue ids that were closed.
+  def partial?
+    !!partial_closure_issue_sequence_ids
+  end
+
+  def close!
+    if partial?
+      partial_closure_issue_sequence_ids.each do |vacols_sequence_id|
+        Issue.close_in_vacols!(
+          vacols_id: vacols_id,
+          vacols_sequence_id: vacols_sequence_id,
+          disposition_code: "P"
+        )
+      end
+    else
+      LegacyAppeal.close(
+        appeals: [appeal],
+        user: user,
+        closed_on: closed_on || ramp_election.established_at,
+        disposition: "RAMP Opt-in"
+      )
+    end
+  end
 
   def reclose!
     # If the ramp election was already rolled back, it can't be reclosed, so skip
@@ -19,7 +46,7 @@ class RampClosedAppeal < ApplicationRecord
     if !appeal.active?
       LegacyAppeal.reopen(
         appeals: [appeal],
-        user: User.system_user,
+        user: user,
         disposition: "RAMP Opt-in",
         safeguards: false
       )
@@ -28,31 +55,42 @@ class RampClosedAppeal < ApplicationRecord
       @appeal = nil
     end
 
-    LegacyAppeal.close(
-      appeals: [appeal],
-      user: User.system_user,
-      closed_on: ramp_election.established_at,
-      disposition: "RAMP Opt-in"
-    )
+    close!
   end
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
-  def self.reclose_all!
-    appeals_to_reclose = []
+  private
 
-    find_in_batches(batch_size: 800) do |batch|
-      appeals_to_reclose += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
+  def user
+    @user || User.system_user
+  end
+
+  class << self
+    def fully_closed
+      where(partial_closure_issue_sequence_ids: nil)
     end
 
-    appeals_to_reclose = appeals_to_reclose.map do |appeal|
-      RampClosedAppeal.find_by(vacols_id: appeal.vacols_id)
+    def partial
+      where.not(partial_closure_issue_sequence_ids: nil)
     end
 
-    appeals_to_reclose.each(&:reclose!)
+    def reclose_all!
+      appeals_to_reclose = []
 
-    appeals_to_reclose
+      fully_closed.find_in_batches(batch_size: 800) do |batch|
+        appeals_to_reclose += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
+      end
+
+      appeals_to_reclose = appeals_to_reclose.map do |appeal|
+        RampClosedAppeal.find_by(vacols_id: appeal.vacols_id)
+      end
+
+      appeals_to_reclose.each(&:reclose!)
+
+      appeals_to_reclose
+    end
   end
 end
