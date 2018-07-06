@@ -75,35 +75,38 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
-    grouped_shuffled_monthly_dates = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
+    @ros[ro_key][:allocated_dates] = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
 
-    monthly_allocations = self.class.validate_and_evenly_distribute_monthly_allocations(
-      grouped_monthly_avail_dates,
-      monthly_distributed_days(@ros[ro_key][:allocated_days]),
-      @ros[ro_key][:num_of_rooms]
-    )
-
-    assign_hearing_days(ro_key, monthly_allocations, grouped_shuffled_monthly_dates)
-    add_allocated_days_and_format(ro_key, grouped_shuffled_monthly_dates)
+    assign_hearing_days(ro_key)
+    add_allocated_days_and_format(ro_key)
   end
 
-  def assign_hearing_days(ro_key, monthly_allocations, grouped_shuffled_monthly_dates)
+  def assign_hearing_days(ro_key)
     date_index = 0
+
+    monthly_allocations = allocations_by_month(ro_key)
 
     # Keep allocating the days until all monthly allocations are 0
     while monthly_allocations.values.inject(:+) != 0
       allocate_hearing_days_to_individual_ro(
+        ro_key,
         monthly_allocations,
-        grouped_shuffled_monthly_dates,
-        @ros[ro_key][:num_of_rooms],
         date_index
       )
       date_index += 1
     end
   end
 
-  def add_allocated_days_and_format(ro_key, grouped_shuffled_monthly_dates)
-    @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates.reduce({}) do |acc, (k, v)|
+  def allocations_by_month(ro_key)
+    self.class.validate_and_evenly_distribute_monthly_allocations(
+      @ros[ro_key][:allocated_dates],
+      monthly_distributed_days(@ros[ro_key][:allocated_days]),
+      @ros[ro_key][:num_of_rooms]
+    )
+  end
+
+  def add_allocated_days_and_format(ro_key)
+    @ros[ro_key][:allocated_dates] = @ros[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
       acc[k] = v.to_a.sort.to_h
       acc
     end
@@ -117,46 +120,45 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # allocated hearing days for each RO
   #
-  # grouped_shuffled_monthly_dates: is a hash with months as keys and date has with rooms array value
+  # @ros[ro_key][:allocated_dates]: is a hash with months as keys and date has with rooms array value
   # as values.
   #
   # rooms array is initally empty.
   #
-  # Sample grouped_shuffled_monthly_dates -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}
+  # Sample @ros[ro_key][:allocated_dates] -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}
   #
-  def allocate_hearing_days_to_individual_ro(monthly_allocations,
-                                             grouped_shuffled_monthly_dates, num_of_rooms, date_index)
+  # rubocop:disable Metrics/CyclomaticComplexity:
+  def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
+    grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]
+
     # looping through all the monthly allocations
+    # and assigning rooms to the datess
     monthly_allocations.each_key do |month|
       next if grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
 
       allocated_days = monthly_allocations[month]
       monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys
+      num_of_rooms = @ros[ro_key][:num_of_rooms]
 
       if allocated_days > 0 &&
          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
-        if num_of_rooms <= allocated_days
-          # there are enough allocation days for the rooms avaiable, allocate the
-          # to the number of rooms avaiable for the day
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-            get_rooms(num_of_rooms)
 
-          allocated_days -= num_of_rooms
-        else
-          # there are less allocated days than the number of rooms, so allocate
-          # all the remaining allocated days to the day
-          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-            get_rooms(allocated_days)
-          allocated_days -= allocated_days
-        end
+        rooms_to_allocate = (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
+
+        grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
+          get_rooms(rooms_to_allocate)
+
+        allocated_days -= rooms_to_allocate
       end
 
       monthly_allocations[month] = allocated_days
     end
+    @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates
   end
+  # rubocop:enable Metrics/CyclomaticComplexity:
 
   def get_rooms(num_of_rooms)
-    num_of_rooms.times.map { |room_num| { room_num: room_num + 1 } }
+    Array.new(num_of_rooms) { |room_num| { room_num: room_num + 1 } }
   end
 
   def distribute(percentage, total)
