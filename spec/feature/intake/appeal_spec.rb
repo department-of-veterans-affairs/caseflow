@@ -124,7 +124,11 @@ RSpec.feature "Appeal Intake" do
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
 
+    expect(page).to have_content("1 issue")
+
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 
