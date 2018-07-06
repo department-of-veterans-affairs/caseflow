@@ -133,11 +133,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
     visit "/intake/review-request"
 
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      expect(find("label", text: "Yes", match: :prefer_exact)).to be_checked
-    end
+    expect(find("#different-claimant-option_true", visible: false)).to be_checked
 
-    expect(find("label", text: "Baz Qux, Child", match: :prefer_exact)).to be_checked
+    expect(find_field("Baz Qux, Child", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
