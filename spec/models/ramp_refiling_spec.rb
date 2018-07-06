@@ -3,7 +3,7 @@ describe RampRefiling do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
-  let(:user) { Generators::User.build }
+  let(:user) { build(:default_user) }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:veteran_file_number) { "64205555" }
   let(:detail) { nil }

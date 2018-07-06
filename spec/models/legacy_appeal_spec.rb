@@ -469,7 +469,7 @@ describe LegacyAppeal do
     let(:appeal_with_decision) do
       create(:legacy_appeal, vacols_case: another_vacols_case)
     end
-    let(:user) { Generators::User.build }
+    let(:user) { build(:default_user) }
     let(:disposition) { "RAMP Opt-in" }
 
     before do
@@ -580,7 +580,7 @@ describe LegacyAppeal do
       create(:case_with_decision, :status_complete, :disposition_ramp, bfboard: "00")
     end
 
-    let(:user) { Generators::User.build }
+    let(:user) { build(:default_user) }
     let(:disposition) { "RAMP Opt-in" }
 
     let(:undecided_appeal) do

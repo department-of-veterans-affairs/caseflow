@@ -159,7 +159,7 @@ RSpec.feature "Intake" do
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
-        user: Generators::User.build(full_name: "David Schwimmer")
+        user: build(:user, full_name: "David Schwimmer")
       ).start!
 
       visit "/intake"

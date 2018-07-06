@@ -126,7 +126,7 @@ describe RampClosedAppeal do
       ]
     end
 
-    let(:user) { Generators::User.build }
+    let(:user) { build(:default_user) }
 
     before do
       expect(AppealRepository).to receive(:find_ramp_reopened_appeals)

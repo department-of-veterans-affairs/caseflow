@@ -19,7 +19,7 @@ describe RampElectionRollback do
     )
   end
 
-  let(:user) { Generators::User.build }
+  let(:user) { build(:default_user) }
   let(:reason) { "A very good reason" }
 
   let!(:established_end_product) do

@@ -39,7 +39,7 @@ describe IntakeStats do
   context ".intake_series_statuses" do
     subject { IntakeStats.intake_series_statuses(4.days.ago...Time.zone.now) }
 
-    let(:user) { Generators::User.build }
+    let(:user) { build(:default_user) }
 
     let!(:out_of_range_series) do
       RampElectionIntake.create!(

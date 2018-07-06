@@ -4,7 +4,7 @@ describe SupplementalClaimIntake do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let(:user) { Generators::User.build }
+  let(:user) { build(:default_user) }
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:completed_at) { nil }
