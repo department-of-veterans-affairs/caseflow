@@ -1,10 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
+import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../components/Table';
 import {formatDate} from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
+import DateSelector from '../../components/DateSelector'
 
 export default class ListSchedule extends React.Component {
 
@@ -51,6 +53,18 @@ export default class ListSchedule extends React.Component {
     ));
 
     return <AppSegment filledBackground>
+      <h1>{COPY.HEARING_SCHEDULE_ViEW_PAGE_HEADER}</h1>
+      <div className="rdw-left-aligned-block">
+        <DateSelector name={'from_date'} label={'From: '} value={'06/06/2018'}/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <DateSelector name={'to_date'} label={'To: '} value={'06/06/2019'}/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <Link
+          name="apply"
+          to="/hearings/schedule_periods">
+          {COPY.HEARING_SCHEDULE_ViEW_PAGE_APPLY_LINK}
+        </Link>
+      </div>
       <Table
         columns={hearingScheduleColumns}
         rowObjects={hearingScheduleRows}
