@@ -3,12 +3,14 @@ RSpec.describe TasksController, type: :controller do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:judge_queue)
+    FeatureToggle.enable!(:co_located_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:judge_queue)
+    FeatureToggle.disable!(:co_located_queue)
   end
 
   describe "GET tasks/xxx" do
@@ -19,6 +21,10 @@ RSpec.describe TasksController, type: :controller do
       create(:colocated_admin_action, assigned_by: user)
       create(:colocated_admin_action, assigned_by: user)
       create(:colocated_admin_action, assigned_by: user, status: "completed")
+
+      create(:colocated_admin_action, assigned_to: user)
+      create(:colocated_admin_action, assigned_to: user, status: "in_progress")
+      create(:colocated_admin_action, assigned_to: user, status: "completed")
       create(:colocated_admin_action)
     end
 
@@ -48,6 +54,23 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 0
+      end
+    end
+
+    context "when user is a colocated admin" do
+      let(:role) { :co_located_role }
+
+      it "should process the request succesfully" do
+        get :index, params: { user_id: user.id, role: "co_located" }
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "assigned"
+        expect(response_body.first["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.second["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
       end
     end
 

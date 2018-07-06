@@ -30,6 +30,11 @@ FactoryBot.define do
       sactive "A"
     end
 
+    trait :co_located_role do
+      stitle %w[A1 A2].sample
+      sactive "A"
+    end
+
     trait :has_location_code do
       slogid "55"
     end
