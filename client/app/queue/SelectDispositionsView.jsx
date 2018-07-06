@@ -94,7 +94,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
-    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+    const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
   };
