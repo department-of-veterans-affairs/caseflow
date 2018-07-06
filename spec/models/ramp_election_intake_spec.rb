@@ -152,8 +152,8 @@ describe RampElectionIntake do
       expect(appeal_to_fully_close.case_record.folder.timduser).to eq(user.regional_office)
 
       reloaded_issues = AppealRepository.issues(appeal_to_partially_close.vacols_id)
-      education_issue = reloaded_issues.first
-      compensation_issue = reloaded_issues.last
+      education_issue = reloaded_issues.find { |i| i.program == :education }
+      compensation_issue = reloaded_issues.find { |i| i.program == :compensation }
 
       expect(education_issue.disposition_id).to eq(nil)
       expect(compensation_issue.disposition_id).to eq("P")
