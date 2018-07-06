@@ -56,7 +56,7 @@
 
 "@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#mdbenjam-add-sentry-webpack":
   version "2.5.8"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#710c62f9cf69273951dcda201ddbf1795edb8088"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#2c5b0772e0ce13be120f756fbb5d7e5f8ea58a9c"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
