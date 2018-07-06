@@ -5,8 +5,10 @@ import {
   onFileTypeChange,
   onRoCoStartDateChange,
   onRoCoEndDateChange,
+  onRoCoFileUpload,
   onJudgeStartDateChange,
-  onJudgeEndDateChange
+  onJudgeEndDateChange,
+  onJudgeFileUpload
 } from '../actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
@@ -19,10 +21,12 @@ export class BuildScheduleUploadContainer extends React.Component {
       onRoCoStartDateChange={this.props.onRoCoStartDateChange}
       roCoEndDate={this.props.roCoEndDate}
       onRoCoEndDateChange={this.props.onRoCoEndDateChange}
+      onRoCoFileUpload={this.props.onRoCoFileUpload}
       judgeStartDate={this.props.judgeStartDate}
       onJudgeStartDateChange={this.props.onJudgeStartDateChange}
       judgeEndDate={this.props.judgeEndDate}
       onJudgeEndDateChange={this.props.onJudgeEndDateChange}
+      onJudgeFileUpload={this.props.onJudgeFileUpload}
     />;
   }
 }
@@ -39,8 +43,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onFileTypeChange,
   onRoCoStartDateChange,
   onRoCoEndDateChange,
+  onRoCoFileUpload,
   onJudgeStartDateChange,
-  onJudgeEndDateChange
+  onJudgeEndDateChange,
+  onJudgeFileUpload
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer);
