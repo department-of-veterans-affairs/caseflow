@@ -55,7 +55,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
 class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
-    this.props.setCategory(this.props.id, event.value);
+    this.props.setCategory(this.props.id, event ? event.value : null);
   }
 
   handleDescriptionChange(event) {

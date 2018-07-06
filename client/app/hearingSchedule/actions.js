@@ -20,3 +20,31 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
     hearingSchedule
   }
 });
+
+export const onRoCoStartDateChange = (startDate) => ({
+  type: ACTIONS.RO_CO_START_DATE_CHANGE,
+  payload: {
+    startDate
+  }
+});
+
+export const onRoCoEndDateChange = (endDate) => ({
+  type: ACTIONS.RO_CO_END_DATE_CHANGE,
+  payload: {
+    endDate
+  }
+});
+
+export const onJudgeStartDateChange = (startDate) => ({
+  type: ACTIONS.JUDGE_START_DATE_CHANGE,
+  payload: {
+    startDate
+  }
+});
+
+export const onJudgeEndDateChange = (endDate) => ({
+  type: ACTIONS.JUDGE_END_DATE_CHANGE,
+  payload: {
+    endDate
+  }
+});
