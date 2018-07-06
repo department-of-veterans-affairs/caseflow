@@ -122,7 +122,6 @@ group :stubbed, :test, :development, :demo do
 
   # Testing tools
   gem "faker"
-  gem "fakeweb", "~> 1.3"
   gem "rspec"
   gem "rspec-rails"
   # gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5

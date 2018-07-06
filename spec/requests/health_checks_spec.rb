@@ -1,69 +1,25 @@
 describe "Health Check API" do
-  context "mock tests" do
-    before do
-      Rails.application.config.build_version = { deployed_at: "the best day ever" }
-      FakeWeb.allow_net_connect = false
-    end
+  Rails.application.config.build_version = { deployed_at: "the best day ever" }
 
-    after { FakeWeb.allow_net_connect = true }
+  it "fails health check when unhealthy" do
+    allow()
 
-    context "pushgateway offline" do
-      it "fails health check when pushgateway is offline" do
-        get "/health-check"
+    get "/health-check"
 
-        expect(response).to be_success
+    expect(response).to be_success
 
-        json = JSON.parse(response.body)
-        expect(json["healthy"]).to eq(false)
-        expect(json["deployed_at"]).to eq("the best day ever")
-      end
-    end
+    json = JSON.parse(response.body)
+    expect(json["healthy"]).to eq(false)
+    expect(json["deployed_at"]).to eq("the best day ever")
+  end
 
-    context "service online and unhealthy" do
-      before do
-        FakeWeb.register_uri(
-          :get, "http://127.0.0.1:9091/-/healthy",
-          body: "Error",
-          status: ["503", "Service Unavailable"]
-        )
-      end
+  it "passes health check when healthy" do
+    get "/health-check"
 
-      after { FakeWeb.clean_registry }
+    expect(response).to be_success
 
-      it "fails health check when pushgateway is unhealthy" do
-        Rails.application.config.build_version = { deployed_at: "the best day ever" }
-
-        get "/health-check"
-
-        expect(response).to be_success
-
-        json = JSON.parse(response.body)
-        expect(json["healthy"]).to eq(false)
-        expect(json["deployed_at"]).to eq("the best day ever")
-      end
-    end
-
-    context "service online and healthy" do
-      before do
-        FakeWeb.register_uri(
-          :get, "http://127.0.0.1:9091/-/healthy",
-          body: "OK"
-        )
-      end
-
-      after { FakeWeb.clean_registry }
-
-      it "passes health check when everything is working" do
-        Rails.application.config.build_version = { deployed_at: "the best day ever" }
-
-        get "/health-check"
-
-        expect(response).to be_success
-
-        json = JSON.parse(response.body)
-        expect(json["healthy"]).to be_truthy
-        expect(json["deployed_at"]).to eq("the best day ever")
-      end
-    end
+    json = JSON.parse(response.body)
+    expect(json["healthy"]).to eq(true)
+    expect(json["deployed_at"]).to eq("the best day ever")
   end
 end
