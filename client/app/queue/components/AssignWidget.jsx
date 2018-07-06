@@ -19,6 +19,7 @@ import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../types';
+import pluralize from 'pluralize';
 
 type Props = {|
   // Parameters
@@ -74,7 +75,7 @@ class AssignWidget extends React.PureComponent<Props> {
       { tasks: selectedTasks,
         assigneeId: selectedAssignee,
         previousAssigneeId }).
-      then(() => this.props.showSuccessMessage(`Assigned ${selectedTasks.length} case(s)`)).
+      then(() => this.props.showSuccessMessage(`Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
       catch(() => this.props.showErrorMessage(
         { title: 'Error assigning tasks',
           detail: 'One or more tasks couldn\'t be assigned.' }));
@@ -117,7 +118,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.selectedTasks().length} case(s)`}
+          name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
           loading={false}
           loadingText="Loading" />
       </div>
