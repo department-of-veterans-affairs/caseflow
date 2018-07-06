@@ -994,6 +994,7 @@ fieldset {
   margin-bottom: rem(20px);
 
   label {
+    max-width: 100%;
     // This important can be removed when the latest USWDS
     // are merged into the gem we use.
     // scss-lint:disable ImportantRule
