@@ -7,83 +7,41 @@ def click_dropdown(opt_idx, container = page)
 end
 
 RSpec.feature "Case details" do
+  let!(:attorney_user) { FactoryBot.create(:user) }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+
   before do
-    Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_phase_two)
+    FeatureToggle.enable!(:test_facols)
+
+    User.authenticate!(user: attorney_user)
   end
 
   after do
+    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_phase_two)
   end
 
-  let(:documents) do
-    [
-      Generators::Document.create(
-        filename: "My BVA Decision",
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: 6,
-        category_procedural: true,
-        tags: [
-          Generators::Tag.create(text: "New Tag1"),
-          Generators::Tag.create(text: "New Tag2")
-        ],
-        description: Generators::Random.word_characters(50)
-      ),
-      Generators::Document.create(
-        filename: "My Form 9",
-        type: "Form 9",
-        received_at: 5.days.ago,
-        vbms_document_id: 4,
-        category_medical: true,
-        category_other: true
-      ),
-      Generators::Document.create(
-        filename: "My NOD",
-        type: "NOD",
-        received_at: 1.day.ago,
-        vbms_document_id: 3
-      )
-    ]
-  end
-  let(:vacols_record) { :remand_decided }
-  let(:appeals) do
-    [
-      Generators::LegacyAppeal.build(
-        vbms_id: "123456789S",
-        vacols_record: vacols_record,
-        documents: documents
-      ),
-      Generators::LegacyAppeal.build(
-        vbms_id: "115555555S",
-        vacols_record: vacols_record,
-        documents: documents,
-        issues: []
-      )
-    ]
-  end
-  let!(:issues) { [Generators::Issue.build] }
-  let! :attorney_user do
-    User.authenticate!(roles: ["System Admin"])
-  end
-
-  let!(:vacols_tasks) { Fakes::QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let!(:vacols_appeals) { Fakes::QueueRepository.appeals_from_tasks(vacols_tasks) }
-
   context "loads attorney task detail views" do
-    before do
-      User.unauthenticate!
-      User.authenticate!(roles: ["System Admin"])
-    end
-
     context "loads appeal summary view" do
+      let!(:vacols_case_hearing) { FactoryBot.build(:case_hearing, user: attorney_user) }
+      let!(:appeal_w_hearing) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            case_hearings: [vacols_case_hearing]
+          )
+        )
+      end
+      let(:hearing) { appeal_w_hearing.hearings.first }
+
       scenario "appeal has hearing" do
-        appeal = vacols_appeals.reject { |a| a.hearings.empty? }.first
-        hearing = appeal.hearings.first
-
         visit "/queue"
-
-        click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
+        click_on "#{appeal_w_hearing.veteran_full_name} (#{appeal_w_hearing.sanitized_vbms_id})"
 
         expect(page).to have_content("Select an action")
 
