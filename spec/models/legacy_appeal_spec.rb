@@ -1645,9 +1645,10 @@ describe LegacyAppeal do
       end
 
       let!(:issues) do
-        [Generators::Issue.build(disposition: :allowed,
-                                 codes: %w[02 15 03 04 05],
-                                 labels: labels)]
+        [build(:issue,
+          disposition: :allowed,
+          codes: %w[02 15 03 04 05],
+          labels: labels)]
       end
 
       it "includes viewed boolean in hash" do

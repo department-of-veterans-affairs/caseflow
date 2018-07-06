@@ -22,7 +22,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
   let(:issues) do
     [
-      Generators::Issue.build
+      build(:default_issue)
     ]
   end
 
