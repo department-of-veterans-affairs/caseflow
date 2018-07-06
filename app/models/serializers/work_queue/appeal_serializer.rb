@@ -1,4 +1,8 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :is_legacy_appeal do
+    false
+  end
+
   attribute :issues do
     object.request_issues
   end
@@ -30,7 +34,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :location_code do
-    "not implemented"
+    "Not supported for BEAAM appeals"
   end
 
   attribute :veteran_full_name do
@@ -58,7 +62,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    "not implemented"
+    object.advanced_on_docket
   end
 
   attribute :docket_number do
@@ -82,15 +86,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :power_of_attorney do
-    "not implemented"
+    object.representative_name
   end
 
   attribute :regional_office do
-    {
-      key: "not implemented",
-      city: "not implemented",
-      state: "not implemented"
-    }
   end
 
   attribute :caseflow_veteran_id do

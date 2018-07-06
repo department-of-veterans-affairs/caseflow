@@ -16,6 +16,7 @@ FactoryBot.define do
         user nil
         assigner nil
         work_product nil
+        document_id nil
       end
 
       after(:create) do |vacols_case, evaluator|
@@ -35,7 +36,8 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
-          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
+          dedocid: evaluator.document_id || nil
         )
       end
     end

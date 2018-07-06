@@ -40,4 +40,10 @@ class Appeal < AmaReview
   def docket_number
     "#{established_at.strftime('%y%m%d')}-#{id}"
   end
+
+  def power_of_attorney
+    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
+  end
+
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 end

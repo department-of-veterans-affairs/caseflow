@@ -14,8 +14,6 @@ class Fakes::BGSService
   cattr_accessor :rating_issue_records
   attr_accessor :client
 
-  ID_TO_RAISE_ERROR = "ERROR-ID".freeze
-
   # rubocop:disable Metrics/MethodLength
   def self.create_veteran_records
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
@@ -279,8 +277,6 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
-    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
-
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address
 
