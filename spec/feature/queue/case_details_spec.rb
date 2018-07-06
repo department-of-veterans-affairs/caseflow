@@ -162,7 +162,7 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         sleep 1
-        expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
+        expect(page).to have_content(COPY::CASE_SNAPSHOT_ABOUT_BOX_TITLE)
 
         click_on "View #{appeal.documents.count} documents"
 
