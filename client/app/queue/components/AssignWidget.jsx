@@ -67,21 +67,17 @@ class AssignWidget extends React.PureComponent<Props> {
       return;
     }
 
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId: selectedAssignee,
         previousAssigneeId }).
-      then(() => {
-        this.props.resetErrorMessages();
-        this.props.showSuccessMessage(`Assigned ${selectedTasks.length} case(s)`);
-      }).
-      catch((e) => {
-        this.props.resetSuccessMessages();
-        debugger;
-        this.props.showErrorMessage(
-          { title: 'Error assigning tasks',
-            detail: 'One or more tasks couldn\'t be assigned.' });
-      });
+      then(() => this.props.showSuccessMessage(`Assigned ${selectedTasks.length} case(s)`)).
+      catch(() => this.props.showErrorMessage(
+        { title: 'Error assigning tasks',
+          detail: 'One or more tasks couldn\'t be assigned.' }));
   }
 
   render = () => {
@@ -99,9 +95,9 @@ class AssignWidget extends React.PureComponent<Props> {
           </div>
         </div>}
       {success &&
-        <div class="usa-alert usa-alert-success" >
-          <div class="usa-alert-body">
-            <h3 class="usa-alert-heading">{success}</h3>
+        <div className="usa-alert usa-alert-success" >
+          <div className="usa-alert-body">
+            <h3 className="usa-alert-heading">{success}</h3>
           </div>
         </div>}
       <div {...css({
