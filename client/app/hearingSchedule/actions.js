@@ -48,3 +48,17 @@ export const onJudgeEndDateChange = (endDate) => ({
     endDate
   }
 });
+
+export const onViewStartDateChange = (viewStartDate) => ({
+  type: ACTIONS.VIEW_START_DATE_CHANGE,
+  payload: {
+    viewStartDate
+  }
+});
+
+export const onViewEndDateChange = (viewEndDate) => ({
+  type: ACTIONS.VIEW_END_DATE_CHANGE,
+  payload: {
+    viewEndDate
+  }
+});

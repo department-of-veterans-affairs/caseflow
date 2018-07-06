@@ -6,7 +6,7 @@ import Table from '../../components/Table';
 import {formatDate} from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import DateSelector from '../../components/DateSelector'
+import BasicDateRangeSelector from './BasicDateRangeSelector'
 
 export default class ListSchedule extends React.Component {
 
@@ -54,17 +54,20 @@ export default class ListSchedule extends React.Component {
 
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ViEW_PAGE_HEADER}</h1>
-      <div className="rdw-left-aligned-block">
-        <DateSelector name={'from_date'} label={'From: '} value={'06/06/2018'}/>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <DateSelector name={'to_date'} label={'To: '} value={'06/06/2019'}/>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <Link
-          name="apply"
-          to="/hearings/schedule_periods">
-          {COPY.HEARING_SCHEDULE_ViEW_PAGE_APPLY_LINK}
-        </Link>
-      </div>
+      <BasicDateRangeSelector
+        startDateValue={this.props.startDateValue}
+        startDateLabel={COPY.HEARING_SCHEDULE_VIEW_START_DATE_LABEL}
+        endDateValue={this.props.endDateValue}
+        endDateLabel={COPY.HEARING_SCHEDULE_VIEW_END_DATE_LABEL}
+        onStartDateChange={this.props.startDateChange}
+        onEndDateChange={this.props.endDateChange}
+      />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <Link
+        name="apply"
+        to="/hearings/schedule_periods">
+        {COPY.HEARING_SCHEDULE_ViEW_PAGE_APPLY_LINK}
+      </Link>
       <Table
         columns={hearingScheduleColumns}
         rowObjects={hearingScheduleRows}
@@ -83,5 +86,9 @@ ListSchedule.propTypes = {
     judgeId: PropTypes.string,
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
-  })
+  }),
+  startDateValue: PropTypes.string,
+  endDateValue: PropTypes.string,
+  startDateChange: PropTypes.func,
+  endDateChange: PropTypes.func
 };
