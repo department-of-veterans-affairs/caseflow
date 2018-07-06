@@ -105,10 +105,15 @@ test:
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
 
+# Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
+# Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
+# Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
 test_vacols:
   adapter: oracle_enhanced
-  host: localhost
-  port: 1521
   username: VACOLS
   password: VACOLS
-  database: BVAP.localdomain
+  database: "(DESCRIPTION=
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
+    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
+    (CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain))
+  )"
