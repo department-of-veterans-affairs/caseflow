@@ -22,7 +22,7 @@ module HearingSchedule::RoDistribution
       end.to_h
     end
 
-    # Evently distributes weights to every month in the array based on the percenrage of
+    # Evently distributes weights to every month in the array based on the percentage of
     # days allocated to each month.
     #
     # For example:
@@ -35,8 +35,8 @@ module HearingSchedule::RoDistribution
     #   [7, 2018] => 0.2, [8, 2018] => 0.2
     #
     def weight_by_percentages(monthly_percentages)
-      percenrage_sum = monthly_percentages.map { |_k, v| v }.inject(:+)
-      monthly_percentages.map { |date, num| [date, (num / percenrage_sum)] }.to_h
+      percentage_sum = monthly_percentages.map { |_k, v| v }.inject(:+)
+      monthly_percentages.map { |date, num| [date, (num / percentage_sum)] }.to_h
     end
 
     # shuffles the dates of each month in random order and assigns an empty array for each date
