@@ -1,3 +1,4 @@
+// @flow
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';

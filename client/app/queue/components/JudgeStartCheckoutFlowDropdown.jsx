@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
+import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -70,13 +71,22 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     this.props.stageAppeal(appealId);
   }
 
-  render = () => <SearchableDropdown
-    placeholder="Select an action&hellip;"
-    name={`start-checkout-flow-${this.props.appealId}`}
-    options={JUDGE_DECISION_OPTIONS}
-    onChange={this.changeRoute}
-    hideLabel
-    dropdownStyling={dropdownStyling} />;
+  render = () => {
+    const {
+      task: { attributes: task }
+    } = this.props;
+    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.work_product) ?
+      JUDGE_DECISION_OPTIONS.OMO_REQUEST :
+      JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
+
+    return <SearchableDropdown
+      placeholder="Select an action&hellip;"
+      name={`start-checkout-flow-${this.props.appealId}`}
+      options={[dropdownOption]}
+      onChange={this.changeRoute}
+      hideLabel
+      dropdownStyling={dropdownStyling} />;
+  }
 }
 
 JudgeStartCheckoutFlowDropdown.propTypes = {
