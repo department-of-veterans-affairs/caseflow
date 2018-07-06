@@ -75,7 +75,7 @@ class Search extends React.PureComponent {
         body: rampIneligibleInstructions
       },
       no_eligible_appeals: {
-        title: 'Ineligible to participate in RAMP: appeal is at the Board',
+        title: 'Ineligible to participate in RAMP',
         body: rampIneligibleInstructions
       },
       no_active_compensation_appeals: {

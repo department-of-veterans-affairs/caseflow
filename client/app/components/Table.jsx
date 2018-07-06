@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
+import ReactTooltip from 'react-tooltip';
 
 /**
  * This component can be used to easily build tables.
@@ -38,7 +39,10 @@ const HeaderRow = (props) => {
     <tr>
       {getColumns(props).map((column, columnNumber) =>
         <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.header || ''}
+          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
+            {column.tooltip}
+          </ReactTooltip>}
+          <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
         </th>
       )}
     </tr>
