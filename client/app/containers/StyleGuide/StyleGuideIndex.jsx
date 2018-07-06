@@ -14,6 +14,7 @@ import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideSearch from './StyleGuideSearch';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
+import StyleGuideDropdownButton from './StyleGuideDropdownButton';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLoaders from './StyleGuideLoaders';
 import StyleGuideLayout from './StyleGuideLayout';
@@ -76,6 +77,8 @@ export default class StyleGuideIndex extends React.PureComponent {
         <StyleGuideSearch />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
+        <div className="cf-help-divider"></div>
+        <StyleGuideDropdownButton />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
         <div className="cf-help-divider"></div>
