@@ -29,7 +29,7 @@ describe AppealSeriesAlerts do
         bfmpro: status,
         case_hearings: hearings,
         bfso: "F",
-        case_issues: [ create(:case_issue, :compensation) ]
+        case_issues: [create(:case_issue, :compensation)]
       ))
   end
 
