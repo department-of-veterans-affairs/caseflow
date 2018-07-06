@@ -23,7 +23,7 @@ module HearingSchedule::RoAllocation
       ordered_months
     end
 
-    # Validates the current allocated days based on the avaiable days for each
+    # Validates the current allocated days based on the available days for each
     # month in the schedule periods. Also evens out the monthly allocated days
     # based on the available days.
     #
@@ -36,15 +36,15 @@ module HearingSchedule::RoAllocation
     # returns:
     #   { [1, 2018] => 20, [2, 2018] => 20, [6, 2018] => 20 }
     #
-    # Raises NotEnoughAvailableDays if there not not enough avaiable days based
-    # on the allocated days and rooms avaiable.
+    # Raises NotEnoughAvailableDays if there not not enough available days based
+    # on the allocated days and rooms available.
     #
     def validate_available_days(allocated_days, available_days, num_of_rooms)
-      # raise error if there are not enough avaiable days
+      # raise error if there are not enough available days
       verify_total_available_days(allocated_days, available_days, num_of_rooms)
 
       allocated_days.each_key do |month|
-        # skipping if allocated days meets the avaiable days critiera
+        # skipping if allocated days meets the available days critiera
         next if allocated_days[month] <= (get_available_days(available_days, month) * num_of_rooms)
 
         diff = allocated_days[month] - get_available_days(available_days, month)
@@ -112,7 +112,7 @@ module HearingSchedule::RoAllocation
 
     # Evens out the monthly allocated days that best divide by the number of rooms provided.
     #
-    # Monlthly allocated days is converted to:
+    # Monthly allocated days is converted to:
     # {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20}
     #
     # {[4, 2018]=>20, [9, 2018]=>20, [5, 2018]=>20, [8, 2018]=>18, [6, 2018]=>20, [7, 2018]=>20}
