@@ -25,9 +25,9 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-const dispositionLabelForDescription = (disposition) => {
+export const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
-  return `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}`;
+  return disposition ? `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}` : null;
 };
 
 export default class LegacyIssueListItem extends React.PureComponent {
