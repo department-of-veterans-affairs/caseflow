@@ -7,7 +7,8 @@ class TasksController < ApplicationController
   }.freeze
 
   QUEUES = {
-    attorney: AttorneyQueue
+    attorney: AttorneyQueue,
+    co_located: CoLocatedAdminQueue
   }.freeze
 
   def set_application
