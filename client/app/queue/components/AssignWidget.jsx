@@ -75,7 +75,8 @@ class AssignWidget extends React.PureComponent<Props> {
       { tasks: selectedTasks,
         assigneeId: selectedAssignee,
         previousAssigneeId }).
-      then(() => this.props.showSuccessMessage(`Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
+      then(() => this.props.showSuccessMessage(
+        `Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
       catch(() => this.props.showErrorMessage(
         { title: 'Error assigning tasks',
           detail: 'One or more tasks couldn\'t be assigned.' }));
