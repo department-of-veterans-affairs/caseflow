@@ -12,7 +12,6 @@ import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import { convertBooleanToRadioOption } from '../../util';
 
 class Review extends React.PureComponent {
   render() {
@@ -21,13 +20,10 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
-      setReceiptDate,
       informalConference,
       informalConferenceError,
-      setInformalConference,
       sameOffice,
-      sameOfficeError,
-      setSameOffice
+      sameOfficeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -45,7 +41,7 @@ class Review extends React.PureComponent {
         name="receipt-date"
         label="What is the Receipt Date of this form?"
         value={receiptDate}
-        onChange={setReceiptDate}
+        onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
         strongLabel
       />
@@ -56,9 +52,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={setInformalConference}
+        onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
-        value={informalConference !== null ? informalConference.toString() : null}
+        value={informalConference === null ? null : informalConference.toString()}
       />
 
       <RadioField
@@ -67,9 +63,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={setSameOffice}
+        onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
-        value={sameOffice !== null ? sameOffice.toString() : null}
+        value={sameOffice === null ? null : sameOffice.toString()}
       />
 
       <SelectClaimantConnected />

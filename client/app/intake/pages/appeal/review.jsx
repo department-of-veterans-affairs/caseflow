@@ -20,10 +20,8 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
-      setReceiptDate,
       docketType,
-      docketTypeError,
-      setDocketType
+      docketTypeError
     } = this.props;
 
     switch (appealStatus) {
@@ -50,7 +48,7 @@ class Review extends React.PureComponent {
         name="receipt-date"
         label="What is the Receipt Date of this form?"
         value={receiptDate}
-        onChange={setReceiptDate}
+        onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
         strongLabel
       />
@@ -61,7 +59,7 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={docketTypeRadioOptions}
-        onChange={setDocketType}
+        onChange={this.props.setDocketType}
         errorMessage={docketTypeError}
         value={docketType}
       />

@@ -40,7 +40,7 @@ export default class SelectClaimant extends React.PureComponent {
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={setClaimantNotVeteran}
-        value={claimantNotVeteran !== null ? claimantNotVeteran.toString() : null}
+        value={claimantNotVeteran === null ? null : claimantNotVeteran.toString()}
       />
 
       { showClaimants && claimantOptions() }

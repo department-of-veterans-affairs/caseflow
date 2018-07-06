@@ -17,8 +17,7 @@ class Review extends React.PureComponent {
       supplementalClaimStatus,
       veteranName,
       receiptDate,
-      receiptDateError,
-      setReceiptDate
+      receiptDateError
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -36,7 +35,7 @@ class Review extends React.PureComponent {
         name="receipt-date"
         label="What is the Receipt Date of this form?"
         value={receiptDate}
-        onChange={setReceiptDate}
+        onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
         strongLabel
       />
