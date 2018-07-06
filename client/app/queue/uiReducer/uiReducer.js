@@ -1,7 +1,6 @@
 // @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
-import _ from 'lodash';
 import type { UiState } from '../types';
 
 const initialSaveState = {

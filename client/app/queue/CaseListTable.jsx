@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { sprintf } from 'sprintf-js';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';

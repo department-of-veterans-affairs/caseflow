@@ -23,8 +23,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
     const {
       vacolsId,
-      history,
-      appeal: { attributes: { veteran_full_name: vetName } }
+      history
     } = this.props;
     const decisionType = props.value;
     const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
