@@ -90,10 +90,8 @@ class AssignWidget extends React.PureComponent<Props> {
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
 
     return <React.Fragment>
-      {error &&
-        <Alert type="error" title={error.title} message={error.detail} />}
-      {success &&
-        <Alert type="success" title={success} />}
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
+      {success && <Alert type="success" title={success} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
