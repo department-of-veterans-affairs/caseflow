@@ -18,11 +18,7 @@ class HealthChecksController < ActionController::Base
   end
 
   def show
-    self.healthy?
-
-    # TODO: wire check into controller
-    healthy = true
-
+    healthy = self.healthy?
     body = {
       healthy: healthy
     }.merge(Rails.application.config.build_version || {})
