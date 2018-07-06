@@ -29,7 +29,7 @@ describe "Health Check API" do
       end
 
       after { FakeWeb.clean_registry }
-      
+
       it "fails health check when pushgateway is unhealthy" do
         Rails.application.config.build_version = { deployed_at: "the best day ever" }
 
@@ -52,7 +52,7 @@ describe "Health Check API" do
       end
 
       after { FakeWeb.clean_registry }
-      
+
       it "passes health check when everything is working" do
         Rails.application.config.build_version = { deployed_at: "the best day ever" }
 

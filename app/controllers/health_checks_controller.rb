@@ -10,7 +10,7 @@ class HealthChecksController < ActionController::Base
 
   def healthy?
     # Check health of sidecar services
-    if not Rails.deploy_env?(:prod)
+    if !Rails.deploy_env?(:prod)
       @pushgateway.healthy?
     else
       true
@@ -18,7 +18,7 @@ class HealthChecksController < ActionController::Base
   end
 
   def show
-    healthy = self.healthy?
+    healthy = healthy?
     body = {
       healthy: healthy
     }.merge(Rails.application.config.build_version || {})
