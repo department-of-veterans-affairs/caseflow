@@ -9,16 +9,16 @@ import {
   showSuccessMessage,
   resetSuccessMessages,
   setSelectedAssignee
-} from '../queue/uiReducer/uiActions';
+} from '../uiReducer/uiActions';
 import {
   initialAssignTasksToUser
-} from '../queue/QueueActions';
-import SearchableDropdown from '../components/SearchableDropdown';
-import Button from '../components/Button';
+} from '../QueueActions';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
-} from '../queue/types';
+} from '../types';
 
 type Props = {|
   // Parameters
@@ -85,7 +85,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { previousAssigneeId, attorneysOfJudge, selectedAssignee, error, success } = this.props;
+    const { attorneysOfJudge, selectedAssignee, error, success } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
@@ -108,7 +108,7 @@ class AssignWidget extends React.PureComponent<Props> {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        '& > *': { marginRight: '1rem' }})}>
+        '& > *': { marginRight: '1rem' } })}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
           name="Assignee"
