@@ -21,7 +21,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:allocation, regional_office: "RO02", allocated_days: 3, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO02", allocated_days: 3, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO21", allocated_days: 0, schedule_period: schedule_period),
-      create(:allocation, regional_office: "RO27", allocated_days: 100, schedule_period: schedule_period)
+      create(:allocation, regional_office: "RO27", allocated_days: 100, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO28", allocated_days: 42.5, schedule_period: schedule_period)
+
     ]
   end
 
@@ -35,7 +37,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       "RO55" => get_unique_dates_for_ro_between("RO55", schedule_period, 25),
       "RO02" => get_unique_dates_for_ro_between("RO02", schedule_period, 20),
       "RO21" => get_unique_dates_for_ro_between("RO21", schedule_period, 100),
-      "RO27" => get_unique_dates_for_ro_between("RO27", schedule_period, 0)
+      "RO27" => get_unique_dates_for_ro_between("RO27", schedule_period, 0),
+      "RO28" => get_unique_dates_for_ro_between("RO28", schedule_period, 40)
     }
   end
 
@@ -49,7 +52,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       "RO55" => get_unique_dates_for_ro_between("RO55", schedule_period, 0),
       "RO02" => get_unique_dates_for_ro_between("RO02", schedule_period, 0),
       "RO21" => get_unique_dates_for_ro_between("RO21", schedule_period, 0),
-      "RO27" => get_unique_dates_for_ro_between("RO27", schedule_period, 0)
+      "RO27" => get_unique_dates_for_ro_between("RO27", schedule_period, 0),
+      "RO28" => get_unique_dates_for_ro_between("RO28", schedule_period, 0)
     }
   end
 
@@ -254,13 +258,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           end
 
           # making sure rooms are filled
-          if subject[ro_key][:allocated_days] % subject[ro_key][:num_of_rooms] == 0
+          if subject[ro_key][:allocated_days].ceil % subject[ro_key][:num_of_rooms] == 0
             expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.all?).to eq(true)
           else
             expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.count(false)).to eq(1)
           end
 
-          expect(rooms.values.inject(:+)).to eq(allocations[ro_key])
+          expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
         end
       end
     end

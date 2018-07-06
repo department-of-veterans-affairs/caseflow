@@ -100,7 +100,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocations_by_month(ro_key)
     self.class.validate_and_evenly_distribute_monthly_allocations(
       @ros[ro_key][:allocated_dates],
-      monthly_distributed_days(@ros[ro_key][:allocated_days]),
+      monthly_distributed_days(@ros[ro_key][:allocated_days].ceil),
       @ros[ro_key][:num_of_rooms]
     )
   end
