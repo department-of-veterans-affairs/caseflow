@@ -7,7 +7,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import USER_ROLES_TYPES from '../../constants/USER_ROLES_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -124,8 +124,8 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
 
 export const USER_ROLES = {
-  ATTORNEY: USER_ROLES_TYPES.attorney,
-  JUDGE: USER_ROLES_TYPES.judge
+  ATTORNEY: USER_ROLE_TYPES.attorney,
+  JUDGE: USER_ROLE_TYPES.judge
 };
 
 export const PAGE_TITLES = {
