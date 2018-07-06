@@ -20,6 +20,7 @@ import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../types';
 import pluralize from 'pluralize';
+import Alert from '../../components/Alert';
 
 type Props = {|
   // Parameters
@@ -90,18 +91,9 @@ class AssignWidget extends React.PureComponent<Props> {
 
     return <React.Fragment>
       {error &&
-        <div className="usa-alert usa-alert-error" role="alert">
-          <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">{error.title}</h3>
-            <p className="usa-alert-text">{error.detail}</p>
-          </div>
-        </div>}
+        <Alert type="error" title={error.title} message={error.detail} />}
       {success &&
-        <div className="usa-alert usa-alert-success" >
-          <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">{success}</h3>
-          </div>
-        </div>}
+        <Alert type="success" title={success} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
