@@ -140,3 +140,10 @@ export const setUserRole = (userRole) => ({
   type: ACTIONS.SET_USER_ROLE,
   payload: { userRole }
 });
+
+export const setSelectedAssignee = ({ assigneeId }) => ({
+  type: ACTIONS.SET_SELECTED_ASSIGNEE,
+  payload: {
+    assigneeId
+  }
+});

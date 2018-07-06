@@ -7,7 +7,7 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
-import AssignWidget from '../components/AssignWidget';
+import AssignWidget from './components/AssignWidget';
 
 const AssignedCasesPage = (props) => {
   const {
