@@ -66,6 +66,7 @@
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "react-scroll-to-component": "^1.0.2",
+    "react-scrolllock": "^3.0.1",
     "react-select": "^1.0.0-rc.4",
     "react-textarea-autosize": "^5.1.0",
     "react-tooltip": "^3.6.0",
