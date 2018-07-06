@@ -72,7 +72,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { previousAssigneeId, attorneysOfJudge, selectedAssignee, error } = this.props;
+    const { attorneysOfJudge, selectedAssignee, error } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
@@ -89,7 +89,7 @@ class AssignWidget extends React.PureComponent<Props> {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        '& > *': { marginRight: '1rem' }})}>
+        '& > *': { marginRight: '1rem' } })}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
           name="Assignee"
