@@ -10,12 +10,12 @@ RSpec.describe UsersController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-  describe "GET /users?role=Judge" do
+  describe "GET /users?role=judge" do
     let!(:judges) { create_list(:staff, 2, :judge_role) }
 
     context "when role is passed" do
       it "should return a list of judges" do
-        get :index, params: { role: "Judge" }
+        get :index, params: { role: "judge" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["judges"].size).to eq 3
@@ -32,23 +32,28 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe "GET /users?role=Attorney" do
-    context "when current user not a judge" do
-      it "should not return a list of attorneys" do
-        get :index, params: { role: "Attorney" }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq 0
-      end
-    end
+  describe "GET /users?role=attorney" do
+    context "when judge ID is passed" do
+      let!(:judge) { User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID) }
 
-    context "when current user a judge" do
-      it "should return a list of attorneys" do
-        User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID)
-        get :index, params: { role: "Attorney", judge_css_id: "BVARZIEMANN1" }
+      it "should return a list of attorneys associated with the judge" do
+        get :index, params: { role: "attorney", judge_css_id: judge.css_id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorneys"].size).to eq 3
+      end
+    end
+
+    context "when judge ID is not passed" do
+      let!(:attorneys) { create_list(:staff, 4, :attorney_role) }
+      let!(:judges) { create_list(:staff, 2, :judge_role) }
+
+      it "should return a list of all attorneys" do
+        get :index, params: { role: "attorney" }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        # four regular attorneys and one attorney acting as a judge
+        expect(response_body["attorneys"].size).to eq 5
       end
     end
   end
