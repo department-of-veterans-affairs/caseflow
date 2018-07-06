@@ -2,8 +2,6 @@ describe "Health Check API" do
   Rails.application.config.build_version = { deployed_at: "the best day ever" }
 
   it "fails health check when unhealthy" do
-    allow()
-
     get "/health-check"
 
     expect(response).to be_success
