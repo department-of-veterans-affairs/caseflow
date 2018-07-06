@@ -6,7 +6,7 @@ import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
-import AssignWidget from '../components/AssignWidget';
+import AssignWidget from './components/AssignWidget';
 
 const UnassignedCasesPage = (props) => {
   const { tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
