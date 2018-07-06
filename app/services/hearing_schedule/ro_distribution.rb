@@ -13,19 +13,30 @@ module HearingSchedule::RoDistribution
     #
     # (2018-Jan-15, 2018-Jun-30)
     # returns -> {[1, 2018]=>53.333333333333336, [2, 2018]=>100.0, [3, 2018]=>100.0,
-    #             s[4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
+    #             [4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
     #
     def montly_percentage_for_period(start_date, end_date)
-      # FIX THIS! number of days is incorrect here
       (start_date..end_date).group_by { |d| [d.month, d.year] }.map do |group|
         number_of_days_in_month = (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f
         [group[0], ((group.last.last - group.last.first).to_f / number_of_days_in_month) * 100]
       end.to_h
     end
 
+    # Evently distributes weights to every month in the array based on the percentage of
+    # days allocated to each month.
+    #
+    # For example:
+    # (2018-Jan-01, 2018-Jun-30)
+    # Monthly percentages:
+    # [4, 2018] => 100.0, [5, 2018] => 100.0, [6, 2018] => 100.0,
+    #   [7, 2018] => 100.0, [8, 2018] => 100.0
+    # returns:
+    # [4, 2018] => 0.2, [5, 2018] => 0.2, [6, 2018] => 0.2,
+    #   [7, 2018] => 0.2, [8, 2018] => 0.2
+    #
     def weight_by_percentages(monthly_percentages)
-      percenrage_sum = monthly_percentages.map { |_k, v| v }.inject(:+)
-      monthly_percentages.map { |date, num| [date, (num / percenrage_sum)] }.to_h
+      percentage_sum = monthly_percentages.map { |_k, v| v }.inject(:+)
+      monthly_percentages.map { |date, num| [date, (num / percentage_sum)] }.to_h
     end
 
     # shuffles the dates of each month in random order and assigns an empty array for each date
