@@ -8,15 +8,18 @@ module HearingSchedule::RoDistribution
     #
     # For example:
     # (2018-Jan-01, 2018-Jun-30)
-    # returns -> {[1, 2018]=>100.0, [2, 2018]=>100.0, [3, 2018]=>100.0, [4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
+    # returns -> {[1, 2018]=>100.0, [2, 2018]=>100.0, [3, 2018]=>100.0,
+    #             [4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
     #
     # (2018-Jan-15, 2018-Jun-30)
-    # returns -> {[1, 2018]=>53.333333333333336, [2, 2018]=>100.0, [3, 2018]=>100.0, [4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
+    # returns -> {[1, 2018]=>53.333333333333336, [2, 2018]=>100.0, [3, 2018]=>100.0,
+    #             s[4, 2018]=>100.0, [5, 2018]=>100.0, [6, 2018]=>100.0}
     #
     def montly_percentage_for_period(start_date, end_date)
       # FIX THIS! number of days is incorrect here
       (start_date..end_date).group_by { |d| [d.month, d.year] }.map do |group|
-        [group[0], ((group.last.last - group.last.first).to_f / (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f) * 100]
+        number_of_days_in_month = (group.last.first.end_of_month - group.last.first.beginning_of_month).to_f
+        [group[0], ((group.last.last - group.last.first).to_f / number_of_days_in_month) * 100]
       end.to_h
     end
 

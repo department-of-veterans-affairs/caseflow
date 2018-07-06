@@ -115,6 +115,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     dates.group_by { |d| [d.month, d.year] }
   end
 
+  # allocated hearing days for each RO
   #
   # grouped_shuffled_monthly_dates: is a hash with months as keys and date has with rooms array value
   # as values.
@@ -131,26 +132,31 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       allocated_days = monthly_allocations[month]
       monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys
-      
+
       if allocated_days > 0 &&
          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
-        if (num_of_rooms <= allocated_days)
+        if num_of_rooms <= allocated_days
           # there are enough allocation days for the rooms avaiable, allocate the
           # to the number of rooms avaiable for the day
           grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-            num_of_rooms.times.map { |room_num| { room_num: room_num + 1 } }
+            get_rooms(num_of_rooms)
+
           allocated_days -= num_of_rooms
         else
           # there are less allocated days than the number of rooms, so allocate
           # all the remaining allocated days to the day
           grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-            allocated_days.times.map { |room_num| { room_num: room_num + 1 } }
+            get_rooms(allocated_days)
           allocated_days -= allocated_days
         end
       end
 
       monthly_allocations[month] = allocated_days
     end
+  end
+
+  def get_rooms(num_of_rooms)
+    num_of_rooms.times.map { |room_num| { room_num: room_num + 1 } }
   end
 
   def distribute(percentage, total)
@@ -208,10 +214,17 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #     Thu, 05 Apr 2018,
   #     Fri, 06 Apr 2018
   #   ]}
+  # fails with RoNonAvailableDaysNotProvided
+  #   fails if non-available days not provided for a RO
+  # fails with NoDaysAvailableForRO
+  #   fails if there are no available days for a RO
   #
   def filter_non_available_ro_days
     @ros.each_key do |ro_key|
-      fail RoNonAvailableDaysNotProvided, "Non-availability days not provided for #{ro_key}" unless @ro_non_available_days[ro_key]
+      unless @ro_non_available_days[ro_key]
+        fail RoNonAvailableDaysNotProvided,
+             "Non-availability days not provided for #{ro_key}"
+      end
       @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key].map(&:date) || [])
       fail NoDaysAvailableForRO, "No available days for #{ro_key}" if @ros[ro_key][:available_days].empty?
     end
