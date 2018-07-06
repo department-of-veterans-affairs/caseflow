@@ -134,7 +134,6 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/intake/review-request"
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
-
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
 
     safe_click "#button-submit-review"

@@ -27,7 +27,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.claimant_not_veteran
     },
     claimant: {
-      $set: serverIntake.claimant
+      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)

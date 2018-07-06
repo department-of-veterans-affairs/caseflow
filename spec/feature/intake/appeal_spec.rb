@@ -98,6 +98,14 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
+    visit "/intake/review-request"
+
+    expect(find_field("Evidence Submission", visible: false)).to be_checked
+
+    expect(find("#different-claimant-option_false", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
     appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
