@@ -113,7 +113,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: intake.veteran.participant_id
+      participant_id: veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")
