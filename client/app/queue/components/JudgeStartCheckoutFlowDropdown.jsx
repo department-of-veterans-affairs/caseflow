@@ -13,8 +13,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import { buildCaseReviewPayload } from '../utils';
 import {
   requestSave,
-  saveSuccess,
-  resetBreadcrumbs
+  saveSuccess
 } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
@@ -53,7 +52,6 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
           history.replace('/queue');
         });
     } else {
-      this.props.resetBreadcrumbs(appeal.veteran_full_name, vacolsId);
       this.stageAppeal();
 
       history.push('');
@@ -107,7 +105,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  resetBreadcrumbs,
   setCaseReviewActionType
 }, dispatch);
 

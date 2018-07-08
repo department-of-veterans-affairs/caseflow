@@ -162,7 +162,7 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
 
         sleep 1
-        expect(page).to have_content("Your Queue > #{appeal.veteran_full_name}")
+        expect(page).to have_content(COPY::CASE_SNAPSHOT_ABOUT_BOX_TITLE)
 
         click_on "View #{appeal.documents.count} documents"
 
@@ -236,32 +236,6 @@ RSpec.feature "Case details" do
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
-    end
-  end
-
-  context "pop breadcrumb" do
-    scenario "goes back from submit decision view" do
-      appeal = vacols_appeals.select { |a| a.issues.map(&:disposition).uniq.eql? [nil] }.first
-      visit "/queue"
-
-      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-      sleep 1
-      click_dropdown 0
-
-      issue_rows = page.find_all("tr[id^='table-row-']")
-      expect(issue_rows.length).to eq(appeal.issues.length)
-
-      issue_rows.each { |row| click_dropdown 2, row }
-
-      click_on "Continue"
-
-      expect(page).to have_content("Submit Draft Decision for Review")
-      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions > Submit")
-
-      click_on "Back"
-
-      expect(page).to have_content("Your Queue > #{appeal.veteran_full_name} > Select Dispositions")
-      expect(page).not_to have_content("Select Dispositions > Submit")
     end
   end
 end

@@ -25,7 +25,7 @@ import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS
 import {
   marginBottom, marginTop,
   marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES
+  fullWidth, redText
 } from './constants';
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
@@ -61,13 +61,6 @@ class EvaluateDecisionView extends React.PureComponent {
   componentDidMount = () => this.setState(
     _.pick(this.props.taskOptions, _.keys(this.state))
   );
-
-  getPageName = () => PAGE_TITLES.EVALUATE;
-
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/evaluate`
-  });
 
   qualityIsDeficient = () => this.state.quality > 0 && this.state.quality < 3;
 

@@ -50,7 +50,6 @@ export type UiStateError = {title: string, detail: string}
 
 export type UiState = {
   selectingJudge: boolean,
-  breadcrumbs: Array<Object>,
   highlightFormItems: boolean,
   messages: {
     success: ?string,

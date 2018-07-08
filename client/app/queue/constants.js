@@ -136,6 +136,5 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  },
-  EVALUATE: 'Evaluate Decision'
+  }
 };
