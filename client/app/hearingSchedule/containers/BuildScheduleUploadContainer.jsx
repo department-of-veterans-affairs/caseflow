@@ -9,14 +9,20 @@ import {
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  onUploadContinue
+  toggleUploadContinueLoading
 } from '../actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
 
-  onUploadContinue = (startDate, endDate, type, fileName) => () => {
-    this.props.onUploadContinue(startDate, endDate, type, fileName);
+  createSchedulePeriod = () => {
+    return true;
+  };
+
+  onUploadContinue = () => {
+    this.props.toggleUploadContinueLoading();
+    this.createSchedulePeriod();
+    this.props.toggleUploadContinueLoading();
   };
 
   render() {
@@ -36,16 +42,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
       uploadContinueLoading={this.props.uploadContinueLoading}
-      onRoCoUploadContinue={this.onUploadContinue(
-          this.props.roCoStartDate,
-          this.props.roCoEndDate,
-          this.props.fileType,
-          this.props.roCoFileUpload)}
-      onJudgeUploadContinue={this.onUploadContinue(
-          this.props.judgeStartDate,
-          this.props.judgeEndDate,
-          this.props.fileType,
-          this.props.judgeFileUpload)}
+      onUploadContinue={this.onUploadContinue}
     />;
   }
 }
@@ -69,7 +66,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  onUploadContinue
+  toggleUploadContinueLoading
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer);

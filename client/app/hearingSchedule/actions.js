@@ -56,9 +56,6 @@ export const onJudgeFileUpload = (file) => ({
   }
 });
 
-export const onUploadContinue = (startDate, endDate, type, fileName) => ({
-  type: ACTIONS.ON_UPLOAD_CONTINUE,
-  payload: {
-    startDate, endDate, type, fileName
-  }
+export const toggleUploadContinueLoading = () => ({
+  type: ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING
 });

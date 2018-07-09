@@ -53,11 +53,9 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.file
       }
     });
-  case ACTIONS.ON_UPLOAD_CONTINUE:
+  case ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING:
     return update(state, {
-      uploadContinueLoading: {
-        $set: true
-      }
+      $toggle: ['uploadContinueLoading']
     });
   default:
     return state;

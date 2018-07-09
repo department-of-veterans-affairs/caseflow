@@ -9,6 +9,6 @@ export class ShowSchedulePeriodContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps)(ShowSchedulePeriodContainer);

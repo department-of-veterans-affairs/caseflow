@@ -4,6 +4,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 export default class ShowSchedulePeriod extends React.Component {
 
   render() {
-    return <AppSegment filledBackground></AppSegment>;
+    return <AppSegment filledBackground />;
   }
 }
