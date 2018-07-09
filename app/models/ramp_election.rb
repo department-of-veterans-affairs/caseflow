@@ -29,6 +29,10 @@ class RampElection < RampReview
   end
 
   def recreate_issues_from_contentions!
+    # If there is any ramp issues attached to saved ramp refilings connected to this election,
+    # then the issues are locked and cannot be recreated
+    return false if any_matching_refiling_ramp_issues?
+
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
     end_product_establishment.contentions
@@ -75,6 +79,10 @@ class RampElection < RampReview
   end
 
   private
+
+  def any_matching_refiling_ramp_issues?
+    RampIssue.where(source_issue_id: issues.map(&:id)).any?
+  end
 
   def validate_receipt_date
     return unless receipt_date

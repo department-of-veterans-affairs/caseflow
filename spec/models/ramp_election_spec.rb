@@ -178,6 +178,26 @@ describe RampElection do
 
     subject { ramp_election.recreate_issues_from_contentions! }
 
+    context "when election has an issue attached to a ramp refiling" do
+      let!(:ramp_refiling) do
+        RampRefiling.create(
+          veteran_file_number: veteran_file_number,
+          receipt_date: receipt_date,
+          option_selected: option_selected,
+          appeal_docket: "hearing"
+        ).tap do |refiling|
+          RampIssue.create(review: refiling, source_issue_id: ramp_election.issues.first.id)
+        end
+      end
+
+      it "returns false and deletes/creates no issues" do
+        expect(subject).to be_falsey
+
+        expect(ramp_election.issues.length).to eq(1)
+        expect(ramp_election.issues.first.description).to eq("old")
+      end
+    end
+
     context "when election has no refiling" do
       let!(:contentions) do
         [
