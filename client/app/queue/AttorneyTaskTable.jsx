@@ -18,7 +18,7 @@ import COPY from '../../COPY.json';
 class AttorneyTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.vacolsId];
+    const appeal = this.props.appeals[task.appealId];
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
@@ -76,10 +76,10 @@ class AttorneyTaskTable extends React.PureComponent {
         return null;
       }
 
-      return <ReaderLink vacolsId={task.vacolsId}
+      return <ReaderLink appealId={task.appealId}
         analyticsSource={CATEGORIES.QUEUE_TABLE}
         redirectUrl={window.location.pathname}
-        appeal={this.props.appeals[task.vacolsId]} />;
+        appeal={this.props.appeals[task.appealId]} />;
     }
   }];
 
