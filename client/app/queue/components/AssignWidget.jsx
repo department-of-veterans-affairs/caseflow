@@ -19,8 +19,11 @@ import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../types';
-import pluralize from 'pluralize';
+import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
 import Alert from '../../components/Alert';
+import pluralize from 'pluralize';
+
+const OTHER = 'OTHER';
 
 type Props = {|
   // Parameters
@@ -86,8 +89,9 @@ class AssignWidget extends React.PureComponent<Props> {
   render = () => {
     const { attorneysOfJudge, selectedAssignee, error, success } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() }));
+      value: attorney.id.toString() })).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
+    const showOtherSearchBox = selectedAssignee === OTHER;
 
     return <React.Fragment>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
@@ -107,6 +111,8 @@ class AssignWidget extends React.PureComponent<Props> {
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
+        {showOtherSearchBox &&
+          <p>Enter the name of an attorney or judge:</p>}
         <Button
           onClick={this.handleButtonClick}
           name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
