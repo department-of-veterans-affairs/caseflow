@@ -6,12 +6,13 @@ import {
   initialAssignTasksToUser
 } from './QueueActions';
 import AssignWidget from './components/AssignWidget';
+import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY.json';
 
 const UnassignedCasesPage = (props) => {
   const { userId, featureToggles } = props;
 
   return <React.Fragment>
-    <h2>Cases to Assign</h2>
+    <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
     {featureToggles.judge_assign_cases &&
       <AssignWidget previousAssigneeId={userId}
         onTaskAssignment={(params) => props.initialAssignTasksToUser(params)} />}
