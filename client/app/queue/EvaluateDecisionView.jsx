@@ -212,22 +212,10 @@ class EvaluateDecisionView extends React.PureComponent {
         value={this.state.quality}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
-        options={[{
-          value: 'outstanding',
-          displayText: `5 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.outstanding}`
-        }, {
-          value: 'exceeds_expectations',
-          displayText: `4 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.exceeds_expectations}`
-        }, {
-          value: 'meets_expectations',
-          displayText: `3 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.meets_expectations}`
-        }, {
-          value: 'needs_improvements',
-          displayText: `2 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.needs_improvements}`
-        }, {
-          value: 'does_not_meet_expectations',
-          displayText: `1 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.does_not_meet_expectations}`
-        }]} />
+        options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
+          value: key,
+          displayText: `${Object.keys(obj).indexOf(key) + 1} - ${val}`
+        }))} />
 
       {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}
         type="info"
