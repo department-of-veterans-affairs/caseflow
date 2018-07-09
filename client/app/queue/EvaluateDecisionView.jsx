@@ -69,7 +69,7 @@ class EvaluateDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
-  qualityIsDeficient = () => this.state.quality === 'needs_improvements' || this.state.quality === 'does_not_meet_expectations';
+  qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
