@@ -2,10 +2,12 @@ require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
   end
 
   after do
+    FeatureToggle.disable!(:test_facols)
     Timecop.return
   end
 

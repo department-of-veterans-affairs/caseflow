@@ -2,8 +2,13 @@ require "rails_helper"
 
 describe IntakeStats do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
     Rails.cache.clear
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context ".throttled_calculate_all!" do
@@ -39,7 +44,7 @@ describe IntakeStats do
   context ".intake_series_statuses" do
     subject { IntakeStats.intake_series_statuses(4.days.ago...Time.zone.now) }
 
-    let(:user) { Generators::User.build }
+    let(:user) { build(:default_user) }
 
     let!(:out_of_range_series) do
       RampElectionIntake.create!(

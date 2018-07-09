@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.feature "RAMP Refiling Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
@@ -11,13 +12,17 @@ RSpec.feature "RAMP Refiling Intake" do
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
   let(:issues) do
     [
-      Generators::Issue.build
+      build(:default_issue)
     ]
   end
 

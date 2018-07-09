@@ -1,6 +1,11 @@
 describe HigherLevelReview do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -8,19 +13,14 @@ describe HigherLevelReview do
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:end_product_reference_id) { nil }
-  let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:higher_level_review) do
-    HigherLevelReview.new(
-      veteran_file_number: veteran_file_number,
+    build(
+      :higher_level_review,
       receipt_date: receipt_date,
+      veteran_file_number: veteran_file_number,
       informal_conference: informal_conference,
-      same_office: same_office,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
+      same_office: same_office
     )
   end
 

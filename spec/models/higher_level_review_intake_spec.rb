@@ -1,10 +1,15 @@
 describe HigherLevelReviewIntake do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:veteran_file_number) { "64205555" }
-  let(:user) { Generators::User.build }
+  let(:user) { build(:default_user) }
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:completed_at) { nil }

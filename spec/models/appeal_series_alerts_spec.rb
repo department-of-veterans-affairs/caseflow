@@ -1,11 +1,8 @@
 describe AppealSeriesAlerts do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     DocketSnapshot.create
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do

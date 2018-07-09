@@ -1,6 +1,11 @@
 describe RampElectionRollback do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:ramp_election) do
@@ -19,7 +24,7 @@ describe RampElectionRollback do
     )
   end
 
-  let(:user) { Generators::User.build }
+  let(:user) { build(:default_user) }
   let(:reason) { "A very good reason" }
 
   let!(:established_end_product) do

@@ -1,6 +1,11 @@
 describe Intake do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   class TestIntake < Intake; end
@@ -12,8 +17,8 @@ describe Intake do
     build(:ramp_election, veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
   end
 
-  let(:user) { Generators::User.build }
-  let(:another_user) { Generators::User.build(full_name: "David Schwimmer") }
+  let(:user) { build(:default_user) }
+  let(:another_user) { build(:user, full_name: "David Schwimmer") }
 
   let(:intake) do
     TestIntake.new(
