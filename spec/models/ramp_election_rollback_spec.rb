@@ -75,7 +75,15 @@ describe RampElectionRollback do
     let!(:appeals_to_reopen) do
       %w[12345 23456].map do |vacols_id|
         ramp_election.ramp_closed_appeals.create!(vacols_id: vacols_id)
-        Generators::LegacyAppeal.create(vacols_record: :ramp_closed, vacols_id: vacols_id)
+        create(:legacy_appeal,
+               vacols_case: create(
+                 :case_with_decision,
+                 :type_original,
+                 :status_complete,
+                 :disposition_ramp,
+                 bfboard: "00",
+                 bfkey: vacols_id
+               ))
       end
     end
 
