@@ -19,9 +19,9 @@ import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../types';
-import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
+import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
 
 const OTHER = 'OTHER';
 

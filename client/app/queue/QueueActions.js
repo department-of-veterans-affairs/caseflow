@@ -249,3 +249,11 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
             selected: false }));
         });
   }));
+
+export const fetchAllAttorneys = () => (dispatch) => {
+  return ApiUtil.get(
+    '/users?role=Attorney').
+    then((resp) => resp.body).
+    then(
+      (resp) => console.log(resp));
+};
