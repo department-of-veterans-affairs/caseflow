@@ -28,8 +28,11 @@ export default class BuildScheduleUpload extends React.Component {
         />
         <div {...fileUploadStyling} >
           <FileUpload {...fileUploadStyling}
-            text="Select a file for upload"
+            preUploadText="Select a file for upload"
+            postUploadText="Choose a different file"
             id="ro_co_file_upload"
+            onChange={this.props.onRoCoFileUpload}
+            value={this.props.roCoFileUpload}
           />
         </div>
       </InlineForm> }
@@ -47,9 +50,12 @@ export default class BuildScheduleUpload extends React.Component {
           onEndDateChange={this.props.onJudgeEndDateChange}
         />
         <div {...fileUploadStyling} >
-          <FileUpload {...fileUploadStyling}
-            text="Select a file for upload"
+          <FileUpload
+            preUploadText="Select a file for upload"
+            postUploadText="Choose a different file"
             id="judge_file_upload"
+            onChange={this.props.onJudgeFileUpload}
+            value={this.props.judgeFileUpload}
           />
         </div>
       </InlineForm>}
@@ -57,7 +63,6 @@ export default class BuildScheduleUpload extends React.Component {
   };
 
   render() {
-
     const fileTypes = [
       {
         value: SPREADSHEET_TYPES.RoSchedulePeriod.value,
@@ -106,10 +111,12 @@ BuildScheduleUpload.propTypes = {
   roCoEndDate: PropTypes.string,
   onRoCoStartDateChange: PropTypes.func,
   onRoCoEndDateChange: PropTypes.func,
+  roCoFileUpload: PropTypes.string,
   onRoCoFileUpload: PropTypes.func,
   judgeStartDate: PropTypes.string,
   judgeEndDate: PropTypes.string,
   onJudgeStartDateChange: PropTypes.func,
   onJudgeEndDateChange: PropTypes.func,
+  judgeFileUpload: PropTypes.string,
   onJudgeFileUpload: PropTypes.func
 };
