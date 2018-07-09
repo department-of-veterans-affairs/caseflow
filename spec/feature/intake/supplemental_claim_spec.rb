@@ -130,6 +130,16 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
+
+    visit "/intake/review-request"
+
+    expect(find("#different-claimant-option_true", visible: false)).to be_checked
+    expect(find_field("Baz Qux, Child", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_current_path("/intake/finish")
+
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
