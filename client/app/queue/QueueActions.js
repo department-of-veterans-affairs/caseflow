@@ -250,10 +250,17 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
         });
   }));
 
+const receiveAllAttorneys = (attorneys) => ({
+  type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
+  payload: {
+    attorneys
+  }
+});
+
 export const fetchAllAttorneys = () => (dispatch) => {
   return ApiUtil.get(
     '/users?role=Attorney').
     then((resp) => resp.body).
     then(
-      (resp) => console.log(resp));
+      (resp) => dispatch(receiveAllAttorneys(resp.attorneys)));
 };

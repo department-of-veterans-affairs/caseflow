@@ -38,7 +38,8 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isTaskAssignedToUserSelected: {}
+  isTaskAssignedToUserSelected: {},
+  allAttorneys: []
 };
 
 // eslint-disable-next-line max-statements
@@ -359,6 +360,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.RECEIVE_ALL_ATTORNEYS:
+    return update(state, {
+      allAttorneys: {
+        $set: action.payload.attorneys
+      }
+    });
   default:
     return state;
   }
