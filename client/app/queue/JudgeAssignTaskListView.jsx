@@ -44,12 +44,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
       taskWithId[id] = tasks[id];
     }
 
-    return sortTasks({ tasks: taskWithId,
-      appeals }).
+    return sortTasks({
+      tasks: taskWithId,
+      appeals
+    }).
       filter((task) => task.attributes.task_type === 'Assign').
       map((task) => ({
         task,
-        appeal: this.props.appeals[task.vacolsId] }));
+        appeal: this.props.appeals[task.appealId]
+      }));
   }
 
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
