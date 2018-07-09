@@ -249,10 +249,21 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_ramp?
-    (
-      (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva) ||
-      eligible_for_ramp_at_bva?
-    ) && !appellant_first_name
+    !ramp_ineligibility_reason
+  end
+
+  def ramp_ineligibility_reason
+    return @ramp_ineligibility_reason if defined? @ramp_ineligibility_reason
+
+    @ramp_ineligibility_reason = begin
+      if ineligibile_for_ramp_at_bva?
+        :activated_to_bva
+      elsif appellant_first_name
+        :claimant_not_veteran
+      elsif !compensation?
+        :no_compensation_issues
+      end
+    end
   end
 
   def compensation_issues
@@ -541,9 +552,14 @@ class LegacyAppeal < ApplicationRecord
     regional_office.to_h
   end
 
+  def ineligibile_for_ramp_at_bva?
+    !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
+      eligible_for_ramp_despite_being_at_bva?)
+  end
+
   # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
   # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
-  def eligible_for_ramp_at_bva?
+  def eligible_for_ramp_despite_being_at_bva?
     (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
   end
 

@@ -5,10 +5,11 @@ class RampElectionIntake < Intake
     did_not_receive_ramp_election: "did_not_receive_ramp_election",
     no_eligible_appeals: "no_eligible_appeals",
     no_active_compensation_appeals: "no_active_compensation_appeals",
-    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     no_active_appeals: "no_active_appeals",
     # This is a legacy error_code from when we only allowed one RAMP election
     ramp_election_already_complete: "ramp_election_already_complete",
+    # This is a legacy error_code from when we did not allow RAMP elections on mixed comp/non-comp appeals
+    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     # This status will be set on successful intakes to signify that we had to
     # connect an existing EP, which in theory, shouldn't happen, but does in practice.
     connected_preexisting_ep: "connected_preexisting_ep"
@@ -44,18 +45,12 @@ class RampElectionIntake < Intake
       create_or_connect_end_product
     end
 
-    close_eligible_appeals!
-
     transaction do
       complete_with_status!(:success)
-      eligible_appeals.each do |appeal|
-        RampClosedAppeal.create!(
-          vacols_id: appeal.vacols_id,
-          ramp_election_id: ramp_election.id,
-          nod_date: appeal.nod_date
-        )
-      end
+      create_ramp_closed_appeals!
     end
+
+    @ramp_closed_appeals.each(&:close!)
   end
 
   def cancel_detail!
@@ -99,24 +94,23 @@ class RampElectionIntake < Intake
     raise e
   end
 
-  def close_eligible_appeals!
-    LegacyAppeal.close(
-      appeals: eligible_appeals,
-      user: user,
-      closed_on: Time.zone.today,
-      disposition: "RAMP Opt-in"
-    )
+  def create_ramp_closed_appeals!
+    @ramp_closed_appeals = eligible_appeals.map do |appeal|
+      RampClosedAppeal.create!(
+        vacols_id: appeal.vacols_id,
+        ramp_election_id: ramp_election.id,
+        nod_date: appeal.nod_date,
+        closed_on: Time.zone.now,
+        user: user,
+        partial_closure_issue_sequence_ids:
+          (appeal.fully_compensation? ? nil : appeal.compensation_issues.map(&:vacols_sequence_id))
+      )
+    end
   end
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
-    active_fully_compensation_appeals.select(&:eligible_for_ramp?)
-  end
-
-  # Temporarily only allow RAMP appeals with 100% compensation issues.
-  # TODO: Take this out when we allow partial closing of appeals.
-  def active_fully_compensation_appeals
-    active_veteran_appeals.select(&:fully_compensation?)
+    active_compensation_appeals.select(&:eligible_for_ramp?)
   end
 
   def active_compensation_appeals
@@ -133,9 +127,6 @@ class RampElectionIntake < Intake
 
     elsif active_compensation_appeals.empty?
       self.error_code = :no_active_compensation_appeals
-
-    elsif active_fully_compensation_appeals.empty?
-      self.error_code = :no_active_fully_compensation_appeals
 
     elsif eligible_appeals.empty?
       self.error_code = :no_eligible_appeals

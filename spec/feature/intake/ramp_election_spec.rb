@@ -236,7 +236,7 @@ RSpec.feature "RAMP Election Intake" do
     expect(AppealRepository).to receive(:close_undecided_appeal!).with(
       appeal: LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey),
       user: current_user,
-      closed_on: Time.zone.today,
+      closed_on: Time.zone.now,
       disposition_code: "P"
     )
 
