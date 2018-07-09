@@ -1,5 +1,5 @@
 module HearingDayMapper
-  class InvalidRegionalOfficeError < StandardError;
+  class InvalidRegionalOfficeError < StandardError
   end
 
   COLUMN_NAME_REVERSE_MAP = {

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import {formatDate} from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from './BasicDateRangeSelector';
@@ -44,13 +44,12 @@ export default class ListSchedule extends React.Component {
     ];
 
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-        hearingDate: `${formatDate(hearingDay.hearingDate)}`,
-				hearingType: hearingDay.hearingType,
-				regionalOffice: hearingDay.folderNr,
-				room: hearingDay.roomInfo,
-				vlj: hearingDay.judgeId
-			}
-		));
+      hearingDate: `${formatDate(hearingDay.hearingDate)}`,
+      hearingType: hearingDay.hearingType,
+      regionalOffice: hearingDay.folderNr,
+      room: hearingDay.roomInfo,
+      vlj: hearingDay.judgeId
+    }));
 
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ViEW_PAGE_HEADER}</h1>

@@ -28,19 +28,19 @@ class LoadingScreen extends React.PureComponent {
 
     return ApiUtil.get('/hearings/hearing_day.json').then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-      const hearingDays = _.keyBy(resp["hearings"], 'id');
+      const hearingDays = _.keyBy(resp.hearings, 'id');
 
       this.props.onReceiveHearingSchedule(hearingDays);
     });
   };
 
   createLoadPromise = () => {
-    if (this.props.children.type.WrappedComponent.name == "ListScheduleContainer") {
+    if (this.props.children.type.WrappedComponent.name === "ListScheduleContainer") {
       return Promise.all([
         this.loadHearingSchedule()
       ]);
-    }else {
-       return Promise.all([
+    } else {
+        return Promise.all([
         this.loadPastUploads()
       ]);
     }

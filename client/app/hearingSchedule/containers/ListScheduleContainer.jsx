@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ListSchedule from '../components/ListSchedule';
 import { onViewStartDateChange, onViewEndDateChange } from '../actions';
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from 'redux';
 
 export class ListScheduleContainer extends React.Component {
 
