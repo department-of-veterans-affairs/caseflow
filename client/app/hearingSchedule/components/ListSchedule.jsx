@@ -3,7 +3,7 @@ import _ from 'lodash';
 import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../components/Table';
-import {formatDate} from '../../util/DateUtil';
+import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from './BasicDateRangeSelector';

@@ -35,12 +35,12 @@ class LoadingScreen extends React.PureComponent {
   };
 
   createLoadPromise = () => {
-    if (this.props.children.type.WrappedComponent.name === "ListScheduleContainer") {
+    if (this.props.children.type.WrappedComponent.name === 'ListScheduleContainer') {
       return Promise.all([
         this.loadHearingSchedule()
       ]);
     } else {
-        return Promise.all([
+      return Promise.all([
         this.loadPastUploads()
       ]);
     }
