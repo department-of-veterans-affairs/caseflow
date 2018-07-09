@@ -2,7 +2,12 @@ require "rails_helper"
 
 describe Rating do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:rating) do

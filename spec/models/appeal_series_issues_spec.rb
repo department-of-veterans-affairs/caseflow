@@ -1,10 +1,7 @@
 describe AppealSeriesIssues do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  end
-
-  before do
     FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
