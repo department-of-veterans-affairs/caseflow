@@ -16,11 +16,14 @@ describe CoLocatedAdminAction do
   context ".create" do
     context "when all fields are present" do
       subject do
-        CoLocatedAdminAction.create(
-          assigned_by: attorney,
-          titles: [:aoj, :poa_clarification],
-          appeal: appeal
-        )
+        CoLocatedAdminAction.create([{
+                                      assigned_by: attorney,
+                                      title: :aoj,
+                                      appeal: appeal
+                                    },
+                                     { assigned_by: attorney,
+                                       title: :poa_clarification,
+                                       appeal: appeal }])
       end
 
       it "creates a co-located task successfully" do
@@ -40,14 +43,14 @@ describe CoLocatedAdminAction do
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
 
         # should start from index 0
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
       end
     end
@@ -56,7 +59,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:aoj]
+          title: :aoj
         )
       end
       it "does not create a co-located task" do
@@ -73,7 +76,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:aoj],
+          title: :aoj,
           appeal: appeal
         )
       end
@@ -87,7 +90,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:test],
+          title: :test,
           appeal: appeal
         )
       end
