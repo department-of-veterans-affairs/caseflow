@@ -15,7 +15,8 @@ describe HigherLevelReview do
   let(:same_office) { nil }
 
   let(:higher_level_review) do
-    build(:higher_level_review,
+    build(
+      :higher_level_review,
       receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       informal_conference: informal_conference,

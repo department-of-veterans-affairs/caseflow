@@ -7,7 +7,7 @@ describe LegacyAppeal do
   after do
     FeatureToggle.disable!(:test_facols)
   end
-  
+
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
@@ -1665,10 +1665,12 @@ describe LegacyAppeal do
       end
 
       let!(:issues) do
-        [build(:issue,
+        [build(
+          :issue,
           disposition: :allowed,
           codes: %w[02 15 03 04 05],
-          labels: labels)]
+          labels: labels
+        )]
       end
 
       it "includes viewed boolean in hash" do
