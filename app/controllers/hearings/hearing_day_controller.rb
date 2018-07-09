@@ -9,8 +9,6 @@ class Hearings::HearingDayController < HearingScheduleController
 
     video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
 
-    hearings = json_hearings(video_and_co)
-
     respond_to do |format|
       format.html do
         render "hearing_schedule/index"
@@ -104,13 +102,11 @@ class Hearings::HearingDayController < HearingScheduleController
   def format_for_client(json_hash)
     if json_hash[:data].is_a?(Array)
       hearing_array = []
-      json_hash[:data].each { |hearing_hash|
-        hearing_array.push({id: hearing_hash[:id]}.merge(hearing_hash[:attributes]))
-      }
-      return hearing_array
+      json_hash[:data].each  |hearing_hash|
+        hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
+      hearing_array
     else
-      return {id: json_hash[:data][:id]}.merge(json_hash[:data][:attributes])
+      { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
   end
-
 end
