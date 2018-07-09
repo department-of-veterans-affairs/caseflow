@@ -104,9 +104,9 @@ export class CaseSnapshot extends React.PureComponent {
     let CheckoutDropdown = <React.Fragment />;
 
     if (this.props.userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     } else if (this.props.featureToggles.judge_assignment) {
-      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>

@@ -72,7 +72,7 @@ class AssignedCasesPage extends React.PureComponent {
           }).
             map((task) => ({
               task,
-              appeal: appeals[task.vacolsId] }))
+              appeal: appeals[task.appealId] }))
         }
         userId={attorneyId} />
     </React.Fragment>;
