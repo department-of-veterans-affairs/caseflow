@@ -68,7 +68,7 @@ export type UiState = {
   selectedAssignee: ?string
 };
 
-export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?{[string]: boolean}}};
+export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
   judges: Object,
