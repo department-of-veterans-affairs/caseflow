@@ -8,6 +8,10 @@ class HigherLevelReviewIntake < Intake
   def ui_hash
     super.merge(
       receipt_date: detail.receipt_date,
+      same_office: detail.same_office,
+      informal_conference: detail.informal_conference,
+      claimant: detail.claimant_participant_id,
+      claimant_not_veteran: detail.claimant_not_veteran,
       end_product_description: detail.end_product_description,
       ratings: detail.cached_serialized_timely_ratings
     )
