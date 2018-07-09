@@ -47,11 +47,11 @@ const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
   componentDidMount = () => {
-    const { issueId, vacolsId } = this.props;
+    const { issueId, appealId } = this.props;
 
     this.props.cancelEditingAppealIssue();
     if (this.props.action === 'edit') {
-      this.props.startEditingAppealIssue(vacolsId, issueId);
+      this.props.startEditingAppealIssue(appealId, issueId);
     }
   };
 
@@ -143,7 +143,7 @@ class AddEditIssueView extends React.Component {
       };
     });
 
-    this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
+    this.props.saveEditedAppealIssue(this.props.appealId, { issues });
   }
 
   deleteIssue = () => {
@@ -151,7 +151,7 @@ class AddEditIssueView extends React.Component {
       issue,
       appeal,
       appeal: { attributes: { issues } },
-      vacolsId,
+      appealId,
       issueId
     } = this.props;
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
@@ -161,7 +161,7 @@ class AddEditIssueView extends React.Component {
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
       `You deleted issue ${issueIndex + 1}.`
-    ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
+    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
   };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
@@ -329,7 +329,7 @@ class AddEditIssueView extends React.Component {
 
 AddEditIssueView.propTypes = {
   action: PropTypes.oneOf(['add', 'edit']).isRequired,
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
   issueId: PropTypes.string,
@@ -339,8 +339,8 @@ AddEditIssueView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.tasks[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
   modal: state.ui.modal.deleteIssue
