@@ -8,7 +8,7 @@ export type LoadedQueueTasks = { [string]: DeprecatedTask };
 
 export type Task = {
   id: string,
-  vacolsId: string,
+  appealId: string,
   attributes: {
     added_by_css_id: string,
     added_by_name: string,
