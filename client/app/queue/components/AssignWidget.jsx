@@ -6,6 +6,8 @@ import { css } from 'glamor';
 import {
   resetErrorMessages,
   showErrorMessage,
+  showSuccessMessage,
+  resetSuccessMessages,
   setSelectedAssignee
 } from '../uiReducer/uiActions';
 import {
@@ -17,6 +19,8 @@ import _ from 'lodash';
 import type {
   AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
 } from '../types';
+import pluralize from 'pluralize';
+import Alert from '../../components/Alert';
 
 type Props = {|
   // Parameters
@@ -28,11 +32,14 @@ type Props = {|
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   tasks: Tasks,
   error: ?UiStateError,
+  success: string,
   // Action creators
   setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
   showErrorMessage: (UiStateError) => void,
-  resetErrorMessages: Function
+  resetErrorMessages: Function,
+  showSuccessMessage: (string) => void,
+  resetSuccessMessages: Function
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
@@ -44,6 +51,10 @@ class AssignWidget extends React.PureComponent<Props> {
 
   handleButtonClick = () => {
     const { previousAssigneeId, selectedAssignee } = this.props;
+    const selectedTasks = this.selectedTasks();
+
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
 
     if (!selectedAssignee) {
       this.props.showErrorMessage(
@@ -53,7 +64,7 @@ class AssignWidget extends React.PureComponent<Props> {
       return;
     }
 
-    if (this.selectedTasks().length === 0) {
+    if (selectedTasks.length === 0) {
       this.props.showErrorMessage(
         { title: 'No tasks selected',
           detail: 'Please select a task.' });
@@ -62,29 +73,25 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     this.props.onTaskAssignment(
-      { tasks: this.selectedTasks(),
+      { tasks: selectedTasks,
         assigneeId: selectedAssignee,
         previousAssigneeId }).
-      then(() => this.props.resetErrorMessages()).
+      then(() => this.props.showSuccessMessage(
+        `Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
       catch(() => this.props.showErrorMessage(
         { title: 'Error assigning tasks',
           detail: 'One or more tasks couldn\'t be assigned.' }));
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, error } = this.props;
+    const { attorneysOfJudge, selectedAssignee, error, success } = this.props;
     const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() }));
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
 
     return <React.Fragment>
-      {error &&
-        <div className="usa-alert usa-alert-error" role="alert">
-          <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">{error.title}</h3>
-            <p className="usa-alert-text">{error.detail}</p>
-          </div>
-        </div>}
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
+      {success && <Alert type="success" title={success} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
@@ -102,7 +109,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.selectedTasks().length} case(s)`}
+          name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
           loading={false}
           loadingText="Loading" />
       </div>
@@ -112,14 +119,15 @@ class AssignWidget extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks } = state.queue;
-  const { selectedAssignee, messages: { error } } = state.ui;
+  const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     isTaskAssignedToUserSelected,
     tasks,
-    error
+    error,
+    success
   };
 };
 
@@ -129,6 +137,8 @@ export default connect(
     setSelectedAssignee,
     initialAssignTasksToUser,
     showErrorMessage,
-    resetErrorMessages
+    resetErrorMessages,
+    showSuccessMessage,
+    resetSuccessMessages
   }, dispatch)
 )(AssignWidget);

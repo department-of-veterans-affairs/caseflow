@@ -5,13 +5,28 @@ describe EstablishClaim do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let(:folder) { build(:folder) }
+
+  let(:vacols_case) do
+    create(:case_with_decision, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)], folder: folder)
+  end
+
   let(:appeal) do
-    Generators::LegacyAppeal.build(
-      vacols_record: vacols_record,
-      dispatched_to_station: dispatched_to_station,
-      vamc: special_issues[:vamc],
-      radiation: special_issues[:radiation]
-    )
+    create(:legacy_appeal,
+           :with_veteran,
+           vacols_case: vacols_case,
+           vamc: special_issues[:vamc],
+           radiation: special_issues[:radiation],
+           dispatched_to_station: dispatched_to_station)
   end
 
   let(:establish_claim) do
@@ -50,12 +65,16 @@ describe EstablishClaim do
     it { is_expected.to be_falsey }
 
     context "appeal status is active" do
-      let(:vacols_record) { { template: :remand_decided, status: "Active" } }
+      let(:vacols_case) do
+        create(:case_with_decision, :status_active)
+      end
       it { is_expected.to be_truthy }
     end
 
     context "appeal decision date is nil" do
-      let(:vacols_record) { { template: :remand_decided, decision_date: nil } }
+      let(:vacols_case) do
+        create(:case, :status_complete)
+      end
       it { is_expected.to be_truthy }
     end
 
@@ -68,8 +87,9 @@ describe EstablishClaim do
     end
 
     context "appeal decision type is nil" do
-      let(:vacols_record) { { template: :full_grant_decided, issues: [] } }
-
+      let(:vacols_case) do
+        create(:case_with_decision, :status_complete)
+      end
       it { is_expected.to be_truthy }
     end
   end
@@ -77,12 +97,16 @@ describe EstablishClaim do
   context "#prepare_with_decision!" do
     subject { establish_claim.prepare_with_decision! }
 
-    let(:appeal) do
-      Generators::LegacyAppeal.create(
-        vacols_record: { template: :partial_grant_decided, decision_date: decision_date },
-        documents: documents
-      )
+    let(:vacols_case) do
+      create(:case, :status_complete, bfddec: decision_date, documents: documents, case_issues:
+          [create(:case_issue, :education, :disposition_allowed)])
     end
+
+    let(:appeal) do
+      create(:legacy_appeal,
+             vacols_case: vacols_case)
+    end
+
     let(:decision_date) { 7.days.ago }
     let(:documents) { [] }
     let(:aasm_state) { :unprepared }
@@ -254,12 +278,16 @@ describe EstablishClaim do
   end
 
   context "#complete_with_review!" do
+    before do
+      RequestStore[:current_user] = user
+    end
+
     subject { establish_claim.complete_with_review!(vacols_note: vacols_note) }
 
     let(:assigned_user) { user }
     let(:aasm_state) { :reviewed }
     let(:vacols_note) { "This is my note." }
-    let(:vacols_update) { Fakes::AppealRepository.vacols_dispatch_update }
+    let(:folder) { build(:folder, tioctime: 17.days.ago.midnight) }
 
     it "completes the task" do
       subject
@@ -269,15 +297,13 @@ describe EstablishClaim do
     it "updates VACOLS" do
       subject
 
-      expect(vacols_update[:appeal]).to eq(appeal)
-      expect(vacols_update[:vacols_note]).to eq("This is my note.")
+      expect(vacols_case.notes.first.tskrqact).to eq(vacols_note)
     end
 
     it "updates the claim establishment" do
-      establish_claim.appeal.outcoding_date = 17.days.ago
       subject
 
-      expect(claim_establishment.reload.outcoding_date).to eq(17.days.ago)
+      expect(claim_establishment.reload.outcoding_date).to eq(17.days.ago.midnight)
     end
 
     context "when an ep was created" do
@@ -333,6 +359,7 @@ describe EstablishClaim do
     let(:params) { { email_recipient: "shane@va.gov", email_ro_id: "RO22" } }
     let(:aasm_state) { :started }
     let(:assigned_user) { user }
+    let(:folder) { build(:folder, tioctime: 17.days.ago.midnight) }
 
     it "completes the task" do
       subject
@@ -342,12 +369,10 @@ describe EstablishClaim do
     end
 
     it "updates the claim establishment" do
-      establish_claim.appeal.outcoding_date = 17.days.ago
-
       subject
 
       expect(claim_establishment.reload).to have_attributes(
-        outcoding_date: 17.days.ago,
+        outcoding_date: 17.days.ago.midnight,
         email_recipient: "shane@va.gov",
         email_ro_id: "RO22"
       )
@@ -377,6 +402,15 @@ describe EstablishClaim do
     let(:end_product_id) { "123YAY" }
     let(:aasm_state) { :started }
     let(:assigned_user) { user }
+    let(:vacols_case) do
+      create(:case_with_decision, :status_active, case_issues:
+          [create(:case_issue, :education, :disposition_allowed)], folder: folder)
+    end
+    let(:folder) { build(:folder, tioctime: 23.days.ago.midnight) }
+
+    before do
+      RequestStore[:current_user] = user
+    end
 
     it "completes the task and sets reference to end product" do
       subject
@@ -389,14 +423,13 @@ describe EstablishClaim do
     it "updates VACOLS location" do
       subject
 
-      expect(Fakes::AppealRepository.location_updated_for).to eq(appeal)
+      expect(vacols_case.reload.bfcurloc).to eq("98")
     end
 
     it "updates associated claim establishment" do
-      establish_claim.appeal.outcoding_date = 23.days.ago
       subject
 
-      expect(claim_establishment.reload.outcoding_date).to eq(23.days.ago)
+      expect(claim_establishment.reload.outcoding_date).to eq(23.days.ago.midnight)
     end
 
     context "when not started" do
@@ -439,6 +472,10 @@ describe EstablishClaim do
       context "when appeal is a Remand or Partial Grant" do
         let(:vacols_record) { :remand_decided }
 
+        let(:vacols_case) do
+          create(:case_with_decision, :status_remand, folder: folder)
+        end
+
         it { is_expected.to include("Reviewed Remand decision") }
         it { is_expected.to include("VACOLS Updated: Changed Location to 98") }
 
@@ -446,6 +483,9 @@ describe EstablishClaim do
           let(:ep_code) { "170RMDAMC" }
           let(:outgoing_reference_id) { "VBMS123" }
           let(:dispatched_to_station) { "397" }
+          let(:vacols_case) do
+            create(:case_with_decision, :status_remand, folder: folder)
+          end
 
           it { is_expected.to include("Established EP: 170RMDAMC - ARC-Remand for Station 397 - ARC") }
           it { is_expected.to_not include(/Added Diary Note/) }
@@ -461,6 +501,10 @@ describe EstablishClaim do
 
       context "when appeal is a Full Grant" do
         let(:vacols_record) { :full_grant_decided }
+        let(:vacols_case) do
+          create(:case_with_decision, :status_complete, case_issues:
+              [create(:case_issue, :education, :disposition_allowed)], folder: folder)
+        end
 
         it { is_expected.to include("Reviewed Full Grant decision") }
         it { is_expected.to_not include(/VACOLS Updated/) }
