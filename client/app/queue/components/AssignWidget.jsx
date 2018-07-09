@@ -53,6 +53,9 @@ class AssignWidget extends React.PureComponent<Props> {
     const { previousAssigneeId, selectedAssignee } = this.props;
     const selectedTasks = this.selectedTasks();
 
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+
     if (!selectedAssignee) {
       this.props.showErrorMessage(
         { title: 'No assignee selected',
@@ -68,9 +71,6 @@ class AssignWidget extends React.PureComponent<Props> {
 
       return;
     }
-
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
 
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
