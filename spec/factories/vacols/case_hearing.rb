@@ -25,7 +25,6 @@ FactoryBot.define do
     end
 
     after(:create) do |hearing, evaluator|
-      byebug
       # For some reason the returned record's sequence is one less than what is actually saved.
       # We need to reload the correct record before trying to modify it.
       hearing.hearing_pkseq = hearing.hearing_pkseq + 1
@@ -38,12 +37,18 @@ FactoryBot.define do
       end
     end
 
-    after(:build) do |hearing, _evaluator|
+    after(:build) do |hearing, evaluator|
       # For video hearings we need to build the master record.
       if hearing.hearing_type == "V"
         master_record = create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO13")
         # For some reason the returned record's sequence is one less than what is actually saved.
         hearing.vdkey = master_record.hearing_pkseq
+      end
+
+      if evaluator.user
+        existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+        sattyid = (existing_staff || create(:staff, :attorney_judge_role, user: evaluator.user)).sattyid
+        hearing.board_member = sattyid
       end
     end
   end
