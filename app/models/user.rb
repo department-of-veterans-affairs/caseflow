@@ -184,7 +184,7 @@ class User < ApplicationRecord
   end
 
   def as_json(options)
-    super(options).merge({"judge_css_id" => judge_css_id})
+    super(options).merge("judge_css_id" => judge_css_id)
   end
 
   private
