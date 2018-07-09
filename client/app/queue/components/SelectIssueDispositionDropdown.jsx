@@ -62,7 +62,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
 
 SelectIssueDispositionDropdown.propTypes = {
   issue: PropTypes.object.isRequired,
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   highlight: PropTypes.bool,
   updateIssue: PropTypes.func.isRequired
 };

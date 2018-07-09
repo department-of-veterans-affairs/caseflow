@@ -29,6 +29,15 @@ class AmaReview < ApplicationRecord
     claimants.destroy_all
   end
 
+  def claimant_participant_id
+    return nil if claimants.empty?
+    claimants.first.participant_id
+  end
+
+  def claimant_not_veteran
+    claimant_participant_id && claimant_participant_id != veteran.participant_id
+  end
+
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 

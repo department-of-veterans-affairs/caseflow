@@ -54,7 +54,7 @@ class Review extends React.PureComponent {
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
-        value={informalConference}
+        value={informalConference === null ? null : informalConference.toString()}
       />
 
       <RadioField
@@ -65,7 +65,7 @@ class Review extends React.PureComponent {
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
-        value={sameOffice}
+        value={sameOffice === null ? null : sameOffice.toString()}
       />
 
       <SelectClaimantConnected />
