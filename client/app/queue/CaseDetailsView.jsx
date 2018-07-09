@@ -40,18 +40,17 @@ class CaseDetailsView extends React.PureComponent {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
     if (!this.props.breadcrumbs.length) {
-      this.props.resetBreadcrumbs(this.props.appeal.attributes.veteran_full_name, this.props.vacolsId);
+      this.props.resetBreadcrumbs(this.props.appeal.attributes.veteran_full_name, this.props.appealId);
     }
   }
 
   render = () => <AppSegment filledBackground>
-    <CaseTitle appeal={this.props.appeal} vacolsId={this.props.vacolsId} redirectUrl={window.location.pathname} />
+    <CaseTitle appeal={this.props.appeal} appealId={this.props.appealId} redirectUrl={window.location.pathname} />
     {this.props.error && <Alert title={this.props.error.title} type="error">
       {this.props.error.detail}
     </Alert>}
     <CaseSnapshot
       appeal={this.props.appeal}
-      featureToggles={this.props.featureToggles}
       loadedQueueAppealIds={this.props.loadedQueueAppealIds}
       task={this.props.task}
     />
@@ -71,13 +70,12 @@ class CaseDetailsView extends React.PureComponent {
 }
 
 CaseDetailsView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  featureToggles: PropTypes.object
+  appealId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles'),
+  ..._.pick(state.ui, 'breadcrumbs'),
   error: state.ui.messages.error,
   task: state.caseDetail.activeTask,
   loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)

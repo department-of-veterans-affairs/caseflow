@@ -27,7 +27,7 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 
   loadRelevantCases = () => {
-    if (this.props.vacolsId) {
+    if (this.props.appealId) {
       return this.loadActiveAppeal();
     }
 
@@ -58,7 +58,7 @@ class QueueLoadingScreen extends React.PureComponent {
   loadActiveAppeal = () => {
     const {
       activeAppeal,
-      vacolsId,
+      appealId,
       appeals
     } = this.props;
 
@@ -66,13 +66,13 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    if (vacolsId in appeals) {
-      this.props.setActiveAppeal(appeals[vacolsId]);
+    if (appealId in appeals) {
+      this.props.setActiveAppeal(appeals[appealId]);
 
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/appeals/${vacolsId}`).then((response) => {
+    return ApiUtil.get(`/appeals/${appealId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveAppeal(resp.appeal);
@@ -119,7 +119,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
 QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired,
-  vacolsId: PropTypes.string
+  appealId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

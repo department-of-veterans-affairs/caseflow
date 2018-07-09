@@ -92,8 +92,6 @@ RSpec.feature "Checkout flows" do
       expect(cancel_modal.matches_css?(".active")).to eq true
       cancel_modal.find(".usa-button-warning").click
 
-      click_on "#{appeal.veteran_full_name} (#{appeal.vbms_id})"
-
       click_dropdown 1
 
       expect(page).to have_content "Submit OMO for Review"
