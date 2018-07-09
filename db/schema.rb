@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180628195002) do
+ActiveRecord::Schema.define(version: 20180705173803) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -434,6 +434,8 @@ ActiveRecord::Schema.define(version: 20180628195002) do
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
+    t.string "partial_closure_issue_sequence_ids", array: true
+    t.datetime "closed_on"
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|

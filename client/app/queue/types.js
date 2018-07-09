@@ -8,7 +8,7 @@ export type LoadedQueueTasks = { [string]: DeprecatedTask };
 
 export type Task = {
   id: string,
-  vacolsId: string,
+  appealId: string,
   attributes: {
     added_by_css_id: string,
     added_by_name: string,
@@ -68,7 +68,7 @@ export type UiState = {
   selectedAssignee: ?string
 };
 
-export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?{[string]: boolean}}};
+export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
   judges: Object,
