@@ -102,7 +102,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def format_for_client(json_hash)
     if json_hash[:data].is_a?(Array)
       hearing_array = []
-      json_hash[:data].each do | hearing_hash |
+      json_hash[:data].each do |hearing_hash|
         hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
       end
       hearing_array
