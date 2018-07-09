@@ -35,6 +35,12 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.endDate
       }
     });
+  case ACTIONS.RO_CO_FILE_UPLOAD:
+    return update(state, {
+      roCoFileUpload: {
+        $set: action.payload.file
+      }
+    });
   case ACTIONS.JUDGE_START_DATE_CHANGE:
     return update(state, {
       judgeStartDate: {
@@ -57,6 +63,12 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       viewEndDate: {
         $set: action.payload.viewEndDate
+      }
+    });
+  case ACTIONS.JUDGE_FILE_UPLOAD:
+    return update(state, {
+      judgeFileUpload: {
+        $set: action.payload.file
       }
     });
   default:

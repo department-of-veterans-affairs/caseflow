@@ -35,6 +35,13 @@ export const onRoCoEndDateChange = (endDate) => ({
   }
 });
 
+export const onRoCoFileUpload = (file) => ({
+  type: ACTIONS.RO_CO_FILE_UPLOAD,
+  payload: {
+    file
+  }
+});
+
 export const onJudgeStartDateChange = (startDate) => ({
   type: ACTIONS.JUDGE_START_DATE_CHANGE,
   payload: {
@@ -60,5 +67,12 @@ export const onViewEndDateChange = (viewEndDate) => ({
   type: ACTIONS.VIEW_END_DATE_CHANGE,
   payload: {
     viewEndDate
+  }
+});
+
+export const onJudgeFileUpload = (file) => ({
+  type: ACTIONS.JUDGE_FILE_UPLOAD,
+  payload: {
+    file
   }
 });
