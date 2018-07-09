@@ -17,7 +17,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
+  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
@@ -36,6 +36,7 @@ type Props = {|
   tasks: Tasks,
   error: ?UiStateError,
   success: string,
+  allAttorneys: AllAttorneys,
   // Action creators
   setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
@@ -87,11 +88,22 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, error, success } = this.props;
-    const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() })).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
+    const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
+      value: attorney.id.toString() });
+    const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
+
+    const { attorneysOfJudge, selectedAssignee, error, success, allAttorneys } = this.props;
+    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
     const showOtherSearchBox = selectedAssignee === OTHER;
+    let optionsOther = [];
+    let placeholderOther = 'Loading';
+    let selectedOptionOther = null;
+    if (allAttorneys.data) {
+      optionsOther = allAttorneys.data.map(optionFromAttorney);
+      placeholderOther = 'Select a user';
+      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssignee);
+    }
 
     return <React.Fragment>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
@@ -108,11 +120,22 @@ class AssignWidget extends React.PureComponent<Props> {
           searchable
           options={options}
           placeholder="Select a user"
-          onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
+          onChange={handleChange}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
         {showOtherSearchBox &&
-          <p>Enter the name of an attorney or judge:</p>}
+          <React.Fragment>
+            <p>Enter the name of an attorney or judge:</p>
+            <SearchableDropdown
+              name="Other assignee"
+              hideLabel
+              searchable
+              options={optionsOther}
+              placeholder={placeholderOther}
+              onChange={handleChange}
+              value={selectedOptionOther}
+              styling={css({ width: '30rem' })} />
+          </React.Fragment>}
         <Button
           onClick={this.handleButtonClick}
           name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
@@ -124,7 +147,7 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks } = state.queue;
+  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, allAttorneys } = state.queue;
   const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
@@ -133,7 +156,8 @@ const mapStateToProps = (state: State) => {
     isTaskAssignedToUserSelected,
     tasks,
     error,
-    success
+    success,
+    allAttorneys
   };
 };
 
