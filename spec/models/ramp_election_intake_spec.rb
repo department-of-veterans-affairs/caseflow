@@ -15,6 +15,7 @@ describe RampElectionIntake do
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:compensation_issue) { create(:case_issue, :compensation) }
+  let(:education_issue) { create(:case_issue, :education) }
   let(:issues) { [compensation_issue] }
   let(:completed_at) { nil }
   let(:case_status) { :status_advance }
@@ -109,53 +110,74 @@ describe RampElectionIntake do
              receipt_date: 3.days.ago)
     end
 
-    let!(:appeals_to_close) do
-      (1..2).map do
-        create(:legacy_appeal,
-               vacols_case: create(
-                 :case,
-                 :status_advance,
-                 bfcorlid: "64205555C",
-                 bfdnod: 1.year.ago
-               ))
-      end
+    let!(:appeal_to_partially_close) do
+      create(:legacy_appeal,
+             vacols_case: create(
+               :case,
+               :status_advance,
+               bfcorlid: "64205555C",
+               bfdnod: 1.year.ago,
+               case_issues: [compensation_issue, education_issue]
+             ))
+    end
+
+    let!(:appeal_to_fully_close) do
+      create(:legacy_appeal,
+             vacols_case: create(
+               :case,
+               :status_advance,
+               bfcorlid: "64205555C",
+               bfdnod: 1.year.ago,
+               case_issues: [create(:case_issue, :compensation)]
+             ))
     end
 
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-      expect(AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: appeals_to_close.first,
-        user: intake.user,
-        closed_on: Time.zone.today,
-        disposition_code: "P"
-      )
-
-      expect(AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: appeals_to_close.last,
-        user: intake.user,
-        closed_on: Time.zone.today,
-        disposition_code: "P"
-      )
-
       subject
 
       expect(intake.reload).to be_success
-      expect(intake.detail.established_at).to_not be_nil
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+
+      expect(appeal_to_fully_close.case_record.reload).to have_attributes(
+        bfmpro: "HIS",
+        bfddec: AppealRepository.dateshift_to_utc(Time.zone.now),
+        bfdc: "P"
+      )
+
+      expect(appeal_to_fully_close.case_record.folder.timduser).to eq(user.regional_office)
+
+      reloaded_issues = AppealRepository.issues(appeal_to_partially_close.vacols_id)
+      education_issue = reloaded_issues.find { |i| i.program == :education }
+      compensation_issue = reloaded_issues.find { |i| i.program == :compensation }
+
+      expect(education_issue.disposition_id).to eq(nil)
+      expect(compensation_issue.disposition_id).to eq("P")
+
+      expect(appeal_to_partially_close.case_record.reload).to have_attributes(
+        bfmpro: "ADV",
+        bfddec: nil,
+        bfdc: nil
+      )
 
       expect(
         RampClosedAppeal.where(
-          vacols_id: appeals_to_close.first.vacols_id,
+          vacols_id: appeal_to_partially_close.vacols_id,
           ramp_election_id: detail.id,
-          nod_date: appeals_to_close.first.nod_date
+          nod_date: appeal_to_partially_close.nod_date,
+          closed_on: Time.zone.now,
+          partial_closure_issue_sequence_ids: [compensation_issue.id]
         )
       ).to_not be_nil
 
       expect(
         RampClosedAppeal.where(
-          vacols_id: appeals_to_close.last.vacols_id,
+          vacols_id: appeal_to_fully_close.vacols_id,
           ramp_election_id: detail.id,
-          nod_date: appeals_to_close.last.nod_date
+          nod_date: appeal_to_fully_close.nod_date,
+          closed_on: Time.zone.now,
+          partial_closure_issue_sequence_ids: nil
         )
       ).to_not be_nil
     end
@@ -209,35 +231,27 @@ describe RampElectionIntake do
 
       context "the existing RAMP election EP is active" do
         it "closes out legacy appeals and connects intake to the existing ramp election" do
-          expect(AppealRepository).to receive(:close_undecided_appeal!).with(
-            appeal: appeals_to_close.first,
-            user: intake.user,
-            closed_on: Time.zone.today,
-            disposition_code: "P"
-          )
-
-          expect(AppealRepository).to receive(:close_undecided_appeal!).with(
-            appeal: appeals_to_close.last,
-            user: intake.user,
-            closed_on: Time.zone.today,
-            disposition_code: "P"
-          )
-
           subject
+
+          expect(appeal_to_fully_close.case_record.reload).to have_attributes(bfdc: "P")
 
           expect(
             RampClosedAppeal.where(
-              vacols_id: appeals_to_close.first.vacols_id,
-              ramp_election_id: existing_ramp_election.id,
-              nod_date: appeals_to_close.first.nod_date
+              vacols_id: appeal_to_partially_close.vacols_id,
+              ramp_election_id: detail.id,
+              nod_date: appeal_to_partially_close.nod_date,
+              closed_on: Time.zone.now,
+              partial_closure_issue_sequence_ids: [compensation_issue.id]
             )
           ).to_not be_nil
 
           expect(
             RampClosedAppeal.where(
-              vacols_id: appeals_to_close.last.vacols_id,
-              ramp_election_id: existing_ramp_election.id,
-              nod_date: appeals_to_close.last.nod_date
+              vacols_id: appeal_to_fully_close.vacols_id,
+              ramp_election_id: detail.id,
+              nod_date: appeal_to_fully_close.nod_date,
+              closed_on: Time.zone.now,
+              partial_closure_issue_sequence_ids: nil
             )
           ).to_not be_nil
 
@@ -267,18 +281,6 @@ describe RampElectionIntake do
           expect(intake.detail).to_not eq(existing_ramp_election)
           expect(intake.detail.established_at).to_not be_nil
         end
-      end
-    end
-
-    context "if VACOLS closure fails" do
-      it "does not complete" do
-        intake.save!
-        expect(AppealRepository).to receive(:close_undecided_appeal!).and_raise("VACOLS failz")
-
-        expect { subject }.to raise_error("VACOLS failz")
-
-        intake.reload
-        expect(intake.completed_at).to be_nil
       end
     end
 
@@ -460,8 +462,6 @@ describe RampElectionIntake do
     end
     let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
-    let(:education_issue) { create(:case_issue, :education) }
-
     context "the ramp election is complete" do
       let(:end_product_reference_id) { 1 }
       let(:established_at) { Time.zone.now }
@@ -486,15 +486,6 @@ describe RampElectionIntake do
       it "adds no_active_compensation_appeals and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("no_active_compensation_appeals")
-      end
-    end
-
-    context "there are no active fully compensation appeals" do
-      let(:issues) { [compensation_issue, education_issue] }
-
-      it "adds no_active_fully_compensation_appeals and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("no_active_fully_compensation_appeals")
       end
     end
 

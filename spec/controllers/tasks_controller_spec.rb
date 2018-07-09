@@ -3,14 +3,14 @@ RSpec.describe TasksController, type: :controller do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:judge_queue)
-    FeatureToggle.enable!(:co_located_queue)
+    FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:judge_queue)
-    FeatureToggle.disable!(:co_located_queue)
+    FeatureToggle.disable!(:colocated_queue)
   end
 
   describe "GET tasks/xxx" do
@@ -58,10 +58,10 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when user is a colocated admin" do
-      let(:role) { :co_located_role }
+      let(:role) { :colocated_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: user.id, role: "co_located" }
+        get :index, params: { user_id: user.id, role: "colocated" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
         expect(response_body.first["attributes"]["status"]).to eq "assigned"
@@ -179,6 +179,41 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body["errors"].first["detail"]).to eq "Appeal can't be blank"
           end
         end
+      end
+    end
+  end
+
+  describe "PATCH /task/:id" do
+    let(:user) { create(:user) }
+    before do
+      User.stub = user
+      create(:staff, :colocated_role, sdomainid: user.css_id)
+    end
+
+    context "when updating status to in-progress and on-hold" do
+      let(:admin_action) { create(:colocated_admin_action, assigned_to: user) }
+
+      it "should update successfully" do
+        patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.first["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.first["attributes"]["started_at"]).to_not be nil
+
+        patch :update, params: { task: { status: "on_hold" }, id: admin_action.id }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+      end
+    end
+
+    context "when some other user updates another user's task" do
+      let(:admin_action) { create(:colocated_admin_action, assigned_to: create(:user)) }
+
+      it "should return not be successful" do
+        patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
+        expect(response.status).to eq 302
       end
     end
   end

@@ -68,20 +68,20 @@ class QueueApp extends React.PureComponent {
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} vacolsId={props.match.params.vacolsId}>
+  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} appealId={props.match.params.appealId}>
     <Breadcrumbs />
-    <CaseDetailsView vacolsId={props.match.params.vacolsId} />
+    <CaseDetailsView appealId={props.match.params.appealId} />
   </QueueLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
-    vacolsId={props.match.params.vacolsId}
+    appealId={props.match.params.appealId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView vacolsId={props.match.params.vacolsId} />;
+  routedSelectDispositions = (props) => <SelectDispositionsView appealId={props.match.params.appealId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
-    prevStep={`/queue/appeals/${props.match.params.vacolsId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
@@ -142,12 +142,12 @@ class QueueApp extends React.PureComponent {
             render={this.routedJudgeQueueList('Assign')} />
           <PageRoute
             exact
-            path="/queue/appeals/:vacolsId"
+            path="/queue/appeals/:appealId"
             title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/appeals/:vacolsId/submit"
+            path="/queue/appeals/:appealId/submit"
             title={() => {
               let reviewActionType = '';
 
@@ -169,7 +169,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:vacolsId/dispositions/:action(add|edit)/:issueId?"
+            path="/queue/appeals/:appealId/dispositions/:action(add|edit)/:issueId?"
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
@@ -179,7 +179,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/queue/appeals/:vacolsId/dispositions"
+            path="/queue/appeals/:appealId/dispositions"
             title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute

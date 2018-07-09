@@ -126,6 +126,24 @@ RSpec.feature "Higher Level Review Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
+
+    visit "/intake/review-request"
+
+    within_fieldset("Did the Veteran request an informal conference?") do
+      expect(find_field("Yes", visible: false)).to be_checked
+    end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      expect(find_field("No", visible: false)).to be_checked
+    end
+
+    expect(find("#different-claimant-option_true", visible: false)).to be_checked
+    expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_current_path("/intake/finish")
+
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
