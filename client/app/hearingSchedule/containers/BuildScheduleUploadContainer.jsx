@@ -13,7 +13,6 @@ import {
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
-
   render() {
     return <BuildScheduleUpload
       fileType={this.props.fileType}
@@ -23,7 +22,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       roCoEndDate={this.props.roCoEndDate}
       onRoCoEndDateChange={this.props.onRoCoEndDateChange}
       roCoFileUpload={this.props.roCoFileUpload}
-      onRoCoFileUpload={this.props.onJudgeFileUpload}
+      onRoCoFileUpload={this.props.onRoCoFileUpload}
       judgeStartDate={this.props.judgeStartDate}
       onJudgeStartDateChange={this.props.onJudgeStartDateChange}
       judgeEndDate={this.props.judgeEndDate}

@@ -30,7 +30,7 @@ export default class FileUpload extends React.Component {
           onChange={this.onUploadEvent}
         />
       </div>
-    </div>
+    </div>;
   }
 }
 
