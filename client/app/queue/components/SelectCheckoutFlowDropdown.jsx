@@ -23,7 +23,7 @@ import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 class SelectCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
     const {
-      vacolsId,
+      appealId,
       history,
       appeal: { attributes: { veteran_full_name: vetName } }
     } = this.props;
@@ -34,24 +34,24 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
 
     this.props.resetDecisionOptions();
     this.props.setCaseReviewActionType(decisionType);
-    this.props.resetBreadcrumbs(vetName, vacolsId);
+    this.props.resetBreadcrumbs(vetName, appealId);
 
     history.push('');
-    history.replace(`/queue/appeals/${vacolsId}/${route}`);
+    history.replace(`/queue/appeals/${appealId}/${route}`);
   };
 
   stageAppeal = () => {
-    const { vacolsId } = this.props;
+    const { appealId } = this.props;
 
-    if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.checkoutStagedAppeal(vacolsId);
+    if (this.props.changedAppeals.includes(appealId)) {
+      this.props.checkoutStagedAppeal(appealId);
     }
 
-    this.props.stageAppeal(vacolsId);
+    this.props.stageAppeal(appealId);
   }
 
   render = () => <SearchableDropdown
-    name={`start-checkout-flow-${this.props.vacolsId}`}
+    name={`start-checkout-flow-${this.props.appealId}`}
     placeholder="Select an action&hellip;"
     options={DRAFT_DECISION_OPTIONS}
     onChange={this.changeRoute}
@@ -60,11 +60,11 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
 }
 
 SelectCheckoutFlowDropdown.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
+  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals)
 });
 
