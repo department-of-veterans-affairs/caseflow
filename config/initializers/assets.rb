@@ -14,6 +14,10 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # folder are already added.
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
+
+Rails.application.config.assets.precompile += %w( webpack-bundle.js )
+Rails.application.config.assets.precompile += %w( 0.webpack-bundle.js )
+
 Rails.application.config.assets.precompile += %w( favicon.ico )
 Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # Add client/assets/ folders to asset pipeline's search path.
@@ -23,6 +27,3 @@ Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # If you have a different server bundle file than your client bundle, you'll
 # need to add it here, like this:
 # Rails.application.config.assets.precompile += %w( server-bundle.js )
-
-# Add folder with webpack generated assets to assets.paths
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack")
