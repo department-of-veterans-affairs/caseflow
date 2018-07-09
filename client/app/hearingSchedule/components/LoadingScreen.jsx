@@ -34,21 +34,18 @@ class LoadingScreen extends React.PureComponent {
     });
   };
 
-  createLoadPromise = () => {
-    if (this.props.children.type.WrappedComponent.name === 'ListScheduleContainer') {
-      return Promise.all([
-        this.loadHearingSchedule()
-      ]);
-    } else {
-      return Promise.all([
-        this.loadPastUploads()
-      ]);
-    }
-  }
+  createLoadPromise = () => Promise.all([
+    this.loadPastUploads()
+  ]);
+
+  createHearingPromise = () => Promise.all([
+    this.loadHearingSchedule()
+  ]);
 
   render = () => {
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createLoadPromise}
+      createLoadPromise={this.props.children.type.WrappedComponent.name === 'ListScheduleContainer' ?
+        this.createHearingPromise : this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
         message: 'Loading the hearing schedule...'
