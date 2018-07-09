@@ -19,14 +19,14 @@ class UnassignedCasesPage extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, featureToggles } = props;
+    const { userId, featureToggles } = this.props;
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {featureToggles.judge_assign_cases &&
         <AssignWidget previousAssigneeId={userId}
-          onTaskAssignment={(params) => props.initialAssignTasksToUser(params)} />}
-      <JudgeAssignTaskTable {...props} />
+          onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)} />}
+      <JudgeAssignTaskTable {...this.props} />
     </React.Fragment>;
   }
 }
