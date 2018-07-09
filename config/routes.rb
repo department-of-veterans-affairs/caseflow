@@ -93,7 +93,7 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
-    resources :schedule_periods, only: [:index, :show]
+    resources :schedule_periods, only: [:index, :create]
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule/build', to: "hearing_schedule#index"

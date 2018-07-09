@@ -54,7 +54,11 @@ const reducers = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.ON_UPLOAD_CONTINUE:
-    return;
+    return update(state, {
+      uploadContinueLoading: {
+        $set: true
+      }
+    });
   default:
     return state;
   }

@@ -63,6 +63,15 @@ export default class BuildScheduleUpload extends React.Component {
     </div>;
   };
 
+  getContinueFunction = () => {
+    if (this.props.fileType == SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      return this.props.onJudgeUploadContinue
+    }
+    if (this.props.fileType == SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+      return this.props.onRoCoUploadContinue
+    }
+  };
+
   render() {
     const fileTypes = [
       {
@@ -97,7 +106,10 @@ export default class BuildScheduleUpload extends React.Component {
         <Button
           name="continue"
           button="primary"
-          onClick={this.props.onUploadContinue}>
+          loading={this.props.uploadContinueLoading}
+          onClick={this.getContinueFunction()}
+          disabled={!this.props.fileType}
+        >
           Continue
         </Button>
       </div>
@@ -119,5 +131,8 @@ BuildScheduleUpload.propTypes = {
   onJudgeStartDateChange: PropTypes.func,
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.string,
-  onJudgeFileUpload: PropTypes.func
+  onJudgeFileUpload: PropTypes.func,
+  onRoCoUploadContinue: PropTypes.func,
+  onJudgeUploadContinue: PropTypes.func,
+  uploadContinueLoading: PropTypes.bool
 };

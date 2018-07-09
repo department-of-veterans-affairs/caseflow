@@ -14,6 +14,11 @@ import {
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
+
+  onUploadContinue = (startDate, endDate, type, fileName) => () => {
+    this.props.onUploadContinue(startDate, endDate, type, fileName);
+  };
+
   render() {
     return <BuildScheduleUpload
       fileType={this.props.fileType}
@@ -30,7 +35,17 @@ export class BuildScheduleUploadContainer extends React.Component {
       onJudgeEndDateChange={this.props.onJudgeEndDateChange}
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
-      onUploadContinue={this.props.onUploadContinue}
+      uploadContinueLoading={this.props.uploadContinueLoading}
+      onRoCoUploadContinue={this.onUploadContinue(
+          this.props.roCoStartDate,
+          this.props.roCoEndDate,
+          this.props.fileType,
+          this.props.roCoFileUpload)}
+      onJudgeUploadContinue={this.onUploadContinue(
+          this.props.judgeStartDate,
+          this.props.judgeEndDate,
+          this.props.fileType,
+          this.props.judgeFileUpload)}
     />;
   }
 }
@@ -42,7 +57,8 @@ const mapStateToProps = (state) => ({
   roCoFileUpload: state.roCoFileUpload,
   judgeStartDate: state.judgeStartDate,
   judgeEndDate: state.judgeEndDate,
-  judgeFileUpload: state.judgeFileUpload
+  judgeFileUpload: state.judgeFileUpload,
+  uploadContinueLoading: state.uploadContinueLoading
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
