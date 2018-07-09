@@ -69,7 +69,7 @@ class EvaluateDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/evaluate`
   });
 
-  qualityIsDeficient = () => this.state.quality > 0 && this.state.quality < 3;
+  qualityIsDeficient = () => this.state.quality === 'needs_improvements' || this.state.quality === 'does_not_meet_expectations';
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
@@ -213,19 +213,19 @@ class EvaluateDecisionView extends React.PureComponent {
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
         options={[{
-          value: '5',
+          value: 'outstanding',
           displayText: `5 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.outstanding}`
         }, {
-          value: '4',
+          value: 'exceeds_expectations',
           displayText: `4 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.exceeds_expectations}`
         }, {
-          value: '3',
+          value: 'meets_expectations',
           displayText: `3 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.meets_expectations}`
         }, {
-          value: '2',
+          value: 'needs_improvements',
           displayText: `2 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.needs_improvements}`
         }, {
-          value: '1',
+          value: 'does_not_meet_expectations',
           displayText: `1 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.does_not_meet_expectations}`
         }]} />
 
