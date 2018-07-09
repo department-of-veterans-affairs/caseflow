@@ -9,6 +9,10 @@ FactoryBot.define do
       type "CoLocatedAdminAction"
       title "poa_clarification"
       instructions "poa is missing"
+
+      after(:create) do |task, _evaluator|
+        create(:staff, :attorney_role, sdomainid: task.assigned_by.css_id)
+      end
     end
   end
 end
