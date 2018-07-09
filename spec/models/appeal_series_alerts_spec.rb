@@ -28,7 +28,8 @@ describe AppealSeriesAlerts do
         bfdc: disposition,
         bfmpro: status,
         case_hearings: hearings,
-        bfso: "F"
+        bfso: "F",
+        case_issues: [create(:case_issue, :compensation)]
       ))
   end
 

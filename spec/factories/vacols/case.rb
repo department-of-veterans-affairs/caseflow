@@ -211,6 +211,20 @@ FactoryBot.define do
       bfhr "2"
     end
 
+    trait :reopenable do
+      bfmpro "HIS"
+      bfcurloc "99"
+      bfboard "00"
+
+      after(:create) do |vacols_case, _evaluator|
+        create(:priorloc,
+               lockey: vacols_case.bfkey,
+               locstto: "77",
+               locdin: Time.zone.today - 6,
+               locdout: Time.zone.today - 2)
+      end
+    end
+
     trait :aod do
       after(:create) do |vacols_case, _evaluator|
         create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
