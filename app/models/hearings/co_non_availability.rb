@@ -5,7 +5,7 @@ class CoNonAvailability < NonAvailability
       co_non_availability = []
       transaction do
         dates.each do |date|
-          next unless date != "N/A"
+          next if date == "N/A"
           co_non_availability << CoNonAvailability.create!(schedule_period: schedule_period,
                                                            date: date,
                                                            object_identifier: "CO")
