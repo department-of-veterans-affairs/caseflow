@@ -53,6 +53,8 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.file
       }
     });
+  case ACTIONS.ON_UPLOAD_CONTINUE:
+    return;
   default:
     return state;
   }
