@@ -1,6 +1,14 @@
 require "rails_helper"
 
 describe RatingIssue do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+  
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }
 
