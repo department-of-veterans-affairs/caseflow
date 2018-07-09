@@ -93,9 +93,11 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
+    resources :schedule_periods, only: [:index]
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
-  get 'hearings/schedule/build', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/build', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
@@ -128,6 +130,10 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
@@ -137,11 +143,11 @@ Rails.application.routes.draw do
     get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id(*rest)', to: 'tasks#index'
+    get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:create]
+  resources :tasks, only: [:index, :create]
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"

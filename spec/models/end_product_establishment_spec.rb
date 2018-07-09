@@ -3,8 +3,10 @@ describe EndProductEstablishment do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
-  let(:veteran) { Generators::Veteran.build(file_number: "12341234") }
+  let(:veteran_file_number) { "12341234" }
+  let(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:code) { "030HLRR" }
+  let(:reference_id) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -12,7 +14,8 @@ describe EndProductEstablishment do
       code: code,
       claim_date: 2.days.ago,
       station: "397",
-      valid_modifiers: ["030"]
+      valid_modifiers: ["030"],
+      reference_id: reference_id
     )
   end
 
@@ -49,6 +52,33 @@ describe EndProductEstablishment do
         subject
         expect(end_product_establishment.reference_id).to eq("FAKECLAIMID")
       end
+    end
+  end
+
+  context "#result" do
+    subject { end_product_establishment.result }
+
+    let!(:other_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+    let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+
+    context "when matching end product has not yet been established" do
+      context "when end_product_reference_id is nil" do
+        it { is_expected.to be_nil }
+      end
+
+      context "when end_product_reference_id is set" do
+        let(:reference_id) { "not matching" }
+
+        it "raises EstablishedEndProductNotFound error" do
+          expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
+        end
+      end
+    end
+
+    context "when a matching end product has been established" do
+      let(:reference_id) { matching_ep.claim_id }
+
+      it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
     end
   end
 end

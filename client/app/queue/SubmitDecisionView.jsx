@@ -7,7 +7,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
-  getUndecidedIssues
+  buildCaseReviewPayload
 } from './utils';
 
 import {
@@ -30,25 +30,16 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
-  DECISION_TYPES
+  marginBottom,
+  marginTop,
+  ERROR_FIELD_REQUIRED
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-const mediumBottomMargin = css({ marginBottom: '2rem' });
-const smallBottomMargin = css({ marginBottom: '1rem' });
-const noBottomMargin = css({ marginBottom: 0 });
-const noTopMargin = css({ marginTop: 0 });
-
-const radioFieldStyling = css(noBottomMargin, {
-  marginTop: '2rem',
-  '& .question-label': {
-    marginBottom: 0
-  }
+const radioFieldStyling = css(marginBottom(0), marginTop(2), {
+  '& .question-label': marginBottom(0)
 });
-const subHeadStyling = css({ marginBottom: '2rem' });
-const checkboxStyling = css({ marginTop: '1rem' });
-const textAreaStyling = css({ marginTop: '4rem' });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 class SubmitDecisionView extends React.PureComponent {
@@ -68,7 +59,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/appeals/${this.props.vacolsId}/submit`
+    path: `/queue/appeals/${this.props.appealId}/submit`
   });
 
   validateForm = () => {
@@ -94,36 +85,27 @@ class SubmitDecisionView extends React.PureComponent {
         attributes: {
           issues,
           veteran_full_name,
-          vacols_id: vacolsId
+          vacols_id: appealId
         }
       },
       decision,
+      userRole,
       judges
     } = this.props;
-    const params = {
-      data: {
-        tasks: {
-          document_type: decision.type,
-          type: 'AttorneyCaseReview',
-          issues: getUndecidedIssues(issues).map((issue) => _.extend({},
-            _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
-            { disposition: _.capitalize(issue.disposition) })
-          ),
-          ...decision.opts
-        }
-      }
-    };
+
+    const payload = buildCaseReviewPayload(decision, userRole, issues);
 
     const fields = {
-      type: decision.type === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
+      type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
+        'decision' : 'outside medical opinion (OMO) request',
       veteran: veteran_full_name,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/case_reviews/${taskId}/complete`, params, successMsg).
-      then(() => this.props.deleteAppeal(vacolsId));
+    this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
+      then(() => this.props.deleteAppeal(appealId));
   };
 
   getJudgeSelectComponent = () => {
@@ -179,6 +161,7 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   render = () => {
+    // todo: move to constants?
     const omoTypes = [{
       displayText: 'OMO - VHA',
       value: 'OMO - VHA'
@@ -198,13 +181,13 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionTypeDisplay = getDecisionTypeDisplay(decision);
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Submit {decisionTypeDisplay} for Review
       </h1>
-      <p className="cf-lead-paragraph" {...subHeadStyling}>
+      <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Complete the details below to submit this {decisionTypeDisplay} request for judge review.
       </p>
-      {error && <Alert title={error.title} type="error" styling={css(noTopMargin, mediumBottomMargin)}>
+      {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(2))}>
         {error.detail}
       </Alert>}
       <hr />
@@ -223,7 +206,7 @@ class SubmitDecisionView extends React.PureComponent {
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
         value={decisionOpts.overtime || false}
-        styling={css(smallBottomMargin, checkboxStyling)}
+        styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
         label="Document ID:"
@@ -238,14 +221,14 @@ class SubmitDecisionView extends React.PureComponent {
         name="notes"
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
-        styling={textAreaStyling}
+        styling={marginTop(4)}
       />
     </React.Fragment>;
   };
 }
 
 SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
@@ -254,17 +237,18 @@ const mapStateToProps = (state, ownProps) => {
     queue: {
       stagedChanges: {
         appeals: {
-          [ownProps.vacolsId]: appeal
+          [ownProps.appealId]: appeal
         },
         taskDecision: decision
       },
       tasks: {
-        [ownProps.vacolsId]: task
+        [ownProps.appealId]: task
       },
       judges
     },
     ui: {
       highlightFormItems,
+      userRole,
       selectingJudge,
       messages: {
         error
@@ -278,6 +262,7 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     judges,
     error,
+    userRole,
     highlightFormItems,
     selectingJudge
   };

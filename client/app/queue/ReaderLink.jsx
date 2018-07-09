@@ -33,7 +33,7 @@ export default class ReaderLink extends React.PureComponent {
     const {
       redirectUrl,
       taskType,
-      vacolsId
+      appealId
     } = this.props;
     const linkProps = {};
 
@@ -47,7 +47,7 @@ export default class ReaderLink extends React.PureComponent {
       }
       const qs = querystring.stringify(queryParams);
 
-      linkProps.href = `/reader/appeal/${vacolsId}/documents?${qs}`;
+      linkProps.href = `/reader/appeal/${appealId}/documents?${qs}`;
     } else {
       linkProps.disabled = true;
     }
@@ -64,7 +64,7 @@ ReaderLink.propTypes = {
   longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
-  vacolsId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired
 };
 
 ReaderLink.defaultProps = {

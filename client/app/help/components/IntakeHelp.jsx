@@ -62,7 +62,7 @@ class IntakeHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Intake Access" src="/assets/help/intake-access-a705a2da4181b5936408d4f417447ec7d3cfcbf9d924bbdc7c7f6359ac4ab076.png" />
+        <img className="cf-help-image" alt="Intake Access" src="/assets/help/intake-access.jpg" />
       </p>
 
       <p>Once the email is drafted, attach a copy of your latest “VA Privacy and Information Security
@@ -90,7 +90,7 @@ class IntakeHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Send Intake Feedback" src="/assets/help/intake-feedback-d23b3874b9eaeaca49809e7e802f6cf5f5b56002f536ee6ae07b326800128b31.png" />
+        <img className="cf-help-image" alt="Send Intake Feedback" src="/assets/help/intake-feedback.jpg" />
       </p>
 
       <h2 id="suggestions">8. How can I share my suggestions for improving Intake?</h2>

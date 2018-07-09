@@ -1,6 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatRatingData, prepareReviewData } from '../util';
+import { formatIssues, prepareReviewData } from '../util';
 import _ from 'lodash';
 
 const analytics = true;
@@ -15,10 +15,19 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
     then(
-      () => dispatch({
-        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
-        meta: { analytics }
-      }),
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
+          meta: { analytics }
+        });
+
+        return true;
+      },
       (error) => {
         const responseObject = JSON.parse(error.response.text);
         const responseErrorCodes = responseObject.error_codes;
@@ -51,7 +60,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = formatRatingData(intakeData);
+  const data = formatIssues(intakeData);
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
@@ -90,3 +99,65 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
       }
     );
 };
+
+export const setClaimantNotVeteran = (claimantNotVeteran) => ({
+  type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
+  payload: {
+    claimantNotVeteran
+  }
+});
+
+export const setClaimant = (claimant) => ({
+  type: ACTIONS.SET_CLAIMANT,
+  payload: {
+    claimant
+  }
+});
+
+export const setIssueSelected = (profileDate, issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    profileDate,
+    issueId,
+    isSelected
+  },
+  meta: {
+    analytics: {
+      label: isSelected ? 'selected' : 'de-selected'
+    }
+  }
+});
+
+export const addNonRatedIssue = (nonRatedIssues) => ({
+  type: ACTIONS.ADD_NON_RATED_ISSUE,
+  payload: {
+    nonRatedIssues
+  },
+  meta: { analytics }
+});
+
+export const setIssueCategory = (issueId, category) => ({
+  type: ACTIONS.SET_ISSUE_CATEGORY,
+  payload: {
+    issueId,
+    category
+  },
+  meta: {
+    analytics: {
+      label: category
+    }
+  }
+});
+
+export const setIssueDescription = (issueId, description) => ({
+  type: ACTIONS.SET_ISSUE_DESCRIPTION,
+  payload: {
+    issueId,
+    description
+  },
+  meta: {
+    analytics: {
+      label: description
+    }
+  }
+});

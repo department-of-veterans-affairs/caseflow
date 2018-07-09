@@ -341,6 +341,12 @@ dd {
   &:hover {
     text-decoration: none;
   }
+
+  &.usa-button {
+    &::after {
+      background: image-url('icons/icon-down-arrow.svg') 50% 100% no-repeat;
+    }
+  }
 }
 
 // Quick fix to property count lint
@@ -360,7 +366,6 @@ dd {
   display: none;
   text-align: left;
   width: auto;
-  min-width: 13em;
   padding-top: 5px;
   padding-bottom: 5px;
   top: 3em;
@@ -992,6 +997,7 @@ fieldset {
   margin-bottom: rem(20px);
 
   label {
+    max-width: 100%;
     // This important can be removed when the latest USWDS
     // are merged into the gem we use.
     // scss-lint:disable ImportantRule

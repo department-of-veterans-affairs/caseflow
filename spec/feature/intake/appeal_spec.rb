@@ -21,14 +21,30 @@ RSpec.feature "Appeal Intake" do
     Generators::Veteran.build(file_number: "22334455", first_name: "Ed", last_name: "Merica")
   end
 
+  let(:receipt_date) { Date.new(2018, 4, 20) }
+
+  let(:untimely_days) { 372.days }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: Date.new(2018, 4, 25),
-      profile_date: Date.new(2018, 4, 28),
+      promulgation_date: receipt_date - untimely_days + 1.day,
+      profile_date: receipt_date - untimely_days + 4.days,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
+      ]
+    )
+  end
+
+  let!(:untimely_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - untimely_days,
+      profile_date: receipt_date - untimely_days + 3.days,
+      issues: [
+        { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "def456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
@@ -82,19 +98,28 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
+    visit "/intake/review-request"
+
+    expect(find_field("Evidence Submission", visible: false)).to be_checked
+
+    expect(find("#different-claimant-option_false", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
     appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
     expect(appeal).to_not be_nil
-    expect(appeal.receipt_date).to eq(Date.new(2018, 4, 20))
+    expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: intake.veteran.participant_id
+      participant_id: veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/25/2018")
+    expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
+    expect(page).to_not have_content("Untimely rating issue 1")
 
     find("label", text: "PTSD denied").click
 
@@ -105,7 +130,11 @@ RSpec.feature "Appeal Intake" do
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
 
+    expect(page).to have_content("1 issue")
+
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 
@@ -120,7 +149,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.request_issues.count).to eq 2
     expect(appeal.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: Date.new(2018, 4, 28),
+      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied"
     )
 

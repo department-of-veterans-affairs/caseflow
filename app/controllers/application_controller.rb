@@ -96,6 +96,7 @@ class ApplicationController < ApplicationBaseController
   def can_access_queue?
     return true if current_user.attorney_in_vacols?
     return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    return true if current_user.colocated_in_vacols? && feature_enabled?(:co_located_queue)
     false
   end
   helper_method :can_access_queue?
@@ -125,6 +126,15 @@ class ApplicationController < ApplicationBaseController
   def invalid_record_error(record)
     render json:  {
       "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
+    }, status: 400
+  end
+
+  def required_parameters_missing(array_of_keys)
+    render json: {
+      "errors": [
+        "title": "Missing required parameters",
+        "detail": "Required parameters are missing: #{array_of_keys.join(' ,')}"
+      ]
     }, status: 400
   end
 

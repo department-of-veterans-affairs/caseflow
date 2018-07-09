@@ -61,8 +61,7 @@ describe IntakeStats do
         RampElectionIntake.create!(
           veteran_file_number: "1111",
           completed_at: 2.hours.ago,
-          completion_status: :error,
-          error_code: :ramp_election_already_complete,
+          completion_status: :success,
           user: user
         )
       ]

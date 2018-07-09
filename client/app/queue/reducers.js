@@ -1,3 +1,4 @@
+// @flow
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
@@ -37,7 +38,7 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isVacolsIdAssignedToUserSelected: {}
+  isTaskAssignedToUserSelected: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -88,7 +89,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
-        [action.payload.vacolsId]: {
+        [action.payload.appealId]: {
           $set: action.payload.docCount
         }
       }
@@ -270,16 +271,90 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
-    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
-      [action.payload.vacolsId]: {
+    const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.taskId]: {
         $set: action.payload.selected
       }
     });
 
     return update(state, {
-      isVacolsIdAssignedToUserSelected: {
+      isTaskAssignedToUserSelected: {
         [action.payload.userId]: {
-          $set: isVacolsIdSelected
+          $set: isTaskSelected
+        }
+      }
+    });
+  }
+  case ACTIONS.TASK_INITIAL_ASSIGNED: {
+    const appealId = action.payload.task.id;
+    const appeal = state.loadedQueue.appeals[appealId];
+
+    return update(state, {
+      tasks: {
+        [appealId]: {
+          $set: action.payload.task
+        }
+      },
+      loadedQueue: {
+        tasks: {
+          $unset: [appealId]
+        },
+        appeals: {
+          $unset: [appealId]
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.assigneeId]: {
+          data: {
+            tasks: {
+              [appealId]: {
+                $set: action.payload.task
+              }
+            },
+            appeals: {
+              [appealId]: {
+                $set: appeal
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  case ACTIONS.TASK_REASSIGNED: {
+    const appealId = action.payload.task.id;
+    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
+
+    return update(state, {
+      tasks: {
+        [appealId]: {
+          $set: action.payload.task
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.previousAssigneeId]: {
+          data: {
+            tasks: {
+              $unset: [appealId]
+            },
+            appeals: {
+              $unset: [appealId]
+            }
+          }
+        },
+        [action.payload.assigneeId]: {
+          data: {
+            tasks: {
+              [appealId]: {
+                $set: action.payload.task
+              }
+            },
+            appeals: {
+              [appealId]: {
+                $set: appeal
+              }
+            }
+          }
         }
       }
     });

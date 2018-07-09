@@ -8,6 +8,7 @@ import { css } from 'glamor';
 import {
   pushBreadcrumb,
   popBreadcrumb,
+  setBreadcrumbs,
   highlightInvalidFormItems,
   showModal,
   hideModal
@@ -88,14 +89,17 @@ export default function decisionViewBase(ComponentToWrap) {
     cancelCheckoutFlow = () => {
       const {
         history,
-        stagedAppeals
+        stagedAppeals,
+        appealId
       } = this.props;
 
       this.props.hideModal('cancelCheckout');
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
-      history.push('/queue');
+      // breadcrumbs get set within CaseDetailsView if there are none
+      this.props.setBreadcrumbs();
+      history.push(`/queue/appeals/${appealId}`);
     }
 
     goToPrevStep = () => {
@@ -193,6 +197,7 @@ export default function decisionViewBase(ComponentToWrap) {
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     pushBreadcrumb,
     popBreadcrumb,
+    setBreadcrumbs,
     highlightInvalidFormItems,
     showModal,
     hideModal,

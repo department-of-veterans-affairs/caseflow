@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: fd9771bafc48d98b56909c4466721da312a22739
-  ref: fd9771bafc48d98b56909c4466721da312a22739
+  revision: b4d61f190ac8f6f397db245a257a89238970a224
+  ref: b4d61f190ac8f6f397db245a257a89238970a224
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -257,7 +257,7 @@ GEM
     newrelic_rpm (4.7.1.340)
     nio4r (2.3.0)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.2)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     octokit (4.8.0)
@@ -507,6 +507,7 @@ DEPENDENCIES
   launchy
   moment_timezone-rails
   newrelic_rpm
+  nokogiri (>= 1.8.3)
   paper_trail (= 8.1.2)
   parallel
   paranoia (~> 2.2)

@@ -13,10 +13,32 @@ FactoryBot.define do
     trait :assigned do
       transient do
         decass_count 1
+        user nil
+        assigner nil
+        work_product nil
+        document_id nil
       end
 
       after(:create) do |vacols_case, evaluator|
-        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+        if evaluator.user
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+        end
+        if evaluator.assigner
+          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
+        end
+        vacols_case.update!(bfcurloc: slogid) if slogid
+        create_list(
+          :decass,
+          evaluator.decass_count,
+          evaluator.work_product,
+          defolder: vacols_case.bfkey,
+          deadusr: slogid ? slogid : "TEST",
+          demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
+          dedocid: evaluator.document_id || nil
+        )
       end
     end
 
@@ -187,6 +209,20 @@ FactoryBot.define do
 
     trait :travel_board_hearing do
       bfhr "2"
+    end
+
+    trait :reopenable do
+      bfmpro "HIS"
+      bfcurloc "99"
+      bfboard "00"
+
+      after(:create) do |vacols_case, _evaluator|
+        create(:priorloc,
+               lockey: vacols_case.bfkey,
+               locstto: "77",
+               locdin: Time.zone.today - 6,
+               locdout: Time.zone.today - 2)
+      end
     end
 
     trait :aod do

@@ -1,6 +1,8 @@
+// @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
 import _ from 'lodash';
+import type { UiState } from '../types';
 
 const initialSaveState = {
   savePending: false,
@@ -21,7 +23,8 @@ export const initialState = {
     deleteIssue: false
   },
   featureToggles: {},
-  userRole: ''
+  userRole: '',
+  selectedAssignee: null
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -51,7 +54,7 @@ const setModalState = (state, visibility, modalType) => update(state, {
 const showModal = (state, modalType) => setModalState(state, true, modalType);
 const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
-const workQueueUiReducer = (state = initialState, action = {}) => {
+const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) => {
   switch (action.type) {
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
@@ -139,6 +142,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_USER_ROLE:
     return update(state, {
       userRole: { $set: action.payload.userRole }
+    });
+  case ACTIONS.SET_SELECTED_ASSIGNEE:
+    return update(state, {
+      selectedAssignee: {
+        $set: action.payload.assigneeId
+      }
     });
   default:
     return state;

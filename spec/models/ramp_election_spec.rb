@@ -13,64 +13,64 @@ describe RampElection do
   let(:end_product_status) { nil }
 
   let(:ramp_election) do
-    RampElection.new(
-      veteran_file_number: veteran_file_number,
-      notice_date: notice_date,
-      option_selected: option_selected,
-      receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
-    )
+    build(:ramp_election,
+          veteran_file_number: veteran_file_number,
+          notice_date: notice_date,
+          option_selected: option_selected,
+          receipt_date: receipt_date,
+          end_product_reference_id: end_product_reference_id,
+          established_at: established_at,
+          end_product_status: end_product_status)
   end
 
   context ".active scope" do
     it "includes any RampElection where end_product_status is nil or not inactive" do
-      RampElection.create!(
-        veteran_file_number: "1",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        end_product_status: "ACTIVE"
-      )
-      RampElection.create!(
-        veteran_file_number: "11",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        established_at: Time.zone.now,
-        end_product_status: "ACTIVE"
-      )
-      RampElection.create!(
-        veteran_file_number: "2",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        end_product_status: EndProduct::INACTIVE_STATUSES.first
-      )
-      RampElection.create!(
-        veteran_file_number: "3",
-        notice_date: 1.day.ago,
-        receipt_date: 1.day.ago,
-        established_at: Time.zone.now
-      )
+      create(:ramp_election,
+             veteran_file_number: "1",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             end_product_status: "ACTIVE")
+      create(:ramp_election,
+             veteran_file_number: "11",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             established_at: Time.zone.now,
+             end_product_status: "ACTIVE")
+      create(:ramp_election,
+             veteran_file_number: "2",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             end_product_status: EndProduct::INACTIVE_STATUSES.first)
+      create(:ramp_election,
+             veteran_file_number: "3",
+             notice_date: 1.day.ago,
+             receipt_date: 1.day.ago,
+             established_at: Time.zone.now)
       expect(RampElection.active.count).to eq(2)
     end
   end
 
-  context ".sync_all!" do
-    it "calls recreate_issues_from_contentions! and sync_ep_status! for active RAMPs" do
-      ramp_election1 = RampElection.create!(
-        veteran_file_number: "1"
-      )
-      ramp_election2 = RampElection.create!(
-        veteran_file_number: "2"
-      )
-      expect(ramp_election1).to receive(:recreate_issues_from_contentions!)
-      expect(ramp_election1).to receive(:sync_ep_status!)
-      expect(ramp_election2).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
-      expect(Rails.logger).to receive(:error)
-      expect(Raven).to receive(:capture_exception)
-      allow(RampElection).to receive(:active).and_return([ramp_election1, ramp_election2])
+  context "#sync!" do
+    subject { ramp_election.sync! }
 
-      RampElection.sync_all!
+    it "calls recreate_issues_from_contentions! and sync_ep_status!" do
+      expect(ramp_election).to receive(:recreate_issues_from_contentions!)
+      expect(ramp_election).to receive(:sync_ep_status!)
+
+      subject
+    end
+
+    context "when error is raised" do
+      before do
+        expect(ramp_election).to receive(:sync_ep_status!).and_raise(ActiveRecord::RecordInvalid)
+      end
+
+      it "sends error to sentry but does not re-raise" do
+        expect(ramp_election).to receive(:recreate_issues_from_contentions!)
+        expect(Raven).to receive(:capture_exception)
+
+        subject
+      end
     end
   end
 
@@ -252,33 +252,6 @@ describe RampElection do
       let(:status_type_code) { "PEND" }
 
       it { is_expected.to eq(true) }
-    end
-  end
-
-  context "#established_end_product" do
-    subject { ramp_election.established_end_product }
-
-    let!(:other_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-    let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-
-    context "when matching end product has not yet been established" do
-      context "when end_product_reference_id is nil" do
-        it { is_expected.to be_nil }
-      end
-
-      context "when end_product_reference_id is set" do
-        let(:end_product_reference_id) { "not matching" }
-
-        it "raises EstablishedEndProductNotFound error" do
-          expect { subject }.to raise_error(RampElection::EstablishedEndProductNotFound)
-        end
-      end
-    end
-
-    context "when a matching end product has been established" do
-      let(:end_product_reference_id) { matching_ep.claim_id }
-
-      it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
     end
   end
 
@@ -486,16 +459,15 @@ describe RampElection do
     subject { ramp_election.rollback! }
 
     let!(:ramp_election) do
-      RampElection.create!(
-        veteran_file_number: "44444444",
-        notice_date: 31.days.ago,
-        option_selected: "higher_level_review",
-        receipt_date: 5.days.ago,
-        end_product_reference_id: "1234",
-        established_at: 3.days.ago,
-        end_product_status: "CAN",
-        end_product_status_last_synced_at: Time.zone.now
-      )
+      create(:ramp_election,
+             veteran_file_number: "44444444",
+             notice_date: 31.days.ago,
+             option_selected: "higher_level_review",
+             receipt_date: 5.days.ago,
+             end_product_reference_id: "1234",
+             established_at: 3.days.ago,
+             end_product_status: "CAN",
+             end_product_status_last_synced_at: Time.zone.now)
     end
 
     let!(:ramp_closed_appeals) do

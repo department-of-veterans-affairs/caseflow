@@ -70,18 +70,12 @@ class Search extends React.PureComponent {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
         body: rampIneligibleInstructions
       },
-      ramp_election_already_complete: {
-        title: 'Opt-in already processed in Caseflow',
-        body: `A RAMP opt-in with the receipt date ${searchErrorData.duplicateReceiptDate}` +
-          ' was already processed in Caseflow.' +
-          ' Caseflow does not currently support more than one RAMP Election for a Veteran.'
-      },
       no_active_appeals: {
         title: 'Ineligible to participate in RAMP: no active appeals',
         body: rampIneligibleInstructions
       },
       no_eligible_appeals: {
-        title: 'Ineligible to participate in RAMP: appeal is at the Board',
+        title: 'Ineligible to participate in RAMP',
         body: rampIneligibleInstructions
       },
       no_active_compensation_appeals: {

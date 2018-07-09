@@ -3,44 +3,82 @@ RSpec.describe TasksController, type: :controller do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:judge_queue)
+    FeatureToggle.enable!(:co_located_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:judge_queue)
+    FeatureToggle.disable!(:co_located_queue)
   end
 
   describe "GET tasks/xxx" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { create(:user) }
     before do
       User.stub = user
-      FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      create(:staff, role, sdomainid: user.css_id)
+      create(:colocated_admin_action, assigned_by: user)
+      create(:colocated_admin_action, assigned_by: user)
+      create(:colocated_admin_action, assigned_by: user, status: "completed")
+
+      create(:colocated_admin_action, assigned_to: user)
+      create(:colocated_admin_action, assigned_to: user, status: "in_progress")
+      create(:colocated_admin_action, assigned_to: user, status: "completed")
+      create(:colocated_admin_action)
     end
 
-    context "user is an attorney" do
+    context "when user is an attorney" do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.second["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
       end
     end
 
-    context "user is a judge" do
-      let(:role) { :judge_role }
+    context "when user is an attorney and has no tasks" do
+      let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: create(:user).id, role: "attorney" }
         expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 0
       end
     end
 
-    context "user is neither judge nor attorney" do
+    context "when user is a colocated admin" do
+      let(:role) { :co_located_role }
+
+      it "should process the request succesfully" do
+        get :index, params: { user_id: user.id, role: "co_located" }
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "assigned"
+        expect(response_body.first["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.second["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
+      end
+    end
+
+    context "when user is neither judge nor attorney" do
       let(:role) { nil }
 
       it "should not process the request succesfully" do
-        get :index, params: { user_id: user.id }
+        get :index, params: { user_id: user.id, role: "unknown" }
         expect(response.status).to eq 302
       end
     end
@@ -86,7 +124,7 @@ RSpec.describe TasksController, type: :controller do
           {
             "appeal_id": appeal.id,
             "type": "CoLocatedAdminAction",
-            "title": "address_verification",
+            "titles": %w[address_verification substituation_determination],
             "instructions": "do this"
           }
         end
@@ -95,10 +133,34 @@ RSpec.describe TasksController, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
           response_body = JSON.parse(response.body)
-          expect(response_body["task"]["status"]).to eq "assigned"
-          expect(response_body["task"]["appeal_id"]).to eq appeal.id
-          expect(response_body["task"]["instructions"]).to eq "do this"
-          expect(response_body["task"]["title"]).to eq "address_verification"
+          expect(response_body["tasks"].first["status"]).to eq "assigned"
+          expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
+          expect(response_body["tasks"].first["instructions"]).to eq "do this"
+          expect(response_body["tasks"].first["title"]).to eq "address_verification"
+
+          expect(response_body["tasks"].second["status"]).to eq "assigned"
+          expect(response_body["tasks"].second["appeal_id"]).to eq appeal.id
+          expect(response_body["tasks"].second["instructions"]).to eq "do this"
+          expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
+        end
+
+        context "when 'titles' is missing" do
+          let(:role) { :attorney_role }
+          let(:params) do
+            {
+              "appeal_id": appeal.id,
+              "type": "CoLocatedAdminAction",
+              "titles": [],
+              "instructions": "do this"
+            }
+          end
+
+          it "should be successful" do
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 400
+            response_body = JSON.parse(response.body)
+            expect(response_body["errors"].first["title"]).to eq "Missing required parameters"
+          end
         end
 
         context "when appeal is not found" do
@@ -106,7 +168,7 @@ RSpec.describe TasksController, type: :controller do
             {
               "appeal_id": 4_646_464,
               "type": "CoLocatedAdminAction",
-              "title": "address_verification"
+              "titles": %w[address_verification substituation_determination]
             }
           end
 

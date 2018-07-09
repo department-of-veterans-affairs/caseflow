@@ -12,7 +12,7 @@ class Rating
   # If you change this method, you will need
   # to clear cache in prod for your changes to
   # take effect immediately.
-  # See Veteran#cached_serialized_timely_ratings.
+  # See AmaReview#cached_serialized_timely_ratings.
   def ui_hash
     {
       participant_id: participant_id,
@@ -36,15 +36,15 @@ class Rating
   end
 
   class << self
-    def fetch_timely(participant_id:)
+    def fetch_timely(participant_id:, from_date:)
       response = BGSService.new.fetch_ratings_in_range(
         participant_id: participant_id,
-        start_date: Time.zone.today - TIMELY_DAYS,
+        start_date: from_date - TIMELY_DAYS,
         end_date: Time.zone.today
       )
 
       unsorted = ratings_from_bgs_response(response).select do |rating|
-        rating.promulgation_date > (Time.zone.today - 372)
+        rating.promulgation_date > (from_date - TIMELY_DAYS)
       end
 
       unsorted.sort_by(&:promulgation_date).reverse

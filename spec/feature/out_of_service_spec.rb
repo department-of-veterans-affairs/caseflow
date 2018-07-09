@@ -2,7 +2,11 @@ require "rails_helper"
 
 RSpec.feature "Out of Service" do
   before do
-    User.user_repository = Fakes::UserRepository
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context "Across all apps" do
@@ -46,25 +50,7 @@ RSpec.feature "Out of Service" do
 
     let(:documents) { [nod, soc, form9] }
     let(:appeal_ready) do
-      Generators::LegacyAppeal.build(vacols_record: vacols_record, documents: documents)
-    end
-    let(:vacols_record) do
-      {
-        template: :ready_to_certify,
-        type: "Original",
-        file_type: "VVA",
-        representative: "The American Legion",
-        veteran_first_name: "Davy",
-        veteran_last_name: "Crockett",
-        veteran_middle_initial: "X",
-        appellant_first_name: "Susie",
-        appellant_middle_initial: nil,
-        appellant_last_name: "Crockett",
-        appellant_relationship: "Daughter",
-        nod_date: nod.received_at,
-        soc_date: soc.received_at + 4.days,
-        form9_date: form9.received_at
-      }
+      create(:legacy_appeal, vacols_case: create(:case_with_form_9))
     end
 
     scenario "When out of service is disabled, it shows Check Documents page" do
@@ -88,15 +74,10 @@ RSpec.feature "Out of Service" do
     after do
       Rails.cache.write("reader_out_of_service", false)
     end
-
-    let(:vacols_record) { :remand_decided }
-
     let(:documents) { [] }
 
-    let!(:issues) { [Generators::Issue.build] }
-
     let(:appeal) do
-      Generators::LegacyAppeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
+      create(:legacy_appeal, vacols_case: create(:case, documents: documents, case_issues: [create(:case_issue)]))
     end
 
     let!(:current_user) do
@@ -117,20 +98,8 @@ RSpec.feature "Out of Service" do
   end
 
   context "Hearing Prep" do
-    before do
-      2.times do
-        Generators::Hearing.build(
-          user: current_user,
-          date: 5.days.from_now,
-          type: "video"
-        )
-      end
-
-      Generators::Hearing.build(
-        user: current_user,
-        type: "central_office",
-        date: Time.zone.now
-      )
+    let!(:vacols_case) do
+      create(:case, case_hearings: [create(:case_hearing, user: current_user)])
     end
 
     after do
@@ -151,6 +120,29 @@ RSpec.feature "Out of Service" do
       Rails.cache.write("hearing_prep_out_of_service", true)
       visit "/hearings/dockets"
       expect(page).to have_content("Technical Difficulties")
+    end
+  end
+
+  context "Hearing Schedule" do
+    after do
+      Rails.cache.write("hearing_schedule_out_of_service", false)
+    end
+
+    let!(:current_user) do
+      User.authenticate!(roles: ["Build HearSched"])
+    end
+
+    scenario "When out of service is disabled, it shows hearing schedule page" do
+      visit "/hearings/schedule/build"
+      expect(page).to have_content("Welcome to Caseflow Hearing Schedule!")
+      expect(page).to_not have_content("Technical Difficulties")
+    end
+
+    scenario "When out of service is enabled, it shows out of service page" do
+      Rails.cache.write("hearing_schedule_out_of_service", true)
+      visit "/hearings/schedule/build"
+      expect(page).to have_content("Technical Difficulties")
+      expect(page).to_not have_content("Welcome to Caseflow Hearing Schedule!")
     end
   end
 
