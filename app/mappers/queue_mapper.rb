@@ -62,9 +62,9 @@ module QueueMapper
                                 when :work_product
                                   work_product_to_vacols_code(decass_attrs[:work_product], decass_attrs[:overtime])
                                 when :complexity
-                                  COMPLEXITY.key(decass_attrs[:complexity].to_sym)
+                                  complexity_to_vacols_code(decass_attrs[:complexity])
                                 when :quality
-                                  QUALITY.key(decass_attrs[:quality].to_sym)
+                                  quality_to_vacols_code(decass_attrs[:quality])
                                 else
                                   decass_attrs[k]
                                 end
@@ -80,6 +80,18 @@ module QueueMapper
       result[DEFICIENCIES[d.to_sym]] = "Y"
       result
     end
+  end
+
+  def self.complexity_to_vacols_code(complexity)
+    result = COMPLEXITY.key(complexity.to_sym)
+    fail Caseflow::Error::QueueRepositoryError, "Complexity value is not valid" unless result
+    result
+  end
+
+  def self.quality_to_vacols_code(quality)
+    result = QUALITY.key(quality.to_sym)
+    fail Caseflow::Error::QueueRepositoryError, "Quality value is not valid" unless result
+    result
   end
 
   def self.work_product_to_vacols_code(work_product, overtime)
