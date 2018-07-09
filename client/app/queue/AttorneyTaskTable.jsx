@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -15,7 +15,19 @@ import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
 import COPY from '../../COPY.json';
 
-class AttorneyTaskTable extends React.PureComponent {
+import type {
+  Tasks,
+  LegacyAppeals
+} from './types/models';
+
+type Props = {|
+  loadedQueueTasks: Tasks,
+  appeals: LegacyAppeals,
+  tasks: Tasks,
+  featureToggles: Object
+|};
+
+class AttorneyTaskTable extends React.PureComponent<Props> {
   getKeyForRow = (rowNumber, object) => object.id;
   getAppealForTask = (task, attr) => {
     const appeal = this.props.appeals[task.appealId];
@@ -93,20 +105,15 @@ class AttorneyTaskTable extends React.PureComponent {
 
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={sortTasks({ appeals,
-        tasks: taskWithId })}
+      rowObjects={sortTasks({
+        appeals,
+        tasks: taskWithId
+      })}
       getKeyForRow={this.getKeyForRow}
       rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
       bodyStyling={this.tableStyle} />;
   }
 }
-
-AttorneyTaskTable.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired,
-  tasks: PropTypes.object.isRequired,
-  featureToggles: PropTypes.object
-};
 
 const mapStateToProps = (state) => {
   const {
@@ -122,10 +129,12 @@ const mapStateToProps = (state) => {
     }
   } = state;
 
-  return { loadedQueueTasks,
+  return {
+    loadedQueueTasks,
     appeals,
     tasks,
-    featureToggles };
+    featureToggles
+  };
 };
 
 export default connect(mapStateToProps)(AttorneyTaskTable);
