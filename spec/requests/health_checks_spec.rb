@@ -1,23 +1,31 @@
 describe "Health Check API" do
-  Rails.application.config.build_version = { deployed_at: "the best day ever" }
+  context "mock" do
+    before do
+      Rails.application.config.build_version = { deployed_at: "the best day ever" }
+    end
 
-  it "passes health check when healthy" do
-    get "/health-check"
+    it "should fail health check when pushgateway is offline" do
+      allow_any_instance_of(Caseflow::PushgatewayService).to receive(:healthy?) { false }
 
-    expect(response).to be_success
+      get "/health-check"
 
-    json = JSON.parse(response.body)
-    expect(json["healthy"]).to eq(true)
-    expect(json["deployed_at"]).to eq("the best day ever")
-  end
+      expect(response).to have_http_status(503)
 
-  it "fails health check when unhealthy" do
-    get "/health-check"
+      json = JSON.parse(response.body)
+      expect(json["healthy"]).to eq(false)
+      expect(json["deployed_at"]).to eq("the best day ever")
+    end
 
-    expect(response).to have_http_status(503)
+    it "should pass health check when pushgateway is online" do
+      allow_any_instance_of(Caseflow::PushgatewayService).to receive(:healthy?) { true }
 
-    json = JSON.parse(response.body)
-    expect(json["healthy"]).to eq(false)
-    expect(json["deployed_at"]).to eq("the best day ever")
+      get "/health-check"
+
+      expect(response).to be_success
+
+      json = JSON.parse(response.body)
+      expect(json["healthy"]).to eq(true)
+      expect(json["deployed_at"]).to eq("the best day ever")
+    end
   end
 end
