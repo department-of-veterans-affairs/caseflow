@@ -14,6 +14,11 @@ import {
 } from './uiReducer/uiActions';
 
 class AssignedCasesPage extends React.PureComponent {
+  componentDidMount = () => {
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+  }
+
   componentDidUpdate = (prevProps) => {
     const { attorneyId: prevAttorneyId } = prevProps.match.params;
     const { attorneyId } = this.props.match.params;
