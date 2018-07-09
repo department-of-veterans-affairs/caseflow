@@ -22,7 +22,8 @@ export type Task = {
     due_on: string,
     task_id: string,
     task_type: string,
-    user_id: string
+    user_id: string,
+    work_product: string
   }
 };
 
@@ -45,7 +46,7 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {detail: string, title: string}
+export type UiStateError = {title: string, detail: string}
 
 export type UiState = {
   selectingJudge: boolean,
@@ -63,8 +64,11 @@ export type UiState = {
     cancelCheckout: boolean,
     deleteIssue: boolean
   },
-  featureToggles: Object
+  featureToggles: Object,
+  selectedAssignee: ?string
 };
+
+export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?{[string]: boolean}}};
 
 export type QueueState = {
   judges: Object,
@@ -85,7 +89,7 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
 };
 
 export type State = {

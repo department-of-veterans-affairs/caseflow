@@ -98,6 +98,14 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
+    visit "/intake/review-request"
+
+    expect(find_field("Evidence Submission", visible: false)).to be_checked
+
+    expect(find("#different-claimant-option_false", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
     appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
@@ -105,7 +113,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: intake.veteran.participant_id
+      participant_id: veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")
@@ -122,7 +130,11 @@ RSpec.feature "Appeal Intake" do
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
 
+    expect(page).to have_content("1 issue")
+
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 

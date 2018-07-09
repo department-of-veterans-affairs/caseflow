@@ -124,12 +124,30 @@ RSpec.feature "Higher Level Review Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
+
+    visit "/intake/review-request"
+
+    within_fieldset("Did the Veteran request an informal conference?") do
+      expect(find_field("Yes", visible: false)).to be_checked
+    end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      expect(find_field("No", visible: false)).to be_checked
+    end
+
+    expect(find("#different-claimant-option_true", visible: false)).to be_checked
+    expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_current_path("/intake/finish")
+
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
-    expect(page).to have_content("0 rated issues")
+    expect(page).to have_content("0 issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
@@ -143,11 +161,11 @@ RSpec.feature "Higher Level Review Intake" do
     intake = Intake.find_by(veteran_file_number: "12341234")
 
     find("label", text: "PTSD denied").click
-    expect(page).to have_content("1 rated issue")
+    expect(page).to have_content("1 issue")
     find("label", text: "Left knee granted").click
-    expect(page).to have_content("2 rated issues")
+    expect(page).to have_content("2 issues")
     find("label", text: "Left knee granted").click
-    expect(page).to have_content("1 rated issue")
+    expect(page).to have_content("1 issue")
 
     safe_click "#button-add-issue"
 
@@ -156,7 +174,11 @@ RSpec.feature "Higher Level Review Intake" do
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
 
+    expect(page).to have_content("1 issue")
+
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 

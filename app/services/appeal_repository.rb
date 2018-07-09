@@ -119,7 +119,8 @@ class AppealRepository
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
-    outcoder_record = folder_record.outcoder
+    # Only fetch outcoder (VACOLS::Staff) if the foreign key (:tiocuser) isn't nil
+    outcoder_record = folder_record.outcoder if folder_record.tiocuser?
 
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
@@ -441,7 +442,8 @@ class AppealRepository
     fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
-    fail AppealNotValidToReopen unless adv_status ^ (close_disposition == "9")
+    fail AppealNotValidToReopen if adv_status && (close_disposition == "9")
+    fail AppealNotValidToReopen if !adv_status && (close_disposition != "9")
 
     bfmpro = adv_status ? "ADV" : "ACT"
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
