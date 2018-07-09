@@ -7,6 +7,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import RadioField from '../../components/RadioField';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
+import Button from '../../components/Button';
 import UploadDateSelector from './UploadDateSelector';
 import { SPREADSHEET_TYPES } from '../constants';
 
@@ -93,12 +94,12 @@ export default class BuildScheduleUpload extends React.Component {
         Cancel
       </Link>
       <div className="cf-push-right">
-        <Link
+        <Button
           name="continue"
           button="primary"
-          to="/hearings/schedule/build/upload">
+          onClick={this.props.onUploadContinue}>
           Continue
-        </Link>
+        </Button>
       </div>
     </AppSegment>;
   }
