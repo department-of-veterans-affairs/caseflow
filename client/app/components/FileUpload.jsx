@@ -35,9 +35,9 @@ export default class FileUpload extends React.Component {
 }
 
 FileUpload.propTypes = {
-  onChange: PropTypes.func,
-  id: PropTypes.string,
-  preUploadText: PropTypes.string,
-  postUploadText: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
+  preUploadText: PropTypes.string.isRequired,
+  postUploadText: PropTypes.string.isRequired,
   value: PropTypes.string
 };
