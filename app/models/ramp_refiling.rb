@@ -1,8 +1,6 @@
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 
-  belongs_to :ramp_election
-
   before_validation :clear_appeal_docket_if_not_appeal
 
   validate :validate_receipt_date, :validate_option_selected
