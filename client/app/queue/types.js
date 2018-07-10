@@ -8,7 +8,7 @@ export type LoadedQueueTasks = { [string]: DeprecatedTask };
 
 export type Task = {
   id: string,
-  vacolsId: string,
+  appealId: string,
   attributes: {
     added_by_css_id: string,
     added_by_name: string,
@@ -46,7 +46,7 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {detail: string, title: string}
+export type UiStateError = {title: string, detail: string}
 
 export type UiState = {
   selectingJudge: boolean,
@@ -64,8 +64,11 @@ export type UiState = {
     cancelCheckout: boolean,
     deleteIssue: boolean
   },
-  featureToggles: Object
+  featureToggles: Object,
+  selectedAssignee: ?string
 };
+
+export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
   judges: Object,
@@ -86,7 +89,7 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isVacolsIdAssignedToUserSelected: {[string]: {[string]: {[string]: boolean}}}
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
 };
 
 export type State = {

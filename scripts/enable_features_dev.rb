@@ -63,7 +63,7 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "co_located_queue",
+          feature: "colocated_queue",
           enable_all: true
         },
         {

@@ -3,11 +3,11 @@ class CoLocatedAdminAction < Task
   validate :assigned_by_role_is_valid
 
   class << self
-    def create(params)
+    def create(tasks)
       ActiveRecord::Base.multi_transaction do
-        params[:assigned_to] = next_assignee
-        records = params.delete(:titles).each_with_object([]) do |title, result|
-          result << super(params.merge(title: title))
+        assignee = next_assignee
+        records = [tasks].flatten.each_with_object([]) do |task, result|
+          result << super(task.merge(assigned_to: assignee))
           result
         end
         if records.map(&:valid?).uniq == [true]
