@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
+import { ArrowUp, ArrowDown } from './RenderFunctions';
 
 /**
  * This component can be used to easily build tables.
@@ -42,7 +45,13 @@ const HeaderRow = (props) => {
           {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
             {column.tooltip}
           </ReactTooltip>}
-          <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
+          {column.sortable ?
+            <Link data-tip data-for={`${columnNumber}-tooltip`} onClick={() => props.setSortOrder(columnNumber)}>
+              {column.header || ''} {props.sortColIdx === columnNumber && (
+                props.sortDir > 0 ? <ArrowDown /> : <ArrowUp />
+              )}
+            </Link> :
+            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>}
         </th>
       )}
     </tr>
@@ -68,6 +77,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
+// todo: make these functional components?
 class Row extends React.PureComponent {
   render() {
     const props = this.props;
@@ -122,6 +132,15 @@ class FooterRow extends React.PureComponent {
 }
 
 export default class Table extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sortDir: 1,
+      sortColIdx: null
+    };
+  }
+
   defaultRowClassNames = () => ''
 
   render() {
@@ -141,6 +160,10 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
+    const {
+      sortColIdx,
+      sortDir
+    } = this.state;
 
     let keyGetter = getKeyForRow;
 
@@ -152,6 +175,20 @@ export default class Table extends React.PureComponent {
       }
     }
 
+    if (sortColIdx !== null) {
+      const isNumber = (val) => !isNaN(parseFloat(val)) && isFinite(val);
+
+      rowObjects.sort((first, second) => {
+        const builtColumns = getColumns(this.props);
+
+        const firstVal = builtColumns[sortColIdx].sortValue(first).toString();
+        const secondVal = builtColumns[sortColIdx].sortValue(second).toString();
+
+        // eslint-disable-next-line no-undefined
+        return sortDir * firstVal.localeCompare(secondVal, undefined, { numeric: isNumber(firstVal) });
+      });
+    }
+
     return <table
       id={id}
       className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
@@ -160,7 +197,14 @@ export default class Table extends React.PureComponent {
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow columns={columns} headerClassName={headerClassName} />
+      <HeaderRow
+        columns={columns}
+        headerClassName={headerClassName}
+        setSortOrder={(colIdx, dir = this.state.sortDir * -1) => this.setState({
+          sortColIdx: colIdx,
+          sortDir: dir
+        })}
+        {...this.state} />
       <BodyRows
         id={tbodyId}
         tbodyRef={tbodyRef}
@@ -169,7 +213,8 @@ export default class Table extends React.PureComponent {
         rowObjects={rowObjects}
         bodyClassName={bodyClassName}
         rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling} />
+        bodyStyling={bodyStyling}
+        {...this.state} />
       <FooterRow columns={columns} />
     </table>;
   }
