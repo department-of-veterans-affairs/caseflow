@@ -63,7 +63,8 @@ class AssignedCasesPage extends React.PureComponent {
       {featureToggles.judge_assign_cases &&
         <AssignWidget
           previousAssigneeId={attorneyId}
-          onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
+          onTaskAssignment={(params) => props.reassignTasksToUser(params)}
+          userCssId={this.props.userCssId} />}
       <JudgeAssignTaskTable
         tasksAndAppeals={
           sortTasks({

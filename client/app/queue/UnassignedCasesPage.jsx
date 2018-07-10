@@ -32,7 +32,8 @@ class UnassignedCasesPage extends React.PureComponent {
         <h2>Cases to Assign</h2>
         {featureToggles.judge_assign_cases &&
           <AssignWidget previousAssigneeId={userId}
-            onTaskAssignment={(params) => props.initialAssignTasksToUser(params)} />}
+            onTaskAssignment={(params) => props.initialAssignTasksToUser(params)}
+            userCssId={this.props.userCssId} />}
         <JudgeAssignTaskTable {...props} />
       </React.Fragment>;
     }

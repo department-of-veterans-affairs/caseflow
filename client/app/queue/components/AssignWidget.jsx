@@ -17,7 +17,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys
+  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
@@ -29,8 +29,8 @@ type Props = {|
   // Parameters
   previousAssigneeId: string,
   onTaskAssignment: Function,
+  userCssId: string,
   // From state
-  attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   tasks: Tasks,
@@ -91,19 +91,26 @@ class AssignWidget extends React.PureComponent<Props> {
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
+    const { selectedAssignee, error, success, allAttorneys } = this.props;
+    const attorneys = allAttorneys.data;
 
-    const { attorneysOfJudge, selectedAssignee, error, success, allAttorneys } = this.props;
-    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
-    const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
-    const showOtherSearchBox = selectedAssignee === OTHER;
-    let optionsOther = [];
-    let placeholderOther = 'Loading';
-    let selectedOptionOther = null;
-    if (allAttorneys.data) {
-      optionsOther = allAttorneys.data.map(optionFromAttorney);
-      placeholderOther = 'Select a user';
-      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssignee);
+    const options = [];
+
+    {
+      const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
+      const judgeCssIds = Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== this.props.userCssId);
+
+      options.push(...attorneysOfJudgeWithCssId[this.props.userCssId].map(optionFromAttorney));
+      for (const judgeCssId of judgeCssIds) {
+        options.push({ label: '—',
+          value: null });
+        options.push(...attorneysOfJudgeWithCssId[judgeCssId].map(optionFromAttorney));
+      }
+      options.push({ label: ASSIGN_WIDGET_OTHER,
+        value: OTHER });
     }
+
+    const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
 
     return <React.Fragment>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
@@ -123,19 +130,6 @@ class AssignWidget extends React.PureComponent<Props> {
           onChange={handleChange}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
-        {showOtherSearchBox &&
-          <React.Fragment>
-            <p>Enter the name of an attorney or judge:</p>
-            <SearchableDropdown
-              name="Other assignee"
-              hideLabel
-              searchable
-              options={optionsOther}
-              placeholder={placeholderOther}
-              onChange={handleChange}
-              value={selectedOptionOther}
-              styling={css({ width: '30rem' })} />
-          </React.Fragment>}
         <Button
           onClick={this.handleButtonClick}
           name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
@@ -147,11 +141,10 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, allAttorneys } = state.queue;
+  const { isTaskAssignedToUserSelected, tasks, allAttorneys } = state.queue;
   const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
-    attorneysOfJudge,
     selectedAssignee,
     isTaskAssignedToUserSelected,
     tasks,

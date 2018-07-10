@@ -33,7 +33,8 @@ export type User = {
   email: ?string,
   roles: Array<String>,
   selected_regional_office: ?string,
-  display_name: string
+  display_name: string,
+  judge_css_id: string
 };
 export type LoadedQueueTasks = { [string]: DeprecatedTask };
 

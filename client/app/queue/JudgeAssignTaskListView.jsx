@@ -58,19 +58,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
-    this.props.fetchAllAttorneys();
-
-    const requestOptions = {
-      timeout: true
-    };
-
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
+    return this.props.fetchAllAttorneys().
       then(
-        (response) => {
-          const resp = JSON.parse(response.text);
+        (attorneys) => {
+          const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
+          const attorneysOfJudge = attorneysOfJudgeWithCssId[this.props.userCssId];
+          debugger;
 
-          this.props.setAttorneysOfJudge(resp.attorneys);
-          for (const attorney of resp.attorneys) {
+          this.props.setAttorneysOfJudge(attorneysOfJudge);
+          for (const attorney of attorneysOfJudge) {
             this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
           }
         });
@@ -129,12 +125,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                userId={this.props.userId.toString()} />}
+                userId={this.props.userId.toString()}
+                userCssId={this.props.userCssId} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
             title="Assigned Cases | Caseflow"
-            component={AssignedCasesPage}
+            render={({match}) => <AssignedCasesPage userCssId={this.props.userCssId} match={match} />}
           />
         </div>
       </div>

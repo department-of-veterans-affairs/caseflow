@@ -262,5 +262,6 @@ export const fetchAllAttorneys = () => (dispatch) => {
     '/users?role=Attorney').
     then((resp) => resp.body).
     then(
-      (resp) => dispatch(receiveAllAttorneys(resp.attorneys)));
+      (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
+    then((action) => action.payload.attorneys);
 };
