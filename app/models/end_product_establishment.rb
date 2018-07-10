@@ -1,9 +1,7 @@
-class EndProductEstablishment
-  include ActiveModel::Model
-
+class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
-
-  attr_accessor :veteran, :reference_id, :claim_date, :code, :valid_modifiers, :station, :cached_status
+  attr_accessor :valid_modifiers
+  belongs_to :source, polymorphic: true
 
   class InvalidEndProductError < StandardError; end
 
@@ -11,7 +9,7 @@ class EndProductEstablishment
     fail InvalidEndProductError unless end_product_to_establish.valid?
 
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      self.reference_id = result.claim_id
+      update!(reference_id: result.claim_id, established_at: Time.zone.now)
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
@@ -34,6 +32,10 @@ class EndProductEstablishment
   delegate :contentions, to: :end_product_to_establish
 
   private
+
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
 
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
