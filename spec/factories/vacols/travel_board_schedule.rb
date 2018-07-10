@@ -4,9 +4,9 @@ FactoryBot.define do
 
     tbleg true
     tbyear "2018"
-    tbro "RO01"
-    tbstdate Date.parse("2018-04-30")
-    tbenddate Date.parse("2018-05-04")
+    tbro "RO17"
+    tbstdate Date.parse("2018-05-07")
+    tbenddate Date.parse("2018-05-11")
     tbmem1 { create(:staff, sattyid: 201).sattyid }
   end
 end
