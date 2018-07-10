@@ -1,6 +1,11 @@
 describe RampElection do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -178,11 +183,16 @@ describe RampElection do
 
     subject { ramp_election.recreate_issues_from_contentions! }
 
-    context "when election has a saved refiling associated to it" do
+    context "when election has an issue attached to a ramp refiling" do
       let!(:ramp_refiling) do
-        ramp_election.ramp_refilings.create!(
-          veteran_file_number: ramp_election.veteran_file_number
-        )
+        RampRefiling.create(
+          veteran_file_number: veteran_file_number,
+          receipt_date: receipt_date,
+          option_selected: option_selected,
+          appeal_docket: "hearing"
+        ).tap do |refiling|
+          RampIssue.create(review: refiling, source_issue_id: ramp_election.issues.first.id)
+        end
       end
 
       it "returns false and deletes/creates no issues" do

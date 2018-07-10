@@ -4,6 +4,7 @@ RSpec.feature "Supplemental Claim Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -14,6 +15,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
