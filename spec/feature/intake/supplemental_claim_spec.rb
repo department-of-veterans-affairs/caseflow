@@ -234,4 +234,32 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
   end
+
+  it "Shows a review error when something goes wrong" do
+    visit "/intake"
+    safe_click ".Select"
+
+    fill_in "Which form are you processing?", with: "Supplemental Claim (VA Form 21-526b)"
+    find("#form-select").send_keys :enter
+
+    safe_click ".cf-submit.usa-button"
+
+    fill_in "Search small", with: "12341234"
+
+    click_on "Search"
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/review-request")
+  end
 end
