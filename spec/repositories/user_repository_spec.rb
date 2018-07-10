@@ -37,7 +37,7 @@ describe UserRepository do
     end
 
     context "when a user is a co-located admin" do
-      let!(:staff) { create(:staff, stitle: "A1", sdomainid: css_id) }
+      let!(:staff) { create(:staff, :colocated_role, sdomainid: css_id) }
 
       it "should return a co-located role" do
         expect(subject).to eq ["colocated"]
