@@ -21,10 +21,13 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
       <InlineForm>
         <BasicDateRangeSelector
+          startDateName="startDate"
           startDateValue={this.props.roCoStartDate}
           startDateLabel={false}
+          endDateName="endDate"
           endDateValue={this.props.roCoEndDate}
           endDateLabel={false}
+          messageLabel={true}
           onStartDateChange={this.props.onRoCoStartDateChange}
           onEndDateChange={this.props.onRoCoEndDateChange}
         />
@@ -46,10 +49,13 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
       <InlineForm>
         <BasicDateRangeSelector
+          startDateName="startDate"
           startDateValue={this.props.judgeStartDate}
           startDateLabel={false}
+          endDateName="endDate"
           endDateValue={this.props.judgeEndDate}
           endDateLabel={false}
+          messageLabel={true}
           onStartDateChange={this.props.onJudgeStartDateChange}
           onEndDateChange={this.props.onJudgeEndDateChange}
         />

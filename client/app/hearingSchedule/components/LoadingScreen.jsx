@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { onReceivePastUploads, onReceiveHearingSchedule } from '../actions';
+import { onReceivePastUploads } from '../actions';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
@@ -21,31 +21,13 @@ class LoadingScreen extends React.PureComponent {
     });
   };
 
-  loadHearingSchedule = () => {
-    if (!_.isEmpty(this.props.hearingSchedule)) {
-      return Promise.resolve();
-    }
-
-    return ApiUtil.get('/hearings/hearing_day.json').then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-      const hearingDays = _.keyBy(resp.hearings, 'id');
-
-      this.props.onReceiveHearingSchedule(hearingDays);
-    });
-  };
-
   createLoadPromise = () => Promise.all([
     this.loadPastUploads()
   ]);
 
-  createHearingPromise = () => Promise.all([
-    this.loadHearingSchedule()
-  ]);
-
   render = () => {
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.props.children.type.WrappedComponent.name === 'ListScheduleContainer' ?
-        this.createHearingPromise : this.createLoadPromise}
+      createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
         message: 'Loading the hearing schedule...'
@@ -60,11 +42,13 @@ class LoadingScreen extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  viewStartDate: state.viewStartDate,
+  viewEndDate: state.viewEndDate
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceivePastUploads,
-  onReceiveHearingSchedule
+  onReceivePastUploads
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen);

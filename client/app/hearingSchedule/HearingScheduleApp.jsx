@@ -23,11 +23,9 @@ class HearingScheduleApp extends React.PureComponent {
     <BuildScheduleUploadContainer />
   </LoadingScreen>;
 
-  listSchedule = () => <LoadingScreen>
-    <ListScheduleContainer />
-  </LoadingScreen>;
+  listSchedule = () => <ListScheduleContainer />;
 
-  render = () => <BrowserRouter>
+  render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
       userDisplayName={this.props.userDisplayName}
@@ -42,19 +40,19 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/hearings/schedule/build"
+            path="/schedule/build"
             title="Caseflow Hearing Schedule"
             render={this.buildSchedule}
           />
           <PageRoute
             exact
-            path="/hearings/schedule_periods"
-            title="Caseflow"
+            path="/hearing_day"
+            title="Scheduled Hearings"
             render={this.listSchedule}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build/upload"
+            path="/schedule/build/upload"
             title="Upload Files"
             render={this.buildScheduleUpload}
           />
