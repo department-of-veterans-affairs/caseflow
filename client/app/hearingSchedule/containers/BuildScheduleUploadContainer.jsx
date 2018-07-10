@@ -1,6 +1,6 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
 import { SPREADSHEET_TYPES } from '../constants';
