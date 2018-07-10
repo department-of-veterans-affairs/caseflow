@@ -45,7 +45,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "when judge ID is not passed" do
-      let!(:attorneys) { create_list(:staff, 4, :attorney_role) }
+      let!(:staff_attorney) { create(:staff, :attorney_role, sdomainid: "BVACFRANECKI1") }
       let!(:judges) { create_list(:staff, 2, :judge_role) }
 
       it "should return a list of all attorneys" do
@@ -53,7 +53,9 @@ RSpec.describe UsersController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         # four regular attorneys and one attorney acting as a judge
-        expect(response_body["attorneys"].size).to eq 5
+        expect(response_body["attorneys"].size).to eq 2
+        attorney = response_body["attorneys"].select { |e| e["css_id"] == staff_attorney.sdomainid }[0]
+        expect(attorney["judge_css_id"]).to eq "BVARZIEMANN1"
       end
     end
   end
