@@ -1,11 +1,5 @@
 require "rails_helper"
 
-def click_dropdown(opt_idx, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-end
-
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
