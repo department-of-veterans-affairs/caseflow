@@ -85,8 +85,12 @@ export type AllAttorneys = {
   data?: Array<User>
 };
 
+export type UserWithId = {
+  [string]: ?User
+};
+
 export type QueueState = {
-  judges: Object,
+  judges: UserWithId,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,

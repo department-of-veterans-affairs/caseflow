@@ -17,7 +17,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys
+  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys, UserWithId, User
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
@@ -37,6 +37,7 @@ type Props = {|
   error: ?UiStateError,
   success: string,
   allAttorneys: AllAttorneys,
+  judges: UserWithId,
   // Action creators
   setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
@@ -91,18 +92,29 @@ class AssignWidget extends React.PureComponent<Props> {
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
-    const { selectedAssignee, error, success, allAttorneys, userCssId } = this.props;
+    const { selectedAssignee, error, success, allAttorneys, userCssId, judges } = this.props;
     const attorneys = allAttorneys.data;
 
     const options = [];
 
     {
       const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
-      const judgeCssIds = [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
+      const judgeCssIds =
+        [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
 
       for (const judgeCssId of judgeCssIds) {
+        let judgeName = 'Other';
+        for (const id in judges) {
+          const judge = judges[id];
+          if (!judge) {
+            continue;
+          }
+          if (judge.css_id == judgeCssId) {
+            judgeName = judge.full_name;
+          }
+        }
         options.push({
-          label: judgeCssId,
+          label: `${judgeName}:`,
           value: judgeCssId,
           disabled: true
         });
@@ -143,7 +155,7 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { isTaskAssignedToUserSelected, tasks, allAttorneys } = state.queue;
+  const { isTaskAssignedToUserSelected, tasks, allAttorneys, judges } = state.queue;
   const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
@@ -152,7 +164,8 @@ const mapStateToProps = (state: State) => {
     tasks,
     error,
     success,
-    allAttorneys
+    allAttorneys,
+    judges
   };
 };
 
