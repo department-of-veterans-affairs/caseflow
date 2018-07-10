@@ -74,12 +74,12 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    context "when user is neither judge nor attorney" do
+    context "when user has no role" do
       let(:role) { nil }
 
-      it "should not process the request succesfully" do
+      it "should return a 400 invalid role error" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
       end
     end
   end
