@@ -153,6 +153,43 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(intake.detail).to be_nil
     end
 
+    scenario "Review intake for RAMP Refiling form fails due to unexpected error" do
+      ramp_election = create(:ramp_election,
+                             veteran_file_number: "12341234",
+                             notice_date: 5.days.ago,
+                             receipt_date: 4.days.ago,
+                             established_at: 2.days.ago,
+                             end_product_reference_id: Generators::EndProduct.build(
+                               veteran_file_number: "12341234",
+                               bgs_attrs: { status_type_code: "CLR" }
+                             ).claim_id)
+
+      Generators::Contention.build(
+        claim_id: ramp_election.end_product_reference_id,
+        text: "Left knee rating increase"
+      )
+
+      visit "/intake/search"
+      scroll_element_in_to_view(".cf-submit.usa-button")
+      within_fieldset("Which form are you processing?") do
+        find("label", text: "RAMP Selection (VA Form 21-4138)").click
+      end
+      safe_click ".cf-submit.usa-button"
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      within_fieldset("Which review lane did the Veteran select?") do
+        find("label", text: "Higher Level Review", match: :prefer_exact).click
+      end
+
+      expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Something went wrong")
+      expect(page).to have_current_path("/intake/review-request")
+    end
+
     scenario "Complete a RAMP refiling for an appeal" do
       # Create an RAMP election with a cleared EP
       ramp_election = create(:ramp_election,

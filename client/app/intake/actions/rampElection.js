@@ -24,12 +24,14 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
       }),
       (error) => {
         const responseObject = JSON.parse(error.response.text);
-        const responseErrorCodes = responseObject.error_codes;
+        const responseErrorCodes = responseObject.validation_error_codes;
+        const responseErrorCode = responseObject.error_code;
 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
-            responseErrorCodes
+            responseErrorCodes,
+            responseErrorCode
           },
           meta: {
             analytics: (triggerEvent, category, actionName) => {
