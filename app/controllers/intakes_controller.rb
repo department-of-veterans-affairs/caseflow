@@ -33,11 +33,11 @@ class IntakesController < ApplicationController
     else
       render json: { validation_error_codes: intake.review_errors }, status: 422
     end
-  rescue StandardError => error
+  rescue StandardError
     render json: {
       validation_error_codes: intake.review_errors || false,
       error_code: "default"
-      }, status: 500
+    }, status: 500
   end
 
   def complete

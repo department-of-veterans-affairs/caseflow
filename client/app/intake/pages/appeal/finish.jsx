@@ -43,10 +43,10 @@ class Finish extends React.PureComponent {
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
-        completeIntakeErrorCode={completeIntakeErrorCode}
-        completeIntakeErrorData={completeIntakeErrorData} />
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
       }
-      
+
       <p>
         Please select all the issues that best match the Veteran's request on the form.
         The list below includes issues claimed by the Veteran in the last year.

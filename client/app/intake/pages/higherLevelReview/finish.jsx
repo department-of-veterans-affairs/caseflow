@@ -43,8 +43,8 @@ class Finish extends React.PureComponent {
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
-        completeIntakeErrorCode={completeIntakeErrorCode}
-        completeIntakeErrorData={completeIntakeErrorData} />
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
       }
 
       <p>
