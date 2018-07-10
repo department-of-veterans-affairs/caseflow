@@ -102,8 +102,11 @@ class AssignWidget extends React.PureComponent<Props> {
 
       options.push(...attorneysOfJudgeWithCssId[this.props.userCssId].map(optionFromAttorney));
       for (const judgeCssId of judgeCssIds) {
-        options.push({ label: '—',
-          value: null });
+        options.push({
+          label: '—',
+          value: '—',
+          disabled: true
+        });
         options.push(...attorneysOfJudgeWithCssId[judgeCssId].map(optionFromAttorney));
       }
       options.push({ label: ASSIGN_WIDGET_OTHER,

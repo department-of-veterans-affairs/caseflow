@@ -13,7 +13,6 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { NavLink } from 'react-router-dom';
-import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -24,6 +23,7 @@ import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
+import _ from 'lodash';
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -63,7 +63,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
         (attorneys) => {
           const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
           const attorneysOfJudge = attorneysOfJudgeWithCssId[this.props.userCssId];
-          debugger;
 
           this.props.setAttorneysOfJudge(attorneysOfJudge);
           for (const attorney of attorneysOfJudge) {
@@ -131,7 +130,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
           <PageRoute
             path={`${match.url}/:attorneyId`}
             title="Assigned Cases | Caseflow"
-            render={({match}) => <AssignedCasesPage userCssId={this.props.userCssId} match={match} />}
+            render={
+              ({ match: innerMatch }) => <AssignedCasesPage userCssId={this.props.userCssId} match={innerMatch} />}
           />
         </div>
       </div>
