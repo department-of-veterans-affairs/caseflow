@@ -12,18 +12,21 @@ import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
     const {
       higherLevelReviewStatus,
+      requestState,
       veteranName,
       receiptDate,
       receiptDateError,
       informalConference,
       informalConferenceError,
       sameOffice,
-      sameOfficeError
+      sameOfficeError,
+      reviewIntakeErrorCode
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -36,6 +39,11 @@ class Review extends React.PureComponent {
 
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
+
+      { requestState === REQUEST_STATE.FAILED && reviewIntakeErrorCode &&
+        <ReviewIntakeErrorAlert
+          reviewIntakeErrorCode={reviewIntakeErrorCode} />
+      }
 
       <DateSelector
         name="receipt-date"
@@ -69,7 +77,6 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
-
     </div>;
   }
 }
@@ -132,7 +139,9 @@ export default connect(
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
-    sameOfficeError: state.higherLevelReview.sameOfficeError
+    sameOfficeError: state.higherLevelReview.sameOfficeError,
+    requestState: state.higherLevelReview.requestStatus.submitReview,
+    reviewIntakeErrorCode: state.higherLevelReview.requestStatus.reviewIntakeErrorCode
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,

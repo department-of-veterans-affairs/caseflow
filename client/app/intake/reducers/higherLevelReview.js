@@ -70,6 +70,10 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     endProductDescription: null,
     issueCount: 0,
     nonRatedIssues: { },
+    reviewIntakeErrorCode: null,
+    reviewIntakeErrorData: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -168,6 +172,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
         }
       }
     });

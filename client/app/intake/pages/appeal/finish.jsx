@@ -41,6 +41,12 @@ class Finish extends React.PureComponent {
     return <div>
       <h1>Identify issues on { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
 
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+        completeIntakeErrorCode={completeIntakeErrorCode}
+        completeIntakeErrorData={completeIntakeErrorData} />
+      }
+      
       <p>
         Please select all the issues that best match the Veteran's request on the form.
         The list below includes issues claimed by the Veteran in the last year.
@@ -49,13 +55,6 @@ class Finish extends React.PureComponent {
 
       <RatedIssues />
       <NonRatedIssues />
-
-      { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
-      }
-
     </div>;
   }
 }

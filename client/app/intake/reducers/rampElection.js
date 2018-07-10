@@ -146,6 +146,12 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        reviewIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });

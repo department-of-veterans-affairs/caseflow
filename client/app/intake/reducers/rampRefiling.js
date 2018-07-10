@@ -169,6 +169,12 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeErrorCode: {
+          $set: action.payload.responseErrorCode
+        },
+        reviewIntakeErrorData: {
+          $set: action.payload.responseErrorData
         }
       }
     });

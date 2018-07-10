@@ -29,13 +29,20 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
         return true;
       },
       (error) => {
-        const responseObject = JSON.parse(error.response.text);
-        const responseErrorCodes = responseObject.error_codes;
+        let responseObject = {};
+
+        try {
+          responseObject = JSON.parse(error.response.text);
+        } catch (ex) { /* pass */ }
+
+        const responseErrorCodes = responseObject.validation_error_codes;
+        const responseErrorCode = responseObject.error_code;
 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
-            responseErrorCodes
+            responseErrorCodes,
+            responseErrorCode
           },
           meta: {
             analytics: (triggerEvent, category, actionName) => {
