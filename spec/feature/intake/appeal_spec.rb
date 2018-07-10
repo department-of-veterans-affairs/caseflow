@@ -4,6 +4,7 @@ RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
@@ -11,6 +12,7 @@ RSpec.feature "Appeal Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:current_user) do
@@ -98,6 +100,14 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
+    visit "/intake/review-request"
+
+    expect(find_field("Evidence Submission", visible: false)).to be_checked
+
+    expect(find("#different-claimant-option_false", visible: false)).to be_checked
+
+    safe_click "#button-submit-review"
+
     appeal = Appeal.find_by(veteran_file_number: "22334455")
     intake = Intake.find_by(veteran_file_number: "22334455")
 
@@ -105,7 +115,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: intake.veteran.participant_id
+      participant_id: veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")

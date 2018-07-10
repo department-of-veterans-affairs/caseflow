@@ -13,17 +13,15 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   let(:ro_allocations) do
     [
       create(:allocation, regional_office: "RO17", allocated_days: 118, schedule_period: schedule_period),
-      create(:allocation, regional_office: "RO61", allocated_days: 66, schedule_period: schedule_period),
+      create(:allocation, regional_office: "RO60", allocated_days: 66, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO18", allocated_days: 61, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO22", allocated_days: 55, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO01", allocated_days: 24, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO55", allocated_days: 6, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO02", allocated_days: 3, schedule_period: schedule_period),
-      create(:allocation, regional_office: "RO02", allocated_days: 3, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO21", allocated_days: 0, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO27", allocated_days: 100, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO28", allocated_days: 42.5, schedule_period: schedule_period)
-
     ]
   end
 
@@ -155,7 +153,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       end
 
       it "throws an ro non-avaiable days not provided" do
-        expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::RoNonAvailableDaysNotProvided)
+        expect(subject.ros.count).to eq ro_allocations.count
       end
     end
 

@@ -7,14 +7,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   include HearingSchedule::RoAllocation
   include HearingSchedule::RoDistribution
 
-  class RoNonAvailableDaysNotProvided < StandardError; end
   class NoDaysAvailableForRO < StandardError; end
 
   attr_reader :available_days, :ros
-
-  MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
-  MULTIPLE_NUM_OF_ROOMS = 2
-  DEFAULT_NUM_OF_ROOMS = 1
 
   def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {})
     @amortized = 0
@@ -28,7 +23,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def assign_and_filter_ro_days(schedule_period)
-    @ros = assign_ro_hearing_day_allocations(RegionalOffice::CITIES, schedule_period.allocations)
+    @ros = assign_ro_hearing_day_allocations(RegionalOffice.ros_with_hearings, schedule_period.allocations)
     filter_non_available_ro_days
     @ros = filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
   end
@@ -127,14 +122,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   # Sample @ros[ro_key][:allocated_dates] -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}
   #
-  # rubocop:disable Metrics/CyclomaticComplexity:
   def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
     grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]
 
     # looping through all the monthly allocations
     # and assigning rooms to the datess
     monthly_allocations.each_key do |month|
-      next if grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
+      next if allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
 
       allocated_days = monthly_allocations[month]
       monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys
@@ -146,7 +140,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
         rooms_to_allocate = (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
 
         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-          get_rooms(rooms_to_allocate)
+          get_room_numbers(rooms_to_allocate)
 
         allocated_days -= rooms_to_allocate
       end
@@ -155,9 +149,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
     @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates
   end
-  # rubocop:enable Metrics/CyclomaticComplexity:
 
-  def get_rooms(num_of_rooms)
+  def allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
+    grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
+  end
+
+  def get_room_numbers(num_of_rooms)
     Array.new(num_of_rooms) { |room_num| { room_num: room_num + 1 } }
   end
 
@@ -174,10 +171,17 @@ class HearingSchedule::GenerateHearingDaysSchedule
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
         available_days: @available_days,
-        num_of_rooms:
-          MULTIPLE_ROOM_ROS.include?(allocation.regional_office) ? MULTIPLE_NUM_OF_ROOMS : DEFAULT_NUM_OF_ROOMS
+        num_of_rooms: get_num_of_rooms(allocation.regional_office)
       )
       acc
+    end
+  end
+
+  def get_num_of_rooms(ro)
+    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(ro)
+      RegionalOffice::MULTIPLE_NUM_OF_RO_ROOMS
+    else
+      RegionalOffice::DEFAULT_NUM_OF_RO_ROOMS
     end
   end
 
@@ -216,18 +220,16 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #     Thu, 05 Apr 2018,
   #     Fri, 06 Apr 2018
   #   ]}
-  # fails with RoNonAvailableDaysNotProvided
-  #   fails if non-available days not provided for a RO
   # fails with NoDaysAvailableForRO
   #   fails if there are no available days for a RO
   #
   def filter_non_available_ro_days
+    get_non_available_days = lambda { |ro_key|
+      @ro_non_available_days[ro_key] ? @ro_non_available_days[ro_key].map(&:date) : []
+    }
+
     @ros.each_key do |ro_key|
-      unless @ro_non_available_days[ro_key]
-        fail RoNonAvailableDaysNotProvided,
-             "Non-availability days not provided for #{ro_key}"
-      end
-      @ros[ro_key][:available_days] -= (@ro_non_available_days[ro_key].map(&:date) || [])
+      @ros[ro_key][:available_days] -= get_non_available_days.call(ro_key)
       fail NoDaysAvailableForRO, "No available days for #{ro_key}" if @ros[ro_key][:available_days].empty?
     end
   end

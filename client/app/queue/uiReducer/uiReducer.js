@@ -23,7 +23,8 @@ export const initialState = {
     deleteIssue: false
   },
   featureToggles: {},
-  userRole: ''
+  userRole: '',
+  selectedAssignee: null
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -141,6 +142,12 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_USER_ROLE:
     return update(state, {
       userRole: { $set: action.payload.userRole }
+    });
+  case ACTIONS.SET_SELECTED_ASSIGNEE:
+    return update(state, {
+      selectedAssignee: {
+        $set: action.payload.assigneeId
+      }
     });
   default:
     return state;
