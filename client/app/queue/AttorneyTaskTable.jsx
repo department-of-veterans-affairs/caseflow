@@ -50,7 +50,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
       task={task}
       appeal={this.getAppealForTask(task)}
       disabled={!task.attributes.task_id} />,
-    sortValue: (task) => this.getAppealForTask(task, 'veteran_full_name'),
+    getSortValue: (task) => this.getAppealForTask(task, 'veteran_full_name'),
     sortable: true
   }, {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
@@ -61,14 +61,14 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
   }, {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
     valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
-    sortValue: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
     span: this.collapseColumnIfNoDASRecord,
+    getSortValue: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
     sortable: true
   }, {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
     valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
     span: this.collapseColumnIfNoDASRecord,
-    sortValue: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
+    getSortValue: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'issues.length') : null,
     sortable: true
   }, {
     header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
@@ -86,7 +86,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
       </React.Fragment>;
     },
     span: this.collapseColumnIfNoDASRecord,
-    sortValue: (task) => moment().diff(moment(task.attributes.assigned_on), 'days'),
+    getSortValue: (task) => moment().diff(moment(task.attributes.assigned_on), 'days'),
     sortable: true
   }, {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,

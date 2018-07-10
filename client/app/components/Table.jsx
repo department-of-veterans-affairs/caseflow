@@ -182,8 +182,8 @@ export default class Table extends React.PureComponent {
       rowObjects.sort((first, second) => {
         const builtColumns = getColumns(this.props);
 
-        const firstVal = builtColumns[sortColIdx].sortValue(first).toString();
-        const secondVal = builtColumns[sortColIdx].sortValue(second).toString();
+        const firstVal = builtColumns[sortColIdx].getSortValue(first).toString();
+        const secondVal = builtColumns[sortColIdx].getSortValue(second).toString();
 
         // eslint-disable-next-line no-undefined
         return sortDir * firstVal.localeCompare(secondVal, undefined, { numeric: isNumber(firstVal) });
