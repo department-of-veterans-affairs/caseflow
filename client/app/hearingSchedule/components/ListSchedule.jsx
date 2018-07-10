@@ -7,8 +7,8 @@ import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import BasicDateRangeSelector from './BasicDateRangeSelector';
-import InlineForm from "../../components/InlineForm";
+import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
+import InlineForm from '../../components/InlineForm';
 
 const hearingSchedStyling = css({
   marginTop: '70px'
@@ -74,7 +74,7 @@ export default class ListSchedule extends React.Component {
         <div {...hearingSchedStyling}>
           <Link
             name="apply"
-            to="/hearing_day"
+            to="/schedule"
             onClick={this.props.onApply}>
             {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
           </Link>

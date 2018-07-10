@@ -46,7 +46,7 @@ class HearingScheduleApp extends React.PureComponent {
           />
           <PageRoute
             exact
-            path="/hearing_day"
+            path="/schedule"
             title="Scheduled Hearings"
             render={this.listSchedule}
           />

@@ -5,7 +5,7 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
-import BasicDateRangeSelector from './BasicDateRangeSelector';
+import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
 import { SPREADSHEET_TYPES } from '../constants';
@@ -27,7 +27,6 @@ export default class BuildScheduleUpload extends React.Component {
           endDateName="endDate"
           endDateValue={this.props.roCoEndDate}
           endDateLabel={false}
-          messageLabel={true}
           onStartDateChange={this.props.onRoCoStartDateChange}
           onEndDateChange={this.props.onRoCoEndDateChange}
         />
@@ -55,7 +54,6 @@ export default class BuildScheduleUpload extends React.Component {
           endDateName="endDate"
           endDateValue={this.props.judgeEndDate}
           endDateLabel={false}
-          messageLabel={true}
           onStartDateChange={this.props.onJudgeStartDateChange}
           onEndDateChange={this.props.onJudgeEndDateChange}
         />

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InlineForm from '../../components/InlineForm';
-import DateSelector from '../../components/DateSelector';
+import InlineForm from './InlineForm';
+import DateSelector from './DateSelector';
 
 export default class BasicDateRangeSelector extends React.Component {
   render() {
@@ -15,7 +15,7 @@ export default class BasicDateRangeSelector extends React.Component {
           onChange={this.props.onStartDateChange}
           type="date"
         />
-        &nbsp;{this.props.messageLabel && "to"}&nbsp;
+        &nbsp;{this.props.messageLabel && 'to'}&nbsp;
         <DateSelector
           name={this.props.endDateName}
           label={this.props.endDateLabel}

@@ -83,7 +83,7 @@ export default class BuildSchedule extends React.Component {
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
       <Link
         name="view-schedule"
-        to="/hearing_day">
+        to="/schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
