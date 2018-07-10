@@ -13,6 +13,7 @@ export default class UploadDateSelector extends React.Component {
           label={false}
           value={this.props.startDate}
           onChange={this.props.onStartDateChange}
+          type="date"
         />
         &nbsp;to&nbsp;
         <DateSelector
@@ -20,6 +21,7 @@ export default class UploadDateSelector extends React.Component {
           label={false}
           value={this.props.endDate}
           onChange={this.props.onEndDateChange}
+          type="date"
         />
       </InlineForm>
     </div>;
