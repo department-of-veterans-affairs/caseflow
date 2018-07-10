@@ -60,7 +60,7 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("Select an action")
 
@@ -76,7 +76,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         hearing = appeal.hearings.first
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
@@ -95,7 +95,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
@@ -107,7 +107,7 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).not_to have_content("Hearing preference")
       end
     end
@@ -130,7 +130,7 @@ RSpec.feature "Case details" do
 
       scenario "details view informs us that the Veteran is the appellant" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("Veteran Details")
         expect(page).to have_content("The veteran is the appellant.")
@@ -161,7 +161,7 @@ RSpec.feature "Case details" do
 
       scenario "details view informs us that the Veteran is not the appellant" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("Appellant Details")
         expect(page).to have_content("Veteran Details")
@@ -187,14 +187,14 @@ RSpec.feature "Case details" do
 
     scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
       click_on "View documents"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
-      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})")
+      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
 
       click_on "Caseflow"
       expect(page.current_path).to eq "/queue"
@@ -217,7 +217,7 @@ RSpec.feature "Case details" do
 
     scenario "case details page shows appropriate text" do
       visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
     end
@@ -253,7 +253,7 @@ RSpec.feature "Case details" do
       appeal = appeals.first
 
       visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
