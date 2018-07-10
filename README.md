@@ -9,6 +9,10 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ## Setup
 
+### Install the Xcode commandline tools
+
+    xcode-select --install
+
 ### Install base dependencies
 
 Install the base dependencies via Homebrew:
@@ -18,10 +22,6 @@ Install the base dependencies via Homebrew:
     brew install nodenv-nvmrc
     brew tap caskroom/cask
     brew cask install chromedriver
-
-### Install the Xcode commandline tools
-
-    xcode-select --install
 
 ### Setup [rbenv](https://github.com/rbenv/rbenv).
 
@@ -206,7 +206,7 @@ to skip production gems when installing.
 
 Set up and seed the DB
 
-    rake db:setup
+    bundle exec rake db:setup
 
 And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
 
@@ -271,7 +271,7 @@ bundle install --with staging
 ### Run the app
 
 ```sh
-rails s -e staging
+bundle exec rails s -e staging
 ```
 
 ## Changing between test users
@@ -299,7 +299,7 @@ add more links and users as needed.
 
 To run the test suite:
 
-    rake
+    bundle exec rake
 
 ## Feature Toggle and Functions
 
