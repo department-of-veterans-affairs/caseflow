@@ -5,7 +5,7 @@ import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { ArrowUp, ArrowDown } from './RenderFunctions';
+import { ChevronUp, ChevronDown } from './RenderFunctions';
 
 /**
  * This component can be used to easily build tables.
@@ -48,10 +48,11 @@ const HeaderRow = (props) => {
           {column.sortable ?
             <Link data-tip data-for={`${columnNumber}-tooltip`} onClick={() => props.setSortOrder(columnNumber)}>
               {column.header || ''} {props.sortColIdx === columnNumber && (
-                props.sortDir > 0 ? <ArrowDown /> : <ArrowUp />
+                props.sortDir > 0 ? <ChevronDown /> : <ChevronUp />
               )}
             </Link> :
-            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>}
+            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
+          }
         </th>
       )}
     </tr>
