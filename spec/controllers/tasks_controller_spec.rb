@@ -106,10 +106,10 @@ RSpec.describe TasksController, type: :controller do
       context "when current user is a judge" do
         let(:role) { :judge_role }
         let(:params) do
-          {
+          [{
             "appeal_id": appeal.id,
             "type": "CoLocatedAdminAction"
-          }
+          }]
         end
 
         it "should not be successful" do
@@ -120,56 +120,72 @@ RSpec.describe TasksController, type: :controller do
 
       context "when current user is an attorney" do
         let(:role) { :attorney_role }
-        let(:params) do
-          {
-            "appeal_id": appeal.id,
-            "type": "CoLocatedAdminAction",
-            "titles": %w[address_verification substituation_determination],
-            "instructions": "do this"
-          }
+
+        context "when multiple admin actions" do
+          let(:params) do
+            [{
+              "appeal_id": appeal.id,
+              "type": "CoLocatedAdminAction",
+              "title": "address_verification",
+              "instructions": "do this"
+            },
+             {
+               "appeal_id": appeal.id,
+               "type": "CoLocatedAdminAction",
+               "title": "substituation_determination",
+               "instructions": "another one"
+             }]
+          end
+
+          it "should be successful" do
+            expect(AppealRepository).to receive(:update_location!).exactly(1).times
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 201
+            response_body = JSON.parse(response.body)
+            expect(response_body["tasks"].size).to eq 2
+            expect(response_body["tasks"].first["status"]).to eq "assigned"
+            expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
+            expect(response_body["tasks"].first["instructions"]).to eq "do this"
+            expect(response_body["tasks"].first["title"]).to eq "address_verification"
+
+            expect(response_body["tasks"].second["status"]).to eq "assigned"
+            expect(response_body["tasks"].second["appeal_id"]).to eq appeal.id
+            expect(response_body["tasks"].second["instructions"]).to eq "another one"
+            expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
+            # assignee should be the same person
+            expect(response_body["tasks"].first["assigned_to_id"]).to eq response_body["tasks"].second["assigned_to_id"]
+          end
         end
 
-        it "should be successful" do
-          post :create, params: { tasks: params }
-          expect(response.status).to eq 201
-          response_body = JSON.parse(response.body)
-          expect(response_body["tasks"].first["status"]).to eq "assigned"
-          expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
-          expect(response_body["tasks"].first["instructions"]).to eq "do this"
-          expect(response_body["tasks"].first["title"]).to eq "address_verification"
-
-          expect(response_body["tasks"].second["status"]).to eq "assigned"
-          expect(response_body["tasks"].second["appeal_id"]).to eq appeal.id
-          expect(response_body["tasks"].second["instructions"]).to eq "do this"
-          expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
-        end
-
-        context "when 'titles' is missing" do
-          let(:role) { :attorney_role }
+        context "when one admin action" do
           let(:params) do
             {
               "appeal_id": appeal.id,
               "type": "CoLocatedAdminAction",
-              "titles": [],
+              "title": "address_verification",
               "instructions": "do this"
             }
           end
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 400
+            expect(response.status).to eq 201
             response_body = JSON.parse(response.body)
-            expect(response_body["errors"].first["title"]).to eq "Missing required parameters"
+            expect(response_body["tasks"].size).to eq 1
+            expect(response_body["tasks"].first["status"]).to eq "assigned"
+            expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
+            expect(response_body["tasks"].first["instructions"]).to eq "do this"
+            expect(response_body["tasks"].first["title"]).to eq "address_verification"
           end
         end
 
         context "when appeal is not found" do
           let(:params) do
-            {
+            [{
               "appeal_id": 4_646_464,
               "type": "CoLocatedAdminAction",
-              "titles": %w[address_verification substituation_determination]
-            }
+              "title": "address_verification"
+            }]
           end
 
           it "should not be successful" do
