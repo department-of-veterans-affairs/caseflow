@@ -32,6 +32,8 @@ class ClaimsFolderDetails extends React.PureComponent {
     const appealDoesntExist = _.isEmpty(appeal);
     const docsViewedCount = _.filter(documents, 'opened_by_current_user').length;
 
+    throw "Silly Error";
+
     return <div>
       <div>
         { !appealDoesntExist && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1> }
