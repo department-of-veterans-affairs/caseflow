@@ -64,19 +64,23 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
+  def validate_ro_date_formats
+    @ro_spreadsheet_data.all? do |row|
+      row["date"].instance_of?(Date) || row["date"] == "N/A"
+    end
+  end
+
+  def validate_ro_dates_in_range
+    @ro_spreadsheet_data.all? do |row|
+      row["date"] == "N/A" || (row["date"] >= @start_date && row["date"] <= @end_date)
+    end
+  end
+
   def validate_ro_non_availability_dates
-    unless @ro_spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
-      fail RoDatesNotCorrectFormat
-    end
-    unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
-      fail RoDatesNotUnique
-    end
-    unless @ro_spreadsheet_data.all? { |row| row["date"] >= @start_date && row["date"] <= @end_date }
-      fail RoDatesNotInRange
-    end
-    unless validate_ros_with_hearings(@ro_spreadsheet_data)
-      fail RoListedIncorrectly
-    end
+    fail RoDatesNotCorrectFormat unless validate_ro_date_formats
+    fail RoDatesNotUnique unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
+    fail RoDatesNotInRange unless validate_ro_dates_in_range
+    fail RoListedIncorrectly unless validate_ros_with_hearings(@ro_spreadsheet_data)
     true
   end
 
