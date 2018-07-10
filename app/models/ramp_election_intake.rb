@@ -29,7 +29,6 @@ class RampElectionIntake < Intake
   def review!(request_params)
     ramp_election.start_review!
     ramp_election.update_attributes(request_params.permit(:receipt_date, :option_selected))
-    raise "hello"
   end
 
   def review_errors
