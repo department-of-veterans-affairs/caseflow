@@ -88,7 +88,7 @@ class TasksController < ApplicationController
 
   def update_params
     params.require("task")
-      .permit(:status)
+      .permit(:status, :on_hold_duration)
   end
 
   def json_tasks(tasks)
