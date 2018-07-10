@@ -10,17 +10,12 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import ScrollToTop from '../components/ScrollToTop';
-import LoadingScreen from './components/LoadingScreen';
 
 class HearingScheduleApp extends React.PureComponent {
 
-  buildSchedule = () => <LoadingScreen>
-    <BuildScheduleContainer />
-  </LoadingScreen>;
+  buildSchedule = () => <BuildScheduleContainer />;
 
-  buildScheduleUpload = () => <LoadingScreen>
-    <BuildScheduleUploadContainer />
-  </LoadingScreen>;
+  buildScheduleUpload = () => <BuildScheduleUploadContainer />;
 
   render = () => <BrowserRouter>
     <NavigationBar
