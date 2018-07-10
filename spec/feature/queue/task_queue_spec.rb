@@ -65,6 +65,15 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
+    it "supports custom sorting" do
+      docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/a")
+      docket_number_column_header.click
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]")
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
+      docket_number_column_header.click
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
+    end
+
     it "displays special text indicating an assigned case has a claimant who is not the Veteran" do
       vna_appeal_row = find("tbody").find("#table-row-#{non_veteran_claimant_appeal.vacols_id}")
       first_cell = vna_appeal_row.find_all("td").first
