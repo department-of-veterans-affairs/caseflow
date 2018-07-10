@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180710144303) do
+ActiveRecord::Schema.define(version: 20180710214914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -228,6 +228,22 @@ ActiveRecord::Schema.define(version: 20180710144303) do
     t.integer "document_id", null: false
     t.integer "tag_id", null: false
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
+  end
+
+  create_table "end_product_establishments", force: :cascade do |t|
+    t.datetime "established_at"
+    t.string "synced_status"
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.string "veteran_file_number", null: false
+    t.string "reference_id"
+    t.date "claim_date"
+    t.string "code"
+    t.string "modifier"
+    t.string "station"
+    t.datetime "last_synced_at"
+    t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
+    t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
