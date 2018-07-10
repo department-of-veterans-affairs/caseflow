@@ -53,8 +53,7 @@ export class BuildScheduleUploadContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
-  createSchedulePeriod = () => {
-
+  async createSchedulePeriod() {
     if (!this.validateData()) {
       return;
     }
@@ -69,8 +68,8 @@ export class BuildScheduleUploadContainer extends React.Component {
 
   onUploadContinue = () => {
     this.props.toggleUploadContinueLoading();
-    this.createSchedulePeriod();
-    this.props.toggleUploadContinueLoading();
+    Promise.resolve(this.createSchedulePeriod()).
+      then(this.props.toggleUploadContinueLoading());
   };
 
   render() {
