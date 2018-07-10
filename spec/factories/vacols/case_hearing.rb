@@ -29,12 +29,6 @@ FactoryBot.define do
       # We need to reload the correct record before trying to modify it.
       hearing.hearing_pkseq = hearing.hearing_pkseq + 1
       hearing.reload
-
-      if evaluator.user
-        existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
-        sattyid = (existing_staff || create(:staff, :attorney_judge_role, user: evaluator.user)).sattyid
-        hearing.update(board_member: sattyid)
-      end
     end
 
     after(:build) do |hearing, evaluator|
