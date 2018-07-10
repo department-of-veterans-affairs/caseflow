@@ -49,8 +49,6 @@ RSpec.feature "Case details" do
           :assigned,
           user: attorney_user,
           # Need a non-cancelled dispositon to show the full set of hearing attributes.
-          # https://github.com/department-of-veterans-affairs/caseflow/blob/7c3f80b3e30aec1488663d99731c6387b6044e61/client/app/queue/CaseHearingsDetail.jsx#L33
-          # and line 48.
           case_hearings: case_hearings
         )
       )
