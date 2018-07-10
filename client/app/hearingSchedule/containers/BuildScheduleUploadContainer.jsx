@@ -64,7 +64,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       then((response) => {
         this.props.history.push(`/hearings/schedule/build/upload/${response.body.id}`);
       });
-  };
+  }
 
   onUploadContinue = () => {
     this.props.toggleUploadContinueLoading();
