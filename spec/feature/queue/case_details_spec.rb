@@ -35,8 +35,6 @@ RSpec.feature "Case details" do
   end
 
   after do
-    User.unauthenticate!
-
     FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_phase_two)
   end
