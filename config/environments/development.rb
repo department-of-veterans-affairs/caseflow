@@ -1,98 +1,103 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # Code is not reloaded between requests.
-  config.cache_classes = true
+  # In the development environment your application's code is reloaded on
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
+  config.cache_classes = false
 
-  # Eager load code on boot. This eager loads most of Rails and
-  # your application in memory, allowing both threaded web servers
-  # and those relying on copy on write to perform better.
-  # Rake tasks automatically ignore this option for performance.
-  config.eager_load = true
+  # Do not eager load code on boot.
+  config.eager_load = false
 
-  # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
-  config.action_controller.perform_caching = true
+  # Show full error reports and disable caching.
+  config.consider_all_requests_local       = true
 
-  # Attempt to read encrypted secrets from `config/secrets.yml.enc`.
-  # Requires an encryption key in `ENV["RAILS_MASTER_KEY"]` or
-  # `config/secrets.yml.key`.
-  # config.read_encrypted_secrets = true
-
-  # Disable serving static files from the `/public` folder by default since
-  # Apache or NGINX already handles this.
-  config.public_file_server.enabled = true
-
-  # Compress JavaScripts and CSS.
-  # config.assets.js_compressor = :uglifier
-  # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = 'http://assets.example.com'
-
-  # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
-
-  # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
-
-  # Mount Action Cable outside main process or domain
-  # config.action_cable.mount_path = nil
-  # config.action_cable.url = 'wss://example.com/cable'
-  # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
-
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :debug
-
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
-
-  # Use a different logger for distributed setups.
-  # require 'syslog/logger'
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
+  # Enable/disable caching. By default caching is disabled.
+  if Rails.root.join('tmp/caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
+    config.cache_store = :null_store
   end
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
 
-  # Use a real queuing backend for Active Job (and separate queues per environment)
-  # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "caseflow_certification_#{Rails.env}"
   config.action_mailer.perform_caching = false
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # Print deprecation notices to the Rails logger.
+  config.active_support.deprecation = :log
 
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation cannot be found).
-  config.i18n.fallbacks = true
+  # Raise an error on page load if there are pending migrations.
+  config.active_record.migration_error = :page_load
 
-  # Send deprecation notices to registered listeners.
-  config.active_support.deprecation = :notify
+  # Debug mode disables concatenation and preprocessing of assets.
+  # This option may cause significant delays in view rendering with a large
+  # number of complex assets.
+  config.assets.debug = true
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
+  # yet still be able to expire them through the digest params.
+  config.assets.digest = true
 
-  # Do not dump schema after migrations.
-  config.active_record.dump_schema_after_migration = false
+  # Adds additional error checking when serving assets at runtime.
+  # Checks for improperly declared sprockets dependencies.
+  # Raises helpful error messages.
+  config.assets.raise_runtime_errors = true
+
+  # Suppress logger output for asset requests.
+  config.assets.quiet = true
 
   # Setup S3
-  config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
-  config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
+  config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
+  config.s3_bucket_name = "caseflow-cache"
 
-  config.google_analytics_account = ENV["GA_TRACKING_ID"]
+  # Set to true to get the documents from efolder running locally on port 4000.
+  config.use_efolder_locally = false
 
+  # set to true to create queues and override the sqs endpiont
+  config.sqs_create_queues = true
+  config.sqs_endpoint = "http://localhost:4576"
+
+  # since we mock aws using localstack, provide dummy creds to the aws gem
+  ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
+  ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
+
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
+  #
+  ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
+
+  ENV["METRICS_USERNAME"] ||= "caseflow"
+  ENV["METRICS_PASSWORD"] ||= "caseflow"
+  ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
+  ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
+
+  # eFolder API URL to retrieve appeal documents
+  config.efolder_url = "http://localhost:4000"
+  config.efolder_key = "token"
+
+  config.google_analytics_account = "UA-74789258-5"
+
+  # configure pry
+  silence_warnings do
+    begin
+      require 'pry'
+      config.console = Pry
+      unless defined? Pry::ExtendCommandBundle
+        Pry::ExtendCommandBundle = Module.new
+      end
+      require "rails/console/app"
+      require "rails/console/helpers"
+      require_relative "../../lib/helpers/console_methods"
+
+      TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
+      TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
+    rescue LoadError
+    end
+  end
 end
