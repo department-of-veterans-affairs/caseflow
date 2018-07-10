@@ -49,8 +49,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     endProductDescription: null,
     issueCount: 0,
     nonRatedIssues: { },
-    reviewIntakeErrorCode: null,
-    reviewIntakeErrorData: null,
+    reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     requestStatus: {
@@ -128,11 +127,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         submitReview: {
           $set: REQUEST_STATE.FAILED
         },
-        reviewIntakeErrorCode: {
+        reviewIntakeError: {
           $set: action.payload.responseErrorCode
-        },
-        reviewIntakeErrorData: {
-          $set: action.payload.responseErrorData
         }
       }
     });

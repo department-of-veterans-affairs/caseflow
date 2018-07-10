@@ -26,7 +26,7 @@ class Review extends React.PureComponent {
       informalConferenceError,
       sameOffice,
       sameOfficeError,
-      reviewIntakeErrorCode
+      reviewIntakeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -40,9 +40,9 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeErrorCode &&
+      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
         <ReviewIntakeErrorAlert
-          reviewIntakeErrorCode={reviewIntakeErrorCode} />
+          reviewIntakeError={reviewIntakeError} />
       }
 
       <DateSelector
@@ -141,7 +141,7 @@ export default connect(
     sameOffice: state.higherLevelReview.sameOffice,
     sameOfficeError: state.higherLevelReview.sameOfficeError,
     requestState: state.higherLevelReview.requestStatus.submitReview,
-    reviewIntakeErrorCode: state.higherLevelReview.requestStatus.reviewIntakeErrorCode
+    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,

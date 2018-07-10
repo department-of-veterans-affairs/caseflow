@@ -13,6 +13,7 @@ import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../acti
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
+import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
 
 class Review extends React.PureComponent {
   beginNextIntake = () => {
@@ -21,6 +22,7 @@ class Review extends React.PureComponent {
   render() {
     const {
       rampRefilingStatus,
+      requestState,
       veteranName,
       optionSelected,
       optionSelectedError,
@@ -29,7 +31,8 @@ class Review extends React.PureComponent {
       receiptDateError,
       appealDocket,
       appealDocketError,
-      submitInvalidOptionError
+      submitInvalidOptionError,
+      reviewIntakeError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -81,6 +84,11 @@ class Review extends React.PureComponent {
 
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
+      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
+        <ReviewIntakeErrorAlert
+          reviewIntakeError={reviewIntakeError} />
+      }
+
       <DateSelector
         name="receipt-date"
         label="What is the Receipt Date of this form?"
@@ -128,7 +136,9 @@ export default connect(
     intakeId: state.intake.id,
     appealDocket: state.rampRefiling.appealDocket,
     appealDocketError: state.rampRefiling.appealDocketError,
-    submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError
+    submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError,
+    requestState: state.rampRefiling.requestStatus.submitReview,
+    reviewIntakeError: state.rampRefiling.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,

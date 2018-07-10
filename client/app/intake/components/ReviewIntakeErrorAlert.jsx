@@ -8,7 +8,7 @@ export default class ReviewIntakeErrorAlert extends React.PureComponent {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'
       }
-    }[this.props.reviewIntakeErrorCode || 'default'];
+    }[this.props.reviewIntakeError || 'default'];
 
     return <Alert title={errorObject.title} type="error" lowerMargin>
       {errorObject.body}

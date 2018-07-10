@@ -59,6 +59,7 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     outsideCaseflowStepsError: null,
     endProductDescription: null,
     submitInvalidOptionError: false,
+    reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
 
@@ -170,11 +171,8 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         submitReview: {
           $set: REQUEST_STATE.FAILED
         },
-        reviewIntakeErrorCode: {
+        reviewIntakeError: {
           $set: action.payload.responseErrorCode
-        },
-        reviewIntakeErrorData: {
-          $set: action.payload.responseErrorData
         }
       }
     });
