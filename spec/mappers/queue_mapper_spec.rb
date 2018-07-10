@@ -82,6 +82,42 @@ describe QueueMapper do
     end
   end
 
+  context ".complexity_to_vacols_code" do
+    subject { QueueMapper.complexity_to_vacols_code(complexity) }
+
+    context "when complexity is not valid" do
+      let(:complexity) { "not_valid" }
+
+      it "should raise Caseflow::Error::QueueRepositoryError" do
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+      end
+    end
+
+    context "when complexity is valid" do
+      let(:complexity) { "hard" }
+
+      it { is_expected.to eq "3" }
+    end
+  end
+
+  context ".quality_to_vacols_code" do
+    subject { QueueMapper.quality_to_vacols_code(quality) }
+
+    context "when quality is not valid" do
+      let(:quality) { "not_valid" }
+
+      it "should raise Caseflow::Error::QueueRepositoryError" do
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
+      end
+    end
+
+    context "when quality is valid" do
+      let(:quality) { "does_not_meet_expectations" }
+
+      it { is_expected.to eq "1" }
+    end
+  end
+
   context ".work_product_to_vacols_code" do
     subject { QueueMapper.work_product_to_vacols_code(work_product, overtime) }
     context "when overtime" do

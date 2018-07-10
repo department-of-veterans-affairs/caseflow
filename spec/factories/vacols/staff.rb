@@ -29,7 +29,7 @@ FactoryBot.define do
       sactive "A"
     end
 
-    trait :co_located_role do
+    trait :colocated_role do
       stitle %w[A1 A2].sample
       sactive "A"
       sattyid nil

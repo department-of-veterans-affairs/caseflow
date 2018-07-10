@@ -3,16 +3,13 @@ require "rails_helper"
 RSpec.feature "RAMP Election Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do
@@ -236,7 +233,7 @@ RSpec.feature "RAMP Election Intake" do
     expect(AppealRepository).to receive(:close_undecided_appeal!).with(
       appeal: LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey),
       user: current_user,
-      closed_on: Time.zone.today,
+      closed_on: Time.zone.now,
       disposition_code: "P"
     )
 

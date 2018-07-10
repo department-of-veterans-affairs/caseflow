@@ -23,6 +23,12 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
+    claimantNotVeteran: {
+      $set: serverIntake.claimant_not_veteran
+    },
+    claimant: {
+      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
@@ -88,6 +94,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       claimantNotVeteran: {
         $set: action.payload.claimantNotVeteran
+      },
+      claimant: {
+        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
