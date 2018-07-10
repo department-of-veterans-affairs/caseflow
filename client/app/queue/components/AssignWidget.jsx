@@ -91,20 +91,19 @@ class AssignWidget extends React.PureComponent<Props> {
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
-    const { selectedAssignee, error, success, allAttorneys } = this.props;
+    const { selectedAssignee, error, success, allAttorneys, userCssId } = this.props;
     const attorneys = allAttorneys.data;
 
     const options = [];
 
     {
       const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
-      const judgeCssIds = Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== this.props.userCssId);
+      const judgeCssIds = [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
 
-      options.push(...attorneysOfJudgeWithCssId[this.props.userCssId].map(optionFromAttorney));
       for (const judgeCssId of judgeCssIds) {
         options.push({
-          label: '—',
-          value: '—',
+          label: judgeCssId,
+          value: judgeCssId,
           disabled: true
         });
         options.push(...attorneysOfJudgeWithCssId[judgeCssId].map(optionFromAttorney));
