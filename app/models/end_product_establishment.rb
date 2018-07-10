@@ -1,9 +1,7 @@
 class EndProductEstablishment < ApplicationRecord
-
   class EstablishedEndProductNotFound < StandardError; end
   attr_accessor :valid_modifiers
   belongs_to :source, polymorphic: true
-
 
   class InvalidEndProductError < StandardError; end
 

@@ -52,7 +52,11 @@ describe EndProductEstablishment do
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
-        expect(end_product_establishment.reload).to have_attributes(reference_id: "FAKECLAIMID", veteran_file_number: veteran_file_number, established_at: Time.zone.now )
+        expect(end_product_establishment.reload).to have_attributes(
+          reference_id: "FAKECLAIMID",
+          veteran_file_number: veteran_file_number,
+          established_at: Time.zone.now
+        )
       end
     end
   end
