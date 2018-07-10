@@ -1,7 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
+import { SPREADSHEET_TYPES } from '../constants';
 import {
   onFileTypeChange,
   onRoCoStartDateChange,
@@ -16,22 +18,53 @@ import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
 
-  getData = () => {
-    return ApiUtil.convertToSnakeCase({
-      schedulePeriod: {
-        fileName: 'this is a fake file name',
-        startDate: '2015/10/24',
-        endDate: '2016/10/24',
-        type: 'RoSchedulePeriod'
-      }
-    });
+  validateData = () => {
+    if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+      return this.props.roCoStartDate && this.props.roCoEndDate && this.props.roCoFileUpload;
+    }
+    if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      return this.props.judgeStartDate && this.props.judgeEndDate && this.props.judgeFileUpload;
+    }
+
+    return false;
+  };
+
+  formatData = () => {
+    let schedulePeriod = {};
+
+    if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+      schedulePeriod = {
+        fileName: this.props.roCoFileUpload,
+        startDate: this.props.roCoStartDate,
+        endDate: this.props.roCoEndDate,
+        type: this.props.fileType
+      };
+    }
+
+    if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      schedulePeriod = {
+        fileName: this.props.judgeFileUpload,
+        startDate: this.props.judgeStartDate,
+        endDate: this.props.judgeEndDate,
+        type: this.props.fileType
+      };
+    }
+
+    return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
   createSchedulePeriod = () => {
-    const data = this.getData();
+
+    if (!this.validateData()) {
+      return;
+    }
+
+    const data = this.formatData();
 
     ApiUtil.post('/hearings/schedule_periods', { data }).
-      then();
+      then((response) => {
+        this.props.history.push(`/hearings/schedule/build/upload/${response.body.id}`);
+      });
   };
 
   onUploadContinue = () => {
@@ -84,4 +117,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleUploadContinueLoading
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer));

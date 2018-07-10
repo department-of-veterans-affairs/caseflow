@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
 import UploadDateSelector from './UploadDateSelector';
@@ -93,15 +94,14 @@ export default class BuildScheduleUpload extends React.Component {
         Cancel
       </Link>
       <div className="cf-push-right">
-        <Link
+        <Button
           name="continue"
           button="primary"
           loading={this.props.uploadContinueLoading}
           onClick={this.props.onUploadContinue}
-          to="hearings/schedule/build/upload/1"
         >
           Continue
-        </Link>
+        </Button>
       </div>
     </AppSegment>;
   }
