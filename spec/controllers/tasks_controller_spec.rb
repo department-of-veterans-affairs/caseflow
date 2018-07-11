@@ -216,7 +216,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "in_progress"
         expect(response_body.first["attributes"]["started_at"]).to_not be nil
 
-        patch :update, params: { task: { status: "on_hold" }, id: admin_action.id }
+        patch :update, params: { task: { status: "on_hold", on_hold_duration: 60 }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
