@@ -34,10 +34,12 @@ class EndProductEstablishment < ApplicationRecord
     # is already inactive since an EP can never leave that state
     return true unless status_active?
 
-    update!(
-      synced_status: result.status_type_code,
-      last_synced_at: Time.zone.now
-    )
+    if result
+      update!(
+        synced_status: result.status_type_code,
+        last_synced_at: Time.zone.now
+      )
+    end
   end
 
   delegate :contentions, to: :end_product_to_establish
