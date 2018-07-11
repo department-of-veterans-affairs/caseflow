@@ -4,13 +4,15 @@ describe EndProductEstablishment do
   end
 
   let(:veteran_file_number) { "12341234" }
-  let(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:code) { "030HLRR" }
   let(:reference_id) { nil }
+  let(:source) { create(:ramp_election) }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
-      veteran: veteran,
+      source: source,
+      veteran_file_number: veteran_file_number,
       code: code,
       claim_date: 2.days.ago,
       station: "397",
@@ -50,7 +52,11 @@ describe EndProductEstablishment do
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
-        expect(end_product_establishment.reference_id).to eq("FAKECLAIMID")
+        expect(end_product_establishment.reload).to have_attributes(
+          reference_id: "FAKECLAIMID",
+          veteran_file_number: veteran_file_number,
+          established_at: Time.zone.now
+        )
       end
     end
   end

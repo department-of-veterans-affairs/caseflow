@@ -9,6 +9,7 @@ import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
+import ListScheduleContainer from './containers/ListScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 class HearingScheduleApp extends React.PureComponent {
@@ -17,7 +18,9 @@ class HearingScheduleApp extends React.PureComponent {
 
   buildScheduleUpload = () => <BuildScheduleUploadContainer />;
 
-  render = () => <BrowserRouter>
+  listSchedule = () => <ListScheduleContainer />;
+
+  render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
       userDisplayName={this.props.userDisplayName}
@@ -32,13 +35,19 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/hearings/schedule/build"
+            path="/schedule/build"
             title="Caseflow Hearing Schedule"
             render={this.buildSchedule}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build/upload"
+            path="/schedule"
+            title="Scheduled Hearings"
+            render={this.listSchedule}
+          />
+          <PageRoute
+            exact
+            path="/schedule/build/upload"
             title="Upload Files"
             render={this.buildScheduleUpload}
           />
