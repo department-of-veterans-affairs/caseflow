@@ -7,6 +7,18 @@ def click_dropdown(opt_idx, container = page)
   dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
 end
 
+def generate_text(length)
+  charset = ("A".."Z").to_a.concat(("a".."z").to_a)
+  Array.new(length) { charset.sample }.join
+end
+
+def generate_words(n_words)
+  Array.new(n_words).map do
+    word_length = [rand(12), 3].max
+    generate_text(word_length)
+  end.join(" ")
+end
+
 RSpec.feature "Checkout flows" do
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -171,7 +183,10 @@ RSpec.feature "Checkout flows" do
         click_label("omo-type_OMO - VHA")
         click_label("overtime")
         fill_in "document_id", with: "12345"
-        fill_in "notes", with: "notes"
+
+        dummy_note = generate_words 100
+        fill_in "notes", with: dummy_note
+        expect(page).to have_content(dummy_note[0..349])
 
         safe_click("#select-judge")
         click_dropdown 0
@@ -180,6 +195,10 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
         sleep 1
         expect(page.current_path).to eq("/queue")
+        
+        case_review = AttorneyCaseReview.all.first
+        expect(case_review.note.length).to eq 350
+        expect(case_review.task_id.start_with?(appeal.vacols_id)).to be_truthy
       end
 
       scenario "deletes issue" do
