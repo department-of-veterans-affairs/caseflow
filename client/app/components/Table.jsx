@@ -56,7 +56,7 @@ const HeaderRow = (props) => {
               data-tip data-for={`${columnNumber}-tooltip`}
               onClick={() => props.setSortOrder(columnNumber)}>
               {column.header || ''} {props.sortColIdx === columnNumber && (
-                props.sortDir > 0 ? <ChevronDown /> : <ChevronUp />
+                props.sortAscending ? <ChevronDown /> : <ChevronUp />
               )}
             </span> :
             <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
@@ -146,17 +146,35 @@ export default class Table extends React.PureComponent {
     super(props);
 
     this.state = {
-      sortDir: 1,
+      sortAscending: true,
       sortColIdx: null
     };
   }
 
   defaultRowClassNames = () => ''
 
+  sortRowObjects = () => {
+    const { rowObjects } = this.props;
+    const {
+      sortColIdx,
+      sortAscending
+    } = this.state;
+
+    if (sortColIdx === null) {
+      return rowObjects;
+    }
+
+    const builtColumns = getColumns(this.props);
+
+    return _.orderBy(rowObjects,
+      (row) => builtColumns[sortColIdx].getSortValue(row),
+      sortAscending ? 'asc' : 'desc'
+    );
+  }
+
   render() {
     let {
       columns,
-      rowObjects,
       summary,
       headerClassName = '',
       bodyClassName = '',
@@ -170,10 +188,7 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
-    const {
-      sortColIdx,
-      sortDir
-    } = this.state;
+    const rowObjects = this.sortRowObjects();
 
     let keyGetter = getKeyForRow;
 
@@ -183,20 +198,6 @@ export default class Table extends React.PureComponent {
         console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
-    }
-
-    if (sortColIdx !== null) {
-      const isNumber = (val) => !isNaN(parseFloat(val)) && isFinite(val);
-
-      rowObjects.sort((first, second) => {
-        const builtColumns = getColumns(this.props);
-
-        const firstVal = builtColumns[sortColIdx].getSortValue(first).toString();
-        const secondVal = builtColumns[sortColIdx].getSortValue(second).toString();
-
-        // eslint-disable-next-line no-undefined
-        return sortDir * firstVal.localeCompare(secondVal, undefined, { numeric: isNumber(firstVal) });
-      });
     }
 
     return <table
@@ -210,9 +211,9 @@ export default class Table extends React.PureComponent {
       <HeaderRow
         columns={columns}
         headerClassName={headerClassName}
-        setSortOrder={(colIdx, dir = this.state.sortDir * -1) => this.setState({
+        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
           sortColIdx: colIdx,
-          sortDir: dir
+          sortAscending: ascending
         })}
         {...this.state} />
       <BodyRows
