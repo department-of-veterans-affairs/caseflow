@@ -98,14 +98,8 @@ describe EndProductEstablishment do
     end
 
     context "when matching end product has not yet been established" do
-      before do
-        end_product_establishment.update! last_synced_at: 1.day.ago
-        subject
-      end
-
-      it "should not update last_synced_at or synced_status" do
-        expect(end_product_establishment.reload.last_synced_at).not_to eq(Time.zone.now)
-        expect(end_product_establishment.reload.synced_status).to be_nil
+      it "raises EstablishedEndProductNotFound error" do
+        expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
       end
     end
 
