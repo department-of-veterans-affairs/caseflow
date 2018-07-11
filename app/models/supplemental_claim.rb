@@ -25,13 +25,13 @@ class SupplementalClaim < AmaReview
 
   def end_product_establishment
     @end_product_establishment ||= EndProductEstablishment.new(
-      veteran: veteran,
+      veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: "040SCR",
       valid_modifiers: END_PRODUCT_MODIFIERS,
-      station: "397", # AMC
-      cached_status: end_product_status
+      source: self,
+      station: "397" # AMC
     )
   end
 end

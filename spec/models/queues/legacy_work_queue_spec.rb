@@ -1,4 +1,4 @@
-describe WorkQueue do
+describe LegacyWorkQueue do
   before do
     FeatureToggle.enable!(:test_facols)
   end
