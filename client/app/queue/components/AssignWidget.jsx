@@ -17,7 +17,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys, UserWithId, User
+  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys, UserWithId
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
@@ -90,16 +90,43 @@ class AssignWidget extends React.PureComponent<Props> {
           detail: 'One or more tasks couldn\'t be assigned.' }));
   }
 
+  fullNameOfJudgeWithCssId = (judgeCssId) => {
+    const judge = _.find(this.props.judges, (judge) => judge && judge.css_id === judgeCssId);
+
+    if (!judge) {
+      return undefined;
+    }
+
+    return judge.full_name;
+  }
+
+  optionsFromJudgeAndAttorneys = (judgeCssId, attorneysOfJudgeWithCssId) => {
+    if (!attorneysOfJudgeWithCssId[judgeCssId]) {
+      return [];
+    }
+
+    const options = [];
+
+    options.push({
+      label: `${this.fullNameOfJudgeWithCssId(judgeCssId) || 'Other'}:`,
+      value: judgeCssId,
+      disabled: true
+    });
+    options.push(...attorneysOfJudgeWithCssId[judgeCssId].map((attorney) => ({ label: attorney.full_name,
+      value: attorney.id.toString() })));
+
+    return options;
+  }
+
   render = () => {
-    const { selectedAssignee, error, success, allAttorneys, userCssId, judges } = this.props;
+    const { selectedAssignee, error, success, allAttorneys, userCssId } = this.props;
+
     if (!allAttorneys.data && !allAttorneys.error) {
-      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
     }
     if (allAttorneys.error) {
       return <Alert type="error" title="Error fetching attorneys" message="Please refresh the page." />;
     }
-    const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() });
     const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
     const attorneys = allAttorneys.data;
 
@@ -111,25 +138,7 @@ class AssignWidget extends React.PureComponent<Props> {
         [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
 
       for (const judgeCssId of judgeCssIds) {
-        if (!attorneysOfJudgeWithCssId[judgeCssId]) {
-          continue;
-        }
-        let judgeName = 'Other';
-        for (const id in judges) {
-          const judge = judges[id];
-          if (!judge) {
-            continue;
-          }
-          if (judge.css_id === judgeCssId) {
-            judgeName = judge.full_name;
-          }
-        }
-        options.push({
-          label: `${judgeName}:`,
-          value: judgeCssId,
-          disabled: true
-        });
-        options.push(...attorneysOfJudgeWithCssId[judgeCssId].map(optionFromAttorney));
+        options.push(...this.optionsFromJudgeAndAttorneys(judgeCssId, attorneysOfJudgeWithCssId));
       }
       options.push({ label: ASSIGN_WIDGET_OTHER,
         value: OTHER });
