@@ -195,7 +195,7 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
         sleep 1
         expect(page.current_path).to eq("/queue")
-        
+
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350
         expect(case_review.task_id.start_with?(appeal.vacols_id)).to be_truthy
