@@ -51,7 +51,7 @@ const HeaderRow = (props) => {
           {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
             {column.tooltip}
           </ReactTooltip>}
-          {column.sortable ?
+          {column.getSortValue ?
             <span {...sortableHeaderStyle}
               data-tip data-for={`${columnNumber}-tooltip`}
               onClick={() => props.setSortOrder(columnNumber)}>
