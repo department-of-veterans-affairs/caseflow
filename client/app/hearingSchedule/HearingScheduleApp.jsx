@@ -58,7 +58,7 @@ class HearingScheduleApp extends React.PureComponent {
             render={this.buildScheduleUpload}
           />
           <PageRoute
-            path="/hearings/schedule/build/upload/:schedulePeriodId"
+            path="/schedule/build/upload/:schedulePeriodId"
             title="Upload Files"
             render={this.showSchedulePeriod}
           />

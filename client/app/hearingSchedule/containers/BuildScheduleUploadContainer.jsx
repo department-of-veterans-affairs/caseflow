@@ -62,7 +62,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
-        this.props.history.push(`/hearings/schedule/build/upload/${response.body.id}`);
+        this.props.history.push(`/schedule/build/upload/${response.body.id}`);
       });
   }
 
