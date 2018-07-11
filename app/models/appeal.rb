@@ -45,5 +45,12 @@ class Appeal < AmaReview
     @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
   end
 
+  def has_new_files_for_user(user)
+    appeal_view = appeal_views.find_by(user: user)
+    return false if !appeal_view
+
+    appeal.documents.where(received_at > appeal_view.last_viewed_at)
+  end
+
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 end

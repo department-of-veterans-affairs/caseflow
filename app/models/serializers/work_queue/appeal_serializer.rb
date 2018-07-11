@@ -95,4 +95,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
   end
+
+  attribute :has_new_files do
+    object.has_new_files
+  end
 end

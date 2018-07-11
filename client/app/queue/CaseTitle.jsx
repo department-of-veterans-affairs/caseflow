@@ -55,7 +55,7 @@ export default class CaseTitle extends React.PureComponent {
         redirectUrl={redirectUrl}
         appeal={appeal}
         taskType={taskType}
-        message={<React.Fragment>View <AppealDocumentCount appeal={appeal} /> documents</React.Fragment>} />
+        longMessage={true} />
     </CaseTitleScaffolding>;
   }
 }
