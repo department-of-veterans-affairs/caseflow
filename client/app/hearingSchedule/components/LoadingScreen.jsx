@@ -42,7 +42,10 @@ class LoadingScreen extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  viewStartDate: state.viewStartDate,
+  viewEndDate: state.viewEndDate
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceivePastUploads
