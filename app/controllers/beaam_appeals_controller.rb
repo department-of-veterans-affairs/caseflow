@@ -12,7 +12,7 @@ class BeaamAppealsController < ApplicationController
   private
 
   def verify_beaam_access
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user))
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user)
   end
 
   def json_appeals(appeals)
