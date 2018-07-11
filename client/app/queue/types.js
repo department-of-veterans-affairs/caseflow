@@ -82,7 +82,8 @@ export type UiState = {
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type AllAttorneys = {
-  data?: Array<User>
+  data?: Array<User>,
+  error?: string
 };
 
 export type UserWithId = {

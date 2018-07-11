@@ -22,6 +22,8 @@ import type {
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
 import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const OTHER = 'OTHER';
 
@@ -89,10 +91,13 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
+    const { selectedAssignee, error, success, allAttorneys, userCssId, judges } = this.props;
+    if (!allAttorneys.data && !allAttorneys.error) {
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE} />
+    }
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
-    const { selectedAssignee, error, success, allAttorneys, userCssId, judges } = this.props;
     const attorneys = allAttorneys.data;
 
     const options = [];
@@ -103,13 +108,16 @@ class AssignWidget extends React.PureComponent<Props> {
         [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
 
       for (const judgeCssId of judgeCssIds) {
+        if (!attorneysOfJudgeWithCssId[judgeCssId]) {
+          continue;
+        }
         let judgeName = 'Other';
         for (const id in judges) {
           const judge = judges[id];
           if (!judge) {
             continue;
           }
-          if (judge.css_id == judgeCssId) {
+          if (judge.css_id === judgeCssId) {
             judgeName = judge.full_name;
           }
         }
