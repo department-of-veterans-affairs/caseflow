@@ -35,6 +35,7 @@ export class BuildScheduleUploadContainer extends React.Component {
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
         fileName: this.props.roCoFileUpload,
+        file: document.getElementById('file').files[0],
         startDate: this.props.roCoStartDate,
         endDate: this.props.roCoEndDate,
         type: this.props.fileType

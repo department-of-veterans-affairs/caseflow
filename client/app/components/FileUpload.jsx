@@ -10,6 +10,13 @@ const styling = css({
 export default class FileUpload extends React.Component {
 
   onUploadEvent = (event) => {
+    let reader = new FileReader();
+    let file = event.target.files[0];
+    console.log(file);
+    let someBlob = reader.readAsDataURL(event.target.files[0]);
+    console.log(someBlob);
+    console.log(file);
+    console.log(document.getElementById('file'));
     this.props.onChange(event.target.value);
   };
 
