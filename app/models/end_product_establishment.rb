@@ -29,6 +29,17 @@ class EndProductEstablishment < ApplicationRecord
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
+  def sync!
+    # There is no need to sync end_product_status if the status
+    # is already inactive since an EP can never leave that state
+    return true unless status_active?
+
+    update!(
+      synced_status: result.status_type_code,
+      last_synced_at: Time.zone.now
+    )
+  end
+
   delegate :contentions, to: :end_product_to_establish
 
   private
@@ -75,5 +86,9 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
+  end
+
+  def status_active?
+    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 end
