@@ -32,11 +32,12 @@ import {
   fullWidth,
   marginBottom,
   marginTop,
-  ERROR_FIELD_REQUIRED,
-  ATTORNEY_COMMENTS_MAX_LENGTH
+  ATTORNEY_COMMENTS_MAX_LENGTH,
+  OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import COPY from '../../COPY.json';
 
 const radioFieldStyling = css(marginBottom(0), marginTop(2), {
   '& .question-label': marginBottom(0)
@@ -63,6 +64,25 @@ class SubmitDecisionView extends React.PureComponent {
     path: `/queue/appeals/${this.props.appealId}/submit`
   });
 
+  validateDocumentId = () => {
+    const {
+      opts: {
+        document_id: documentId,
+        work_product: workProduct
+      }
+    } = this.props.decision;
+
+    if (!workProduct) {
+      return false;
+    }
+
+    const initialChar = workProduct.includes('IME') ? 'V' : 'M';
+    const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
+    const validFormat = new RegExp(regex);
+
+    return validFormat.test(documentId);
+  }
+
   validateForm = () => {
     const {
       type: decisionType,
@@ -72,6 +92,11 @@ class SubmitDecisionView extends React.PureComponent {
 
     if (decisionType === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
+
+      // todo: settle validation for non-omo case reviews
+      if (!this.validateDocumentId()) {
+        return false;
+      }
     }
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
@@ -155,21 +180,13 @@ class SubmitDecisionView extends React.PureComponent {
     return <div className={fieldClasses}>
       <label>Submit to judge:</label>
       {shouldDisplayError && <span className="usa-input-error-message">
-        {ERROR_FIELD_REQUIRED}
+        {COPY.FORM_ERROR_FIELD_REQUIRED}
       </span>}
       {componentContent}
     </div>;
   };
 
   render = () => {
-    // todo: move to constants?
-    const omoTypes = [{
-      displayText: 'OMO - VHA',
-      value: 'OMO - VHA'
-    }, {
-      displayText: 'OMO - IME',
-      value: 'OMO - IME'
-    }];
     const {
       highlightFormItems,
       error,
@@ -180,6 +197,13 @@ class SubmitDecisionView extends React.PureComponent {
       }
     } = this.props;
     const decisionTypeDisplay = getDecisionTypeDisplay(decision);
+    let documentIdErrorMessage = '';
+
+    if (!decisionOpts.document_id) {
+      documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
+    } else if (!this.validateDocumentId()) {
+      documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
+    }
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -198,9 +222,9 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
-        options={omoTypes}
+        options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
@@ -212,7 +236,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextField
         label="Document ID:"
         name="document_id"
-        errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
       />

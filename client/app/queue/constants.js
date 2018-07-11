@@ -96,6 +96,14 @@ export const DRAFT_DECISION_OPTIONS = [{
   value: DECISION_TYPES.OMO_REQUEST
 }];
 
+export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
+  displayText: 'OMO - VHA',
+  value: 'OMO - VHA'
+}, {
+  displayText: 'OMO - IME',
+  value: 'OMO - IME'
+}];
+
 export const SEARCH_ERROR_FOR = {
   EMPTY_SEARCH_TERM: 'EMPTY_SEARCH_TERM',
   INVALID_VETERAN_ID: 'INVALID_VETERAN_ID',
