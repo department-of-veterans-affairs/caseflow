@@ -24,7 +24,7 @@ FactoryBot.define do
       hearing_disp "N"
     end
 
-    after(:create) do |hearing, evaluator|
+    after(:create) do |hearing, _evaluator|
       # For some reason the returned record's sequence is one less than what is actually saved.
       # We need to reload the correct record before trying to modify it.
       hearing.hearing_pkseq = hearing.hearing_pkseq + 1
