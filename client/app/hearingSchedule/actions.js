@@ -14,6 +14,13 @@ export const onFileTypeChange = (fileType) => ({
   }
 });
 
+export const onReceiveHearingSchedule = (hearingSchedule) => ({
+  type: ACTIONS.RECEIVE_HEARING_SCHEDULE,
+  payload: {
+    hearingSchedule
+  }
+});
+
 export const onRoCoStartDateChange = (startDate) => ({
   type: ACTIONS.RO_CO_START_DATE_CHANGE,
   payload: {
@@ -46,6 +53,20 @@ export const onJudgeEndDateChange = (endDate) => ({
   type: ACTIONS.JUDGE_END_DATE_CHANGE,
   payload: {
     endDate
+  }
+});
+
+export const onViewStartDateChange = (viewStartDate) => ({
+  type: ACTIONS.VIEW_START_DATE_CHANGE,
+  payload: {
+    viewStartDate
+  }
+});
+
+export const onViewEndDateChange = (viewEndDate) => ({
+  type: ACTIONS.VIEW_END_DATE_CHANGE,
+  payload: {
+    viewEndDate
   }
 });
 

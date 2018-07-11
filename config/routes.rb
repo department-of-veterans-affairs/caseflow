@@ -96,6 +96,7 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:index, :create]
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
