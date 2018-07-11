@@ -93,7 +93,10 @@ class AssignWidget extends React.PureComponent<Props> {
   render = () => {
     const { selectedAssignee, error, success, allAttorneys, userCssId, judges } = this.props;
     if (!allAttorneys.data && !allAttorneys.error) {
-      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE} />
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+    }
+    if (allAttorneys.error) {
+      return <Alert type="error" title="Error fetching attorneys" message="Please refresh the page." />;
     }
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });

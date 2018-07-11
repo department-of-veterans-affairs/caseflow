@@ -83,7 +83,7 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type AllAttorneys = {
   data?: Array<User>,
-  error?: string
+  error?: Object
 };
 
 export type UserWithId = {
