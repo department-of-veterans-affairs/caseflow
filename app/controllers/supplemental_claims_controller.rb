@@ -4,7 +4,8 @@ class SupplementalClaimsController < ApplicationController
   private
 
   def supplemental_claim
-    @supplemental_claim ||= SupplementalClaim.find_by!(end_product_reference_id: params[:claim_id])
+    @supplemental_claim ||=
+      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: "SupplementalClaim").source
   end
 
   helper_method :supplemental_claim

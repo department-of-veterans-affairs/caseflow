@@ -137,8 +137,11 @@ describe RampElectionIntake do
 
       subject
 
-      expect(intake.reload).to be_success
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(resultant_end_product_establishment).not_to be_nil
+      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
 
       expect(appeal_to_fully_close.case_record.reload).to have_attributes(
         bfmpro: "HIS",
@@ -271,7 +274,7 @@ describe RampElectionIntake do
         end
       end
 
-      context "exiting RAMP election EP is a different type" do
+      context "existing RAMP election EP is a different type" do
         let(:existing_option_selected) { "higher_level_review" }
 
         it "establishes new ramp election" do

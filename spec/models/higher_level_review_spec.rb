@@ -168,7 +168,7 @@ describe HigherLevelReview do
 
   context "#create_end_product_and_contentions!" do
     subject { higher_level_review.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -194,7 +194,7 @@ describe HigherLevelReview do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    it "creates end product" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
@@ -216,7 +216,7 @@ describe HigherLevelReview do
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(higher_level_review.reload.end_product_reference_id).to eq("454545")
+      expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
     end
 
     context "when VBMS throws an error" do

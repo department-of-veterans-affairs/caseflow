@@ -99,7 +99,7 @@ describe RampElection do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+      let(:veteran) { Veteran.create(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
@@ -132,7 +132,7 @@ describe RampElection do
           veteran_hash: veteran.to_vbms_hash
         )
 
-        expect(ramp_election.reload.end_product_reference_id).to eq("454545")
+        expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
       end
 
       context "if matching RAMP ep already exists" do

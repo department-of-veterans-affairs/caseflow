@@ -12,15 +12,6 @@ class SupplementalClaim < AmaReview
     end_product_establishment.valid_modifiers.first
   end
 
-  def establish_end_product!
-    end_product_establishment.perform!
-
-    update!(
-      end_product_reference_id: end_product_establishment.reference_id,
-      established_at: Time.zone.now
-    )
-  end
-
   private
 
   def end_product_establishment

@@ -144,9 +144,11 @@ describe HigherLevelReviewIntake do
     it "completes the intake and creates an end product" do
       subject
 
-      expect(intake.reload).to be_success
-      expect(intake.detail.established_at).to_not be_nil
-      expect(intake.detail.end_product_reference_id).to_not be_nil
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      expect(intake).to be_success
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(resultant_end_product_establishment).to_not be_nil
+      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
       expect(intake.detail.request_issues.count).to eq 1
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",

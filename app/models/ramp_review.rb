@@ -84,11 +84,7 @@ class RampReview < ApplicationRecord
 
   def establish_end_product!
     end_product_establishment.perform!
-
-    update!(
-      end_product_reference_id: end_product_establishment.reference_id,
-      established_at: Time.zone.now
-    )
+    update! established_at: Time.zone.now
   end
 
   class << self
