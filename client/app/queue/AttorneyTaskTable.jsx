@@ -50,7 +50,12 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
       task={task}
       appeal={this.getAppealForTask(task)}
       disabled={!task.attributes.task_id} />,
-    getSortValue: (task) => this.getAppealForTask(task, 'veteran_full_name')
+    getSortValue: (task) => {
+      const vetName = this.getAppealForTask(task, 'veteran_full_name').split(' ');
+      // only take last, first names. ignore middle names/initials
+
+      return `${_.last(vetName)} ${vetName[0]}`;
+    }
   }, {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     valueFunction: (task) => task.attributes.task_id ?
