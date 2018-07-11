@@ -105,6 +105,7 @@ class LoadingDataDisplay extends React.PureComponent {
     } = this.props;
     const isTimedOut = this.state.promiseTimeElapsedMs > this.props.timeoutMs;
 
+    throw "FRONT END ERROR";
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {

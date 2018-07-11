@@ -62,7 +62,7 @@
     <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
     <script>
       Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
-        release: "<%= Rails.application.config.build_version[:commit] %>"
+        release: "<%= Rails.application.config.build_version[:commit][0..6] %>"
       }).install();
       <% if current_user && current_user.authenticated? %>
         Raven.setUserContext({
