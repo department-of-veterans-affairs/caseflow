@@ -6,7 +6,7 @@ import DateSelector from './DateSelector';
 export default class BasicDateRangeSelector extends React.Component {
   render() {
     return <div>
-      {this.props.messageLabel && <p><i>Please enter a date range</i></p>}
+      {this.props.messageLabel && <p><i>Please input a date range</i></p>}
       <InlineForm>
         <DateSelector
           name={this.props.startDateName}

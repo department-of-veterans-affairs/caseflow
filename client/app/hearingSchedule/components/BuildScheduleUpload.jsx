@@ -21,6 +21,7 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
       <InlineForm>
         <BasicDateRangeSelector
+          messageLabel
           startDateName="startDate"
           startDateValue={this.props.roCoStartDate}
           startDateLabel={false}
@@ -48,6 +49,7 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
       <InlineForm>
         <BasicDateRangeSelector
+          messageLabel
           startDateName="startDate"
           startDateValue={this.props.judgeStartDate}
           startDateLabel={false}
