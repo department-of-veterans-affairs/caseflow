@@ -7,19 +7,22 @@ export const ACTIONS = {
   RO_CO_FILE_UPLOAD: 'RO_CO_FILE_UPLOAD',
   JUDGE_START_DATE_CHANGE: 'JUDGE_START_DATE_CHANGE',
   JUDGE_END_DATE_CHANGE: 'JUDGE_END_DATE_CHANGE',
+  JUDGE_FILE_UPLOAD: 'JUDGE_FILE_UPLOAD',
+  TOGGLE_UPLOAD_CONTINUE_LOADING: 'TOGGLE_UPLOAD_CONTINUE_LOADING',
   VIEW_START_DATE_CHANGE: 'VIEW_START_DATE_CHANGE',
-  VIEW_END_DATE_CHANGE: 'VIEW_END_DATE_CHANGE',
-  JUDGE_FILE_UPLOAD: 'JUDGE_FILE_UPLOAD'
+  VIEW_END_DATE_CHANGE: 'VIEW_END_DATE_CHANGE'
 };
 
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {
-    value: 'RO/CO',
+    value: 'RoSchedulePeriod',
+    shortDisplay: 'RO/CO',
     display: 'RO/CO hearings',
     template: '/ROAssignmentTemplate.xlsx'
   },
   JudgeSchedulePeriod: {
-    value: 'Judge',
+    value: 'JudgeSchedulePeriod',
+    shortDisplay: 'Judge',
     display: 'Judge non-availability',
     template: '/JudgeAssignmentTemplate.xlsx'
   }

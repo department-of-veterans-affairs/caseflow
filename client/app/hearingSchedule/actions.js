@@ -76,3 +76,7 @@ export const onJudgeFileUpload = (file) => ({
     file
   }
 });
+
+export const toggleUploadContinueLoading = () => ({
+  type: ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING
+});

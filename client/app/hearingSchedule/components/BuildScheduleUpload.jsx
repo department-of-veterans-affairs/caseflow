@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
@@ -99,16 +100,18 @@ export default class BuildScheduleUpload extends React.Component {
       />
       <Link
         name="cancel"
-        to="/hearings/schedule/build">
+        to="/schedule/build">
         Cancel
       </Link>
       <div className="cf-push-right">
-        <Link
+        <Button
           name="continue"
           button="primary"
-          to="/hearings/schedule/build/upload">
+          loading={this.props.uploadContinueLoading}
+          onClick={this.props.onUploadContinue}
+        >
           Continue
-        </Link>
+        </Button>
       </div>
     </AppSegment>;
   }
@@ -128,5 +131,7 @@ BuildScheduleUpload.propTypes = {
   onJudgeStartDateChange: PropTypes.func,
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.string,
-  onJudgeFileUpload: PropTypes.func
+  onJudgeFileUpload: PropTypes.func,
+  onUploadContinue: PropTypes.func,
+  uploadContinueLoading: PropTypes.bool
 };

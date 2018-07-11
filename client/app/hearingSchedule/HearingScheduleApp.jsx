@@ -9,6 +9,7 @@ import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
+import ShowSchedulePeriodContainer from './containers/ShowSchedulePeriodContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
@@ -17,6 +18,8 @@ class HearingScheduleApp extends React.PureComponent {
   buildSchedule = () => <BuildScheduleContainer />;
 
   buildScheduleUpload = () => <BuildScheduleUploadContainer />;
+
+  showSchedulePeriod = () => <ShowSchedulePeriodContainer />;
 
   listSchedule = () => <ListScheduleContainer />;
 
@@ -50,6 +53,11 @@ class HearingScheduleApp extends React.PureComponent {
             path="/schedule/build/upload"
             title="Upload Files"
             render={this.buildScheduleUpload}
+          />
+          <PageRoute
+            path="/schedule/build/upload/:schedulePeriodId"
+            title="Upload Files"
+            render={this.showSchedulePeriod}
           />
         </div>
       </AppFrame>
