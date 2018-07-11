@@ -10,7 +10,7 @@ class AttorneyQueue
     CoLocatedAdminAction.where(assigned_by: user).group_by(&:appeal_id).each_with_object([]) do |(_k, value), result|
       # Attorneys can assign multiple admin actions per appeal, we assume a case is still on hold
       # if not all admin actions are completed
-      next if value.map(&:status).uniq == "completed"
+      next if value.map(&:status).uniq == ["completed"]
       result << value.each do |record|
         record.placed_on_hold_at = record.assigned_at
         record.status = "on_hold"

@@ -15,6 +15,8 @@ describe AttorneyQueue do
     let!(:action1) { create(:colocated_admin_action, assigned_by: user) }
     let!(:action2) { create(:colocated_admin_action, appeal: appeal, assigned_by: user) }
     let!(:action3) { create(:colocated_admin_action, appeal: appeal, assigned_by: user, status: "completed") }
+    let!(:action4) { create(:colocated_admin_action, assigned_by: user, status: "completed") }
+    let!(:action5) { create(:colocated_admin_action, assigned_by: user, status: "in_progress") }
 
     subject { AttorneyQueue.new(user: user).tasks }
 
@@ -22,10 +24,11 @@ describe AttorneyQueue do
       it "should return the list" do
         # action2 and action3 belong to the same appeal so return both of them because one
         # admin action is not completed yet
-        expect(subject.size).to eq 3
-        expect(subject.first.status).to eq "on_hold"
-        expect(subject.second.status).to eq "on_hold"
-        expect(subject.third.status).to eq "on_hold"
+        expect(subject.size).to eq 4
+        expect(subject[0].status).to eq "on_hold"
+        expect(subject[1].status).to eq "on_hold"
+        expect(subject[2].status).to eq "on_hold"
+        expect(subject[3].status).to eq "on_hold"
       end
     end
   end
