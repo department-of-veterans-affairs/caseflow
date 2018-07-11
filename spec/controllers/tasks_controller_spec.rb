@@ -74,12 +74,12 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    context "when user is neither judge nor attorney" do
+    context "when user has no role" do
       let(:role) { nil }
 
-      it "should not process the request succesfully" do
+      it "should return a 400 invalid role error" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
       end
     end
   end
@@ -216,7 +216,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "in_progress"
         expect(response_body.first["attributes"]["started_at"]).to_not be nil
 
-        patch :update, params: { task: { status: "on_hold" }, id: admin_action.id }
+        patch :update, params: { task: { status: "on_hold", on_hold_duration: 60 }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"

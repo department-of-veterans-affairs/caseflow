@@ -104,6 +104,20 @@ describe CoLocatedAdminAction do
   context ".update" do
     let(:colocated_admin_action) { create(:colocated_admin_action) }
 
+    context "when status is updated to on-hold" do
+      it "should validate on-hold duration" do
+        colocated_admin_action.update(status: "on_hold")
+        expect(colocated_admin_action.valid?).to eq false
+        expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
+
+        colocated_admin_action.update(status: "in_progress")
+        expect(colocated_admin_action.valid?).to eq true
+
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 60)
+        expect(colocated_admin_action.valid?).to eq true
+      end
+    end
+
     context "when status is updated to in-progress and on-hold" do
       it "should reset timestamps only if status has changed" do
         time1 = Time.utc(2015, 1, 1, 12, 0, 0)
@@ -119,13 +133,13 @@ describe CoLocatedAdminAction do
 
         time3 = Time.utc(2015, 1, 5, 12, 0, 0)
         Timecop.freeze(time3)
-        colocated_admin_action.update(status: "on_hold")
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time4 = Time.utc(2015, 1, 6, 12, 0, 0)
         Timecop.freeze(time4)
-        colocated_admin_action.update(status: "on_hold")
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
         # neither dates should change
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
