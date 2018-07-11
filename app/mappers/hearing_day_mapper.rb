@@ -1,7 +1,9 @@
 module HearingDayMapper
-  class InvalidRegionalOfficeError < StandardError; end
+  class InvalidRegionalOfficeError < StandardError
+  end
 
   COLUMN_NAME_REVERSE_MAP = {
+    hearing_pkseq: :id,
     hearing_type: :hearing_type,
     hearing_date: :hearing_date,
     folder_nr: :folder_nr,
@@ -9,7 +11,7 @@ module HearingDayMapper
     board_member: :judge_id,
     team: :team,
     mduser: :updated_by,
-    mdtime: :updated_by
+    mdtime: :updated_on
   }.freeze
 
   class << self

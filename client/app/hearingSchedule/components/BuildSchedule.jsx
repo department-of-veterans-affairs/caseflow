@@ -76,13 +76,14 @@ export default class BuildSchedule extends React.Component {
       <Link
         name="upload-files"
         button="primary"
-        to="/hearings/schedule/build/upload">
+        to="/schedule/build/upload">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
       </Link>
       <div className="cf-help-divider"></div>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
       <Link
-        name="view-schedule">
+        name="view-schedule"
+        to="/schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
