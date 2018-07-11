@@ -16,11 +16,13 @@ export const ACTIONS = {
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {
     value: 'RoSchedulePeriod',
+    shortDisplay: 'RO/CO',
     display: 'RO/CO hearings',
     template: '/ROAssignmentTemplate.xlsx'
   },
   JudgeSchedulePeriod: {
     value: 'JudgeSchedulePeriod',
+    shortDisplay: 'Judge',
     display: 'Judge non-availability',
     template: '/JudgeAssignmentTemplate.xlsx'
   }
