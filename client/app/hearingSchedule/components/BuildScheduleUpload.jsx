@@ -100,7 +100,7 @@ export default class BuildScheduleUpload extends React.Component {
       />
       <Link
         name="cancel"
-        to="/hearings/schedule/build">
+        to="/schedule/build">
         Cancel
       </Link>
       <div className="cf-push-right">
