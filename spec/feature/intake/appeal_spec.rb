@@ -20,7 +20,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   let(:veteran) do
-    Generators::Veteran.build(file_number: "22334455", first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: "22334455", first_name: "Ed", last_name: "Merica", participant_id: "55443322")
   end
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
@@ -115,7 +115,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: appeal.veteran.participant_id
+      participant_id: veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")
