@@ -22,21 +22,21 @@ class Generators::Rating
     end
 
     def build(attrs = {})
-      # attrs = default_attrs.merge(attrs)
-      #
-      # init_fakes(attrs[:participant_id])
-      #
-      # attrs[:profile_date] ||= generate_profile_date(attrs[:participant_id])
-      #
-      # existing_rating = Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]]
-      # fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
-      #
-      # Fakes::BGSService.rating_records[attrs[:participant_id]] << bgs_rating_data(attrs)
-      #
-      # Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]] =
-      #   bgs_rating_profile_data(attrs)
-      #
-      # Rating.new(attrs.except(:issues))
+      attrs = default_attrs.merge(attrs)
+
+      init_fakes(attrs[:participant_id])
+
+      attrs[:profile_date] ||= generate_profile_date(attrs[:participant_id])
+
+      existing_rating = Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]]
+      fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
+
+      Fakes::BGSService.rating_records[attrs[:participant_id]] << bgs_rating_data(attrs)
+
+      Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]] =
+        bgs_rating_profile_data(attrs)
+
+      Rating.new(attrs.except(:issues))
     end
 
     private
