@@ -7,12 +7,15 @@ class AttorneyQueue
   # Until we get rid of legacy tasks for attorneys, we have to search for tasks that are on hold
   # using assigned by user. We set status to being on_hold and placed_on_hold_at to assigned_at timestamp
   def tasks
-    # rubocop:disable Rails/FindEach
-    # 'find_each' doesn't return anything so we need to use 'each'
-    CoLocatedAdminAction.where.not(status: "completed").where(assigned_by: user).each do |record|
-      record.placed_on_hold_at = record.assigned_at
-      record.status = "on_hold"
-    end
-    # rubocop:enable Rails/FindEach
+    CoLocatedAdminAction.where(assigned_by: user).group_by(&:appeal_id).each_with_object([]) do |(_k, value), result|
+      # Attorneys can assign multiple admin actions per appeal, we assume a case is still on hold
+      # if not all admin actions are completed
+      next if value.map(&:status).uniq == "completed"
+      result << value.each do |record|
+        record.placed_on_hold_at = record.assigned_at
+        record.status = "on_hold"
+      end
+      result
+    end.flatten
   end
 end
