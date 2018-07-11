@@ -12,13 +12,10 @@ import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContai
 import ShowSchedulePeriodContainer from './containers/ShowSchedulePeriodContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
-import LoadingScreen from './containers/LoadingScreen';
 
 class HearingScheduleApp extends React.PureComponent {
 
-  buildSchedule = () => <LoadingScreen>
-    <BuildScheduleContainer />
-  </LoadingScreen>;
+  buildSchedule = () => <BuildScheduleContainer />;
 
   buildScheduleUpload = () => <BuildScheduleUploadContainer />;
 
