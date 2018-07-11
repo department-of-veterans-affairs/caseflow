@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { ChevronUp, ChevronDown } from './RenderFunctions';
+import { css, hover } from 'glamor';
+import { COLORS } from '../constants/AppConstants';
 
 /**
  * This component can be used to easily build tables.
@@ -38,6 +39,11 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
+  const sortableHeaderStyle = css(
+    { color: COLORS.PRIMARY },
+    hover({ cursor: 'pointer' })
+  );
+
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) =>
@@ -46,11 +52,13 @@ const HeaderRow = (props) => {
             {column.tooltip}
           </ReactTooltip>}
           {column.sortable ?
-            <Link data-tip data-for={`${columnNumber}-tooltip`} onClick={() => props.setSortOrder(columnNumber)}>
+            <span {...sortableHeaderStyle}
+              data-tip data-for={`${columnNumber}-tooltip`}
+              onClick={() => props.setSortOrder(columnNumber)}>
               {column.header || ''} {props.sortColIdx === columnNumber && (
                 props.sortDir > 0 ? <ChevronDown /> : <ChevronUp />
               )}
-            </Link> :
+            </span> :
             <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
           }
         </th>
