@@ -157,7 +157,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        sleep 1
+        sleep 5
         expect(page.current_path).to eq("/queue")
       end
 
