@@ -4,6 +4,7 @@ RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
@@ -11,6 +12,7 @@ RSpec.feature "Appeal Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:current_user) do

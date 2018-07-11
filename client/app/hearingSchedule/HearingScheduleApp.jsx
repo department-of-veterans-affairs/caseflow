@@ -9,20 +9,21 @@ import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
+import ShowSchedulePeriodContainer from './containers/ShowSchedulePeriodContainer';
+import ListScheduleContainer from './containers/ListScheduleContainer';
 import ScrollToTop from '../components/ScrollToTop';
-import LoadingScreen from './components/LoadingScreen';
 
 class HearingScheduleApp extends React.PureComponent {
 
-  buildSchedule = () => <LoadingScreen>
-    <BuildScheduleContainer />
-  </LoadingScreen>;
+  buildSchedule = () => <BuildScheduleContainer />;
 
-  buildScheduleUpload = () => <LoadingScreen>
-    <BuildScheduleUploadContainer />
-  </LoadingScreen>;
+  buildScheduleUpload = () => <BuildScheduleUploadContainer />;
 
-  render = () => <BrowserRouter>
+  showSchedulePeriod = () => <ShowSchedulePeriodContainer />;
+
+  listSchedule = () => <ListScheduleContainer />;
+
+  render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
       userDisplayName={this.props.userDisplayName}
@@ -37,15 +38,26 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/hearings/schedule/build"
+            path="/schedule/build"
             title="Caseflow Hearing Schedule"
             render={this.buildSchedule}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build/upload"
+            path="/schedule"
+            title="Scheduled Hearings"
+            render={this.listSchedule}
+          />
+          <PageRoute
+            exact
+            path="/schedule/build/upload"
             title="Upload Files"
             render={this.buildScheduleUpload}
+          />
+          <PageRoute
+            path="/schedule/build/upload/:schedulePeriodId"
+            title="Upload Files"
+            render={this.showSchedulePeriod}
           />
         </div>
       </AppFrame>
