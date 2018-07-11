@@ -293,17 +293,10 @@ RSpec.feature "Higher Level Review Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
+    intake = HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
-    find("#form-select").send_keys :enter
-
-    safe_click ".cf-submit.usa-button"
-
-    fill_in "Search small", with: "12341234"
-
-    click_on "Search"
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"

@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -128,7 +128,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: action.payload.responseErrorCode
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });

@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getReceiptDateError } from '../util';
+import { getOptionSelectedError, getPageError, getReceiptDateError } from '../util';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
@@ -149,7 +149,7 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: action.payload.responseErrorCode
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });

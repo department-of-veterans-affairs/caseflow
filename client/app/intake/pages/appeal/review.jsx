@@ -12,13 +12,12 @@ import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
     const {
       appealStatus,
-      requestState,
       veteranName,
       receiptDate,
       receiptDateError,
@@ -47,10 +46,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
-        <ReviewIntakeErrorAlert
-          reviewIntakeError={reviewIntakeError} />
-      }
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -134,7 +130,6 @@ export default connect(
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
     docketTypeError: state.appeal.docketTypeError,
-    requestState: state.appeal.requestStatus.submitReview,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

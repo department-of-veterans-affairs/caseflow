@@ -169,14 +169,11 @@ RSpec.feature "RAMP Refiling Intake" do
         text: "Left knee rating increase"
       )
 
-      visit "/intake/search"
-      scroll_element_in_to_view(".cf-submit.usa-button")
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Selection (VA Form 21-4138)").click
-      end
-      safe_click ".cf-submit.usa-button"
-      fill_in "Search small", with: "12341234"
-      click_on "Search"
+      intake = RampRefilingIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher Level Review", match: :prefer_exact).click

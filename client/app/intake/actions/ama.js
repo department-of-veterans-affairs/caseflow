@@ -29,20 +29,13 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
-        const responseErrorCodes = responseObject.validation_error_codes;
-        const responseErrorCode = responseObject.error_code;
+        const responseObject = JSON.parse(error.response.text);
+        const responseErrorCodes = responseObject.error_codes;
 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
-            responseErrorCodes,
-            responseErrorCode
+            responseErrorCodes
           },
           meta: {
             analytics: (triggerEvent, category, actionName) => {
@@ -85,12 +78,7 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
         return true;
       },
       (error) => {
-        let responseObject = {};
-
-        try {
-          responseObject = JSON.parse(error.response.text);
-        } catch (ex) { /* pass */ }
-
+        const responseObject = JSON.parse(error.response.text);
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
 

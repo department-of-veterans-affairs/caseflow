@@ -115,7 +115,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.claimants.first).to have_attributes(
-      participant_id: veteran.participant_id
+      participant_id: appeal.veteran.participant_id
     )
 
     expect(page).to have_content("Identify issues on")
@@ -164,17 +164,10 @@ RSpec.feature "Appeal Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
+    intake = AppealIntake.new(veteran_file_number: "22334455", user: current_user)
+    intake.start!
+
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: "Notice of Disagreement (VA Form 10182)"
-    find("#form-select").send_keys :enter
-
-    safe_click ".cf-submit.usa-button"
-
-    fill_in "Search small", with: "22334455"
-
-    click_on "Search"
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 

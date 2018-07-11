@@ -12,13 +12,12 @@ import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
     const {
       higherLevelReviewStatus,
-      requestState,
       veteranName,
       receiptDate,
       receiptDateError,
@@ -40,10 +39,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
-        <ReviewIntakeErrorAlert
-          reviewIntakeError={reviewIntakeError} />
-      }
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -140,7 +136,6 @@ export default connect(
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
     sameOfficeError: state.higherLevelReview.sameOfficeError,
-    requestState: state.higherLevelReview.requestStatus.submitReview,
     reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

@@ -236,17 +236,10 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
+    intake = SupplementalClaimIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: "Supplemental Claim (VA Form 21-526b)"
-    find("#form-select").send_keys :enter
-
-    safe_click ".cf-submit.usa-button"
-
-    fill_in "Search small", with: "12341234"
-
-    click_on "Search"
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 

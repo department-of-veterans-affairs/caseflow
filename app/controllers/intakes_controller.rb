@@ -31,13 +31,10 @@ class IntakesController < ApplicationController
     if intake.review!(params)
       render json: intake.ui_hash
     else
-      render json: { validation_error_codes: intake.review_errors }, status: 422
+      render json: { error_codes: intake.review_errors }, status: 422
     end
   rescue StandardError
-    render json: {
-      validation_error_codes: intake.review_errors || false,
-      error_code: "default"
-    }, status: 500
+    render json: { error_codes: { other: ["unknown_error"] } }, status: 500
   end
 
   def complete

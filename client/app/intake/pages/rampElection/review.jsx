@@ -11,13 +11,12 @@ import { submitReview } from '../../actions/rampElection';
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
     const {
       rampElectionStatus,
-      requestState,
       veteranName,
       optionSelected,
       optionSelectedError,
@@ -43,10 +42,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Opt-In Election Form</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
-        <ReviewIntakeErrorAlert
-          reviewIntakeError={reviewIntakeError} />
-      }
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -115,7 +111,6 @@ export default connect(
     optionSelectedError: state.rampElection.optionSelectedError,
     receiptDate: state.rampElection.receiptDate,
     receiptDateError: state.rampElection.receiptDateError,
-    requestState: state.rampElection.requestStatus.submitReview,
     reviewIntakeError: state.rampElection.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

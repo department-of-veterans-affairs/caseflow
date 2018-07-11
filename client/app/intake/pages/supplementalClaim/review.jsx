@@ -10,13 +10,12 @@ import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
-import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
     const {
       supplementalClaimStatus,
-      requestState,
       veteranName,
       receiptDate,
       receiptDateError,
@@ -34,10 +33,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
-        <ReviewIntakeErrorAlert
-          reviewIntakeError={reviewIntakeError} />
-      }
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -109,7 +105,6 @@ export default connect(
     supplementalClaimStatus: getIntakeStatus(state),
     receiptDate: state.supplementalClaim.receiptDate,
     receiptDateError: state.supplementalClaim.receiptDateError,
-    requestState: state.supplementalClaim.requestStatus.submitReview,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

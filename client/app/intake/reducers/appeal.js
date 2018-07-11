@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -146,7 +146,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: action.payload.responseErrorCode
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });

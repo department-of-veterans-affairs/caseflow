@@ -13,7 +13,7 @@ import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../acti
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
-import ReviewIntakeErrorAlert from '../../components/ReviewIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   beginNextIntake = () => {
@@ -22,7 +22,6 @@ class Review extends React.PureComponent {
   render() {
     const {
       rampRefilingStatus,
-      requestState,
       veteranName,
       optionSelected,
       optionSelectedError,
@@ -64,8 +63,7 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      { submitInvalidOptionError && <Alert title="Something went wrong" type="error">
-        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+      { submitInvalidOptionError && <ErrorAlert />}
 
       { toggleIneligibleError(hasInvalidOption, optionSelected) &&
         <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
@@ -84,10 +82,7 @@ class Review extends React.PureComponent {
 
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
-      { requestState === REQUEST_STATE.FAILED && reviewIntakeError &&
-        <ReviewIntakeErrorAlert
-          reviewIntakeError={reviewIntakeError} />
-      }
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -137,7 +132,6 @@ export default connect(
     appealDocket: state.rampRefiling.appealDocket,
     appealDocketError: state.rampRefiling.appealDocketError,
     submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError,
-    requestState: state.rampRefiling.requestStatus.submitReview,
     reviewIntakeError: state.rampRefiling.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
