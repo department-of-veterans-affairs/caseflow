@@ -56,7 +56,12 @@ describe RampElection do
   end
 
   context "#sync!" do
+    before { ramp_election.save! }
+
     subject { ramp_election.sync! }
+
+    let!(:ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+    let(:end_product_reference_id) { ep.claim_id }
 
     it "calls recreate_issues_from_contentions! and sync_ep_status!" do
       expect(ramp_election).to receive(:recreate_issues_from_contentions!)
