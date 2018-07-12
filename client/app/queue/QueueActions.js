@@ -185,14 +185,15 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
   );
 };
 
-export const setSelectionOfTaskOfUser = ({ userId, taskId, selected }) => ({
-  type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
-  payload: {
-    userId,
-    taskId,
-    selected
-  }
-});
+export const setSelectionOfTaskOfUser =
+  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) => ({
+    type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
+    payload: {
+      userId,
+      taskId,
+      selected
+    }
+  });
 
 const initialTaskAssignment = ({ task, assigneeId }) => ({
   type: ACTIONS.TASK_INITIAL_ASSIGNED,
