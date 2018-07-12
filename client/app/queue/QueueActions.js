@@ -108,16 +108,17 @@ export const startEditingAppealIssue = (appealId, issueId, attributes) => (dispa
   }
 };
 
-export const deleteEditingAppealIssue = (appealId, issueId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
-    payload: {
-      appealId,
-      issueId
-    }
-  });
-  dispatch(editAppeal(appealId, attributes));
-};
+export const deleteEditingAppealIssue =
+  (appealId: string, issueId: string, attributes: Object) => (dispatch: Dispatch) => {
+    dispatch({
+      type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
+      payload: {
+        appealId,
+        issueId
+      }
+    });
+    dispatch(editAppeal(appealId, attributes));
+  };
 
 export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
