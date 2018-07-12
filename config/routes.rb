@@ -100,6 +100,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
+  post 'hearings/schedule/build/upload/upload_file', to: "hearings/schedule_periods#upload_file"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"

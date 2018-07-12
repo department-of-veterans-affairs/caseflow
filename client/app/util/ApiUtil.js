@@ -139,6 +139,23 @@ const ApiUtil = {
     return result;
   },
 
+  uploadFile(file, path, onSuccess) {
+    let xhr = new XMLHttpRequest();
+    const headers = ReactOnRails.authenticityHeaders();
+
+    xhr.open("post", path, true);
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    xhr.setRequestHeader("X-File-Name", file.name);
+    xhr.setRequestHeader("X-File-Size", file.size);
+    xhr.setRequestHeader("X-File-Type", file.type);
+    xhr.setRequestHeader('X-CSRF-Token', headers['X-CSRF-Token']);
+    xhr.setRequestHeader('X-Requested-With', headers['X-Requested-With']);
+
+    xhr.onload = () => onSuccess();
+
+    xhr.send(file);
+  },
+
   ..._.mapValues(httpMethods, timeApiRequest)
 };
 
