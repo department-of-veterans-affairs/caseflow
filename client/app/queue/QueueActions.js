@@ -50,7 +50,7 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-export const editAppeal = (appealId, attributes) => ({
+const editAppeal = (appealId, attributes) => ({
   type: ACTIONS.EDIT_APPEAL,
   payload: {
     appealId,
@@ -58,14 +58,14 @@ export const editAppeal = (appealId, attributes) => ({
   }
 });
 
-export const deleteAppeal = (appealId) => ({
+export const deleteAppeal = (appealId: string) => ({
   type: ACTIONS.DELETE_APPEAL,
   payload: {
     appealId
   }
 });
 
-export const editStagedAppeal = (appealId, attributes) => ({
+export const editStagedAppeal = (appealId: string, attributes: Object) => ({
   type: ACTIONS.EDIT_STAGED_APPEAL,
   payload: {
     appealId,
@@ -73,21 +73,21 @@ export const editStagedAppeal = (appealId, attributes) => ({
   }
 });
 
-export const stageAppeal = (appealId) => ({
+export const stageAppeal = (appealId: string) => ({
   type: ACTIONS.STAGE_APPEAL,
   payload: {
     appealId
   }
 });
 
-export const checkoutStagedAppeal = (appealId) => ({
+export const checkoutStagedAppeal = (appealId: string) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
 });
 
-export const updateEditingAppealIssue = (attributes) => ({
+export const updateEditingAppealIssue = (attributes: Object) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
   payload: {
     attributes
