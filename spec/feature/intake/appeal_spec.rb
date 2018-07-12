@@ -20,7 +20,12 @@ RSpec.feature "Appeal Intake" do
   end
 
   let(:veteran) do
-    Generators::Veteran.build(file_number: "22334455", first_name: "Ed", last_name: "Merica", participant_id: "55443322")
+    Generators::Veteran.build(
+      file_number: "22334455",
+      first_name: "Ed",
+      last_name: "Merica",
+      participant_id: "55443322"
+    )
   end
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
