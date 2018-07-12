@@ -16,11 +16,14 @@ describe CoLocatedAdminAction do
   context ".create" do
     context "when all fields are present" do
       subject do
-        CoLocatedAdminAction.create(
-          assigned_by: attorney,
-          titles: [:aoj, :poa_clarification],
-          appeal: appeal
-        )
+        CoLocatedAdminAction.create([{
+                                      assigned_by: attorney,
+                                      title: :aoj,
+                                      appeal: appeal
+                                    },
+                                     { assigned_by: attorney,
+                                       title: :poa_clarification,
+                                       appeal: appeal }])
       end
 
       it "creates a co-located task successfully" do
@@ -40,14 +43,14 @@ describe CoLocatedAdminAction do
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
 
         # should start from index 0
-        record = CoLocatedAdminAction.create(assigned_by: attorney, titles: [:aoj], appeal: appeal)
+        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
       end
     end
@@ -56,7 +59,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:aoj]
+          title: :aoj
         )
       end
       it "does not create a co-located task" do
@@ -73,7 +76,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:aoj],
+          title: :aoj,
           appeal: appeal
         )
       end
@@ -87,7 +90,7 @@ describe CoLocatedAdminAction do
       subject do
         CoLocatedAdminAction.create(
           assigned_by: attorney,
-          titles: [:test],
+          title: :test,
           appeal: appeal
         )
       end
@@ -100,6 +103,20 @@ describe CoLocatedAdminAction do
 
   context ".update" do
     let(:colocated_admin_action) { create(:colocated_admin_action) }
+
+    context "when status is updated to on-hold" do
+      it "should validate on-hold duration" do
+        colocated_admin_action.update(status: "on_hold")
+        expect(colocated_admin_action.valid?).to eq false
+        expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
+
+        colocated_admin_action.update(status: "in_progress")
+        expect(colocated_admin_action.valid?).to eq true
+
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 60)
+        expect(colocated_admin_action.valid?).to eq true
+      end
+    end
 
     context "when status is updated to in-progress and on-hold" do
       it "should reset timestamps only if status has changed" do
@@ -116,13 +133,13 @@ describe CoLocatedAdminAction do
 
         time3 = Time.utc(2015, 1, 5, 12, 0, 0)
         Timecop.freeze(time3)
-        colocated_admin_action.update(status: "on_hold")
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time4 = Time.utc(2015, 1, 6, 12, 0, 0)
         Timecop.freeze(time4)
-        colocated_admin_action.update(status: "on_hold")
+        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
         # neither dates should change
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3

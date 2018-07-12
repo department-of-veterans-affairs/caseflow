@@ -123,6 +123,8 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 
 // max length of VACOLS issue description field `ISSDESC`
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+// max length for Attorney comments `DECASS.DEATCOM`
+export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,

@@ -61,7 +61,7 @@ class AppealsController < ApplicationController
                           name: "AppealsController.index") do
 
       appeals = []
-      if FeatureToggle.enabled?(:queue_beaam_appeals)
+      if FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user)
         appeals.concat(Appeal.where(veteran_file_number: file_number).to_a)
       end
       # rubocop:disable Lint/HandleExceptions
