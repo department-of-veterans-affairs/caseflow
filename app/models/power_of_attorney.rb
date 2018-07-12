@@ -14,7 +14,6 @@
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
-  include AssociatedBgsRecord
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name
