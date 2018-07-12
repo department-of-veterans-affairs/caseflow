@@ -26,8 +26,7 @@ const horizontalRuleStyling = css({
   marginBottom: '3rem'
 });
 
-// TODO: Move this out to its own component when it gets complex.
-const PowerOfAttorneyDetail = ({ appeal }) => <p>{appeal.attributes.power_of_attorney}</p>;
+const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
 
 class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -53,7 +52,7 @@ class CaseDetailsView extends React.PureComponent {
         isLegacyAppeal={this.props.appeal.attributes.is_legacy_appeal}
         issues={this.props.appeal.attributes.issues}
       />
-      <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
+      <PowerOfAttorneyDetail title="Power of Attorney" poa={this.props.appeal.attributes.power_of_attorney} />
       { this.props.appeal.attributes.hearings.length &&
       <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
       <AppellantDetail title="About the Veteran" appeal={this.props.appeal} />
