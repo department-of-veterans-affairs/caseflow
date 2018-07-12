@@ -18,7 +18,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, AllAttorneys
+  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, Attorneys
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
