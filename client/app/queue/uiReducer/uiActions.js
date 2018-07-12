@@ -147,3 +147,10 @@ export const setSelectedAssignee = ({ assigneeId }) => ({
     assigneeId
   }
 });
+
+export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
+  type: ACTIONS.SET_SELECTED_ASSIGNEE_SECONDARY,
+  payload: {
+    assigneeId
+  }
+});

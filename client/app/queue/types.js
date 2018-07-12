@@ -75,7 +75,8 @@ export type UiState = {
     deleteIssue: boolean
   },
   featureToggles: Object,
-  selectedAssignee: ?string
+  selectedAssignee: ?string,
+  selectedAssigneeSecondary: ?string
 };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
