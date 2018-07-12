@@ -9,6 +9,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
+import VeteranDetail from './VeteranDetail';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
@@ -63,8 +64,10 @@ class CaseDetailsView extends React.PureComponent {
       />
       <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
       { this.props.appeal.attributes.hearings.length &&
-      <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
-      <AppellantDetail title="About the Veteran" appeal={this.props.appeal} />
+        <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
+      <VeteranDetail title="About the Veteran" appeal={this.props.appeal} />
+      { !_.isNull(this.props.appeal.attributes.appellant_full_name) &&
+        <AppellantDetail title="About the Appellant" appeal={this.props.appeal} /> }
     </StickyNavContentArea>
   </AppSegment>;
 }
