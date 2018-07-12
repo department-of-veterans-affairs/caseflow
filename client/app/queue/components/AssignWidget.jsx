@@ -35,7 +35,9 @@ import {
   ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
   ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY,
   ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY,
-  ASSIGN_WIDGET_BUTTON_TEXT
+  ASSIGN_WIDGET_BUTTON_TEXT,
+  ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL,
+  ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL
 } from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
@@ -146,6 +148,10 @@ class AssignWidget extends React.PureComponent<Props> {
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
+    if (allAttorneys.error) {
+      placeholderOther = ASSIGN_WIDGET_
+    }
+
     return <React.Fragment>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       {success && <Alert type="success" title={success} />}
@@ -154,7 +160,7 @@ class AssignWidget extends React.PureComponent<Props> {
         alignItems: 'center',
         flexWrap: 'wrap',
         '& > *': { marginRight: '1rem' } })}>
-        <p>Assign to:&nbsp;</p>
+        <p>{ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
         <SearchableDropdown
           name={ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
           hideLabel
@@ -166,7 +172,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         {showOtherSearchBox &&
           <React.Fragment>
-            <p>Enter the name of an attorney or judge:</p>
+            <p>{ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
               name={ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
               hideLabel
