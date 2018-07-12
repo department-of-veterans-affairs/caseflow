@@ -99,8 +99,6 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    throw "FRONT END ERROR";
-
     const {
       loadingComponent: LoadingComponent,
       errorComponent: ErrorComponent
@@ -115,6 +113,8 @@ class LoadingDataDisplay extends React.PureComponent {
         {this.errorMsgHelper(this.state.statusCode)}
       </ErrorComponent>;
     }
+
+    throw "FRONT END ERROR";
 
     if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
       return this.props.children;
