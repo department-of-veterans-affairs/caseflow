@@ -122,7 +122,6 @@ class AssignWidget extends React.PureComponent<Props> {
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,
       value: OTHER });
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
-    const showOtherSearchBox = selectedAssignee === OTHER;
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
@@ -155,7 +154,7 @@ class AssignWidget extends React.PureComponent<Props> {
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
-        {showOtherSearchBox &&
+        {selectedAssignee === OTHER &&
           <React.Fragment>
             <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
