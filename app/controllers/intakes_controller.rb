@@ -33,7 +33,8 @@ class IntakesController < ApplicationController
     else
       render json: { error_codes: intake.review_errors }, status: 422
     end
-  rescue StandardError
+  rescue StandardError => error
+    Raven.capture_exception(error)
     render json: { error_codes: { other: ["unknown_error"] } }, status: 500
   end
 
