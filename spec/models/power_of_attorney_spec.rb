@@ -23,10 +23,11 @@ describe PowerOfAttorney do
   end
 
   describe "error handling" do
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_raise(Savon::Error)
+    end
+
     it "gracefully handles error fetching address" do
-      allow_any_instance_of(BGSService).to receive(:find_address_by_participant_id).and_raise(Savon::Error)
-      expect(power_of_attorney.load_bgs_address!).to eq nil
-      expect(power_of_attorney.bgs_participant_id).to_not eq nil
       expect(power_of_attorney.bgs_representative_address).to eq nil
     end
   end

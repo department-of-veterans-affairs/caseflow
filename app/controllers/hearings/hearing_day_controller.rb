@@ -1,20 +1,17 @@
-class Hearings::HearingDayController < ApplicationController
-  before_action :verify_access
-  before_action :check_hearing_schedule_out_of_service
-
+class Hearings::HearingDayController < HearingScheduleController
   # Controller to add and update hearing schedule days.
 
   # show schedule days for date range provided
   def index
-    @start_date = validate_start_date(params[:start_date])
-    @end_date = validate_end_date(params[:end_date])
+    start_date = validate_start_date(params[:start_date])
+    end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, travel_board = HearingDay.load_days(@start_date, @end_date, regional_office)
+    video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
       format.html do
-        render "hearings/schedule_index"
+        render "hearing_schedule/index"
       end
       format.json do
         render json: {
@@ -43,20 +40,7 @@ class Hearings::HearingDayController < ApplicationController
     }, status: :ok
   end
 
-  # :nocov:
-  def logo_name
-    "Hearing Schedule"
-  end
-
   private
-
-  def verify_access
-    verify_authorized_roles("Hearing Schedule")
-  end
-
-  def check_hearing_schedule_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("hearing_schedule_out_of_service")
-  end
 
   def hearing
     @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
@@ -82,10 +66,6 @@ class Hearings::HearingDayController < ApplicationController
     end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
   end
 
-  def set_application
-    RequestStore.store[:application] = "hearings"
-  end
-
   def invalid_record_error(hearing)
     render json:  {
       "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
@@ -102,16 +82,32 @@ class Hearings::HearingDayController < ApplicationController
   end
 
   def json_hearings(hearings)
-    ActiveModelSerializers::SerializableResource.new(
+    json_hash = ActiveModelSerializers::SerializableResource.new(
       hearings,
       each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
+
+    format_for_client(json_hash)
   end
 
   def json_tb_hearings(tbhearings)
-    ActiveModelSerializers::SerializableResource.new(
+    json_hash = ActiveModelSerializers::SerializableResource.new(
       tbhearings,
       each_serializer: ::Hearings::TravelBoardScheduleSerializer
     ).as_json
+
+    format_for_client(json_hash)
+  end
+
+  def format_for_client(json_hash)
+    if json_hash[:data].is_a?(Array)
+      hearing_array = []
+      json_hash[:data].each do |hearing_hash|
+        hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
+      end
+      hearing_array
+    else
+      { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
+    end
   end
 end

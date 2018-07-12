@@ -14,7 +14,7 @@ class JudgeReviewTaskTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getAppealForTask = (task, attr) => {
-    const appeal = this.props.appeals[task.vacolsId];
+    const appeal = this.props.appeals[task.appealId];
 
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
@@ -25,6 +25,9 @@ class JudgeReviewTaskTable extends React.PureComponent {
   }, {
     header: COPY.JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE,
     valueFunction: (task) => {
+      if (!task.attributes.assigned_by_first_name) {
+        return task.attributes.document_id;
+      }
       const firstInitial = String.fromCodePoint(task.attributes.assigned_by_first_name.codePointAt(0));
       const nameAbbrev = `${firstInitial}. ${task.attributes.assigned_by_last_name}`;
 

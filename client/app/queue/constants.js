@@ -7,6 +7,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -76,13 +77,16 @@ export const TASK_ACTIONS = {
 
 export const ERROR_FIELD_REQUIRED = 'This field is required';
 
-export const JUDGE_DECISION_OPTIONS = [{
-  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-  value: DECISION_TYPES.DISPATCH
-}, {
-  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-  value: DECISION_TYPES.OMO_REQUEST
-}];
+export const JUDGE_DECISION_OPTIONS = {
+  DRAFT_DECISION: {
+    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+    value: DECISION_TYPES.DISPATCH
+  },
+  OMO_REQUEST: {
+    label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+    value: DECISION_TYPES.OMO_REQUEST
+  }
+};
 
 export const DRAFT_DECISION_OPTIONS = [{
   label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
@@ -118,10 +122,12 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 
 // max length of VACOLS issue description field `ISSDESC`
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+// max length for Attorney comments `DECASS.DEATCOM`
+export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
 export const USER_ROLES = {
-  ATTORNEY: 'Attorney',
-  JUDGE: 'Judge'
+  ATTORNEY: USER_ROLE_TYPES.attorney,
+  JUDGE: USER_ROLE_TYPES.judge
 };
 
 export const PAGE_TITLES = {

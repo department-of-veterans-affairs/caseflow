@@ -1,7 +1,7 @@
-class EndProductEstablishment
-  include ActiveModel::Model
-
-  attr_accessor :veteran, :reference_id, :claim_date, :code, :valid_modifiers, :station, :cached_status
+class EndProductEstablishment < ApplicationRecord
+  class EstablishedEndProductNotFound < StandardError; end
+  attr_accessor :valid_modifiers
+  belongs_to :source, polymorphic: true
 
   class InvalidEndProductError < StandardError; end
 
@@ -9,10 +9,15 @@ class EndProductEstablishment
     fail InvalidEndProductError unless end_product_to_establish.valid?
 
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      self.reference_id = result.claim_id
+      update!(reference_id: result.claim_id, established_at: Time.zone.now)
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  end
+
+  # Fetch the resulting end product from the reference_id
+  def result
+    @result ||= fetch_result
   end
 
   def description
@@ -24,9 +29,25 @@ class EndProductEstablishment
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
+  def sync!
+    # There is no need to sync end_product_status if the status
+    # is already inactive since an EP can never leave that state
+    return true unless status_active?
+
+    fail EstablishedEndProductNotFound unless result
+    update!(
+      synced_status: result.status_type_code,
+      last_synced_at: Time.zone.now
+    )
+  end
+
   delegate :contentions, to: :end_product_to_establish
 
   private
+
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
 
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
@@ -47,6 +68,17 @@ class EndProductEstablishment
     )
   end
 
+  def fetch_result
+    return nil unless reference_id
+
+    result = veteran.end_products.find do |end_product|
+      end_product.claim_id == reference_id
+    end
+
+    fail EstablishedEndProductNotFound unless result
+    result
+  end
+
   def end_product_modifier
     return valid_modifiers.first if valid_modifiers.count == 1
 
@@ -55,5 +87,9 @@ class EndProductEstablishment
         return modifier
       end
     end
+  end
+
+  def status_active?
+    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 end

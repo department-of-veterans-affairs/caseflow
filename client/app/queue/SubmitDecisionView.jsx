@@ -32,7 +32,8 @@ import {
   fullWidth,
   marginBottom,
   marginTop,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  ATTORNEY_COMMENTS_MAX_LENGTH
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
@@ -59,7 +60,7 @@ class SubmitDecisionView extends React.PureComponent {
 
   getBreadcrumb = () => ({
     breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/appeals/${this.props.vacolsId}/submit`
+    path: `/queue/appeals/${this.props.appealId}/submit`
   });
 
   validateForm = () => {
@@ -85,7 +86,7 @@ class SubmitDecisionView extends React.PureComponent {
         attributes: {
           issues,
           veteran_full_name,
-          vacols_id: vacolsId
+          vacols_id: appealId
         }
       },
       decision,
@@ -105,7 +106,7 @@ class SubmitDecisionView extends React.PureComponent {
     been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
-      then(() => this.props.deleteAppeal(vacolsId));
+      then(() => this.props.deleteAppeal(appealId));
   };
 
   getJudgeSelectComponent = () => {
@@ -222,13 +223,14 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
+        maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
     </React.Fragment>;
   };
 }
 
 SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired
 };
 
@@ -237,12 +239,12 @@ const mapStateToProps = (state, ownProps) => {
     queue: {
       stagedChanges: {
         appeals: {
-          [ownProps.vacolsId]: appeal
+          [ownProps.appealId]: appeal
         },
         taskDecision: decision
       },
       tasks: {
-        [ownProps.vacolsId]: task
+        [ownProps.appealId]: task
       },
       judges
     },

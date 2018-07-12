@@ -96,6 +96,7 @@ class ApplicationController < ApplicationBaseController
   def can_access_queue?
     return true if current_user.attorney_in_vacols?
     return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
   end
   helper_method :can_access_queue?

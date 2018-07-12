@@ -1,6 +1,11 @@
 describe HigherLevelReviewIntake do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -151,8 +156,30 @@ describe HigherLevelReviewIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: intake.detail.end_product_reference_id,
-        contention_descriptions: ["decision text"]
+        contention_descriptions: ["decision text"],
+        special_issues: []
       )
+    end
+
+    context "when same office is requested" do
+      let(:detail) do
+        HigherLevelReview.create!(
+          veteran_file_number: "64205555",
+          receipt_date: 3.days.ago,
+          same_office: true
+        )
+      end
+
+      it "adds same office to special issues" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: intake.detail.veteran_file_number,
+          claim_id: intake.detail.end_product_reference_id,
+          contention_descriptions: ["decision text"],
+          special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
+        )
+      end
     end
 
     context "when no requested issues" do

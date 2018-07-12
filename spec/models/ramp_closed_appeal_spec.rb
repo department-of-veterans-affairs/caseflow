@@ -1,16 +1,19 @@
 describe RampClosedAppeal do
   before do
-    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
     FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    RequestStore[:current_user] = user
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:vacols_case) { create(:case) }
+  let(:vacols_case) { create(:case, :status_advance) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:ep_status) { "PEND" }
+  let(:partial_closure_issue_sequence_ids) { nil }
+  let(:user) { Generators::User.build }
 
   let(:end_product) do
     Generators::EndProduct.build(
@@ -32,8 +35,22 @@ describe RampClosedAppeal do
     RampClosedAppeal.create!(
       vacols_id: appeal.vacols_id,
       nod_date: 2.years.ago,
-      ramp_election: ramp_election
+      ramp_election: ramp_election,
+      partial_closure_issue_sequence_ids: partial_closure_issue_sequence_ids
     )
+  end
+
+  context "#partial?" do
+    subject { ramp_closed_appeal.partial? }
+
+    context "when partial_closure_issue_sequence_ids are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when partial_closure_issue_sequence_ids are set" do
+      let(:partial_closure_issue_sequence_ids) { [1, 2, 3] }
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#reclose!" do
@@ -55,13 +72,12 @@ describe RampClosedAppeal do
     end
 
     context "when appeal is in history status" do
-      let(:vacols_case) { create(:case, :status_complete) }
+      let(:vacols_case) { create(:case, :reopenable, bfdc: "B") }
 
       it "reopens the election and closes it with as a RAMP Opt-in" do
-        expect(LegacyAppeal).to receive(:reopen)
-        expect(LegacyAppeal).to receive(:close)
-
         subject
+
+        expect(vacols_case.reload.bfdc).to eq("P")
       end
 
       context "when appeal was decided by BVA" do
@@ -79,6 +95,19 @@ describe RampClosedAppeal do
         expect(LegacyAppeal).to receive(:close)
 
         subject
+      end
+
+      context "when it was a partial closure" do
+        let(:issue) { create(:case_issue) }
+        let(:vacols_case) { create(:case, case_issues: [issue]) }
+        let(:partial_closure_issue_sequence_ids) { [issue.issseq] }
+
+        it "only recloses the issues with a P" do
+          subject
+
+          expect(vacols_case.reload.bfdc).to_not eq("P")
+          expect(issue.reload.issdc).to eq("P")
+        end
       end
     end
   end
@@ -126,8 +155,6 @@ describe RampClosedAppeal do
       ]
     end
 
-    let(:user) { Generators::User.build }
-
     before do
       expect(AppealRepository).to receive(:find_ramp_reopened_appeals)
         .with(%w[SHANE1 SHANE2 CANCELED1 CANCELED2] + [appeal.vacols_id])
@@ -136,14 +163,6 @@ describe RampClosedAppeal do
                       OpenStruct.new(vacols_id: "CANCELED1"),
                       OpenStruct.new(vacols_id: "CANCELED2")
                     ])
-
-      RequestStore[:current_user] = user
-
-      FeatureToggle.enable!(:reclose_ramp_appeals_script)
-    end
-
-    after do
-      FeatureToggle.disable!(:reclose_ramp_appeals_script)
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do

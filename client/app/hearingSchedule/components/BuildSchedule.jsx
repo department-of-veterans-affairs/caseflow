@@ -1,12 +1,15 @@
 import React from 'react';
+import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
+import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
 import { downloadIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
+import { SPREADSHEET_TYPES } from '../constants';
 
 export default class BuildSchedule extends React.Component {
 
@@ -14,6 +17,17 @@ export default class BuildSchedule extends React.Component {
     const {
       pastUploads
     } = this.props;
+
+    const downloadOptions = [
+      {
+        title: SPREADSHEET_TYPES.RoSchedulePeriod.display,
+        target: SPREADSHEET_TYPES.RoSchedulePeriod.template
+      },
+      {
+        title: SPREADSHEET_TYPES.JudgeSchedulePeriod.display,
+        target: SPREADSHEET_TYPES.JudgeSchedulePeriod.template
+      }
+    ];
 
     const pastUploadsColumns = [
       {
@@ -34,7 +48,7 @@ export default class BuildSchedule extends React.Component {
       {
         header: 'Uploaded by',
         align: 'left',
-        valueName: 'uploaded_by'
+        valueName: 'uploadedBy'
       },
       {
         header: '',
@@ -43,24 +57,13 @@ export default class BuildSchedule extends React.Component {
       }
     ];
 
-    const downloadOptions = [
-      {
-        title: 'RO/CO hearings',
-        target: '/hearings/roco' },
-      {
-        title: 'Judge non-availability',
-        target: '/hearings/judge' }
-    ];
-
-    const pastUploadsRows = pastUploads.map((pastUpload) => {
-      return {
-        date: `${pastUpload.startDate} - ${pastUpload.endDate}`,
-        type: pastUpload.type,
-        uploaded: pastUpload.createdAt,
-        uploaded_by: pastUpload.user,
-        download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
-      };
-    });
+    const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
+      date: `${formatDate(pastUpload.startDate)} - ${formatDate(pastUpload.endDate)}`,
+      type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
+      uploaded: formatDate(pastUpload.createdAt),
+      uploadedBy: pastUpload.userFullName,
+      download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
+    }));
 
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
@@ -73,13 +76,14 @@ export default class BuildSchedule extends React.Component {
       <Link
         name="upload-files"
         button="primary"
-        target="_blank">
+        to="/schedule/build/upload">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK}
       </Link>
       <div className="cf-help-divider"></div>
       <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER}</h2>
       <Link
-        name="view-schedule">
+        name="view-schedule"
+        to="/schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
@@ -91,14 +95,12 @@ export default class BuildSchedule extends React.Component {
 }
 
 BuildSchedule.propTypes = {
-  pastUploads: PropTypes.arrayOf(
-    PropTypes.shape({
-      type: PropTypes.string,
-      user: PropTypes.string,
-      startDate: PropTypes.date,
-      endDate: PropTypes.date,
-      createdAt: PropTypes.date,
-      fileName: PropTypes.string
-    })
-  )
+  pastUploads: PropTypes.shape({
+    type: PropTypes.string,
+    userFullName: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    createdAt: PropTypes.string,
+    fileName: PropTypes.string
+  })
 };

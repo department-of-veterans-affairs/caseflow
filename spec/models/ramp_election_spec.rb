@@ -1,6 +1,11 @@
 describe RampElection do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -51,7 +56,12 @@ describe RampElection do
   end
 
   context "#sync!" do
+    before { ramp_election.save! }
+
     subject { ramp_election.sync! }
+
+    let!(:ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+    let(:end_product_reference_id) { ep.claim_id }
 
     it "calls recreate_issues_from_contentions! and sync_ep_status!" do
       expect(ramp_election).to receive(:recreate_issues_from_contentions!)
@@ -178,11 +188,16 @@ describe RampElection do
 
     subject { ramp_election.recreate_issues_from_contentions! }
 
-    context "when election has a saved refiling associated to it" do
+    context "when election has an issue attached to a ramp refiling" do
       let!(:ramp_refiling) do
-        ramp_election.ramp_refilings.create!(
-          veteran_file_number: ramp_election.veteran_file_number
-        )
+        RampRefiling.create(
+          veteran_file_number: veteran_file_number,
+          receipt_date: receipt_date,
+          option_selected: option_selected,
+          appeal_docket: "hearing"
+        ).tap do |refiling|
+          RampIssue.create(review: refiling, source_issue_id: ramp_election.issues.first.id)
+        end
       end
 
       it "returns false and deletes/creates no issues" do
@@ -252,33 +267,6 @@ describe RampElection do
       let(:status_type_code) { "PEND" }
 
       it { is_expected.to eq(true) }
-    end
-  end
-
-  context "#established_end_product" do
-    subject { ramp_election.established_end_product }
-
-    let!(:other_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-    let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-
-    context "when matching end product has not yet been established" do
-      context "when end_product_reference_id is nil" do
-        it { is_expected.to be_nil }
-      end
-
-      context "when end_product_reference_id is set" do
-        let(:end_product_reference_id) { "not matching" }
-
-        it "raises EstablishedEndProductNotFound error" do
-          expect { subject }.to raise_error(RampElection::EstablishedEndProductNotFound)
-        end
-      end
-    end
-
-    context "when a matching end product has been established" do
-      let(:end_product_reference_id) { matching_ep.claim_id }
-
-      it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
     end
   end
 

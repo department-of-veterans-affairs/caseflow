@@ -1,5 +1,4 @@
 class AmaReview < ApplicationRecord
-  include EstablishesEndProduct
   include CachedAttributes
 
   validate :validate_receipt_date
@@ -30,6 +29,15 @@ class AmaReview < ApplicationRecord
     claimants.destroy_all
   end
 
+  def claimant_participant_id
+    return nil if claimants.empty?
+    claimants.first.participant_id
+  end
+
+  def claimant_not_veteran
+    claimant_participant_id && claimant_participant_id != veteran.participant_id
+  end
+
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 
@@ -40,15 +48,6 @@ class AmaReview < ApplicationRecord
     return nil if contention_descriptions_to_create.empty?
     establish_end_product!
     create_contentions_on_new_end_product!
-  end
-
-  def end_product_description
-    end_product_establishment.description
-  end
-
-  def end_product_base_modifier
-    # This is for EPs not yet created or that failed to create
-    end_product_establishment.valid_modifiers.first
   end
 
   def veteran
