@@ -21,12 +21,24 @@ describe('ReviewAssignments', () => {
     expect(wrapper.text()).to.include('We have assigned your judges');
   });
 
-  it('renders the modal', () => {
+  it('renders the modal if displayConfirmationModal is true', () => {
     const wrapper = mount(<MemoryRouter><ReviewAssignments
       displayConfirmationModal
       schedulePeriod={{ type: 'JudgeSchedulePeriod' }}
     /></MemoryRouter>);
 
     expect(wrapper.text()).to.include('Please confirm VACOLS upload');
+  });
+
+  it('redirects if the schedule period is finalized', () => {
+    const wrapper = mount(<MemoryRouter><ReviewAssignments
+      displayConfirmationModal
+      schedulePeriod={{
+        type: 'JudgeSchedulePeriod',
+        finalized: true
+      }}
+    /></MemoryRouter>);
+
+    expect(wrapper).to.deep.equal({ length: 1 });
   });
 });

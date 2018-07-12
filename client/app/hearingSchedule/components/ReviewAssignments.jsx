@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -68,6 +69,11 @@ export default class ReviewAssignments extends React.Component {
   };
 
   render() {
+
+    if (this.props.schedulePeriod.finalized) {
+      return <Redirect to="/schedule/build" />;
+    }
+
     return <AppSegment filledBackground>
       {this.props.displayConfirmationModal && <div className="cf-modal-scroll">
         <Modal
