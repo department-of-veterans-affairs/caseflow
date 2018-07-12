@@ -249,3 +249,27 @@ export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) =
             selected: false }));
         });
   }));
+
+const receiveAllAttorneys = (attorneys) => ({
+  type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
+  payload: {
+    attorneys
+  }
+});
+
+const errorAllAttorneys = (error) => ({
+  type: ACTIONS.ERROR_ALL_ATTORNEYS,
+  payload: {
+    error
+  }
+});
+
+export const fetchAllAttorneys = () => (dispatch) => {
+  return ApiUtil.get(
+    '/users?role=Attorney').
+    then((resp) => resp.body).
+    then(
+      (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
+    then((action) => action.payload.attorneys).
+    catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
+};

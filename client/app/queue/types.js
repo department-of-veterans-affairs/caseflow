@@ -4,8 +4,6 @@ export type DeprecatedTask = {
   id: string
 };
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-
 export type Task = {
   id: string,
   appealId: string,
@@ -27,6 +25,19 @@ export type Task = {
   }
 };
 
+export type User = {
+  id: number,
+  station_id: string,
+  css_id: string,
+  full_name: string,
+  email: ?string,
+  roles: Array<String>,
+  selected_regional_office: ?string,
+  display_name: string,
+  judge_css_id: string
+};
+export type LoadedQueueTasks = { [string]: DeprecatedTask };
+
 export type Tasks = { [string]: Task };
 
 export type LoadedQueueAppeals = { [string]: Object };
@@ -39,7 +50,7 @@ export type TasksAndAppealsOfAttorney = {
   }
 };
 
-export type AttorneysOfJudge = Array<Object>;
+export type AttorneysOfJudge = Array<User>;
 
 export type CaseDetailState = {|
   activeAppeal: ?Object,
@@ -70,13 +81,22 @@ export type UiState = {
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
+export type AllAttorneys = {
+  data?: Array<User>,
+  error?: Object
+};
+
+export type UserWithId = {
+  [number]: ?User
+};
+
 export type QueueState = {
-  judges: Object,
+  judges: UserWithId,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,
     tasks: LoadedQueueTasks,
-    loadedUserId: string
+    loadedUserId: number
   },
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
@@ -89,7 +109,8 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  allAttorneys: AllAttorneys
 };
 
 export type State = {

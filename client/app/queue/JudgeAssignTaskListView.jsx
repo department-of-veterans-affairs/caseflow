@@ -13,17 +13,17 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { NavLink } from 'react-router-dom';
-import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
+  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
+import _ from 'lodash';
 
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
@@ -58,17 +58,14 @@ class JudgeAssignTaskListView extends React.PureComponent {
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
-    const requestOptions = {
-      timeout: true
-    };
-
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
+    return this.props.fetchAllAttorneys().
       then(
-        (response) => {
-          const resp = JSON.parse(response.text);
+        (attorneys) => {
+          const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
+          const attorneysOfJudge = attorneysOfJudgeWithCssId[this.props.userCssId];
 
-          this.props.setAttorneysOfJudge(resp.attorneys);
-          for (const attorney of resp.attorneys) {
+          this.props.setAttorneysOfJudge(attorneysOfJudge);
+          for (const attorney of attorneysOfJudge) {
             this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
           }
         });
@@ -132,7 +129,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
           <PageRoute
             path={`${match.url}/:attorneyId`}
             title="Assigned Cases | Caseflow"
-            component={AssignedCasesPage}
+            render={
+              ({ match: innerMatch }) => <AssignedCasesPage match={innerMatch} />}
           />
         </div>
       </div>
@@ -181,7 +179,8 @@ const mapDispatchToProps = (dispatch) => (
     resetSaveState,
     setAttorneysOfJudge,
     fetchTasksAndAppealsOfAttorney,
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    fetchAllAttorneys
   }, dispatch)
 );
 

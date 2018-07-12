@@ -17,22 +17,29 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State
+  IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys, UserWithId
 } from '../types';
-import pluralize from 'pluralize';
 import Alert from '../../components/Alert';
+import pluralize from 'pluralize';
+import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
+
+const OTHER = 'OTHER';
 
 type Props = {|
   // Parameters
   previousAssigneeId: string,
   onTaskAssignment: Function,
   // From state
-  attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   tasks: Tasks,
   error: ?UiStateError,
   success: string,
+  allAttorneys: AllAttorneys,
+  judges: UserWithId,
+  loadedUserId: number,
   // Action creators
   setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
@@ -83,10 +90,61 @@ class AssignWidget extends React.PureComponent<Props> {
           detail: 'One or more tasks couldn\'t be assigned.' }));
   }
 
+  fullNameOfJudgeWithCssId = (judgeCssId) => {
+    const judge = _.find(this.props.judges, (judge) => judge && judge.css_id === judgeCssId);
+
+    if (!judge) {
+      return undefined;
+    }
+
+    return judge.full_name;
+  }
+
+  optionsFromJudgeAndAttorneys = (judgeCssId, attorneysOfJudgeWithCssId) => {
+    if (!attorneysOfJudgeWithCssId[judgeCssId]) {
+      return [];
+    }
+
+    const options = [];
+
+    options.push({
+      label: `${this.fullNameOfJudgeWithCssId(judgeCssId) || 'Other'}:`,
+      value: judgeCssId,
+      disabled: true
+    });
+    options.push(...attorneysOfJudgeWithCssId[judgeCssId].map((attorney) => ({ label: attorney.full_name,
+      value: attorney.id.toString() })));
+
+    return options;
+  }
+
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, error, success } = this.props;
-    const options = attorneysOfJudge.map((attorney) => ({ label: attorney.full_name,
-      value: attorney.id.toString() }));
+    const { selectedAssignee, error, success, allAttorneys, judges, loadedUserId } = this.props;
+    const userCssId = judges[loadedUserId];
+
+    if (!allAttorneys.data && !allAttorneys.error) {
+      return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
+    }
+    if (allAttorneys.error) {
+      return <Alert type="error" title="Error fetching attorneys" message="Please refresh the page." />;
+    }
+    const handleChange = (option) => this.props.setSelectedAssignee({ assigneeId: option.value });
+    const attorneys = allAttorneys.data;
+
+    const options = [];
+
+    {
+      const attorneysOfJudgeWithCssId = _.groupBy(attorneys, (attorney) => attorney.judge_css_id);
+      const judgeCssIds =
+        [userCssId].concat(Object.keys(attorneysOfJudgeWithCssId).filter((cssId) => cssId !== userCssId));
+
+      for (const judgeCssId of judgeCssIds) {
+        options.push(...this.optionsFromJudgeAndAttorneys(judgeCssId, attorneysOfJudgeWithCssId));
+      }
+      options.push({ label: ASSIGN_WIDGET_OTHER,
+        value: OTHER });
+    }
+
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
 
     return <React.Fragment>
@@ -104,7 +162,7 @@ class AssignWidget extends React.PureComponent<Props> {
           searchable
           options={options}
           placeholder="Select a user"
-          onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
+          onChange={handleChange}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
         <Button
@@ -118,16 +176,18 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks } = state.queue;
+  const { isTaskAssignedToUserSelected, tasks, allAttorneys, judges, loadedQueue: { loadedUserId } } = state.queue;
   const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
-    attorneysOfJudge,
     selectedAssignee,
     isTaskAssignedToUserSelected,
     tasks,
     error,
-    success
+    success,
+    allAttorneys,
+    judges,
+    loadedUserId
   };
 };
 
