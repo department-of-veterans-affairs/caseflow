@@ -17,6 +17,12 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.pastUploads
       }
     });
+  case ACTIONS.RECEIVE_SCHEDULE_PERIOD:
+    return update(state, {
+      schedulePeriod: {
+        $set: action.payload.schedulePeriod
+      }
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {

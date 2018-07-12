@@ -94,6 +94,7 @@ Rails.application.routes.draw do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
     resources :schedule_periods, only: [:index, :create]
+    resources :schedule_periods, only: [:show], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
