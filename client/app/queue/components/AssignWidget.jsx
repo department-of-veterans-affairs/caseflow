@@ -75,7 +75,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   handleButtonClick = () => {
-    const { previousAssigneeId, selectedAssignee, selectedAssigneeSecondary } = this.props;
+    const { selectedAssignee, selectedAssigneeSecondary } = this.props;
     const selectedTasks = this.selectedTasks();
 
     this.props.resetSuccessMessages();
@@ -99,6 +99,7 @@ class AssignWidget extends React.PureComponent<Props> {
 
     if (selectedAssignee !== OTHER) {
       this.assignTasks(selectedTasks, selectedAssignee);
+
       return;
     }
 
