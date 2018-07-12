@@ -22,24 +22,7 @@ import type {
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
-import {
-  ASSIGN_WIDGET_OTHER,
-  ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-  ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL,
-  ASSIGN_WIDGET_NO_TASK_TITLE,
-  ASSIGN_WIDGET_NO_TASK_DETAIL,
-  ASSIGN_WIDGET_SUCCESS,
-  ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-  ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL,
-  ASSIGN_WIDGET_LOADING,
-  ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
-  ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY,
-  ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY,
-  ASSIGN_WIDGET_BUTTON_TEXT,
-  ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL,
-  ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL,
-  ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS
-} from '../../../COPY.json';
+import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
 const OTHER = 'OTHER';
@@ -83,16 +66,16 @@ class AssignWidget extends React.PureComponent<Props> {
 
     if (!selectedAssignee) {
       this.props.showErrorMessage(
-        { title: ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-          detail: ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+        { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+          detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
       return;
     }
 
     if (selectedTasks.length === 0) {
       this.props.showErrorMessage(
-        { title: ASSIGN_WIDGET_NO_TASK_TITLE,
-          detail: ASSIGN_WIDGET_NO_TASK_DETAIL });
+        { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
+          detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
 
       return;
     }
@@ -105,8 +88,8 @@ class AssignWidget extends React.PureComponent<Props> {
 
     if (!selectedAssigneeSecondary) {
       this.props.showErrorMessage(
-        { title: ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-          detail: ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+        { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+          detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
       return;
     }
@@ -123,12 +106,12 @@ class AssignWidget extends React.PureComponent<Props> {
         previousAssigneeId }).
       then(() => this.props.showSuccessMessage(
         sprintf(
-          ASSIGN_WIDGET_SUCCESS,
+          COPY.ASSIGN_WIDGET_SUCCESS,
           { numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length) }))).
       catch(() => this.props.showErrorMessage(
-        { title: ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));
+        { title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
+          detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));
   }
 
   render = () => {
@@ -136,22 +119,22 @@ class AssignWidget extends React.PureComponent<Props> {
     const selectedTasks = this.selectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
-    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER,
+    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,
       value: OTHER });
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
     const showOtherSearchBox = selectedAssignee === OTHER;
     let optionsOther = [];
-    let placeholderOther = ASSIGN_WIDGET_LOADING;
+    let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
     if (attorneys.data) {
       optionsOther = attorneys.data.map(optionFromAttorney);
-      placeholderOther = ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
+      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
     if (attorneys.error) {
-      placeholderOther = ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
+      placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
     return <React.Fragment>
@@ -162,21 +145,21 @@ class AssignWidget extends React.PureComponent<Props> {
         alignItems: 'center',
         flexWrap: 'wrap',
         '& > *': { marginRight: '1rem' } })}>
-        <p>{ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
+        <p>{COPY.ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
         <SearchableDropdown
-          name={ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
+          name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
           hideLabel
           searchable
           options={options}
-          placeholder={ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
+          placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
         {showOtherSearchBox &&
           <React.Fragment>
-            <p>{ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
+            <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
-              name={ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
+              name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
               hideLabel
               searchable
               options={optionsOther}
@@ -188,11 +171,11 @@ class AssignWidget extends React.PureComponent<Props> {
         <Button
           onClick={this.handleButtonClick}
           name={sprintf(
-            ASSIGN_WIDGET_BUTTON_TEXT,
+            COPY.ASSIGN_WIDGET_BUTTON_TEXT,
             { numCases: selectedTasks.length,
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={false}
-          loadingText={ASSIGN_WIDGET_LOADING} />
+          loadingText={COPY.ASSIGN_WIDGET_LOADING} />
       </div>
     </React.Fragment>;
   }
