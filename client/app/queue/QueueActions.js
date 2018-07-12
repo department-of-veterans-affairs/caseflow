@@ -3,7 +3,7 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, Task } from './types';
+import type { Dispatch, Task, User } from './types';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -137,7 +137,7 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   }
 };
 
-export const setAttorneysOfJudge = (attorneys) => ({
+export const setAttorneysOfJudge = (attorneys: Array<User>) => ({
   type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
   payload: {
     attorneys
