@@ -230,7 +230,8 @@ class ApplicationController < ApplicationBaseController
       "reader" => "Caseflow Reader",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
-      "queue" => "Caseflow Queue"
+      "queue" => "Caseflow Queue",
+      "hearings" => "Caseflow Hearing Schedule"
     }
     subject = feedback_hash.keys.select { |route| request.original_fullpath.include?(route) }[0]
     subject.nil? ? "Caseflow" : feedback_hash[subject]

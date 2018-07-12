@@ -65,6 +65,7 @@ class HearingScheduleApp extends React.PureComponent {
         wideApp
         appName="Hearing Scheduling"
         feedbackUrl={this.props.feedbackUrl}
+        buildDate={this.props.buildDate}
       />
     </NavigationBar>
   </BrowserRouter>;
@@ -72,6 +73,8 @@ class HearingScheduleApp extends React.PureComponent {
 
 HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
+  feedbackUrl: PropTypes.string.isRequired,
+  buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
 };
 
