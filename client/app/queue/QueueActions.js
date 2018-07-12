@@ -94,19 +94,20 @@ export const updateEditingAppealIssue = (attributes) => ({
   }
 });
 
-export const startEditingAppealIssue = (appealId, issueId, attributes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.START_EDITING_APPEAL_ISSUE,
-    payload: {
-      appealId,
-      issueId
-    }
-  });
+export const startEditingAppealIssue =
+  (appealId: string, issueId: string, attributes: Object) => (dispatch: Dispatch) => {
+    dispatch({
+      type: ACTIONS.START_EDITING_APPEAL_ISSUE,
+      payload: {
+        appealId,
+        issueId
+      }
+    });
 
-  if (attributes) {
-    dispatch(updateEditingAppealIssue(attributes));
-  }
-};
+    if (attributes) {
+      dispatch(updateEditingAppealIssue(attributes));
+    }
+  };
 
 export const deleteEditingAppealIssue =
   (appealId: string, issueId: string, attributes: Object) => (dispatch: Dispatch) => {
