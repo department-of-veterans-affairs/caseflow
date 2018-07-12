@@ -18,11 +18,21 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Tasks, UiStateError, State, AllAttorneys
+  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, AllAttorneys
 } from '../types';
 import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
-import { ASSIGN_WIDGET_OTHER } from '../../../COPY.json';
+import {
+  ASSIGN_WIDGET_OTHER,
+  ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+  ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL,
+  ASSIGN_WIDGET_NO_TASK_TITLE,
+  ASSIGN_WIDGET_NO_TASK_DETAIL,
+  ASSIGN_WIDGET_SUCCESS,
+  ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
+  ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL
+} from '../../../COPY.json';
+import { sprintf } from 'sprintf-js';
 
 const OTHER = 'OTHER';
 
@@ -50,7 +60,7 @@ type Props = {|
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  selectedTasks = () => {
+  selectedTasks = (): Array<Task> => {
     return _.flatMap(
       this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
       (selected, id) => (selected ? [this.props.tasks[id]] : []));
@@ -65,51 +75,51 @@ class AssignWidget extends React.PureComponent<Props> {
 
     if (!selectedAssignee) {
       this.props.showErrorMessage(
-        { title: 'No assignee selected',
-          detail: 'Please select someone to assign the tasks to.' });
+        { title: ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+          detail: ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
       return;
     }
 
     if (selectedTasks.length === 0) {
       this.props.showErrorMessage(
-        { title: 'No tasks selected',
-          detail: 'Please select a task.' });
+        { title: ASSIGN_WIDGET_NO_TASK_TITLE,
+          detail: ASSIGN_WIDGET_NO_TASK_DETAIL });
 
       return;
     }
 
     if (selectedAssignee !== OTHER) {
-      this.props.onTaskAssignment(
-        { tasks: selectedTasks,
-          assigneeId: selectedAssignee,
-          previousAssigneeId }).
-        then(() => this.props.showSuccessMessage(
-          `Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
-        catch(() => this.props.showErrorMessage(
-          { title: 'Error assigning tasks',
-            detail: 'One or more tasks couldn\'t be assigned.' }));
-
+      this.assignTasks(selectedTasks, selectedAssignee);
       return;
     }
 
     if (!selectedAssigneeSecondary) {
       this.props.showErrorMessage(
-        { title: 'No assignee selected',
-          detail: 'Please select someone to assign the tasks to.' });
+        { title: ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+          detail: ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
       return;
     }
 
+    this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+  }
+
+  assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
+    const { previousAssigneeId } = this.props;
+
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
-        assigneeId: selectedAssigneeSecondary,
+        assigneeId,
         previousAssigneeId }).
       then(() => this.props.showSuccessMessage(
-        `Assigned ${selectedTasks.length} ${pluralize('case', selectedTasks.length)}`)).
+        sprintf(
+          ASSIGN_WIDGET_SUCCESS,
+          { numCases: selectedTasks.length,
+            casePlural: pluralize('case', selectedTasks.length) }))).
       catch(() => this.props.showErrorMessage(
-        { title: 'Error assigning tasks',
-          detail: 'One or more tasks couldn\'t be assigned.' }));
+        { title: ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
+          detail: ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));
   }
 
   render = () => {
