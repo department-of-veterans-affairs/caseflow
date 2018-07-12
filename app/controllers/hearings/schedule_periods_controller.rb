@@ -6,6 +6,10 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     end
   end
 
+  def show
+    render json: { schedule_period: SchedulePeriod.find(params[:schedule_period_id]).to_hash }
+  end
+
   def create
     puts :file
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id))
