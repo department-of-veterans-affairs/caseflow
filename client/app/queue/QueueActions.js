@@ -123,7 +123,7 @@ export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
 });
 
-export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
+export const saveEditedAppealIssue = (appealId: string, attributes: { issues: Object }) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
     payload: {

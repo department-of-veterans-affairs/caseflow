@@ -4,8 +4,6 @@ export type DeprecatedTask = {
   id: string
 };
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-
 export type Task = {
   id: string,
   appealId: string,
@@ -27,8 +25,20 @@ export type Task = {
   }
 };
 
+export type User = {
+  id: number,
+  station_id: string,
+  css_id: string,
+  full_name: string,
+  email: ?string,
+  roles: Array<String>,
+  selected_regional_office: ?string,
+  display_name: string
+};
+
 export type Tasks = { [string]: Task };
 
+export type LoadedQueueTasks = { [string]: DeprecatedTask };
 export type LoadedQueueAppeals = { [string]: Object };
 
 export type TasksAndAppealsOfAttorney = {
