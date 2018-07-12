@@ -13,7 +13,6 @@ import {
   checkoutStagedAppeal,
   stageAppeal
 } from '../QueueActions';
-import { resetBreadcrumbs } from '../uiReducer/uiActions';
 import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS
@@ -24,8 +23,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
     const {
       appealId,
-      history,
-      appeal: { attributes: { veteran_full_name: vetName } }
+      history
     } = this.props;
     const decisionType = props.value;
     const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
@@ -34,7 +32,6 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
 
     this.props.resetDecisionOptions();
     this.props.setCaseReviewActionType(decisionType);
-    this.props.resetBreadcrumbs(vetName, appealId);
 
     history.push('');
     history.replace(`/queue/appeals/${appealId}/${route}`);
@@ -72,8 +69,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   resetDecisionOptions,
   checkoutStagedAppeal,
-  stageAppeal,
-  resetBreadcrumbs
+  stageAppeal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown));

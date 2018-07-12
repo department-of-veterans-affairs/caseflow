@@ -340,7 +340,7 @@ describe AppealSeries do
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:at_vso)
-        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
+        expect(subject[:details][:vso_name]).to eq("The American Legion")
       end
     end
 
