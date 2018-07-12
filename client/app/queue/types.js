@@ -87,7 +87,7 @@ export type AllAttorneys = {
 };
 
 export type UserWithId = {
-  [string]: ?User
+  [number]: ?User
 };
 
 export type QueueState = {
@@ -96,7 +96,7 @@ export type QueueState = {
   loadedQueue: {
     appeals: LoadedQueueAppeals,
     tasks: LoadedQueueTasks,
-    loadedUserId: string
+    loadedUserId: number
   },
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},

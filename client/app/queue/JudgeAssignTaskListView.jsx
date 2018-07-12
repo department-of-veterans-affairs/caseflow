@@ -124,14 +124,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
             render={
               () => <UnassignedCasesPage
                 tasksAndAppeals={this.unassignedTasksWithAppeals()}
-                userId={this.props.userId.toString()}
-                userCssId={this.props.userCssId} />}
+                userId={this.props.userId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
             title="Assigned Cases | Caseflow"
             render={
-              ({ match: innerMatch }) => <AssignedCasesPage userCssId={this.props.userCssId} match={innerMatch} />}
+              ({ match: innerMatch }) => <AssignedCasesPage match={innerMatch} />}
           />
         </div>
       </div>

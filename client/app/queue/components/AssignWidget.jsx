@@ -31,7 +31,6 @@ type Props = {|
   // Parameters
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  userCssId: string,
   // From state
   selectedAssignee: string,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
@@ -40,6 +39,7 @@ type Props = {|
   success: string,
   allAttorneys: AllAttorneys,
   judges: UserWithId,
+  loadedUserId: number,
   // Action creators
   setSelectedAssignee: Function,
   initialAssignTasksToUser: Function,
@@ -119,7 +119,8 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { selectedAssignee, error, success, allAttorneys, userCssId } = this.props;
+    const { selectedAssignee, error, success, allAttorneys, judges, loadedUserId } = this.props;
+    const userCssId = judges[loadedUserId];
 
     if (!allAttorneys.data && !allAttorneys.error) {
       return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
@@ -175,7 +176,7 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { isTaskAssignedToUserSelected, tasks, allAttorneys, judges } = state.queue;
+  const { isTaskAssignedToUserSelected, tasks, allAttorneys, judges, loadedQueue: { loadedUserId } } = state.queue;
   const { selectedAssignee, messages: { error, success } } = state.ui;
 
   return {
@@ -185,7 +186,8 @@ const mapStateToProps = (state: State) => {
     error,
     success,
     allAttorneys,
-    judges
+    judges,
+    loadedUserId
   };
 };
 
