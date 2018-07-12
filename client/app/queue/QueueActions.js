@@ -258,7 +258,7 @@ const receiveAllAttorneys = (attorneys) => ({
 });
 
 const errorAllAttorneys = (error) => ({
-  type: ACTIONS.ERROR_ALL_ATTORNEYS,
+  type: ACTIONS.ERROR_LOADING_ATTORNEYS,
   payload: {
     error
   }
@@ -266,7 +266,7 @@ const errorAllAttorneys = (error) => ({
 
 export const fetchAllAttorneys = () => (dispatch) => {
   return ApiUtil.get(
-    '/userzzz?role=Attorney').
+    '/users?role=Attorney').
     then((resp) => resp.body).
     then(
       (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).

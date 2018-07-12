@@ -380,7 +380,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.ERROR_ALL_ATTORNEYS:
+  case ACTIONS.ERROR_LOADING_ATTORNEYS:
     return update(state, {
       attorneys: {
         $set: {
