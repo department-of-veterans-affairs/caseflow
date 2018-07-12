@@ -88,7 +88,7 @@ export default class VeteranDetail extends React.PureComponent {
   };
 
   render = () => <React.Fragment>
-    <span>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
+    { !this.veteranIsAppellant() && <span>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span> }
     <ul {...detailListStyling}>
       {this.getDetails({
         nameField: 'veteran_full_name',
