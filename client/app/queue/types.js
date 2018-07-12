@@ -81,8 +81,9 @@ export type UiState = {
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
-export type AllAttorneys = {
-  data?: Array<User>
+export type Attorneys = {
+  data?: Array<User>,
+  error?: Object
 };
 
 export type QueueState = {
@@ -105,7 +106,7 @@ export type QueueState = {
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  allAttorneys: AllAttorneys
+  attorneys: Attorneys
 };
 
 export type State = {

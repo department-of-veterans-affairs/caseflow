@@ -55,7 +55,7 @@ type Props = {|
   tasks: Tasks,
   error: ?UiStateError,
   success: string,
-  allAttorneys: AllAttorneys,
+  attorneys: Attorneys,
   // Action creators
   setSelectedAssignee: Function,
   setSelectedAssigneeSecondary: Function,
@@ -130,7 +130,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, allAttorneys } = this.props;
+    const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, attorneys } = this.props;
     const selectedTasks = this.selectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
@@ -142,14 +142,10 @@ class AssignWidget extends React.PureComponent<Props> {
     let placeholderOther = ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
-    if (allAttorneys.data) {
-      optionsOther = allAttorneys.data.map(optionFromAttorney);
+    if (attorneys.data) {
+      optionsOther = attorneys.data.map(optionFromAttorney);
       placeholderOther = ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
-    }
-
-    if (allAttorneys.error) {
-      placeholderOther = ASSIGN_WIDGET_
     }
 
     return <React.Fragment>
@@ -197,7 +193,7 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, allAttorneys } = state.queue;
+  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
 
   return {
@@ -208,7 +204,7 @@ const mapStateToProps = (state: State) => {
     tasks,
     error,
     success,
-    allAttorneys
+    attorneys
   };
 };
 
