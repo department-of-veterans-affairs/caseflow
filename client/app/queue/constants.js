@@ -7,6 +7,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -121,10 +122,12 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 
 // max length of VACOLS issue description field `ISSDESC`
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+// max length for Attorney comments `DECASS.DEATCOM`
+export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
 export const USER_ROLES = {
-  ATTORNEY: 'Attorney',
-  JUDGE: 'Judge'
+  ATTORNEY: USER_ROLE_TYPES.attorney,
+  JUDGE: USER_ROLE_TYPES.judge
 };
 
 export const PAGE_TITLES = {

@@ -13,8 +13,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import { buildCaseReviewPayload } from '../utils';
 import {
   requestSave,
-  saveSuccess,
-  resetBreadcrumbs
+  saveSuccess
 } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
@@ -33,7 +32,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     const {
       appeal: { attributes: appeal },
       task,
-      vacolsId,
+      appealId,
       history,
       decision,
       userRole
@@ -48,27 +47,26 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
       this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
         then(() => {
-          this.props.deleteAppeal(vacolsId);
+          this.props.deleteAppeal(appealId);
           history.push('');
           history.replace('/queue');
         });
     } else {
-      this.props.resetBreadcrumbs(appeal.veteran_full_name, vacolsId);
       this.stageAppeal();
 
       history.push('');
-      history.replace(`/queue/appeals/${vacolsId}/dispositions`);
+      history.replace(`/queue/appeals/${appealId}/dispositions`);
     }
   }
 
   stageAppeal = () => {
-    const { vacolsId } = this.props;
+    const { appealId } = this.props;
 
-    if (this.props.changedAppeals.includes(vacolsId)) {
-      this.props.checkoutStagedAppeal(vacolsId);
+    if (this.props.changedAppeals.includes(appealId)) {
+      this.props.checkoutStagedAppeal(appealId);
     }
 
-    this.props.stageAppeal(vacolsId);
+    this.props.stageAppeal(appealId);
   }
 
   render = () => {
@@ -81,7 +79,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
     return <SearchableDropdown
       placeholder="Select an action&hellip;"
-      name={`start-checkout-flow-${this.props.vacolsId}`}
+      name={`start-checkout-flow-${this.props.appealId}`}
       options={[dropdownOption]}
       onChange={this.changeRoute}
       hideLabel
@@ -90,12 +88,12 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 }
 
 JudgeStartCheckoutFlowDropdown.propTypes = {
-  vacolsId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
+  task: state.queue.loadedQueue.tasks[ownProps.appealId],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole
@@ -107,7 +105,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  resetBreadcrumbs,
   setCaseReviewActionType
 }, dispatch);
 

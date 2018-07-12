@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180628195002) do
+ActiveRecord::Schema.define(version: 20180710214914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -230,6 +230,22 @@ ActiveRecord::Schema.define(version: 20180628195002) do
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
   end
 
+  create_table "end_product_establishments", force: :cascade do |t|
+    t.datetime "established_at"
+    t.string "synced_status"
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.string "veteran_file_number", null: false
+    t.string "reference_id"
+    t.date "claim_date"
+    t.string "code"
+    t.string "modifier"
+    t.string "station"
+    t.datetime "last_synced_at"
+    t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
+    t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
+  end
+
   create_table "form8s", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "vacols_id"
@@ -434,6 +450,8 @@ ActiveRecord::Schema.define(version: 20180628195002) do
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
+    t.string "partial_closure_issue_sequence_ids", array: true
+    t.datetime "closed_on"
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
@@ -470,7 +488,6 @@ ActiveRecord::Schema.define(version: 20180628195002) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
-    t.integer "ramp_election_id"
     t.string "option_selected"
     t.date "receipt_date"
     t.string "end_product_reference_id"
@@ -542,6 +559,7 @@ ActiveRecord::Schema.define(version: 20180628195002) do
     t.datetime "updated_at", null: false
     t.string "appeal_type", null: false
     t.datetime "placed_on_hold_at"
+    t.integer "on_hold_duration"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

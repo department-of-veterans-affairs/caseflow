@@ -6,8 +6,8 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
-import { submitReview } from '../../actions/ama';
-import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
+import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
+import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 

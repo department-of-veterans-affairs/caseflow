@@ -93,10 +93,14 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
-    resources :schedule_periods, only: [:index]
+    resources :schedule_periods, only: [:index, :create]
+    resources :schedule_periods, only: [:show], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
@@ -146,7 +150,7 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create]
+  resources :tasks, only: [:index, :create, :update]
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"

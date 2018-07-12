@@ -33,22 +33,29 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET /users?role=Attorney" do
-    context "when current user not a judge" do
-      it "should not return a list of attorneys" do
-        get :index, params: { role: "Attorney" }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq 0
-      end
-    end
+    context "when judge ID is passed" do
+      let!(:judge) { User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID) }
 
-    context "when current user a judge" do
-      it "should return a list of attorneys" do
-        User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID)
-        get :index, params: { role: "Attorney", judge_css_id: "BVARZIEMANN1" }
+      it "should return a list of attorneys associated with the judge" do
+        get :index, params: { role: "Attorney", judge_css_id: judge.css_id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorneys"].size).to eq 3
+      end
+    end
+
+    context "when judge ID is not passed" do
+      let!(:staff_attorney) { create(:staff, :attorney_role, sdomainid: "BVACFRANECKI1") }
+      let!(:judges) { create_list(:staff, 2, :judge_role) }
+
+      it "should return a list of all attorneys" do
+        get :index, params: { role: "Attorney" }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        # four regular attorneys and one attorney acting as a judge
+        expect(response_body["attorneys"].size).to eq 4
+        attorney = response_body["attorneys"].select { |e| e["css_id"] == staff_attorney.sdomainid }[0]
+        expect(attorney["judge_css_id"]).to eq "BVARZIEMANN1"
       end
     end
   end
