@@ -25,7 +25,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :representative, :contested_claim
+  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -181,7 +181,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+      # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
+      poa.class.repository.set_vacols_values(poa: poa, case_record: case_record)
+      poa
+    end
   end
 
   attr_writer :hearings
@@ -217,18 +221,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def representative_name
-    representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
+    power_of_attorney.vacols_representative_name
   end
 
   def representative_type
-    case representative
-    when "None", "One Time Representative"
-      "Other"
-    when "Agent", "Attorney"
-      representative
-    else
-      "Organization"
-    end
+    power_of_attorney.vacols_representative_type
   end
 
   # TODO: delegate this to veteran

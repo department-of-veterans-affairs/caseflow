@@ -58,11 +58,6 @@ class SubmitDecisionView extends React.PureComponent {
     }
   };
 
-  getBreadcrumb = () => ({
-    breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/appeals/${this.props.appealId}/submit`
-  });
-
   validateForm = () => {
     const {
       type: decisionType,

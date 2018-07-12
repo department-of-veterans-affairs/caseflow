@@ -81,6 +81,18 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['uploadContinueLoading']
     });
+  case ACTIONS.CLICK_CONFIRM_ASSIGNMENTS:
+    return update(state, {
+      displayConfirmationModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CLICK_CLOSE_MODAL:
+    return update(state, {
+      displayConfirmationModal: {
+        $set: false
+      }
+    });
   default:
     return state;
   }

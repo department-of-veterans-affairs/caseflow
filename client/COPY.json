@@ -9,8 +9,6 @@
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
-  "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
-
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
@@ -111,5 +109,7 @@
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
-  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file."
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE": "Please confirm VACOLS upload",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY": "You are about to upload these assignments to VACOLS. Once this is done, you cannot perform this upload for the selected date range again. You will have to make individual edits to the schedule."
 }
