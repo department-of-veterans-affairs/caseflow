@@ -168,7 +168,7 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
-export const fetchTasksAndAppealsOfAttorney = (attorneyId) => (dispatch) => {
+export const fetchTasksAndAppealsOfAttorney = (attorneyId: string) => (dispatch: Dispatch) => {
   const requestOptions = {
     timeout: true
   };
