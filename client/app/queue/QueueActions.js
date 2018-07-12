@@ -257,10 +257,18 @@ const receiveAllAttorneys = (attorneys) => ({
   }
 });
 
+const errorAllAttorneys = (error) => ({
+  type: ACTIONS.ERROR_ALL_ATTORNEYS,
+  payload: {
+    error
+  }
+});
+
 export const fetchAllAttorneys = () => (dispatch) => {
   return ApiUtil.get(
-    '/users?role=Attorney').
+    '/userzzz?role=Attorney').
     then((resp) => resp.body).
     then(
-      (resp) => dispatch(receiveAllAttorneys(resp.attorneys)));
+      (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
+    catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
 };

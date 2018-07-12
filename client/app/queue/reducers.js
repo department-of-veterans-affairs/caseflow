@@ -376,8 +376,15 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       attorneys: {
         $set: {
-          state: 'LOADED',
           data: action.payload.attorneys
+        }
+      }
+    });
+  case ACTIONS.ERROR_ALL_ATTORNEYS:
+    return update(state, {
+      attorneys: {
+        $set: {
+          error: action.payload.error
         }
       }
     });

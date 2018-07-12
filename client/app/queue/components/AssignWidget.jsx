@@ -37,7 +37,8 @@ import {
   ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY,
   ASSIGN_WIDGET_BUTTON_TEXT,
   ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL,
-  ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL
+  ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL,
+  ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS
 } from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
@@ -146,6 +147,10 @@ class AssignWidget extends React.PureComponent<Props> {
       optionsOther = attorneys.data.map(optionFromAttorney);
       placeholderOther = ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
+    }
+
+    if (attorneys.error) {
+      placeholderOther = ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
     return <React.Fragment>
