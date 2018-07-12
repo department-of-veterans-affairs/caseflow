@@ -20,4 +20,13 @@ describe('ReviewAssignments', () => {
 
     expect(wrapper.text()).to.include('We have assigned your judges');
   });
+
+  it('renders the modal', () => {
+    const wrapper = mount(<MemoryRouter><ReviewAssignments
+      displayConfirmationModal
+      schedulePeriod={{ type: 'JudgeSchedulePeriod' }}
+    /></MemoryRouter>);
+
+    expect(wrapper.text()).to.include('Please confirm VACOLS upload');
+  });
 });

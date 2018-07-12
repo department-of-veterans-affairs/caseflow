@@ -42,7 +42,7 @@ export default class ReviewAssignments extends React.Component {
         willNeverBeLoading
         onClick={this.props.onClickConfirmAssignments}
       >
-        Confirm Assignments
+        Confirm assignments
       </Button>
     </div>;
   };
