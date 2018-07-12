@@ -1,7 +1,9 @@
+// @flow
 import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
+import type { Dispatch, GetState, ThunkAction, PromiseAction, Task } from './types';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -230,7 +232,9 @@ const taskReassignment = ({ task, assigneeId, previousAssigneeId }) => ({
   }
 });
 
-export const reassignTasksToUser = ({ tasks, assigneeId, previousAssigneeId }) => (dispatch) =>
+export const reassignTasksToUser =
+  ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
+  (dispatch: Dispatch) =>
   Promise.all(tasks.map((oldTask) => {
     return ApiUtil.patch(
       `/legacy_tasks/${oldTask.attributes.task_id}`,
