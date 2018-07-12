@@ -106,5 +106,10 @@
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
-  "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:"
+  "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
+
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file."
 }
