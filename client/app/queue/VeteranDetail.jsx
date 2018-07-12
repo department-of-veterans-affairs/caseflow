@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import BareList from '../components/BareList';
 import { boldText } from './constants';
-import COPY from '../../COPY.json';
 import { DateString } from '../util/DateUtil';
 
 const detailListStyling = css({
@@ -38,8 +37,6 @@ export default class VeteranDetail extends React.PureComponent {
   };
 
   getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
-
-  veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
 
   getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
@@ -87,18 +84,15 @@ export default class VeteranDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
-  render = () => <React.Fragment>
-    { !this.veteranIsAppellant() && <span>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span> }
-    <ul {...detailListStyling}>
-      {this.getDetails({
-        nameField: 'veteran_full_name',
-        genderField: 'veteran_gender',
-        dobField: 'veteran_date_of_birth',
-        addressField: 'appellant_address',
-        regionalOfficeField: 'regional_office'
-      })}
-    </ul>
-  </React.Fragment>;
+  render = () => <ul {...detailListStyling}>
+    {this.getDetails({
+      nameField: 'veteran_full_name',
+      genderField: 'veteran_gender',
+      dobField: 'veteran_date_of_birth',
+      addressField: 'appellant_address',
+      regionalOfficeField: 'regional_office'
+    })}
+  </ul>;
 }
 
 VeteranDetail.propTypes = {
