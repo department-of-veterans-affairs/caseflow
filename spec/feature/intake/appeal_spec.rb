@@ -57,7 +57,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   it "Creates an appeal" do
-    # Testing no relationships, tests 2 relationships in HRL and one in SC
+    # Testing no relationships, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
