@@ -30,7 +30,12 @@ import {
   ASSIGN_WIDGET_NO_TASK_DETAIL,
   ASSIGN_WIDGET_SUCCESS,
   ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-  ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL
+  ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL,
+  ASSIGN_WIDGET_LOADING,
+  ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
+  ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY,
+  ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY,
+  ASSIGN_WIDGET_BUTTON_TEXT
 } from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
@@ -124,6 +129,7 @@ class AssignWidget extends React.PureComponent<Props> {
 
   render = () => {
     const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, allAttorneys } = this.props;
+    const selectedTasks = this.selectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER,
@@ -131,12 +137,12 @@ class AssignWidget extends React.PureComponent<Props> {
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
     const showOtherSearchBox = selectedAssignee === OTHER;
     let optionsOther = [];
-    let placeholderOther = 'Loading...';
+    let placeholderOther = ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
     if (allAttorneys.data) {
       optionsOther = allAttorneys.data.map(optionFromAttorney);
-      placeholderOther = 'Select a user';
+      placeholderOther = ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
@@ -150,11 +156,11 @@ class AssignWidget extends React.PureComponent<Props> {
         '& > *': { marginRight: '1rem' } })}>
         <p>Assign to:&nbsp;</p>
         <SearchableDropdown
-          name="Assignee"
+          name={ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
           hideLabel
           searchable
           options={options}
-          placeholder="Select a user"
+          placeholder={ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
           onChange={(option) => this.props.setSelectedAssignee({ assigneeId: option.value })}
           value={selectedOption}
           styling={css({ width: '30rem' })} />
@@ -162,7 +168,7 @@ class AssignWidget extends React.PureComponent<Props> {
           <React.Fragment>
             <p>Enter the name of an attorney or judge:</p>
             <SearchableDropdown
-              name="Other assignee"
+              name={ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
               hideLabel
               searchable
               options={optionsOther}
@@ -173,9 +179,12 @@ class AssignWidget extends React.PureComponent<Props> {
           </React.Fragment>}
         <Button
           onClick={this.handleButtonClick}
-          name={`Assign ${this.selectedTasks().length} ${pluralize('case', this.selectedTasks().length)}`}
+          name={sprintf(
+            ASSIGN_WIDGET_BUTTON_TEXT,
+            { numCases: selectedTasks.length,
+              casePlural: pluralize('case', selectedTasks.length) })}
           loading={false}
-          loadingText="Loading" />
+          loadingText={ASSIGN_WIDGET_LOADING} />
       </div>
     </React.Fragment>;
   }
