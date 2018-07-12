@@ -89,6 +89,7 @@ class AssignWidget extends React.PureComponent<Props> {
         catch(() => this.props.showErrorMessage(
           { title: 'Error assigning tasks',
             detail: 'One or more tasks couldn\'t be assigned.' }));
+
       return;
     }
 
@@ -115,12 +116,14 @@ class AssignWidget extends React.PureComponent<Props> {
     const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, allAttorneys } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
-    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER, value: OTHER});
+    const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: ASSIGN_WIDGET_OTHER,
+      value: OTHER });
     const selectedOption = _.find(options, (option) => option.value === selectedAssignee);
     const showOtherSearchBox = selectedAssignee === OTHER;
     let optionsOther = [];
     let placeholderOther = 'Loading...';
     let selectedOptionOther = null;
+
     if (allAttorneys.data) {
       optionsOther = allAttorneys.data.map(optionFromAttorney);
       placeholderOther = 'Select a user';

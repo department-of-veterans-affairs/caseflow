@@ -325,7 +325,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.TASK_REASSIGNED: {
     const appealId = action.payload.task.id;
     const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
-    debugger;
+
     const tasksAndAppealsOfAssignee = update(
       state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
         {
