@@ -78,10 +78,12 @@ export type UiState = {
   selectedAssignee: ?string
 };
 
+export type UsersById = { [number]: User };
+
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
-  judges: Object,
+  judges: UsersById,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,

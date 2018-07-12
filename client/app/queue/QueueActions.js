@@ -3,7 +3,7 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, Task, User } from './types';
+import type { Dispatch, Task, User, UsersById } from './types';
 
 export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
@@ -14,14 +14,14 @@ export const onReceiveQueue = ({ tasks, appeals, userId }) => ({
   }
 });
 
-export const onReceiveJudges = (judges) => ({
+export const onReceiveJudges = (judges: UsersById) => ({
   type: ACTIONS.RECEIVE_JUDGE_DETAILS,
   payload: {
     judges
   }
 });
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (appealId: string, docCount: number) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
@@ -29,14 +29,14 @@ export const setAppealDocCount = (appealId, docCount) => ({
   }
 });
 
-export const setCaseReviewActionType = (type) => ({
+export const setCaseReviewActionType = (type: string) => ({
   type: ACTIONS.SET_REVIEW_ACTION_TYPE,
   payload: {
     type
   }
 });
 
-export const setDecisionOptions = (opts) => (dispatch) => {
+export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({
     type: ACTIONS.SET_DECISION_OPTIONS,
