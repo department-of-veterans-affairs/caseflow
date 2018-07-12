@@ -7,6 +7,13 @@ export const onReceivePastUploads = (pastUploads) => ({
   }
 });
 
+export const onReceiveSchedulePeriod = (schedulePeriod) => ({
+  type: ACTIONS.RECEIVE_SCHEDULE_PERIOD,
+  payload: {
+    schedulePeriod
+  }
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {
