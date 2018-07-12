@@ -28,11 +28,6 @@ class SelectRemandReasonsView extends React.Component {
 
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/remands`
-  });
-
   getNextStepUrl = () => {
     const { appealId, userRole } = this.props;
     const baseUrl = `/queue/appeals/${appealId}`;
