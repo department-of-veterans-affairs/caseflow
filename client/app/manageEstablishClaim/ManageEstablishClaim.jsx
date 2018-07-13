@@ -152,7 +152,8 @@ class ManageEstablishClaim extends React.Component {
             </p>
             <p>
               <a href="/dispatch/admin">
-                View oldest unassigned tasks with uploaded decisions <i className="fa fa-line-chart" aria-hidden="true"></i>
+                View oldest unassigned tasks with uploaded decisions
+                <i className="fa fa-line-chart" aria-hidden="true"></i>
               </a>
             </p>
             <h2>BVA Reports</h2>
