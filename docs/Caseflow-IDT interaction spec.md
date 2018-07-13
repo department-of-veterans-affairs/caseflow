@@ -119,6 +119,8 @@ Caseflow hasn't yet settled on a full plan for handling the following pieces of 
 
 ## Rollout plan (tentative)
 
+Even though we're working toward an October 1st deadline, we can develop, test, and launch much of the new functionality before that deadline. We propose that we complete 1. and 2. as development schedules allow, well in advance of the October 1st deadline.
+
 1. Develop authentication piece and test that the IDT is able to obtain a valid token.
 2. Develop Caseflow IDT API endpoints to fetch appeal information for attorneys for VACOLS appeals, transition IDT to using that functionality.
 3. Add RAMP appeal support to Caseflow IDT API endpoints for attorneys.
