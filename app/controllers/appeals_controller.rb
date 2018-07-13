@@ -3,7 +3,7 @@ class AppealsController < ApplicationController
   before_action :set_application, only: :document_count
 
   def index
-    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
+    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
   end
 
   def show_case_list

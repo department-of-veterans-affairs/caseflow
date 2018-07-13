@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#mdbenjam-add-sentry-webpack":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6":
   version "2.5.8"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#7819808aa2a355dc3c7a386cd4e5ca02cc9e40d5"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6c805c75e29ce9cfdf7811f976657f9507"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -67,29 +67,14 @@
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
 
-"@department-of-veterans-affairs/eslint-config-appeals@^1.0.2":
+"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e":
   version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/eslint-config-appeals/-/eslint-config-appeals-1.0.2.tgz#9996dae98052e5a767d763823ded5561676ffdb9"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522eefd81342a5a75cf13d02eb856ba23399c"
   dependencies:
     babel-eslint "^8.0.2"
     eslint-plugin-import "^2.8.0"
     eslint-plugin-mocha "^4.11.0"
     eslint-plugin-react "^7.5.1"
-
-"@sentry/cli@^1.30.2":
-  version "1.33.0"
-  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.33.0.tgz#ad24f4b6f441a09aafa7265b9d883fc7b1fc9f52"
-  dependencies:
-    https-proxy-agent "^2.2.1"
-    node-fetch "^2.1.2"
-    progress "2.0.0"
-    proxy-from-env "^1.0.0"
-
-"@sentry/webpack-plugin@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@sentry/webpack-plugin/-/webpack-plugin-1.5.2.tgz#c1f66afb919b8881b1b1ab7363939978ee662ce2"
-  dependencies:
-    "@sentry/cli" "^1.30.2"
 
 "@types/node@*":
   version "8.5.5"
@@ -154,12 +139,6 @@ acorn@^5.0.0, acorn@^5.1.1:
 after@0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
-
-agent-base@^4.1.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-4.2.0.tgz#9838b5c3392b962bad031e6a4c5e1024abec45ce"
-  dependencies:
-    es6-promisify "^5.0.0"
 
 ajv-keywords@^2.0.0:
   version "2.1.1"
@@ -2405,16 +2384,6 @@ es6-map@^0.1.3:
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
 
-es6-promise@^4.0.3:
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.2.4.tgz#dc4221c2b16518760bd8c39a52d8f356fc00ed29"
-
-es6-promisify@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/es6-promisify/-/es6-promisify-5.0.0.tgz#5109d62f3e56ea967c4b63505aef08291c8a5203"
-  dependencies:
-    es6-promise "^4.0.3"
-
 es6-set@~0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/es6-set/-/es6-set-0.1.5.tgz#d2b3ec5d4d800ced818db538d28974db0a73ccb1"
@@ -3403,13 +3372,6 @@ http-signature@~1.2.0:
 https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
-
-https-proxy-agent@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-2.2.1.tgz#51552970fa04d723e04c56d04178c3f92592bbc0"
-  dependencies:
-    agent-base "^4.1.0"
-    debug "^3.1.0"
 
 hyphenate-style-name@^1.0.2:
   version "1.0.2"
@@ -4478,10 +4440,6 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-fetch@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
-
 node-forge@0.6.33:
   version "0.6.33"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.6.33.tgz#463811879f573d45155ad6a9f43dc296e8e85ebc"
@@ -5022,7 +4980,7 @@ process@~0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/process/-/process-0.5.2.tgz#1638d8a8e34c2f440a91db95ab9aeb677fc185cf"
 
-progress@2.0.0, progress@^2.0.0:
+progress@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
 
@@ -5053,10 +5011,6 @@ proxy-addr@~2.0.2:
   dependencies:
     forwarded "~0.1.2"
     ipaddr.js "1.5.2"
-
-proxy-from-env@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.0.0.tgz#33c50398f70ea7eb96d21f7b817630a55791c7ee"
 
 prr@~0.0.0:
   version "0.0.0"

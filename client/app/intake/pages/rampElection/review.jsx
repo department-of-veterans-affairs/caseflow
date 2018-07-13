@@ -11,6 +11,7 @@ import { submitReview } from '../../actions/rampElection';
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
@@ -20,7 +21,8 @@ class Review extends React.PureComponent {
       optionSelected,
       optionSelectedError,
       receiptDate,
-      receiptDateError
+      receiptDateError,
+      reviewIntakeError
     } = this.props;
 
     switch (rampElectionStatus) {
@@ -40,6 +42,8 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Opt-In Election Form</h1>
 
+      { reviewIntakeError && <ErrorAlert /> }
+
       <DateSelector
         name="receipt-date"
         label="What is the Receipt Date of this form?"
@@ -58,7 +62,6 @@ class Review extends React.PureComponent {
         errorMessage={optionSelectedError}
         value={optionSelected}
       />
-
     </div>;
   }
 }
@@ -107,7 +110,8 @@ export default connect(
     optionSelected: state.rampElection.optionSelected,
     optionSelectedError: state.rampElection.optionSelectedError,
     receiptDate: state.rampElection.receiptDate,
-    receiptDateError: state.rampElection.receiptDateError
+    receiptDateError: state.rampElection.receiptDateError,
+    reviewIntakeError: state.rampElection.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
