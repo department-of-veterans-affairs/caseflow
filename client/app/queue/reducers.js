@@ -290,6 +290,29 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const appealId = action.payload.task.id;
     const appeal = state.loadedQueue.appeals[appealId];
 
+    const tasksAndAppealsOfAssignee = update(
+      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
+        {
+          data: {
+            tasks: {},
+            appeals: {}
+          }
+        },
+      {
+        data: {
+          tasks: {
+            [appealId]: {
+              $set: action.payload.task
+            }
+          },
+          appeals: {
+            [appealId]: {
+              $set: appeal
+            }
+          }
+        }
+      });
+
     return update(state, {
       tasks: {
         [appealId]: {
@@ -306,18 +329,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       },
       tasksAndAppealsOfAttorney: {
         [action.payload.assigneeId]: {
-          data: {
-            tasks: {
-              [appealId]: {
-                $set: action.payload.task
-              }
-            },
-            appeals: {
-              [appealId]: {
-                $set: appeal
-              }
-            }
-          }
+          $set: tasksAndAppealsOfAssignee
         }
       }
     });
