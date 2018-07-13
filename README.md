@@ -40,7 +40,7 @@ Once you've done that, close your terminal window and open a new one. Verify tha
 
 If you don't see both, stop and debug.
 
-### Install GIT
+### Install Git
 
 ```
 brew install git
@@ -130,13 +130,15 @@ This should install clean. If you have errors, try ... FIXME.
 
 ### Setup the development Postgres user
 
-Add these to your `.bashrc`:
+Add these to your `.bash_profile`:
 
 ```
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
+
+(Reload the file `source ~/.bash_profile`)
 
 ### Cleanup the old dev environment (not needed for new Macbooks)
 
