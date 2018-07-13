@@ -40,6 +40,14 @@ Once you've done that, close your terminal window and open a new one. Verify tha
 
 If you don't see both, stop and debug.
 
+### Install GIT
+
+```
+brew install git
+```
+
+We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like `git clone`, `git fetch`, `git pull` or `git push` with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
+
 ### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/)
 
 Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
