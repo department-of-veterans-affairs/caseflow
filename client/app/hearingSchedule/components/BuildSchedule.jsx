@@ -3,7 +3,7 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr, formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
@@ -58,7 +58,7 @@ export default class BuildSchedule extends React.Component {
     ];
 
     const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
-      date: `${formatDate(pastUpload.startDate)} - ${formatDate(pastUpload.endDate)}`,
+      date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
