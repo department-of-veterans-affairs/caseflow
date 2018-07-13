@@ -36,8 +36,8 @@ class Hearings::HearingDayController < HearingScheduleController
 
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
 
-    json_hearing = if updtd_hearing.class.equal?(TrueClass)
-                     json_created_hearings(updated_hearing)
+    json_hearing = if updated_hearing.class.equal?(TrueClass)
+                     json_created_hearings(hearing)
                    else
                      json_tb_hearings(updated_hearing)
                    end
