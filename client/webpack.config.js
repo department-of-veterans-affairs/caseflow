@@ -1,9 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const devBuild = process.env.NODE_ENV !== 'production';
+const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
 const config = {
   entry: [
@@ -39,7 +39,7 @@ const config = {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exclude: new RegExp("node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)")
+        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
       }
     ]
   }
@@ -50,7 +50,7 @@ if (devBuild) {
   config.devtool = 'eval-source-map';
 } else {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
-  console.log('Generating source maps...');
+  console.log('Generating source maps...'); // eslint-disable-line no-console
   config.devtool = 'source-map';
 }
 
