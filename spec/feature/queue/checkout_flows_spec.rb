@@ -87,10 +87,6 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 1
 
-        expect(page).to have_link("Your Queue", href: "/queue")
-        expect(page).to have_link(appeal.veteran_full_name, href: "/queue/appeals/#{appeal.vacols_id}")
-        expect(page).to have_link("Submit OMO", href: "/queue/appeals/#{appeal.vacols_id}/submit")
-
         expect(page).to have_content "Back"
 
         click_on "Continue"
@@ -228,7 +224,7 @@ RSpec.feature "Checkout flows" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues_count - 1)
 
-        click_on "Your Queue"
+        click_on "Caseflow"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
@@ -344,7 +340,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content field_values.last
         expect(page).to have_content "Note: added issue"
 
-        click_on "Your Queue"
+        click_on "Caseflow"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
         expect(issue_count).to eq "2"
