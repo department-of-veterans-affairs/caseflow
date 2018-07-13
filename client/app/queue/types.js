@@ -35,10 +35,10 @@ export type User = {
   selected_regional_office: ?string,
   display_name: string
 };
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
 
 export type Tasks = { [string]: Task };
 
+export type LoadedQueueTasks = { [string]: DeprecatedTask };
 export type LoadedQueueAppeals = { [string]: Object };
 
 export type TasksAndAppealsOfAttorney = {
@@ -78,6 +78,8 @@ export type UiState = {
   selectedAssigneeSecondary: ?string
 };
 
+export type UsersById = { [number]: User };
+
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type Attorneys = {
@@ -86,7 +88,7 @@ export type Attorneys = {
 };
 
 export type QueueState = {
-  judges: Object,
+  judges: UsersById,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,
@@ -115,3 +117,14 @@ export type State = {
   queue: QueueState,
   ui: UiState
 };
+
+type Action = { type: string, payload: Object };
+
+/* eslint-disable no-use-before-define */
+
+export type Dispatch = (action: Action | ThunkAction | PromiseAction) => any;
+export type GetState = () => State;
+export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+export type PromiseAction = Promise<Action>;
+
+/* eslint-enable no-use-before-define */
