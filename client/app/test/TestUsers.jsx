@@ -7,6 +7,9 @@ import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import NavigationBar from '../components/NavigationBar';
+import AppFrame from '../components/AppFrame';
+import { BrowserRouter } from 'react-router-dom';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -93,56 +96,66 @@ export default class TestUsers extends React.PureComponent {
       return tab;
     });
 
-    return <AppSegment filledBackground>
-      <h1>Welcome to the Caseflow admin page.</h1>
-      { this.props.dependenciesFaked &&
-        <div>
-          <p>
-            Here you can test out different user stories by selecting
-            a Test User and accessing different parts of the application.</p>
-          <p>
-            Some of our users come from different stations across the country,
-            therefore selecting station 405 might lead to an extra Login screen.</p>
-          <strong>User Selector:</strong>
-          <SearchableDropdown
-            name="Test user dropdown"
-            hideLabel
-            options={userOptions} searchable
-            onChange={this.handleUserSelect}
-            value={this.state.userSelect} />
-          <Button
-            onClick={this.handleUserSwitch}
-            name="Switch user"
-            loading={this.state.isSwitching}
-            loadingText="Switching users" />
-          <br /><br />
-          <p>
-          Not all applications are available to every user. Additionally,
-          some users have access to different parts of the same application.</p>
-          <strong>App Selector:</strong>
-          <TabWindow
-            tabs={tabs} />
-        </div> }
-      { this.props.isGlobalAdmin &&
+    return <BrowserRouter>
       <div>
-        <strong>Log in as user:</strong>
-        <TextField
-          label="User ID:"
-          name="userId"
-          value={this.state.userId}
-          onChange={this.userIdOnChange} />
-        <TextField
-          label="Station ID:"
-          name="stationId"
-          value={this.state.stationId}
-          onChange={this.stationIdOnChange} />
-        <Button
-          onClick={this.handleLogInAsUser}
-          name="Log in as user"
-          loading={this.state.isLoggingIn}
-          loadingText="Logging in" />
-      </div>}
-    </AppSegment>;
+        <NavigationBar
+          userDisplayName={this.props.userDisplayName}
+          dropdownUrls={this.props.dropdownUrls}
+          appName="Test Users" />
+        <AppFrame>
+          <AppSegment filledBackground>
+            <h1>Welcome to the Caseflow admin page.</h1>
+            { this.props.dependenciesFaked &&
+              <div>
+                <p>
+                  Here you can test out different user stories by selecting
+                  a Test User and accessing different parts of the application.</p>
+                <p>
+                  Some of our users come from different stations across the country,
+                  therefore selecting station 405 might lead to an extra Login screen.</p>
+                <strong>User Selector:</strong>
+                <SearchableDropdown
+                  name="Test user dropdown"
+                  hideLabel
+                  options={userOptions} searchable
+                  onChange={this.handleUserSelect}
+                  value={this.state.userSelect} />
+                <Button
+                  onClick={this.handleUserSwitch}
+                  name="Switch user"
+                  loading={this.state.isSwitching}
+                  loadingText="Switching users" />
+                <br /><br />
+                <p>
+                Not all applications are available to every user. Additionally,
+                some users have access to different parts of the same application.</p>
+                <strong>App Selector:</strong>
+                <TabWindow
+                  tabs={tabs} />
+              </div> }
+            { this.props.isGlobalAdmin &&
+            <div>
+              <strong>Log in as user:</strong>
+              <TextField
+                label="User ID:"
+                name="userId"
+                value={this.state.userId}
+                onChange={this.userIdOnChange} />
+              <TextField
+                label="Station ID:"
+                name="stationId"
+                value={this.state.stationId}
+                onChange={this.stationIdOnChange} />
+              <Button
+                onClick={this.handleLogInAsUser}
+                name="Log in as user"
+                loading={this.state.isLoggingIn}
+                loadingText="Logging in" />
+            </div>}
+          </AppSegment>
+        </AppFrame>
+      </div>
+    </BrowserRouter>;
   }
 
 }
