@@ -68,8 +68,10 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Install via Homebrew:
 
+```
     brew tap InstantClientTap/instantclient
     brew install instantclient-basic instantclient-sdk
+```
 
 #### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
