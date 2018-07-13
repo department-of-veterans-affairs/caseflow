@@ -4,41 +4,41 @@ class HearingRooms
       label: "1 (1W200A)"
     },
     "2" => {
-        label: "2 (1W200B)"
+      label: "2 (1W200B)"
     },
     "3" => {
-        label: "3 (1W200C)"
+      label: "3 (1W200C)"
     },
     "4" => {
-        label: "4 (1W424)"
+      label: "4 (1W424)"
     },
     "5" => {
-        label: "5 (1W428)"
+      label: "5 (1W428)"
     },
     "6" => {
-        label: "6 (1W432)"
+      label: "6 (1W432)"
     },
     "7" => {
-        label: "7 (1W434)"
+      label: "7 (1W434)"
     },
     "8" => {
-        label: "8 (1W435)"
+      label: "8 (1W435)"
     },
     "9" => {
-        label: "9 (1W436)"
+      label: "9 (1W436)"
     },
     "10" => {
-        label: "10 (1W437)"
+      label: "10 (1W437)"
     },
     "11" => {
-        label: "11 (1W438)"
+      label: "11 (1W438)"
     },
     "12" => {
-        label: "12 (1W439)"
+      label: "12 (1W439)"
     },
     "13" => {
-        label: "10 (1W440)"
-    },
+      label: "13 (1W440)"
+    }
   }.freeze
 
   attr_reader :key

@@ -35,8 +35,15 @@ class Hearings::HearingDayController < HearingScheduleController
     return record_not_found unless hearing
 
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
+
+    json_hearing = if updtd_hearing.class.equal?(TrueClass)
+                     json_created_hearings(updated_hearing)
+                   else
+                     json_tb_hearings(updated_hearing)
+                   end
+
     render json: {
-      hearing: updated_hearing.class.equal?(TrueClass) ? json_created_hearings(hearing) : json_tb_hearings(updated_hearing)
+      hearing: json_hearing
     }, status: :ok
   end
 
@@ -92,8 +99,8 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearings(hearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
-        hearings,
-        each_serializer: ::Hearings::HearingDaySerializer
+      hearings,
+      each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
 
     format_for_client(json_hash)
