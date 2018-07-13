@@ -1,10 +1,16 @@
 <% content_for :page_title do %>&nbsp &gt &nbspTest Users<% end %>
 
-<%= react_component("TestUsers", props: {
-  currentUser: current_user.to_hash,
-  isGlobalAdmin: current_user.global_admin?,
-  dependenciesFaked: ApplicationController.dependencies_faked?,
-  testUsersList: @test_users,
-  appSelectList: Test::UsersController::APPS,
-  epTypes: @ep_types
-}) %>
+<% content_for :full_page_content do %>
+  <%= react_component("TestUsers", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    page: "TestUsers",
+    feedbackUrl: feedback_url,
+    currentUser: current_user.to_hash,
+    isGlobalAdmin: current_user.global_admin?,
+    dependenciesFaked: ApplicationController.dependencies_faked?,
+    testUsersList: @test_users,
+    appSelectList: Test::UsersController::APPS,
+    epTypes: @ep_types
+  }) %>
+<% end %>
