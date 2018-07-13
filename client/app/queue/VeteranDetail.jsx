@@ -16,7 +16,7 @@ const addressIndentStyling = (secondLine) => css({
   marginLeft: secondLine ? '7.5em' : 0
 });
 
-export default class AppellantDetail extends React.PureComponent {
+export default class VeteranDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
 
   formatAddress = (addressFieldName) => {
@@ -86,13 +86,15 @@ export default class AppellantDetail extends React.PureComponent {
 
   render = () => <ul {...detailListStyling}>
     {this.getDetails({
-      nameField: 'appellant_full_name',
+      nameField: 'veteran_full_name',
+      genderField: 'veteran_gender',
+      dobField: 'veteran_date_of_birth',
       addressField: 'appellant_address',
-      relationField: 'appellant_relationship'
+      regionalOfficeField: 'regional_office'
     })}
   </ul>;
 }
 
-AppellantDetail.propTypes = {
+VeteranDetail.propTypes = {
   appeal: PropTypes.object.isRequired
 };

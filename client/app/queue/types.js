@@ -49,7 +49,7 @@ export type TasksAndAppealsOfAttorney = {
   }
 };
 
-export type AttorneysOfJudge = Array<Object>;
+export type AttorneysOfJudge = Array<User>;
 
 export type CaseDetailState = {|
   activeAppeal: ?Object,
@@ -60,7 +60,6 @@ export type UiStateError = {title: string, detail: string}
 
 export type UiState = {
   selectingJudge: boolean,
-  breadcrumbs: Array<Object>,
   highlightFormItems: boolean,
   messages: {
     success: ?string,
@@ -75,12 +74,18 @@ export type UiState = {
     deleteIssue: boolean
   },
   featureToggles: Object,
-  selectedAssignee: ?string
+  selectedAssignee: ?string,
+  selectedAssigneeSecondary: ?string
 };
 
 export type UsersById = { [number]: User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
+
+export type Attorneys = {
+  data?: Array<User>,
+  error?: Object
+};
 
 export type QueueState = {
   judges: UsersById,
@@ -101,7 +106,8 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  attorneys: Attorneys
 };
 
 export type State = {

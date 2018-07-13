@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -70,6 +70,9 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     endProductDescription: null,
     issueCount: 0,
     nonRatedIssues: { },
+    reviewIntakeError: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -168,6 +171,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeError: {
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });
