@@ -27,7 +27,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) unless hearing.valid?
     render json: {
-      hearing: json_hearings(hearing)
+      hearing: json_created_hearings(hearing)
     }, status: :created
   end
 
@@ -36,7 +36,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
     render json: {
-      hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
+      hearing: updated_hearing.class.equal?(TrueClass) ? json_created_hearings(hearing) : json_tb_hearings(updated_hearing)
     }, status: :ok
   end
 
@@ -81,10 +81,19 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: 404
   end
 
-  def json_hearings(hearings)
+  def json_created_hearings(hearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
       hearings,
-      each_serializer: ::Hearings::HearingDaySerializer
+      each_serializer: ::Hearings::HearingDayCreateSerializer
+    ).as_json
+
+    format_for_client(json_hash)
+  end
+
+  def json_hearings(hearings)
+    json_hash = ActiveModelSerializers::SerializableResource.new(
+        hearings,
+        each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
 
     format_for_client(json_hash)
