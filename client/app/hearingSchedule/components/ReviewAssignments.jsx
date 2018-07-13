@@ -139,7 +139,6 @@ export default class ReviewAssignments extends React.Component {
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
       />
       <Table
-        headerClassName="cf-hearings-dark-background"
         styling={tableBorder}
         columns={hearingAssignmentColumns}
         rowObjects={hearingAssignmentRows}
