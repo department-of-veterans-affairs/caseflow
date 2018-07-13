@@ -61,7 +61,6 @@ RSpec.feature "AmaQueue" do
       click_on appeals.first.veteran.first_name
 
       expect(page).to have_content("About the Veteran")
-      expect(page).to have_content("The veteran is the appellant.")
 
       expect(page).to have_content("AOD")
 
