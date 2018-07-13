@@ -25,10 +25,19 @@ import {
   dropdownStyling,
   JUDGE_DECISION_OPTIONS
 } from '../constants';
+import AssignWidget from './AssignWidget';
+
+const ASSIGN = 'ASSIGN';
 
 // todo: make StartCheckoutFlowDropdownBase
 class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
-  changeRoute = (props) => {
+  handleChange = (option) => {
+    if (option.value === ASSIGN) {
+      this.setState({ assignWidgetVisible: true });
+
+      return;
+    }
+
     const {
       appeal: { attributes: appeal },
       task,
@@ -37,7 +46,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
       decision,
       userRole
     } = this.props;
-    const actionType = props.value;
+    const actionType = option.value;
 
     this.props.setCaseReviewActionType(actionType);
 
@@ -76,14 +85,19 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
     const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.work_product) ?
       JUDGE_DECISION_OPTIONS.OMO_REQUEST :
       JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
+    const assignOption = { label: 'Assign to attorney',
+      value: ASSIGN };
 
-    return <SearchableDropdown
-      placeholder="Select an action&hellip;"
-      name={`start-checkout-flow-${this.props.appealId}`}
-      options={[dropdownOption]}
-      onChange={this.changeRoute}
-      hideLabel
-      dropdownStyling={dropdownStyling} />;
+    return <React.Fragment>
+      <SearchableDropdown
+        placeholder="Select an action&hellip;"
+        name={`start-checkout-flow-${this.props.appealId}`}
+        options={[dropdownOption, assignOption]}
+        onChange={this.handleChange}
+        hideLabel
+        dropdownStyling={dropdownStyling} />
+      {this.state.assignWidgetVisible && <AssignWidget />}
+    </React.Fragment>;
   }
 }
 
