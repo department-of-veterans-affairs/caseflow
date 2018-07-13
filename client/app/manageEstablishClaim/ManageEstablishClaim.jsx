@@ -103,6 +103,7 @@ class ManageEstablishClaim extends React.Component {
         <NavigationBar
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
+          defaultUrl="/dispatch/establish-claim/"
           appName="Dispatch"
           logoProps={{
             accentColor: LOGO_COLORS.DISPATCH.ACCENT,
