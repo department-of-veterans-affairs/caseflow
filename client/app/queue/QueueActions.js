@@ -274,7 +274,7 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
-export const fetchAllAttorneys = () => (dispatch) => {
+export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
   return ApiUtil.get(
     '/users?role=Attorney').
     then((resp) => resp.body).
