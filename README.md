@@ -20,6 +20,7 @@ Install the base dependencies via Homebrew:
     brew install rbenv nodenv yarn
     brew tap ouchxp/nodenv
     brew install nodenv-nvmrc
+    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
