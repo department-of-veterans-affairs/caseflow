@@ -14,6 +14,13 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
+export const onReceiveHearingDays = (hearingDays) => ({
+  type: ACTIONS.RECEIVE_HEARING_DAYS,
+  payload: {
+    hearingDays
+  }
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {

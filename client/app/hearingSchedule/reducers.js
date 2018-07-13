@@ -23,6 +23,12 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.RECEIVE_HEARING_DAYS:
+    return update(state, {
+      hearingDays: {
+        $set: action.payload.hearingDays
+      }
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {

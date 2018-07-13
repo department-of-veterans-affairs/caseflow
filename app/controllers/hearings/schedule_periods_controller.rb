@@ -7,7 +7,31 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def show
-    render json: { schedule_period: SchedulePeriod.find(params[:schedule_period_id]).to_hash }
+    render json: { schedule_period: SchedulePeriod.find(params[:schedule_period_id]).to_hash.merge(
+      hearing_days: [
+        {
+          hearing_date: '2018-06-04',
+          hearing_type: 'Video',
+          regional_office: 'St. Petersburg, FL',
+          room: '1',
+          judge: 'Sarah Smith'
+        },
+        {
+          hearing_date: '2018-06-04',
+          hearing_type: 'Video',
+          regional_office: 'Baltimore, MD',
+          room: '1',
+          judge: 'Sarah Smith'
+        },
+        {
+          hearing_date: '2018-06-04',
+          hearing_type: 'Video',
+          regional_office: 'Portland, OR',
+          room: '1',
+          judge: 'Sarah Smith'
+        }
+      ]
+    ) }
   end
 
   def create
