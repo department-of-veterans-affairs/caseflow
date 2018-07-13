@@ -9,8 +9,7 @@ import ReviewAssignments from '../components/ReviewAssignments';
 import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal,
-  onReceiveHearingDays
+  onClickCloseModal
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
@@ -24,10 +23,8 @@ export class ReviewAssignmentsContainer extends React.Component {
     return ApiUtil.get(`/hearings/schedule_periods/${this.props.match.params.schedulePeriodId}`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
       const schedulePeriod = resp.schedulePeriod;
-      const hearingDays = resp.hearingDays;
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);
-      this.props.onReceiveHearingDays(hearingDays);
     });
   };
 
@@ -66,8 +63,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal,
-  onReceiveHearingDays
+  onClickCloseModal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));
