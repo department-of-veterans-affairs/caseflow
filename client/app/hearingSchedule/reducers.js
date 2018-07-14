@@ -93,6 +93,25 @@ const reducers = (state = initialState, action = {}) => {
         $set: false
       }
     });
+  case ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD:
+    return update(state, {
+      displaySuccessMessage: {
+        $set: true
+      },
+      $unset: [
+        'fileType',
+        'roCoStartDate',
+        'roCoEndDate',
+        'roCoFileUpload',
+        'judgeStartDate',
+        'judgeEndDate',
+        'judgeFileUpload'
+      ]
+    });
+    case ACTIONS.UNSET_SUCCESS_MESSAGE:
+      return update(state, {
+        $unset: ['displaySuccessMessage']
+      });
   default:
     return state;
   }
