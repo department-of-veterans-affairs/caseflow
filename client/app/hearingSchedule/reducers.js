@@ -108,10 +108,10 @@ const reducers = (state = initialState, action = {}) => {
         'judgeFileUpload'
       ]
     });
-    case ACTIONS.UNSET_SUCCESS_MESSAGE:
-      return update(state, {
-        $unset: ['displaySuccessMessage']
-      });
+  case ACTIONS.UNSET_SUCCESS_MESSAGE:
+    return update(state, {
+      $unset: ['displaySuccessMessage']
+    });
   default:
     return state;
   }

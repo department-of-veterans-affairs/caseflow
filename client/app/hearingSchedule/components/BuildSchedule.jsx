@@ -74,21 +74,21 @@ export default class BuildSchedule extends React.Component {
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
-      schedulePeriod.type == SPREADSHEET_TYPES.JudgeSchedulePeriod.value;
+      schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value;
 
     const displayRoCoSuccessMessage = displaySuccessMessage &&
-      schedulePeriod.type == SPREADSHEET_TYPES.RoSchedulePeriod.value;
+      schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
     return <AppSegment filledBackground>
       {displayJudgeSuccessMessage && <Alert
-        type='success'
+        type="success"
         title={`You have successfully assigned judges to hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
         message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
-        type='success'
+        type="success"
         title={`You have successfully assigned hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
         message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
