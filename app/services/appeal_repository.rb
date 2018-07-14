@@ -126,7 +126,6 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
       contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
