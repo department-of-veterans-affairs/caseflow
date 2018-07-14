@@ -43,7 +43,9 @@ export const ACTIONS = {
   SET_SELECTED_ASSIGNEE_OF_USER: 'SET_SELECTED_ASSIGNEE_OF_USER',
   START_ASSIGN_TASKS_TO_USER: 'START_ASSIGN_TASKS_TO_USER',
   TASK_INITIAL_ASSIGNED: 'TASK_INITIAL_ASSIGNED',
-  TASK_REASSIGNED: 'TASK_REASSIGNED'
+  TASK_REASSIGNED: 'TASK_REASSIGNED',
+  RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
+  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -122,6 +124,8 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 
 // max length of VACOLS issue description field `ISSDESC`
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+// max length for Attorney comments `DECASS.DEATCOM`
+export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,

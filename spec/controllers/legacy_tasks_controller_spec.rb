@@ -14,8 +14,8 @@ RSpec.describe LegacyTasksController, type: :controller do
   describe "GET legacy_tasks/xxx" do
     let(:user) { create(:user) }
     before do
-      User.stub = user
       create(:staff, role, sdomainid: user.css_id)
+      User.authenticate!(user: user)
     end
 
     context "user is an attorney" do
@@ -37,9 +37,9 @@ RSpec.describe LegacyTasksController, type: :controller do
     end
 
     context "user is neither judge nor attorney" do
-      let(:role) { nil }
+      let(:role) { :colocated_role }
 
-      it "should not process the request succesfully" do
+      it "should redirect request to /unauthorized" do
         get :index, params: { user_id: user.id }
         expect(response.status).to eq 302
       end

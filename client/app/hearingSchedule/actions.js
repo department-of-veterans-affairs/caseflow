@@ -7,10 +7,24 @@ export const onReceivePastUploads = (pastUploads) => ({
   }
 });
 
+export const onReceiveSchedulePeriod = (schedulePeriod) => ({
+  type: ACTIONS.RECEIVE_SCHEDULE_PERIOD,
+  payload: {
+    schedulePeriod
+  }
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {
     fileType
+  }
+});
+
+export const onReceiveHearingSchedule = (hearingSchedule) => ({
+  type: ACTIONS.RECEIVE_HEARING_SCHEDULE,
+  payload: {
+    hearingSchedule
   }
 });
 
@@ -49,9 +63,35 @@ export const onJudgeEndDateChange = (endDate) => ({
   }
 });
 
+export const onViewStartDateChange = (viewStartDate) => ({
+  type: ACTIONS.VIEW_START_DATE_CHANGE,
+  payload: {
+    viewStartDate
+  }
+});
+
+export const onViewEndDateChange = (viewEndDate) => ({
+  type: ACTIONS.VIEW_END_DATE_CHANGE,
+  payload: {
+    viewEndDate
+  }
+});
+
 export const onJudgeFileUpload = (file) => ({
   type: ACTIONS.JUDGE_FILE_UPLOAD,
   payload: {
     file
   }
+});
+
+export const toggleUploadContinueLoading = () => ({
+  type: ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING
+});
+
+export const onClickConfirmAssignments = () => ({
+  type: ACTIONS.CLICK_CONFIRM_ASSIGNMENTS
+});
+
+export const onClickCloseModal = () => ({
+  type: ACTIONS.CLICK_CLOSE_MODAL
 });

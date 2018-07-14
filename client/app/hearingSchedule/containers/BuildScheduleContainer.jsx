@@ -1,13 +1,47 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import _ from 'lodash';
+import { onReceivePastUploads } from '../actions';
+import ApiUtil from '../../util/ApiUtil';
+import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import BuildSchedule from '../components/BuildSchedule';
 
-export class BuildScheduleContainer extends React.Component {
+class BuildScheduleContainer extends React.PureComponent {
+  loadPastUploads = () => {
+    if (!_.isEmpty(this.props.pastUploads)) {
+      return Promise.resolve();
+    }
 
-  render() {
-    return <BuildSchedule
-      pastUploads={this.props.pastUploads}
-    />;
+    return ApiUtil.get('/hearings/schedule_periods.json').then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+      const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
+
+      this.props.onReceivePastUploads(schedulePeriods);
+    });
+  };
+
+  createLoadPromise = () => Promise.all([
+    this.loadPastUploads()
+  ]);
+
+  render = () => {
+    const loadingDataDisplay = <LoadingDataDisplay
+      createLoadPromise={this.createLoadPromise}
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        message: 'Loading past schedule uploads...'
+      }}
+      failStatusMessageProps={{
+        title: 'Unable to load past schedule uploads.'
+      }}>
+      <BuildSchedule
+        pastUploads={this.props.pastUploads}
+      />
+    </LoadingDataDisplay>;
+
+    return <div>{loadingDataDisplay}</div>;
   }
 }
 
@@ -15,4 +49,8 @@ const mapStateToProps = (state) => ({
   pastUploads: state.pastUploads
 });
 
-export default connect(mapStateToProps)(BuildScheduleContainer);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceivePastUploads
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleContainer);

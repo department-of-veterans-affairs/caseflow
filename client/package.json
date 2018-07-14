@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "^2.5.8",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -44,6 +44,7 @@
     "glamor": "^2.20.40",
     "history": "^4.5.1",
     "immutability-helper": "^2.4.0",
+    "immutable": "^3.8.2",
     "imports-loader": "^0.7.1",
     "jsdom": "9.8.3",
     "lodash": "^4.17.2",
@@ -83,7 +84,7 @@
     "webpack": "^3.10.0"
   },
   "devDependencies": {
-    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.2",
+    "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-node-modules": "^0.0.1",

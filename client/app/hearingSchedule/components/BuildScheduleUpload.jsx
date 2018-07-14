@@ -5,9 +5,10 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
+import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
-import UploadDateSelector from './UploadDateSelector';
 import { SPREADSHEET_TYPES } from '../constants';
 
 const fileUploadStyling = css({
@@ -20,9 +21,14 @@ export default class BuildScheduleUpload extends React.Component {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
       <InlineForm>
-        <UploadDateSelector
-          startDate={this.props.roCoStartDate}
-          endDate={this.props.roCoEndDate}
+        <BasicDateRangeSelector
+          messageLabel
+          startDateName="startDate"
+          startDateValue={this.props.roCoStartDate}
+          startDateLabel={false}
+          endDateName="endDate"
+          endDateValue={this.props.roCoEndDate}
+          endDateLabel={false}
           onStartDateChange={this.props.onRoCoStartDateChange}
           onEndDateChange={this.props.onRoCoEndDateChange}
         />
@@ -43,9 +49,14 @@ export default class BuildScheduleUpload extends React.Component {
     return <div>{ SPREADSHEET_TYPES.JudgeSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
       <InlineForm>
-        <UploadDateSelector
-          startDate={this.props.judgeStartDate}
-          endDate={this.props.judgeEndDate}
+        <BasicDateRangeSelector
+          messageLabel
+          startDateName="startDate"
+          startDateValue={this.props.judgeStartDate}
+          startDateLabel={false}
+          endDateName="endDate"
+          endDateValue={this.props.judgeEndDate}
+          endDateLabel={false}
           onStartDateChange={this.props.onJudgeStartDateChange}
           onEndDateChange={this.props.onJudgeEndDateChange}
         />
@@ -89,16 +100,18 @@ export default class BuildScheduleUpload extends React.Component {
       />
       <Link
         name="cancel"
-        to="/hearings/schedule/build">
+        to="/schedule/build">
         Cancel
       </Link>
       <div className="cf-push-right">
-        <Link
+        <Button
           name="continue"
           button="primary"
-          to="/hearings/schedule/build/upload">
+          loading={this.props.uploadContinueLoading}
+          onClick={this.props.onUploadContinue}
+        >
           Continue
-        </Link>
+        </Button>
       </div>
     </AppSegment>;
   }
@@ -118,5 +131,7 @@ BuildScheduleUpload.propTypes = {
   onJudgeStartDateChange: PropTypes.func,
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.string,
-  onJudgeFileUpload: PropTypes.func
+  onJudgeFileUpload: PropTypes.func,
+  onUploadContinue: PropTypes.func,
+  uploadContinueLoading: PropTypes.bool
 };
