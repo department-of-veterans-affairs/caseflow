@@ -57,7 +57,7 @@ Rails.application.configure do
   config.s3_bucket_name = "caseflow-cache"
 
   # Set to true to get the documents from efolder running locally on port 4000.
-  config.use_efolder_locally = false
+  config.use_efolder_locally = true
 
   # set to true to create queues and override the sqs endpiont
   config.sqs_create_queues = true

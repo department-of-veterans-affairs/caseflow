@@ -13,7 +13,8 @@ class Appeal < AmaReview
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at,
+    :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match(id)
@@ -43,13 +44,6 @@ class Appeal < AmaReview
 
   def power_of_attorney
     @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
-  end
-
-  def has_new_files_for_user(user)
-    appeal_view = appeal_views.find_by(user: user)
-    return false if !appeal_view
-
-    appeal.documents.where(received_at > appeal_view.last_viewed_at)
   end
 
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney

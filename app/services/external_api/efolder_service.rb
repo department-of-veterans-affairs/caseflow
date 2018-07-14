@@ -34,7 +34,7 @@ class ExternalApi::EfolderService
   end
 
   def self.efolder_v2_api(vbms_id, user)
-    headers = { "FILE-NUMBER" => vbms_id }
+    headers = { "FILE-NUMBER" => "DEMO#{vbms_id}" }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
 

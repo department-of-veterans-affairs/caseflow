@@ -1,6 +1,6 @@
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: :document_count
+  before_action :set_application, only: [:document_count, :new_documents]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
@@ -17,6 +17,12 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
+  end
+
+  def new_documents
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
     render e.serialize_response
   end

@@ -624,7 +624,7 @@ export class NewFileIcon extends React.PureComponent {
                     <polygon id="Path-Copy" fill="#844E9F" points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
                     <polygon id="Path-Copy-2" fill="#844E9F" points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
                 </g>
-                <text id="NEW" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="13" font-weight="normal" letter-spacing="-0.75" fill="#844E9F">
+                <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill="#844E9F">
                     <tspan x="10" y="13">N</tspan>
                     <tspan x="17.661" y="13">E</tspan>
                     <tspan x="24.512" y="13">W</tspan>

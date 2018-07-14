@@ -1,14 +1,19 @@
 import React from 'react';
-import { NewFileIcon } from '../components/RenderFunctions';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { NewFileIcon } from '../../components/RenderFunctions';
+import { bindActionCreators } from 'redux';
+import { getNewDocuments } from '../QueueActions'
 
-export default class NewFile extends React.PureComponent {
-
+class NewFile extends React.Component {
   componentDidMount = () => {
-
+    if (!this.props.docs) {
+      this.props.getNewDocuments(this.props.appeal.attributes.vacols_id);
+    }
   }
 
   render = () => {
-    if (appeal.hasNewFiles) {
+    if (this.props.docs && this.props.docs.length > 0) {
       return <NewFileIcon />;
     } else {
       return null
@@ -18,25 +23,27 @@ export default class NewFile extends React.PureComponent {
 
 NewFile.propTypes = {
   appeal: PropTypes.shape({
-    hasNewFiles: PropTypes.bool
+    attributes: PropTypes.shape({
+      vacols_id: PropTypes.string
+    })
   }).isRequired,
+  documentObject: PropTypes.shape({
+    docs: PropTypes.object,
+    error: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.attributes.vacols_id];
 
   return {
-    appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
-    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems
+    docs: documentObject ? documentObject.docs : null,
+    error: documentObject ? documentObject.error : null
   };
-};
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  startEditingAppealIssue,
-  saveEditedAppealIssue
+  getNewDocuments
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewFile);

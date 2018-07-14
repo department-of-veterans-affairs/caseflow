@@ -5,9 +5,8 @@ import querystring from 'querystring';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
-import AppealDocumentCount from './AppealDocumentCount';
 
-import { NewFile } from 'components/NewFile';
+import NewFile from './components/NewFile';
 
 export default class ReaderLink extends React.PureComponent {
 
