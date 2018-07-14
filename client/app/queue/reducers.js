@@ -39,7 +39,8 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isTaskAssignedToUserSelected: {}
+  isTaskAssignedToUserSelected: {},
+  attorneys: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -311,6 +312,29 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const appealId = action.payload.task.id;
     const appeal = state.loadedQueue.appeals[appealId];
 
+    const tasksAndAppealsOfAssignee = update(
+      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
+        {
+          data: {
+            tasks: {},
+            appeals: {}
+          }
+        },
+      {
+        data: {
+          tasks: {
+            [appealId]: {
+              $set: action.payload.task
+            }
+          },
+          appeals: {
+            [appealId]: {
+              $set: appeal
+            }
+          }
+        }
+      });
+
     return update(state, {
       tasks: {
         [appealId]: {
@@ -327,18 +351,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       },
       tasksAndAppealsOfAttorney: {
         [action.payload.assigneeId]: {
-          data: {
-            tasks: {
-              [appealId]: {
-                $set: action.payload.task
-              }
-            },
-            appeals: {
-              [appealId]: {
-                $set: appeal
-              }
-            }
-          }
+          $set: tasksAndAppealsOfAssignee
         }
       }
     });
@@ -346,6 +359,29 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.TASK_REASSIGNED: {
     const appealId = action.payload.task.id;
     const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
+
+    const tasksAndAppealsOfAssignee = update(
+      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
+        {
+          data: {
+            tasks: {},
+            appeals: {}
+          }
+        },
+      {
+        data: {
+          tasks: {
+            [appealId]: {
+              $set: action.payload.task
+            }
+          },
+          appeals: {
+            [appealId]: {
+              $set: appeal
+            }
+          }
+        }
+      });
 
     return update(state, {
       tasks: {
@@ -365,22 +401,27 @@ const workQueueReducer = (state = initialState, action = {}) => {
           }
         },
         [action.payload.assigneeId]: {
-          data: {
-            tasks: {
-              [appealId]: {
-                $set: action.payload.task
-              }
-            },
-            appeals: {
-              [appealId]: {
-                $set: appeal
-              }
-            }
-          }
+          $set: tasksAndAppealsOfAssignee
         }
       }
     });
   }
+  case ACTIONS.RECEIVE_ALL_ATTORNEYS:
+    return update(state, {
+      attorneys: {
+        $set: {
+          data: action.payload.attorneys
+        }
+      }
+    });
+  case ACTIONS.ERROR_LOADING_ATTORNEYS:
+    return update(state, {
+      attorneys: {
+        $set: {
+          error: action.payload.error
+        }
+      }
+    });
   default:
     return state;
   }

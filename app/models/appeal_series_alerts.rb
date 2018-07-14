@@ -100,7 +100,7 @@ class AppealSeriesAlerts
     if appeal_series.status == :at_vso && appeal_series.at_front
       {
         type: :blocked_by_vso,
-        details: { vso_name: appeal_series.representative }
+        details: { vso_name: appeal_series.representative_name }
       }
     end
   end

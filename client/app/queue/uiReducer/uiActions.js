@@ -45,38 +45,6 @@ export const setSelectingJudge = (selectingJudge) => ({
   }
 });
 
-export const pushBreadcrumb = (...crumbs) => ({
-  type: ACTIONS.PUSH_BREADCRUMB,
-  payload: {
-    crumbs: [...crumbs]
-  }
-});
-
-export const popBreadcrumb = (crumbsToDrop = 1) => ({
-  type: ACTIONS.POP_BREADCRUMB,
-  payload: {
-    crumbsToDrop
-  }
-});
-
-export const setBreadcrumbs = (...crumbs) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.RESET_BREADCRUMBS
-  });
-
-  dispatch(pushBreadcrumb(...crumbs));
-};
-
-export const resetBreadcrumbs = (vetName, appealId) => (dispatch) => {
-  dispatch(setBreadcrumbs({
-    breadcrumb: 'Your Queue',
-    path: '/queue'
-  }, {
-    breadcrumb: vetName,
-    path: `/queue/appeals/${appealId}`
-  }));
-};
-
 export const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
@@ -143,6 +111,13 @@ export const setUserRole = (userRole) => ({
 
 export const setSelectedAssignee = ({ assigneeId }) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE,
+  payload: {
+    assigneeId
+  }
+});
+
+export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
+  type: ACTIONS.SET_SELECTED_ASSIGNEE_SECONDARY,
   payload: {
     assigneeId
   }

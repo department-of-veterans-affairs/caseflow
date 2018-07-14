@@ -109,7 +109,6 @@ describe AppealRepository do
         vbms_id: "VBMS-ID",
         type: "Reconsideration",
         file_type: "VBMS",
-        representative: "Catholic War Veterans",
         veteran_first_name: "Phil",
         veteran_middle_initial: "J",
         veteran_last_name: "Johnston",
