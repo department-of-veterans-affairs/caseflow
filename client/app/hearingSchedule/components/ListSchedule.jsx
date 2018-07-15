@@ -52,9 +52,9 @@ export default class ListSchedule extends React.Component {
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: `${formatDate(hearingDay.hearingDate)}`,
       hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.folderNr,
+      regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
-      vlj: hearingDay.judgeId
+      vlj: hearingDay.judgeName
     }));
 
     return <AppSegment filledBackground>
@@ -93,9 +93,10 @@ ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
     hearingDate: PropTypes.string,
     hearingType: PropTypes.string,
-    folderNr: PropTypes.string,
+    regionalOffice: PropTypes.string,
     roomInfo: PropTypes.string,
     judgeId: PropTypes.string,
+    judgeName: PropTypes.string,
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),

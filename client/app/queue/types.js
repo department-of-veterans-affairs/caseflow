@@ -4,8 +4,6 @@ export type DeprecatedTask = {
   id: string
 };
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-
 export type Task = {
   id: string,
   appealId: string,
@@ -27,8 +25,20 @@ export type Task = {
   }
 };
 
+export type User = {
+  id: number,
+  station_id: string,
+  css_id: string,
+  full_name: string,
+  email: ?string,
+  roles: Array<String>,
+  selected_regional_office: ?string,
+  display_name: string
+};
+
 export type Tasks = { [string]: Task };
 
+export type LoadedQueueTasks = { [string]: DeprecatedTask };
 export type LoadedQueueAppeals = { [string]: Object };
 
 export type TasksAndAppealsOfAttorney = {
@@ -39,7 +49,7 @@ export type TasksAndAppealsOfAttorney = {
   }
 };
 
-export type AttorneysOfJudge = Array<Object>;
+export type AttorneysOfJudge = Array<User>;
 
 export type CaseDetailState = {|
   activeAppeal: ?Object,
@@ -64,13 +74,21 @@ export type UiState = {
     deleteIssue: boolean
   },
   featureToggles: Object,
-  selectedAssignee: ?string
+  selectedAssignee: ?string,
+  selectedAssigneeSecondary: ?string
 };
+
+export type UsersById = { [number]: User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
+export type Attorneys = {
+  data?: Array<User>,
+  error?: Object
+};
+
 export type QueueState = {
-  judges: Object,
+  judges: UsersById,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,
@@ -88,7 +106,8 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  attorneys: Attorneys
 };
 
 export type State = {
@@ -98,3 +117,14 @@ export type State = {
   queue: QueueState,
   ui: UiState
 };
+
+type Action = { type: string, payload: Object };
+
+/* eslint-disable no-use-before-define */
+
+export type Dispatch = (action: Action | ThunkAction | PromiseAction) => any;
+export type GetState = () => State;
+export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+export type PromiseAction = Promise<Action>;
+
+/* eslint-enable no-use-before-define */
