@@ -37,10 +37,10 @@ export class ReviewAssignmentsContainer extends React.Component {
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        message: 'Loading past schedule uploads...'
+        message: 'We are assigning hearings...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load past schedule uploads.'
+        title: 'Unable to assign hearings. Please try again.'
       }}>
       <ReviewAssignments
         schedulePeriod={this.props.schedulePeriod}
