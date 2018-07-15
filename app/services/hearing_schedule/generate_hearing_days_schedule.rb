@@ -11,15 +11,27 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   attr_reader :available_days, :ros
 
-  def initialize(schedule_period, co_non_availability_days = [], ro_non_available_days = {})
+  def initialize(schedule_period)
     @amortized = 0
-    @co_non_availability_days = co_non_availability_days
+    @co_non_availability_days = []
+    @ro_non_available_days = {}
     @schedule_period = schedule_period
+    extract_non_available_days
+
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
-    @ro_non_available_days = ro_non_available_days
 
     assign_and_filter_ro_days(schedule_period)
+  end
+
+  def extract_non_available_days
+    @schedule_period.non_availabilities.each do |non_availability|
+      obj_id = non_availability.object_identifier
+
+      @co_non_availability_days << non_availability if non_availability.type = "CoNonAvailability"
+      @ro_non_available_days[obj_id] ||= []
+      @ro_non_available_days[obj_id] << non_availability if non_availability.type = "RONonAvailability"
+    end
   end
 
   def assign_and_filter_ro_days(schedule_period)

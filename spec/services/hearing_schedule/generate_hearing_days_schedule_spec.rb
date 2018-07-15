@@ -58,8 +58,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   let(:generate_hearing_days_schedule) do
     HearingSchedule::GenerateHearingDaysSchedule.new(
-      schedule_period,
-      co_non_available_days
+      schedule_period
     )
   end
 
@@ -230,11 +229,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "RO hearing days allocation" do
+    before do
+      co_non_available_days
+      ro_allocations
+    end
+
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(
-        schedule_period,
-        co_non_available_days,
-        ro_non_available_days
+        schedule_period
       )
     end
 

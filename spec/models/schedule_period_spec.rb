@@ -22,7 +22,7 @@ describe SchedulePeriod do
 
   context "generate hearing schedule" do
     it do
-      expect(schedule_period.genenerate_ro_hearing_schedule.count).to eq(allocation.allocated_days)
+      expect(schedule_period.ro_hearing_day_allocations.count).to eq(allocation.allocated_days)
     end
   end
 end
