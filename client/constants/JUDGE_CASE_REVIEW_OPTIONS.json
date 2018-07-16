@@ -6,11 +6,11 @@
   },
 
   "QUALITY": {
-    "outstanding": "Outstanding",
-    "exceeds_expectations": "Exceeds expectations",
-    "meets_expectations": "Meets expectations",
+    "does_not_meet_expectations": "Does not meet expectations",
     "needs_improvements": "Needs improvements",
-    "does_not_meet_expectations": "Does not meet expectations"
+    "meets_expectations": "Meets expectations",
+    "exceeds_expectations": "Exceeds expectations",
+    "outstanding": "Outstanding"
   },
 
   "FACTORS_NOT_CONSIDERED": {
