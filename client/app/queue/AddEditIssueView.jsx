@@ -11,8 +11,7 @@ import {
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  deleteEditingAppealIssue,
-  editAppeal
+  deleteEditingAppealIssue
 } from './QueueActions';
 import {
   highlightInvalidFormItems,
@@ -357,8 +356,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestDelete,
   showModal,
   hideModal,
-  requestSave,
-  editAppeal
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

@@ -22,7 +22,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       create(:allocation, regional_office: "RO21", allocated_days: 0, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO27", allocated_days: 100, schedule_period: schedule_period),
       create(:allocation, regional_office: "RO28", allocated_days: 42.5, schedule_period: schedule_period)
-
     ]
   end
 
@@ -57,13 +56,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   let(:generate_hearing_days_schedule) do
-    HearingSchedule::GenerateHearingDaysSchedule.new(
-      schedule_period,
-      co_non_available_days
-    )
+    HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
   end
 
   context "gets all available business days between a date range" do
+    before do
+      co_non_available_days
+    end
+
     subject { generate_hearing_days_schedule.available_days }
 
     it "has available hearing days" do
@@ -81,15 +81,20 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "change the year" do
+    before do
+      get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 25).map do |date|
+        create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
+      end
+    end
+
+    let(:schedule_period) do
+      create(:ro_schedule_period, start_date: Date.parse("2025-01-01"),
+                                  end_date: Date.parse("2025-12-31"))
+    end
+
     # generating a schedule for 2025
     let(:generate_hearing_days_schedule) do
-      HearingSchedule::GenerateHearingDaysSchedule.new(
-        schedule_period,
-        co_non_available_days.map do |day|
-          day.date += 7.years
-          day
-        end
-      )
+      HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
 
     let(:federal_holidays) do
@@ -110,17 +115,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     subject { generate_hearing_days_schedule.available_days }
 
     it "removes holidays" do
-      expect(subject.find { |day| federal_holidays.include?(day) }).to eq nil
+      expect(federal_holidays.find { |day| subject.include?(day) }).to eq nil
     end
   end
 
   context "filter available days" do
+    before do
+      co_non_available_days
+      ro_non_available_days
+    end
+
     let(:generate_hearing_days_schedule_removed_ro_na) do
-      HearingSchedule::GenerateHearingDaysSchedule.new(
-        schedule_period,
-        co_non_available_days,
-        ro_non_available_days
-      )
+      HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
 
     context "RO available days" do
@@ -161,6 +167,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "Travelboard hearing days" do
       before do
         ro_allocations
+        no_ro_non_available_days
       end
 
       let(:travel_board_schedules) do
@@ -191,9 +198,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
       let(:generate_hearing_days_schedule_removed_tb) do
         HearingSchedule::GenerateHearingDaysSchedule.new(
-          schedule_period,
-          {},
-          no_ro_non_available_days
+          schedule_period
         )
       end
 
@@ -230,12 +235,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "RO hearing days allocation" do
+    before do
+      co_non_available_days
+      no_ro_non_available_days
+    end
+
     let(:generate_hearing_days_schedule) do
-      HearingSchedule::GenerateHearingDaysSchedule.new(
-        schedule_period,
-        co_non_available_days,
-        ro_non_available_days
-      )
+      HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
 
     subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
@@ -271,6 +277,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "too many allocated days for an RO" do
       before do
         ro_allocations
+        ro_non_available_days
+        co_non_available_days
       end
 
       let(:ro_allocations) do
@@ -284,6 +292,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "too many ro non-avaiable days" do
       before do
         ro_allocations
+        ro_non_available_days
+        co_non_available_days
       end
 
       let(:ro_non_available_days) do
