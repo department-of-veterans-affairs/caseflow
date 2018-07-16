@@ -31,13 +31,14 @@ One viable approach is to require users to periodically copy a token from Casefl
 ### Draft of login flow
 
 1. User launches IDT. 
-2. If there is a token saved for the user, IDT attempts to use it to make the neccessary API call.
-3. If there is no token, or if a 403 status code is returned by the API, IDT opens a web browser window with the URL caseflow.ds.va.gov/idt/token
-4. If the user is not logged in, Caseflow's existing logic will redirect the user to the CSS login page, and redirect back to caseflow.ds.va.gov/idt/token after login.
-5. If the user is logged in, Caseflow will display a page with a "Copy token" button that copies a token to the clipboard. The accompanying text might be something like: "Click this button to copy a token to your clipboard. You'll need to paste that token in the IDT to fetch appeal data. This token is a password, so don't share it with anyone. It will be valid for three days."
-6. The user switches back to the IDT, IDT prompts user to enter a new token. 
-7. User pastes the token into the IDT.
-8. User can use the IDT without having to log in again until the token is no longer valid.
+1. If there is a token saved for the user, IDT attempts to use it to make the neccessary API call.
+1. If there is no token, or if a 403 status code is returned by the API (token expired), IDT makes a GET request to caseflow.ds.va.gov/idt/api/v1/token
+1. Caseflow returns a proposed token and a one-time key.
+1. IDT opens a browser window with the URL caseflow.ds.va.gov/idt/auth?key=#{ONE_TIME_KEY}
+1. If the user is not logged in, Caseflow's existing logic will redirect the user to the CSS login page, and redirect back to caseflow.ds.va.gov/idt/auth?key=#{ONE_TIME_KEY} after login.
+1. After the user is logged in, Caseflow will mark the token as valid and display a message like "You have successfully authenticated with the IDT. You can now return to the IDT"
+1. In the meantime, every 10 seconds, the IDT will make a new call with the proposed token. If the token is not yet validated, Caseflow will return a 401. Otherwise, Caseflow will return a 200.
+1. The user can use the IDT without having to log in again until the token is no longer valid.
 
 ### Token implementation
 
