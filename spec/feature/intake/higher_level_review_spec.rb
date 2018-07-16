@@ -291,4 +291,36 @@ RSpec.feature "Higher Level Review Intake" do
       special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
     )
   end
+
+  it "Shows a review error when something goes wrong" do
+    intake = HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
+    visit "/intake"
+
+    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+    safe_click "#button-submit-review"
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+    within_fieldset("Did the Veteran request an informal conference?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(HigherLevelReviewIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/review-request")
+  end
 end

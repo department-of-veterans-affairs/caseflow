@@ -87,3 +87,19 @@ export const onJudgeFileUpload = (file) => ({
 export const toggleUploadContinueLoading = () => ({
   type: ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING
 });
+
+export const onClickConfirmAssignments = () => ({
+  type: ACTIONS.CLICK_CONFIRM_ASSIGNMENTS
+});
+
+export const onClickCloseModal = () => ({
+  type: ACTIONS.CLICK_CLOSE_MODAL
+});
+
+export const onConfirmAssignmentsUpload = () => ({
+  type: ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD
+});
+
+export const unsetSuccessMessage = () => ({
+  type: ACTIONS.UNSET_SUCCESS_MESSAGE
+});
