@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#ac-1":
-  version "2.5.8"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#8c6e9a1ca96345c0d9b4cdd2607bbae96c15b076"
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#49b3470":
+  version "2.5.9"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#49b3470996691119a9f047a310688768c33f7bd2"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -67,9 +67,9 @@
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
 
-"@department-of-veterans-affairs/eslint-config-appeals@^1.0.2":
+"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e":
   version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/eslint-config-appeals/-/eslint-config-appeals-1.0.2.tgz#9996dae98052e5a767d763823ded5561676ffdb9"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522eefd81342a5a75cf13d02eb856ba23399c"
   dependencies:
     babel-eslint "^8.0.2"
     eslint-plugin-import "^2.8.0"
