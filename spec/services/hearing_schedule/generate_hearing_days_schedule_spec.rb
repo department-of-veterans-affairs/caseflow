@@ -333,7 +333,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       end
       it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
     end
-    
+
     context "too many co non-avaiable days" do
       before do
         ro_allocations
