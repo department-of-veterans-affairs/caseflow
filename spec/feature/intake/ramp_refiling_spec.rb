@@ -3,12 +3,17 @@ require "rails_helper"
 RSpec.feature "RAMP Refiling Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -146,6 +151,40 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(intake.completion_status).to eq("error")
       expect(intake.error_code).to eq("ineligible_for_higher_level_review")
       expect(intake.detail).to be_nil
+    end
+
+    scenario "Review intake for RAMP Refiling form fails due to unexpected error" do
+      ramp_election = create(:ramp_election,
+                             veteran_file_number: "12341234",
+                             notice_date: 5.days.ago,
+                             receipt_date: 4.days.ago,
+                             established_at: 2.days.ago,
+                             end_product_reference_id: Generators::EndProduct.build(
+                               veteran_file_number: "12341234",
+                               bgs_attrs: { status_type_code: "CLR" }
+                             ).claim_id)
+
+      Generators::Contention.build(
+        claim_id: ramp_election.end_product_reference_id,
+        text: "Left knee rating increase"
+      )
+
+      intake = RampRefilingIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
+      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      within_fieldset("Which review lane did the Veteran select?") do
+        find("label", text: "Higher Level Review", match: :prefer_exact).click
+      end
+
+      expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Something went wrong")
+      expect(page).to have_current_path("/intake/review-request")
     end
 
     scenario "Complete a RAMP refiling for an appeal" do

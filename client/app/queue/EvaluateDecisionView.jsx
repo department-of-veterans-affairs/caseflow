@@ -64,12 +64,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   getPageName = () => PAGE_TITLES.EVALUATE;
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/evaluate`
-  });
-
-  qualityIsDeficient = () => this.state.quality > 0 && this.state.quality < 3;
+  qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
@@ -214,22 +209,10 @@ class EvaluateDecisionView extends React.PureComponent {
         value={this.state.quality}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
-        options={[{
-          value: '5',
-          displayText: `5 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.outstanding}`
-        }, {
-          value: '4',
-          displayText: `4 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.exceeds_expectations}`
-        }, {
-          value: '3',
-          displayText: `3 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.meets_expectations}`
-        }, {
-          value: '2',
-          displayText: `2 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.needs_improvements}`
-        }, {
-          value: '1',
-          displayText: `1 - ${JUDGE_CASE_REVIEW_OPTIONS.QUALITY.does_not_meet_expectations}`
-        }]} />
+        options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
+          value: key,
+          displayText: `${Object.keys(obj).indexOf(key) + 1} - ${val}`
+        }))} />
 
       {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}
         type="info"

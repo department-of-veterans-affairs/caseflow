@@ -9,8 +9,6 @@
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
-  "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
-
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
@@ -53,6 +51,8 @@
   "JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
+
+  "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
@@ -99,5 +99,36 @@
 
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
-  "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?"
+  "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
+
+  "ASSIGN_WIDGET_OTHER": "Other",
+  "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
+  "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
+  "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
+  "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
+  "ASSIGN_WIDGET_SUCCESS": "Assigned %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned.",
+  "ASSIGN_WIDGET_LOADING": "Loading...",
+  "ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a user",
+  "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
+  "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",
+  "ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
+  "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney or judge:",
+  "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
+
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Hearing Schedule",
+  "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
+  "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
+  "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
+
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE": "Please confirm VACOLS upload",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY": "You are about to upload these assignments to VACOLS. Once this is done, you cannot perform this upload for the selected date range again. You will have to make individual edits to the schedule.",
+
+  "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view what you uploaded by clicking the 'View current schedule' link below."
 }

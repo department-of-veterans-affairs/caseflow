@@ -71,8 +71,13 @@ class RampReview < ApplicationRecord
     # is already inactive since an EP can never leave that state
     return true unless cached_status_active?
 
+    ## TODO: Remove this once all the data is backfilled
+    if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
+      saved_end_product_establishment.sync!
+    end
+
     update!(
-      end_product_status: end_product_establishment.result.status_type_code,
+      end_product_status: (saved_end_product_establishment || end_product_establishment).result.status_type_code,
       end_product_status_last_synced_at: Time.zone.now
     )
   end
@@ -104,13 +109,13 @@ class RampReview < ApplicationRecord
 
   def end_product_establishment
     @end_product_establishment ||= EndProductEstablishment.new(
-      veteran: veteran,
+      veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
       valid_modifiers: [end_product_modifier],
-      station: "397", # AMC
-      cached_status: end_product_status
+      source: self,
+      station: "397" # AMC
     )
   end
 

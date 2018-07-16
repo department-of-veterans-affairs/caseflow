@@ -1,28 +1,26 @@
 const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const frontendToolkit = '@department-of-veterans-affairs/caseflow-frontend-toolkit';
-
-// eslint-disable-next-line no-process-env
-const devBuild = process.env.NODE_ENV !== 'production';
+const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
 const config = {
-  entry: _.compact([
+  entry: [
     'es5-shim/es5-shim',
     'es5-shim/es5-sham',
     'babel-polyfill',
     './app/index'
-  ]),
-
+  ],
   output: {
     filename: 'webpack-bundle.js',
-    path: path.join(__dirname, '../app/assets/webpack')
+    sourceMapFilename: 'sourcemap-[file].map',
+    path: path.join(__dirname, '../app/assets/javascripts')
   },
-
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
+    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
+    devBuild ? null : new UglifyJsPlugin({ sourceMap: true })
   ]),
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -41,24 +39,19 @@ const config = {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        // We want JSX from toolkit
-        exclude: new RegExp(`node_modules/(?!${frontendToolkit})`)
-      },
-      // New
-      {
-        test: /\.scss$/,
-        loaders: ['style', 'css', 'sass']
+        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
       }
     ]
   }
 };
-
-module.exports = config;
 
 if (devBuild) {
   console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
   config.devtool = 'eval-source-map';
 } else {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
+  console.log('Generating source maps...'); // eslint-disable-line no-console
+  config.devtool = 'source-map';
 }
 
+module.exports = config;

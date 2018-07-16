@@ -8,7 +8,7 @@ class TasksController < ApplicationController
 
   QUEUES = {
     attorney: AttorneyQueue,
-    co_located: CoLocatedAdminQueue
+    colocated: CoLocatedAdminQueue
   }.freeze
 
   def set_application
@@ -22,13 +22,23 @@ class TasksController < ApplicationController
   end
 
   def create
-    return required_parameters_missing([:titles]) if task_params[:titles].blank?
-
     return invalid_type_error unless task_class
-    tasks = task_class.create(task_params.merge(appeal_type: "LegacyAppeal"))
+
+    tasks = task_class.create(tasks_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: tasks }, status: :created
+  end
+
+  def update
+    if task.assigned_to != current_user
+      redirect_to "/unauthorized"
+      return
+    end
+    task.update(update_params)
+
+    return invalid_record_error(task) unless task.valid?
+    render json: { tasks: json_tasks([task]) }
   end
 
   private
@@ -52,7 +62,7 @@ class TasksController < ApplicationController
   end
 
   def task_class
-    TASK_CLASSES[params["tasks"][:type].try(:to_sym)]
+    TASK_CLASSES[tasks_params.first[:type].try(:to_sym)]
   end
 
   def invalid_type_error
@@ -64,11 +74,21 @@ class TasksController < ApplicationController
     }, status: 400
   end
 
-  def task_params
-    params.require("tasks")
-      .permit(:appeal_id, :type, :instructions, titles: [])
-      .merge(assigned_by: current_user)
-      .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
+  def task
+    @task ||= Task.find(params[:id])
+  end
+
+  def tasks_params
+    [params.require("tasks")].flatten.map do |task|
+      task.permit(:appeal_id, :type, :instructions, :title)
+        .merge(assigned_by: current_user)
+        .merge(appeal_type: "LegacyAppeal")
+    end
+  end
+
+  def update_params
+    params.require("task")
+      .permit(:status, :on_hold_duration)
   end
 
   def json_tasks(tasks)

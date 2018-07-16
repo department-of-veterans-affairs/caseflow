@@ -4,6 +4,7 @@ FactoryBot.define do
       user nil
     end
 
+    sequence(:sattyid)
     sequence(:stafkey)
     sequence(:slogid) { |n| "ID#{n}" }
     sequence(:sdomainid) do |n|
@@ -15,7 +16,6 @@ FactoryBot.define do
     end
 
     trait :attorney_role do
-      sattyid "123"
       sactive "A"
     end
 
@@ -26,13 +26,13 @@ FactoryBot.define do
 
     trait :attorney_judge_role do
       svlj "A"
-      sattyid "123"
       sactive "A"
     end
 
-    trait :co_located_role do
+    trait :colocated_role do
       stitle %w[A1 A2].sample
       sactive "A"
+      sattyid nil
     end
 
     trait :has_location_code do

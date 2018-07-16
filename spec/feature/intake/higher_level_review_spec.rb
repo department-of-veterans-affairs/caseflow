@@ -4,6 +4,7 @@ RSpec.feature "Higher Level Review Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -14,6 +15,7 @@ RSpec.feature "Higher Level Review Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -288,5 +290,37 @@ RSpec.feature "Higher Level Review Intake" do
       contention_descriptions: ["PTSD denied"],
       special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
     )
+  end
+
+  it "Shows a review error when something goes wrong" do
+    intake = HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
+    visit "/intake"
+
+    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+    safe_click "#button-submit-review"
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+    within_fieldset("Did the Veteran request an informal conference?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(HigherLevelReviewIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/review-request")
   end
 end

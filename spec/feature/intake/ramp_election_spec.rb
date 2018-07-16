@@ -3,16 +3,13 @@ require "rails_helper"
 RSpec.feature "RAMP Election Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do
@@ -203,6 +200,27 @@ RSpec.feature "RAMP Election Intake" do
     expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
     expect(page).to have_content("5252 - Thigh, limitation of flexion of")
     expect(page).to have_content("Broken thigh")
+  end
+
+  scenario "Review intake for RAMP Election form fails due to unexpected error" do
+    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+
+    intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
+    visit "/intake"
+
+    within_fieldset("Which review lane did the veteran select?") do
+      find("label", text: "Higher Level Review with Informal Conference").click
+    end
+
+    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    expect_any_instance_of(RampElectionIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/review-request")
   end
 
   scenario "Complete intake for RAMP Election form" do

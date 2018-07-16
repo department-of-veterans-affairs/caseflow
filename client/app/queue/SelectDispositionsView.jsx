@@ -51,11 +51,6 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/dispositions`
-  });
-
   getNextStepUrl = () => {
     const {
       appealId,
@@ -94,7 +89,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
-    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+    const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
   };

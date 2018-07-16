@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@^2.5.8":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6":
   version "2.5.8"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/caseflow-frontend-toolkit/-/caseflow-frontend-toolkit-2.5.8.tgz#4fb51a21011c9ecd6b0b390518462135e681dc1e"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6c805c75e29ce9cfdf7811f976657f9507"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -67,9 +67,9 @@
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
 
-"@department-of-veterans-affairs/eslint-config-appeals@^1.0.2":
+"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e":
   version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/eslint-config-appeals/-/eslint-config-appeals-1.0.2.tgz#9996dae98052e5a767d763823ded5561676ffdb9"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522eefd81342a5a75cf13d02eb856ba23399c"
   dependencies:
     babel-eslint "^8.0.2"
     eslint-plugin-import "^2.8.0"
@@ -3608,6 +3608,10 @@ immutability-helper@^2.4.0:
   resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-2.4.0.tgz#00d421e2957c17f0f0781475f05ffd837e73458d"
   dependencies:
     invariant "^2.2.0"
+
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
 
 immutable@~3.7.4:
   version "3.7.6"

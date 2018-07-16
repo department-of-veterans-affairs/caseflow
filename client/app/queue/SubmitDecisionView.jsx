@@ -32,7 +32,8 @@ import {
   fullWidth,
   marginBottom,
   marginTop,
-  ERROR_FIELD_REQUIRED
+  ERROR_FIELD_REQUIRED,
+  ATTORNEY_COMMENTS_MAX_LENGTH
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
@@ -56,11 +57,6 @@ class SubmitDecisionView extends React.PureComponent {
       });
     }
   };
-
-  getBreadcrumb = () => ({
-    breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/appeals/${this.props.appealId}/submit`
-  });
 
   validateForm = () => {
     const {
@@ -222,6 +218,7 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
+        maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
     </React.Fragment>;
   };
