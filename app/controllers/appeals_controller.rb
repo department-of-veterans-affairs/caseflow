@@ -21,6 +21,15 @@ class AppealsController < ApplicationController
     render e.serialize_response
   end
 
+  def tasks
+    no_cache
+
+    tasks, _ = LegacyWorkQueue.tasks_with_appeals_of_appeal(params[:appeal_id])
+    render json: {
+      tasks: json_tasks(tasks)
+    }
+  end
+
   def show
     no_cache
 
@@ -93,6 +102,13 @@ class AppealsController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
     ).as_json
   end
 end
