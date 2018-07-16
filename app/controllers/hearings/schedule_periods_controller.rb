@@ -44,8 +44,8 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def upload_file
-    puts request.raw_post
-    render json: {file_name: 'fakefilename.xlsx'}, status: 200
+    S3Service.store_file('spreadsheet.xlsx', params["spreadsheet"].open)
+    render json: {file_name: 'spreadsheet.xlsx'}, status: 200
   end
 
   def schedule_period_params
