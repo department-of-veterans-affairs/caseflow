@@ -143,4 +143,14 @@ RSpec.describe AppealsController, type: :controller do
       assert_response :success
     end
   end
+
+  describe "GET appeals/:id/tasks" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+
+    it "should succeed" do
+      get :tasks, params: { appeals_id: appeal.vacols_id }
+
+      assert_response :success
+    end
+  end
 end

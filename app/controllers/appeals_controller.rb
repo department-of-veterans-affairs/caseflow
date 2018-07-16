@@ -22,8 +22,6 @@ class AppealsController < ApplicationController
   end
 
   def tasks
-    no_cache
-
     tasks, _ = LegacyWorkQueue.tasks_with_appeals_of_appeal(params[:appeal_id])
     render json: {
       tasks: json_tasks(tasks)
