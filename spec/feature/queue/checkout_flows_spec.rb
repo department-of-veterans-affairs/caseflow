@@ -400,6 +400,13 @@ RSpec.feature "Checkout flows" do
         case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
         case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
 
+        expect(case_quality_opts.first.text).to eq(
+          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+        )
+        expect(case_quality_opts.last.text).to eq(
+          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
+        )
+
         [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
         # areas of improvement
         page.find_all(".question-label").sample(2).each(&:double_click)
