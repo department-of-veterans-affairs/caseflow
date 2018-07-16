@@ -228,6 +228,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
+      "schedule" => "Caseflow Hearing Schedule",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
@@ -245,7 +246,6 @@ class ApplicationController < ApplicationBaseController
 
     redirect_url = redirect || request.original_url
     param_object = { redirect: redirect_url, subject: feedback_subject }
-
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
   helper_method :feedback_url
