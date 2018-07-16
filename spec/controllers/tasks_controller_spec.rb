@@ -224,6 +224,18 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
+    context "when updating status to completed" do
+      let(:admin_action) { create(:colocated_admin_action, assigned_to: user) }
+
+      it "should update successfully" do
+        patch :update, params: { task: { status: "completed" }, id: admin_action.id }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.first["attributes"]["status"]).to eq "completed"
+        expect(response_body.first["attributes"]["completed_at"]).to_not be nil
+      end
+    end
+
     context "when some other user updates another user's task" do
       let(:admin_action) { create(:colocated_admin_action, assigned_to: create(:user)) }
 
