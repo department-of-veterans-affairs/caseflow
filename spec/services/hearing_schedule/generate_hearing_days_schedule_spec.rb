@@ -236,6 +236,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   context "RO hearing days allocation" do
     before do
+      ro_allocations
       co_non_available_days
       no_ro_non_available_days
     end
