@@ -19,15 +19,17 @@ import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 // they become visible.
 export class Pdf extends React.PureComponent {
   handleAltEnter = () => {
-    // todo: this is only triggered if not editing a comment--EditComment listens to alt+enter when active
-    this.props.placeAnnotation(
-      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-      {
-        xPosition: this.props.placingAnnotationIconPageCoords.x,
-        yPosition: this.props.placingAnnotationIconPageCoords.y
-      },
-      this.props.documentId
-    );
+    if(this.props.placingAnnotationIconPageCoords) {
+      // todo: this is only triggered if not editing a comment--EditComment listens to alt+enter when active
+      this.props.placeAnnotation(
+        pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+        {
+          xPosition: this.props.placingAnnotationIconPageCoords.x,
+          yPosition: this.props.placingAnnotationIconPageCoords.y
+        },
+        this.props.documentId
+      );
+    }
   }
 
   handleAltBackspace = () => {
