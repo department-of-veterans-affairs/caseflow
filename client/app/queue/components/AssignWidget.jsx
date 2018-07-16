@@ -29,7 +29,8 @@ const OTHER = 'OTHER';
 
 type Params = {|
   previousAssigneeId: string,
-  onTaskAssignment: Function
+  onTaskAssignment: Function,
+  getSelectedTasks: () => Array<Task>,
 |};
 
 type Props = Params & {|
