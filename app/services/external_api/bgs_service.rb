@@ -102,7 +102,7 @@ class ExternalApi::BGSService
       MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        client.can_access?(vbms_id)
+        client.can_access?(vbms_id, FeatureToggle.enabled?(:can_access_v2, user: current_user))
       end
     end
   end
