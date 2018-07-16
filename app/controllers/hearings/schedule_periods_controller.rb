@@ -44,7 +44,6 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def upload_file
-    puts params
     puts request.raw_post
     render json: {file_name: 'fakefilename.xlsx'}, status: 200
   end

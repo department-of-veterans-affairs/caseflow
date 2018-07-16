@@ -143,17 +143,27 @@ const ApiUtil = {
     let xhr = new XMLHttpRequest();
     const headers = ReactOnRails.authenticityHeaders();
 
-    xhr.open("post", path, true);
-    xhr.setRequestHeader("Content-Type", "multipart/form-data");
-    xhr.setRequestHeader("X-File-Name", file.name);
-    xhr.setRequestHeader("X-File-Size", file.size);
-    xhr.setRequestHeader("X-File-Type", file.type);
-    xhr.setRequestHeader('X-CSRF-Token', headers['X-CSRF-Token']);
-    xhr.setRequestHeader('X-Requested-With', headers['X-Requested-With']);
+    const formData = new FormData(file);
 
-    xhr.onload = () => onSuccess();
+    // xhr.open("post", path, true);
+    // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    // xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    // xhr.setRequestHeader("X-File-Name", file.name);
+    // xhr.setRequestHeader("X-File-Size", file.size);
+    // xhr.setRequestHeader("X-File-Type", file.type);
+    // xhr.setRequestHeader('X-CSRF-Token', headers['X-CSRF-Token']);
+    // xhr.setRequestHeader('X-Requested-With', headers['X-Requested-With']);
+    //
+    // xhr.onload = () => onSuccess();
+    //
+    // xhr.send(file);
 
-    xhr.send(file);
+    console.log('do i get in here?');
+
+    httpMethods.post(path, { data: formData } ).
+    then(() => {
+      onSuccess();
+    });
   },
 
   ..._.mapValues(httpMethods, timeApiRequest)
