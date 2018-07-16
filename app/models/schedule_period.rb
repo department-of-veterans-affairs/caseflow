@@ -1,6 +1,7 @@
 class SchedulePeriod < ApplicationRecord
   belongs_to :user
   has_many :allocations
+  has_many :non_availabilities
 
   delegate :full_name, to: :user, prefix: true
 

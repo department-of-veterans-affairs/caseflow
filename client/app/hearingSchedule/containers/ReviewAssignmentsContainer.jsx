@@ -1,13 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ReviewAssignments from '../components/ReviewAssignments';
-import { onReceiveSchedulePeriod } from '../actions';
+import {
+  onReceiveSchedulePeriod,
+  onClickConfirmAssignments,
+  onClickCloseModal,
+  onConfirmAssignmentsUpload
+} from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
+
+  onConfirmAssignmentsUpload = () => {
+    this.props.onClickCloseModal();
+    this.props.onConfirmAssignmentsUpload();
+    this.props.history.push('/schedule/build');
+  };
 
   loadSchedulePeriod = () => {
     return ApiUtil.get(`/hearings/schedule_periods/${this.props.match.params.schedulePeriodId}`).then((response) => {
@@ -27,13 +39,17 @@ export class ReviewAssignmentsContainer extends React.Component {
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        message: 'Loading past schedule uploads...'
+        message: 'We are assigning hearings...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load past schedule uploads.'
+        title: 'Unable to assign hearings. Please try again.'
       }}>
       <ReviewAssignments
         schedulePeriod={this.props.schedulePeriod}
+        onClickConfirmAssignments={this.props.onClickConfirmAssignments}
+        onClickCloseModal={this.props.onClickCloseModal}
+        displayConfirmationModal={this.props.displayConfirmationModal}
+        onConfirmAssignmentsUpload={this.onConfirmAssignmentsUpload}
       />
     </LoadingDataDisplay>;
 
@@ -42,11 +58,15 @@ export class ReviewAssignmentsContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  schedulePeriod: state.schedulePeriod
+  schedulePeriod: state.schedulePeriod,
+  displayConfirmationModal: state.displayConfirmationModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveSchedulePeriod
+  onReceiveSchedulePeriod,
+  onClickConfirmAssignments,
+  onClickCloseModal,
+  onConfirmAssignmentsUpload
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));

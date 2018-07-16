@@ -6,7 +6,7 @@ class HearingDay
   HEARING_TYPES = {
     video: "V",
     travel: "T",
-    central_office: "C"
+    central: "C"
   }.freeze
 
   class << self
