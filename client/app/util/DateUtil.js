@@ -7,6 +7,7 @@ const ZERO_INDEX_MONTH_OFFSET = 1;
 
 export const dateFormatString = 'MM/DD/YYYY';
 
+// Only Compatible to ISO Date/Time format
 export const formatDate = function(dateString) {
   if (!dateString) {
     return;
@@ -26,6 +27,7 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
   }).join(', ');
 };
 
+// Date format YYYY-MM-DD
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
   if (!dateString) {
     return;
