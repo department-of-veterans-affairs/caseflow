@@ -72,6 +72,7 @@ module HearingSchedule::RoAllocation
     end
 
     def verify_total_available_days(allocated_days, available_days, num_of_rooms)
+      binding.pry
       fail NotEnoughAvailableDays unless
         allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
     end

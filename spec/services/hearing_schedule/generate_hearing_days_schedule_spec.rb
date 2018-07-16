@@ -61,7 +61,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
   context "gets all available business days between a date range" do
     before do
-      co_non_available_dayss
+      co_non_available_days
     end
 
     subject { generate_hearing_days_schedule.available_days }
@@ -277,6 +277,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "too many allocated days for an RO" do
       before do
         ro_allocations
+        ro_non_available_days
+        co_non_available_days
       end
 
       let(:ro_allocations) do
@@ -290,6 +292,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "too many ro non-avaiable days" do
       before do
         ro_allocations
+        ro_non_available_days
+        co_non_available_days
       end
 
       let(:ro_non_available_days) do
@@ -328,7 +332,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       end
       it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
     end
-
+    
     context "too many co non-avaiable days" do
       before do
         ro_allocations
