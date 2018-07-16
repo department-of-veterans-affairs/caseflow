@@ -52,7 +52,7 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker preferences and limit Docker to 2 CPUs in order to keep FACOLS from consuming your Macbook.
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
 
 After installation is complete, run:
 ```
