@@ -60,14 +60,14 @@ describe('Documents reducer', () => {
         {
           type: Constants.REQUEST_NEW_TAG_CREATION,
           payload: {
-            newTags: [{ text: 'first tag' }],
+            newTags: [{ text: 'first tag', id: 123, temporaryId: true }],
             docId: 0
           }
         },
         {
           type: Constants.REQUEST_NEW_TAG_CREATION,
           payload: {
-            newTags: [{ text: 'second tag' }],
+            newTags: [{ text: 'second tag', id: 456, temporaryId: true }],
             docId: 0
           }
         },
@@ -89,7 +89,9 @@ describe('Documents reducer', () => {
           id: 100
         },
         {
-          text: 'second tag'
+          text: 'second tag',
+          temporaryId: true,
+          id: 456
         }
       ]);
     });
