@@ -17,6 +17,12 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.pastUploads
       }
     });
+  case ACTIONS.RECEIVE_SCHEDULE_PERIOD:
+    return update(state, {
+      schedulePeriod: {
+        $set: action.payload.schedulePeriod
+      }
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {
@@ -74,6 +80,37 @@ const reducers = (state = initialState, action = {}) => {
   case ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING:
     return update(state, {
       $toggle: ['uploadContinueLoading']
+    });
+  case ACTIONS.CLICK_CONFIRM_ASSIGNMENTS:
+    return update(state, {
+      displayConfirmationModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CLICK_CLOSE_MODAL:
+    return update(state, {
+      displayConfirmationModal: {
+        $set: false
+      }
+    });
+  case ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD:
+    return update(state, {
+      displaySuccessMessage: {
+        $set: true
+      },
+      $unset: [
+        'fileType',
+        'roCoStartDate',
+        'roCoEndDate',
+        'roCoFileUpload',
+        'judgeStartDate',
+        'judgeEndDate',
+        'judgeFileUpload'
+      ]
+    });
+  case ACTIONS.UNSET_SUCCESS_MESSAGE:
+    return update(state, {
+      $unset: ['displaySuccessMessage']
     });
   default:
     return state;
