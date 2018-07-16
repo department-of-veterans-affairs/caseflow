@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -27,10 +27,12 @@ import { sprintf } from 'sprintf-js';
 
 const OTHER = 'OTHER';
 
-type Props = {|
-  // Parameters
+type Params = {|
   previousAssigneeId: string,
-  onTaskAssignment: Function,
+  onTaskAssignment: Function
+|};
+
+type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
@@ -196,7 +198,7 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-export default connect(
+export default (connect(
   mapStateToProps,
   (dispatch) => bindActionCreators({
     setSelectedAssignee,
@@ -207,4 +209,4 @@ export default connect(
     showSuccessMessage,
     resetSuccessMessages
   }, dispatch)
-)(AssignWidget);
+)(AssignWidget): React.ComponentType<Params>);
