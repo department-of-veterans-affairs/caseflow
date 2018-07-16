@@ -28,9 +28,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @schedule_period.non_availabilities.each do |non_availability|
       obj_id = non_availability.object_identifier
 
-      @co_non_availability_days << non_availability if non_availability.type = "CoNonAvailability"
-      @ro_non_available_days[obj_id] ||= []
-      @ro_non_available_days[obj_id] << non_availability if non_availability.type = "RONonAvailability"
+      if non_availability.instance_of? CoNonAvailability
+        @co_non_availability_days << non_availability
+      elsif non_availability.instance_of? RoNonAvailability
+        @ro_non_available_days[obj_id] ||= []
+        @ro_non_available_days[obj_id] << non_availability
+      end
     end
   end
 
