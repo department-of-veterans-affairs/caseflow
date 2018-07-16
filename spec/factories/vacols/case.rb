@@ -231,6 +231,25 @@ FactoryBot.define do
       end
     end
 
+    trait :docs_in_vbms do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = %w[Y 1 0].sample
+      end
+    end
+
+    trait :docs_in_vva do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tisubj2 = "Y"
+      end
+    end
+
+    trait :paper_case do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
+      end
+    end
+
     transient do
       remand_return_date nil
 

@@ -1,5 +1,16 @@
 // @flow
 
+export type User = {
+  id: number,
+  station_id: string,
+  css_id: string,
+  full_name: string,
+  email: ?string,
+  roles: Array<String>,
+  selected_regional_office: ?string,
+  display_name: string
+};
+
 export type DeprecatedTask = {
   id: string
 };
@@ -65,3 +76,8 @@ export type Task = {
 };
 
 export type Tasks = { [string]: Task };
+
+export type Attorneys = {
+  data?: Array<User>,
+  error?: Object
+};

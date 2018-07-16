@@ -64,11 +64,6 @@ class EvaluateDecisionView extends React.PureComponent {
 
   getPageName = () => PAGE_TITLES.EVALUATE;
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/evaluate`
-  });
-
   qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo

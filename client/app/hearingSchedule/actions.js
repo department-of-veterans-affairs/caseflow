@@ -7,6 +7,13 @@ export const onReceivePastUploads = (pastUploads) => ({
   }
 });
 
+export const onReceiveSchedulePeriod = (schedulePeriod) => ({
+  type: ACTIONS.RECEIVE_SCHEDULE_PERIOD,
+  payload: {
+    schedulePeriod
+  }
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {
@@ -79,4 +86,20 @@ export const onJudgeFileUpload = (file) => ({
 
 export const toggleUploadContinueLoading = () => ({
   type: ACTIONS.TOGGLE_UPLOAD_CONTINUE_LOADING
+});
+
+export const onClickConfirmAssignments = () => ({
+  type: ACTIONS.CLICK_CONFIRM_ASSIGNMENTS
+});
+
+export const onClickCloseModal = () => ({
+  type: ACTIONS.CLICK_CLOSE_MODAL
+});
+
+export const onConfirmAssignmentsUpload = () => ({
+  type: ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD
+});
+
+export const unsetSuccessMessage = () => ({
+  type: ACTIONS.UNSET_SUCCESS_MESSAGE
 });

@@ -2,11 +2,12 @@
 import type {
   Task,
   Tasks,
-  DeprecatedTask
+  DeprecatedTask,
+  User,
+  Attorneys
 } from './models';
 
 export type LoadedQueueTasks = { [string]: DeprecatedTask };
-
 export type LoadedQueueAppeals = { [string]: Object };
 
 export type TasksAndAppealsOfAttorney = {
@@ -17,7 +18,7 @@ export type TasksAndAppealsOfAttorney = {
   }
 };
 
-export type AttorneysOfJudge = Array<Object>;
+export type AttorneysOfJudge = Array<User>;
 
 export type CaseDetailState = {|
   activeAppeal: ?Object,
@@ -28,7 +29,6 @@ export type UiStateError = {title: string, detail: string}
 
 export type UiState = {
   selectingJudge: boolean,
-  breadcrumbs: Array<Object>,
   highlightFormItems: boolean,
   messages: {
     success: ?string,
@@ -43,13 +43,16 @@ export type UiState = {
     deleteIssue: boolean
   },
   featureToggles: Object,
-  selectedAssignee: ?string
+  selectedAssignee: ?string,
+  selectedAssigneeSecondary: ?string
 };
+
+export type UsersById = { [number]: User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
-  judges: Object,
+  judges: UsersById,
   tasks: Tasks,
   loadedQueue: {
     appeals: LoadedQueueAppeals,
@@ -67,7 +70,8 @@ export type QueueState = {
   },
   attorneysOfJudge: AttorneysOfJudge,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected
+  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  attorneys: Attorneys
 };
 
 export type State = {
@@ -77,3 +81,14 @@ export type State = {
   queue: QueueState,
   ui: UiState
 };
+
+type Action = { type: string, payload: Object };
+
+/* eslint-disable no-use-before-define */
+
+export type Dispatch = (action: Action | ThunkAction | PromiseAction) => any;
+export type GetState = () => State;
+export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+export type PromiseAction = Promise<Action>;
+
+/* eslint-enable no-use-before-define */
