@@ -64,11 +64,6 @@ class EvaluateDecisionView extends React.PureComponent {
 
   getPageName = () => PAGE_TITLES.EVALUATE;
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/evaluate`
-  });
-
   qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
@@ -216,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
         options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
           value: key,
-          displayText: `${Object.keys(obj).indexOf(key) + 1} - ${val}`
+          displayText: `${_.size(obj) - Object.keys(obj).indexOf(key)} - ${val}`
         }))} />
 
       {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}

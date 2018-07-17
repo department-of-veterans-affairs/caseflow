@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.feature "AmaQueue" do
   before do
+    Time.zone = "America/New_York"
+
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
   end
@@ -60,8 +62,7 @@ RSpec.feature "AmaQueue" do
 
       click_on appeals.first.veteran.first_name
 
-      expect(page).to have_content("Veteran Details")
-      expect(page).to have_content("The veteran is the appellant.")
+      expect(page).to have_content("About the Veteran")
 
       expect(page).to have_content("AOD")
 

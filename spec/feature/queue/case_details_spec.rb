@@ -132,11 +132,9 @@ RSpec.feature "Case details" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-        expect(page).to have_content("Veteran Details")
-        expect(page).to have_content("The veteran is the appellant.")
+        expect(page).to have_content("About the Veteran")
         expect(page).to have_content("She/Her")
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
-        expect(page).to have_content("The veteran is the appellant.")
       end
     end
 
@@ -163,9 +161,8 @@ RSpec.feature "Case details" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-        expect(page).to have_content("Appellant Details")
-        expect(page).to have_content("Veteran Details")
-        expect(page).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
+        expect(page).to have_content("About the Appellant")
+        expect(page).to have_content("About the Veteran")
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
@@ -237,13 +234,11 @@ RSpec.feature "Case details" do
 
     before do
       FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:judge_assignment)
 
       User.authenticate!(user: judge_user)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
       FeatureToggle.disable!(:judge_queue)
     end
 

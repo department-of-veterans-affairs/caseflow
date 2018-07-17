@@ -2,7 +2,7 @@ class LegacyTasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
-  ROLES = %w[judge attorney].freeze
+  ROLES = %w[judge attorney colocated].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"

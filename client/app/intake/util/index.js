@@ -10,6 +10,10 @@ export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
 );
 
+export const getPageError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
+);
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
