@@ -163,16 +163,15 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
       work_product: workProduct
     }
   } = decision;
+  const newFormat = new RegExp(/^\d{5}-\d{8}$/);
 
   if (!workProduct) {
-    return false;
+    return newFormat.test(documentId);
   }
 
   const initialChar = workProduct.includes('IME') ? 'V' : 'M';
   const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
   const oldFormat = new RegExp(regex);
-
-  const newFormat = new RegExp(/^\d{5}-\d{8}$/);
 
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
