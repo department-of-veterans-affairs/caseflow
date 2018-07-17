@@ -12,7 +12,6 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import _ from 'lodash';
 import { selectedTasksSelector } from './utils';
 import type { Task } from './types';
 
@@ -36,9 +35,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
     this.props.resetErrorMessages();
   }
 
-  getSelectedTasks = () => {
-    return this.props.selectedTasks;
-  }
+  getSelectedTasks = () => this.props.selectedTasks
 
   render = () => {
     const { userId, featureToggles } = this.props;
