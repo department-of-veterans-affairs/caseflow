@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -52,10 +52,13 @@ import type {
 } from './types/models';
 import type { UiStateError } from './types/state';
 
-type Props = {|
+type Params = {|
   appealId: string,
-  nextStep: string,
-  // state props
+  nextStep: string
+|};
+
+type Props = Params & {|
+  // state
   appeal: LegacyAppeal,
   decision: Object,
   task: Task,
@@ -64,12 +67,12 @@ type Props = {|
   userRole: string,
   selectingJudge: Boolean,
   error: ?UiStateError,
-  // dispatch props
-  setDecisionOptions: Function,
-  resetDecisionOptions: Function,
-  setSelectingJudge: Function,
-  requestSave: Function,
-  deleteAppeal: Function
+  // dispatch
+  setDecisionOptions: typeof setDecisionOptions,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  setSelectingJudge: typeof setSelectingJudge,
+  requestSave: typeof requestSave,
+  deleteAppeal: typeof deleteAppeal
 |};
 
 class SubmitDecisionView extends React.PureComponent<Props> {
@@ -300,4 +303,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));
+export default (connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  decisionViewBase(SubmitDecisionView)
+): React.ComponentType<Params>
+);

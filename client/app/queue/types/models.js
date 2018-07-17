@@ -8,22 +8,11 @@ export type User = {
   email: ?string,
   roles: Array<String>,
   selected_regional_office: ?string,
-  display_name: string
-};
-
-export type Judge = {
-  css_id: string,
   display_name: string,
-  email: ?string,
-  full_name: string,
-  id: Number,
-  judge_css_id: ?string,
-  roles: Array<string>,
-  selected_regional_office: ?string,
-  station_id: string
+  judge_css_id: ?string
 };
 
-export type Judges = { [string]: Judge };
+export type Judges = { [string]: User };
 
 export type DeprecatedTask = {
   id: string
