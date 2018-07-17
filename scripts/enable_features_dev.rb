@@ -31,10 +31,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "efolder_api_v2",
-          enable_all: true
-        },
-        {
           feature: "hearings",
           users: ["CASEFLOW_397", "CASEFLOW1"]
         },
@@ -48,10 +44,6 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "vbms_efolder_service_v1",
           enable_all: true
         },
         {
