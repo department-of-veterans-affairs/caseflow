@@ -55,7 +55,7 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant", focus: true do
+    scenario "veteran is the appellant" do
       visit "/queue/beaam"
 
       click_on appeals.first.veteran.first_name
@@ -68,9 +68,15 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(appeals.first.docket_number)
       expect(page).to have_content(poa_name)
 
-      expect(page).to have_content("View documents")
+      expect(page).to have_content("View Veteran's documents")
+      expect(page).to have_selector("text", id: "NEW")
 
-      binding.pry
+      click_on "View Veteran's documents"
+
+      visit "/queue/beaam"
+      click_on appeals.first.veteran.first_name
+
+      expect(page).not_to have_selector("text", id: "NEW")
     end
   end
 end

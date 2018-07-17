@@ -55,7 +55,7 @@ class Document < ApplicationRecord
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date, :created_at, :updated_at
+  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date, :created_at, :updated_at, :upload_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -93,6 +93,7 @@ class Document < ApplicationRecord
         series_id: hash["series_id"],
         created_at: hash["created_at"],
         updated_at: hash["updated_at"],
+        upload_date: hash["upload_date"],
         file_number: file_number)
   end
 
@@ -152,6 +153,7 @@ class Document < ApplicationRecord
         :content_url,
         :type,
         :received_at,
+        :upload_date,
         :filename,
         :category_procedural,
         :category_medical,
