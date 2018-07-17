@@ -2,13 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { onReceivePastUploads } from '../actions';
+import { onReceivePastUploads, unsetSuccessMessage } from '../actions';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import BuildSchedule from '../components/BuildSchedule';
 
 class BuildScheduleContainer extends React.PureComponent {
+
+  componentWillUnmount() {
+    this.props.unsetSuccessMessage();
+  }
+
   loadPastUploads = () => {
     if (!_.isEmpty(this.props.pastUploads)) {
       return Promise.resolve();
@@ -38,6 +43,8 @@ class BuildScheduleContainer extends React.PureComponent {
       }}>
       <BuildSchedule
         pastUploads={this.props.pastUploads}
+        schedulePeriod={this.props.schedulePeriod}
+        displaySuccessMessage={this.props.displaySuccessMessage}
       />
     </LoadingDataDisplay>;
 
@@ -46,11 +53,14 @@ class BuildScheduleContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  pastUploads: state.pastUploads
+  pastUploads: state.pastUploads,
+  schedulePeriod: state.schedulePeriod,
+  displaySuccessMessage: state.displaySuccessMessage
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceivePastUploads
+  onReceivePastUploads,
+  unsetSuccessMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleContainer);

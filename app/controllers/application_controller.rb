@@ -108,6 +108,7 @@ class ApplicationController < ApplicationBaseController
   def verify_case_review_access
     # :nocov:
     # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
+    # we can remove this feature toggle when attorney checkout is enabled for all
     return true if feature_enabled?(:queue_phase_two)
     redirect_to "/unauthorized"
     # :nocov:
@@ -116,9 +117,9 @@ class ApplicationController < ApplicationBaseController
   def verify_task_assignment_access
     # :nocov:
     # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
     # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
     redirect_to "/unauthorized"
     # :nocov:
   end
@@ -228,6 +229,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
+      "schedule" => "Caseflow Hearing Schedule",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
@@ -245,7 +247,6 @@ class ApplicationController < ApplicationBaseController
 
     redirect_url = redirect || request.original_url
     param_object = { redirect: redirect_url, subject: feedback_subject }
-
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
   helper_method :feedback_url
