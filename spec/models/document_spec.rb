@@ -94,7 +94,6 @@ describe Document do
       context "application is reader" do
         before do
           RequestStore.store[:application] = "reader"
-          FeatureToggle.enable!(:efolder_docs_api)
           expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         end
 
@@ -119,10 +118,6 @@ describe Document do
     end
 
     context "EFolderService is Fakes::VBMSService" do
-      before do
-        FeatureToggle.disable!(:efolder_docs_api)
-      end
-
       context "application is not reader" do
         before do
           RequestStore.store[:application] = Faker::Cat.name
