@@ -54,15 +54,9 @@ type Props = Params & {|
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  selectedTasks = (): Array<Task> => {
-    return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
-      (selected, id) => (selected ? [this.props.tasks[id]] : []));
-  }
-
   handleButtonClick = () => {
-    const { selectedAssignee, selectedAssigneeSecondary } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const { selectedAssignee, selectedAssigneeSecondary, getSelectedTasks } = this.props;
+    const selectedTasks = getSelectedTasks();
 
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -118,8 +112,16 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, attorneys } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const {
+      attorneysOfJudge,
+      selectedAssignee,
+      selectedAssigneeSecondary,
+      error,
+      success,
+      attorneys,
+      getSelectedTasks
+    } = this.props;
+    const selectedTasks = getSelectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,

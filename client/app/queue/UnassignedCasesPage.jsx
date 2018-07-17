@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
@@ -13,15 +13,17 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import _ from 'lodash';
-import type { Tasks, IsTaskAssignedToUserSelected } from './types';
+import { selectedTasksSelector } from './utils';
+import type { Task } from './types';
 
-type Props = {|
-  // Parameters
+type Params = {|
   userId: string,
+|};
+
+type Props = Params & {|
   // Props
-  tasks: Tasks,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   featureToggles: Object,
+  selectedTasks: Array<Task>,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,
@@ -35,9 +37,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
   }
 
   getSelectedTasks = () => {
-    return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.userId] || {},
-      (selected, id) => (selected ? [this.props.tasks[id]] : []));
+    return this.props.selectedTasks;
   }
 
   render = () => {
@@ -55,7 +55,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
       tasks,
@@ -69,7 +69,8 @@ const mapStateToProps = (state) => {
   return {
     tasks,
     isTaskAssignedToUserSelected,
-    featureToggles
+    featureToggles,
+    selectedTasks: selectedTasksSelector(state, ownProps.userId)
   };
 };
 
@@ -80,4 +81,4 @@ const mapDispatchToProps = (dispatch) =>
     resetSuccessMessages
   }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedCasesPage);
+export default (connect(mapStateToProps, mapDispatchToProps)(UnassignedCasesPage): React.ComponentType<Params>);
