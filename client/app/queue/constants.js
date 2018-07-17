@@ -77,8 +77,6 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const ERROR_FIELD_REQUIRED = 'This field is required';
-
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
     label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
