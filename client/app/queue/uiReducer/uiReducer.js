@@ -1,7 +1,7 @@
 // @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
-import type { UiState } from '../types';
+import type { UiState } from '../types/state';
 
 const initialSaveState = {
   savePending: false,

@@ -17,13 +17,17 @@ import {
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
-import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, Attorneys
-} from '../types';
-import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
+import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
+
+import type {
+  AttorneysOfJudge, IsTaskAssignedToUserSelected, UiStateError, State
+} from '../types/state';
+import type {
+  Tasks, Task, Attorneys
+} from '../types/models';
 
 const OTHER = 'OTHER';
 

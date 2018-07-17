@@ -47,7 +47,7 @@ module HearingSchedule::RoAllocation
         # skipping if allocated days meets the available days critiera
         next if allocated_days[month] <= (get_available_days(available_days, month) * num_of_rooms)
 
-        diff = allocated_days[month] - get_available_days(available_days, month)
+        diff = allocated_days[month] - get_available_days(available_days, month) * num_of_rooms
         allocated_days_keys = allocated_days.keys.sort
 
         i = 0
