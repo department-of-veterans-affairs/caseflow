@@ -13,7 +13,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import { selectedTasksSelector } from './utils';
-import type { Task } from './types';
+import type { Task } from './types/models';
 
 type Params = {|
   userId: string,

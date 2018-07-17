@@ -13,7 +13,8 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, Task, Tasks, State } from './types';
+import type { Task, Tasks } from './types/models';
+import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, State } from './types/state';
 
 type Params = {|
   match: Object
