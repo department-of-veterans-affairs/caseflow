@@ -67,7 +67,7 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "judge_assignment",
+          feature: "judge_case_review_checkout",
           enable_all: true
         },
         {
@@ -75,7 +75,7 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "judge_assign_cases",
+          feature: "judge_assignment_to_attorney",
           enable_all: true
         }
   ]
