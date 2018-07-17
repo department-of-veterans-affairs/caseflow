@@ -28,11 +28,12 @@ class QueueLoadingScreen extends React.PureComponent {
 
   loadRelevantCases = () => {
     const promises = [];
+
     if (this.props.appealId) {
       promises.push(this.loadActiveAppeal());
     }
-
     promises.push(this.loadQueue());
+
     return Promise.all(promises);
   }
 
