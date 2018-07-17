@@ -1,7 +1,7 @@
 // @flow
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
-import type { CaseDetailState } from '../types';
+import type { CaseDetailState } from '../types/state';
 
 export const initialState = {
   activeAppeal: null,

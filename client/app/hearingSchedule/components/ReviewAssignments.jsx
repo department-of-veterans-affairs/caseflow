@@ -1,13 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
+import _ from 'lodash';
+import { css } from 'glamor';
 import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
+import Table from '../../components/Table';
+import { formatDate } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
+
+const tableBorder = css({
+  border: '1px solid #dadbdc'
+});
 
 export default class ReviewAssignments extends React.Component {
 
@@ -74,6 +82,45 @@ export default class ReviewAssignments extends React.Component {
       return <Redirect to="/schedule/build" />;
     }
 
+    let hearingAssignmentColumns = [
+      {
+        header: 'Date',
+        align: 'left',
+        valueName: 'date'
+      },
+      {
+        header: 'Type',
+        align: 'left',
+        valueName: 'type'
+      },
+      {
+        header: 'Regional Office',
+        align: 'left',
+        valueName: 'regionalOffice'
+      },
+      {
+        header: 'Room',
+        align: 'left',
+        valueName: 'room'
+      }
+    ];
+
+    if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      hearingAssignmentColumns.push({
+        header: 'VLJ',
+        align: 'left',
+        valueName: 'judge'
+      });
+    }
+
+    const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
+      date: formatDate(hearingDay.hearingDate),
+      type: hearingDay.hearingType,
+      regionalOffice: hearingDay.regionalOffice,
+      room: hearingDay.room,
+      judge: hearingDay.judge
+    }));
+
     return <AppSegment filledBackground>
       {this.props.displayConfirmationModal && <div className="cf-modal-scroll">
         <Modal
@@ -90,6 +137,12 @@ export default class ReviewAssignments extends React.Component {
         type="info"
         title={this.getAlertTitle()}
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
+      />
+      <Table
+        styling={tableBorder}
+        columns={hearingAssignmentColumns}
+        rowObjects={hearingAssignmentRows}
+        summary="hearing-assignments"
       />
     </AppSegment>;
   }

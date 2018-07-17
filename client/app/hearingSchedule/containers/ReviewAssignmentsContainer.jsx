@@ -9,13 +9,15 @@ import ReviewAssignments from '../components/ReviewAssignments';
 import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal
+  onClickCloseModal,
+  onConfirmAssignmentsUpload
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
 
   onConfirmAssignmentsUpload = () => {
     this.props.onClickCloseModal();
+    this.props.onConfirmAssignmentsUpload();
     this.props.history.push('/schedule/build');
   };
 
@@ -37,10 +39,10 @@ export class ReviewAssignmentsContainer extends React.Component {
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        message: 'Loading past schedule uploads...'
+        message: 'We are assigning hearings...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load past schedule uploads.'
+        title: 'Unable to assign hearings. Please try again.'
       }}>
       <ReviewAssignments
         schedulePeriod={this.props.schedulePeriod}
@@ -63,7 +65,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal
+  onClickCloseModal,
+  onConfirmAssignmentsUpload
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));
