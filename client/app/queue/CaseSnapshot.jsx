@@ -99,11 +99,12 @@ export class CaseSnapshot extends React.PureComponent {
 
   render = () => {
     const {
-      appeal: { attributes: appeal }
+      appeal: { attributes: appeal },
+      userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
 
-    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+    if (userRole === USER_ROLES.ATTORNEY) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     } else if (this.props.featureToggles.judge_assignment) {
       CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
@@ -127,7 +128,7 @@ export class CaseSnapshot extends React.PureComponent {
         </CaseDetailsDescriptionList>
       </div>
       { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+        (this.props.loadedQueueAppealIds.includes(appeal.vacols_id) || userRole === USER_ROLES.JUDGE) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
