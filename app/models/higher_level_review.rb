@@ -31,8 +31,12 @@ class HigherLevelReview < AmaReview
 
   private
 
-  def end_product_establishment
-    @end_product_establishment ||= EndProductEstablishment.new(
+  def find_end_product_establishment
+    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  end
+
+  def new_end_product_establishment
+    @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
@@ -41,5 +45,9 @@ class HigherLevelReview < AmaReview
       source: self,
       station: "397" # AMC
     )
+  end
+
+  def end_product_establishment
+    find_end_product_establishment || new_end_product_establishment
   end
 end

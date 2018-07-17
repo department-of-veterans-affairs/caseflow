@@ -63,7 +63,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_canceled?
-    sync_ep_status! && end_product_status == "CAN"
+    sync_ep_status! && end_product_establishment.synced_status == "CAN"
   end
 
   def sync_ep_status!
@@ -76,10 +76,10 @@ class RampReview < ApplicationRecord
       saved_end_product_establishment.sync!
     end
 
-    update!(
-      end_product_status: (saved_end_product_establishment || end_product_establishment).result.status_type_code,
-      end_product_status_last_synced_at: Time.zone.now
-    )
+    # update!(
+    #   end_product_status: (saved_end_product_establishment || end_product_establishment).result.status_type_code,
+    #   end_product_status_last_synced_at: Time.zone.now
+    # )
   end
 
   def establish_end_product!
@@ -103,8 +103,12 @@ class RampReview < ApplicationRecord
 
   private
 
-  def end_product_establishment
-    @end_product_establishment ||= EndProductEstablishment.new(
+  def find_end_product_establishment
+    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  end
+
+  def new_end_product_establishment
+    @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
@@ -113,6 +117,10 @@ class RampReview < ApplicationRecord
       source: self,
       station: "397" # AMC
     )
+  end
+
+  def end_product_establishment
+    find_end_product_establishment || new_end_product_establishment
   end
 
   def veteran
@@ -127,7 +135,7 @@ class RampReview < ApplicationRecord
   end
 
   def cached_status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
+    !EndProduct::INACTIVE_STATUSES.include?(end_product_establishment.synced_status)
   end
 
   def end_product_code

@@ -16,12 +16,28 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   # Fetch the resulting end product from the reference_id
-  def result
-    @result ||= fetch_result
+  def result(cached: false) # add option to either load from BGS or just used cached values
+    cached ? cached_result : fetched_result
+  end
+
+  def cached_result
+    @cached_result ||= EndProduct.new(
+      claim_id: reference_id,
+      claim_date: claim_date,
+      claim_type_code: code,
+      modifier: modifier,
+      suppress_acknowledgement_letter: false,
+      gulf_war_registry: false,
+      station_of_jurisdiction: station
+    )
+  end
+
+  def fetched_result
+    @fetched_result ||= fetch_result
   end
 
   def description
-    reference_id && end_product_to_establish.description_with_routing
+    reference_id && cached_result.description_with_routing
   end
 
   # Find an end product that has the traits of the end product that should be created.
@@ -41,7 +57,7 @@ class EndProductEstablishment < ApplicationRecord
     )
   end
 
-  delegate :contentions, to: :end_product_to_establish
+  delegate :contentions, to: :cached_result
 
   private
 
@@ -61,7 +77,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
-      modifier: end_product_modifier,
+      modifier: find_open_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
       station_of_jurisdiction: station
@@ -79,7 +95,7 @@ class EndProductEstablishment < ApplicationRecord
     result
   end
 
-  def end_product_modifier
+  def find_open_modifier
     return valid_modifiers.first if valid_modifiers.count == 1
 
     valid_modifiers.each do |modifier|
