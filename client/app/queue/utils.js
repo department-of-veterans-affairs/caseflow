@@ -9,6 +9,7 @@ import {
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import type { Tasks } from './types/models';
+import type { State } from './types/state';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
@@ -135,3 +136,7 @@ export const buildCaseReviewPayload =
 
     return payload;
   };
+
+export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
+  state.queue.isTaskAssignedToUserSelected[userId] || {},
+  (selected, id) => (selected ? [state.queue.tasks[id]] : []));
