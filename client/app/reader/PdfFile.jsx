@@ -370,7 +370,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   handlePageUpDown = (event) => {
-    if (event.code === 'PageDown' || event.code === 'PageUp') {
+    if (this.grid && (event.code === 'PageDown' || event.code === 'PageUp')) {
       const { rowIndex, columnIndex } = this.pageRowAndColumn(this.currentPage);
 
       this.grid.scrollToCell({
