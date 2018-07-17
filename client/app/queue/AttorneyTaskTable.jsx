@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -146,4 +146,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(AttorneyTaskTable);
+export default (connect(mapStateToProps)(AttorneyTaskTable): React.ComponentType<Props>);
