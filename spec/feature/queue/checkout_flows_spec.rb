@@ -180,6 +180,12 @@ RSpec.feature "Checkout flows" do
         click_label("overtime")
         fill_in "document_id", with: "12345"
 
+        click_on "Continue"
+        expect(page).to have_content("This field is invalid")
+        fill_in "document_id", with: "M1234567.1234"
+        click_on "Continue"
+        expect(page).not_to have_content("This field is invalid")
+
         dummy_note = generate_words 100
         fill_in "notes", with: dummy_note
         expect(page).to have_content(dummy_note[0..349])
