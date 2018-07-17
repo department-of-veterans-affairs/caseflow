@@ -60,7 +60,7 @@ class AssignedCasesPage extends React.PureComponent {
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
-      {featureToggles.judge_assign_cases &&
+      {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
           onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
