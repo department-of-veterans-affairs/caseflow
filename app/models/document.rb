@@ -231,8 +231,7 @@ class Document < ApplicationRecord
 
   def reader_with_efolder_api?
     EFolderService == ExternalApi::EfolderService &&
-      RequestStore.store[:application] == "reader" &&
-      FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      RequestStore.store[:application] == "reader"
   end
 
   def match_vbms_document_using(vbms_documents, &date_match_test)
