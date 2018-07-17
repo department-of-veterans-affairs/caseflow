@@ -13,10 +13,9 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, Task, Tasks } from './types';
+import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, Task, Tasks, State } from './types';
 
 type Params = {|
-  userId: string,
   match: Object
 |};
 
@@ -102,16 +101,17 @@ class AssignedCasesPage extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: State, ownProps: Params) => {
   const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
   const { featureToggles } = state.ui;
+  const { attorneyId } = ownProps.match.params;
 
   return {
     tasksAndAppealsOfAttorney,
     attorneysOfJudge,
     tasks,
     featureToggles,
-    selectedTasks: selectedTasksSelector(state, ownProps.userId)
+    selectedTasks: selectedTasksSelector(state, attorneyId)
   };
 };
 

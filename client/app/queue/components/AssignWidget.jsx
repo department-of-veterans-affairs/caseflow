@@ -142,8 +142,8 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>
-      {error && <Alert type="error" title={error.title} message={error.detail} />}
-      {success && <Alert type="success" title={success} />}
+      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
