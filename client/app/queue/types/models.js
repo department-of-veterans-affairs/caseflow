@@ -46,8 +46,7 @@ export type Issue = {
   disposition: string,
   close_date: Date,
   note: string,
-  id: string,
-  vacols_sequence_id: string,
+  vacols_sequence_id: Number,
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>

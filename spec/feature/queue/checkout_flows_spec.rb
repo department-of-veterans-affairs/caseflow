@@ -181,10 +181,10 @@ RSpec.feature "Checkout flows" do
         fill_in "document_id", with: "12345"
 
         click_on "Continue"
-        expect(page).to have_content("This field is invalid")
+        expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
         fill_in "document_id", with: "M1234567.1234"
         click_on "Continue"
-        expect(page).not_to have_content("This field is invalid")
+        expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
 
         dummy_note = generate_words 100
         fill_in "notes", with: dummy_note
