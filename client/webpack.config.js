@@ -1,4 +1,3 @@
-//const uswds = require('uswds');
 const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');

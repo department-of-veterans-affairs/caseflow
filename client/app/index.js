@@ -3,6 +3,7 @@ import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
+import 'uswds';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
