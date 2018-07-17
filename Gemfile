@@ -45,7 +45,7 @@ gem "puma", "~> 2.16.0"
 gem "wannabe_bool"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b8b6d0f918d855b61b31f03e01a39d802d587367"
 
 # PDF Tools
 gem "pdf-forms"
