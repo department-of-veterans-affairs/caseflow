@@ -3,7 +3,8 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, Task, User, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from './types';
+import type { Dispatch, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
+import type { Task, User } from './types/models';
 
 export const onReceiveQueue =
   ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: string }) => ({

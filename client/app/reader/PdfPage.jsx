@@ -159,7 +159,7 @@ export class PdfPage extends React.PureComponent {
       this.measureTimeStartMs = performance.now();
     }
 
-    if (prevProps.scale !== this.props.scale) {
+    if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
 
