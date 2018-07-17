@@ -366,13 +366,13 @@ RSpec.feature "Checkout flows" do
 
     before do
       FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:judge_assignment)
+      FeatureToggle.enable!(:judge_case_review_checkout)
 
       User.authenticate!(user: judge_user)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
+      FeatureToggle.disable!(:judge_case_review_checkout)
       FeatureToggle.disable!(:judge_queue)
     end
 
