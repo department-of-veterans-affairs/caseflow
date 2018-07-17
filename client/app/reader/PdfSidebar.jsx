@@ -70,7 +70,7 @@ export class PdfSidebar extends React.Component {
   }
 
   componentDidUpdate = () => {
-    if (this.props.scrollToSidebarComment) {
+    if (this.props.scrollToSidebarComment && this.commentElements[this.props.scrollToSidebarComment.id]) {
       const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
 
       this.commentListElement.scrollTop = this.commentListElement.scrollTop +
