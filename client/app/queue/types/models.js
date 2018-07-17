@@ -11,6 +11,20 @@ export type User = {
   display_name: string
 };
 
+export type Judge = {
+  css_id: string,
+  display_name: string,
+  email: ?string,
+  full_name: string,
+  id: Number,
+  judge_css_id: ?string,
+  roles: Array<string>,
+  selected_regional_office: ?string,
+  station_id: string
+};
+
+export type Judges = { [string]: Judge };
+
 export type DeprecatedTask = {
   id: string
 };
@@ -23,6 +37,23 @@ export type AppellantAddress = {
   zip: string,
   country: string
 };
+
+export type Issue = {
+  levels: Array<string>,
+  program: string,
+  type: string,
+  codes: Array<string>,
+  disposition: string,
+  close_date: Date,
+  note: string,
+  id: string,
+  vacols_sequence_id: string,
+  labels: Array<string>,
+  readjudication: Boolean,
+  remand_reasons: Array<Object>
+};
+
+export type Issues = Array<Issue>;
 
 export type LegacyAppeal = {
   id: string,

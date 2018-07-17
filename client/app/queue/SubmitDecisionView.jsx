@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -7,7 +7,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
-  buildCaseReviewPayload
+  buildCaseReviewPayload,
+  validateWorkProductTypeAndId
 } from './utils';
 
 import {
@@ -44,7 +45,34 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
-class SubmitDecisionView extends React.PureComponent {
+import type {
+  Task,
+  LegacyAppeal,
+  Judges
+} from './types/models';
+import type { UiStateError } from './types/state';
+
+type Props = {|
+  appealId: string,
+  nextStep: string,
+  // state props
+  appeal: LegacyAppeal,
+  decision: Object,
+  task: Task,
+  judges: Judges,
+  highlightFormItems: Boolean,
+  userRole: string,
+  selectingJudge: Boolean,
+  error: ?UiStateError,
+  // dispatch props
+  setDecisionOptions: Function,
+  resetDecisionOptions: Function,
+  setSelectingJudge: Function,
+  requestSave: Function,
+  deleteAppeal: Function
+|};
+
+class SubmitDecisionView extends React.PureComponent<Props> {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
@@ -59,25 +87,6 @@ class SubmitDecisionView extends React.PureComponent {
     }
   };
 
-  validateDocumentId = () => {
-    const {
-      opts: {
-        document_id: documentId,
-        work_product: workProduct
-      }
-    } = this.props.decision;
-
-    if (!workProduct) {
-      return false;
-    }
-
-    const initialChar = workProduct.includes('IME') ? 'V' : 'M';
-    const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
-    const validFormat = new RegExp(regex);
-
-    return validFormat.test(documentId);
-  }
-
   validateForm = () => {
     const {
       type: decisionType,
@@ -88,8 +97,7 @@ class SubmitDecisionView extends React.PureComponent {
     if (decisionType === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
 
-      // todo: settle validation for non-omo case reviews
-      if (!this.validateDocumentId()) {
+      if (!validateWorkProductTypeAndId(this.props.decision)) {
         return false;
       }
     }
@@ -196,7 +204,7 @@ class SubmitDecisionView extends React.PureComponent {
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (!this.validateDocumentId()) {
+    } else if (!validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
@@ -247,11 +255,6 @@ class SubmitDecisionView extends React.PureComponent {
     </React.Fragment>;
   };
 }
-
-SubmitDecisionView.propTypes = {
-  appealId: PropTypes.string.isRequired,
-  nextStep: PropTypes.string.isRequired
-};
 
 const mapStateToProps = (state, ownProps) => {
   const {
