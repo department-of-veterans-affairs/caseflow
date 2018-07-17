@@ -57,7 +57,8 @@ describe EndProductEstablishment do
         expect(end_product_establishment.reload).to have_attributes(
           reference_id: "FAKECLAIMID",
           veteran_file_number: veteran_file_number,
-          established_at: Time.zone.now
+          established_at: Time.zone.now,
+          claimant_participant_id: veteran_participant_id
         )
       end
     end
