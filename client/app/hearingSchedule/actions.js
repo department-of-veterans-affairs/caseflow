@@ -95,3 +95,11 @@ export const onClickConfirmAssignments = () => ({
 export const onClickCloseModal = () => ({
   type: ACTIONS.CLICK_CLOSE_MODAL
 });
+
+export const onConfirmAssignmentsUpload = () => ({
+  type: ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD
+});
+
+export const unsetSuccessMessage = () => ({
+  type: ACTIONS.UNSET_SUCCESS_MESSAGE
+});

@@ -234,13 +234,11 @@ RSpec.feature "Case details" do
 
     before do
       FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:judge_assignment)
 
       User.authenticate!(user: judge_user)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
       FeatureToggle.disable!(:judge_queue)
     end
 

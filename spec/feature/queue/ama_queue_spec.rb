@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.feature "AmaQueue" do
   before do
+    Time.zone = "America/New_York"
+
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
   end
