@@ -101,7 +101,7 @@ describe Document do
 
         it "returns the URL for the document in efolder" do
           document.efolder_id = Generators::Document.generate_external_id
-          expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
+          expect(document.content_url).to eq(base_url + "/api/v2/records/#{document.vbms_document_id}")
         end
       end
 
