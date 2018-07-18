@@ -8,13 +8,48 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
+    bfregoff "RO18"
+
     trait :assigned do
       transient do
         decass_count 1
+        user nil
+        assigner nil
+        work_product nil
+        document_id nil
       end
 
       after(:create) do |vacols_case, evaluator|
-        create_list(:decass, evaluator.decass_count, defolder: vacols_case.bfkey)
+        if evaluator.user
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+        end
+        if evaluator.assigner
+          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
+        end
+        vacols_case.update!(bfcurloc: slogid) if slogid
+        create_list(
+          :decass,
+          evaluator.decass_count,
+          evaluator.work_product,
+          defolder: vacols_case.bfkey,
+          deadusr: slogid ? slogid : "TEST",
+          demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
+          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
+          dedocid: evaluator.document_id || nil
+        )
+      end
+    end
+
+    transient do
+      # Pass an array of built (not created) case_hearings to associate with this appeal
+      case_hearings []
+
+      after(:create) do |vacols_case, evaluator|
+        evaluator.case_hearings.each do |case_hearing|
+          case_hearing.update!(folder_nr: vacols_case.bfkey)
+        end
       end
     end
 
@@ -24,6 +59,7 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         evaluator.case_issues.each do |case_issue|
           case_issue.isskey = vacols_case.bfkey
+          case_issue.issseq = VACOLS::CaseIssue.generate_sequence_id(vacols_case.bfkey)
           case_issue.save
         end
       end
@@ -98,6 +134,10 @@ FactoryBot.define do
       bfac "1"
     end
 
+    trait :type_post_remand do
+      bfac "3"
+    end
+
     trait :type_reconsideration do
       bfac "4"
     end
@@ -143,6 +183,14 @@ FactoryBot.define do
       bfdc "5"
     end
 
+    trait :disposition_granted_by_aoj do
+      bfdc "B"
+    end
+
+    trait :disposition_merged do
+      bfdc "M"
+    end
+
     trait :disposition_ramp do
       bfdc "P"
     end
@@ -163,14 +211,53 @@ FactoryBot.define do
       bfhr "2"
     end
 
+    trait :reopenable do
+      bfmpro "HIS"
+      bfcurloc "99"
+      bfboard "00"
+
+      after(:create) do |vacols_case, _evaluator|
+        create(:priorloc,
+               lockey: vacols_case.bfkey,
+               locstto: "77",
+               locdin: Time.zone.today - 6,
+               locdout: Time.zone.today - 2)
+      end
+    end
+
     trait :aod do
       after(:create) do |vacols_case, _evaluator|
         create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
       end
     end
 
-    trait :has_regional_office do
-      bfregoff "RO18"
+    trait :docs_in_vbms do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = %w[Y 1 0].sample
+      end
+    end
+
+    trait :docs_in_vva do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tisubj2 = "Y"
+      end
+    end
+
+    trait :paper_case do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
+      end
+    end
+
+    transient do
+      remand_return_date nil
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.remand_return_date
+          create(:priorloc, lockey: vacols_case.bfkey, locstto: "96", locdout: evaluator.remand_return_date)
+        end
+      end
     end
 
     transient do

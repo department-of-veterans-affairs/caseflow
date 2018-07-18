@@ -6,10 +6,13 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import { setDocketType, submitReview } from '../../actions/appeal';
+import SelectClaimant from '../../components/SelectClaimant';
+import { setDocketType } from '../../actions/appeal';
+import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
@@ -19,7 +22,8 @@ class Review extends React.PureComponent {
       receiptDate,
       receiptDateError,
       docketType,
-      docketTypeError
+      docketTypeError,
+      reviewIntakeError
     } = this.props;
 
     switch (appealStatus) {
@@ -42,6 +46,8 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
 
+      { reviewIntakeError && <ErrorAlert /> }
+
       <DateSelector
         name="receipt-date"
         label="What is the Receipt Date of this form?"
@@ -61,13 +67,27 @@ class Review extends React.PureComponent {
         errorMessage={docketTypeError}
         value={docketType}
       />
+
+      <SelectClaimantConnected />
     </div>;
   }
 }
 
+const SelectClaimantConnected = connect(
+  ({ appeal }) => ({
+    claimantNotVeteran: appeal.claimantNotVeteran,
+    claimant: appeal.claimant,
+    relationships: appeal.relationships
+  }),
+  (dispatch) => bindActionCreators({
+    setClaimantNotVeteran,
+    setClaimant
+  }, dispatch)
+)(SelectClaimant);
+
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.appeal).then(
+    this.props.submitReview(this.props.intakeId, this.props.appeal, 'appeal').then(
       () => this.props.history.push('/finish')
     );
   }
@@ -109,7 +129,8 @@ export default connect(
     receiptDate: state.appeal.receiptDate,
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
-    docketTypeError: state.appeal.docketTypeError
+    docketTypeError: state.appeal.docketTypeError,
+    reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,

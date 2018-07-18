@@ -1,2 +1,0 @@
-class RoSchedulePeriod < SchedulePeriod
-end

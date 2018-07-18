@@ -1,15 +1,19 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
-  attribute :assigned_on
-  attribute :due_on
-  attribute :docket_name
-  attribute :docket_date
+  attribute :type
+  attribute :title
   attribute :appeal_id
-  attribute :user_id
-  attribute :added_by_name
-  attribute :added_by_css_id
-  attribute :task_id
-  attribute :task_type
-  attribute :document_id
-  attribute :assigned_by_first_name
-  attribute :assigned_by_last_name
+  attribute :status
+  attribute :assigned_to_id
+  attribute :assigned_by_id
+  attribute :assigned_at
+  attribute :started_at
+  attribute :completed_at
+  attribute :placed_on_hold_at
+
+  attribute :docket_name do
+    "legacy"
+  end
+  attribute :docket_date do
+    object.appeal.form9_date
+  end
 end

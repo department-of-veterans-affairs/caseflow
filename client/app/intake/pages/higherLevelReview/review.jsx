@@ -1,15 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
-import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import { setInformalConference, setSameOffice, submitReview } from '../../actions/higherLevelReview';
+import SelectClaimant from '../../components/SelectClaimant';
+import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
+import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
@@ -21,7 +24,8 @@ class Review extends React.PureComponent {
       informalConference,
       informalConferenceError,
       sameOffice,
-      sameOfficeError
+      sameOfficeError,
+      reviewIntakeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -32,15 +36,10 @@ class Review extends React.PureComponent {
     default:
     }
 
-    const radioOptions = [
-      { value: 'false',
-        displayText: 'No' },
-      { value: 'true',
-        displayText: 'Yes' }
-    ];
-
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
+
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -56,10 +55,10 @@ class Review extends React.PureComponent {
         label="Did the Veteran request an informal conference?"
         strongLabel
         vertical
-        options={radioOptions}
+        options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
-        value={informalConference}
+        value={informalConference === null ? null : informalConference.toString()}
       />
 
       <RadioField
@@ -67,19 +66,32 @@ class Review extends React.PureComponent {
         label="Did the Veteran request review by the same office?"
         strongLabel
         vertical
-        options={radioOptions}
+        options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
-        value={sameOffice}
+        value={sameOffice === null ? null : sameOffice.toString()}
       />
 
+      <SelectClaimantConnected />
     </div>;
   }
 }
 
+const SelectClaimantConnected = connect(
+  ({ higherLevelReview }) => ({
+    claimantNotVeteran: higherLevelReview.claimantNotVeteran,
+    claimant: higherLevelReview.claimant,
+    relationships: higherLevelReview.relationships
+  }),
+  (dispatch) => bindActionCreators({
+    setClaimantNotVeteran,
+    setClaimant
+  }, dispatch)
+)(SelectClaimant);
+
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview).then(
+    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview, 'higherLevelReview').then(
       () => this.props.history.push('/finish')
     );
   }
@@ -123,7 +135,8 @@ export default connect(
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
-    sameOfficeError: state.higherLevelReview.sameOfficeError
+    sameOfficeError: state.higherLevelReview.sameOfficeError,
+    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,

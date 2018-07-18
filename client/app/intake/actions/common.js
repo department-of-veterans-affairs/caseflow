@@ -103,54 +103,6 @@ export const setOptionSelected = (optionSelected) => ({
   }
 });
 
-export const setIssueSelected = (profileDate, issueId, isSelected) => ({
-  type: ACTIONS.SET_ISSUE_SELECTED,
-  payload: {
-    profileDate,
-    issueId,
-    isSelected
-  },
-  meta: {
-    analytics: {
-      label: isSelected ? 'selected' : 'de-selected'
-    }
-  }
-});
-
-export const addNonRatedIssue = (nonRatedIssues) => ({
-  type: ACTIONS.ADD_NON_RATED_ISSUE,
-  payload: {
-    nonRatedIssues
-  },
-  meta: { analytics }
-});
-
-export const setIssueCategory = (issueId, category) => ({
-  type: ACTIONS.SET_ISSUE_CATEGORY,
-  payload: {
-    issueId,
-    category
-  },
-  meta: {
-    analytics: {
-      label: category
-    }
-  }
-});
-
-export const setIssueDescription = (issueId, description) => ({
-  type: ACTIONS.SET_ISSUE_DESCRIPTION,
-  payload: {
-    issueId,
-    description
-  },
-  meta: {
-    analytics: {
-      label: description
-    }
-  }
-});
-
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
   meta: {

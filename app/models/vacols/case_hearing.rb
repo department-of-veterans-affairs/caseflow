@@ -42,9 +42,11 @@ class VACOLS::CaseHearing < VACOLS::Record
     add_on: :addon,
     representative_name: :repname,
     staff_id: :mduser,
+    room_info: :room,
     room: :room,
     hearing_date: :hearing_date,
-    hearing_type: :hearing_type
+    hearing_type: :hearing_type,
+    judge_id: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -78,6 +80,15 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
+    def load_days_for_range(start_date, end_date)
+      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date)
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?",
+                                 "VIDEO #{regional_office}", start_date, end_date)
+    end
+
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
@@ -86,7 +97,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil))
       end
     end
 
@@ -116,6 +127,20 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+
+    def select_schedule_days
+      select(:hearing_pkseq,
+             :hearing_date,
+             :hearing_type,
+             :folder_nr,
+             :room,
+             :board_member,
+             "snamef || ' ' || snamemi || ' ' || snamel as judge_name",
+             :mduser,
+             :mdtime)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .where("folder_nr is null or folder_nr like ?", "VIDEO %")
+    end
   end
 
   def master_record_type
@@ -127,14 +152,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
-  end
-
-  private_class_method
-
-  def self.current_user_slogid
-    RequestStore.store[:current_user].vacols_uniq_id.upcase
   end
 
   private

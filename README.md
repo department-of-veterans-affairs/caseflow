@@ -1,5 +1,5 @@
 # Caseflow
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
 Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
 
@@ -8,77 +8,84 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
 ## Setup
-Install dependencies via Homebrew:
 
-    brew install rbenv nvm yarn
+### Install the Xcode commandline tools
+
+    xcode-select --install
+
+### Install base dependencies
+
+Install the base dependencies via Homebrew:
+
+    brew install rbenv nodenv yarn
+    brew tap ouchxp/nodenv
+    brew install nodenv-nvmrc
+    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
-Make sure you have installed and setup both [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm). For rbenv this means running `rbenv init`. For nvm this means doing the following:
-- Run `mkdir ~/.nvm`
-- Add the following to your shell login script:
+### Setup [rbenv](https://github.com/rbenv/rbenv).
 
-        export NVM_DIR="$HOME/.nvm"
-        . "/usr/local/opt/nvm/nvm.sh"
+Run `rbenv init` and do what it tells you.
 
-Before continuing, source your shell login script, e.g., `source ~/.profile` or `source ~/.bashrc`.
+### Setup [nodenv](https://github.com/nodenv/nodenv).
 
-Then run the following:
+Run `nodenv init` and do what it tells you.
 
-    cd caseflow
-    rbenv install $(cat .ruby-version)
-    rbenv rehash
-    gem install bundler
+Once you've done that, close your terminal window and open a new one. Verify that both environment managers are running:
 
-*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Do not proceed by running `sudo gem install bundler`.
+    $ env | grep ENV_SHELL
+    NODENV_SHELL=bash
+    RBENV_SHELL=bash
 
-Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
+If you don't see both, stop and debug.
 
-Note this link was found on Stack Overflow and is not the same link that is on the pdftk website.
-The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
+### Git 2-factor authentication
 
-For the frontend, you'll need to install Node and the relevant npm modules. [Install yarn](https://yarnpkg.com/en/docs/install). Use the version of Yarn defined in our `.travis.yml` file.
+We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like `git clone`, `git fetch`, `git pull` or `git push` with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
 
-    # Use the version of Node defined in .nvmrc.
-    nvm use
+### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/)
 
-    cd client && yarn
+Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
 
+[PDFtk Server for modern macOS](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
-## Set up Docker
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. After installation is complete, run:
+### Install Docker
+
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+
+After installation is complete, run:
 ```
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to
-accept the license agreement for [this docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
 
-## Set up Oracle
-You'll need to install the libraries required to connect to the VACOLS Oracle database:
+### Install the Oracle client libraries
 
-### OSX
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+You'll need to install the libraries required to connect to the VACOLS Oracle database.
 
-2) Unzip both packages into `/opt/oracle/instantclient_<version_number>` where `<version_number>` is consistent with step 3. Most of us are using `<version_number>=12_2`.
+#### macOS
 
-3) Setup both packages according to the Oracle documentation:
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit. You'll need to make an Oracle account.
+
+2) Copy both zip files into `~/Library/Caches/Homebrew` and leave them zipped.
+
+3) Install via Homebrew:
+
 ```
-export OCI_DIR=/opt/oracle/instantclient_<version_number>
-cd /opt/oracle/instantclient_<version_number>
-sudo ln -s libclntsh.dylib.<version_number> libclntsh.dylib
+    brew tap InstantClientTap/instantclient
+    brew install instantclient-basic instantclient-sdk
 ```
 
-If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
-
-### Windows
+#### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
 2) Unzip both packages into `[DIR]`
 
 3) Add `[DIR]` to your `PATH`
 
-### Linux
+#### Linux
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
 
@@ -94,14 +101,32 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
-## Start up your docker based environment
+### Install Ruby dependencies
 
-We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required, but slowly learning how docker works is encouraged.
-Please ask a team member for an overview, and/or slowly review the docs linked.
+    cd caseflow
+    rbenv install $(cat .ruby-version)
+    rbenv rehash
+    gem install bundler
 
-Your development setup of caseflow currently runs Redis, postgres and OracleDB (VACOLS) in Docker.
+*NOTE* If when running `gem install bundler` above you get a permissions error, this means you have not propertly configured your rbenv. Debug. Do not proceed by running `sudo gem install bundler`.
 
-Setup your postgres user.  Run this in your CLI, or better yet, add this to your shell configuration `~/.bashrc`
+    bundle install
+
+This should install clean. If you have errors, you probably missed a dependency (like the Oracle libraries).
+
+### Install JavaScript dependencies
+
+    cd caseflow
+    nodenv install $(cat .nvmrc)
+    nodenv rehash
+    cd client
+    yarn install
+
+This should install clean. If you have errors, try ... FIXME.
+
+### Setup the development Postgres user
+
+Add these to your `.bash_profile`:
 
 ```
 export POSTGRES_HOST=localhost
@@ -109,49 +134,32 @@ export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
 
-**Note: If you previously have had redis and postgres installed via brew and would like to switch to docker, do the following:**
+(Reload the file `source ~/.bash_profile`)
+
+### Cleanup the old dev environment (not needed for new Macbooks)
+
+If you were doing Caseflow development before Docker, you need to turn off the brew managed Postgres and Redis services before starting to use the Docker services:
 ```
 brew services stop postgresql
 brew services stop redis
 ```
 
-Start all containers
-```
-docker-compose up -d
-# run without -d to start your environment and view container logging in the foreground
+## Start your dev environment
 
-docker-compose ps
-# this shows you the status of all of your dependencies
-```
+We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required and slowly learning how docker works is encouraged. Please ask a team member for an overview, and/or slowly review the docs linked.
 
-Turning off dependencies
-```
-# this stops all containers
-docker-compose down
+Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in Docker.
 
-# this will reset your setup back to scratch. You will need to setup your database schema again if you do this (see below)
-docker-compose down -v
+### Database environment setup
+
+To rapidly set up your local development (and testing) environment, you can run:
+```
+bundle exec rake local:build
 ```
 
-Enable features
-```
-bundle exec rails runner scripts/enable_features_dev.rb
-```
+The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
-## Setup your Database Schema
-```
-rake [RAILS_ENV=<test|development|stubbed>] db:setup
-rake [RAILS_ENV=<test|development|stubbed>] db:seed
-
-# setup local VACOLS (FACOLS)
-RAILS_ENV=test rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:setup
-RAILS_ENV=development rake local:vacols:seed
-```
-
-Note you'll need to setup both the test and development databases, but only need to seed the development database.
-
-## Debugging FACOLS setup
+### Debugging FACOLS setup
 Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
 
 1) Running `rake local:vacols:setup` logs out:
@@ -164,17 +172,23 @@ Try running `docker-compose down --rmi all -v --remove-orphans` and then running
 
 2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
 
-## Manually seeding your local VACOLS container
+If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
+```
+bundle exec rake local:destroy
+bundle exec rake local:build
+```
+
+### Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
 
 1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
 2) `rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
 3) `rails s` to start the server connected to local VACOLS or `rails c` to start the rails console connected to local VACOLS.
 
-## Certification Test Scenarios
+### Certification Test Scenarios
 
-| BFKEY/VACOLS_ID | Case | 
-| ----- | ---------------- | 
+| BFKEY/VACOLS_ID | Case |
+| ----- | ---------------- |
 | 2367429 | Ready to certify with all dates matching |
 | 2774535 | Ready to certify with fuzzy-matched dates |
 | 2771149 | Mismatched documents |
@@ -201,7 +215,7 @@ to skip production gems when installing.
 
 Set up and seed the DB
 
-    rake db:setup
+    bundle exec rake db:setup
 
 And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
 
@@ -231,6 +245,13 @@ To test the app connected to external dependencies, you'll need to set up Oracle
 
 ### Environment variables
 
+First you'll need to install ansible-vault and credstash.
+```sh
+pip install ansible-vault
+pip install credstash
+```
+For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash)
+
 We'll need to obtain the Ansible vault password using credstash:
 
 ```sh
@@ -259,7 +280,7 @@ bundle install --with staging
 ### Run the app
 
 ```sh
-rails s -e staging
+bundle exec rails s -e staging
 ```
 
 ## Changing between test users
@@ -292,7 +313,7 @@ add more links and users as needed.
 
 To run the test suite:
 
-    rake
+    bundle exec rake
 
 ## Feature Toggle and Functions
 
@@ -312,8 +333,11 @@ Rails.cache.write("certification_out_of_service", true)
 # enable for dispatch only
 Rails.cache.write("dispatch_out_of_service", true)
 
-# enable for hearings only
+# enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
+
+# enable for hearing schedule only
+Rails.cache.write("hearing_schedule_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)
@@ -344,9 +368,9 @@ Rails.cache.write(:degraded_service_banner, :auto)
 ```
 
 # Other Caseflow Products
-| Product | GitHub Repository | Travis CI |
+| Product | GitHub Repository | CI |
 | --- | --- | ---|
-| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [Travis CI - Caseflow](https://travis-ci.org/department-of-veterans-affairs/caseflow) |
+| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
 | eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
 | Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |

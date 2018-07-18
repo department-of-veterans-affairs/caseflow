@@ -2,18 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { sprintf } from 'sprintf-js';
 
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
+import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
+
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
-import { subHeadTextStyle } from './constants';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
-import { setBreadcrumbs } from './uiReducer/uiActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -26,30 +23,15 @@ const labelForLocation = (locationCode) => {
 class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
-  setActiveAppealAndBreadcrumbs = (appeal) => {
-    this.props.setActiveAppeal(appeal);
-    this.props.setBreadcrumbs({
-      breadcrumb: sprintf(COPY.BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.attributes.veteran_full_name),
-      path: window.location.pathname
-    });
-  }
-
   getColumns = () => [
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (appeal) => <span>
-        <Link
-          to={`/queue/appeals/${appeal.attributes.vacols_id}`}
-          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)}
-          disabled={appeal.attributes.paper_case}
-        >
-          {appeal.attributes.docket_number}
-        </Link>
-        {appeal.attributes.paper_case && <React.Fragment>
-          <br />
-          <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
-        </React.Fragment>}
-      </span>
+      valueFunction: (appeal) => <React.Fragment>
+        <CaseDetailsLink
+          appeal={appeal}
+          getLinkText={() => appeal.attributes.docket_number}
+          onClick={() => this.props.setActiveAppeal(appeal)} />
+      </React.Fragment>
     },
     {
       header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,
@@ -89,8 +71,7 @@ CaseListTable.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal,
-  setBreadcrumbs
+  setActiveAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);

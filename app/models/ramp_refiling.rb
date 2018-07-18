@@ -1,8 +1,6 @@
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 
-  belongs_to :ramp_election
-
   before_validation :clear_appeal_docket_if_not_appeal
 
   validate :validate_receipt_date, :validate_option_selected
@@ -36,7 +34,7 @@ class RampRefiling < RampReview
   end
 
   def election_receipt_date
-    ramp_election && ramp_election.receipt_date
+    ramp_elections.map(&:receipt_date).min
   end
 
   def needs_end_product?
@@ -44,6 +42,15 @@ class RampRefiling < RampReview
   end
 
   private
+
+  # TODO: add end product status to ramp_refiling
+  def end_product_status
+    nil
+  end
+
+  def ramp_elections
+    RampElection.established.where(veteran_file_number: veteran_file_number).all
+  end
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
@@ -76,7 +83,7 @@ class RampRefiling < RampReview
   end
 
   def validate_receipt_date
-    return unless receipt_date && ramp_election
+    return unless receipt_date && election_receipt_date
 
     if election_receipt_date > receipt_date
       errors.add(:receipt_date, "before_ramp_receipt_date")
@@ -86,9 +93,9 @@ class RampRefiling < RampReview
   end
 
   def validate_option_selected
-    return unless option_selected && ramp_election
+    return unless option_selected
 
-    if ramp_election.higher_level_review? && higher_level_review?
+    if ramp_elections.any?(&:higher_level_review?) && higher_level_review?
       errors.add(:option_selected, "higher_level_review_invalid")
     end
   end

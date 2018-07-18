@@ -6,5 +6,17 @@ FactoryBot.define do
 
     vacols_id { vacols_case.bfkey }
     vbms_id { vacols_case.bfcorlid }
+
+    trait :with_veteran do
+      after(:create) do |legacy_appeal, evaluator|
+        veteran = create(:veteran, file_number: legacy_appeal.veteran_file_number)
+
+        if evaluator.vacols_case
+          evaluator.vacols_case.correspondent.snamef = veteran.first_name
+          evaluator.vacols_case.correspondent.snamel = veteran.last_name
+          evaluator.vacols_case.correspondent.save
+        end
+      end
+    end
   end
 end

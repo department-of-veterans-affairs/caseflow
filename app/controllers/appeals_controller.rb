@@ -3,7 +3,7 @@ class AppealsController < ApplicationController
   before_action :set_application, only: :document_count
 
   def index
-    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"])
+    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
   end
 
   def show_case_list
@@ -17,6 +17,8 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
   end
 
   def show
@@ -58,11 +60,16 @@ class AppealsController < ApplicationController
                           service: :queue,
                           name: "AppealsController.index") do
 
-      begin
-        appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
-      rescue ActiveRecord::RecordNotFound
-        appeals = []
+      appeals = []
+      if FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user)
+        appeals.concat(Appeal.where(veteran_file_number: file_number).to_a)
       end
+      # rubocop:disable Lint/HandleExceptions
+      begin
+        appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
+      rescue ActiveRecord::RecordNotFound
+      end
+      # rubocop:enable Lint/HandleExceptions
 
       render json: {
         appeals: json_appeals(appeals)[:data]
@@ -71,7 +78,7 @@ class AppealsController < ApplicationController
   end
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def file_number_not_found_error
@@ -85,8 +92,7 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
+      appeals
     ).as_json
   end
 end

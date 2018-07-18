@@ -3,22 +3,39 @@ describe AppealSeriesAlerts do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     DocketSnapshot.create
   end
-  let(:series) { AppealSeries.create(appeals: [appeal]) }
-  let(:appeal) do
-    Generators::LegacyAppeal.build(
-      vbms_id: "999887777S",
-      status: status,
-      location_code: location_code,
-      notification_date: 1.year.ago,
-      soc_date: soc_date,
-      form9_date: form9_date,
-      certification_date: certification_date,
-      decision_date: decision_date,
-      disposition: disposition
-    )
+
+  before do
+    FeatureToggle.enable!(:test_facols)
   end
 
-  let(:status) { "Advance" }
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let(:appeal) do
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :type_original,
+        :certified,
+        bfcorlid: "999887777S",
+        bfcurloc: location_code,
+        bfdrodec: 1.year.ago,
+        bfdsoc: soc_date,
+        bfd19: form9_date,
+        certification_date: certification_date,
+        bfddec: decision_date,
+        bfdc: disposition,
+        bfmpro: status,
+        case_hearings: hearings,
+        bfso: "F",
+        case_issues: [create(:case_issue, :compensation)]
+      ))
+  end
+
+  let(:series) { AppealSeries.create(appeals: [appeal]) }
+  let(:hearings) { [] }
+  let(:status) { "ADV" }
   let(:location_code) { "77" }
   let(:soc_date) { 5.days.ago }
   let(:form9_date) { nil }
@@ -41,11 +58,8 @@ describe AppealSeriesAlerts do
       # Save appeal so hearings can be associated to it
       before { appeal.save! }
       let(:certification_date) { 3.days.ago }
-      let!(:hearing) do
-        Generators::Hearing.create(
-          appeal_id: appeal.id,
-          date: 1.day.from_now
-        )
+      let(:hearings) do
+        [build(:case_hearing, hearing_date: 1.day.from_now)]
       end
 
       it "includes an alert" do
@@ -61,12 +75,8 @@ describe AppealSeriesAlerts do
       # Save appeal so hearings can be associated to it
       before { appeal.save! }
       let(:certification_date) { 3.days.ago }
-      let!(:hearing) do
-        Generators::Hearing.create(
-          appeal_id: appeal.id,
-          date: hearing_date,
-          disposition: :no_show
-        )
+      let(:hearings) do
+        [build(:case_hearing, :disposition_no_show, hearing_date: hearing_date)]
       end
       let(:hearing_date) { 1.day.ago }
 
@@ -90,13 +100,8 @@ describe AppealSeriesAlerts do
       # Save appeal so hearings can be associated to it
       before { appeal.save! }
       let(:certification_date) { 3.days.ago }
-      let!(:hearing) do
-        Generators::Hearing.create(
-          appeal_id: appeal.id,
-          date: hearing_date,
-          disposition: :held,
-          hold_open: 30
-        )
+      let(:hearings) do
+        [build(:case_hearing, :disposition_held, hearing_date: hearing_date, holddays: 30)]
       end
       let(:hearing_date) { 1.day.ago }
 
@@ -117,7 +122,7 @@ describe AppealSeriesAlerts do
 
     context "decision_soon alert" do
       let(:form9_date) { 1.year.ago }
-      let(:status) { "Active" }
+      let(:status) { "ACT" }
 
       before do
         series.appeals.each do |appeal|
@@ -133,7 +138,7 @@ describe AppealSeriesAlerts do
 
     context "blocked_by_vso alert" do
       let(:form9_date) { 1.year.ago }
-      let(:status) { "Active" }
+      let(:status) { "ACT" }
       let(:location_code) { "55" }
 
       before { series.appeals.each { |appeal| appeal.aod = false } }
@@ -146,9 +151,9 @@ describe AppealSeriesAlerts do
     end
 
     context "cavc_option alert" do
-      let(:status) { "Complete" }
+      let(:status) { "HIS" }
       let(:decision_date) { 1.day.ago }
-      let(:disposition) { "Allowed" }
+      let(:disposition) { "1" }
 
       it "includes an alert" do
         alert = alerts.find { |a| a[:type] == :cavc_option }
@@ -165,7 +170,7 @@ describe AppealSeriesAlerts do
       end
 
       context "when not a Board decision" do
-        let(:disposition) { "Benefits Granted by AOJ" }
+        let(:disposition) { "B" }
 
         it "does not include an alert" do
           expect(alerts.find { |a| a[:type] == :held_for_evidence }).to be_nil
@@ -187,7 +192,7 @@ describe AppealSeriesAlerts do
       end
 
       context "when no longer eligible" do
-        let(:status) { "Complete" }
+        let(:status) { "HIS" }
 
         it "includes an ineligible alert" do
           alert = alerts.find { |a| a[:type] == :ramp_ineligible }

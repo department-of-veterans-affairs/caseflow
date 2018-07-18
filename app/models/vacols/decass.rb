@@ -12,11 +12,11 @@ class VACOLS::Decass < VACOLS::Record
   delegate :update_vacols_location!, to: :case
 
   def omo_request?
-    %w[IME VHA OTI OTV].include? deprod
+    Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include? deprod
   end
 
   def draft_decision?
-    %w[DEC OTD].include? deprod
+    Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].include? deprod
   end
 
   def update(*)

@@ -1,14 +1,20 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import RatedIssueCounter from '../../components/RatedIssueCounter';
-import NonRatedIssues from './nonRatedIssues';
-import RatedIssues from './ratedIssues';
-import { connect } from 'react-redux';
-import { completeIntake } from '../../actions/supplementalClaim';
+import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../components/RatedIssues';
+import IssueCounter from '../../components/IssueCounter';
+import {
+  completeIntake,
+  setIssueSelected,
+  addNonRatedIssue,
+  setIssueCategory,
+  setIssueDescription
+} from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -54,6 +60,27 @@ class Finish extends React.PureComponent {
   }
 }
 
+const NonRatedIssues = connect(
+  ({ supplementalClaim }) => ({
+    nonRatedIssues: supplementalClaim.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    addNonRatedIssue,
+    setIssueCategory,
+    setIssueDescription
+  }, dispatch)
+)(NonRatedIssuesUnconnected);
+
+const RatedIssues = connect(
+  ({ supplementalClaim, intake }) => ({
+    intakeId: intake.id,
+    reviewState: supplementalClaim
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
+
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.intakeId, this.props.supplementalClaim).then(
@@ -71,7 +98,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.supplementalClaim.selectedRatingCount}
+      disabled={!this.props.supplementalClaim.issueCount}
     >
       Establish EP
     </Button>;
@@ -88,18 +115,18 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
-const RatedIssueCounterConnected = connect(
+const IssueCounterConnected = connect(
   ({ supplementalClaim }) => ({
-    selectedRatingCount: supplementalClaim.selectedRatingCount
+    issueCount: supplementalClaim.issueCount
   })
-)(RatedIssueCounter);
+)(IssueCounter);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
-      <RatedIssueCounterConnected />
+      <IssueCounterConnected />
     </div>
 }
 

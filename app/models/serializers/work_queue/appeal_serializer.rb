@@ -1,6 +1,10 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :is_legacy_appeal do
+    false
+  end
+
   attribute :issues do
-    []
+    object.request_issues
   end
 
   attribute :hearings do
@@ -8,26 +12,29 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_full_name do
-    "not implemented"
+    object.claimants[0].name if object.claimants && object.claimants.any?
   end
 
   attribute :appellant_address do
-    {
-      address_line_1: "not implemented",
-      address_line_2: "not implemented",
-      city: "not implemented",
-      state: "not implemented",
-      zip: "not implemented",
-      country: "not implemented"
-    }
+    if object.claimants && object.claimants.any?
+      primary_appellant = object.claimants[0]
+      {
+        address_line_1: primary_appellant.address_line_1,
+        address_line_2: primary_appellant.address_line_2,
+        city: primary_appellant.city,
+        state: primary_appellant.state,
+        zip: primary_appellant.zip,
+        country: primary_appellant.country
+      }
+    end
   end
 
   attribute :appellant_relationship do
-    "not implemented"
+    object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
   attribute :location_code do
-    "not implemented"
+    "Not supported for BEAAM appeals"
   end
 
   attribute :veteran_full_name do
@@ -51,27 +58,27 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    "not implemented"
+    "BEAAM"
   end
 
   attribute :aod do
-    "not implemented"
+    object.advanced_on_docket
   end
 
   attribute :docket_number do
-    "not implemented"
+    object.docket_number
   end
 
   attribute :status do
-    "not implemented"
+    nil
   end
 
   attribute :decision_date do
-    "not implemented"
+    nil
   end
 
   attribute :certification_date do
-    "not implemented"
+    nil
   end
 
   attribute :paper_case do
@@ -79,15 +86,17 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :power_of_attorney do
-    "not implemented"
+    object.representative_name
+  end
+
+  attribute :power_of_attorney do
+    {
+      representative_type: object.representative_type,
+      representative_name: object.representative_name
+    }
   end
 
   attribute :regional_office do
-    {
-      key: "not implemented",
-      city: "not implemented",
-      state: "not implemented"
-    }
   end
 
   attribute :caseflow_veteran_id do

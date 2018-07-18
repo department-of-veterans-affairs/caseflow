@@ -4,13 +4,9 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText, TASK_ACTIONS } from './constants';
-import COPY from '../../COPY.json';
+import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
 
-const detailHeaderStyling = css({
-  marginBottom: '5px'
-});
 const detailListStyling = css({
   paddingLeft: 0,
   listStyle: 'none',
@@ -42,9 +38,7 @@ export default class AppellantDetail extends React.PureComponent {
 
   getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
 
-  veteranIsAppellant = () => _.isNull(this.getAppealAttr('appellant_full_name'));
-
-  getDetails = ({ nameField, genderField, dobField, addressField, relationField }) => {
+  getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
       label: 'Name',
       value: this.getAppealAttr(nameField)
@@ -74,6 +68,14 @@ export default class AppellantDetail extends React.PureComponent {
         value: this.formatAddress(addressField)
       });
     }
+    if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {
+      const { city, key } = this.getAppealAttr(regionalOfficeField);
+
+      details.push({
+        label: 'Regional Office',
+        value: `${city} (${key.replace('RO', '')})`
+      });
+    }
 
     const getDetailField = ({ label, value }) => () => <React.Fragment>
       <span {...boldText}>{label}:</span> {value}
@@ -82,60 +84,15 @@ export default class AppellantDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
-  componentDidMount = () => {
-    window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.VIEW_APPELLANT_INFO);
-  }
-
-  render = () => {
-    let appellantDetails;
-    let veteranDetails;
-
-    if (this.veteranIsAppellant()) {
-      appellantDetails = <React.Fragment>
-        <h2 {...detailHeaderStyling}>Veteran Details</h2>
-        <span>{COPY.CASE_SAME_VETERAN_AND_APPELLANT}</span>
-        <ul {...detailListStyling}>
-          {this.getDetails({
-            nameField: 'veteran_full_name',
-            genderField: 'veteran_gender',
-            dobField: 'veteran_date_of_birth',
-            addressField: 'appellant_address'
-          })}
-        </ul>
-      </React.Fragment>;
-    } else {
-      appellantDetails = <React.Fragment>
-        <h2 {...detailHeaderStyling}>Appellant Details</h2>
-        <span>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
-        <ul {...detailListStyling}>
-          {this.getDetails({
-            nameField: 'appellant_full_name',
-            addressField: 'appellant_address',
-            relationField: 'appellant_relationship'
-          })}
-        </ul>
-      </React.Fragment>;
-
-      veteranDetails = <React.Fragment>
-        <h2 {...detailHeaderStyling}>Veteran Details</h2>
-        <ul {...detailListStyling}>
-          {this.getDetails({
-            nameField: 'veteran_full_name',
-            genderField: 'veteran_gender',
-            dobField: 'veteran_date_of_birth'
-          })}
-        </ul>
-      </React.Fragment>;
-    }
-
-    return <div>
-      {appellantDetails}
-      {veteranDetails}
-    </div>;
-  };
+  render = () => <ul {...detailListStyling}>
+    {this.getDetails({
+      nameField: 'appellant_full_name',
+      addressField: 'appellant_address',
+      relationField: 'appellant_relationship'
+    })}
+  </ul>;
 }
 
 AppellantDetail.propTypes = {
-  analyticsSource: PropTypes.string.isRequired,
   appeal: PropTypes.object.isRequired
 };

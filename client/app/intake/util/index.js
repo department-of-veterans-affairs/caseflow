@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -7,6 +8,10 @@ export const getAppealDocketError = (responseErrorCodes) => (
 
 export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
+);
+
+export const getPageError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
 
 export const getReceiptDateError = (responseErrorCodes, state) => (
@@ -35,7 +40,20 @@ export const formatRatings = (ratings) => {
   }), 'profile_date');
 };
 
-export const formatRatingData = (intakeState) => {
+export const formatRelationships = (relationships) => {
+  return relationships.map((relationship) => {
+    const first = _.capitalize(relationship.first_name);
+    const last = _.capitalize(relationship.last_name);
+    const type = _.capitalize(relationship.relationship_type);
+
+    return {
+      value: relationship.participant_id,
+      displayText: `${first} ${last}, ${type}`
+    };
+  });
+};
+
+export const formatIssues = (intakeState) => {
   const ratingData = {
     request_issues:
       _(intakeState.ratings).
@@ -50,13 +68,16 @@ export const formatRatingData = (intakeState) => {
 
   const nonRatingData = {
     request_issues:
-      _(intakeState.nonRatedIssues).map((issue) => {
-        return {
-          decision_text: issue.description,
-          issue_category: issue.category
-        };
-      }).
-        filter('issue_category')
+      _(intakeState.nonRatedIssues).
+        filter((issue) => {
+          return issue.category && issue.description;
+        }).
+        map((issue) => {
+          return {
+            decision_text: issue.description,
+            issue_category: issue.category
+          };
+        })
   };
 
   const data = {
@@ -64,4 +85,52 @@ export const formatRatingData = (intakeState) => {
   };
 
   return data;
+};
+
+export const nonRatedIssueCounter = (state, action) => {
+  const selectedIssues = formatIssues(state).request_issues;
+  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0;
+  const currentIssue = state.nonRatedIssues[action.payload.issueId];
+  const descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0;
+  const categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0;
+
+  if (selectedIssueCount && !action.payload.category && !action.payload.description) {
+    return selectedIssueCount - 1;
+  }
+
+  if (action.payload.description) {
+    return selectedIssueCount + descriptionCounter;
+  }
+
+  if (action.payload.category) {
+    return selectedIssueCount + categoryCounter;
+  }
+};
+
+export const prepareReviewData = (intakeData, intakeType) => {
+  switch (intakeType) {
+  case 'appeal':
+    return {
+      docket_type: intakeData.docketType,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  case 'supplementalClaim':
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  case 'higherLevelReview':
+    return {
+      informal_conference: intakeData.informalConference,
+      same_office: intakeData.sameOffice,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  default:
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant
+    };
+  }
 };

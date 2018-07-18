@@ -1,6 +1,11 @@
 describe SupplementalClaim do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -114,7 +119,7 @@ describe SupplementalClaim do
       let(:receipt_date) { nil }
 
       it "raises error" do
-        expect { subject }.to raise_error(EstablishesEndProduct::InvalidEndProductError)
+        expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
       end
     end
 

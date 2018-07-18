@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
@@ -11,26 +12,27 @@ RSpec.feature "Intake" do
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
-  let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
-  let(:issues) do
-    [
-      Generators::Issue.build
-    ]
+  let!(:veteran) do
+    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
   let(:inaccessible) { false }
 
   let!(:appeal) do
-    Generators::LegacyAppeal.build(
-      vbms_id: "12341234C",
-      issues: issues,
-      vacols_record: :ready_to_certify,
-      veteran: veteran,
-      inaccessible: inaccessible,
-      nod_date: 1.year.ago
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(
+      :case,
+      :status_advance,
+      bfcorlid: "12341234C",
+      case_issues: [create(:case_issue, :compensation)],
+      bfdnod: 1.year.ago
     )
   end
 
@@ -110,7 +112,9 @@ RSpec.feature "Intake" do
     end
 
     context "Veteran has too high of a sensitivity level for user" do
-      let(:inaccessible) { true }
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+      end
 
       scenario "Search for a veteran with a sensitivity error" do
         visit "/intake"
@@ -151,7 +155,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Search for a veteran who's form is already being processed" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
@@ -173,7 +177,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Cancel an intake" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!

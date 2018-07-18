@@ -18,41 +18,14 @@ class PowerOfAttorney
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name
 
-  attr_accessor :bgs_representative_name,
-                :bgs_representative_type,
-                :bgs_representative_address,
-                :bgs_participant_id,
-                :vacols_id,
+  attr_accessor :vacols_id,
                 :file_number
 
-  def load_bgs_record!
-    result = bgs.fetch_poa_by_file_number(file_number)
-    self.bgs_representative_name = result[:representative_name]
-    self.bgs_representative_type = result[:representative_type]
-    self.bgs_participant_id = result[:participant_id]
-    self.bgs_representative_address = result[:participant_id] ? load_bgs_address! : nil
-
-    self
-  end
-
-  def load_bgs_address!
-    load_bgs_record! unless bgs_participant_id
-    self.bgs_representative_address = nil
-
-    begin
-      self.bgs_representative_address = find_bgs_address
-    rescue Savon::Error => e
-      # If there is no address associated with the participant id,
-      # Savon::SOAPFault will be thrown. Let's not reraise since
-      # this error shouldn't block the user.
-
-      # TODO: should this be an exception at all? It's a known case.
-      # Fix ruby-bgs so it doesn't throw here.
-      Raven.capture_exception(e)
-    end
-
-    bgs_representative_address
-  end
+  # By using the prefix command of delegate we make the methods bgs_representative_name etc.
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :participant_id, to: :bgs_power_of_attorney, prefix: :bgs
 
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
@@ -76,18 +49,15 @@ class PowerOfAttorney
 
   private
 
-  def find_bgs_address
-    bgs.find_address_by_participant_id(bgs_participant_id)
-  end
-
-  def bgs
-    @bgs ||= BGSService.new
+  def bgs_power_of_attorney
+    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: file_number)
   end
 
   class << self
     attr_writer :repository
 
     def repository
+      return PowerOfAttorneyRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= PowerOfAttorneyRepository
     end
   end

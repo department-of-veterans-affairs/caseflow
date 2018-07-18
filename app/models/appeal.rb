@@ -1,8 +1,9 @@
-class Appeal < ApplicationRecord
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
-  validate :validate_receipt_date_within_range
+class Appeal < AmaReview
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
 
-  has_many :request_issues, as: :review_request
+  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -32,24 +33,17 @@ class Appeal < ApplicationRecord
     request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
   end
 
-  def serializer
+  def serializer_class
     ::WorkQueue::AppealSerializer
   end
 
-  private
-
-  def validate_receipt_date_within_range
-    return unless receipt_date
-
-    validate_receipt_date_not_before_ama
-    validate_receipt_date_not_in_future
+  def docket_number
+    "#{established_at.strftime('%y%m%d')}-#{id}"
   end
 
-  def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < HigherLevelReview::AMA_BEGIN_DATE
+  def power_of_attorney
+    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
   end
 
-  def validate_receipt_date_not_in_future
-    errors.add(:receipt_date, "in_future") if Time.zone.today < receipt_date
-  end
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 end

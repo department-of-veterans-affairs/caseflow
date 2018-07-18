@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, formatRatings } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -23,14 +23,23 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
+    claimantNotVeteran: {
+      $set: serverIntake.claimant_not_veteran
+    },
+    claimant: {
+      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
-      $set: state.ratings || formatRatings(serverIntake.ratings)
+      $set: formatRatings(serverIntake.ratings)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
     }
   });
 };
@@ -44,8 +53,11 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     isStarted: false,
     isReviewed: false,
     isComplete: false,
-    selectedRatingCount: 0,
+    issueCount: 0,
     nonRatedIssues: { },
+    reviewIntakeError: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -81,6 +93,21 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+    return update(state, {
+      claimantNotVeteran: {
+        $set: action.payload.claimantNotVeteran
+      },
+      claimant: {
+        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
+      }
+    });
+  case ACTIONS.SET_CLAIMANT:
+    return update(state, {
+      claimant: {
+        $set: action.payload.claimant
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -90,7 +117,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
-    return update(state, {
+    return updateFromServerIntake(update(state, {
       docketTypeError: {
         $set: null
       },
@@ -105,7 +132,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       docketTypeError: {
@@ -117,6 +144,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeError: {
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });
@@ -166,8 +196,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           }
         }
       },
-      selectedRatingCount: {
-        $set: action.payload.isSelected ? state.selectedRatingCount + 1 : state.selectedRatingCount - 1
+      issueCount: {
+        $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
   case ACTIONS.ADD_NON_RATED_ISSUE:
@@ -189,6 +219,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             $set: action.payload.category
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -199,6 +232,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             $set: action.payload.description
           }
         }
+      },
+      issueCount: {
+        $set: nonRatedIssueCounter(state, action)
       }
     });
   default:

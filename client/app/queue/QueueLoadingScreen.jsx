@@ -27,11 +27,14 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 
   loadRelevantCases = () => {
-    if (this.props.vacolsId) {
-      return this.loadActiveAppeal();
-    }
+    const promises = [];
 
-    return this.loadQueue();
+    if (this.props.appealId) {
+      promises.push(this.loadActiveAppeal());
+    }
+    promises.push(this.loadQueue());
+
+    return Promise.all(promises);
   }
 
   loadQueue = () => {
@@ -48,16 +51,17 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(urlToLoad).then((response) => this.props.onReceiveQueue({
-      ...associateTasksWithAppeals(JSON.parse(response.text)),
-      userId
-    }));
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+      this.props.onReceiveQueue({
+        ...associateTasksWithAppeals(JSON.parse(response.text)),
+        userId
+      }));
   };
 
   loadActiveAppeal = () => {
     const {
       activeAppeal,
-      vacolsId,
+      appealId,
       appeals
     } = this.props;
 
@@ -65,13 +69,13 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    if (vacolsId in appeals) {
-      this.props.setActiveAppeal(appeals[vacolsId]);
+    if (appealId in appeals) {
+      this.props.setActiveAppeal(appeals[appealId]);
 
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/appeals/${vacolsId}`).then((response) => {
+    return ApiUtil.get(`/appeals/${appealId}`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setActiveAppeal(resp.appeal);
@@ -117,12 +121,13 @@ class QueueLoadingScreen extends React.PureComponent {
 }
 
 QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired
+  userId: PropTypes.number.isRequired,
+  appealId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue, 'judges'),
-  ...state.caseDetail.activeAppeal,
+  activeAppeal: state.caseDetail.activeAppeal,
   ...state.queue.loadedQueue
 });
 

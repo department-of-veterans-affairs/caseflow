@@ -107,7 +107,6 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
@@ -128,17 +127,6 @@ RSpec.feature "Reader" do
 
   let!(:current_user) do
     User.authenticate!(roles: ["Reader"])
-  end
-
-  context "User on blacklist" do
-    before do
-      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
-    end
-
-    scenario "it redirects to unauthorized" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Unauthorized")
-    end
   end
 
   context "Short list of documents" do
@@ -331,7 +319,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_title("Assignments | Caseflow Reader")
 
-        click_on "New", match: :first
+        find("a[href='/reader/appeal/#{appeal.vacols_id}/documents']").click
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
@@ -1531,15 +1519,10 @@ RSpec.feature "Reader" do
     end
 
     before do
-      FeatureToggle.enable!(:efolder_api_v2)
       allow(VBMSService).to receive(:fetch_documents_for).with(appeal, anything).and_return(
         fetch_documents_responses[0],
         fetch_documents_responses[1]
       )
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_api_v2)
     end
 
     it "should alert user" do

@@ -1,39 +1,53 @@
 class CoLocatedAdminAction < Task
-  # TODO: move it to the constants file
-  TITLES = {
-    ihp: "IHP",
-    poa_clarification: "POA clarification",
-    hearing_clarification: "Hearing clarification",
-    aoj: "AOJ",
-    extension: "Extension",
-    missing_hearing_transcripts: "Missing hearing transcripts",
-    unaccredited_rep: "Unaccredited rep",
-    foia: "FOIA",
-    retired_vlj: "Retired VLJ",
-    arneson: "Arneson",
-    new_rep_arguments: "New rep arguments",
-    pending_scanning_vbms: "Pending scanning (VBMS)",
-    substituation_determination: "Substituation determination",
-    address_verification: "Address verification",
-    schedule_hearing: "Schedule hearing",
-    missing_records: "Missing records",
-    other: "Other"
-  }.freeze
-
-  after_initialize :set_assigned_to
-  validates :title, inclusion: { in: TITLES.keys.map(&:to_s) }
+  validates :title, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
+
+  class << self
+    def create(tasks)
+      ActiveRecord::Base.multi_transaction do
+        assignee = next_assignee
+        records = [tasks].flatten.each_with_object([]) do |task, result|
+          result << super(task.merge(assigned_to: assignee))
+          result
+        end
+        if records.map(&:valid?).uniq == [true]
+          AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        end
+        records
+      end
+    end
+
+    private
+
+    def next_assignee
+      User.find_or_create_by(css_id: next_assignee_css_id, station_id: User::BOARD_STATION_ID)
+    end
+
+    def latest_task
+      order("created_at").last
+    end
+
+    def last_assignee_css_id
+      latest_task ? latest_task.assigned_to.css_id : nil
+    end
+
+    def next_assignee_css_id
+      list_of_assignees[next_assignee_index]
+    end
+
+    def next_assignee_index
+      return 0 unless last_assignee_css_id
+      (list_of_assignees.index(last_assignee_css_id) + 1) % list_of_assignees.length
+    end
+
+    def list_of_assignees
+      Constants::CoLocatedTeams::USERS[Rails.current_env]
+    end
+  end
 
   private
 
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be an attorney") if assigned_by && assigned_by.vacols_role != "Attorney"
-  end
-
-  def set_assigned_to
-    self.assigned_to = User.find_or_create_by(
-      css_id: Constants::CoLocatedTeams::USERS[Rails.current_env].sample,
-      station_id: User::BOARD_STATION_ID
-    )
+    errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
   end
 end
