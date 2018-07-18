@@ -150,7 +150,7 @@ RSpec.describe AppealsController, type: :controller do
     }
 
     it "should succeed" do
-      get :tasks, params: { appeal_id: appeal.vacols_id }
+      get :tasks, params: { appeal_id: appeal.vacols_id, role: "attorney" }
 
       assert_response :success
       response_body = JSON.parse(response.body)
