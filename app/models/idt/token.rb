@@ -17,7 +17,7 @@ class Idt::Token
   def self.activate_proposed_token(one_time_key)
     token = client.get(ONE_TIME_KEYS_KEY + one_time_key)
 
-    raise Caseflow::Error::InvalidOneTimeKey unless token && token.length == 32
+    fail Caseflow::Error::InvalidOneTimeKey unless token && token.length == 32
 
     # Remove the one_time_key/token association to ensure it isn't used again,
     # and move the token to the valid tokens list for the validity period.

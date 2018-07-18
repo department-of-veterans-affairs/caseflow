@@ -1,4 +1,4 @@
-describe Idt::Token do 
+describe Idt::Token do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
@@ -22,15 +22,15 @@ describe Idt::Token do
 
     it "raises an error when invalid one time key is used" do
       expect { Idt::Token.activate_proposed_token(invalid_token) }
-          .to raise_error(Caseflow::Error::InvalidOneTimeKey)
-    end    
+        .to raise_error(Caseflow::Error::InvalidOneTimeKey)
+    end
 
     it "raises on the second attempted use of a one time key" do
       key, token = key_token_pair
       expect(Idt::Token.activate_proposed_token(key)).to eq(true)
 
       expect { Idt::Token.activate_proposed_token(key) }
-          .to raise_error(Caseflow::Error::InvalidOneTimeKey)
+        .to raise_error(Caseflow::Error::InvalidOneTimeKey)
     end
   end
 
@@ -46,7 +46,7 @@ describe Idt::Token do
     end
 
     it "returns false after a token expires" do
-      # todo: add test for this
+      # TODO: add test for this
     end
   end
 end
