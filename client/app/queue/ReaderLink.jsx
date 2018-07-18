@@ -17,12 +17,11 @@ export default class ReaderLink extends React.PureComponent {
   getLinkText = () => {
     const {
       appeal,
-      longMessage,
-      message
+      longMessage
     } = this.props;
 
     return longMessage ?
-      <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment>:
+      <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :
       <React.Fragment>View docs <NewFile appeal={appeal} /></React.Fragment>;
   };
 

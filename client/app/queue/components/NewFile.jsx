@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
 import { bindActionCreators } from 'redux';
-import { getNewDocuments } from '../QueueActions'
+import { getNewDocuments } from '../QueueActions';
 
 class NewFile extends React.Component {
   componentDidMount = () => {
@@ -15,9 +15,10 @@ class NewFile extends React.Component {
   render = () => {
     if (this.props.docs && this.props.docs.length > 0) {
       return <NewFileIcon />;
-    } else {
-      return null
     }
+
+    return null;
+
   }
 }
 
@@ -40,7 +41,7 @@ const mapStateToProps = (state, ownProps) => {
     docs: documentObject ? documentObject.docs : null,
     error: documentObject ? documentObject.error : null
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   getNewDocuments

@@ -1,4 +1,6 @@
+/* eslint-disable max-lines */
 // @flow
+
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
@@ -104,7 +106,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            error: action.payload.error  
+            error: action.payload.error
           }
         }
       }

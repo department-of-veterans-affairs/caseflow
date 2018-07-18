@@ -122,7 +122,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :documents, :number_of_documents, :new_documents_for_user,
-    :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+           :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date
