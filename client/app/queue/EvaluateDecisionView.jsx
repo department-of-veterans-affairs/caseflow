@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
         options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
           value: key,
-          displayText: `${Object.keys(obj).indexOf(key) + 1} - ${val}`
+          displayText: `${_.size(obj) - Object.keys(obj).indexOf(key)} - ${val}`
         }))} />
 
       {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}
