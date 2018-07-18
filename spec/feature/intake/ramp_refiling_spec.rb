@@ -135,7 +135,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       fill_in "What is the Receipt Date of this form?", with: "11/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
 
@@ -176,7 +176,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
 
       expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
@@ -454,7 +454,7 @@ RSpec.feature "RAMP Refiling Intake" do
       click_on "Search"
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
       click_label("confirm-outside-caseflow-steps")
