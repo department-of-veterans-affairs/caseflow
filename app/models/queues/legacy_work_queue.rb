@@ -10,13 +10,13 @@ class LegacyWorkQueue
       tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
     end
 
-    def tasks_with_appeals_by_appeal_id(appeal_id)
+    def tasks_with_appeals_by_appeal_id(appeal_id, role)
       vacols_tasks = repository.tasks_for_appeal(appeal_id)
       if vacols_tasks.empty?
         return [], []
       end
       user = User.find_or_create_by(css_id: vacols_tasks[0].staff.sdomainid, station_id: User::BOARD_STATION_ID)
-      tasks_with_appeals_of_vacols_tasks(user, user.vacols_roles.first, vacols_tasks)
+      tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
     end
 
     def repository
