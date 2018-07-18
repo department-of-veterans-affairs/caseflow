@@ -40,6 +40,17 @@ const config = {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: './fonts/[name].[ext]',
+            outputPath: 'fonts/'
+          }
+
+        }]
       }
     ]
   }
@@ -55,3 +66,4 @@ if (devBuild) {
 }
 
 module.exports = config;
+
