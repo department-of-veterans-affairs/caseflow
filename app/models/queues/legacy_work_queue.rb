@@ -24,11 +24,17 @@ class LegacyWorkQueue
       @repository ||= QueueRepository
     end
   private
+    MODEL_CLASS_OF_ROLE = {
+      "attorney" => AttorneyLegacyTask,
+      "judge" => JudgeLegacyTask,
+      "colocated" => LegacyTask
+    }
+
     def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
       tasks = vacols_tasks.zip(vacols_appeals).map do |task, appeal|
-        (role.capitalize + "LegacyTask").constantize.from_vacols(task, appeal, user)
+        MODEL_CLASS_OF_ROLE[role].from_vacols(task, appeal, user)
       end
       [tasks, vacols_appeals]
     end
