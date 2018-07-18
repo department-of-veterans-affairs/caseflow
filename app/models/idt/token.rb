@@ -4,8 +4,8 @@ class Idt::Token
   TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24 * 3
 
   def self.generate_proposed_token_and_one_time_key
-    one_time_key = SecureRandom.hex(n = 64)
-    token = SecureRandom.hex(n = 64)
+    one_time_key = SecureRandom.hex(64)
+    token = SecureRandom.hex(64)
 
     # Associate key and token, so we can later use the one time key
     # to activate the token.
