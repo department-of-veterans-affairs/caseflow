@@ -8,8 +8,8 @@ describe Idt::Token do
 
   context "#generate_proposed_token_and_one_time_key" do
     it "generates tokens and keys" do
-      expect(key_token_pair[0].length).to eq(32)
-      expect(key_token_pair[1].length).to eq(32)
+      expect(key_token_pair[0].length).to eq(128)
+      expect(key_token_pair[1].length).to eq(128)
     end
   end
 
