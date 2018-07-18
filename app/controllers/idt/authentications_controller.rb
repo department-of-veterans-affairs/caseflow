@@ -1,4 +1,6 @@
 class Idt::AuthenticationsController < ApplicationController
+  protect_from_forgery with: :exception
+
   def activate_token
     key = params[:one_time_key]
 

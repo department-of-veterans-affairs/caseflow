@@ -1,4 +1,5 @@
 class Idt::Api::V1::AppealsController < ActionController::Base
+  protect_from_forgery with: :exception
   before_action :validate_token
 
   def validate_token
