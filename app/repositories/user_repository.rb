@@ -36,15 +36,10 @@ class UserRepository
     private
 
     def roles_based_on_staff_fields(staff_record)
-      if staff_record.stitle == "SUP"
-        ["supervisor"]
-      end
-
       case staff_record.svlj
       when "J"
         ["judge"]
       when "A"
-        # acting judge
         staff_record.sattyid ? %w[attorney judge] : ["judge"]
       when nil
         check_other_staff_fields(staff_record)
