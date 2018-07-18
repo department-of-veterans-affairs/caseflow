@@ -1,11 +1,26 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
 import { bindActionCreators } from 'redux';
 import { getNewDocuments } from '../QueueActions';
+import type {
+  Appeal,
+  LegacyAppeal
+} from '../types/models';
 
-class NewFile extends React.Component {
+type Params = {|
+  appeal: Appeal | LegacyAppeal
+|};
+
+type Props = Params & {|
+  docs: Array<Object>,
+  error: string,
+  getNewDocuments: Function
+|};
+
+class NewFile extends React.Component<Props> {
   componentDidMount = () => {
     if (!this.props.docs) {
       this.props.getNewDocuments(this.props.appeal.attributes.vacols_id);
@@ -22,18 +37,6 @@ class NewFile extends React.Component {
   }
 }
 
-NewFile.propTypes = {
-  appeal: PropTypes.shape({
-    attributes: PropTypes.shape({
-      vacols_id: PropTypes.string
-    })
-  }).isRequired,
-  documentObject: PropTypes.shape({
-    docs: PropTypes.object,
-    error: PropTypes.string
-  })
-};
-
 const mapStateToProps = (state, ownProps) => {
   const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.attributes.vacols_id];
 
@@ -47,4 +50,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getNewDocuments
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewFile);
+export default (connect(mapStateToProps, mapDispatchToProps)(NewFile): React.ComponentType<Params>);

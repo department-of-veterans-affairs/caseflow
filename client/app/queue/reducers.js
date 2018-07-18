@@ -95,7 +95,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            error: null,
             docs: action.payload.newDocuments
           }
         }

@@ -71,6 +71,31 @@ export type LegacyAppeal = {
   }
 };
 
+export type Appeal = {
+  id: string,
+  attributes: {
+    is_legacy_appeal: Boolean,
+    issues: Array<Object>,
+    hearings: Array<Object>,
+    appellant_full_name: string,
+    appellant_address: AppellantAddress,
+    appellant_relationship: string,
+    veteran_full_name: string,
+    veteran_date_of_birth: string,
+    veteran_gender: string,
+    vbms_id: string,
+    vacols_id: string,
+    type: string,
+    aod: Boolean,
+    docket_number: string,
+    status: string,
+    decision_date: string,
+    paper_case: Boolean,
+    power_of_attorney: string,
+    caseflow_veteran_id: ?string
+  }
+};
+
 export type LegacyAppeals = { [string]: LegacyAppeal };
 
 export type Task = {

@@ -55,7 +55,7 @@ class Document < ApplicationRecord
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date, :upload_date
+  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date, :created_at, :updated_at, :upload_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)

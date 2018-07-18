@@ -24,7 +24,7 @@ class DocumentFetcher
     return documents if !appeal_view
 
     documents.select do |doc|
-      return false if doc.upload_date.nil?
+      next if doc.upload_date.nil?
 
       doc.upload_date > appeal_view.last_viewed_at
     end
