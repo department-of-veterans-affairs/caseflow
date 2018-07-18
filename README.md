@@ -20,6 +20,7 @@ Install the base dependencies via Homebrew:
     brew install rbenv nodenv yarn
     brew tap ouchxp/nodenv
     brew install nodenv-nvmrc
+    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
@@ -39,6 +40,10 @@ Once you've done that, close your terminal window and open a new one. Verify tha
 
 If you don't see both, stop and debug.
 
+### Git 2-factor authentication
+
+We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like `git clone`, `git fetch`, `git pull` or `git push` with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
+
 ### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/)
 
 Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
@@ -47,7 +52,7 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker preferences and limit Docker to 2 CPUs in order to keep FACOLS from consuming your Macbook.
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
 
 After installation is complete, run:
 ```
@@ -68,8 +73,10 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Install via Homebrew:
 
+```
     brew tap InstantClientTap/instantclient
     brew install instantclient-basic instantclient-sdk
+```
 
 #### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
@@ -119,13 +126,15 @@ This should install clean. If you have errors, try ... FIXME.
 
 ### Setup the development Postgres user
 
-Add these to your `.bashrc`:
+Add these to your `.bash_profile`:
 
 ```
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
+
+(Reload the file `source ~/.bash_profile`)
 
 ### Cleanup the old dev environment (not needed for new Macbooks)
 
