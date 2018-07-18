@@ -3,17 +3,18 @@ import type {
   Task,
   Tasks,
   DeprecatedTask,
+  LegacyAppeals,
   User,
   Attorneys
 } from './models';
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-export type LoadedQueueAppeals = { [string]: Object };
+// export type LoadedQueueTasks = { [string]: DeprecatedTask };
+// export type LoadedQueueAppeals = { [string]: Object };
 
 export type TasksAndAppealsOfAttorney = {
   [string]: {
     state: string,
-    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals},
+    data: {tasks: Tasks, appeals: LegacyAppeals},
     error: {status: number, response: Object}
   }
 };
@@ -54,11 +55,8 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
-  loadedQueue: {
-    appeals: LoadedQueueAppeals,
-    tasks: LoadedQueueTasks,
-    loadedUserId: string
-  },
+  appeals: LegacyAppeals,
+  loadedUserId: string,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

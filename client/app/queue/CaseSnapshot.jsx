@@ -127,7 +127,7 @@ export class CaseSnapshot extends React.PureComponent {
         </CaseDetailsDescriptionList>
       </div>
       { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+        this.props.appealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
@@ -140,14 +140,14 @@ export class CaseSnapshot extends React.PureComponent {
 CaseSnapshot.propTypes = {
   appeal: PropTypes.object.isRequired,
   featureToggles: PropTypes.object,
-  loadedQueueAppealIds: PropTypes.array,
+  appealIds: PropTypes.array,
   task: PropTypes.object,
   userRole: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  appealIds: Object.keys(state.queue.appeals)
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

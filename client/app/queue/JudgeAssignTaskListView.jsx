@@ -37,10 +37,10 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 
   unassignedTasksWithAppeals = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
+    const { appeals, tasks } = this.props;
     const taskWithId = {};
 
-    for (const id of Object.keys(loadedQueueTasks)) {
+    for (const id of Object.keys(tasks)) {
       taskWithId[id] = tasks[id];
     }
 
@@ -143,7 +143,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
   tasksAndAppealsOfAttorney: PropTypes.object.isRequired
@@ -155,10 +155,7 @@ const mapStateToProps = (state) => {
       attorneysOfJudge,
       tasksAndAppealsOfAttorney,
       tasks,
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      }
+      appeals,
     },
     ui: {
       featureToggles
@@ -169,7 +166,6 @@ const mapStateToProps = (state) => {
     attorneysOfJudge,
     tasksAndAppealsOfAttorney,
     tasks,
-    loadedQueueTasks,
     appeals,
     featureToggles
   };

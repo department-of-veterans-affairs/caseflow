@@ -126,9 +126,8 @@ QueueLoadingScreen.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'judges'),
-  activeAppeal: state.caseDetail.activeAppeal,
-  ...state.queue.loadedQueue
+  ..._.pick(state.queue, 'judges', 'tasks', 'appeals'),
+  activeAppeal: state.caseDetail.activeAppeal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

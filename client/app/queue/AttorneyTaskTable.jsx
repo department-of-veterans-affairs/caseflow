@@ -21,7 +21,6 @@ import type {
 } from './types/models';
 
 type Props = {|
-  loadedQueueTasks: Tasks,
   appeals: LegacyAppeals,
   tasks: Tasks,
   featureToggles: Object
@@ -105,18 +104,13 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
   }];
 
   render = () => {
-    const { appeals, loadedQueueTasks, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
+    const { appeals, tasks } = this.props;
 
     return <Table
       columns={this.getQueueColumns}
       rowObjects={sortTasks({
         appeals,
-        tasks: taskWithId
+        tasks
       })}
       getKeyForRow={this.getKeyForRow}
       rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
@@ -127,10 +121,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
+      appeals,
       tasks
     },
     ui: {
@@ -139,11 +130,10 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    loadedQueueTasks,
     appeals,
     tasks,
     featureToggles
   };
 };
 
-export default (connect(mapStateToProps)(AttorneyTaskTable): React.ComponentType<Props>);
+export default connect(mapStateToProps)(AttorneyTaskTable);

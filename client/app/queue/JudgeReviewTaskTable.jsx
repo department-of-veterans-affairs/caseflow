@@ -51,10 +51,10 @@ class JudgeReviewTaskTable extends React.PureComponent {
   }];
 
   render = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
+    const { appeals, tasks } = this.props;
     const taskWithId = {};
 
-    for (const id of Object.keys(loadedQueueTasks)) {
+    for (const id of Object.keys(tasks)) {
       taskWithId[id] = tasks[id];
     }
 
@@ -71,7 +71,6 @@ class JudgeReviewTaskTable extends React.PureComponent {
 }
 
 JudgeReviewTaskTable.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   tasks: PropTypes.object.isRequired
 };
@@ -79,16 +78,12 @@ JudgeReviewTaskTable.propTypes = {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
+      appeals,
       tasks
     }
   } = state;
 
   return {
-    loadedQueueTasks,
     appeals,
     tasks
   };
