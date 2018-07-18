@@ -36,7 +36,6 @@ export default class BuildScheduleUpload extends React.Component {
           <FileUpload {...fileUploadStyling}
             preUploadText="Select a file for upload"
             postUploadText="Choose a different file"
-            postFilePath="/hearings/schedule/build/upload/upload_file"
             id="ro_co_file_upload"
             onChange={this.props.onRoCoFileUpload}
             value={this.props.roCoFileUpload}
@@ -65,7 +64,6 @@ export default class BuildScheduleUpload extends React.Component {
           <FileUpload
             preUploadText="Select a file for upload"
             postUploadText="Choose a different file"
-            postFilePath="/hearings/schedule/build/upload/upload_file"
             id="judge_file_upload"
             onChange={this.props.onJudgeFileUpload}
             value={this.props.judgeFileUpload}

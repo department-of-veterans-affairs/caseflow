@@ -34,7 +34,8 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.roCoFileUpload,
+        file: this.props.roCoFileUpload.file,
+        fileName: this.props.roCoFileUpload.fileName,
         startDate: this.props.roCoStartDate,
         endDate: this.props.roCoEndDate,
         type: this.props.fileType
@@ -43,7 +44,8 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.judgeFileUpload,
+        file: this.props.judgeFileUpload.file,
+        fileName: this.props.judgeFileUpload.fileName,
         startDate: this.props.judgeStartDate,
         endDate: this.props.judgeEndDate,
         type: this.props.fileType
@@ -63,7 +65,7 @@ export class BuildScheduleUploadContainer extends React.Component {
     let formData = new FormData();
     formData.append(
       "spreadsheet",
-      ApiUtil.dataURLtoFile(data.file_name, 'fakefilename.xlsx')
+      ApiUtil.dataURLtoFile(data.file, 'tbd.xlsx')
     );
 
     ApiUtil.uploadFile('/hearings/schedule/build/upload/upload_file', formData);
@@ -76,7 +78,6 @@ export class BuildScheduleUploadContainer extends React.Component {
 
   onUploadContinue = () => {
     this.props.toggleUploadContinueLoading();
-    console.log('fml what is happening');
     Promise.resolve(this.createSchedulePeriod()).
       then(this.props.toggleUploadContinueLoading());
   };
