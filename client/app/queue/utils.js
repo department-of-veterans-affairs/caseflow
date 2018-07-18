@@ -86,6 +86,8 @@ export const getIssueTypeDescription = (issue: Issue) => {
     type
   } = issue;
 
+  console.log(`program: ${program}`); // eslint-disable-line no-console
+
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 

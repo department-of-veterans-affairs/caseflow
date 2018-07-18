@@ -23,10 +23,10 @@ import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, UiStateError, State
+  AttorneysOfJudge, UiStateError, State
 } from '../types/state';
 import type {
-  Tasks, Task, Attorneys
+  Task, Attorneys
 } from '../types/models';
 
 const OTHER = 'OTHER';
@@ -42,8 +42,6 @@ type Props = Params & {|
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  tasks: Tasks,
   error: ?UiStateError,
   success: string,
   attorneys: Attorneys,
@@ -188,15 +186,13 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, attorneys } = state.queue;
+  const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    isTaskAssignedToUserSelected,
-    tasks,
     error,
     success,
     attorneys
