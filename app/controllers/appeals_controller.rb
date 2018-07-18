@@ -1,6 +1,10 @@
 class AppealsController < ApplicationController
+  include Errors
+
   before_action :react_routed
   before_action :set_application, only: :document_count
+
+  ROLES = Constants::ROLES["roles"]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
