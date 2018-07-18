@@ -7,17 +7,30 @@ class LegacyWorkQueue
 
     def tasks_with_appeals(user, role)
       vacols_tasks = repository.tasks_for_user(user.css_id)
+      tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
+    end
+
+    def tasks_with_appeals_of_appeal(appeal_id)
+      vacols_tasks = repository.tasks_for_appeal(appeal_id)
+      if vacols_tasks.empty?
+        return [], []
+      end
+      user = User.find_or_create_by(css_id: vacols_tasks[0].staff.sdomainid, station_id: User::BOARD_STATION_ID)
+      tasks_with_appeals_of_vacols_tasks(user, user.vacols_roles.first, vacols_tasks)
+    end
+
+    def repository
+      return QueueRepository if FeatureToggle.enabled?(:test_facols)
+      @repository ||= QueueRepository
+    end
+  private
+    def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
       tasks = vacols_tasks.zip(vacols_appeals).map do |task, appeal|
         (role.capitalize + "LegacyTask").constantize.from_vacols(task, appeal, user)
       end
       [tasks, vacols_appeals]
-    end
-
-    def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
     end
   end
 end

@@ -65,11 +65,18 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("s2.sdomainid = #{id}")
     end
 
+    def tasks_for_appeal(appeal_id)
+      id = connection.quote(appeal_id)
+
+      select_tasks.where("brieff.bfkey = #{id}")
+    end
+
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
              "brieff.bfdloout as assigned_to_location_date",
+             "brieff.bfcurloc as bfcurloc",
              "decass.deassign as assigned_to_attorney_date",
              "decass.dereceive as reassigned_to_judge_date",
              "decass.decomp as date_completed",
