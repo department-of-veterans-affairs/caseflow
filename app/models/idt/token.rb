@@ -30,7 +30,7 @@ class Idt::Token
 
   def self.active?(token)
     # check if token is in valid list and return boolean
-    !!client.exists(VALID_TOKENS_KEY + token)
+    client.exists(VALID_TOKENS_KEY + token)
   end
 
   private
