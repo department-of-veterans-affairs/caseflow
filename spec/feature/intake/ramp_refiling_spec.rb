@@ -104,7 +104,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Start a RAMP refiling with an invalid option" do
-      # Create an complete higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
@@ -289,7 +289,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling for a supplemental claim" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
@@ -376,7 +376,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling with only invalid issues" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
