@@ -60,6 +60,14 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     const data = this.formatData();
 
+    let formData = new FormData();
+    formData.append(
+      "spreadsheet",
+      ApiUtil.dataURLtoFile(data.file_name, 'fakefilename.xlsx')
+    );
+
+    ApiUtil.uploadFile('/hearings/schedule/build/upload/upload_file', formData);
+
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
@@ -68,6 +76,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
   onUploadContinue = () => {
     this.props.toggleUploadContinueLoading();
+    console.log('fml what is happening');
     Promise.resolve(this.createSchedulePeriod()).
       then(this.props.toggleUploadContinueLoading());
   };

@@ -10,22 +10,18 @@ const styling = css({
 
 export default class FileUpload extends React.Component {
 
-  onSuccess = (value) => () => {
-    this.props.onChange(value)
-  };
-
   onUploadEvent = (event) => {
-    ApiUtil.uploadFile(
-      event.target.files[0],
-      this.props.postFilePath,
-      this.onSuccess(event.target.files[0].name)
-    );
+    const reader = new FileReader();
+    const file = event.target.files[0];
+
+    reader.onloadend = () => this.props.onChange({file: reader.result, fileName: file.name});
+    reader.readAsDataURL(file);
   };
 
   render() {
     return <div>
       <label htmlFor={this.props.id}>
-        {this.props.value && <b>{this.props.value}&nbsp;</b>}
+        {this.props.value && <b>{this.props.value.fileName}&nbsp;</b>}
         <Link
           onChange={this.props.onChange}
         >
@@ -45,9 +41,8 @@ export default class FileUpload extends React.Component {
 
 FileUpload.propTypes = {
   onChange: PropTypes.func.isRequired,
-  postFilePath: PropTypes.string,
   id: PropTypes.string.isRequired,
   preUploadText: PropTypes.string.isRequired,
   postUploadText: PropTypes.string.isRequired,
-  value: PropTypes.string
+  value: PropTypes.object
 };
