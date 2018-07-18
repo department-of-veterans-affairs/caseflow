@@ -7,10 +7,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "appeals_status",
-          enable_all: true
-        },
-        {
           feature: "queue_welcome_gate",
           enable_all: true
         },
