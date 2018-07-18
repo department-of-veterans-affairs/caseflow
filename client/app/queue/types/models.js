@@ -8,8 +8,11 @@ export type User = {
   email: ?string,
   roles: Array<String>,
   selected_regional_office: ?string,
-  display_name: string
+  display_name: string,
+  judge_css_id: ?string
 };
+
+export type Judges = { [string]: User };
 
 export type DeprecatedTask = {
   id: string
@@ -23,6 +26,22 @@ export type AppellantAddress = {
   zip: string,
   country: string
 };
+
+export type Issue = {
+  levels: Array<string>,
+  program: string,
+  type: string,
+  codes: Array<string>,
+  disposition: string,
+  close_date: Date,
+  note: string,
+  vacols_sequence_id: Number,
+  labels: Array<string>,
+  readjudication: Boolean,
+  remand_reasons: Array<Object>
+};
+
+export type Issues = Array<Issue>;
 
 export type LegacyAppeal = {
   id: string,

@@ -32,9 +32,9 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED,
   ISSUE_DESCRIPTION_MAX_LENGTH
 } from './constants';
+import COPY from '../../COPY.json';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
@@ -260,7 +260,7 @@ class AddEditIssueView extends React.Component {
             type: null,
             codes: []
           })}
-          errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.program ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={issue.program} />
       </div>
       <div {...dropdownMarginTop}>
@@ -275,7 +275,7 @@ class AddEditIssueView extends React.Component {
             // unset issue levels for validation
             codes: []
           })}
-          errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.type ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={issue.type} />
       </div>
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
@@ -286,7 +286,7 @@ class AddEditIssueView extends React.Component {
           options={this.renderIssueAttrs(issueLevels[0])}
           onChange={({ value }) => this.updateIssueCode(0, value)}
           readOnly={_.isEmpty(issueLevels[0])}
-          errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.level1 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[0]', '')} />
       </div>
       {!_.isEmpty(issueLevels[1]) && <div {...dropdownMarginTop}>
@@ -295,7 +295,7 @@ class AddEditIssueView extends React.Component {
           placeholder="Select level 2"
           options={this.renderIssueAttrs(issueLevels[1])}
           onChange={({ value }) => this.updateIssueCode(1, value)}
-          errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.level2 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[1]', '')} />
       </div>}
       {this.issueLevelsConfigHasDiagCode() && <div {...dropdownMarginTop}>
@@ -315,7 +315,7 @@ class AddEditIssueView extends React.Component {
             this.updateIssue({ codes });
           }}
           value={_.last(issue.codes)}
-          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''} />
+          errorMessage={errorHighlightConditions.diagCode ? COPY.FORM_ERROR_FIELD_REQUIRED : ''} />
       </div>}
       <TextField
         name="Notes:"
