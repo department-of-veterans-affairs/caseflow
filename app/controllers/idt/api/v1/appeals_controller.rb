@@ -8,7 +8,7 @@ class Idt::Api::V1::AppealsController < ActionController::Base
     return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
   end
 
-  def fetch_appeals
+  def index
     # TODO: return list of appeals assigned to attorney
     render json: { message: "Successfully authenticated." }
   end

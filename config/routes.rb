@@ -32,11 +32,11 @@ Rails.application.routes.draw do
   end
 
   namespace :idt do    
-    get 'auth', to: 'authentications#activate_token'
+    get 'auth', to: 'authentications#index'
     namespace :api do
       namespace :v1 do
         get 'token', to: 'tokens#generate_token'
-        get 'appeals', to: 'appeals#fetch_appeals'
+        get 'appeals', to: 'appeals#index'
       end
     end
   end

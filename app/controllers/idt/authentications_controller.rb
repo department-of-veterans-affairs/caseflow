@@ -1,7 +1,7 @@
 class Idt::AuthenticationsController < ApplicationController
   protect_from_forgery with: :exception
 
-  def activate_token
+  def index
     key = params[:one_time_key]
 
     return render json: { message: "Missing key." }, status: 400 unless key
