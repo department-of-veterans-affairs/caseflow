@@ -97,7 +97,6 @@ describe SupplementalClaim do
 
   context "#create_end_product_and_contentions!" do
     subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
