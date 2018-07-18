@@ -84,7 +84,6 @@ describe DocumentFetcher do
       end
     end
 
-
     context "when appeal has an appeal view newer than documents" do
       let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
       let!(:documents) do

@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
 import { bindActionCreators } from 'redux';
