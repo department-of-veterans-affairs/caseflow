@@ -10,7 +10,7 @@ class LegacyWorkQueue
       tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
     end
 
-    def tasks_with_appeals_of_appeal(appeal_id)
+    def tasks_with_appeals_by_appeal_id(appeal_id)
       vacols_tasks = repository.tasks_for_appeal(appeal_id)
       if vacols_tasks.empty?
         return [], []
