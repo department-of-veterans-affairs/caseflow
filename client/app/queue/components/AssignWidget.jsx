@@ -34,7 +34,7 @@ const OTHER = 'OTHER';
 type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  getSelectedTasks: () => Array<Task>,
+  selectedTasks: Array<Task>
 |};
 
 type Props = Params & {|
@@ -59,8 +59,7 @@ type Props = Params & {|
 
 class AssignWidget extends React.PureComponent<Props> {
   handleButtonClick = () => {
-    const { selectedAssignee, selectedAssigneeSecondary, getSelectedTasks } = this.props;
-    const selectedTasks = getSelectedTasks();
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -123,9 +122,8 @@ class AssignWidget extends React.PureComponent<Props> {
       error,
       success,
       attorneys,
-      getSelectedTasks
+      selectedTasks
     } = this.props;
-    const selectedTasks = getSelectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,

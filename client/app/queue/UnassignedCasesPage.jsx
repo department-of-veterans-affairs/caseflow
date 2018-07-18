@@ -35,10 +35,8 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
     this.props.resetErrorMessages();
   }
 
-  getSelectedTasks = () => this.props.selectedTasks
-
   render = () => {
-    const { userId, featureToggles } = this.props;
+    const { userId, featureToggles, selectedTasks } = this.props;
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
@@ -46,7 +44,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         <AssignWidget
           previousAssigneeId={userId}
           onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
-          getSelectedTasks={this.getSelectedTasks} />}
+          selectedTasks={selectedTasks} />}
       <JudgeAssignTaskTable {...this.props} />
     </React.Fragment>;
   }

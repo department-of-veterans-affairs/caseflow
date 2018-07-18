@@ -49,12 +49,10 @@ class AssignedCasesPage extends React.PureComponent<Props> {
     }
   }
 
-  selectedTasks = () => this.props.selectedTasks
-
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles
+      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles, selectedTasks
     } = props;
     const { attorneyId } = match.params;
 
@@ -86,7 +84,7 @@ class AssignedCasesPage extends React.PureComponent<Props> {
         <AssignWidget
           previousAssigneeId={attorneyId}
           onTaskAssignment={(params) => props.reassignTasksToUser(params)}
-          getSelectedTasks={this.selectedTasks} />}
+          selectedTasks={selectedTasks} />}
       <JudgeAssignTaskTable
         tasksAndAppeals={
           sortTasks({
