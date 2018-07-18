@@ -31,7 +31,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when request header contains inactive token" do
       before do
-        key, token = Idt::Token.generate_proposed_token_and_one_time_key
+        _key, token = Idt::Token.generate_proposed_token_and_one_time_key
         request.headers["TOKEN"] = token
       end
 

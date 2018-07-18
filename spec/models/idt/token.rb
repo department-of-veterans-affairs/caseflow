@@ -26,7 +26,7 @@ describe Idt::Token do
     end
 
     it "raises on the second attempted use of a one time key" do
-      key, token = key_token_pair
+      key, _token = key_token_pair
       expect(Idt::Token.activate_proposed_token(key)).to eq(true)
 
       expect { Idt::Token.activate_proposed_token(key) }

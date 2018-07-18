@@ -33,8 +33,6 @@ class Idt::Token
     client.exists(VALID_TOKENS_KEY + token)
   end
 
-  private
-
   def self.client
     # Use separate Redis namespace for test to avoid conflicts between test and dev environments
     namespace = Rails.env.test? ? :idt_test : :idt
