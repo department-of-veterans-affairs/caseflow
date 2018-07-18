@@ -35,13 +35,6 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
-  tableStyle = css({
-    '& > tr > td': {
-      '&:last-of-type': {
-        width: '25%'
-      }
-    }
-  });
   collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
 
   getQueueColumns = () => [{
@@ -119,8 +112,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
         tasks: taskWithId
       })}
       getKeyForRow={this.getKeyForRow}
-      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
-      bodyStyling={this.tableStyle} />;
+      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
   }
 }
 
