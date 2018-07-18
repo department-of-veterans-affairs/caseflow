@@ -136,4 +136,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(AttorneyTaskTable);
+export default (connect(mapStateToProps)(AttorneyTaskTable): React.ComponentType<Props>);
