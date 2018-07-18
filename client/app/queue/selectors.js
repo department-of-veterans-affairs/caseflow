@@ -1,5 +1,4 @@
 // @flow
-import * as React from 'react';
 import type { State } from './types/state';
 import _ from 'lodash';
 

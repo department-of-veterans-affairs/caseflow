@@ -14,10 +14,6 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type DeprecatedTask = {
-  id: string
-};
-
 export type AppellantAddress = {
   address_line_1: string,
   address_line_2: string,

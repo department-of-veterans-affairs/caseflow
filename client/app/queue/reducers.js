@@ -62,17 +62,17 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.DELETE_APPEAL:
     return update(state, {
-        appeals: { $unset: action.payload.appealId },
-        tasks: { $unset: action.payload.appealId }
+      appeals: { $unset: action.payload.appealId },
+      tasks: { $unset: action.payload.appealId }
     });
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
-        appeals: {
-          [action.payload.appealId]: {
-            attributes: {
-              $merge: action.payload.attributes
-            }
+      appeals: {
+        [action.payload.appealId]: {
+          attributes: {
+            $merge: action.payload.attributes
           }
+        }
       }
     });
   case ACTIONS.SET_APPEAL_DOC_COUNT:

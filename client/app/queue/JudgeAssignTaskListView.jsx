@@ -155,7 +155,7 @@ const mapStateToProps = (state) => {
       attorneysOfJudge,
       tasksAndAppealsOfAttorney,
       tasks,
-      appeals,
+      appeals
     },
     ui: {
       featureToggles

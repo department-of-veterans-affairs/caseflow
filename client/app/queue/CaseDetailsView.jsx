@@ -42,7 +42,7 @@ class CaseDetailsView extends React.PureComponent {
     {this.props.error && <Alert title={this.props.error.title} type="error">
       {this.props.error.detail}
     </Alert>}
-    <CaseSnapshot appeal={this.props.appeal} task={this.props.task}/>
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
       <CaseDetailsIssueList
