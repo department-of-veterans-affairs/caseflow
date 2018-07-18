@@ -40,7 +40,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
-      {featureToggles.judge_assign_cases &&
+      {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={userId}
           onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
