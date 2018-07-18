@@ -4,7 +4,7 @@ describe Idt::Token do
   end
 
   let(:key_token_pair) { Idt::Token.generate_proposed_token_and_one_time_key }
-  let(:invalid_token) { "34fb4ei8jfjd123098nc6gd53hd73jh46" }
+  let(:invalid_token) { "9373a256a2ac3c3bd320adeeb8a1e4d996ef064d1332357954410f25740bf0c17b6565e152760c461a85587e6a6845457f955ccfa20a8e462a77b776eb10b72c" }
 
   context "#generate_proposed_token_and_one_time_key" do
     it "generates tokens and keys" do

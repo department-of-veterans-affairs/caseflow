@@ -4,8 +4,8 @@ class Idt::Token
   TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24 * 3
 
   def self.generate_proposed_token_and_one_time_key
-    one_time_key = SecureRandom.uuid.delete("-")
-    token = SecureRandom.uuid.delete("-")
+    one_time_key = SecureRandom.hex(n = 64)
+    token = SecureRandom.hex(n = 64)
 
     # Associate key and token, so we can later use the one time key
     # to activate the token.
@@ -17,7 +17,7 @@ class Idt::Token
   def self.activate_proposed_token(one_time_key)
     token = client.get(ONE_TIME_KEYS_KEY + one_time_key)
 
-    fail Caseflow::Error::InvalidOneTimeKey unless token && token.length == 32
+    fail Caseflow::Error::InvalidOneTimeKey unless token && token.length == 128
 
     # Remove the one_time_key/token association to ensure it isn't used again,
     # and move the token to the valid tokens list for the validity period.
