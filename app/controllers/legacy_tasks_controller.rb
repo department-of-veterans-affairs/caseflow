@@ -2,7 +2,7 @@ class LegacyTasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
-  ROLES = %w[judge attorney].freeze
+  ROLES = %w[judge attorney colocated].freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -16,17 +16,6 @@ class LegacyTasksController < ApplicationController
         render "queue/show"
       end
       format.json do
-        if params[:appeal_id]
-          MetricsService.record("VACOLS: Get all tasks with appeals for appeal #{params[:appeal_id]}",
-                                name: "LegacyTasksController.index") do
-            tasks, appeals = LegacyWorkQueue.tasks_with_appeals_of_appeal(params[:appeal_id])
-            return render json: {
-              tasks: json_tasks(tasks),
-              appeals: json_appeals(appeals)
-            }
-          end
-        end
-
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
           tasks, appeals = LegacyWorkQueue.tasks_with_appeals(user, current_role)
