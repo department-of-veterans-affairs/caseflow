@@ -22,7 +22,7 @@ RSpec.describe Idt::AuthenticationsController, type: :controller do
 
       context "when no key is passed" do
         it "responds witn an error" do
-          get :index 
+          get :index
           expect(response.status).to eq 400
         end
       end
@@ -32,14 +32,14 @@ RSpec.describe Idt::AuthenticationsController, type: :controller do
           get :index, params: { one_time_key: activated_one_time_key }
           expect(response.status).to eq 400
         end
-      end    
+      end
 
       context "when request header contains valid key" do
         it "succeeds" do
           get :index, params: { one_time_key: one_time_key }
           expect(response.status).to eq 200
         end
-      end   
+      end
     end
   end
 end
