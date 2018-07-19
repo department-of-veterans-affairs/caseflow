@@ -61,12 +61,12 @@ describe LegacyWorkQueue do
 
     subject { LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role) }
 
-    context "when the user is a colocated admin" do
-      let(:role) { "colocated" }
+    context "when the user is an attorney" do
+      let(:role) { "attorney" }
 
       it "returns a task" do
         expect(subject[0].length).to eq(1)
-        expect(subject[0][0].class).to eq(LegacyTask)
+        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
       end
 
       it "returns an appeal" do

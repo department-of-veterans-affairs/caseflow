@@ -28,8 +28,7 @@ class LegacyWorkQueue
 
     MODEL_CLASS_OF_ROLE = {
       "Attorney" => AttorneyLegacyTask,
-      "Judge" => JudgeLegacyTask,
-      "Colocated" => LegacyTask
+      "Judge" => JudgeLegacyTask
     }.freeze
 
     def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
