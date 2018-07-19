@@ -108,11 +108,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     });
   };
 
-  maybeLoadAttorneysOfJudge = () => {
-    if (this.props.userRole !== 'Judge') {
-      return Promise.resolve();
-    }
-
+  loadAttorneysOfJudge = () => {
     return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
       then((response) => response.body).
       then(
@@ -121,10 +117,18 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
         });
   }
 
+  maybeLoadJudgeData = () => {
+    if (this.props.userRole !== 'Judge') {
+      return Promise.resolve();
+    }
+
+    return Promise.all([this.loadAttorneysOfJudge()]);
+  }
+
   createLoadPromise = () => Promise.all([
     this.loadRelevantCases(),
     this.loadJudges(),
-    this.maybeLoadAttorneysOfJudge()
+    this.maybeLoadJudgeData()
   ]);
 
   reload = () => window.location.reload();
