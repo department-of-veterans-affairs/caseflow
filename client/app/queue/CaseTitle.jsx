@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AppealDocumentCount from './AppealDocumentCount';
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
@@ -55,7 +54,7 @@ export default class CaseTitle extends React.PureComponent {
         redirectUrl={redirectUrl}
         appeal={appeal}
         taskType={taskType}
-        message={<React.Fragment>View <AppealDocumentCount appeal={appeal} /> documents</React.Fragment>} />
+        longMessage />
     </CaseTitleScaffolding>;
   }
 }

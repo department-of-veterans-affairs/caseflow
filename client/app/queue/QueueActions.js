@@ -29,6 +29,28 @@ export const onReceiveJudges = (judges: UsersById) => ({
   }
 });
 
+export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    dispatch({
+      type: ACTIONS.RECEIVE_NEW_FILES,
+      payload: {
+        appealId,
+        newDocuments: resp.new_documents
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
+      payload: {
+        appealId,
+        error
+      }
+    });
+  });
+};
+
 export const setAppealDocCount = (appealId: string, docCount: number) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {

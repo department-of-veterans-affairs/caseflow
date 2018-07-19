@@ -1,4 +1,6 @@
+/* eslint-disable max-lines */
 // @flow
+
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
@@ -20,6 +22,7 @@ export const initialState = {
   loadedUserId: null,
   editingIssue: {},
   docCountForAppeal: {},
+  newDocsForAppeal: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -71,6 +74,26 @@ const workQueueReducer = (state = initialState, action = {}) => {
         [action.payload.appealId]: {
           attributes: {
             $merge: action.payload.attributes
+          }
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_NEW_FILES:
+    return update(state, {
+      newDocsForAppeal: {
+        [action.payload.appealId]: {
+          $set: {
+            docs: action.payload.newDocuments
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES:
+    return update(state, {
+      newDocsForAppeal: {
+        [action.payload.appealId]: {
+          $set: {
+            error: action.payload.error
           }
         }
       }
