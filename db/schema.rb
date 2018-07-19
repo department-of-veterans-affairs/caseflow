@@ -450,7 +450,7 @@ ActiveRecord::Schema.define(version: 20180719153446) do
     t.string "type"
     t.string "name"
     t.string "role"
-    t.string "function"
+    t.string "feature"
     t.string "url"
     t.string "participant_id"
   end

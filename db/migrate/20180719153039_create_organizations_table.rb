@@ -4,7 +4,7 @@ class CreateOrganizationsTable < ActiveRecord::Migration[5.1]
       t.string :type
       t.string :name
       t.string :role
-      t.string :function
+      t.string :feature
       t.string :url
       t.string :participant_id
     end
