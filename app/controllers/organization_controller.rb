@@ -1,0 +1,36 @@
+class OrganizationController < ApplicationController
+  before_action :verify_organization_access
+  before_action :verify_role_access
+  before_action :verify_function_access
+  before_action :set_application
+
+  def verify_organization_access
+    redirect_to "/unauthorized" unless organization.user_has_access?(current_user)
+  end
+
+  def verify_role_access
+    verify_authorized_roles(organization.role)
+  end
+
+  def verify_function_access
+    return unless organization.function
+
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(organization.function.to_sym, user: current_user)
+  end
+
+  def set_application
+    RequestStore.store[:application] = "queue"
+  end
+
+  def organization_id
+    params[:id]
+  end
+
+  def organization
+    Organization.find_by(url: organization_id)
+  end
+
+  def show
+    render "queue/index"
+  end
+end

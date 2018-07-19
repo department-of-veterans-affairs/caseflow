@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b8b6d0f918d855b61b31f03e01a39d802d587367"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "cacc3effa76fc3134c63e88c9e50157c333168a7"
 
 # PDF Tools
 gem "pdf-forms"

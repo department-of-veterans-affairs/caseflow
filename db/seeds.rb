@@ -188,6 +188,8 @@ class SeedDB
     create_tags
     create_beaam_appeals
 
+    User.create(css_id: "VSO", station_id: 101)
+
     return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
