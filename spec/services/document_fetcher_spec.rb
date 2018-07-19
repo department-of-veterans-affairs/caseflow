@@ -5,8 +5,8 @@ describe DocumentFetcher do
 
   let!(:documents) do
     [
-      Generators::Document.build,
-      Generators::Document.build
+      create(:document),
+      create(:document)
     ]
   end
 
@@ -22,6 +22,8 @@ describe DocumentFetcher do
       manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
     }
   end
+
+  let(:user) { create(:user) }
 
   before do
     expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
@@ -40,6 +42,59 @@ describe DocumentFetcher do
       it "EFolderService is only called once" do
         document_service.documents
         document_service.documents
+      end
+    end
+  end
+
+  context "#new_documents_for_user" do
+    let!(:documents) do
+      [
+        create(:document, upload_date: 5.days.ago),
+        create(:document, upload_date: 5.days.ago)
+      ]
+    end
+
+    subject { document_service.new_documents_for_user(user) }
+
+    context "when appeal has no appeal view" do
+      it "should return all documents" do
+        expect(subject).to eq(documents)
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+      it "should return no documents" do
+        expect(subject).to eq([])
+      end
+
+      context "when one document is missing an upload_date" do
+        let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+        let!(:documents) do
+          [
+            create(:document, upload_date: nil),
+            create(:document, upload_date: 5.days.ago)
+          ]
+        end
+
+        it "should return no documents" do
+          expect(subject).to eq([])
+        end
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+      let!(:documents) do
+        [
+          create(:document, upload_date: -2.days.ago),
+          create(:document, upload_date: -2.days.ago)
+        ]
+      end
+
+      it "should return both documents" do
+        expect(subject).to eq(documents)
       end
     end
   end
