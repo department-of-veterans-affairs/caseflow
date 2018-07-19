@@ -143,4 +143,24 @@ RSpec.describe AppealsController, type: :controller do
       assert_response :success
     end
   end
+
+  describe "GET appeals/:id/tasks" do
+    let(:user) { create(:user) }
+    let(:appeal) do
+      create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: user))
+    end
+
+    it "should succeed" do
+      get :tasks, params: { appeal_id: appeal.vacols_id, role: "attorney" }
+
+      assert_response :success
+      response_body = JSON.parse(response.body)
+      expect(response_body["tasks"].length).to eq 1
+      task = response_body["tasks"][0]
+      expect(task["id"]).to eq(appeal.vacols_id)
+      expect(task["type"]).to eq("attorney_legacy_tasks")
+      expect(task["attributes"]["user_id"]).to eq(user.css_id)
+      expect(task["attributes"]["appeal_id"]).to eq(appeal.id)
+    end
+  end
 end
