@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+  has_many :tasks, as: :assigned_to
 
   BOARD_STATION_ID = "101".freeze
 
