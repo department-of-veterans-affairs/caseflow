@@ -175,7 +175,7 @@ class ExternalApi::BGSService
 
     MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
                           service: :bgs,
-                          name: "claimants.find_all_relationships") do
+                          name: "security.find_participant_id") do
       client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
     end
   end
