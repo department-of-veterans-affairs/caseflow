@@ -9,7 +9,6 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
       judge_assignment_to_attorney: FeatureToggle.enabled?(:judge_assignment_to_attorney, user: current_user)
     }
