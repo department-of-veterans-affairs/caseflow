@@ -1,7 +1,7 @@
 class OrganizationController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
-  before_action :verify_function_access
+  before_action :verify_feature_access
   before_action :set_application
 
   def verify_organization_access
