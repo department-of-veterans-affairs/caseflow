@@ -27,7 +27,7 @@ export const unassignedTasksSelector = createSelector(
   )
 );
 
-export const tasksByAssigneeCssId = createSelector(
+export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
     _.filter(tasks, (task: Task) => task.attributes.user_id === cssId),
@@ -36,14 +36,14 @@ export const tasksByAssigneeCssId = createSelector(
 );
 
 export const judgeReviewTasksSelector = createSelector(
-  [tasksByAssigneeCssId],
+  [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => _.keyBy(
     _.filter(tasks, (task: Task) => task.attributes.task_type === 'Review'),
     (task: Task) => task.id
   )
 );
 
-export const appealsByLocationCodeSelector = createSelector(
+export const appealsByAssigneeCssIdSelector = createSelector(
   [getAppeals, getUserCssId],
   (appeals: LegacyAppeals, cssId: string) => _.keyBy(
     _.filter(appeals, (appeal: LegacyAppeal) => cssId.includes(appeal.attributes.location_code)),

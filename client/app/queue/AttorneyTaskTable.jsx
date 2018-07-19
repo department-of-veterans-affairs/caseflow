@@ -9,6 +9,7 @@ import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 
+import { appealsByAssigneeCssIdSelector } from './selectors';
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
@@ -112,7 +113,6 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      appeals,
       tasks
     },
     ui: {
@@ -121,7 +121,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    appeals,
+    appeals: appealsByAssigneeCssIdSelector(state),
     tasks,
     featureToggles
   };

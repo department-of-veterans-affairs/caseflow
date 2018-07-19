@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import { appealsByAssigneeCssIdSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
@@ -146,7 +147,7 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealIds: Object.keys(state.queue.appeals)
+  appealIds: Object.keys(appealsByAssigneeCssIdSelector(state))
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);
