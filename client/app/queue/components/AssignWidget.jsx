@@ -23,10 +23,10 @@ import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
 import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, UiStateError, State
+  AttorneysOfJudge, UiStateError, State
 } from '../types/state';
 import type {
-  Tasks, Task, Attorneys
+  Task, Attorneys
 } from '../types/models';
 
 const OTHER = 'OTHER';
@@ -34,7 +34,7 @@ const OTHER = 'OTHER';
 type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  getSelectedTasks: () => Array<Task>,
+  selectedTasks: Array<Task>
 |};
 
 type Props = Params & {|
@@ -42,8 +42,6 @@ type Props = Params & {|
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  tasks: Tasks,
   error: ?UiStateError,
   success: string,
   attorneys: Attorneys,
@@ -59,8 +57,7 @@ type Props = Params & {|
 
 class AssignWidget extends React.PureComponent<Props> {
   handleButtonClick = () => {
-    const { selectedAssignee, selectedAssigneeSecondary, getSelectedTasks } = this.props;
-    const selectedTasks = getSelectedTasks();
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -123,9 +120,8 @@ class AssignWidget extends React.PureComponent<Props> {
       error,
       success,
       attorneys,
-      getSelectedTasks
+      selectedTasks
     } = this.props;
-    const selectedTasks = getSelectedTasks();
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,
@@ -190,15 +186,13 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, attorneys } = state.queue;
+  const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    isTaskAssignedToUserSelected,
-    tasks,
     error,
     success,
     attorneys

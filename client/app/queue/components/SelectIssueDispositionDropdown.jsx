@@ -6,7 +6,8 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import { COLORS, ERROR_FIELD_REQUIRED, ISSUE_DISPOSITIONS } from '../constants';
+import { COLORS, ISSUE_DISPOSITIONS } from '../constants';
+import COPY from '../../../COPY.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 
 const dropdownStyling = (highlight, issueDisposition) => {
@@ -35,7 +36,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         placeholder="Select Disposition"
         value={issue.disposition}
         hideLabel
-        errorMessage={(highlight && !issue.disposition) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlight && !issue.disposition) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
         options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
           map((opt) => ({
             label: `${opt[0]} - ${opt[1]}`,

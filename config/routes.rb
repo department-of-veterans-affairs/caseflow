@@ -31,6 +31,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :idt do    
+    get 'auth', to: 'authentications#index'
+    namespace :api do
+      namespace :v1 do
+        get 'token', to: 'tokens#generate_token'
+        get 'appeals', to: 'appeals#index'
+      end
+    end
+  end
+
+
   namespace :metrics do
     namespace :v1 do
       resources :histogram, only: :create
@@ -83,6 +94,7 @@ Rails.application.routes.draw do
 
   resources :appeals, only: [:index, :show] do
     get :document_count
+    get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
   end
 

@@ -20,16 +20,6 @@ RSpec.describe CaseReviewsController, type: :controller do
     let(:vacols_issue_remanded) { create(:case_issue, :disposition_remanded, isskey: vacols_case.bfkey) }
     let(:vacols_issue_allowed) { create(:case_issue, :disposition_allowed, isskey: vacols_case.bfkey) }
 
-    before do
-      FeatureToggle.enable!(:queue_phase_two)
-      FeatureToggle.enable!(:judge_queue)
-    end
-
-    after do
-      FeatureToggle.disable!(:queue_phase_two)
-      FeatureToggle.disable!(:judge_queue)
-    end
-
     context "Attorney Case Review" do
       before do
         User.stub = attorney
