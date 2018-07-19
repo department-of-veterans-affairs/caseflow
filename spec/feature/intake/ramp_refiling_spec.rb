@@ -275,7 +275,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       find("label", text: "Left knee rating increase").click
       find("label", text: "Left shoulder service connection").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -328,7 +328,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       Fakes::VBMSService.hold_request!
       expect(page).to have_button("Cancel intake", disabled: false)
@@ -412,7 +412,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
 
       click_label("confirm-outside-caseflow-steps")
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -459,7 +459,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
       safe_click "#finish-intake"
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
