@@ -2,10 +2,7 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
 
-import type {
-  State,
-  QueueState
-} from './types/state';
+import type { State } from './types/state';
 import type {
   Tasks,
   LegacyAppeals
@@ -16,7 +13,7 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
   (selected, id) => selected ? [state.queue.tasks[id]] : []
 );
 
-export const getTasks = (state: State): Tasks => state.queue.tasks;
+const getTasks = (state: State): Tasks => state.queue.tasks;
 const getAppeals = (state: State): LegacyAppeals => state.queue.appeals;
 
 export const unassignedTasksSelector = createSelector(
