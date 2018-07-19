@@ -36,7 +36,7 @@ class LegacyWorkQueue
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)
 
       tasks = vacols_tasks.zip(vacols_appeals).map do |task, appeal|
-        MODEL_CLASS_OF_ROLE[role].from_vacols(task, appeal, user)
+        MODEL_CLASS_OF_ROLE[role.capitalize].from_vacols(task, appeal, user)
       end
       [tasks, vacols_appeals]
     end
