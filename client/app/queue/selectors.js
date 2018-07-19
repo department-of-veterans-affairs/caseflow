@@ -4,7 +4,9 @@ import _ from 'lodash';
 
 import type { State } from './types/state';
 import type {
+  Task,
   Tasks,
+  LegacyAppeal,
   LegacyAppeals
 } from './types/models';
 
@@ -15,12 +17,13 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
 
 const getTasks = (state: State): Tasks => state.queue.tasks;
 const getAppeals = (state: State): LegacyAppeals => state.queue.appeals;
+const getUserCssId = (state: State): string => state.ui.userCssId;
 
 export const unassignedTasksSelector = createSelector(
   [getTasks],
   (tasks: Tasks) => _.keyBy(
     _.filter(tasks, (task) => task.attributes.task_type === 'Assign'),
-    'id'
+    (task: Task) => task.id
   )
 );
 
@@ -28,11 +31,14 @@ export const judgeReviewTasksSelector = createSelector(
   [getTasks],
   (tasks: Tasks) => _.keyBy(
     _.filter(tasks, (task) => task.attributes.task_type === 'Review'),
-    'id'
+    (task: Task) => task.id
   )
 );
 
-// export const appealByAssigneeCssId = (state: State, css_id: string = '') => createSelector(
-//   [getAppeals],
-//   (appeal) => css_id.includes(appeal.attributes.location_code)
-// );
+export const appealsByLocationCodeSelector = createSelector(
+  [getAppeals, getUserCssId],
+  (appeals: LegacyAppeals, cssId: string) => _.keyBy(
+    _.filter(appeals, (appeal) => cssId.includes(appeal.attributes.location_code)),
+    (appeal: LegacyAppeal) => appeal.attributes.vacols_id
+  )
+);

@@ -7,7 +7,11 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import { setFeatureToggles, setUserRole } from './uiReducer/uiActions';
+import {
+  setFeatureToggles,
+  setUserRole,
+  setUserCssId
+} from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -40,6 +44,7 @@ class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
+    this.props.setUserCssId(this.props.userCssId);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -215,7 +220,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
-  setUserRole
+  setUserRole,
+  setUserCssId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

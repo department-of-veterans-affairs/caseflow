@@ -41,7 +41,9 @@ export type UiState = {
   },
   featureToggles: Object,
   selectedAssignee: ?string,
-  selectedAssigneeSecondary: ?string
+  selectedAssigneeSecondary: ?string,
+  userRole: string,
+  userCssId: string
 };
 
 export type UsersById = { [number]: User };
