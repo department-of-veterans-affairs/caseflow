@@ -2,7 +2,7 @@ class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: :document_count
+  before_action :set_application, only: [:document_count, :new_documents]
 
   ROLES = Constants::ROLES["roles"]
 
@@ -34,6 +34,12 @@ class AppealsController < ApplicationController
     render json: {
       tasks: json_tasks(tasks)[:data]
     }
+  end
+
+  def new_documents
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
   end
 
   def show
