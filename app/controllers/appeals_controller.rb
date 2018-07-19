@@ -25,6 +25,12 @@ class AppealsController < ApplicationController
     render e.serialize_response
   end
 
+  def new_documents
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
+  end
+
   def tasks
     no_cache
 
@@ -34,12 +40,6 @@ class AppealsController < ApplicationController
     render json: {
       tasks: json_tasks(tasks)[:data]
     }
-  end
-
-  def new_documents
-    render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
   end
 
   def show

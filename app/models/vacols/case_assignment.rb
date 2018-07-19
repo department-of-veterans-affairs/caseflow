@@ -71,6 +71,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("brieff.bfkey = #{id}")
     end
 
+    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
