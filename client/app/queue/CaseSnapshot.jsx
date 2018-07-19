@@ -126,8 +126,7 @@ export class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </CaseDetailsDescriptionList>
       </div>
-      { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+      { this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
