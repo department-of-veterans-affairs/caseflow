@@ -180,7 +180,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "Continue"
         expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
-        fill_in "document_id", with: "M1234567.1234"
+        fill_in "document_id", with: "V1234567.1234"
         click_on "Continue"
         expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
 
