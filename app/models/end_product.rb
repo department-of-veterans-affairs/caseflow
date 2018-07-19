@@ -16,7 +16,6 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
-  # TODO: Put real codes in here when we know them
   AMA_CODES = {
     "030HLRR" => "Higher Level Review Rating",
     "040SCR" => "Supplemental Claim Rating"
@@ -57,7 +56,7 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :claimant_participant_id,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
   # Validators are used for validating the EP before we create it in VBMS
@@ -113,7 +112,8 @@ class EndProduct
       station_of_jurisdiction: station_of_jurisdiction,
       date: claim_date.to_date,
       suppress_acknowledgement_letter: suppress_acknowledgement_letter,
-      gulf_war_registry: gulf_war_registry
+      gulf_war_registry: gulf_war_registry,
+      claimant_participant_id: claimant_participant_id
     }
   end
 

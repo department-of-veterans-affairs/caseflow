@@ -9,7 +9,8 @@ describe RampElection do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let(:veteran_participant_id) { "5550246" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
   let(:notice_date) { Time.zone.today - 2 }
   let(:receipt_date) { Time.zone.today - 1 }
   let(:option_selected) { nil }
@@ -99,7 +100,6 @@ describe RampElection do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
@@ -127,7 +127,8 @@ describe RampElection do
             end_product_label: "Supplemental Claim Review Rating",
             end_product_code: "683SCRRRAMP",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            suppress_acknowledgement_letter: false,
+            claimant_participant_id: veteran.participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )

@@ -4,7 +4,8 @@ describe EndProductEstablishment do
   end
 
   let(:veteran_file_number) { "12341234" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:veteran_participant_id) { "11223344" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
   let(:code) { "030HLRR" }
   let(:reference_id) { nil }
   let(:source) { create(:ramp_election) }
@@ -17,7 +18,8 @@ describe EndProductEstablishment do
       claim_date: 2.days.ago,
       station: "397",
       valid_modifiers: ["030"],
-      reference_id: reference_id
+      reference_id: reference_id,
+      claimant_participant_id: veteran_participant_id
     )
   end
 
@@ -55,7 +57,8 @@ describe EndProductEstablishment do
         expect(end_product_establishment.reload).to have_attributes(
           reference_id: "FAKECLAIMID",
           veteran_file_number: veteran_file_number,
-          established_at: Time.zone.now
+          established_at: Time.zone.now,
+          claimant_participant_id: veteran_participant_id
         )
       end
     end

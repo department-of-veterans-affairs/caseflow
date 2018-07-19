@@ -97,7 +97,6 @@ describe SupplementalClaim do
 
   context "#create_end_product_and_contentions!" do
     subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -108,6 +107,7 @@ describe SupplementalClaim do
     before do
       supplemental_claim.save!
       supplemental_claim.create_issues!(request_issues_data: request_issues_data)
+      supplemental_claim.create_claimants!(claimant_data: "12345")
     end
 
     # Stub the id of the end product being created
@@ -140,7 +140,8 @@ describe SupplementalClaim do
           end_product_label: "Supplemental Claim Rating",
           end_product_code: "040SCR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
         },
         veteran_hash: veteran.to_vbms_hash
       )

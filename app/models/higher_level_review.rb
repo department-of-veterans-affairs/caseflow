@@ -47,6 +47,7 @@ class HigherLevelReview < AmaReview
       claim_date: receipt_date,
       code: "030HLRR",
       valid_modifiers: END_PRODUCT_MODIFIERS,
+      claimant_participant_id: claimant_participant_id,
       source: self,
       station: "397" # AMC
     )
