@@ -15,7 +15,8 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/javascripts')
+    path: path.join(__dirname, '../app/assets/javascripts', '../public'),
+    publicPath: '../public'
   },
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
@@ -50,8 +51,7 @@ const config = {
           loader: 'file-loader',
           options: {
             name: './fonts/[name].[ext]',
-            outputPath: 'assets/fonts/',
-            publicPath: '/'
+            outputPath: 'assets/fonts/'
           }
 
         }]
@@ -65,9 +65,7 @@ const config = {
             // Name of bundled asset
             name: '[name][md5:hash].[ext]',
             // Output location for assets. Final: `app/assets/webpack/images/`
-            outputPath: 'assets/images/',
-            // Endpoint asset
-            publicPath: '/'
+            outputPath: 'assets/images/'
           } }
 
       }
