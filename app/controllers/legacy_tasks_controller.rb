@@ -4,14 +4,14 @@ class LegacyTasksController < ApplicationController
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
-  ROLES = Constants::ROLES["roles"]
+  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def index
-    current_role = params[:role] || user.vacols_roles.first
+    current_role = params[:role].downcase || user.vacols_roles.first
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
