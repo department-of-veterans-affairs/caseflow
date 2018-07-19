@@ -452,6 +452,7 @@ ActiveRecord::Schema.define(version: 20180719153446) do
     t.string "role"
     t.string "function"
     t.string "url"
+    t.string "participant_id"
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
