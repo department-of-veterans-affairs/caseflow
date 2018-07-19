@@ -12,8 +12,8 @@ import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
-import type { Appeal } from './types/models';
-import type { LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
+import type { LegacyAppeal } from './types/models';
+import type { LoadedQueueTasks, LoadedQueueAppeals, UsersById } from './types/state';
 
 type Params = {|
   userId: number,
@@ -28,7 +28,8 @@ type Props = Params & {|
   tasks: LoadedQueueTasks,
   appeals: LoadedQueueAppeals,
   loadedUserId: number,
-  activeAppeal: Appeal,
+  activeAppeal: LegacyAppeal,
+  judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
   onReceiveJudges: typeof onReceiveJudges,

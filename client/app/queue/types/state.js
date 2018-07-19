@@ -4,11 +4,12 @@ import type {
   Tasks,
   DeprecatedTask,
   User,
-  Attorneys
+  Attorneys,
+  LegacyAppeals
 } from './models';
 
 export type LoadedQueueTasks = { [string]: ?DeprecatedTask };
-export type LoadedQueueAppeals = { [string]: ?Object };
+export type LoadedQueueAppeals = LegacyAppeals;
 
 export type TasksAndAppealsOfAttorney = {
   [string]: {

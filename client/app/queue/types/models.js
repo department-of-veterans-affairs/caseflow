@@ -52,7 +52,7 @@ export type LegacyAppeal = {
   }
 };
 
-export type LegacyAppeals = { [string]: LegacyAppeal };
+export type LegacyAppeals = { [string]: ?LegacyAppeal };
 
 export type Task = {
   id: string,
