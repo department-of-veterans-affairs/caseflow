@@ -23,12 +23,14 @@ class LegacyWorkQueue
       return QueueRepository if FeatureToggle.enabled?(:test_facols)
       @repository ||= QueueRepository
     end
-  private
+
+    private
+
     MODEL_CLASS_OF_ROLE = {
       "attorney" => AttorneyLegacyTask,
       "judge" => JudgeLegacyTask,
       "colocated" => LegacyTask
-    }
+    }.freeze
 
     def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
       vacols_appeals = repository.appeals_from_tasks(vacols_tasks)

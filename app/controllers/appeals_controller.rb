@@ -36,7 +36,7 @@ class AppealsController < ApplicationController
 
     role = params[:role]
     return invalid_role_error unless ROLES.include?(role)
-    tasks, _ = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
     render json: {
       tasks: json_tasks(tasks)[:data]
     }

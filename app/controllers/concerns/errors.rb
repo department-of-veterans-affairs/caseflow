@@ -1,4 +1,5 @@
-module Errors extend ActiveSupport::Concern
+module Errors
+  extend ActiveSupport::Concern
   def invalid_role_error
     render json: {
       "errors": [

@@ -146,9 +146,9 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/:id/tasks" do
     let(:user) { create(:user) }
-    let(:appeal) {
+    let(:appeal) do
       create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: user))
-    }
+    end
 
     it "should succeed" do
       get :tasks, params: { appeal_id: appeal.vacols_id, role: "attorney" }
