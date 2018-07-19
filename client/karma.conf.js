@@ -5,7 +5,7 @@
 const _ = require('lodash');
 const process = require('process');
 /* eslint-disable max-len */
-const webpackConfig = require('./webpack.config')(__dirname);
+const webpackConfig = require('./webpack.config');
 /* eslint-enable max-len */
 
 const files = [
