@@ -143,7 +143,7 @@ CaseSnapshot.propTypes = {
   loadedQueueAppealIds: PropTypes.array,
   task: PropTypes.object,
   userRole: PropTypes.string,
-  hideDropdown: PropTypes.boolean
+  hideDropdown: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
