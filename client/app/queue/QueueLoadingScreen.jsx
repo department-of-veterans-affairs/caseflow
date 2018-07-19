@@ -1,6 +1,7 @@
+// @flow
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,8 +12,30 @@ import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
+import type { Appeal } from './types/models';
+import type { LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
 
-class QueueLoadingScreen extends React.PureComponent {
+type Params = {|
+  userId: number,
+  appealId?: string,
+  children: React.ChildrenArray<React.Node>,
+  userCanAccessQueue: boolean,
+  urlToLoad?: string
+|};
+
+type Props = Params & {|
+  // From state
+  tasks: LoadedQueueTasks,
+  appeals: LoadedQueueAppeals,
+  loadedUserId: number,
+  activeAppeal: Appeal,
+  // Action creators
+  onReceiveQueue: typeof onReceiveQueue,
+  onReceiveJudges: typeof onReceiveJudges,
+  setActiveAppeal: typeof setActiveAppeal
+|};
+
+class QueueLoadingScreen extends React.PureComponent<Props> {
   loadJudges = () => {
     if (!_.isEmpty(this.props.judges)) {
       return Promise.resolve();
@@ -30,7 +53,7 @@ class QueueLoadingScreen extends React.PureComponent {
     const promises = [];
 
     if (this.props.appealId) {
-      promises.push(this.loadActiveAppeal());
+      promises.push(this.loadActiveAppeal(this.props.appealId));
     }
     promises.push(this.loadQueue());
 
@@ -58,10 +81,9 @@ class QueueLoadingScreen extends React.PureComponent {
       }));
   };
 
-  loadActiveAppeal = () => {
+  loadActiveAppeal = (appealId) => {
     const {
       activeAppeal,
-      appealId,
       appeals
     } = this.props;
 

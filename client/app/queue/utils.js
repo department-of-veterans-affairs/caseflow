@@ -9,7 +9,7 @@ import {
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import type { Tasks } from './types/models';
-import type { State } from './types/state';
+import type { State, LoadedQueueAppeals } from './types/state';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
@@ -40,7 +40,7 @@ export const associateTasksWithAppeals = (serverData: Object = {}) => {
 *  Sort by docket date (form 9 date) oldest to
 *  newest within each group
 */
-export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: {[string]: Object}}) => _(tasks).
+export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: LoadedQueueAppeals}) => _(tasks).
   partition((task) =>
     appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
   ).

@@ -7,7 +7,7 @@ import type { Dispatch, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from '
 import type { Task, User } from './types/models';
 
 export const onReceiveQueue =
-  ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: string }) => ({
+  ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: number }) => ({
     type: ACTIONS.RECEIVE_QUEUE_DETAILS,
     payload: {
       tasks,

@@ -7,8 +7,8 @@ import type {
   Attorneys
 } from './models';
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-export type LoadedQueueAppeals = { [string]: Object };
+export type LoadedQueueTasks = { [string]: ?DeprecatedTask };
+export type LoadedQueueAppeals = { [string]: ?Object };
 
 export type TasksAndAppealsOfAttorney = {
   [string]: {
@@ -47,7 +47,7 @@ export type UiState = {
   selectedAssigneeSecondary: ?string
 };
 
-export type UsersById = { [number]: User };
+export type UsersById = { [number]: ?User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
@@ -57,7 +57,7 @@ export type QueueState = {
   loadedQueue: {
     appeals: LoadedQueueAppeals,
     tasks: LoadedQueueTasks,
-    loadedUserId: string
+    loadedUserId: number
   },
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
