@@ -521,6 +521,7 @@ ActiveRecord::Schema.define(version: 20180719153446) do
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
+    t.date "decision_date"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
