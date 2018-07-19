@@ -120,14 +120,20 @@ RSpec.feature "RAMP Refiling Intake" do
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
-
+                             established_at: 2.days.ago)
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee"
       )
 
@@ -168,14 +174,21 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
 
+       ep = Generators::EndProduct.build(
+         veteran_file_number: "12341234",
+         bgs_attrs: { status_type_code: "CLR" }
+       )
+       EndProductEstablishment.create(
+         source: ramp_election,
+         veteran_file_number: "12341234",
+         reference_id: ep.claim_id,
+         synced_status: "CLR",
+         last_synced_at: 2.days.ago
+       )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
@@ -203,19 +216,27 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
+
+       ep = Generators::EndProduct.build(
+         veteran_file_number: "12341234",
+         bgs_attrs: { status_type_code: "CLR" }
+       )
+       EndProductEstablishment.create(
+         source: ramp_election,
+         veteran_file_number: "12341234",
+         reference_id: ep.claim_id,
+         synced_status: "CLR",
+         last_synced_at: 2.days.ago
+       )
 
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left shoulder service connection"
       )
 
@@ -402,14 +423,20 @@ RSpec.feature "RAMP Refiling Intake" do
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
-
+                             established_at: 2.days.ago)
+       ep = Generators::EndProduct.build(
+         veteran_file_number: "12341234",
+         bgs_attrs: { status_type_code: "CLR" }
+       )
+       EndProductEstablishment.create(
+         source: ramp_election,
+         veteran_file_number: "12341234",
+         reference_id: ep.claim_id,
+         synced_status: "CLR",
+         last_synced_at: 2.days.ago
+       )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
@@ -453,14 +480,21 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
 
+       ep = Generators::EndProduct.build(
+         veteran_file_number: "12341234",
+         bgs_attrs: { status_type_code: "CLR" }
+       )
+       EndProductEstablishment.create(
+         source: ramp_election,
+         veteran_file_number: "12341234",
+         reference_id: ep.claim_id,
+         synced_status: "CLR",
+         last_synced_at: 2.days.ago
+       )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 

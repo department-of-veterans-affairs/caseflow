@@ -157,7 +157,7 @@ describe HigherLevelReviewIntake do
       )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
-        claim_id: intake.detail.end_product_reference_id,
+        claim_id: resultant_end_product_establishment.reference_id,
         contention_descriptions: ["decision text"],
         special_issues: []
       )
@@ -175,9 +175,10 @@ describe HigherLevelReviewIntake do
       it "adds same office to special issues" do
         subject
 
+        resultant_end_product_establishment = EndProductEstablishment.find_by(source: detail.reload)
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: intake.detail.veteran_file_number,
-          claim_id: intake.detail.end_product_reference_id,
+          claim_id: resultant_end_product_establishment.reference_id,
           contention_descriptions: ["decision text"],
           special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
         )

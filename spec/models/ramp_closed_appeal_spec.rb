@@ -20,6 +20,7 @@ describe RampClosedAppeal do
       veteran_file_number: appeal.veteran_file_number,
       bgs_attrs: { status_type_code: ep_status }
     )
+
   end
 
   let(:ramp_election) do
@@ -27,7 +28,6 @@ describe RampClosedAppeal do
           veteran_file_number: appeal.veteran_file_number,
           option_selected: :higher_level_review,
           receipt_date: 6.days.ago,
-          end_product_reference_id: end_product.claim_id,
           established_at: 2.days.ago)
   end
 
@@ -57,7 +57,16 @@ describe RampClosedAppeal do
     subject { ramp_closed_appeal.reclose! }
 
     context "when end product was canceled" do
-      let!(:current_end_product) { end_product }
+      let!(:current_end_product) do
+        end_product.tap do |ep|
+          EndProductEstablishment.create(
+            source: ramp_election,
+            veteran_file_number: ramp_election.veteran_file_number,
+            last_synced_at: Time.zone.now,
+            synced_status: "CAN"
+          )
+        end
+      end
       let(:ep_status) { "CAN" }
 
       it "rolls back the Caseflow ramp election" do
@@ -124,19 +133,11 @@ describe RampClosedAppeal do
 
     let(:veteran) { Generators::Veteran.build(file_number: "23232323") }
 
-    let(:canceled_end_product) do
-      Generators::EndProduct.build(
-        veteran_file_number: veteran.file_number,
-        bgs_attrs: { status_type_code: "CAN" }
-      )
-    end
-
     let(:ramp_election_canceled_ep) do
       create(:ramp_election,
              veteran_file_number: veteran.file_number,
              option_selected: :higher_level_review,
              receipt_date: 6.days.ago,
-             end_product_reference_id: canceled_end_product.claim_id,
              established_at: 2.days.ago)
     end
 
@@ -163,6 +164,11 @@ describe RampClosedAppeal do
                       OpenStruct.new(vacols_id: "CANCELED1"),
                       OpenStruct.new(vacols_id: "CANCELED2")
                     ])
+      EndProductEstablishment.create(
+        source: ramp_election_canceled_ep,
+        veteran_file_number: veteran.file_number,
+        last_synced_at: 2.days.ago,
+        synced_status: "CAN")
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do

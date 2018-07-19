@@ -43,8 +43,7 @@ class Fakes::BGSService
       when "has_supplemental_claim_with_vbms_claim_id"
         claim_id = "600118926"
         sc = SupplementalClaim.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
-          end_product_reference_id: claim_id
+          veteran_file_number: veteran.file_number
         )
         EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,

@@ -8,12 +8,28 @@ describe RampElectionRollback do
     FeatureToggle.disable!(:test_facols)
   end
 
+  let(:established_end_product) do
+    EndProductEstablishment.create(
+      veteran_file_number: "44444444",
+      source: ramp_election,
+      reference_id: "EP1234",
+      last_synced_at: 2.days.ago,
+      synced_status: ep_status
+    )
+    # Generators::EndProduct.build(
+    #   veteran_file_number: "44444444",
+    #   bgs_attrs: {
+    #     benefit_claim_id: "EP1234",
+    #     status_type_code: ep_status
+    #   }
+    # )
+  end
+
   let!(:ramp_election) do
     create(:ramp_election,
            veteran_file_number: "44444444",
            option_selected: "higher_level_review",
-           receipt_date: 5.days.ago,
-           end_product_reference_id: "EP1234")
+           receipt_date: 5.days.ago)
   end
 
   let(:rollback) do
@@ -27,22 +43,15 @@ describe RampElectionRollback do
   let(:user) { Generators::User.build }
   let(:reason) { "A very good reason" }
 
-  let!(:established_end_product) do
-    Generators::EndProduct.build(
-      veteran_file_number: "44444444",
-      bgs_attrs: {
-        benefit_claim_id: "EP1234",
-        status_type_code: ep_status
-      }
-    )
-  end
-
   let(:ep_status) { "CAN" }
 
   context "#valid?" do
     subject { rollback.valid? }
 
-    it { is_expected.to be true }
+    it do
+      established_end_product
+      is_expected.to be true
+    end
 
     context "when no ramp election" do
       let(:ramp_election) { nil }
@@ -71,6 +80,8 @@ describe RampElectionRollback do
 
   context "#create!" do
     subject { rollback.save! }
+
+    before { established_end_product }
 
     let!(:appeals_to_reopen) do
       %w[12345 23456].map do |vacols_id|

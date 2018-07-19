@@ -68,11 +68,11 @@ describe EndProductEstablishment do
     let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
 
     context "when matching end product has not yet been established" do
-      context "when end_product_reference_id is nil" do
+      context "when end_product.claim_id is nil" do
         it { is_expected.to be_nil }
       end
 
-      context "when end_product_reference_id is set" do
+      context "when end_product_establishment.reference_id is set" do
         let(:reference_id) { "not matching" }
 
         it "raises EstablishedEndProductNotFound error" do
