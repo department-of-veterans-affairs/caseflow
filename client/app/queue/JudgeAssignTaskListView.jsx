@@ -13,12 +13,11 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { NavLink } from 'react-router-dom';
-import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
+  fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
@@ -59,21 +58,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   createLoadPromise = () => {
     this.props.fetchAllAttorneys();
+    for (const attorney of this.props.attorneysOfJudge) {
+      this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+    }
 
-    const requestOptions = {
-      timeout: true
-    };
-
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
-      then(
-        (response) => {
-          const resp = JSON.parse(response.text);
-
-          this.props.setAttorneysOfJudge(resp.attorneys);
-          for (const attorney of resp.attorneys) {
-            this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
-          }
-        });
+    return Promise.resolve();
   }
 
   caseCountOfAttorney = (attorneyId) => {
@@ -181,7 +170,6 @@ const mapDispatchToProps = (dispatch) => (
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
-    setAttorneysOfJudge,
     fetchTasksAndAppealsOfAttorney,
     setSelectionOfTaskOfUser,
     fetchAllAttorneys

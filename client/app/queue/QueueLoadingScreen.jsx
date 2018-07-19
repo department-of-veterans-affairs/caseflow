@@ -11,7 +11,7 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
-import { onReceiveQueue, onReceiveJudges } from './QueueActions';
+import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge } from './QueueActions';
 import type { LegacyAppeal } from './types/models';
 import type { LoadedQueueTasks, LoadedQueueAppeals, UsersById } from './types/state';
 
@@ -35,7 +35,8 @@ type Props = Params & {|
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
   onReceiveJudges: typeof onReceiveJudges,
-  setActiveAppeal: typeof setActiveAppeal
+  setActiveAppeal: typeof setActiveAppeal,
+  setAttorneysOfJudge: typeof setAttorneysOfJudge
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
@@ -107,9 +108,23 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     });
   };
 
+  maybeLoadAttorneysOfJudge = () => {
+    if (this.props.userRole !== 'Judge') {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
+      then((response) => response.body).
+      then(
+        (resp) => {
+          this.props.setAttorneysOfJudge(resp.attorneys);
+        });
+  }
+
   createLoadPromise = () => Promise.all([
     this.loadRelevantCases(),
-    this.loadJudges()
+    this.loadJudges(),
+    this.maybeLoadAttorneysOfJudge()
   ]);
 
   reload = () => window.location.reload();
@@ -159,7 +174,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   onReceiveJudges,
-  setActiveAppeal
+  setActiveAppeal,
+  setAttorneysOfJudge
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
