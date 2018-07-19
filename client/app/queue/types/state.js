@@ -42,6 +42,7 @@ export type UiState = {
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
+  loadedUserId: ?string,
   userRole: string,
   userCssId: string
 };
@@ -54,7 +55,6 @@ export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
   appeals: LegacyAppeals,
-  loadedUserId: string,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

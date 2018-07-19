@@ -125,9 +125,11 @@ QueueLoadingScreen.propTypes = {
   appealId: PropTypes.string
 };
 
+// todo: remove ...this.props from usages within QueueApp
 const mapStateToProps = (state) => ({
   ..._.pick(state.queue, 'judges', 'tasks', 'appeals'),
-  activeAppeal: state.caseDetail.activeAppeal
+  activeAppeal: state.caseDetail.activeAppeal,
+  loadedUserId: state.ui.loadedUserId
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

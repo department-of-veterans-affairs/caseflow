@@ -19,7 +19,6 @@ export const initialState = {
   judges: {},
   tasks: {},
   appeals: {},
-  loadedUserId: null,
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
@@ -52,9 +51,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
       },
       tasks: {
         $merge: action.payload.tasks
-      },
-      loadedUserId: {
-        $set: action.payload.userId
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
