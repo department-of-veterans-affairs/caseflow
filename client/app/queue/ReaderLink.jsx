@@ -5,7 +5,8 @@ import querystring from 'querystring';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { TASK_ACTIONS } from './constants';
-import AppealDocumentCount from './AppealDocumentCount';
+
+import NewFile from './components/NewFile';
 
 export default class ReaderLink extends React.PureComponent {
 
@@ -16,17 +17,12 @@ export default class ReaderLink extends React.PureComponent {
   getLinkText = () => {
     const {
       appeal,
-      longMessage,
-      message
+      longMessage
     } = this.props;
 
-    if (message) {
-      return message;
-    }
-
     return longMessage ?
-      <React.Fragment>Open <AppealDocumentCount appeal={appeal} /> documents in Caseflow Reader</React.Fragment> :
-      <React.Fragment>View <AppealDocumentCount appeal={appeal} /> in Reader</React.Fragment>;
+      <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :
+      <React.Fragment>View docs <NewFile appeal={appeal} /></React.Fragment>;
   };
 
   render = () => {

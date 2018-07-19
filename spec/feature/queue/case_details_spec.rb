@@ -187,7 +187,7 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View documents"
+      click_on "View Veteran's documents"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
@@ -234,13 +234,11 @@ RSpec.feature "Case details" do
 
     before do
       FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:judge_assignment)
 
       User.authenticate!(user: judge_user)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
       FeatureToggle.disable!(:judge_queue)
     end
 

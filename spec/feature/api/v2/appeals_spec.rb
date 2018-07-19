@@ -5,7 +5,6 @@ describe "Appeals API v2", type: :request do
 
   context "Appeal list" do
     before do
-      FeatureToggle.enable!(:appeals_status)
       DocketSnapshot.create
       post_remand.aod = false
     end

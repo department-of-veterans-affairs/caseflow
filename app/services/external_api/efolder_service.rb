@@ -4,36 +4,10 @@ class ExternalApi::EfolderService
   TRIES = 300
 
   def self.fetch_documents_for(appeal, user)
-    # Makes a GET request to https://<efolder_url>/files/<file_number>
-    # to return the list of documents associated with the appeal
-    return efolder_v2_api(appeal.veteran_file_number.to_s, user) if FeatureToggle.enabled?(:efolder_api_v2, user: user)
-    efolder_v1_api(appeal.veteran_file_number.to_s, user)
+    generate_efolder_request(appeal.veteran_file_number.to_s, user)
   end
 
-  def self.efolder_v1_api(vbms_id, user)
-    headers = { "FILE-NUMBER" => vbms_id }
-
-    response = send_efolder_request("/api/v1/files?download=true", user, headers)
-
-    if response.error?
-      fail Caseflow::Error::EfolderAccessForbidden, code: 403 if response.try(:code) == 403
-      fail Caseflow::Error::DocumentRetrievalError, code: 502 if response.try(:code) == 500
-      fail Caseflow::Error::DocumentRetrievalError, code: response.code.to_s
-    end
-
-    response_attrs = JSON.parse(response.body)["data"]["attributes"]
-
-    documents = response_attrs["documents"] || []
-    Rails.logger.info("# of Documents retrieved from efolder v1: #{documents.length}")
-
-    {
-      manifest_vbms_fetched_at: response_attrs["manifest_vbms_fetched_at"],
-      manifest_vva_fetched_at: response_attrs["manifest_vva_fetched_at"],
-      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document, vbms_id) }
-    }
-  end
-
-  def self.efolder_v2_api(vbms_id, user)
+  def self.generate_efolder_request(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
@@ -90,17 +64,8 @@ class ExternalApi::EfolderService
     }
   end
 
-  def self.efolder_files_url
-    # TODO: support v2
-    URI(efolder_base_url + "/api/v1/files").to_s
-  end
-
   def self.efolder_content_url(id)
-    if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
-      URI(efolder_base_url + "/api/v2/records/#{id}").to_s
-    else
-      URI(efolder_base_url + "/api/v1/documents/#{id}").to_s
-    end
+    URI(efolder_base_url + "/api/v2/records/#{id}").to_s
   end
 
   def self.efolder_base_url
