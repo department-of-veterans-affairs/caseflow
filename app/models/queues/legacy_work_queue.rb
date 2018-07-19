@@ -15,7 +15,7 @@ class LegacyWorkQueue
       if vacols_tasks.empty?
         return [], []
       end
-      user = User.find_or_create_by(css_id: vacols_tasks[0].staff.sdomainid, station_id: User::BOARD_STATION_ID)
+      user = User.find_or_create_by(css_id: vacols_tasks[0].assigned_to_css_id, station_id: User::BOARD_STATION_ID)
       tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
     end
 

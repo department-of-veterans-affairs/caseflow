@@ -77,7 +77,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
              "brieff.bfdloout as assigned_to_location_date",
-             "brieff.bfcurloc as bfcurloc",
              "decass.deassign as assigned_to_attorney_date",
              "decass.dereceive as reassigned_to_judge_date",
              "decass.decomp as date_completed",
@@ -92,7 +91,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.deadtim as created_at",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
-             "s3.snamel as assigned_by_last_name")
+             "s3.snamel as assigned_by_last_name",
+             "s2.sdomainid as assigned_to_css_id")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
