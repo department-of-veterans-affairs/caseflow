@@ -27,13 +27,11 @@ RSpec.feature "Checkout flows" do
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "given a valid legacy appeal and an attorney user" do
@@ -371,7 +369,6 @@ RSpec.feature "Checkout flows" do
     end
 
     before do
-      FeatureToggle.enable!(:judge_queue)
       FeatureToggle.enable!(:judge_case_review_checkout)
 
       User.authenticate!(user: judge_user)
@@ -379,7 +376,6 @@ RSpec.feature "Checkout flows" do
 
     after do
       FeatureToggle.disable!(:judge_case_review_checkout)
-      FeatureToggle.disable!(:judge_queue)
     end
 
     context "where work product is decision draft" do

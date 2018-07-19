@@ -7,14 +7,6 @@ RSpec.describe IssuesController, type: :controller do
     FeatureToggle.disable!(:test_facols)
   end
 
-  before do
-    FeatureToggle.enable!(:queue_phase_two)
-  end
-
-  after do
-    FeatureToggle.disable!(:queue_phase_two)
-  end
-
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }
   let(:appeal) do

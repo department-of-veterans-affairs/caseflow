@@ -1,14 +1,12 @@
 RSpec.describe LegacyTasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:judge_queue)
     FeatureToggle.enable!(:test_facols)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:judge_queue)
   end
 
   describe "GET legacy_tasks/xxx" do
