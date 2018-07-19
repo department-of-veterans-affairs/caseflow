@@ -7,10 +7,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "queue_phase_two",
-          enable_all: true
-        },
-        {
           feature: "hearings",
           users: ["CASEFLOW_397", "CASEFLOW1"]
         },
@@ -24,10 +20,6 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "judge_queue",
           enable_all: true
         },
         {
