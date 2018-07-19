@@ -28,7 +28,6 @@ RSpec.feature "Case details" do
   end
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -36,7 +35,6 @@ RSpec.feature "Case details" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -233,13 +231,7 @@ RSpec.feature "Case details" do
     end
 
     before do
-      FeatureToggle.enable!(:judge_queue)
-
       User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_queue)
     end
 
     scenario "displays who prepared task" do

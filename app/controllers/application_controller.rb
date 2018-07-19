@@ -94,8 +94,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
-    return true if current_user.attorney_in_vacols?
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
   end
@@ -103,15 +102,6 @@ class ApplicationController < ApplicationBaseController
 
   def verify_queue_access
     redirect_to "/unauthorized" unless can_access_queue?
-  end
-
-  def verify_case_review_access
-    # :nocov:
-    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
-    # we can remove this feature toggle when attorney checkout is enabled for all
-    return true if feature_enabled?(:queue_phase_two)
-    redirect_to "/unauthorized"
-    # :nocov:
   end
 
   def verify_task_assignment_access

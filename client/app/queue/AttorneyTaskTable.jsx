@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 import moment from 'moment';
 import pluralize from 'pluralize';
 
@@ -34,13 +33,6 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
-  tableStyle = css({
-    '& > tr > td': {
-      '&:last-of-type': {
-        width: this.props.featureToggles.phase_two ? '25%' : ''
-      }
-    }
-  });
   collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
 
   getQueueColumns = () => [{
@@ -113,8 +105,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
         tasks
       })}
       getKeyForRow={this.getKeyForRow}
-      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
-      bodyStyling={this.tableStyle} />;
+      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
   }
 }
 
