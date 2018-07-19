@@ -118,12 +118,11 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
         });
   }
 
-  loadAttorneys = () => this.props.fetchAllAttorneys();
-
   maybeLoadJudgeData = () => {
     if (this.props.userRole !== 'Judge') {
       return Promise.resolve();
     }
+    this.props.fetchAllAttorneys();
 
     return Promise.all([this.loadAttorneysOfJudge()]);
   }
