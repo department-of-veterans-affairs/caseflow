@@ -5,7 +5,7 @@
 const _ = require('lodash');
 const process = require('process');
 /* eslint-disable max-len */
-const webpackConfig = require('@department-of-veterans-affairs/caseflow-frontend-toolkit/config/getWebpackConfig')(__dirname);
+const webpackConfig = require('./webpack.config')(__dirname);
 /* eslint-enable max-len */
 
 const files = [
