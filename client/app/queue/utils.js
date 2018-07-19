@@ -172,7 +172,7 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
     return newFormat.test(documentId);
   }
 
-  const initialChar = workProduct.includes('IME') ? 'V' : 'M';
+  const initialChar = workProduct.includes('IME') ? 'M' : 'V';
   const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
   const oldFormat = new RegExp(regex);
 
