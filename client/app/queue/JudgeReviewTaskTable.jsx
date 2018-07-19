@@ -7,6 +7,7 @@ import moment from 'moment';
 import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
 
+import { judgeReviewTasksSelector } from './selectors';
 import { sortTasks, renderAppealType } from './utils';
 import COPY from '../../COPY.json';
 
@@ -50,24 +51,10 @@ class JudgeReviewTaskTable extends React.PureComponent {
       diff(moment(task.attributes.assigned_on), 'days')
   }];
 
-  render = () => {
-    const { appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(tasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={
-        sortTasks(
-          { tasks: taskWithId,
-            appeals }).
-          filter((task) => task.attributes.task_type === 'Review')
-      }
-      getKeyForRow={this.getKeyForRow} />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
+    getKeyForRow={this.getKeyForRow} />;
 }
 
 JudgeReviewTaskTable.propTypes = {
@@ -78,14 +65,13 @@ JudgeReviewTaskTable.propTypes = {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      appeals,
-      tasks
+      appeals
     }
   } = state;
 
   return {
     appeals,
-    tasks
+    tasks: judgeReviewTasksSelector(state)
   };
 };
 

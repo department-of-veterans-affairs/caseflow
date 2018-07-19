@@ -20,6 +20,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
+import { unassignedTasksSelector } from './selectors';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -36,24 +37,12 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
   };
 
-  unassignedTasksWithAppeals = () => {
-    const { appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(tasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return sortTasks({
-      tasks: taskWithId,
-      appeals
-    }).
-      filter((task) => task.attributes.task_type === 'Assign').
-      map((task) => ({
-        task,
-        appeal: this.props.appeals[task.appealId]
-      }));
-  }
+  unassignedTasksWithAppeals = () => sortTasks(
+    _.pick(this.props, 'tasks', 'appeals')
+  ).map((task) => ({
+    task,
+    appeal: this.props.appeals[task.appealId]
+  }));
 
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
@@ -154,7 +143,6 @@ const mapStateToProps = (state) => {
     queue: {
       attorneysOfJudge,
       tasksAndAppealsOfAttorney,
-      tasks,
       appeals
     },
     ui: {
@@ -165,7 +153,7 @@ const mapStateToProps = (state) => {
   return {
     attorneysOfJudge,
     tasksAndAppealsOfAttorney,
-    tasks,
+    tasks: unassignedTasksSelector(state),
     appeals,
     featureToggles
   };
