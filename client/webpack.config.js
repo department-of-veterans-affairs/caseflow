@@ -28,8 +28,8 @@ const config = {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
       ie: 'component-ie',
-       // Makes it easier to reference our assets in jsx files
-      assets: path.resolve('./app/assets'),
+      // Makes it easier to reference our assets in jsx files
+      assets: path.resolve('./app/assets')
     }
   },
   module: {
@@ -50,7 +50,8 @@ const config = {
           loader: 'file-loader',
           options: {
             name: './fonts/[name].[ext]',
-            outputPath: 'fonts/'
+            outputPath: 'assets/fonts/',
+            publicPath: '/'
           }
 
         }]
@@ -64,9 +65,9 @@ const config = {
             // Name of bundled asset
             name: '[name][md5:hash].[ext]',
             // Output location for assets. Final: `app/assets/webpack/images/`
-            outputPath: '/images/',
+            outputPath: 'assets/images/',
             // Endpoint asset
-            publicPath: '/assets/images/'
+            publicPath: '/'
           } }
 
       }
