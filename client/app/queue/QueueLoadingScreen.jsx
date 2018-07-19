@@ -17,6 +17,8 @@ import type { LoadedQueueTasks, LoadedQueueAppeals, UsersById } from './types/st
 
 type Params = {|
   userId: number,
+  userCssId: string,
+  userRole: string,
   appealId?: string,
   children: React.ChildrenArray<React.Node>,
   userCanAccessQueue: boolean,
@@ -160,4 +162,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);
+export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
