@@ -80,10 +80,10 @@ class ExternalApi::BGSService
                                       name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poas[file_number] = bgs_poas.map do { |poa| get_poa_from_bgs_poa(poa) }
+      @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poas[file_number]
+    @poas[participant_id]
   end
 
   def find_address_by_participant_id(participant_id)

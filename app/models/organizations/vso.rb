@@ -5,6 +5,8 @@ class Vso < Organization
     participant_ids.include?(self.participant_id)
   end
 
+  private
+
   def bgs
     @bgs ||= BGSService.new
   end

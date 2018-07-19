@@ -12,10 +12,10 @@ class OrganizationController < ApplicationController
     verify_authorized_roles(organization.role)
   end
 
-  def verify_function_access
-    return unless organization.function
+  def verify_feature_access
+    return unless organization.feature
 
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(organization.function.to_sym, user: current_user)
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(organization.feature.to_sym, user: current_user)
   end
 
   def set_application
