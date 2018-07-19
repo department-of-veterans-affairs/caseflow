@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 import moment from 'moment';
 import pluralize from 'pluralize';
 
