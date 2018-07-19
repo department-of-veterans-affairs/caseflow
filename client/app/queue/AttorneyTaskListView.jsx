@@ -9,7 +9,10 @@ import AttorneyTaskTable from './AttorneyTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
-import { appealsByAssigneeCssIdSelector } from './selectors';
+import {
+  appealsByAssigneeCssIdSelector,
+  tasksByAssigneeCssIdSelector
+} from './selectors';
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -79,7 +82,6 @@ const mapStateToProps = (state) => {
       stagedChanges: {
         taskDecision
       },
-      tasks,
       judges
     },
     ui: {
@@ -89,9 +91,9 @@ const mapStateToProps = (state) => {
 
   return ({
     appeals: appealsByAssigneeCssIdSelector(state),
+    tasks: tasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision,
-    tasks,
     judges
   });
 };
