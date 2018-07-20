@@ -61,7 +61,6 @@ export default class TestUsers extends React.PureComponent {
   reseed = () => {
     this.setState({ isReseeding: true });
     ApiUtil.post('/test/reseed').then(() => {
-      window.location.reload();
       this.setState({
         reseedingError: null,
         isReseeding: false
