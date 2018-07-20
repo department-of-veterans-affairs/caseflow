@@ -107,7 +107,6 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
 
