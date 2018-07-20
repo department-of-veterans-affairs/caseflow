@@ -31,6 +31,12 @@ const ASSIGN = 'ASSIGN';
 
 // todo: make StartCheckoutFlowDropdownBase
 class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = { assignWidgetVisible: false };
+  }
+
   handleChange = (option) => {
     if (option.value === ASSIGN) {
       this.setState({ assignWidgetVisible: true });
