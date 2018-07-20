@@ -117,10 +117,9 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
 
   loadAttorneysOfJudge = () => {
     return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
-      then((response) => response.body).
       then(
         (resp) => {
-          this.props.setAttorneysOfJudge(resp.attorneys);
+          this.props.setAttorneysOfJudge(resp.body.attorneys);
         });
   }
 
@@ -130,7 +129,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     }
     this.props.fetchAllAttorneys();
 
-    return Promise.all([this.loadAttorneysOfJudge()]);
+    return this.loadAttorneysOfJudge();
   }
 
   createLoadPromise = () => Promise.all([
