@@ -4,7 +4,7 @@ Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mo
 CaseflowCertification::Application.load_tasks
 
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products, :re_seed_db]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
