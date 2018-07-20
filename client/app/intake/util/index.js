@@ -76,7 +76,11 @@ export const formatIssues = (intakeState) => {
           return {
             decision_text: issue.description,
             issue_category: issue.category,
+<<<<<<< Updated upstream
             decision_date: formatDateStringForApi(issue.decisionDate)
+=======
+            decision_date: issue.decisionDate
+>>>>>>> Stashed changes
           };
         })
   };
