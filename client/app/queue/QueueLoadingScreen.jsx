@@ -10,7 +10,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
+import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 import type { LegacyAppeal } from './types/models';
 import type { LoadedQueueTasks, LoadedQueueAppeals, UsersById } from './types/state';
@@ -36,6 +36,7 @@ type Props = Params & {|
   onReceiveQueue: typeof onReceiveQueue,
   onReceiveJudges: typeof onReceiveJudges,
   setActiveAppeal: typeof setActiveAppeal,
+  setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys
 |};
@@ -58,7 +59,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     const promises = [];
 
     if (this.props.appealId) {
-      promises.push(this.loadActiveAppeal(this.props.appealId));
+      promises.push(this.loadActiveAppealAndTask(this.props.appealId));
     }
     promises.push(this.loadQueue());
 
@@ -86,10 +87,11 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       }));
   };
 
-  loadActiveAppeal = (appealId) => {
+  loadActiveAppealAndTask = (appealId) => {
     const {
       activeAppeal,
-      appeals
+      appeals,
+      userRole
     } = this.props;
 
     if (activeAppeal) {
@@ -98,15 +100,19 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
 
     if (appealId in appeals) {
       this.props.setActiveAppeal(appeals[appealId]);
+      this.props.setActiveTask(tasks[appealId]);
 
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setActiveAppeal(resp.appeal);
-    });
+    return Promise.all([
+      ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+        this.props.setActiveAppeal(response.body.appeal);
+      }),
+      ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
+        this.props.setActiveAppeal(response.body.tasks[0]);
+      }),
+    ]);
   };
 
   loadAttorneysOfJudge = () => {
@@ -181,6 +187,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   onReceiveJudges,
   setActiveAppeal,
+  setActiveTask,
   setAttorneysOfJudge,
   fetchAllAttorneys
 }, dispatch);
