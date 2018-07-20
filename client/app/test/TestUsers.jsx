@@ -10,7 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
-import Alert from '../components/Alert'
+import Alert from '../components/Alert';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -160,7 +160,7 @@ export default class TestUsers extends React.PureComponent {
                   onClick={this.reseed}
                   name="Reseed the DB"
                   loading={this.state.isReseeding}
-                  loadingText={"Reseeding the DB"} />
+                  loadingText="Reseeding the DB" />
                 <br /><br />
                 <strong>App Selector:</strong>
                 <TabWindow
