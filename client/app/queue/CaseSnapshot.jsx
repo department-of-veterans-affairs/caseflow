@@ -126,7 +126,7 @@ export class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </CaseDetailsDescriptionList>
       </div>
-      { this.props.featureToggles.phase_two &&
+      {!this.props.hideDropdown &&
         this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
@@ -142,7 +142,8 @@ CaseSnapshot.propTypes = {
   featureToggles: PropTypes.object,
   loadedQueueAppealIds: PropTypes.array,
   task: PropTypes.object,
-  userRole: PropTypes.string
+  userRole: PropTypes.string,
+  hideDropdown: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
