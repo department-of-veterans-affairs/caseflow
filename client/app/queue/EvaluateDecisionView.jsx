@@ -171,7 +171,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
