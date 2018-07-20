@@ -326,9 +326,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
           $set: action.payload.task
         }
       },
-      appeals: {
-        $unset: [appealId]
-      },
       tasksAndAppealsOfAttorney: {
         [action.payload.assigneeId]: {
           $set: tasksAndAppealsOfAssignee

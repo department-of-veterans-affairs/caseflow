@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import _ from 'lodash';
 import { NavLink } from 'react-router-dom';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -39,12 +38,17 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
   };
 
-  unassignedTasksWithAppeals = () => sortTasks(
-    _.pick(this.props, 'tasks', 'appeals')
-  ).map((task) => ({
-    task,
-    appeal: this.props.appeals[task.appealId]
-  }));
+  unassignedTasksWithAppeals = () => {
+    const { tasks, appeals } = this.props;
+
+    return sortTasks({
+      tasks,
+      appeals
+    }).map((task) => ({
+      task,
+      appeal: this.props.appeals[task.appealId]
+    }));
+  }
 
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
