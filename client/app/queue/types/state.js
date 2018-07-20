@@ -58,7 +58,7 @@ export type QueueState = {
   loadedQueue: {
     appeals: LoadedQueueAppeals,
     tasks: LoadedQueueTasks,
-    loadedUserId: number
+    loadedUserId: ?number
   },
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},

@@ -11,6 +11,8 @@ import { ACTIONS } from './constants';
 import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
+import * as CASE_DETAIL_ACTIONS from './CaseDetail/actionTypes';
+import type { QueueState } from './types/state';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -46,7 +48,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-const workQueueReducer = (state = initialState, action = {}) => {
+const workQueueReducer = (state = initialState, action = {}): QueueState => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -423,6 +425,18 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case CASE_DETAIL_ACTIONS.SET_ACTIVE_TASK: {
+    if (!action.payload.taskObj) {
+      return state;
+    }
+    return {
+      ...state,
+      tasks: {
+        ...state.tasks,
+        [action.payload.taskObj.appealId]: action.payload.taskObj
+      }
+    };
+  }
   default:
     return state;
   }
