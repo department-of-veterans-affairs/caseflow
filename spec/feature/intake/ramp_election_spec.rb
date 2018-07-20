@@ -186,7 +186,7 @@ RSpec.feature "RAMP Election Intake" do
 
     expect(page).to_not have_content("Please select an option.")
 
-    within_fieldset("Which review lane did the Veteran select??") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Supplemental Claim").click
     end
     safe_click "#button-submit-review"
@@ -210,7 +210,7 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the Veteran select??") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
@@ -233,7 +233,7 @@ RSpec.feature "RAMP Election Intake" do
     # the review request page if you haven't yet reviewed the intake
     visit "/intake/finish"
 
-    within_fieldset("Which review lane did the Veteran select??") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
@@ -324,7 +324,7 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the Veteran select??") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
@@ -349,7 +349,7 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the Veteran select??") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
