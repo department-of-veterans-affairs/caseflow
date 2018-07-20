@@ -94,6 +94,14 @@ class AmaReview < ApplicationRecord
     )
   end
 
+  def create_associated_rated_issues_in_vbms
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: end_product_reference_id,
+      contention_descriptions: contention_descriptions_to_create
+    )
+  end
+
   def end_product_station
     "397" # TODO: Change to 499 National Work Queue
   end
