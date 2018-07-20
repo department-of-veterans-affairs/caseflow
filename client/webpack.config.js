@@ -50,7 +50,8 @@ const config = {
           loader: 'file-loader',
           options: {
             name: './fonts/[name].[ext]',
-            outputPath: '../../public/fonts'
+            outputPath: 'fonts/',
+            publicPath: '../../public/assets/'
           }
 
         }]
@@ -63,8 +64,9 @@ const config = {
           options: {
             // Name of bundled asset
             name: '[name][md5:hash].[ext]',
-            // Output location for assets. Final: `app/assets/webpack/images/`
-            outputPath: '../../public/images'
+            // Output location for assets.
+            outputPath: 'images/',
+            publicPath: '../../public/assets/'
           } }
 
       }
