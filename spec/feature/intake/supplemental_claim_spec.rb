@@ -176,6 +176,10 @@ RSpec.feature "Supplemental Claim Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    expect(page).to have_content("1 issue")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
@@ -219,13 +223,15 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
     visit "/supplemental_claims/IAMANEPID/edit"

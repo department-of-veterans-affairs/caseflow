@@ -94,7 +94,7 @@ class NonRatedIssue extends React.PureComponent {
           name="Issue date"
           label="Decision date"
           value={decisionDate}
-          required={description ? (description.value !== 'Unknown issue category') : false}
+          required={category ? (category !== 'Unknown issue category') : false}
           onChange={(event) => this.handleDecisionDateChange(event)} />
       </div>
     );
