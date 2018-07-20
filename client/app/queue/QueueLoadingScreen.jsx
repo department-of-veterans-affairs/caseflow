@@ -91,6 +91,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     const {
       activeAppeal,
       appeals,
+      tasks,
       userRole
     } = this.props;
 
@@ -110,7 +111,9 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
         this.props.setActiveAppeal(response.body.appeal);
       }),
       ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        this.props.setActiveAppeal(response.body.tasks[0]);
+        const task = response.body.tasks[0];
+        task.appealId = task.id;
+        this.props.setActiveTask(task);
       }),
     ]);
   };
