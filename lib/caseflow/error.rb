@@ -57,4 +57,7 @@ module Caseflow::Error
   class IssueRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
+
+  class IdtApiError < StandardError; end
+  class InvalidOneTimeKey < IdtApiError; end
 end

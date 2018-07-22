@@ -50,8 +50,6 @@ export default class LegacyIssueListItem extends React.PureComponent {
       }
     } = this.props;
 
-    console.log(program); // eslint-disable-line no-console
-
     const issueLevels = [];
     const vacolsIssue = ISSUE_INFO[program].levels[type];
 

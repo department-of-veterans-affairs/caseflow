@@ -70,7 +70,15 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(appeals.first.docket_number)
       expect(page).to have_content(poa_name)
 
-      expect(page).to have_content("View #{appeals.first.documents.count} documents")
+      expect(page).to have_content("View Veteran's documents")
+      expect(page).to have_selector("text", id: "NEW")
+
+      click_on "View Veteran's documents"
+
+      visit "/queue/beaam"
+      click_on appeals.first.veteran.first_name
+
+      expect(page).not_to have_selector("text", id: "NEW")
     end
   end
 end

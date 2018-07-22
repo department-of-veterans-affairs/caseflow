@@ -28,7 +28,6 @@ RSpec.feature "Case details" do
   end
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -36,7 +35,6 @@ RSpec.feature "Case details" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -187,14 +185,11 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View documents"
+      click_on "View Veteran's documents"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
       expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
-
-      click_on "Caseflow"
-      expect(page.current_path).to eq "/queue"
     end
   end
 
@@ -233,13 +228,7 @@ RSpec.feature "Case details" do
     end
 
     before do
-      FeatureToggle.enable!(:judge_queue)
-
       User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_queue)
     end
 
     scenario "displays who prepared task" do

@@ -87,6 +87,8 @@ export const getIssueTypeDescription = (issue: Issue) => {
     type
   } = issue;
 
+  console.log(`program: ${program}`); // eslint-disable-line no-console
+
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
@@ -170,7 +172,7 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
     return newFormat.test(documentId);
   }
 
-  const initialChar = workProduct.includes('IME') ? 'V' : 'M';
+  const initialChar = workProduct.includes('IME') ? 'M' : 'V';
   const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
   const oldFormat = new RegExp(regex);
 
