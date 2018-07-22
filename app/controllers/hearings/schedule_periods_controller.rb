@@ -39,37 +39,15 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   # rubocop:enable Metrics/MethodLength
 
   def create
-    file_name = params["type"] + Time.now.to_s + '.xlsx'
-    file = base64_to_file(params["file"], file_name)
-    S3Service.store_file(file_name, file.tempfile.to_path.to_s, :filepath)
-    schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id, file_name: file_name))
+    file_name = params["type"] + Time.zone.now.to_s + ".xlsx"
+    uploaded_file = Base64Service.to_file(params["file"], file_name)
+    S3Service.store_file(file_name, uploaded_file.tempfile, :filepath)
+    schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
+                                                                          file_name: file_name))
     render json: { id: schedule_period.id }
   end
 
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
-  end
-
-  def base64_to_file(base64_data, filename=nil)
-    return base64_data unless base64_data.is_a? String
-
-    start_regex = /[a-z]{3,4};base64,/
-    filename ||= SecureRandom.hex
-
-    regex_result = start_regex.match(base64_data)
-    if base64_data && regex_result
-      start = regex_result.to_s
-      tempfile = Tempfile.new(filename)
-      tempfile.binmode
-      tempfile.write(Base64.decode64(base64_data[start.length..-1]))
-      uploaded_file = ActionDispatch::Http::UploadedFile.new(
-          :tempfile => tempfile,
-          :filename => filename,
-          :original_filename => filename
-      )
-      uploaded_file
-    else
-      nil
-    end
   end
 end
