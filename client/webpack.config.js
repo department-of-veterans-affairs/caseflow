@@ -2,6 +2,9 @@ const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const bourbon = require('bourbon').includePaths;
+const neat = require('bourbon-neat').includePaths;
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
@@ -15,7 +18,7 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/javascripts')
+    path: path.join(__dirname, '../public/assets')
   },
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
@@ -44,35 +47,26 @@ const config = {
         exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
       },
       {
-        // Load only font files
-        test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: './fonts/[name].[ext]',
-            outputPath: 'fonts/',
-            publicPath: '../../public/assets/'
-          }
-
-        }]
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract('style-loader', `css!resolve-url!sass?includePaths[]=${bourbon}&includePaths[]=${neat}&includePaths[]=` + '~/uswds/src/stylesheets' + '&sourceMap')
+      },
+      { test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: 'url?limit=10000!img?progressive=true&-minimize'
       },
       {
-      // Load only .jpg .jpeg, and .png files
-        test: /\.(jpg|jpeg|png|svg)(\?.*)?$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            // Name of bundled asset
-            name: '[name][md5:hash].[ext]',
-            // Output location for assets.
-            outputPath: 'images/',
-            publicPath: '../../public/assets/'
-          } }
-
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?limit=10000&minetype=application/font-woff'
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader'
       }
 
     ]
-  }
+  },
+  plugins: [
+    new ExtractTextPlugin('webpack-bundle.css'),
+  ]
 };
 
 if (devBuild) {
