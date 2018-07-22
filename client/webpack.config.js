@@ -18,7 +18,7 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../public/assets')
+    path: path.join(__dirname, '../app/assets/webpack')
   },
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
