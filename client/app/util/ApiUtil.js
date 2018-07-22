@@ -139,29 +139,6 @@ const ApiUtil = {
     return result;
   },
 
-  uploadFile(url, formData) {
-    let xhr = new XMLHttpRequest();
-    const headers = ReactOnRails.authenticityHeaders();
-
-    xhr.open("post", url, true);
-    xhr.setRequestHeader('X-CSRF-Token', headers['X-CSRF-Token']);
-    xhr.setRequestHeader('X-Requested-With', headers['X-Requested-With']);
-
-    // xhr.onload = () => onSuccess();
-
-    xhr.send(formData);
-  },
-
-  // from https://stackoverflow.com/questions/35940290
-  dataURLtoFile(url, fileName) {
-    let arr = url.split(','), mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], fileName, {type:mime});
-  },
-
   ..._.mapValues(httpMethods, timeApiRequest)
 };
 

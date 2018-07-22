@@ -35,7 +35,6 @@ export class BuildScheduleUploadContainer extends React.Component {
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
         file: this.props.roCoFileUpload.file,
-        fileName: this.props.roCoFileUpload.fileName,
         startDate: this.props.roCoStartDate,
         endDate: this.props.roCoEndDate,
         type: this.props.fileType
@@ -45,7 +44,6 @@ export class BuildScheduleUploadContainer extends React.Component {
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       schedulePeriod = {
         file: this.props.judgeFileUpload.file,
-        fileName: this.props.judgeFileUpload.fileName,
         startDate: this.props.judgeStartDate,
         endDate: this.props.judgeEndDate,
         type: this.props.fileType
@@ -61,14 +59,6 @@ export class BuildScheduleUploadContainer extends React.Component {
     }
 
     const data = this.formatData();
-
-    let formData = new FormData();
-    formData.append(
-      "spreadsheet",
-      ApiUtil.dataURLtoFile(data.file, 'tbd.xlsx')
-    );
-
-    ApiUtil.uploadFile('/hearings/schedule/build/upload/upload_file', formData);
 
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
