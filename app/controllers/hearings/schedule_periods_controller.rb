@@ -39,7 +39,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   # rubocop:enable Metrics/MethodLength
 
   def create
-    file_name = params["type"] + Time.zone.now.to_s + ".xlsx"
+    file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["file"], file_name)
     S3Service.store_file(file_name, uploaded_file.tempfile, :filepath)
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
