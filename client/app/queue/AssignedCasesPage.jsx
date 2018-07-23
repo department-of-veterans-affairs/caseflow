@@ -49,8 +49,6 @@ class AssignedCasesPage extends React.PureComponent<Props> {
     }
   }
 
-  selectedTasks = () => this.props.selectedTasks
-
   render = () => {
     const props = this.props;
     const {
