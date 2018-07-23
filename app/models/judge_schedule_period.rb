@@ -1,4 +1,5 @@
 class JudgeSchedulePeriod < SchedulePeriod
+  before_create :validate_spreadsheet
   after_create :import_spreadsheet
 
   def validate_spreadsheet
