@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
-import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
+import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -107,7 +107,7 @@ export class CaseSnapshot extends React.PureComponent {
     if (userRole === USER_ROLES.ATTORNEY) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
+      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.vacols_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>

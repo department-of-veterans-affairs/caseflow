@@ -66,11 +66,11 @@ type ComponentState = {
 };
 
 // todo: make StartCheckoutFlowDropdownBase
-class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, ComponentState> {
+class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = { selectedOption: null };
   }
 
   handleChange = (option) => {
@@ -163,13 +163,13 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
       {this.assignWidgetVisible() &&
         <AssignWidget
           onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.attributes.assigned_to_pg_id}
+          previousAssigneeId={task.attributes.assigned_to_pg_id.toString()}
           selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }
 
-JudgeStartCheckoutFlowDropdown.propTypes = {
+JudgeActionsDropdown.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
@@ -194,4 +194,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default (
   withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown)): React.ComponentType<Params>);
+    connect(mapStateToProps, mapDispatchToProps)(JudgeActionsDropdown)): React.ComponentType<Params>);

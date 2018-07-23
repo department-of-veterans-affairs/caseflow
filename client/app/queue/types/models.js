@@ -115,6 +115,7 @@ export type Task = {
     task_id: string,
     task_type: string,
     user_id: string,
+    assigned_to_pg_id: number,
     work_product: string
   }
 };
