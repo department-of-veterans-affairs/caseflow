@@ -1,6 +1,11 @@
 describe HigherLevelReviewIntake do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -51,7 +56,7 @@ describe HigherLevelReviewIntake do
       )
     end
 
-    it "cancels and deletes the Higher Level Review record created" do
+    it "cancels and deletes the Higher-Level Review record created" do
       subject
 
       expect(intake.reload).to be_canceled
@@ -212,7 +217,7 @@ describe HigherLevelReviewIntake do
             station_of_jurisdiction: "397",
             date: detail.receipt_date.to_date,
             end_product_modifier: "032",
-            end_product_label: "Higher Level Review Rating",
+            end_product_label: "Higher-Level Review Rating",
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false

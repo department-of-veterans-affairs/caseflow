@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+  has_many :tasks, as: :assigned_to
 
   BOARD_STATION_ID = "101".freeze
 
@@ -174,6 +175,17 @@ class User < ApplicationRecord
 
   def current_case_assignments
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
+  end
+
+  def judge_css_id
+    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
+      return id if value[:attorneys].include?(css_id)
+    end
+    nil
+  end
+
+  def as_json(options)
+    super(options).merge("judge_css_id" => judge_css_id)
   end
 
   private

@@ -17,4 +17,10 @@ module FakeDateHelper
     dates.to_a
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+
+  def get_unique_dates_for_ro_between(ro_name, schedule_period, num_of_dates)
+    get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, num_of_dates).map do |date|
+      create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: ro_name)
+    end
+  end
 end

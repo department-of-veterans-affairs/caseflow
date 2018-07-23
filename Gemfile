@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
 
 gem "moment_timezone-rails"
 
@@ -48,7 +48,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b8b6d0f918d855b61b31f03e01a39d802d587367"
 
 # PDF Tools
 gem "pdf-forms"
@@ -88,6 +88,10 @@ gem "redis-namespace"
 
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
+
+# nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
+# https://github.com/sparklemotion/nokogiri/pull/1746
+gem "nokogiri", ">= 1.8.3"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

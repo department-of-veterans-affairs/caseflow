@@ -1,6 +1,5 @@
 class RampElection < RampReview
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
-  has_many :ramp_refilings
   has_many :ramp_closed_appeals
 
   RESPOND_BY_TIME = 60.days.freeze
@@ -30,9 +29,9 @@ class RampElection < RampReview
   end
 
   def recreate_issues_from_contentions!
-    # If there is a saved refiling for this election, then the issues
-    # are locked and cannot be recreated
-    return false if ramp_refilings.count > 0
+    # If there is any ramp issues attached to saved ramp refilings connected to this election,
+    # then the issues are locked and cannot be recreated
+    return false if any_matching_refiling_ramp_issues?
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
@@ -69,6 +68,7 @@ class RampElection < RampReview
   end
 
   def sync!
+    create_end_product_establishment_if_missing
     recreate_issues_from_contentions!
     sync_ep_status!
   rescue StandardError => e
@@ -80,6 +80,27 @@ class RampElection < RampReview
   end
 
   private
+
+  def create_end_product_establishment_if_missing
+    return if EndProductEstablishment.find_by(source: self)
+
+    EndProductEstablishment.create!(
+      veteran_file_number: veteran_file_number,
+      source: self,
+      established_at: established_at,
+      reference_id: end_product_reference_id,
+      claim_date: end_product_establishment.result.claim_date,
+      code: end_product_establishment.result.claim_type_code,
+      modifier: end_product_establishment.result.modifier,
+      synced_status: end_product_status,
+      last_synced_at: end_product_status_last_synced_at,
+      station: "397"
+    )
+  end
+
+  def any_matching_refiling_ramp_issues?
+    RampIssue.where(source_issue_id: issues.map(&:id)).any?
+  end
 
   def validate_receipt_date
     return unless receipt_date

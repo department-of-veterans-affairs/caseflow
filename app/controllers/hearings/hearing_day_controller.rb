@@ -3,11 +3,11 @@ class Hearings::HearingDayController < HearingScheduleController
 
   # show schedule days for date range provided
   def index
-    @start_date = validate_start_date(params[:start_date])
-    @end_date = validate_end_date(params[:end_date])
+    start_date = validate_start_date(params[:start_date])
+    end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, travel_board = HearingDay.load_days(@start_date, @end_date, regional_office)
+    video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
       format.html do
@@ -27,7 +27,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) unless hearing.valid?
     render json: {
-      hearing: json_hearings(hearing)
+      hearing: json_created_hearings(hearing)
     }, status: :created
   end
 
@@ -35,8 +35,15 @@ class Hearings::HearingDayController < HearingScheduleController
     return record_not_found unless hearing
 
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
+
+    json_hearing = if updated_hearing.class.equal?(TrueClass)
+                     json_created_hearings(hearing)
+                   else
+                     json_tb_hearings(updated_hearing)
+                   end
+
     render json: {
-      hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
+      hearing: json_hearing
     }, status: :ok
   end
 
@@ -81,17 +88,42 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: 404
   end
 
+  def json_created_hearings(hearings)
+    json_hash = ActiveModelSerializers::SerializableResource.new(
+      hearings,
+      each_serializer: ::Hearings::HearingDayCreateSerializer
+    ).as_json
+
+    format_for_client(json_hash)
+  end
+
   def json_hearings(hearings)
-    ActiveModelSerializers::SerializableResource.new(
+    json_hash = ActiveModelSerializers::SerializableResource.new(
       hearings,
       each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
+
+    format_for_client(json_hash)
   end
 
   def json_tb_hearings(tbhearings)
-    ActiveModelSerializers::SerializableResource.new(
+    json_hash = ActiveModelSerializers::SerializableResource.new(
       tbhearings,
       each_serializer: ::Hearings::TravelBoardScheduleSerializer
     ).as_json
+
+    format_for_client(json_hash)
+  end
+
+  def format_for_client(json_hash)
+    if json_hash[:data].is_a?(Array)
+      hearing_array = []
+      json_hash[:data].each do |hearing_hash|
+        hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
+      end
+      hearing_array
+    else
+      { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
+    end
   end
 end

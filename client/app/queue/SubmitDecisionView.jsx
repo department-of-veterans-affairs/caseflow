@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -7,7 +7,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
-  buildCaseReviewPayload
+  buildCaseReviewPayload,
+  validateWorkProductTypeAndId
 } from './utils';
 
 import {
@@ -32,17 +33,49 @@ import {
   fullWidth,
   marginBottom,
   marginTop,
-  ERROR_FIELD_REQUIRED
+  ATTORNEY_COMMENTS_MAX_LENGTH,
+  OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import COPY from '../../COPY.json';
 
 const radioFieldStyling = css(marginBottom(0), marginTop(2), {
   '& .question-label': marginBottom(0)
 });
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
-class SubmitDecisionView extends React.PureComponent {
+import type {
+  Task,
+  LegacyAppeal,
+  Judges
+} from './types/models';
+import type { UiStateError } from './types/state';
+
+type Params = {|
+  appealId: string,
+  nextStep: string
+|};
+
+type Props = Params & {|
+  // state
+  appeal: LegacyAppeal,
+  decision: Object,
+  task: Task,
+  judges: Judges,
+  highlightFormItems: Boolean,
+  userRole: string,
+  selectingJudge: Boolean,
+  error: ?UiStateError,
+  // dispatch
+  setDecisionOptions: typeof setDecisionOptions,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  setSelectingJudge: typeof setSelectingJudge,
+  requestSave: typeof requestSave,
+  deleteAppeal: typeof deleteAppeal
+|};
+
+class SubmitDecisionView extends React.PureComponent<Props> {
   componentDidMount = () => {
     const { task: { attributes: task } } = this.props;
     const judge = this.props.judges[task.added_by_css_id];
@@ -57,11 +90,6 @@ class SubmitDecisionView extends React.PureComponent {
     }
   };
 
-  getBreadcrumb = () => ({
-    breadcrumb: `Submit ${getDecisionTypeDisplay(this.props.decision)}`,
-    path: `/queue/appeals/${this.props.vacolsId}/submit`
-  });
-
   validateForm = () => {
     const {
       type: decisionType,
@@ -71,6 +99,10 @@ class SubmitDecisionView extends React.PureComponent {
 
     if (decisionType === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
+
+      if (!validateWorkProductTypeAndId(this.props.decision)) {
+        return false;
+      }
     }
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
@@ -85,7 +117,7 @@ class SubmitDecisionView extends React.PureComponent {
         attributes: {
           issues,
           veteran_full_name,
-          vacols_id: vacolsId
+          vacols_id: appealId
         }
       },
       decision,
@@ -105,7 +137,7 @@ class SubmitDecisionView extends React.PureComponent {
     been sent to ${fields.judge} for review.`;
 
     this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
-      then(() => this.props.deleteAppeal(vacolsId));
+      then(() => this.props.deleteAppeal(appealId));
   };
 
   getJudgeSelectComponent = () => {
@@ -154,21 +186,13 @@ class SubmitDecisionView extends React.PureComponent {
     return <div className={fieldClasses}>
       <label>Submit to judge:</label>
       {shouldDisplayError && <span className="usa-input-error-message">
-        {ERROR_FIELD_REQUIRED}
+        {COPY.FORM_ERROR_FIELD_REQUIRED}
       </span>}
       {componentContent}
     </div>;
   };
 
   render = () => {
-    // todo: move to constants?
-    const omoTypes = [{
-      displayText: 'OMO - VHA',
-      value: 'OMO - VHA'
-    }, {
-      displayText: 'OMO - IME',
-      value: 'OMO - IME'
-    }];
     const {
       highlightFormItems,
       error,
@@ -179,6 +203,13 @@ class SubmitDecisionView extends React.PureComponent {
       }
     } = this.props;
     const decisionTypeDisplay = getDecisionTypeDisplay(decision);
+    let documentIdErrorMessage = '';
+
+    if (!decisionOpts.document_id) {
+      documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
+    } else if (!validateWorkProductTypeAndId(this.props.decision)) {
+      documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
+    }
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -197,9 +228,9 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
-        options={omoTypes}
+        options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         styling={radioFieldStyling}
-        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox
         name="overtime"
@@ -211,7 +242,7 @@ class SubmitDecisionView extends React.PureComponent {
       <TextField
         label="Document ID:"
         name="document_id"
-        errorMessage={(highlightFormItems && !decisionOpts.document_id) ? ERROR_FIELD_REQUIRED : ''}
+        errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
       />
@@ -222,27 +253,23 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
+        maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
     </React.Fragment>;
   };
 }
-
-SubmitDecisionView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  nextStep: PropTypes.string.isRequired
-};
 
 const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
       stagedChanges: {
         appeals: {
-          [ownProps.vacolsId]: appeal
+          [ownProps.appealId]: appeal
         },
         taskDecision: decision
       },
       tasks: {
-        [ownProps.vacolsId]: task
+        [ownProps.appealId]: task
       },
       judges
     },
@@ -276,4 +303,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SubmitDecisionView));
+export default (connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  decisionViewBase(SubmitDecisionView)
+): React.ComponentType<Params>
+);

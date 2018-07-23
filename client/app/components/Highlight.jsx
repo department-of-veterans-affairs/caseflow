@@ -12,6 +12,7 @@ class Highlight extends PureComponent {
       <Highlighter
         searchWords={_.union([searchQuery], searchQuery.split(' '))}
         textToHighlight={this.props.children}
+        autoEscape
       />
     </span>;
   }

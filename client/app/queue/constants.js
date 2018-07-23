@@ -7,6 +7,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -19,6 +20,8 @@ export const COLORS = {
 export const ACTIONS = {
   RECEIVE_QUEUE_DETAILS: 'RECEIVE_QUEUE_DETAILS',
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
+  RECEIVE_NEW_FILES: 'RECEIVE_NEW_FILES',
+  ERROR_ON_RECEIVE_NEW_FILES: 'ERROR_ON_RECEIVE_NEW_FILES',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
@@ -42,7 +45,9 @@ export const ACTIONS = {
   SET_SELECTED_ASSIGNEE_OF_USER: 'SET_SELECTED_ASSIGNEE_OF_USER',
   START_ASSIGN_TASKS_TO_USER: 'START_ASSIGN_TASKS_TO_USER',
   TASK_INITIAL_ASSIGNED: 'TASK_INITIAL_ASSIGNED',
-  TASK_REASSIGNED: 'TASK_REASSIGNED'
+  TASK_REASSIGNED: 'TASK_REASSIGNED',
+  RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
+  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -74,8 +79,6 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const ERROR_FIELD_REQUIRED = 'This field is required';
-
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
     label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
@@ -93,6 +96,14 @@ export const DRAFT_DECISION_OPTIONS = [{
 }, {
   label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
   value: DECISION_TYPES.OMO_REQUEST
+}];
+
+export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
+  displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA,
+  value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA
+}, {
+  displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME,
+  value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME
 }];
 
 export const SEARCH_ERROR_FOR = {
@@ -121,10 +132,12 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 
 // max length of VACOLS issue description field `ISSDESC`
 export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
+// max length for Attorney comments `DECASS.DEATCOM`
+export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
 export const USER_ROLES = {
-  ATTORNEY: 'Attorney',
-  JUDGE: 'Judge'
+  ATTORNEY: USER_ROLE_TYPES.attorney,
+  JUDGE: USER_ROLE_TYPES.judge
 };
 
 export const PAGE_TITLES = {

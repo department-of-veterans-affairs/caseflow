@@ -1,6 +1,11 @@
 describe HigherLevelReview do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -89,6 +94,49 @@ describe HigherLevelReview do
     end
   end
 
+  context "#claimant_participant_id" do
+    subject { higher_level_review.claimant_participant_id }
+
+    it "returns claimant's participant ID" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(claimant_data: "12345")
+      higher_level_review.save!
+      expect(subject).to eql("12345")
+    end
+
+    it "returns new claimant's participant ID if replaced" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(claimant_data: "12345")
+      higher_level_review.create_claimants!(claimant_data: "23456")
+      higher_level_review.reload
+      expect(subject).to eql("23456")
+    end
+
+    it "returns nil when there are no claimants" do
+      expect(subject).to be_nil
+    end
+  end
+
+  context "#claimant_not_veteran" do
+    subject { higher_level_review.claimant_not_veteran }
+
+    it "returns true if claimant is not veteran" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(claimant_data: "12345")
+      expect(subject).to be true
+    end
+
+    it "returns false if claimant is veteran" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(claimant_data: veteran.participant_id)
+      expect(subject).to be false
+    end
+
+    it "returns nil if there are no claimants" do
+      expect(subject).to be_nil
+    end
+  end
+
   context "#create_issues!" do
     before { higher_level_review.save! }
     subject { higher_level_review.create_issues!(request_issues_data: request_issues_data) }
@@ -160,7 +208,7 @@ describe HigherLevelReview do
           station_of_jurisdiction: "397",
           date: receipt_date.to_date,
           end_product_modifier: "030",
-          end_product_label: "Higher Level Review Rating",
+          end_product_label: "Higher-Level Review Rating",
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false

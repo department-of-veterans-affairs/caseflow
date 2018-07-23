@@ -1,38 +1,60 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import StatusMessage from '../components/StatusMessage';
 import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
-import AssignWidget from '../components/AssignWidget';
+import AssignWidget from './components/AssignWidget';
+import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY.json';
+import {
+  resetErrorMessages,
+  resetSuccessMessages
+} from './uiReducer/uiActions';
+import { selectedTasksSelector } from './utils';
+import type { Task } from './types/models';
 
-const UnassignedCasesPage = (props) => {
-  const { tasksAndAppeals: { length: reviewableCount }, userId, featureToggles } = props;
-  let tableContent;
+type Params = {|
+  userId: string,
+|};
 
-  if (reviewableCount === 0) {
-    tableContent = <StatusMessage title="Tasks not found">
-       Congratulations! You don't have any cases to assign.
-    </StatusMessage>;
-  } else {
-    tableContent = <React.Fragment>
-      <h2>Cases to Assign</h2>
-      {featureToggles.judge_assign_cases &&
-        <AssignWidget previousAssigneeId={userId}
-          onTaskAssignment={(params) => props.initialAssignTasksToUser(params)} />}
-      <JudgeAssignTaskTable {...props} />
-    </React.Fragment>;
+type Props = Params & {|
+  // Props
+  featureToggles: Object,
+  selectedTasks: Array<Task>,
+  // Action creators
+  initialAssignTasksToUser: typeof initialAssignTasksToUser,
+  resetErrorMessages: typeof resetErrorMessages,
+  resetSuccessMessages: typeof resetSuccessMessages
+|};
+
+class UnassignedCasesPage extends React.PureComponent<Props> {
+  componentDidMount = () => {
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
   }
 
-  return tableContent;
-};
+  render = () => {
+    const { userId, featureToggles, selectedTasks } = this.props;
 
-const mapStateToProps = (state) => {
+    return <React.Fragment>
+      <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
+      {featureToggles.judge_assignment_to_attorney &&
+        <AssignWidget
+          previousAssigneeId={userId}
+          onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
+          selectedTasks={selectedTasks} />}
+      <JudgeAssignTaskTable {...this.props} />
+    </React.Fragment>;
+  }
+}
+
+const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
-      attorneysOfJudge
+      tasks,
+      isTaskAssignedToUserSelected
     },
     ui: {
       featureToggles
@@ -40,14 +62,18 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    attorneysOfJudge,
-    featureToggles
+    tasks,
+    isTaskAssignedToUserSelected,
+    featureToggles,
+    selectedTasks: selectedTasksSelector(state, ownProps.userId)
   };
 };
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
-    initialAssignTasksToUser
+    initialAssignTasksToUser,
+    resetErrorMessages,
+    resetSuccessMessages
   }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedCasesPage);
+export default (connect(mapStateToProps, mapDispatchToProps)(UnassignedCasesPage): React.ComponentType<Params>);

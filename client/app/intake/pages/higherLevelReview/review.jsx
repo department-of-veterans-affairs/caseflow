@@ -8,10 +8,11 @@ import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
-import { submitReview } from '../../actions/ama';
-import { setReceiptDate, setClaimantNotVeteran, setClaimant } from '../../actions/common';
+import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
+import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Review extends React.PureComponent {
   render() {
@@ -23,7 +24,8 @@ class Review extends React.PureComponent {
       informalConference,
       informalConferenceError,
       sameOffice,
-      sameOfficeError
+      sameOfficeError,
+      reviewIntakeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -36,6 +38,8 @@ class Review extends React.PureComponent {
 
     return <div>
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
+
+      { reviewIntakeError && <ErrorAlert /> }
 
       <DateSelector
         name="receipt-date"
@@ -54,7 +58,7 @@ class Review extends React.PureComponent {
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setInformalConference}
         errorMessage={informalConferenceError}
-        value={informalConference}
+        value={informalConference === null ? null : informalConference.toString()}
       />
 
       <RadioField
@@ -65,11 +69,10 @@ class Review extends React.PureComponent {
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={this.props.setSameOffice}
         errorMessage={sameOfficeError}
-        value={sameOffice}
+        value={sameOffice === null ? null : sameOffice.toString()}
       />
 
       <SelectClaimantConnected />
-
     </div>;
   }
 }
@@ -132,7 +135,8 @@ export default connect(
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
-    sameOfficeError: state.higherLevelReview.sameOfficeError
+    sameOfficeError: state.higherLevelReview.sameOfficeError,
+    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,

@@ -31,6 +31,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :idt do    
+    get 'auth', to: 'authentications#index'
+    namespace :api do
+      namespace :v1 do
+        get 'token', to: 'tokens#generate_token'
+        get 'appeals', to: 'appeals#index'
+      end
+    end
+  end
+
+
   namespace :metrics do
     namespace :v1 do
       resources :histogram, only: :create
@@ -83,7 +94,9 @@ Rails.application.routes.draw do
 
   resources :appeals, only: [:index, :show] do
     get :document_count
+    get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
+    get :tasks
   end
 
   resources :beaam_appeals, only: [:index]
@@ -93,10 +106,14 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
-    resources :schedule_periods, only: [:index]
+    resources :schedule_periods, only: [:index, :create]
+    resources :schedule_periods, only: [:show], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
@@ -146,7 +163,7 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create]
+  resources :tasks, only: [:index, :create, :update]
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
@@ -180,6 +197,7 @@ Rails.application.routes.draw do
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
+      post "/reseed", to: "users#reseed", as: "reseed"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
   end

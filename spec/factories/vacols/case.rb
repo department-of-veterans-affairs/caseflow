@@ -211,9 +211,42 @@ FactoryBot.define do
       bfhr "2"
     end
 
+    trait :reopenable do
+      bfmpro "HIS"
+      bfcurloc "99"
+      bfboard "00"
+
+      after(:create) do |vacols_case, _evaluator|
+        create(:priorloc,
+               lockey: vacols_case.bfkey,
+               locstto: "77",
+               locdin: Time.zone.today - 6,
+               locdout: Time.zone.today - 2)
+      end
+    end
+
     trait :aod do
       after(:create) do |vacols_case, _evaluator|
         create(:note, tsktknm: vacols_case.bfkey, tskactcd: "B")
+      end
+    end
+
+    trait :docs_in_vbms do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = %w[Y 1 0].sample
+      end
+    end
+
+    trait :docs_in_vva do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tisubj2 = "Y"
+      end
+    end
+
+    trait :paper_case do
+      after(:build) do |vacols_case, _evaluator|
+        vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
       end
     end
 

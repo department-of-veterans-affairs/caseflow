@@ -3,16 +3,13 @@ require "rails_helper"
 RSpec.feature "RAMP Election Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do
@@ -170,8 +167,8 @@ RSpec.feature "RAMP Election Intake" do
       "Receipt Date cannot be earlier than RAMP start date, 11/01/2017"
     )
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review", match: :prefer_exact).click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review", match: :prefer_exact).click
     end
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     safe_click "#button-submit-review"
@@ -189,7 +186,7 @@ RSpec.feature "RAMP Election Intake" do
 
     expect(page).to_not have_content("Please select an option.")
 
-    within_fieldset("Which review lane did the veteran select?") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Supplemental Claim").click
     end
     safe_click "#button-submit-review"
@@ -205,6 +202,27 @@ RSpec.feature "RAMP Election Intake" do
     expect(page).to have_content("Broken thigh")
   end
 
+  scenario "Review intake for RAMP Election form fails due to unexpected error" do
+    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+
+    intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+    intake.start!
+
+    visit "/intake"
+
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
+    end
+
+    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    expect_any_instance_of(RampElectionIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/review-request")
+  end
+
   scenario "Complete intake for RAMP Election form" do
     Fakes::VBMSService.end_product_claim_id = "SHANE9642"
 
@@ -215,8 +233,8 @@ RSpec.feature "RAMP Election Intake" do
     # the review request page if you haven't yet reviewed the intake
     visit "/intake/finish"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
@@ -236,7 +254,7 @@ RSpec.feature "RAMP Election Intake" do
     expect(AppealRepository).to receive(:close_undecided_appeal!).with(
       appeal: LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey),
       user: current_user,
-      closed_on: Time.zone.today,
+      closed_on: Time.zone.now,
       disposition_code: "P"
     )
 
@@ -256,7 +274,7 @@ RSpec.feature "RAMP Election Intake" do
 
     expect(page).to have_content("Intake completed")
     expect(page).to have_content(
-      "Established EP: 682HLRRRAMP - Higher Level Review Rating for Station 397"
+      "Established EP: 682HLRRRAMP - Higher-Level Review Rating for Station 397"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -268,7 +286,7 @@ RSpec.feature "RAMP Election Intake" do
         station_of_jurisdiction: "397",
         date: election.receipt_date.to_date,
         end_product_modifier: "682",
-        end_product_label: "Higher Level Review Rating",
+        end_product_label: "Higher-Level Review Rating",
         end_product_code: "682HLRRRAMP",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
@@ -306,8 +324,8 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
@@ -331,8 +349,8 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"

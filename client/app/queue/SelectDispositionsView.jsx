@@ -51,21 +51,16 @@ const smallTopMargin = css({ marginTop: '1rem' });
 class SelectDispositionsView extends React.PureComponent {
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.vacolsId}/dispositions`
-  });
-
   getNextStepUrl = () => {
     const {
-      vacolsId,
+      appealId,
       userRole,
       appeal: {
         attributes: { issues }
       }
     } = this.props;
     let nextStep;
-    const baseUrl = `/queue/appeals/${vacolsId}`;
+    const baseUrl = `/queue/appeals/${appealId}`;
 
     if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
       nextStep = 'remands';
@@ -86,15 +81,15 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   updateIssue = (issueId, attributes) => {
-    const { vacolsId } = this.props;
+    const { appealId } = this.props;
 
-    this.props.startEditingAppealIssue(vacolsId, issueId, attributes);
-    this.props.saveEditedAppealIssue(vacolsId);
+    this.props.startEditingAppealIssue(appealId, issueId, attributes);
+    this.props.saveEditedAppealIssue(appealId);
   };
 
   validateForm = () => {
     const { appeal: { attributes: { issues } } } = this.props;
-    const issuesWithoutDisposition = _.filter(issues, (issue) => _.isNull(issue.disposition));
+    const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
   };
@@ -110,7 +105,7 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link
-      to={`/queue/appeals/${this.props.vacolsId}/dispositions/edit/${issue.vacols_sequence_id}`}
+      to={`/queue/appeals/${this.props.appealId}/dispositions/edit/${issue.vacols_sequence_id}`}
     >
       Edit Issue
     </Link>
@@ -119,13 +114,13 @@ class SelectDispositionsView extends React.PureComponent {
     valueFunction: (issue) => <SelectIssueDispositionDropdown
       updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
       issue={issue}
-      vacolsId={this.props.vacolsId} />
+      appealId={this.props.appealId} />
   }];
 
   render = () => {
     const {
       saveResult,
-      vacolsId,
+      appealId,
       appeal: { attributes: { issues } }
     } = this.props;
 
@@ -146,19 +141,19 @@ class SelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${vacolsId}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${appealId}/dispositions/add`}>Add Issue</Link>
       </div>
     </React.Fragment>;
   };
 }
 
 SelectDispositionsView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   saveResult: state.ui.messages.success,
   ..._.pick(state.ui, 'userRole')
 });

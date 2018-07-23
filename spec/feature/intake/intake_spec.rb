@@ -3,16 +3,13 @@ require "rails_helper"
 RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do
@@ -131,7 +128,7 @@ RSpec.feature "Intake" do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("You don't have permission to view this veteran's information")
+        expect(page).to have_content("You don't have permission to view this Veteran's information")
       end
     end
 

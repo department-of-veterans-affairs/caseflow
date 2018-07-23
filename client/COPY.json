@@ -9,15 +9,13 @@
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
-  "BACK_TO_SEARCH_RESULTS_LINK_LABEL": "< Back to %s's case list",
-
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
-  "CASE_LIST_TABLE_DUE_DATE_COLUMN_TITLE": "Due Date",
+  "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting | Due on",
   "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
@@ -54,6 +52,8 @@
   "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
 
+  "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
+
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
@@ -63,6 +63,8 @@
   "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
+  "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
+  "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
 
@@ -74,7 +76,7 @@
 
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
-  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to judge",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
 
@@ -95,5 +97,43 @@
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_UPLOAD_LINK": "Upload files",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HISTORY_HEADER": "Upload History",
-  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule"
+  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule",
+
+  "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
+  "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
+  "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
+
+  "ASSIGN_WIDGET_OTHER": "Other",
+  "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
+  "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
+  "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
+  "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
+  "ASSIGN_WIDGET_SUCCESS": "Assigned %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned.",
+  "ASSIGN_WIDGET_LOADING": "Loading...",
+  "ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a user",
+  "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
+  "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",
+  "ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
+  "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney or judge:",
+  "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
+
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Hearing Schedule",
+  "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
+  "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
+  "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
+
+  "FORM_ERROR_FIELD_REQUIRED": "This field is required",
+  "FORM_ERROR_FIELD_INVALID": "This field is invalid",
+
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to VACOLS or use go back to upload another file.",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE": "Please confirm VACOLS upload",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY": "You are about to upload these assignments to VACOLS. Once this is done, you cannot perform this upload for the selected date range again. You will have to make individual edits to the schedule.",
+
+  "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view what you uploaded by clicking the 'View current schedule' link below."
 }

@@ -9,7 +9,7 @@ describe RoNonAvailability do
     it "imports ro non-availability days" do
       expect(RoNonAvailability.where(schedule_period: ro_schedule_period).count).to eq(0)
       RoNonAvailability.import_ro_non_availability(ro_schedule_period)
-      expect(RoNonAvailability.where(schedule_period: ro_schedule_period).count).to eq(232)
+      expect(RoNonAvailability.where(schedule_period: ro_schedule_period).count).to eq(227)
     end
   end
 end

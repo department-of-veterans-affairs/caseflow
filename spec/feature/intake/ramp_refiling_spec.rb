@@ -3,12 +3,17 @@ require "rails_helper"
 RSpec.feature "RAMP Refiling Intake" do
   before do
     FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -99,7 +104,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Start a RAMP refiling with an invalid option" do
-      # Create an complete higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
@@ -130,7 +135,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       fill_in "What is the Receipt Date of this form?", with: "11/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
 
@@ -146,6 +151,40 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(intake.completion_status).to eq("error")
       expect(intake.error_code).to eq("ineligible_for_higher_level_review")
       expect(intake.detail).to be_nil
+    end
+
+    scenario "Review intake for RAMP Refiling form fails due to unexpected error" do
+      ramp_election = create(:ramp_election,
+                             veteran_file_number: "12341234",
+                             notice_date: 5.days.ago,
+                             receipt_date: 4.days.ago,
+                             established_at: 2.days.ago,
+                             end_product_reference_id: Generators::EndProduct.build(
+                               veteran_file_number: "12341234",
+                               bgs_attrs: { status_type_code: "CLR" }
+                             ).claim_id)
+
+      Generators::Contention.build(
+        claim_id: ramp_election.end_product_reference_id,
+        text: "Left knee rating increase"
+      )
+
+      intake = RampRefilingIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      visit "/intake"
+
+      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      within_fieldset("Which review lane did the Veteran select?") do
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
+      end
+
+      expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
+
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Something went wrong")
+      expect(page).to have_current_path("/intake/review-request")
     end
 
     scenario "Complete a RAMP refiling for an appeal" do
@@ -236,7 +275,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       find("label", text: "Left knee rating increase").click
       find("label", text: "Left shoulder service connection").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -250,7 +289,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling for a supplemental claim" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
@@ -289,7 +328,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       Fakes::VBMSService.hold_request!
       expect(page).to have_button("Cancel intake", disabled: false)
@@ -337,7 +376,7 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling with only invalid issues" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
@@ -373,7 +412,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
 
       click_label("confirm-outside-caseflow-steps")
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -415,12 +454,12 @@ RSpec.feature "RAMP Refiling Intake" do
       click_on "Search"
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
       safe_click "#finish-intake"
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")

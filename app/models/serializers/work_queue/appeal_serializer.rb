@@ -1,4 +1,8 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :is_legacy_appeal do
+    false
+  end
+
   attribute :issues do
     object.request_issues
   end
@@ -83,6 +87,13 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :power_of_attorney do
     object.representative_name
+  end
+
+  attribute :power_of_attorney do
+    {
+      representative_type: object.representative_type,
+      representative_name: object.representative_name
+    }
   end
 
   attribute :regional_office do

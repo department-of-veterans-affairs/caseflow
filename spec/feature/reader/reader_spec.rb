@@ -107,7 +107,6 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:search)
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
 
@@ -1519,15 +1518,10 @@ RSpec.feature "Reader" do
     end
 
     before do
-      FeatureToggle.enable!(:efolder_api_v2)
       allow(VBMSService).to receive(:fetch_documents_for).with(appeal, anything).and_return(
         fetch_documents_responses[0],
         fetch_documents_responses[1]
       )
-    end
-
-    after do
-      FeatureToggle.disable!(:efolder_api_v2)
     end
 
     it "should alert user" do

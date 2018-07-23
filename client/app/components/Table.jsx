@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
+import ReactTooltip from 'react-tooltip';
+
+import { ChevronUp, ChevronDown } from './RenderFunctions';
+import { css, hover } from 'glamor';
+import { COLORS } from '../constants/AppConstants';
 
 /**
  * This component can be used to easily build tables.
@@ -34,11 +39,28 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
+  const sortableHeaderStyle = css(
+    { color: COLORS.PRIMARY },
+    hover({ cursor: 'pointer' })
+  );
+
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) =>
         <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.header || ''}
+          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
+            {column.tooltip}
+          </ReactTooltip>}
+          {column.getSortValue ?
+            <span {...sortableHeaderStyle}
+              data-tip data-for={`${columnNumber}-tooltip`}
+              onClick={() => props.setSortOrder(columnNumber)}>
+              {column.header || ''} {props.sortColIdx === columnNumber && (
+                props.sortAscending ? <ChevronDown /> : <ChevronUp />
+              )}
+            </span> :
+            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
+          }
         </th>
       )}
     </tr>
@@ -64,12 +86,14 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
+// todo: make these functional components?
 class Row extends React.PureComponent {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
+    const rowClassnameCondition = classnames(!props.footer && props.rowClassNames(props.rowObject));
 
-    return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
+    return <tr id={`table-row-${rowId}`} className={rowClassnameCondition}>
       {getColumns(props).
         filter((column) => getCellSpan(props.rowObject, column) > 0).
         map((column, columnNumber) =>
@@ -118,12 +142,39 @@ class FooterRow extends React.PureComponent {
 }
 
 export default class Table extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sortAscending: true,
+      sortColIdx: null
+    };
+  }
+
   defaultRowClassNames = () => ''
+
+  sortRowObjects = () => {
+    const { rowObjects } = this.props;
+    const {
+      sortColIdx,
+      sortAscending
+    } = this.state;
+
+    if (sortColIdx === null) {
+      return rowObjects;
+    }
+
+    const builtColumns = getColumns(this.props);
+
+    return _.orderBy(rowObjects,
+      (row) => builtColumns[sortColIdx].getSortValue(row),
+      sortAscending ? 'asc' : 'desc'
+    );
+  }
 
   render() {
     let {
       columns,
-      rowObjects,
       summary,
       headerClassName = '',
       bodyClassName = '',
@@ -137,6 +188,7 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
+    const rowObjects = this.sortRowObjects();
 
     let keyGetter = getKeyForRow;
 
@@ -156,7 +208,14 @@ export default class Table extends React.PureComponent {
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow columns={columns} headerClassName={headerClassName} />
+      <HeaderRow
+        columns={columns}
+        headerClassName={headerClassName}
+        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+          sortColIdx: colIdx,
+          sortAscending: ascending
+        })}
+        {...this.state} />
       <BodyRows
         id={tbodyId}
         tbodyRef={tbodyRef}
@@ -165,7 +224,8 @@ export default class Table extends React.PureComponent {
         rowObjects={rowObjects}
         bodyClassName={bodyClassName}
         rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling} />
+        bodyStyling={bodyStyling}
+        {...this.state} />
       <FooterRow columns={columns} />
     </table>;
   }

@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AppealDocumentCount from './AppealDocumentCount';
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
@@ -41,7 +40,7 @@ export default class CaseTitle extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      vacolsId,
+      appealId,
       redirectUrl,
       taskType,
       analyticsSource
@@ -50,12 +49,12 @@ export default class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
       <React.Fragment>Veteran ID: <b>{appeal.attributes.vbms_id}</b></React.Fragment>
       <ReaderLink
-        vacolsId={vacolsId}
+        appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
         redirectUrl={redirectUrl}
         appeal={appeal}
         taskType={taskType}
-        message={<React.Fragment>View <AppealDocumentCount appeal={appeal} /> documents</React.Fragment>} />
+        longMessage />
     </CaseTitleScaffolding>;
   }
 }
@@ -63,7 +62,7 @@ export default class CaseTitle extends React.PureComponent {
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
   redirectUrl: PropTypes.string.isRequired,
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string
 };

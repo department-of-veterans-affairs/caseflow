@@ -18,7 +18,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
+  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
@@ -44,17 +44,22 @@ class JudgeAssignTaskListView extends React.PureComponent {
       taskWithId[id] = tasks[id];
     }
 
-    return sortTasks({ tasks: taskWithId,
-      appeals }).
+    return sortTasks({
+      tasks: taskWithId,
+      appeals
+    }).
       filter((task) => task.attributes.task_type === 'Assign').
       map((task) => ({
         task,
-        appeal: this.props.appeals[task.vacolsId] }));
+        appeal: this.props.appeals[task.appealId]
+      }));
   }
 
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
+    this.props.fetchAllAttorneys();
+
     const requestOptions = {
       timeout: true
     };
@@ -178,7 +183,8 @@ const mapDispatchToProps = (dispatch) => (
     resetSaveState,
     setAttorneysOfJudge,
     fetchTasksAndAppealsOfAttorney,
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    fetchAllAttorneys
   }, dispatch)
 );
 
