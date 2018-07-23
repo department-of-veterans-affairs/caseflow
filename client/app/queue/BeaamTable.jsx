@@ -60,8 +60,6 @@ BeaamTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  appeals: appealsByAssigneeCssIdSelector(state)
-});
+const mapStateToProps = (state) => _.pick(state.queue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);
