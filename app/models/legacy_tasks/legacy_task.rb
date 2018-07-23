@@ -19,6 +19,10 @@ class LegacyTask
     assigned_to.css_id
   end
 
+  def assigned_to_pg_id
+    assigned_to.id
+  end
+
   def task_type
     type
   end

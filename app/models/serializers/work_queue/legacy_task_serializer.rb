@@ -5,6 +5,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :docket_date
   attribute :appeal_id
   attribute :user_id
+  attribute :assigned_to_pg_id
   attribute :added_by_name
   attribute :added_by_css_id
   attribute :task_id
