@@ -168,7 +168,7 @@ export default class Table extends React.PureComponent {
 
     return _.orderBy(rowObjects,
       (row) => builtColumns[sortColIdx].getSortValue(row),
-      sortAscending ? 'asc' : 'desc'
+      sortAscending ? 'desc' : 'asc'
     );
   }
 
