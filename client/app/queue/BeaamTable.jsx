@@ -59,6 +59,6 @@ BeaamTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => _.pick(state.queue.loadedQueue, 'appeals');
+const mapStateToProps = (state) => _.pick(state.queue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);

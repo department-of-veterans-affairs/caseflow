@@ -109,6 +109,11 @@ export const setUserRole = (userRole) => ({
   payload: { userRole }
 });
 
+export const setUserCssId = (cssId) => ({
+  type: ACTIONS.SET_USER_CSS_ID,
+  payload: { cssId }
+});
+
 export const setSelectedAssignee = ({ assigneeId }) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE,
   payload: {
