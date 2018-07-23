@@ -109,6 +109,7 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
         tasks
       })}
       getKeyForRow={this.getKeyForRow}
+      defaultSort={{ sortColIdx: 0 }}
       rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
   }
 }
