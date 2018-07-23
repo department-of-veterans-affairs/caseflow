@@ -2,14 +2,12 @@ RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:test_facols)
-    FeatureToggle.enable!(:judge_queue)
     FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:judge_queue)
     FeatureToggle.disable!(:colocated_queue)
   end
 
@@ -96,11 +94,11 @@ RSpec.describe TasksController, type: :controller do
 
     context "Co-located admin action" do
       before do
-        FeatureToggle.enable!(:attorney_assignment)
+        FeatureToggle.enable!(:attorney_assignment_to_colocated)
       end
 
       after do
-        FeatureToggle.disable!(:attorney_assignment)
+        FeatureToggle.disable!(:attorney_assignment_to_colocated)
       end
 
       context "when current user is a judge" do

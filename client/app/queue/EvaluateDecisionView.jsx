@@ -171,7 +171,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
         errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
         options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
           value: key,
-          displayText: `${Object.keys(obj).indexOf(key) + 1} - ${val}`
+          displayText: `${_.size(obj) - Object.keys(obj).indexOf(key)} - ${val}`
         }))} />
 
       {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}

@@ -99,10 +99,10 @@ class ExternalApi::BGSService
     Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       DBService.release_db_connections
 
-      MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+      MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        client.can_access?(vbms_id)
+        client.can_access?(vbms_id, FeatureToggle.enabled?(:can_access_v2, user: current_user))
       end
     end
   end

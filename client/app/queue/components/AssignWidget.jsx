@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -17,26 +17,31 @@ import {
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
-import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, Attorneys
-} from '../types';
-import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
+import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
+import type {
+  AttorneysOfJudge, UiStateError, State
+} from '../types/state';
+import type {
+  Task, Attorneys
+} from '../types/models';
+
 const OTHER = 'OTHER';
 
-type Props = {|
-  // Parameters
+type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
+  selectedTasks: Array<Task>
+|};
+
+type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  tasks: Tasks,
   error: ?UiStateError,
   success: string,
   attorneys: Attorneys,
@@ -51,15 +56,8 @@ type Props = {|
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  selectedTasks = (): Array<Task> => {
-    return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
-      (selected, id) => (selected ? [this.props.tasks[id]] : []));
-  }
-
   handleButtonClick = () => {
-    const { selectedAssignee, selectedAssigneeSecondary } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -115,8 +113,15 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, attorneys } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const {
+      attorneysOfJudge,
+      selectedAssignee,
+      selectedAssigneeSecondary,
+      error,
+      success,
+      attorneys,
+      selectedTasks
+    } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,
@@ -137,8 +142,8 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>
-      {error && <Alert type="error" title={error.title} message={error.detail} />}
-      {success && <Alert type="success" title={success} />}
+      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
@@ -181,22 +186,20 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, attorneys } = state.queue;
+  const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    isTaskAssignedToUserSelected,
-    tasks,
     error,
     success,
     attorneys
   };
 };
 
-export default connect(
+export default (connect(
   mapStateToProps,
   (dispatch) => bindActionCreators({
     setSelectedAssignee,
@@ -207,4 +210,4 @@ export default connect(
     showSuccessMessage,
     resetSuccessMessages
   }, dispatch)
-)(AssignWidget);
+)(AssignWidget): React.ComponentType<Params>);

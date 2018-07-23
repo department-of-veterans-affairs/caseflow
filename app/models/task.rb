@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-  belongs_to :assigned_to, class_name: "User"
+  belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
 

@@ -46,7 +46,6 @@ RSpec.feature "Task queue" do
   let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -54,7 +53,6 @@ RSpec.feature "Task queue" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "attorney user with assigned tasks" do
@@ -63,6 +61,15 @@ RSpec.feature "Task queue" do
     it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+    end
+
+    it "supports custom sorting" do
+      docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span")
+      docket_number_column_header.click
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]")
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
+      docket_number_column_header.click
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
     end
 
     it "displays special text indicating an assigned case has a claimant who is not the Veteran" do
