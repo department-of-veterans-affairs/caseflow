@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -26,11 +27,39 @@ import {
   JUDGE_DECISION_OPTIONS
 } from '../constants';
 import AssignWidget from './AssignWidget';
+import type { Task, Appeal } from '../types/models';
+import type { State } from '../types/state';
 
 const ASSIGN = 'ASSIGN';
 
+type Params = {|
+  appealId: string
+|};
+
+type Props = Params & {|
+  // From store
+  appeal: Appeal,
+  task: Task,
+  changedAppeals: Array<string>,
+  decision: Object,
+  userRole: string,
+  // Action creators
+  requestSave: typeof requestSave,
+  saveSuccess: typeof saveSuccess,
+  deleteAppeal: typeof deleteAppeal,
+  checkoutStagedAppeal: typeof checkoutStagedAppeal,
+  stageAppeal: typeof stageAppeal,
+  setCaseReviewActionType: typeof setCaseReviewActionType,
+  // From withRouter
+  history: Object
+|};
+
+type ComponentState = {
+  assignWidgetVisible: boolean
+};
+
 // todo: make StartCheckoutFlowDropdownBase
-class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
+class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
 
@@ -86,9 +115,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
   render = () => {
     const {
-      task: { attributes: task }
+      task
     } = this.props;
-    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.work_product) ?
+    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
       JUDGE_DECISION_OPTIONS.OMO_REQUEST :
       JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
     const assignOption = { label: 'Assign to attorney',
@@ -102,7 +131,8 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
         onChange={this.handleChange}
         hideLabel
         dropdownStyling={dropdownStyling} />
-      {this.state.assignWidgetVisible && <AssignWidget />}
+      {this.state.assignWidgetVisible &&
+        <AssignWidget onTaskAssignment={() => {}} previousAssigneeId={'0'} selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }
@@ -111,7 +141,7 @@ JudgeStartCheckoutFlowDropdown.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: State, ownProps: Params) => ({
   appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
   task: state.queue.tasks[ownProps.appealId],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
@@ -128,4 +158,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown));
+export default (
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown)): React.ComponentType<Params>);
