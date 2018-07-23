@@ -13,7 +13,7 @@ import type {
   Issue,
   Issues
 } from './types/models';
-import type { State, LoadedQueueAppeals } from './types/state';
+import type { State } from './types/state';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';

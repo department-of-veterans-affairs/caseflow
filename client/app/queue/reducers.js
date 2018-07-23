@@ -429,6 +429,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     if (!action.payload.taskObj) {
       return state;
     }
+
     return {
       ...state,
       tasks: {

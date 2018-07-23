@@ -118,6 +118,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
       task
     } = this.props;
     const options = [];
+
     if (task.attributes.task_type === 'Review') {
       options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
         JUDGE_DECISION_OPTIONS.OMO_REQUEST :
@@ -136,7 +137,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
         hideLabel
         dropdownStyling={dropdownStyling} />
       {this.state.assignWidgetVisible &&
-        <AssignWidget onTaskAssignment={() => {}} previousAssigneeId={'0'} selectedTasks={[task]} />}
+        <AssignWidget onTaskAssignment={() => {}} previousAssigneeId="0" selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }
@@ -163,4 +164,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (
-  withRouter(connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown)): React.ComponentType<Params>);
+  withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(JudgeStartCheckoutFlowDropdown)): React.ComponentType<Params>);

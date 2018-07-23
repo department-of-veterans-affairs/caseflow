@@ -112,9 +112,10 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       }),
       ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
         const task = response.body.tasks[0];
+
         task.appealId = task.id;
         this.props.setActiveTask(task);
-      }),
+      })
     ]);
   };
 
