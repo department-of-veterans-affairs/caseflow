@@ -25,7 +25,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationNotCorrectFormat < StandardError; end
   class AllocationRoListedIncorrectly < StandardError; end
   class AllocationDuplicateRo < StandardError; end
-  class AllocationCoLocationIncorrect < StandardError; end
   class AllocationTemplateNotFollowed < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
@@ -35,8 +34,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     @co_spreadsheet_template = get_spreadsheet_data.co_non_availability_template
     @co_spreadsheet_data = get_spreadsheet_data.co_non_availability_data
     @allocation_spreadsheet_template = get_spreadsheet_data.allocation_template
-    @allocation_spreadsheet_ro_data = get_spreadsheet_data.allocation_ro_data
-    @allocation_spreadsheet_co_data = get_spreadsheet_data.allocation_co_data
+    @allocation_spreadsheet_data = get_spreadsheet_data.allocation_data
     @start_date = start_date
     @end_date = end_date
   end
@@ -111,13 +109,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     true
   end
 
-  def hearing_co_allocation_days
-    {
-      location: hearing_allocation_template.row(4)[1],
-      allocated_days: hearing_allocation_template.row(4)[3]
-    }
-  end
-
   def validate_hearing_allocation_template
     unless @allocation_spreadsheet_template[:title] == HEARING_ALLOCATION_SHEET_TITLE &&
            @allocation_spreadsheet_template[:example_row] == HEARING_ALLOCATION_SHEET_EXAMPLE_ROW &&
@@ -126,27 +117,18 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
-  def validate_hearing_ro_allocation_days
-    unless @allocation_spreadsheet_ro_data.all? { |row| row["allocated_days"].is_a?(Numeric) }
+  def validate_hearing_allocation_days
+    unless @allocation_spreadsheet_data.all? { |row| row["allocated_days"].is_a?(Numeric) }
       fail AllocationNotCorrectFormat
     end
-    unless validate_ros_with_hearings(@allocation_spreadsheet_ro_data)
+    unless validate_ros_with_hearings(@allocation_spreadsheet_data)
       fail AllocationRoListedIncorrectly
     end
-    ro_codes = @allocation_spreadsheet_ro_data.collect { |ro| ro["ro_code"] }
+    ro_codes = @allocation_spreadsheet_data.collect { |ro| ro["ro_code"] }
     unless ro_codes.uniq == ro_codes
       fail AllocationDuplicateRo
     end
     true
-  end
-
-  def validate_hearing_co_allocation_days
-    unless @allocation_spreadsheet_co_data["ro_code"] == "Central Office"
-      fail AllocationCoLocationIncorrect
-    end
-    unless @allocation_spreadsheet_co_data["allocated_days"].is_a?(Numeric)
-      fail AllocationNotCorrectFormat
-    end
   end
 
   def validate
@@ -155,7 +137,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_co_non_availability_template
     validate_co_non_availability_dates
     validate_hearing_allocation_template
-    validate_hearing_co_allocation_days
-    validate_hearing_ro_allocation_days
+    validate_hearing_allocation_days
   end
 end

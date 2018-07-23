@@ -9,7 +9,7 @@ describe Allocation do
     it "imports allocations" do
       expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(0)
       Allocation.import_allocation(ro_schedule_period)
-      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(58)
+      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(57)
     end
   end
 end
