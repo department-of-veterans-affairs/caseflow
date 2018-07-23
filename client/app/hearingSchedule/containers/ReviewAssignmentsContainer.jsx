@@ -9,15 +9,13 @@ import ReviewAssignments from '../components/ReviewAssignments';
 import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onClickCloseModal
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
 
   onConfirmAssignmentsUpload = () => {
     this.props.onClickCloseModal();
-    this.props.onConfirmAssignmentsUpload();
     this.props.history.push('/schedule/build');
   };
 
@@ -65,8 +63,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
-  onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onClickCloseModal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));
