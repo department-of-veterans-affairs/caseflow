@@ -43,28 +43,24 @@ export const judgeReviewTasksSelector = createSelector(
   )
 );
 
-export const appealsByAssignedTaskSelector = createSelector(
-  [getAppeals, tasksByAssigneeCssIdSelector],
-  (appeals: LegacyAppeals, tasks: Tasks) => {
-    const assignedAppealIds = _.map(tasks, (task: Task) => task.appealId);
-
-    return _.keyBy(
-      _.filter(appeals, (appeal: LegacyAppeal) => assignedAppealIds.includes(appeal.attributes.vacols_id)),
-      (appeal: LegacyAppeal) => appeal.attributes.vacols_id
-    );
-  }
-);
-
 export const appealsWithTasks = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
-    taskMap = tasks.reduce((map, task) => {
-      const taskList = map[task.appeal_id] ? [...map[task.appeal_id], task] : [task]
-      return {...map, [task.appeal_id]: taskList}
+    const taskMap = _.reduce(tasks, (map, task) => {
+      const taskList = map[task.attributes.appeal_id] ? [...map[task.attributes.appeal_id], task] : [task]
+      return {...map, [task.attributes.appeal_id]: taskList}
     }, {});
 
-    return appeals.map((appeal) => {
-      appeal.tasks = taskMap[appeal.id]
+    return _.map(appeals, (appeal) => {
+      appeal.tasks = taskMap[appeal.id];
+
+      return appeal;
     })
   }
+);
+
+export const appealsByAssigneeCssIdSelector = createSelector(
+  [appealsWithTasks, getUserCssId],
+  (appeals: LegacyAppeals, cssId: string) => 
+    _.values(_.filter(appeals, (appeal: LegacyAppeal) => _.some(appeal.tasks, (task) => task.attributes.user_id === cssId)))
 );

@@ -10,7 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 
 import {
-  appealsByAssignedTaskSelector,
+  appealsByAssigneeCssIdSelector,
   tasksByAssigneeCssIdSelector
 } from './selectors';
 import {
@@ -90,7 +90,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    appeals: appealsByAssignedTaskSelector(state),
+    appeals: appealsByAssigneeCssIdSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision,

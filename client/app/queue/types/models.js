@@ -64,7 +64,8 @@ export type LegacyAppeal = {
     power_of_attorney: string,
     regional_office: Object,
     caseflow_veteran_id: ?string
-  }
+  },
+  tasks: ?Array<Task>
 };
 
 export type Appeal = {
