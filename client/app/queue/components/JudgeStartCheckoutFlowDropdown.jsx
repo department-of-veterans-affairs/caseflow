@@ -117,17 +117,20 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
     const {
       task
     } = this.props;
-    const dropdownOption = DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
-      JUDGE_DECISION_OPTIONS.OMO_REQUEST :
-      JUDGE_DECISION_OPTIONS.DRAFT_DECISION;
-    const assignOption = { label: 'Assign to attorney',
-      value: ASSIGN };
+    const options = [];
+    if (task.attributes.task_type === 'Review') {
+      options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
+        JUDGE_DECISION_OPTIONS.OMO_REQUEST :
+        JUDGE_DECISION_OPTIONS.DRAFT_DECISION);
+    }
+    options.push({ label: 'Assign to attorney',
+      value: ASSIGN });
 
     return <React.Fragment>
       <SearchableDropdown
         placeholder="Select an action&hellip;"
         name={`start-checkout-flow-${this.props.appealId}`}
-        options={[dropdownOption, assignOption]}
+        options={options}
         onChange={this.handleChange}
         hideLabel
         dropdownStyling={dropdownStyling} />
