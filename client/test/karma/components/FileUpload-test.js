@@ -13,7 +13,7 @@ describe('FileUpload', () => {
         <FileUpload
           onChange={onChange}
           id="testing-file-upload"
-          value="C:\fakepath\uploadedFile.pdf"
+          value={{ fileName: 'uploadedFile.pdf' }}
           preUploadText="Select a file for upload"
           postUploadText="Choose a different file"
         />
@@ -27,7 +27,7 @@ describe('FileUpload', () => {
         <FileUpload
           onChange={onChange}
           id="testing-file-upload"
-          value="C:\fakepath\uploadedFile.pdf"
+          value={{ fileName: 'uploadedFile.pdf' }}
           preUploadText="Select a file for upload"
           postUploadText="Choose a different file"
         />
