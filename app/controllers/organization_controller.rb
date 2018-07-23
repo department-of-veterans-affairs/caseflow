@@ -4,6 +4,12 @@ class OrganizationController < ApplicationController
   before_action :verify_feature_access
   before_action :set_application
 
+  def show
+    render "queue/index"
+  end
+
+  private
+
   def verify_organization_access
     redirect_to "/unauthorized" unless organization.user_has_access?(current_user)
   end
@@ -22,15 +28,11 @@ class OrganizationController < ApplicationController
     RequestStore.store[:application] = "queue"
   end
 
-  def organization_id
+  def organization_url
     params[:id]
   end
 
   def organization
-    Organization.find_by(url: organization_id)
-  end
-
-  def show
-    render "queue/index"
+    Organization.find_by(url: organization_url)
   end
 end

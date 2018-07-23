@@ -1,4 +1,4 @@
-RSpec.describe OrganizationalTasksController, type: :controller do
+RSpec.describe Organization::TasksController, type: :controller do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "American-Legion" }
@@ -45,7 +45,7 @@ RSpec.describe OrganizationalTasksController, type: :controller do
       with(participant_id).and_return(vso_participant_ids)
   end
 
-  describe "GET organizational/:organization_id/tasks" do
+  describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
       [
         create(:task, type: :Generic, assigned_to: vso),

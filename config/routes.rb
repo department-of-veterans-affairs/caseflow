@@ -166,7 +166,7 @@ Rails.application.routes.draw do
   resources :tasks, only: [:index, :create, :update]
 
   resources :organization, only: [:show] do
-    resources :tasks, only: [:index], controller: 'organizational_tasks'
+    resources :tasks, only: [:index], controller: 'organization/tasks'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

@@ -1,14 +1,14 @@
-class OrganizationalTasksController < OrganizationController
+class Organization::TasksController < OrganizationController
   def index
     tasks = organization.tasks
     render json: { tasks: json_tasks(tasks) }
   end
 
-  def organization_id
+  private
+
+  def organization_url
     params[:organization_id]
   end
-
-  private
 
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
