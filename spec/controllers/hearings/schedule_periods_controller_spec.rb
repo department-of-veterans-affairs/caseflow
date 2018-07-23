@@ -3,10 +3,6 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_schedule_period) { create(:judge_schedule_period) }
 
-  before do
-    Time.zone = "America/New_York"
-  end
-
   context "index" do
     it "returns all schedule periods" do
       get :index, as: :json
