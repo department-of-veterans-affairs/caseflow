@@ -128,7 +128,7 @@ RSpec.feature "Intake" do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("You don't have permission to view this veteran's information")
+        expect(page).to have_content("You don't have permission to view this Veteran's information")
       end
     end
 
