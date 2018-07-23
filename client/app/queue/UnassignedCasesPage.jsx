@@ -35,8 +35,6 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
     this.props.resetErrorMessages();
   }
 
-  getSelectedTasks = () => this.props.selectedTasks
-
   render = () => {
     const { userId, featureToggles, selectedTasks } = this.props;
 
