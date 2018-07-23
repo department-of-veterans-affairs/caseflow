@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
+import COPY from '../../COPY.json';
 
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
@@ -73,8 +75,10 @@ class SelectRemandReasonsView extends React.Component {
       {this.getPageName()}
     </h1>
     <p className="cf-lead-paragraph" {...subHeadStyling}>
-      Please {this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'}
-      the appropriate remand reason(s) for all the remand dispositions.
+      {sprintf(
+        COPY.REMAND_REASONS_SCREEN_SUBHEAD_LABEL,
+        this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'
+      )}
     </p>
     <hr />
     {_.map(_.range(this.state.issuesRendered), (idx) =>

@@ -68,6 +68,8 @@
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
 
+  "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
+
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
