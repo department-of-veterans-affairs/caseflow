@@ -42,7 +42,7 @@ export type UiState = {
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
-  loadedUserId: number,
+  loadedUserId: ?number,
   userRole: string,
   userCssId: string
 };
