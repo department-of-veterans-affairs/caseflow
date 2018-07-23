@@ -44,7 +44,7 @@ RSpec.describe Organizations::TasksController, type: :controller do
     allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
       .with(participant_id).and_return(vso_participant_ids)
   end
-  
+
   after do
     BGSService = Fakes::BGSService
   end
