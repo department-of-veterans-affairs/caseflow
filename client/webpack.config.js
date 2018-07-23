@@ -84,5 +84,27 @@ if (devBuild) {
   config.devtool = 'source-map';
 }
 
-module.exports = config;
+module.exports = {
+  entry: [
+    './index.js'
+  ],
+  output: {
+    filename: 'webpack-bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        // Load only font files
+        test: /\.woff/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: './fonts/[name].[ext]',
+            outputPath: 'fonts/'
+          }
+        }]
+      }
+    ]
+  }
+}
 
