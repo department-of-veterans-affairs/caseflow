@@ -7,7 +7,6 @@ import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 
-import { appealsByAssignedTaskSelector } from './selectors';
 import { renderAppealType } from './utils';
 import { CATEGORIES, disabledLinkStyle } from './constants';
 import COPY from '../../COPY.json';
@@ -60,8 +59,6 @@ BeaamTable.propTypes = {
   featureToggles: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  appeals: appealsByAssignedTaskSelector(state)
-});
+const mapStateToProps = (state) => _.pick(state.queue, 'appeals');
 
 export default connect(mapStateToProps)(BeaamTable);
