@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { appealsByAssigneeCssIdSelector } from './selectors';
+import { appealsByAssignedTaskSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
@@ -149,7 +149,7 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: Object.keys(appealsByAssigneeCssIdSelector(state))
+  appealsAssignedToCurrentUser: Object.keys(appealsByAssignedTaskSelector(state))
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

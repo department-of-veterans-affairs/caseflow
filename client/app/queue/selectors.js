@@ -43,10 +43,14 @@ export const judgeReviewTasksSelector = createSelector(
   )
 );
 
-export const appealsByAssigneeCssIdSelector = createSelector(
-  [getAppeals, getUserCssId],
-  (appeals: LegacyAppeals, cssId: string) => _.keyBy(
-    _.filter(appeals, (appeal: LegacyAppeal) => cssId.includes(appeal.attributes.location_code)),
-    (appeal: LegacyAppeal) => appeal.attributes.vacols_id
-  )
+export const appealsByAssignedTaskSelector = createSelector(
+  [getAppeals, getUserCssId, tasksByAssigneeCssIdSelector],
+  (appeals: LegacyAppeals, css_id: string, tasks: Tasks) => {
+    const assignedAppealIds = _.map(tasks, (task: Task) => task.appealId);
+
+    return _.keyBy(
+      _.filter(appeals, (appeal: LegacyAppeal) => assignedAppealIds.includes(appeal.attributes.vacols_id)),
+      (appeal: LegacyAppeal) => appeal.attributes.vacols_id
+    );
+  }
 );

@@ -10,7 +10,7 @@ import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 
 import {
-  appealsByAssigneeCssIdSelector,
+  appealsByAssignedTaskSelector,
   tasksByAssigneeCssIdSelector
 } from './selectors';
 import { sortTasks, renderAppealType } from './utils';
@@ -121,7 +121,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    appeals: appealsByAssigneeCssIdSelector(state),
+    appeals: appealsByAssignedTaskSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     featureToggles
   };
