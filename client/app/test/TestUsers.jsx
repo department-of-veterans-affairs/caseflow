@@ -10,6 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
+import Alert from '../components/Alert';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -18,7 +19,9 @@ export default class TestUsers extends React.PureComponent {
       currentUser: props.currentUser,
       userSelect: props.currentUser.id,
       isSwitching: false,
-      isLoggingIn: false
+      isLoggingIn: false,
+      reseedingError: null,
+      isReseeding: false
     };
   }
 
@@ -55,10 +58,26 @@ export default class TestUsers extends React.PureComponent {
       });
   }
 
+  reseed = () => {
+    this.setState({ isReseeding: true });
+    ApiUtil.post('/test/reseed').then(() => {
+      this.setState({
+        reseedingError: null,
+        isReseeding: false
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        reseedingError: err,
+        isReseeding: false
+      });
+    });
+  }
+
   render() {
     const userOptions = this.props.testUsersList.map((user) => ({
       value: user.id,
-      label: `${user.css_id} at ${user.station_id}`
+      label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
     }));
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
@@ -129,6 +148,20 @@ export default class TestUsers extends React.PureComponent {
                 <p>
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.</p>
+                <p>This button reseeds the database with default values.</p>
+                {this.state.reseedingError &&
+                  <Alert
+                    message={this.state.reseedingError.toString()}
+                    type="error"
+                  />
+                }
+                <br />
+                <Button
+                  onClick={this.reseed}
+                  name="Reseed the DB"
+                  loading={this.state.isReseeding}
+                  loadingText="Reseeding the DB" />
+                <br /><br />
                 <strong>App Selector:</strong>
                 <TabWindow
                   tabs={tabs} />

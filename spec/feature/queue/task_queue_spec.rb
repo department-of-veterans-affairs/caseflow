@@ -67,9 +67,9 @@ RSpec.feature "Task queue" do
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span")
       docket_number_column_header.click
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]")
-      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort
       docket_number_column_header.click
-      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort
     end
 
     it "displays special text indicating an assigned case has a claimant who is not the Veteran" do

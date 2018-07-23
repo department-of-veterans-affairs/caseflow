@@ -27,19 +27,16 @@ class SeedDB
     @appeals.push(LegacyAppeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
   end
 
-  def create_users(number, deterministic = true)
-    users = number.times.map do |i|
-      length = RegionalOffice::STATIONS.length
-      station_index = deterministic ? (i % length) : (rand(length))
-      User.create(
-        station_id: RegionalOffice::STATIONS.keys[station_index],
-        css_id: "css_#{i}",
-        full_name: "name_#{i}",
-        email: "test#{i}@example.com"
-        )
-    end
+  def create_users
+    User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Attorney with cases")
+    User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
+    User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
+    User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
+    User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
+    User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
+    User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
 
-    @users.push(*users)
+    Functions.grant!("System Admin", users: User.all.pluck(:css_id))
   end
 
   def create_tasks(number)
@@ -187,6 +184,7 @@ class SeedDB
     create_annotations
     create_tags
     create_beaam_appeals
+    create_users
 
     User.create(css_id: "VSO", station_id: 101)
 
@@ -196,7 +194,6 @@ class SeedDB
     # a VACOLS copy locally.
     create_default_users
     create_appeals(50)
-    create_users(3)
     create_tasks(50)
     create_ramp_elections(9)
     create_hearings
