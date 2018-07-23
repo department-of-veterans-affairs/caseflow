@@ -122,9 +122,10 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
       options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
         JUDGE_DECISION_OPTIONS.OMO_REQUEST :
         JUDGE_DECISION_OPTIONS.DRAFT_DECISION);
+    } else {
+      options.push({ label: 'Assign to attorney',
+        value: ASSIGN });
     }
-    options.push({ label: 'Assign to attorney',
-      value: ASSIGN });
 
     return <React.Fragment>
       <SearchableDropdown
