@@ -1,13 +1,7 @@
-// Dependencies already added by package
-@import 'bourbon';
-@import 'neat';
-// End
-
-@import '../../../client/node_modules/uswds/src/stylesheets/all';
-@import '../../../client/node_modules/uswds/src/stylesheets/lib/addons/font-stacks';
 // Local variables
-@import 'variables';
+@import '_variables.scss';
 
+@import '~uswds/src/stylesheets/uswds.scss';
 
 
 html,
@@ -265,7 +259,7 @@ dd {
 }
 
 .cf-icon-success--bg {
-  background: image-url('icons/icon-check.svg') bottom no-repeat;
+//  background: image-url('icons/icon-check.svg') bottom no-repeat;
   background-size: auto 2rem;
   display: inline-block;
   height: 3rem;
@@ -329,7 +323,7 @@ dd {
   background-color: $color-white;
 
   &::after {
-    background: image-url('arrow-down.svg') 50% 100% no-repeat;
+//    background: image-url('arrow-down.svg') 50% 100% no-repeat;
     background-size: .75em;
     content: ' ';
     display: inline-block;
@@ -344,7 +338,7 @@ dd {
 
   &.usa-button {
     &::after {
-      background: image-url('icons/icon-down-arrow.svg') 50% 100% no-repeat;
+//      background: image-url('icons/icon-down-arrow.svg') 50% 100% no-repeat;
     }
   }
 }
@@ -1120,7 +1114,7 @@ fieldset {
   list-style-type: none;
 
   li {
-    background: url('icons/icon-check.svg') no-repeat left top transparent;
+    //background: url('icons/icon-check.svg') no-repeat left top transparent;
     background-size: 22px 17px;
     background-position-y: 7px;
     padding-left: 38px;
@@ -1224,7 +1218,7 @@ button {
       display: inline-block;
       width: 0;
       height: 0;
-      background: image-url('icons/loading-pill.svg') center center no-repeat;
+//      background: image-url('icons/loading-pill.svg') center center no-repeat;
     }
   }
 
@@ -1243,7 +1237,7 @@ button {
   &.cf-cert {
     .cf-loading-icon-back {
       &::after {
-        background: image-url('icons/loading-pill-cf-cert.svg') center center no-repeat;
+//        background: image-url('icons/loading-pill-cf-cert.svg') center center no-repeat;
       }
     }
   }
@@ -1251,7 +1245,7 @@ button {
   &.cf-dispatch {
     .cf-loading-icon-back {
       &::after {
-        background: image-url('icons/loading-pill-cf-dispatch.svg') center center no-repeat;
+//        background: image-url('icons/loading-pill-cf-dispatch.svg') center center no-repeat;
       }
     }
   }
