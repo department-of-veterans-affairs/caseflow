@@ -88,11 +88,11 @@ class HearingSchedule::GetSpreadsheetData
     }
   end
 
-  def allocation_ro_data
+  def allocation_data
     hearing_allocation_days = []
-    ro_names = allocation_sheet.column(2).drop(4)
-    ro_codes = allocation_sheet.column(3).drop(4)
-    allocated_days = allocation_sheet.column(4).drop(4)
+    ro_names = allocation_sheet.column(2).drop(3)
+    ro_codes = allocation_sheet.column(3).drop(3)
+    allocated_days = allocation_sheet.column(4).drop(3)
     ro_names.zip(ro_codes, allocated_days).each do |row|
       hearing_allocation_days.push("ro_code" => row[1],
                                    "ro_city" => row[0].split(", ")[0],
@@ -100,12 +100,5 @@ class HearingSchedule::GetSpreadsheetData
                                    "allocated_days" => row[2])
     end
     hearing_allocation_days
-  end
-
-  def allocation_co_data
-    {
-      "ro_code" => allocation_sheet.row(4)[1],
-      "allocated_days" => allocation_sheet.row(4)[3]
-    }
   end
 end
