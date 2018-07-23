@@ -76,8 +76,8 @@ class ExternalApi::BGSService
 
     unless @poas[participant_id]
       bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
-                                      service: :bgs,
-                                      name: "org.find_poas_by_participant_id") do
+                                       service: :bgs,
+                                       name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
       @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }

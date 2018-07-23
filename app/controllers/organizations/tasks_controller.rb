@@ -1,4 +1,4 @@
-class Organization::TasksController < OrganizationController
+class Organizations::TasksController < OrganizationsController
   def index
     tasks = organization.tasks
     render json: { tasks: json_tasks(tasks) }
@@ -7,7 +7,7 @@ class Organization::TasksController < OrganizationController
   private
 
   def organization_url
-    params[:organization_id]
+    params[:organization_url]
   end
 
   def json_tasks(tasks)

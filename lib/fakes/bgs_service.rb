@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 require "bgs"
 
 class Fakes::BGSService
@@ -270,7 +271,7 @@ class Fakes::BGSService
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
-    record ||= default_vso_power_of_attorney_record if file_number == 216979849
+    record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
     record ||= default_power_of_attorney_record
 
     get_poa_from_bgs_poa(record[:power_of_attorney])
@@ -337,7 +338,7 @@ class Fakes::BGSService
 
   def get_participant_id_for_user(user)
     return VSO_PARTICIPANT_ID if user.css_id == "VSO"
-    return DEFAULT_PARTICIPANT_ID
+    DEFAULT_PARTICIPANT_ID
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -405,8 +406,8 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321"
-  DEFAULT_PARTICIPANT_ID = "781162"
+  VSO_PARTICIPANT_ID = "4623321".freeze
+  DEFAULT_PARTICIPANT_ID = "781162".freeze
 
   def default_claimant_info
     {
@@ -489,3 +490,4 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength

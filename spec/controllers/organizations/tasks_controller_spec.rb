@@ -1,4 +1,4 @@
-RSpec.describe Organization::TasksController, type: :controller do
+RSpec.describe Organizations::TasksController, type: :controller do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "American-Legion" }
@@ -39,23 +39,23 @@ RSpec.describe Organization::TasksController, type: :controller do
 
     FeatureToggle.enable!(:rollout_vso)
 
-    allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id).
-      with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
-    allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id).
-      with(participant_id).and_return(vso_participant_ids)
+    allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
+      .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
+    allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
+      .with(participant_id).and_return(vso_participant_ids)
   end
 
   describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
       [
-        create(:task, type: :Generic, assigned_to: vso),
-        create(:task, type: :Generic, assigned_to: vso)
+        create(:task, type: :VsoTask, assigned_to: vso),
+        create(:task, type: :VsoTask, assigned_to: vso)
       ]
     end
 
     context "when user has VSO role and belongs to the VSO" do
       it "should return tasks" do
-        get :index, params: { organization_id: url }
+        get :index, params: { organization_url: url }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
@@ -68,8 +68,8 @@ RSpec.describe Organization::TasksController, type: :controller do
       end
 
       it "should be redirected" do
-        get :index, params: { organization_id: url }
-        expect(response.status).to eq 302 
+        get :index, params: { organization_url: url }
+        expect(response.status).to eq 302
       end
     end
 
@@ -77,8 +77,8 @@ RSpec.describe Organization::TasksController, type: :controller do
       let(:vso_participant_ids) { [] }
 
       it "should be redirected" do
-        get :index, params: { organization_id: url }
-        expect(response.status).to eq 302 
+        get :index, params: { organization_url: url }
+        expect(response.status).to eq 302
       end
     end
 
@@ -88,8 +88,8 @@ RSpec.describe Organization::TasksController, type: :controller do
       end
 
       it "should be redirected" do
-        get :index, params: { organization_id: url }
-        expect(response.status).to eq 302 
+        get :index, params: { organization_url: url }
+        expect(response.status).to eq 302
       end
     end
   end

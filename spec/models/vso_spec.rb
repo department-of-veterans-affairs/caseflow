@@ -33,10 +33,10 @@ describe Vso do
     BGSService = ExternalApi::BGSService
     RequestStore[:current_user] = user
 
-    allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id).
-      with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
-    allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id).
-      with(participant_id).and_return(vso_participant_ids)
+    allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
+      .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
+    allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
+      .with(participant_id).and_return(vso_participant_ids)
   end
 
   context "#user_has_access?" do

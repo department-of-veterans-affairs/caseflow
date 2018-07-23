@@ -1,4 +1,4 @@
-class OrganizationController < ApplicationController
+class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
   before_action :verify_feature_access
@@ -29,7 +29,7 @@ class OrganizationController < ApplicationController
   end
 
   def organization_url
-    params[:id]
+    params[:url]
   end
 
   def organization
