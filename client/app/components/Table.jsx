@@ -69,7 +69,7 @@ const HeaderRow = (props) => {
             {column.tooltip}
           </ReactTooltip>}
           {columnContent}
-        </th>
+        </th>;
       })}
     </tr>
   </thead>;
