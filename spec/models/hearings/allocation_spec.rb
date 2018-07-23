@@ -3,7 +3,7 @@ describe Allocation do
 
   context ".import_allocation" do
     it "imports allocations" do
-      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(58)
+      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(57)
     end
   end
 end
