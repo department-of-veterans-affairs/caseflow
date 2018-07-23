@@ -212,9 +212,7 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
-  reviewActionType: state.queue.stagedChanges.taskDecision.type,
-  searchedAppeals: state.caseList.receivedAppeals
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
