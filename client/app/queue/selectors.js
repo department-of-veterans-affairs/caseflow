@@ -44,8 +44,8 @@ export const judgeReviewTasksSelector = createSelector(
 );
 
 export const appealsByAssignedTaskSelector = createSelector(
-  [getAppeals, getUserCssId, tasksByAssigneeCssIdSelector],
-  (appeals: LegacyAppeals, css_id: string, tasks: Tasks) => {
+  [getAppeals, tasksByAssigneeCssIdSelector],
+  (appeals: LegacyAppeals, tasks: Tasks) => {
     const assignedAppealIds = _.map(tasks, (task: Task) => task.appealId);
 
     return _.keyBy(
