@@ -9,8 +9,7 @@ import {
   SortArrowUp,
   DoubleArrow
 } from './RenderFunctions';
-import { css, hover } from 'glamor';
-import { COLORS } from '../constants/AppConstants';
+import { hover } from 'glamor';
 
 /**
  * This component can be used to easily build tables.
@@ -43,10 +42,7 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
-  const sortableHeaderStyle = css(
-    { color: COLORS.PRIMARY },
-    hover({ cursor: 'pointer' })
-  );
+  const sortableHeaderStyle = hover({ cursor: 'pointer' });
 
   return <thead className={props.headerClassName}>
     <tr>
