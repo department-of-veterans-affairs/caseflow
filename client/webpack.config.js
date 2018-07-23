@@ -2,9 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const bourbon = require('bourbon').includePaths;
-const neat = require('bourbon-neat').includePaths;
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
@@ -18,7 +15,7 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/webpack')
+    path: path.join(__dirname, '../app/assets/javascripts')
   },
   plugins: _.compact([
     devBuild ? null : new webpack.optimize.ModuleConcatenationPlugin(),
@@ -30,9 +27,7 @@ const config = {
     alias: {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
-      ie: 'component-ie',
-      // Makes it easier to reference our assets in jsx files
-      assets: path.resolve('./app/assets')
+      ie: 'component-ie'
     }
   },
   module: {
@@ -47,26 +42,21 @@ const config = {
         exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
       },
       {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('style-loader', `css!resolve-url!sass?includePaths[]=${bourbon}&includePaths[]=${neat}&includePaths[]=` + '~/uswds/src/stylesheets' + '&sourceMap')
-      },
-      { test: /\.(jpe?g|png|gif|svg)$/i,
-        loader: 'url?limit=10000!img?progressive=true&-minimize'
+        test: /\.(ttf|eot|woff|woff2)$/,
+        loader: 'url-loader?limit=1024&name=fonts/[name].[ext]&outputPath=../../../public/'
       },
       {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?limit=10000&minetype=application/font-woff'
+        test: /\.scss?$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader'
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'url-loader?limit=1024&name=images/[name].[ext]&outputPath=../../../public/'
+        ]
       }
-
     ]
-  },
-  plugins: [
-    new ExtractTextPlugin('webpack-bundle.css'),
-  ]
+  }
 };
 
 if (devBuild) {
@@ -78,27 +68,4 @@ if (devBuild) {
   config.devtool = 'source-map';
 }
 
-module.exports = {
-  entry: [
-    './index.js'
-  ],
-  output: {
-    filename: 'webpack-bundle.js'
-  },
-  module: {
-    rules: [
-      {
-        // Load only font files
-        test: /\.woff/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: './fonts/[name].[ext]',
-            outputPath: 'fonts/'
-          }
-        }]
-      }
-    ]
-  }
-}
-
+module.exports = config;
