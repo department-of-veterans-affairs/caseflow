@@ -45,7 +45,7 @@ export class ListScheduleContainer extends React.Component {
         endDateValue={this.props.endDate}
         endDateChange={this.props.onViewEndDateChange}
         onApply={this.createHearingPromise}
-      />;
+      />
     </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
