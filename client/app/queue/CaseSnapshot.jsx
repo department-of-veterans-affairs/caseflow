@@ -106,7 +106,7 @@ export class CaseSnapshot extends React.PureComponent {
 
     if (userRole === USER_ROLES.ATTORNEY) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
-    } else if (this.props.featureToggles.judge_case_review_checkout) {
+    } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
       CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     }
 
