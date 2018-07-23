@@ -64,7 +64,7 @@ describe JudgeCaseReview do
           expect(decass.deqr1).to eq nil
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
-          expect(vacols_case.reload.bfcurloc).to eq "30"
+          expect(vacols_case.reload.bfcurloc).to eq "4E"
 
           vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
           # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
