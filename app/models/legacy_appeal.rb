@@ -110,7 +110,7 @@ class LegacyAppeal < ApplicationRecord
 
   LOCATION_CODES = {
     remand_returned_to_bva: "96",
-    bva_dispatch: "30",
+    bva_dispatch: "4E",
     omo_office: "20",
     caseflow: "CASEFLOW"
   }.freeze
