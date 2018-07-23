@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
 
-import { ChevronUp, ChevronDown } from './RenderFunctions';
+import {
+  SortArrowDown,
+  SortArrowUp,
+  DoubleArrow
+} from './RenderFunctions';
 import { css, hover } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
 
@@ -46,23 +50,31 @@ const HeaderRow = (props) => {
 
   return <thead className={props.headerClassName}>
     <tr>
-      {getColumns(props).map((column, columnNumber) =>
-        <th scope="col" key={columnNumber} className={cellClasses(column)}>
+      {getColumns(props).map((column, columnNumber) => {
+        const tooltipProps = {
+          'data-tip': true,
+          'data-for': `${columnNumber}-tooltip`
+        };
+        let columnContent = <span {...tooltipProps}>{column.header || ''}</span>;
+
+        if (column.getSortValue) {
+          const sortIndicator = props.sortAscending ? <SortArrowDown /> : <SortArrowUp />;
+          const notSortedIndicator = <DoubleArrow />;
+
+          columnContent = <span
+            {...sortableHeaderStyle} {...tooltipProps}
+            onClick={() => props.setSortOrder(columnNumber)}>
+            {column.header || ''} {props.sortColIdx === columnNumber ? sortIndicator : notSortedIndicator}
+          </span>;
+        }
+
+        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
           {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
             {column.tooltip}
           </ReactTooltip>}
-          {column.getSortValue ?
-            <span {...sortableHeaderStyle}
-              data-tip data-for={`${columnNumber}-tooltip`}
-              onClick={() => props.setSortOrder(columnNumber)}>
-              {column.header || ''} {props.sortColIdx === columnNumber && (
-                props.sortAscending ? <ChevronDown /> : <ChevronUp />
-              )}
-            </span> :
-            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
-          }
+          {columnContent}
         </th>
-      )}
+      })}
     </tr>
   </thead>;
 };
@@ -145,10 +157,17 @@ export default class Table extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
+    const { defaultSort } = this.props;
+    const state = {
       sortAscending: true,
       sortColIdx: null
     };
+
+    if (defaultSort) {
+      Object.assign(state, defaultSort);
+    }
+
+    this.state = state;
   }
 
   defaultRowClassNames = () => ''
@@ -246,5 +265,9 @@ Table.propTypes = {
   className: PropTypes.string,
   caption: PropTypes.string,
   id: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  defaultSort: PropTypes.shape({
+    sortColIdx: PropTypes.number,
+    sortAscending: PropTypes.bool
+  })
 };
