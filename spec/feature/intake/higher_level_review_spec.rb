@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher Level Review Intake" do
+RSpec.feature "Higher-Level Review Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -184,9 +184,9 @@ RSpec.feature "Higher Level Review Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -198,7 +198,7 @@ RSpec.feature "Higher Level Review Intake" do
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
-        end_product_label: "Higher Level Review Rating",
+        end_product_label: "Higher-Level Review Rating",
         end_product_code: "030HLRR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
@@ -282,7 +282,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
