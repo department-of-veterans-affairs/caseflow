@@ -20,7 +20,9 @@ import {
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  setCaseReviewActionType
+  setCaseReviewActionType,
+  initialAssignTasksToUser,
+  reassignTasksToUser
 } from '../QueueActions';
 import {
   dropdownStyling,
@@ -50,12 +52,17 @@ type Props = Params & {|
   checkoutStagedAppeal: typeof checkoutStagedAppeal,
   stageAppeal: typeof stageAppeal,
   setCaseReviewActionType: typeof setCaseReviewActionType,
+  initialAssignTasksToUser: typeof initialAssignTasksToUser,
+  reassignTasksToUser: typeof reassignTasksToUser,
   // From withRouter
   history: Object
 |};
 
 type ComponentState = {
-  assignWidgetVisible: boolean
+  selectedOption: ?{
+    label: string,
+    value: string
+  }
 };
 
 // todo: make StartCheckoutFlowDropdownBase
@@ -63,13 +70,13 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
   constructor(props) {
     super(props);
 
-    this.state = { assignWidgetVisible: false };
+    this.state = {};
   }
 
   handleChange = (option) => {
-    if (option.value === ASSIGN) {
-      this.setState({ assignWidgetVisible: true });
+    this.setState({ selectedOption: option });
 
+    if (option.value === ASSIGN) {
       return;
     }
 
@@ -113,6 +120,22 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
     this.props.stageAppeal(appealId);
   }
 
+  handleAssignment =
+    ({ tasks, assigneeId, previousAssigneeId }:
+      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) => {
+    if (tasks[0].attributes.task_type === 'Assign') {
+      return this.props.initialAssignTasksToUser({ tasks, assigneeId, previousAssigneeId });
+    } else {
+      return this.props.reassignTasksToUser({ tasks, assigneeId, previousAssigneeId });
+    }
+  }
+
+  assignWidgetVisible = () => {
+    const { selectedOption } = this.state;
+
+    return selectedOption && selectedOption.value === ASSIGN;
+  }
+
   render = () => {
     const {
       task
@@ -135,9 +158,13 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent<Props, Componen
         options={options}
         onChange={this.handleChange}
         hideLabel
-        dropdownStyling={dropdownStyling} />
-      {this.state.assignWidgetVisible &&
-        <AssignWidget onTaskAssignment={() => {}} previousAssigneeId="0" selectedTasks={[task]} />}
+        dropdownStyling={dropdownStyling}
+        value={this.state.selectedOption} />
+      {this.assignWidgetVisible() &&
+        <AssignWidget
+          onTaskAssignment={this.handleAssignment}
+          previousAssigneeId={task.attributes.assigned_to_pg_id}
+          selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }
@@ -160,7 +187,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
-  setCaseReviewActionType
+  setCaseReviewActionType,
+  initialAssignTasksToUser,
+  reassignTasksToUser
 }, dispatch);
 
 export default (
