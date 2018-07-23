@@ -79,6 +79,15 @@ export default class BuildSchedule extends React.Component {
     const displayRoCoSuccessMessage = displaySuccessMessage &&
       schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
+    const roSuccessMessage = <div>
+      You can view your uploaded schedule by clicking the link below. <span>
+      <Link
+        name="view-schedule"
+        to="/schedule">
+        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
+      </span>
+    </div>;
+
     return <AppSegment filledBackground>
       {displayJudgeSuccessMessage && <Alert
         type="success"
@@ -91,7 +100,7 @@ export default class BuildSchedule extends React.Component {
         type="success"
         title={`You have successfully assigned hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={roSuccessMessage}
         styling={alertStyling}
       />}
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
