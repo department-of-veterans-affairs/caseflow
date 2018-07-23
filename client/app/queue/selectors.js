@@ -15,9 +15,9 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
   (selected, id) => selected ? [state.queue.tasks[id]] : []
 );
 
-const getTasks = (state: State): Tasks => state.queue.tasks;
-const getAppeals = (state: State): LegacyAppeals => state.queue.appeals;
-const getUserCssId = (state: State): string => state.ui.userCssId;
+const getTasks = (state: State) => state.queue.tasks;
+const getAppeals = (state: State) => state.queue.appeals;
+const getUserCssId = (state: State) => state.ui.userCssId;
 
 export const unassignedTasksSelector = createSelector(
   [getTasks],
