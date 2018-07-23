@@ -153,20 +153,6 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
-  context "when allocation central office is the wrong location" do
-    subject do
-      HearingSchedule::ValidateRoSpreadsheet.new(
-        Roo::Spreadsheet.open("spec/support/allocationWrongCoLocation.xlsx", extension: :xlsx),
-        Date.parse("01/01/2018"),
-        Date.parse("01/06/2018")
-      ).validate
-    end
-
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::AllocationCoLocationIncorrect)
-    end
-  end
-
   context "when allocation template is not followed" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
