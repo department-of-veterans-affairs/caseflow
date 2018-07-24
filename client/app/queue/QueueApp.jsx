@@ -104,7 +104,7 @@ class QueueApp extends React.PureComponent {
         <div className="cf-wide-app" {...appStyling}>
           <PageRoute
             exact
-            path="/"
+            path={this.props.userCanAccessQueue ? '/queue' : '/'}
             title="Caseflow"
             component={CaseSearchSheet} />
           <PageRoute
