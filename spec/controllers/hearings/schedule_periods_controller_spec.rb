@@ -60,4 +60,15 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       expect(JSON.parse(response.body)["hearings"].size).to be_between(355, 359)
     end
   end
+
+  context "assign judges to full schedule for a schedule period" do
+    it "update judge assignments for a given schedulePeriod id" do
+      put :update, params: {
+          schedule_period_id: judge_schedule_period.id
+      }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["id"]).to eq judge_schedule_period.id
+    end
+  end
 end
