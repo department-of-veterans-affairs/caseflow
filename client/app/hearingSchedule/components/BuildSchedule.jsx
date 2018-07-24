@@ -85,12 +85,12 @@ export default class BuildSchedule extends React.Component {
 
     const roSuccessMessage = <div>
       You can view your uploaded schedule by clicking the link below.
-      <br/>
+      <br />
       <div {...linkStyling}>
-      <Link
-        name="view-schedule"
-        to="/schedule">
-        {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
+        <Link
+          name="view-schedule"
+          to="/schedule">
+          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       </div>
     </div>;
 
