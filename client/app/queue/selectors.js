@@ -1,5 +1,5 @@
 // @flow
-import { createSelector } from 'reselect';
+import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 import _ from 'lodash';
 
 import type { State } from './types/state';
@@ -7,7 +7,8 @@ import type {
   Task,
   Tasks,
   LegacyAppeal,
-  LegacyAppeals
+  LegacyAppeals,
+  Attorneys
 } from './types/models';
 
 export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
@@ -15,18 +16,21 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
   (selected, id) => selected ? [state.queue.tasks[id]] : []
 );
 
+const createDeepEqualSelector = createSelectorCreator(
+  defaultMemoize,
+  _.isEqual
+)
+
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
+const getAttorney = (state: State, attorneyId: string) => {
+  if (!state.queue.attorneysOfJudge) {
+    return null;
+  }
 
-export const unassignedTasksSelector = createSelector(
-  [getTasks],
-  (tasks: Tasks) => _.keyBy(
-    _.filter(tasks, (task: Task) => task.attributes.task_type === 'Assign'),
-    (task: Task) => task.id
-  )
-);
-
+  return _.find(state.queue.attorneysOfJudge, (attorney) => attorney.id.toString() === attorneyId);
+}
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
@@ -35,15 +39,7 @@ export const tasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-export const judgeReviewTasksSelector = createSelector(
-  [tasksByAssigneeCssIdSelector],
-  (tasks: Tasks) => _.keyBy(
-    _.filter(tasks, (task: Task) => task.attributes.task_type === 'Review'),
-    (task: Task) => task.id
-  )
-);
-
-export const appealsWithTasks = createSelector(
+export const appealsWithTasks = createDeepEqualSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     const taskMap = _.reduce(tasks, (map, task) => {
@@ -63,4 +59,26 @@ export const appealsByAssigneeCssIdSelector = createSelector(
   [appealsWithTasks, getUserCssId],
   (appeals: LegacyAppeals, cssId: string) => 
     _.values(_.filter(appeals, (appeal: LegacyAppeal) => _.some(appeal.tasks, (task) => task.attributes.user_id === cssId)))
+);
+
+export const judgeReviewAppealsSelector = createSelector(
+  [appealsByAssigneeCssIdSelector],
+  (appeals: LegacyAppeals) =>
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks[0].attributes.task_type === 'Review')
+);
+
+export const unassignedAppealsSelector = createSelector(
+  [appealsWithTasks],
+  (appeals: LegacyAppeals) =>
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks[0].attributes.task_type === 'Assign')
+);
+
+export const assignedAppealsSelector = createDeepEqualSelector(
+  [appealsWithTasks, getAttorney],
+  (appeals: LegacyAppeals, attorney: Attorneys) => {
+    const cssId = attorney ? attorney.css_id : null;
+
+    return _.filter(appeals, (appeal: LegacyAppeal) =>
+      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+  }
 );

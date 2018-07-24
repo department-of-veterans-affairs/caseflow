@@ -12,7 +12,7 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { selectedTasksSelector } from './selectors';
+import { unassignedAppealsSelector, selectedTasksSelector } from './selectors';
 import type { Task } from './types/models';
 
 type Params = {|
@@ -52,8 +52,9 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         includeDocketNumber
         includeIssueCount
         includeDocumentCount
-        includeDueDate
-      {...this.props} />
+        includeDaysWaiting
+        appeals={this.props.appeals}
+        userId={userId} />
     </React.Fragment>;
   }
 }
@@ -61,7 +62,6 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
 const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
-      tasks,
       isTaskAssignedToUserSelected
     },
     ui: {
@@ -70,7 +70,7 @@ const mapStateToProps = (state, ownProps) => {
   } = state;
 
   return {
-    tasks,
+    appeals: unassignedAppealsSelector(state),
     isTaskAssignedToUserSelected,
     featureToggles,
     selectedTasks: selectedTasksSelector(state, ownProps.userId)

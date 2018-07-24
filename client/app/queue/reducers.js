@@ -258,10 +258,12 @@ const workQueueReducer = (state = initialState, action = {}) => {
       tasksAndAppealsOfAttorney: {
         [action.payload.attorneyId]: {
           $set: {
-            state: 'LOADED',
-            data: _.pick(action.payload, 'tasks', 'appeals')
+            state: 'LOADED'
           }
         }
+      },
+      appeals: {
+        $merge: action.payload.appeals
       },
       tasks: {
         $merge: action.payload.tasks
@@ -297,88 +299,22 @@ const workQueueReducer = (state = initialState, action = {}) => {
     const appealId = action.payload.task.id;
     const appeal = state.appeals[appealId];
 
-    const tasksAndAppealsOfAssignee = update(
-      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
-        {
-          data: {
-            tasks: {},
-            appeals: {}
-          }
-        },
-      {
-        data: {
-          tasks: {
-            [appealId]: {
-              $set: action.payload.task
-            }
-          },
-          appeals: {
-            [appealId]: {
-              $set: appeal
-            }
-          }
-        }
-      });
-
     return update(state, {
       tasks: {
         [appealId]: {
           $set: action.payload.task
-        }
-      },
-      tasksAndAppealsOfAttorney: {
-        [action.payload.assigneeId]: {
-          $set: tasksAndAppealsOfAssignee
         }
       }
     });
   }
   case ACTIONS.TASK_REASSIGNED: {
     const appealId = action.payload.task.id;
-    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
-
-    const tasksAndAppealsOfAssignee = update(
-      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
-        {
-          data: {
-            tasks: {},
-            appeals: {}
-          }
-        },
-      {
-        data: {
-          tasks: {
-            [appealId]: {
-              $set: action.payload.task
-            }
-          },
-          appeals: {
-            [appealId]: {
-              $set: appeal
-            }
-          }
-        }
-      });
+    const appeal = state.appeals[appealId];
 
     return update(state, {
       tasks: {
         [appealId]: {
           $set: action.payload.task
-        }
-      },
-      tasksAndAppealsOfAttorney: {
-        [action.payload.previousAssigneeId]: {
-          data: {
-            tasks: {
-              $unset: [appealId]
-            },
-            appeals: {
-              $unset: [appealId]
-            }
-          }
-        },
-        [action.payload.assigneeId]: {
-          $set: tasksAndAppealsOfAssignee
         }
       }
     });

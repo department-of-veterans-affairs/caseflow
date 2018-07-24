@@ -8,7 +8,7 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
-import { selectedTasksSelector } from './selectors';
+import { selectedTasksSelector, assignedAppealsSelector } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
@@ -34,7 +34,7 @@ type Props = Params & {|
   reassignTasksToUser: typeof reassignTasksToUser
 |};
 
-class AssignedCasesPage extends React.PureComponent<Props> {
+class AssignedCasesPage extends React.Component<Props> {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -72,13 +72,7 @@ class AssignedCasesPage extends React.PureComponent<Props> {
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
-    const { tasks: taskIdsOfAttorney, appeals } = tasksAndAppealsOfAttorney[attorneyId].data;
-    const tasksOfAttorney = {};
-
-    for (const taskId of Object.keys(taskIdsOfAttorney)) {
-      tasksOfAttorney[taskId] = tasks[taskId];
-    }
-
+    
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
       {featureToggles.judge_assignment_to_attorney &&
@@ -86,16 +80,15 @@ class AssignedCasesPage extends React.PureComponent<Props> {
           previousAssigneeId={attorneyId}
           onTaskAssignment={(params) => props.reassignTasksToUser(params)}
           selectedTasks={selectedTasks} />}
-      <JudgeAssignTaskTable
-        tasksAndAppeals={
-          sortTasks({
-            tasks: tasksOfAttorney,
-            appeals
-          }).
-            map((task) => ({
-              task,
-              appeal: appeals[task.appealId] }))
-        }
+      <TaskTable
+        includeSelect
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDocumentCount
+        includeDaysWaiting
+        appeals={this.props.appealsOfAttorney}
         userId={attorneyId} />
     </React.Fragment>;
   }
@@ -107,6 +100,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { attorneyId } = ownProps.match.params;
 
   return {
+    appealsOfAttorney: assignedAppealsSelector(state, attorneyId),
     tasksAndAppealsOfAttorney,
     attorneysOfJudge,
     tasks,

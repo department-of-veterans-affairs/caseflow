@@ -106,10 +106,7 @@ class AssignWidget extends React.PureComponent<Props> {
         sprintf(
           COPY.ASSIGN_WIDGET_SUCCESS,
           { numCases: selectedTasks.length,
-            casePlural: pluralize('case', selectedTasks.length) }))).
-      catch(() => this.props.showErrorMessage(
-        { title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));
+            casePlural: pluralize('case', selectedTasks.length) })));
   }
 
   render = () => {

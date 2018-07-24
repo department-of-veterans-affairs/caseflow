@@ -69,6 +69,7 @@ class AttorneyTaskListView extends React.PureComponent {
           includeDueDate
           includeReaderLink
           requireDasRecord
+          appeals={this.props.appeals}
         />
       </div>;
     }
