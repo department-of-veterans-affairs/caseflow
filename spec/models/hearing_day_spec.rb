@@ -58,7 +58,7 @@ describe HearingDay do
 
       it do
         allocation
-        expect(subject.length).to eq(schedule_period.ro_hearing_day_allocations.size)
+        expect(subject.size).to eq(schedule_period.ro_hearing_day_allocations.size)
       end
     end
   end

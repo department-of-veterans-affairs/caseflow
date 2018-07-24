@@ -49,13 +49,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def update
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
-    schedule_period.finalized = if schedule_period.type == "RoSchedulePeriod"
-                                  HearingDay.create_schedule(schedule_period.ro_hearing_day_allocations)
-                                else
-                                  HearingDay.update_schedule(schedule_period.allocations)
-                                end
-
-    schedule_period.save
+    schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
     render json: { id: schedule_period.id }
   end
 
