@@ -6,10 +6,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Table from '../components/Table';
 import _ from 'lodash';
-import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { renderAppealType } from './utils';
+import { renderAppealType, getTaskDaysWaiting } from './utils';
 import { setSelectionOfTaskOfUser } from './QueueActions';
 
 class JudgeAssignTaskTable extends React.PureComponent {
@@ -60,10 +59,8 @@ class JudgeAssignTaskTable extends React.PureComponent {
     },
     {
       header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: ({ task }) => (
-        moment().
-          startOf('day').
-          diff(moment(task.attributes.assigned_on), 'days'))
+      valueFunction: ({ task }) => getTaskDaysWaiting(task),
+      getSortValue: ({ task }) => getTaskDaysWaiting(task)
     }
   ];
 
