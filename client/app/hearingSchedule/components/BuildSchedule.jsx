@@ -22,6 +22,10 @@ export default class BuildSchedule extends React.Component {
       schedulePeriod
     } = this.props;
 
+    const linkStyling = css({
+      marginTop: '6px'
+    });
+
     const alertStyling = css({
       marginBottom: '20px'
     });
@@ -80,12 +84,14 @@ export default class BuildSchedule extends React.Component {
       schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
     const roSuccessMessage = <div>
-      You can view your uploaded schedule by clicking the link below. <span>
+      You can view your uploaded schedule by clicking the link below.
+      <br/>
+      <div {...linkStyling}>
       <Link
         name="view-schedule"
         to="/schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
-      </span>
+      </div>
     </div>;
 
     return <AppSegment filledBackground>
@@ -93,7 +99,7 @@ export default class BuildSchedule extends React.Component {
         type="success"
         title={`You have successfully assigned judges to hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={roSuccessMessage}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
