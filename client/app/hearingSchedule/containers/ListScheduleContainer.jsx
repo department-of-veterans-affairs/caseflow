@@ -18,7 +18,7 @@ export class ListScheduleContainer extends React.Component {
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-      const hearingDays = _.keyBy(resp.hearings, 'id');
+      const hearingDays = _.keyBy(resp.hearings, 'hearingDate');
 
       this.props.onReceiveHearingSchedule(hearingDays);
     });
