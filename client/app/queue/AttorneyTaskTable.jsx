@@ -59,7 +59,10 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     span: (task) => task.attributes.task_id ? 1 : 5,
     getSortValue: (task, tasks) => {
       const { appeals } = this.props;
-      const sortedTasks = sortTasks({ tasks, appeals });
+      const sortedTasks = sortTasks({
+        tasks,
+        appeals
+      });
 
       return sortedTasks.indexOf(task);
     }
