@@ -75,11 +75,6 @@ class RampReview < ApplicationRecord
     if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
       saved_end_product_establishment.sync!
     end
-
-    # update!(
-    #   end_product_status: (saved_end_product_establishment || end_product_establishment).result.status_type_code,
-    #   end_product_status_last_synced_at: Time.zone.now
-    # )
   end
 
   def establish_end_product!
