@@ -93,7 +93,12 @@ export class BuildScheduleUploadContainer extends React.Component {
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
         if (_.has(response.body, 'error')) {
-          this.props.updateUploadFormErrors(response.body.error);
+          if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+            this.props.updateRoCoUploadFormErrors("The spreadsheet validation failed.");
+          }
+          if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+            this.props.updateJudgeUploadFormErrors("The spreadsheet validation failed.");
+          }
           return;
         }
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
@@ -124,6 +129,8 @@ export class BuildScheduleUploadContainer extends React.Component {
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
       uploadFormErrors={this.props.uploadFormErrors}
+      uploadRoCoFormErrors={this.props.uploadRoCoFormErrors}
+      uploadJudgeFormErrors={this.props.uploadJudgeFormErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
       onUploadContinue={this.onUploadContinue}
     />;
@@ -139,8 +146,8 @@ const mapStateToProps = (state) => ({
   judgeEndDate: state.judgeEndDate,
   judgeFileUpload: state.judgeFileUpload,
   uploadFormErrors: state.uploadFormErrors,
-  uploadRoCoUploadFormErrors: state.uploadRoCoUploadFormErrors,
-  uploadJudgeUploadFormErrors: state.uploadJudgeUploadFormErrors,
+  uploadRoCoFormErrors: state.uploadRoCoFormErrors,
+  uploadJudgeFormErrors: state.uploadJudgeFormErrors,
   uploadContinueLoading: state.uploadContinueLoading
 });
 
