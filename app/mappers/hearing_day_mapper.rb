@@ -30,7 +30,7 @@ module HearingDayMapper
     def translate_hearing_type(hearing_type)
       return if hearing_type.nil?
 
-      hearing_type.length > 1 ? HearingDay::HEARING_TYPES[hearing_type.to_sym] : hearing_type
+      (hearing_type.length > 1) ? HearingDay::HEARING_TYPES[hearing_type.to_sym] : hearing_type
     end
 
     def validate_regional_office(regional_office)
