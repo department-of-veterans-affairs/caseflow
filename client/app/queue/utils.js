@@ -181,6 +181,4 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 };
 
 export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(
-    moment(task.attributes.assigned_on), 'days'
-  );
+  diff(moment(task.attributes.assigned_on), 'days');
