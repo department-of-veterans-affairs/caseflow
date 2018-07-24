@@ -53,6 +53,7 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     _.each(renderedChildren, (child) => child.updateStoreIssue());
+
     return true;
   }
 
