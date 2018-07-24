@@ -23,42 +23,42 @@ describe RampRefilingIntake do
 
   let(:completed_ramp_election) do
     re = create(:ramp_election,
-           veteran_file_number: veteran_file_number,
-           notice_date: 4.days.ago,
-           receipt_date: 3.days.ago,
-           established_at: Time.zone.now)
-     ep = Generators::EndProduct.build(
-       veteran_file_number: veteran_file_number,
-       bgs_attrs: { status_type_code: "CLR" }
-     )
-     EndProductEstablishment.create(
-       source: re,
-       established_at: Time.zone.now,
-       veteran_file_number: veteran_file_number,
-       reference_id: ep.claim_id,
-       synced_status: "CLR"
-     )
-     re
+                veteran_file_number: veteran_file_number,
+                notice_date: 4.days.ago,
+                receipt_date: 3.days.ago,
+                established_at: Time.zone.now)
+    ep = Generators::EndProduct.build(
+      veteran_file_number: veteran_file_number,
+      bgs_attrs: { status_type_code: "CLR" }
+    )
+    EndProductEstablishment.create(
+      source: re,
+      established_at: Time.zone.now,
+      veteran_file_number: veteran_file_number,
+      reference_id: ep.claim_id,
+      synced_status: "CLR"
+    )
+    re
   end
 
   let(:second_completed_ramp_election) do
     re = create(:ramp_election,
-           veteran_file_number: veteran_file_number,
-           notice_date: 2.days.ago,
-           receipt_date: 1.day.ago,
-           established_at: Time.zone.now)
-   ep = Generators::EndProduct.build(
-     veteran_file_number: veteran_file_number,
-     bgs_attrs: { status_type_code: "CLR" }
-   )
-   EndProductEstablishment.create(
-     source: re,
-     established_at: Time.zone.now,
-     veteran_file_number: veteran_file_number,
-     reference_id: ep.claim_id,
-     synced_status: "CLR"
-   )
-   re
+                veteran_file_number: veteran_file_number,
+                notice_date: 2.days.ago,
+                receipt_date: 1.day.ago,
+                established_at: Time.zone.now)
+    ep = Generators::EndProduct.build(
+      veteran_file_number: veteran_file_number,
+      bgs_attrs: { status_type_code: "CLR" }
+    )
+    EndProductEstablishment.create(
+      source: re,
+      established_at: Time.zone.now,
+      veteran_file_number: veteran_file_number,
+      reference_id: ep.claim_id,
+      synced_status: "CLR"
+    )
+    re
   end
 
   let(:claim_id) { EndProductEstablishment.find_by(source: completed_ramp_election).reference_id }
@@ -151,8 +151,6 @@ describe RampRefilingIntake do
                notice_date: 3.days.ago,
                established_at: Time.zone.now)
       end
-
-      let(:claim_id) { ramp_election.end_product_reference_id }
 
       context "the EP associated with original RampElection is still pending" do
         let(:end_product_status) { "PEND" }
@@ -368,7 +366,7 @@ describe RampRefilingIntake do
       let!(:second_election) { second_completed_ramp_election }
       let!(:contention2) do
         Generators::Contention.build(
-          claim_id: second_election.end_product_reference_id,
+          claim_id: EndProductEstablishment.find_by(source: second_election).reference_id,
           text: "Right elbow"
         )
       end

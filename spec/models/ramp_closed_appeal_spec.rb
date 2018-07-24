@@ -20,7 +20,6 @@ describe RampClosedAppeal do
       veteran_file_number: appeal.veteran_file_number,
       bgs_attrs: { status_type_code: ep_status }
     )
-
   end
 
   let(:ramp_election) do
@@ -58,7 +57,7 @@ describe RampClosedAppeal do
 
     context "when end product was canceled" do
       let!(:current_end_product) do
-        end_product.tap do |ep|
+        end_product.tap do |_ep|
           EndProductEstablishment.create(
             source: ramp_election,
             veteran_file_number: ramp_election.veteran_file_number,
@@ -168,7 +167,8 @@ describe RampClosedAppeal do
         source: ramp_election_canceled_ep,
         veteran_file_number: veteran.file_number,
         last_synced_at: 2.days.ago,
-        synced_status: "CAN")
+        synced_status: "CAN"
+      )
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do

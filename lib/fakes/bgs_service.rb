@@ -51,10 +51,10 @@ class Fakes::BGSService
           source: sc
         )
         sc
-      when “has_higher_level_review_with_vbms_claim_id”
+      when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
         hlr = HigherLevelReview.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
+          veteran_file_number: veteran.file_number
         )
         EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,

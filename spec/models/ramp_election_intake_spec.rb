@@ -223,19 +223,19 @@ describe RampElectionIntake do
 
       let!(:existing_ramp_election) do
         re = create(:ramp_election,
-               veteran_file_number: veteran_file_number,
-               notice_date: 40.days.ago,
-               option_selected: existing_option_selected,
-               receipt_date: 38.days.ago,
-               established_at: 38.days.ago)
-         EndProductEstablishment.create(
-           veteran_file_number:veteran_file_number,
-           source: re,
-           reference_id: preexisting_ep.claim_id,
-           synced_status: status_type_code,
-           last_synced_at: 38.days.ago
-         )
-         re
+                    veteran_file_number: veteran_file_number,
+                    notice_date: 40.days.ago,
+                    option_selected: existing_option_selected,
+                    receipt_date: 38.days.ago,
+                    established_at: 38.days.ago)
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: re,
+          reference_id: preexisting_ep.claim_id,
+          synced_status: status_type_code,
+          last_synced_at: 38.days.ago
+        )
+        re
       end
 
       context "the existing RAMP election EP is active" do

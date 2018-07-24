@@ -23,7 +23,6 @@ describe RampElection do
           notice_date: notice_date,
           option_selected: option_selected,
           receipt_date: receipt_date,
-          # end_product_reference_id: end_product_reference_id,
           established_at: established_at,
           end_product_status: end_product_status)
   end
@@ -34,7 +33,6 @@ describe RampElection do
                    veteran_file_number: "1",
                    notice_date: 1.day.ago,
                    receipt_date: 1.day.ago)
-             # end_product_status: "ACTIVE")
       EndProductEstablishment.create(
         source: ep1,
         veteran_file_number: "1",
@@ -45,7 +43,6 @@ describe RampElection do
                     notice_date: 1.day.ago,
                     receipt_date: 1.day.ago,
                     established_at: Time.zone.now)
-             # end_product_status: "ACTIVE")
       EndProductEstablishment.create(
         source: ep11,
         veteran_file_number: "11",
@@ -55,7 +52,6 @@ describe RampElection do
                    veteran_file_number: "2",
                    notice_date: 1.day.ago,
                    receipt_date: 1.day.ago)
-             # end_product_status: EndProduct::INACTIVE_STATUSES.first)
       EndProductEstablishment.create(
         source: ep2,
         veteran_file_number: "2",
@@ -75,8 +71,15 @@ describe RampElection do
 
     subject { ramp_election.sync! }
 
-    let!(:ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-    let(:end_product_reference_id) { ep.claim_id }
+    let!(:ep) do
+      Generators::EndProduct.build(veteran_file_number: veteran_file_number).tap do |end_product|
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product.claim_id
+        )
+      end
+    end
 
     it "calls recreate_issues_from_contentions! and sync_ep_status!" do
       expect(ramp_election).to receive(:recreate_issues_from_contentions!)
@@ -230,6 +233,13 @@ describe RampElection do
           Generators::Contention.build(claim_id: end_product_reference_id, text: "Tinnitus"),
           Generators::Contention.build(claim_id: "123", text: "Not related")
         ]
+      end
+      let!(:end_product_establishment) do
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product_reference_id
+        )
       end
 
       it "destroys previous issues and creates issues from contentions" do

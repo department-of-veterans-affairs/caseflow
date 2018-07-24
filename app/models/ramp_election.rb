@@ -63,6 +63,10 @@ class RampElection < RampReview
         end_product_status_last_synced_at: nil
       )
 
+      # End product should already be cancelled, so we don't need to pay attention to the establishment that we already
+      # had created. We will create a new one if the ramp election is recreated.
+      end_product_establishment.destroy!
+
       ramp_closed_appeals.destroy_all
     end
   end

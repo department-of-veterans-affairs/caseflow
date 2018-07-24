@@ -11,7 +11,6 @@ describe SupplementalClaim do
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
-  let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
   let(:end_product_status) { nil }
 
@@ -19,9 +18,7 @@ describe SupplementalClaim do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
@@ -123,7 +120,7 @@ describe SupplementalClaim do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    it "creates end product and saves end_product_establishment" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject

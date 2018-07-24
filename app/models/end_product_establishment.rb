@@ -16,7 +16,8 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   # Fetch the resulting end product from the reference_id
-  def result(cached: false) # add option to either load from BGS or just used cached values
+  # Add option to either load from BGS or just used cached values
+  def result(cached: false)
     cached ? cached_result : fetched_result
   end
 

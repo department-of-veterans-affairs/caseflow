@@ -9,20 +9,20 @@ describe RampElectionRollback do
   end
 
   let(:established_end_product) do
+    ep = Generators::EndProduct.build(
+      veteran_file_number: "44444444",
+      bgs_attrs: {
+        benefit_claim_id: "EP1234",
+        status_type_code: ep_status
+      }
+    )
     EndProductEstablishment.create(
       veteran_file_number: "44444444",
       source: ramp_election,
-      reference_id: "EP1234",
       last_synced_at: 2.days.ago,
-      synced_status: ep_status
+      synced_status: ep_status,
+      reference_id: ep.claim_id
     )
-    # Generators::EndProduct.build(
-    #   veteran_file_number: "44444444",
-    #   bgs_attrs: {
-    #     benefit_claim_id: "EP1234",
-    #     status_type_code: ep_status
-    #   }
-    # )
   end
 
   let!(:ramp_election) do
@@ -107,7 +107,8 @@ describe RampElectionRollback do
 
       subject
 
-      expect(ramp_election.reload.end_product_reference_id).to eq(nil)
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: ramp_election)
+      expect(resultant_end_product_establishment).to eq(nil)
       expect(rollback.reload.reopened_vacols_ids).to eq(%w[12345 23456])
     end
   end
