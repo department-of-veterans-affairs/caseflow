@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
 
 import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
 
 import { judgeReviewTasksSelector } from './selectors';
-import { sortTasks, renderAppealType } from './utils';
+import { sortTasks, renderAppealType, getTaskDaysWaiting } from './utils';
 import COPY from '../../COPY.json';
 
 class JudgeReviewTaskTable extends React.PureComponent {
@@ -47,8 +46,8 @@ class JudgeReviewTaskTable extends React.PureComponent {
     valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
   }, {
     header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    valueFunction: (task) => moment().startOf('day').
-      diff(moment(task.attributes.assigned_on), 'days')
+    valueFunction: getTaskDaysWaiting,
+    getSortValue: getTaskDaysWaiting
   }];
 
   render = () => <Table
