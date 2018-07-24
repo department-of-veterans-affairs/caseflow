@@ -130,6 +130,17 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::AssociateRatedIssues.new(
+      claim_id: claim_id,
+      rated_issue_contention_map: rated_issue_contention_map
+    )
+
+    send_and_log_request(claim_id, request)
+  end
+
   def self.current_user
     RequestStore[:current_user]
   end

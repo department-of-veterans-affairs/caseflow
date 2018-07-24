@@ -48,6 +48,7 @@ class AmaReview < ApplicationRecord
     return nil if contention_descriptions_to_create.empty?
     establish_end_product!
     create_contentions_on_new_end_product!
+    associate_rated_issues_on_contentions!
   end
 
   def veteran
@@ -67,6 +68,11 @@ class AmaReview < ApplicationRecord
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
       request_issues.where(contention_reference_id: nil).pluck(:description)
+  end
+
+  def rated_issue_contention_map
+    @rated_issue_contention_map ||=
+      request_issues.where.not(contention_reference_id: nil)
   end
 
   # VBMS will return ALL contentions on a end product when you create contentions,
@@ -95,10 +101,9 @@ class AmaReview < ApplicationRecord
   end
 
   def create_associated_rated_issues_in_vbms
-    VBMSService.create_contentions!(
-      veteran_file_number: veteran_file_number,
+    VBMSService.associate_rated_issues!(
       claim_id: end_product_reference_id,
-      contention_descriptions: contention_descriptions_to_create
+      rated_issue_contention_map: rated_issue_contention_map
     )
   end
 
