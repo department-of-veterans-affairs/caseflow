@@ -42,11 +42,7 @@ class CaseDetailsView extends React.PureComponent {
     {this.props.error && <Alert title={this.props.error.title} type="error">
       {this.props.error.detail}
     </Alert>}
-    <CaseSnapshot
-      appeal={this.props.appeal}
-      loadedQueueAppealIds={this.props.loadedQueueAppealIds}
-      task={this.props.task}
-    />
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
       <CaseDetailsIssueList
@@ -71,8 +67,7 @@ CaseDetailsView.propTypes = {
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
   error: state.ui.messages.error,
-  task: state.caseDetail.activeTask,
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  task: state.caseDetail.activeTask
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

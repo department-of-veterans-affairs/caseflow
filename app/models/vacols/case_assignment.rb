@@ -71,7 +71,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("brieff.bfkey = #{id}")
     end
 
-    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -85,9 +84,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
              "s1.snamel as added_by_last_name",
-             "decass.deadusr as added_by_css_id",
+             "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
-             "decass.deadusr as added_by",
              "decass.deadtim as created_at",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
@@ -106,7 +104,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON decass.demdusr = s3.slogid
         SQL
     end
-    # rubocop:enable Metrics/MethodLength
 
     def exists_for_appeals(vacols_ids)
       conn = connection
