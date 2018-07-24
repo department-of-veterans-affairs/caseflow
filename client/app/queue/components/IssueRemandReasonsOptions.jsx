@@ -108,8 +108,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     }
   };
 
-  componentWillUnmount = () => {
-    // on unmount, update issue attrs from state
+  updateStoreIssue = () => {
+    // on going to the next page, update issue attrs from state
     // "remand_reasons": [
     //   {"code": "AB", "after_certification": true},
     //   {"code": "AC", "after_certification": false}
