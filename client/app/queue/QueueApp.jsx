@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import { setFeatureToggles, setUserRole } from './uiReducer/uiActions';
+import {
+  setFeatureToggles,
+  setUserRole,
+  setUserCssId
+} from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -40,6 +43,7 @@ class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
+    this.props.setUserCssId(this.props.userCssId);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -207,15 +211,13 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.stagedChanges.taskDecision.type,
-  searchedAppeals: state.caseList.receivedAppeals
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
-  setUserRole
+  setUserRole,
+  setUserCssId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

@@ -9,6 +9,10 @@ import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 
+import {
+  appealsByAssignedTaskSelector,
+  tasksByAssigneeCssIdSelector
+} from './selectors';
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
@@ -20,7 +24,6 @@ import type {
 } from './types/models';
 
 type Props = {|
-  loadedQueueTasks: Tasks,
   appeals: LegacyAppeals,
   tasks: Tasks,
   featureToggles: Object
@@ -97,42 +100,30 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
   }];
 
   render = () => {
-    const { appeals, loadedQueueTasks, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
+    const { appeals, tasks } = this.props;
 
     return <Table
       columns={this.getQueueColumns}
       rowObjects={sortTasks({
         appeals,
-        tasks: taskWithId
+        tasks
       })}
       getKeyForRow={this.getKeyForRow}
+      defaultSort={{ sortColIdx: 0 }}
       rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
   }
 }
 
 const mapStateToProps = (state) => {
   const {
-    queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
-      tasks
-    },
     ui: {
       featureToggles
     }
   } = state;
 
   return {
-    loadedQueueTasks,
-    appeals,
-    tasks,
+    appeals: appealsByAssignedTaskSelector(state),
+    tasks: tasksByAssigneeCssIdSelector(state),
     featureToggles
   };
 };

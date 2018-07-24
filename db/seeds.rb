@@ -265,6 +265,8 @@ class SeedDB
     create_users
     create_tasks
 
+    User.create(css_id: "VSO", station_id: 101)
+
     return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running

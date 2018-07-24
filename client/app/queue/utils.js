@@ -1,19 +1,20 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
   USER_ROLES
 } from './constants';
 import type {
+  Task,
   Tasks,
   LegacyAppeal,
   LegacyAppeals,
   Issue,
   Issues
 } from './types/models';
-import type { State } from './types/state';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
@@ -179,6 +180,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
-  state.queue.isTaskAssignedToUserSelected[userId] || {},
-  (selected, id) => (selected ? [state.queue.tasks[id]] : []));
+export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
+  diff(moment(task.attributes.assigned_on), 'days');

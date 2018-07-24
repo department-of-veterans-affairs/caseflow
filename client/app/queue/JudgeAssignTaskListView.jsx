@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import { NavLink } from 'react-router-dom';
+
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
@@ -12,7 +14,6 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { NavLink } from 'react-router-dom';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
@@ -20,6 +21,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
+import { unassignedTasksSelector } from './selectors';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -37,22 +39,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
   };
 
   unassignedTasksWithAppeals = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
+    const { tasks, appeals } = this.props;
 
     return sortTasks({
-      tasks: taskWithId,
+      tasks,
       appeals
-    }).
-      filter((task) => task.attributes.task_type === 'Assign').
-      map((task) => ({
-        task,
-        appeal: this.props.appeals[task.appealId]
-      }));
+    }).map((task) => ({
+      task,
+      appeal: this.props.appeals[task.appealId]
+    }));
   }
 
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
@@ -143,7 +138,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
   tasksAndAppealsOfAttorney: PropTypes.object.isRequired
@@ -154,11 +149,7 @@ const mapStateToProps = (state) => {
     queue: {
       attorneysOfJudge,
       tasksAndAppealsOfAttorney,
-      tasks,
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      }
+      appeals
     },
     ui: {
       featureToggles
@@ -168,8 +159,7 @@ const mapStateToProps = (state) => {
   return {
     attorneysOfJudge,
     tasksAndAppealsOfAttorney,
-    tasks,
-    loadedQueueTasks,
+    tasks: unassignedTasksSelector(state),
     appeals,
     featureToggles
   };
