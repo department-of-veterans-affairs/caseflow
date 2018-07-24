@@ -14,20 +14,47 @@ import {
   onJudgeEndDateChange,
   onJudgeFileUpload,
   toggleUploadContinueLoading,
-  updateFormErrors
+  updateUploadFormErrors,
+  updateRoCoUploadFormErrors,
+  updateJudgeUploadFormErrors
 } from '../actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
 
+  validateDatesAndFile = (onFailure, startDate, endDate, file) => {
+      if (!(startDate && endDate && file)) {
+          onFailure('Please enter a start date and an end date, and upload a file.');
+
+          return false
+      }
+      if (endDate < startDate) {
+          onFailure('Please enter an end date that is after the start date');
+
+          return false
+      }
+
+      return true;
+  };
+
   validateData = () => {
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-      return this.props.roCoStartDate && this.props.roCoEndDate && this.props.roCoFileUpload;
+      return this.validateDatesAndFile(
+        this.props.updateRoCoUploadFormErrors,
+        this.props.roCoStartDate,
+        this.props.roCoEndDate,
+        this.props.roCoFileUpload
+      )
     }
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-      return this.props.judgeStartDate && this.props.judgeEndDate && this.props.judgeFileUpload;
+      return this.validateDatesAndFile(
+        this.props.updateJudgeUploadFormErrors,
+        this.props.judgeStartDate,
+        this.props.judgeEndDate,
+        this.props.judgeFileUpload
+      )
     }
-    this.props.updateFormErrors('You must select a file type.');
+    this.props.updateUploadFormErrors('Please select a file type.');
 
     return false;
   };
@@ -66,7 +93,7 @@ export class BuildScheduleUploadContainer extends React.Component {
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
         if (_.has(response.body, 'error')) {
-          this.props.updateFormErrors(response.body.error);
+          this.props.updateUploadFormErrors(response.body.error);
           return;
         }
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
@@ -96,7 +123,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       onJudgeEndDateChange={this.props.onJudgeEndDateChange}
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
-      formErrors={this.props.formErrors}
+      uploadFormErrors={this.props.uploadFormErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
       onUploadContinue={this.onUploadContinue}
     />;
@@ -111,7 +138,9 @@ const mapStateToProps = (state) => ({
   judgeStartDate: state.judgeStartDate,
   judgeEndDate: state.judgeEndDate,
   judgeFileUpload: state.judgeFileUpload,
-  formErrors: state.formErrors,
+  uploadFormErrors: state.uploadFormErrors,
+  uploadRoCoUploadFormErrors: state.uploadRoCoUploadFormErrors,
+  uploadJudgeUploadFormErrors: state.uploadJudgeUploadFormErrors,
   uploadContinueLoading: state.uploadContinueLoading
 });
 
@@ -124,7 +153,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onJudgeEndDateChange,
   onJudgeFileUpload,
   toggleUploadContinueLoading,
-  updateFormErrors
+  updateUploadFormErrors,
+  updateRoCoUploadFormErrors,
+  updateJudgeUploadFormErrors
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer));

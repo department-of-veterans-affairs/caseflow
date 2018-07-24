@@ -23,9 +23,21 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
-  case ACTIONS.UPDATE_FORM_ERRORS:
+  case ACTIONS.UPDATE_UPLOAD_FORM_ERRORS:
     return update(state, {
-      formErrors: {
+      uploadFormErrors: {
+        $set: action.payload.errors
+      }
+    });
+  case ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS:
+    return update(state, {
+      uploadRoCoFormErrors: {
+        $set: action.payload.errors
+      }
+    });
+  case ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS:
+    return update(state, {
+      uploadJudgeFormErrors: {
         $set: action.payload.errors
       }
     });
@@ -34,7 +46,7 @@ const reducers = (state = initialState, action = {}) => {
       fileType: {
         $set: action.payload.fileType
       },
-      $unset: ['formErrors']
+      $unset: ['uploadFormErrors']
     });
   case ACTIONS.RO_CO_START_DATE_CHANGE:
     return update(state, {

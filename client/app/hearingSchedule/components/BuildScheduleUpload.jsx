@@ -37,6 +37,7 @@ export default class BuildScheduleUpload extends React.Component {
             preUploadText="Select a file for upload"
             postUploadText="Choose a different file"
             id="ro_co_file_upload"
+            fileType=".xlsx"
             onChange={this.props.onRoCoFileUpload}
             value={this.props.roCoFileUpload}
           />
@@ -65,6 +66,7 @@ export default class BuildScheduleUpload extends React.Component {
             preUploadText="Select a file for upload"
             postUploadText="Choose a different file"
             id="judge_file_upload"
+            fileType=".xlsx"
             onChange={this.props.onJudgeFileUpload}
             value={this.props.judgeFileUpload}
           />
@@ -94,7 +96,7 @@ export default class BuildScheduleUpload extends React.Component {
         options={fileTypes}
         value={this.props.fileType}
         onChange={this.props.onFileTypeChange}
-        errorMessage={this.props.formErrors}
+        errorMessage={this.props.uploadFormErrors}
         required
         vertical
         strongLabel
@@ -133,7 +135,7 @@ BuildScheduleUpload.propTypes = {
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.object,
   onJudgeFileUpload: PropTypes.func,
-  formErrors: PropTypes.string,
+  uploadFormErrors: PropTypes.string,
   onUploadContinue: PropTypes.func,
   uploadContinueLoading: PropTypes.bool
 };

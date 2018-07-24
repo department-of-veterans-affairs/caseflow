@@ -63,8 +63,22 @@ export const onJudgeEndDateChange = (endDate) => ({
   }
 });
 
-export const updateFormErrors = (errors) => ({
-  type: ACTIONS.UPDATE_FORM_ERRORS,
+export const updateUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateRoCoUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateJudgeUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS,
   payload: {
     errors
   }
