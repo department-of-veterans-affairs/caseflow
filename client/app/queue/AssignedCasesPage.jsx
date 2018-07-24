@@ -7,7 +7,8 @@ import JudgeAssignTaskTable from './JudgeAssignTaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
-import { sortTasks, selectedTasksSelector } from './utils';
+import { sortTasks } from './utils';
+import { selectedTasksSelector } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,

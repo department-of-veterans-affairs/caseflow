@@ -92,8 +92,8 @@ JudgeStartCheckoutFlowDropdown.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole

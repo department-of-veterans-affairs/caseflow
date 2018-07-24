@@ -12,7 +12,7 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { selectedTasksSelector } from './utils';
+import { selectedTasksSelector } from './selectors';
 import type { Task } from './types/models';
 
 type Params = {|

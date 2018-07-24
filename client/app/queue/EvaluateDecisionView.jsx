@@ -268,8 +268,8 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   decision: state.queue.stagedChanges.taskDecision,
