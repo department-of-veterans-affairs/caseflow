@@ -35,11 +35,11 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
-        expect(response_body.first["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
-        expect(response_body.second["attributes"]["assigned_by_id"]).to eq user.id
+        expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
       end
     end
@@ -63,11 +63,11 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
         expect(response_body.first["attributes"]["status"]).to eq "assigned"
-        expect(response_body.first["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
 
         expect(response_body.second["attributes"]["status"]).to eq "in_progress"
-        expect(response_body.second["attributes"]["assigned_to_id"]).to eq user.id
+        expect(response_body.second["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
       end
     end
@@ -139,19 +139,20 @@ RSpec.describe TasksController, type: :controller do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
             expect(response.status).to eq 201
-            response_body = JSON.parse(response.body)
-            expect(response_body["tasks"].size).to eq 2
-            expect(response_body["tasks"].first["status"]).to eq "assigned"
-            expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
-            expect(response_body["tasks"].first["instructions"]).to eq "do this"
-            expect(response_body["tasks"].first["title"]).to eq "address_verification"
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq 2
+            expect(response_body.first["attributes"]["status"]).to eq "assigned"
+            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["title"]).to eq "address_verification"
 
-            expect(response_body["tasks"].second["status"]).to eq "assigned"
-            expect(response_body["tasks"].second["appeal_id"]).to eq appeal.id
-            expect(response_body["tasks"].second["instructions"]).to eq "another one"
-            expect(response_body["tasks"].second["title"]).to eq "substituation_determination"
+            expect(response_body.second["attributes"]["status"]).to eq "assigned"
+            expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.second["attributes"]["instructions"]).to eq "another one"
+            expect(response_body.second["attributes"]["title"]).to eq "substituation_determination"
             # assignee should be the same person
-            expect(response_body["tasks"].first["assigned_to_id"]).to eq response_body["tasks"].second["assigned_to_id"]
+            id = response_body.second["attributes"]["assigned_to"]["id"]
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id
           end
         end
 
@@ -168,12 +169,12 @@ RSpec.describe TasksController, type: :controller do
           it "should be successful" do
             post :create, params: { tasks: params }
             expect(response.status).to eq 201
-            response_body = JSON.parse(response.body)
-            expect(response_body["tasks"].size).to eq 1
-            expect(response_body["tasks"].first["status"]).to eq "assigned"
-            expect(response_body["tasks"].first["appeal_id"]).to eq appeal.id
-            expect(response_body["tasks"].first["instructions"]).to eq "do this"
-            expect(response_body["tasks"].first["title"]).to eq "address_verification"
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq 1
+            expect(response_body.first["attributes"]["status"]).to eq "assigned"
+            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["title"]).to eq "address_verification"
           end
         end
 
