@@ -29,6 +29,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+    @errors = []
     @ro_spreadsheet_template = get_spreadsheet_data.ro_non_availability_template
     @ro_spreadsheet_data = get_spreadsheet_data.ro_non_availability_data
     @co_spreadsheet_template = get_spreadsheet_data.co_non_availability_template
@@ -58,7 +59,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     unless @ro_spreadsheet_template[:title] == RO_NON_AVAILABILITY_TITLE &&
            @ro_spreadsheet_template[:example_row] == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
            @ro_spreadsheet_template[:empty_column] == RO_NON_AVAILABILITY_EMPTY_COLUMN
-      fail RoTemplateNotFollowed
+      @errors << RoTemplateNotFollowed
     end
   end
 
@@ -75,18 +76,17 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_ro_non_availability_dates
-    fail RoDatesNotCorrectFormat unless validate_ro_date_formats
-    fail RoDatesNotUnique unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
-    fail RoDatesNotInRange unless validate_ro_dates_in_range
-    fail RoListedIncorrectly unless validate_ros_with_hearings(@ro_spreadsheet_data)
-    true
+    @errors << RoDatesNotCorrectFormat unless validate_ro_date_formats
+    @errors << RoDatesNotUnique unless @ro_spreadsheet_data.uniq == @ro_spreadsheet_data
+    @errors << RoDatesNotInRange unless validate_ro_dates_in_range
+    @errors << RoListedIncorrectly unless validate_ros_with_hearings(@ro_spreadsheet_data)
   end
 
   def validate_co_non_availability_template
     unless @co_spreadsheet_template[:title] == CO_SPREADSHEET_TITLE &&
            @co_spreadsheet_template[:example_row] == CO_SPREADSHEET_EXAMPLE_ROW &&
            @co_spreadsheet_template[:empty_column] == CO_SPREADSHEET_EMPTY_COLUMN
-      fail CoTemplateNotFollowed
+      @errors << CoTemplateNotFollowed
     end
   end
 
@@ -103,32 +103,30 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def validate_co_non_availability_dates
-    fail CoDatesNotCorrectFormat unless validate_co_non_availability_dates_formats
-    fail CoDatesNotUnique unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
-    fail CoDatesNotInRange unless validate_co_non_availability_dates_in_range
-    true
+    @errors << CoDatesNotCorrectFormat unless validate_co_non_availability_dates_formats
+    @errors << CoDatesNotUnique unless @co_spreadsheet_data.uniq == @co_spreadsheet_data
+    @errors << CoDatesNotInRange unless validate_co_non_availability_dates_in_range
   end
 
   def validate_hearing_allocation_template
     unless @allocation_spreadsheet_template[:title] == HEARING_ALLOCATION_SHEET_TITLE &&
            @allocation_spreadsheet_template[:example_row] == HEARING_ALLOCATION_SHEET_EXAMPLE_ROW &&
            @allocation_spreadsheet_template[:empty_column] == HEARING_ALLOCATION_SHEET_EMPTY_COLUMN
-      fail AllocationTemplateNotFollowed
+      @errors << AllocationTemplateNotFollowed
     end
   end
 
   def validate_hearing_allocation_days
     unless @allocation_spreadsheet_data.all? { |row| row["allocated_days"].is_a?(Numeric) }
-      fail AllocationNotCorrectFormat
+      @errors << AllocationNotCorrectFormat
     end
     unless validate_ros_with_hearings(@allocation_spreadsheet_data)
-      fail AllocationRoListedIncorrectly
+      @errors << AllocationRoListedIncorrectly
     end
     ro_codes = @allocation_spreadsheet_data.collect { |ro| ro["ro_code"] }
     unless ro_codes.uniq == ro_codes
-      fail AllocationDuplicateRo
+      @errors << AllocationDuplicateRo
     end
-    true
   end
 
   def validate
@@ -138,5 +136,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_co_non_availability_dates
     validate_hearing_allocation_template
     validate_hearing_allocation_days
+    @errors
   end
 end

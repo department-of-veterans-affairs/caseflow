@@ -1,9 +1,10 @@
 class JudgeSchedulePeriod < SchedulePeriod
-  before_create :validate_spreadsheet
+  validate :validate_spreadsheet
   after_create :import_spreadsheet
 
   def validate_spreadsheet
-    HearingSchedule::ValidateJudgeSpreadsheet.new(spreadsheet, start_date, end_date).validate
+    validate_spreadsheet = HearingSchedule::ValidateJudgeSpreadsheet.new(spreadsheet, start_date, end_date)
+    errors[:base] << validate_spreadsheet.validate
   end
 
   def import_spreadsheet

@@ -23,11 +23,18 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.UPDATE_FORM_ERRORS:
+    return update(state, {
+      formErrors: {
+        $set: action.payload.errors
+      }
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {
         $set: action.payload.fileType
-      }
+      },
+      $unset: ['formErrors']
     });
   case ACTIONS.RO_CO_START_DATE_CHANGE:
     return update(state, {

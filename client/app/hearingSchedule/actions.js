@@ -63,6 +63,13 @@ export const onJudgeEndDateChange = (endDate) => ({
   }
 });
 
+export const updateFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
 export const onViewStartDateChange = (viewStartDate) => ({
   type: ACTIONS.VIEW_START_DATE_CHANGE,
   payload: {
