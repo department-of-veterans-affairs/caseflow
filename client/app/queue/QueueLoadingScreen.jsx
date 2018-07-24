@@ -12,8 +12,8 @@ import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal } from './types/models';
-import type { LoadedQueueTasks, LoadedQueueAppeals, UsersById } from './types/state';
+import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { State, UsersById } from './types/state';
 
 type Params = {|
   userId: number,
@@ -27,8 +27,8 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: LoadedQueueTasks,
-  appeals: LoadedQueueAppeals,
+  tasks: Tasks,
+  appeals: LegacyAppeals,
   loadedUserId: number,
   activeAppeal: LegacyAppeal,
   judges: UsersById,
@@ -180,12 +180,17 @@ QueueLoadingScreen.propTypes = {
   appealId: PropTypes.string
 };
 
-// todo: remove ...this.props from usages within QueueApp
-const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'judges', 'tasks', 'appeals'),
-  activeAppeal: state.caseDetail.activeAppeal,
-  loadedUserId: state.ui.loadedUserId
-});
+const mapStateToProps = (state: State) => {
+  const { judges, tasks, appeals } = state.queue;
+
+  return {
+    judges,
+    tasks,
+    appeals,
+    activeAppeal: state.caseDetail.activeAppeal,
+    loadedUserId: state.ui.loadedUserId
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
