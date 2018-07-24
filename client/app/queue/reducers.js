@@ -18,11 +18,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 export const initialState = {
   judges: {},
   tasks: {},
-  loadedQueue: {
-    appeals: {},
-    tasks: {},
-    loadedUserId: null
-  },
+  appeals: {},
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
@@ -50,16 +46,8 @@ const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          $set: action.payload.appeals
-        },
-        tasks: {
-          $set: action.payload.tasks
-        },
-        loadedUserId: {
-          $set: action.payload.userId
-        }
+      appeals: {
+        $merge: action.payload.appeals
       },
       tasks: {
         $merge: action.payload.tasks
@@ -73,19 +61,15 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.DELETE_APPEAL:
     return update(state, {
-      loadedQueue: {
-        appeals: { $unset: action.payload.appealId },
-        tasks: { $unset: action.payload.appealId }
-      }
+      appeals: { $unset: action.payload.appealId },
+      tasks: { $unset: action.payload.appealId }
     });
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          [action.payload.appealId]: {
-            attributes: {
-              $merge: action.payload.attributes
-            }
+      appeals: {
+        [action.payload.appealId]: {
+          attributes: {
+            $merge: action.payload.attributes
           }
         }
       }
@@ -147,7 +131,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       stagedChanges: {
         appeals: {
           [action.payload.appealId]: {
-            $set: state.loadedQueue.appeals[action.payload.appealId]
+            $set: state.appeals[action.payload.appealId]
           }
         }
       }
@@ -311,7 +295,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
   case ACTIONS.TASK_INITIAL_ASSIGNED: {
     const appealId = action.payload.task.id;
-    const appeal = state.loadedQueue.appeals[appealId];
+    const appeal = state.appeals[appealId];
 
     const tasksAndAppealsOfAssignee = update(
       state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
@@ -340,14 +324,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
       tasks: {
         [appealId]: {
           $set: action.payload.task
-        }
-      },
-      loadedQueue: {
-        tasks: {
-          $unset: [appealId]
-        },
-        appeals: {
-          $unset: [appealId]
         }
       },
       tasksAndAppealsOfAttorney: {
