@@ -4,8 +4,7 @@ import type {
   Tasks,
   LegacyAppeals,
   User,
-  Attorneys,
-  LegacyAppeals
+  Attorneys
 } from './models';
 
 export type TasksAndAppealsOfAttorney = {

@@ -28,13 +28,23 @@ export const associateTasksWithAppeals = (serverData: Object = {}) => {
     task.appealId = task.id;
   });
 
-  const tasksById = _.keyBy(tasks, 'id');
-  const appealsById = _.keyBy(appeals, 'attributes.vacols_id');
-
-  return {
-    appeals: appealsById,
-    tasks: tasksById
+  const result = {
+    appeals: {},
+    tasks: {}
   };
+
+  for (const appeal of appeals) {
+    if (appeal) {
+      result.appeals[appeal.attributes.vacols_id] = appeal;
+    }
+  }
+  for (const task of tasks) {
+    if (task) {
+      result.tasks[task.id] = task;
+    }
+  }
+
+  return result;
 };
 
 /*
