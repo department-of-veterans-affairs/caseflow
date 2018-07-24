@@ -84,7 +84,7 @@ export default class BuildSchedule extends React.Component {
       schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
     const successMessage = <div>
-      You can view your uploaded schedule by clicking the link below.
+      {COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
       <br />
       <div {...linkStyling}>
         <Link
