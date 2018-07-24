@@ -35,13 +35,14 @@ class RampElection < RampReview
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    end_product_establishment.contentions
-
+    contentions = end_product_establishment.contentions
     transaction do
       issues.destroy_all
 
-      end_product_establishment.contentions.each do |contention|
-        issues.create!(contention: contention)
+      if contentions
+        contentions.each do |contention|
+          issues.create!(contention: contention)
+        end
       end
     end
   end
