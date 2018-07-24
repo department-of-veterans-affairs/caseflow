@@ -25,7 +25,8 @@ import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS
 import {
   marginBottom, marginTop,
   marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES
+  fullWidth, redText, PAGE_TITLES,
+  ISSUE_DISPOSITIONS
 } from './constants';
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
@@ -104,6 +105,19 @@ class EvaluateDecisionView extends React.PureComponent {
 
     return true;
   };
+
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal: { attributes: appeal }
+    } = this.props;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const prevUrl = `/queue/appeals/${appealId}`;
+
+    return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+      `${prevUrl}/remands` :
+      `${prevUrl}/dispositions`;
+  }
 
   goToNextStep = () => {
     const {
