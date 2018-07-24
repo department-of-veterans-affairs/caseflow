@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 import {
@@ -12,7 +13,8 @@ import {
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  toggleUploadContinueLoading
+  toggleUploadContinueLoading,
+  updateFormErrors
 } from '../actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
@@ -25,6 +27,7 @@ export class BuildScheduleUploadContainer extends React.Component {
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       return this.props.judgeStartDate && this.props.judgeEndDate && this.props.judgeFileUpload;
     }
+    this.props.updateFormErrors('You must select a file type.');
 
     return false;
   };
@@ -62,8 +65,11 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
+        if (_.has(response.body, 'error')) {
+          this.props.updateFormErrors(response.body.error);
+          return;
+        }
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
-      }, (err) => {
       }
     );
   }
@@ -90,6 +96,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       onJudgeEndDateChange={this.props.onJudgeEndDateChange}
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
+      formErrors={this.props.formErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
       onUploadContinue={this.onUploadContinue}
     />;
@@ -104,6 +111,7 @@ const mapStateToProps = (state) => ({
   judgeStartDate: state.judgeStartDate,
   judgeEndDate: state.judgeEndDate,
   judgeFileUpload: state.judgeFileUpload,
+  formErrors: state.formErrors,
   uploadContinueLoading: state.uploadContinueLoading
 });
 
@@ -115,7 +123,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  toggleUploadContinueLoading
+  toggleUploadContinueLoading,
+  updateFormErrors
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer));

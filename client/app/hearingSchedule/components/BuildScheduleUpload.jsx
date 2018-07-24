@@ -94,6 +94,7 @@ export default class BuildScheduleUpload extends React.Component {
         options={fileTypes}
         value={this.props.fileType}
         onChange={this.props.onFileTypeChange}
+        errorMessage={this.props.formErrors}
         required
         vertical
         strongLabel
@@ -132,6 +133,7 @@ BuildScheduleUpload.propTypes = {
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.object,
   onJudgeFileUpload: PropTypes.func,
+  formErrors: PropTypes.string,
   onUploadContinue: PropTypes.func,
   uploadContinueLoading: PropTypes.bool
 };
