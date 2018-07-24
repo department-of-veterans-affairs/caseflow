@@ -19,18 +19,18 @@ const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
 
-export const unassignedTasksSelector = createSelector(
-  [getTasks],
-  (tasks: Tasks) => _.keyBy(
-    _.filter(tasks, (task: Task) => task.attributes.task_type === 'Assign'),
-    (task: Task) => task.id
-  )
-);
-
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
     _.filter(tasks, (task: Task) => task.attributes.user_id === cssId),
+    (task: Task) => task.id
+  )
+);
+
+export const judgeAssignTasksSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => _.keyBy(
+    _.filter(tasks, (task: Task) => task.attributes.task_type === 'Assign'),
     (task: Task) => task.id
   )
 );

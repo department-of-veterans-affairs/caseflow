@@ -20,7 +20,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
 } from './QueueActions';
-import { unassignedTasksSelector } from './selectors';
+import { judgeAssignTasksSelector } from './selectors';
 import { sortTasks } from './utils';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -147,7 +147,7 @@ const mapStateToProps = (state) => {
   return {
     attorneysOfJudge,
     tasksAndAppealsOfAttorney,
-    tasks: unassignedTasksSelector(state),
+    tasks: judgeAssignTasksSelector(state),
     appeals,
     featureToggles
   };
