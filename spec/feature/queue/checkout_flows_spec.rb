@@ -228,7 +228,7 @@ RSpec.feature "Checkout flows" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(old_issues_count - 1)
 
-        click_on "Caseflow"
+        visit "/queue"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
@@ -344,7 +344,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content field_values.last
         expect(page).to have_content "Note: added issue"
 
-        click_on "Caseflow"
+        visit "/queue"
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
         expect(issue_count).to eq "2"

@@ -1,5 +1,10 @@
+require "rake"
+
+Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
+CaseflowCertification::Application.load_tasks
+
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
@@ -32,8 +37,7 @@ class Test::UsersController < ApplicationController
     {
       name: "Reader",
       links: {
-        welcome_gate: "/reader/appeal",
-        document_list: "/reader/appeal/111111/documents"
+        document_list: "/reader/appeal/3626186/documents"
       }
     },
     {
@@ -87,6 +91,17 @@ class Test::UsersController < ApplicationController
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
     head :ok
+  end
+
+  def reseed
+    # Adding this check a second time out of paranoia
+    if Rails.deploy_env?(:demo)
+      Rake::Task["db:seed"].reenable
+      Rake::Task["db:seed"].invoke
+
+      Rake::Task["local:vacols:seed"].reenable
+      Rake::Task["local:vacols:seed"].invoke
+    end
   end
 
   def save_admin_login_attempt
