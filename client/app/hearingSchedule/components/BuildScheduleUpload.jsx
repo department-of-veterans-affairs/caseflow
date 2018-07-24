@@ -20,58 +20,64 @@ export default class BuildScheduleUpload extends React.Component {
   getRoCoDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
-      <InlineForm>
-        <BasicDateRangeSelector
-          messageLabel
-          startDateName="startDate"
-          startDateValue={this.props.roCoStartDate}
-          startDateLabel={false}
-          endDateName="endDate"
-          endDateValue={this.props.roCoEndDate}
-          endDateLabel={false}
-          onStartDateChange={this.props.onRoCoStartDateChange}
-          onEndDateChange={this.props.onRoCoEndDateChange}
-        />
-        <div {...fileUploadStyling} >
-          <FileUpload {...fileUploadStyling}
-            preUploadText="Select a file for upload"
-            postUploadText="Choose a different file"
-            id="ro_co_file_upload"
-            fileType=".xlsx"
-            onChange={this.props.onRoCoFileUpload}
-            value={this.props.roCoFileUpload}
+      <div>
+        {this.props.uploadRoCoFormErrors && <span className="usa-input-error-message">{this.props.uploadRoCoFormErrors}</span>}
+        <InlineForm>
+          <BasicDateRangeSelector
+            messageLabel
+            startDateName="startDate"
+            startDateValue={this.props.roCoStartDate}
+            startDateLabel={false}
+            endDateName="endDate"
+            endDateValue={this.props.roCoEndDate}
+            endDateLabel={false}
+            onStartDateChange={this.props.onRoCoStartDateChange}
+            onEndDateChange={this.props.onRoCoEndDateChange}
           />
-        </div>
-      </InlineForm> }
+          <div {...fileUploadStyling} >
+            <FileUpload {...fileUploadStyling}
+              preUploadText="Select a file for upload"
+              postUploadText="Choose a different file"
+              id="ro_co_file_upload"
+              fileType=".xlsx"
+              onChange={this.props.onRoCoFileUpload}
+              value={this.props.roCoFileUpload}
+            />
+          </div>
+        </InlineForm>
+      </div>}
     </div>;
   };
 
   getJudgeDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.JudgeSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
-      <InlineForm>
-        <BasicDateRangeSelector
-          messageLabel
-          startDateName="startDate"
-          startDateValue={this.props.judgeStartDate}
-          startDateLabel={false}
-          endDateName="endDate"
-          endDateValue={this.props.judgeEndDate}
-          endDateLabel={false}
-          onStartDateChange={this.props.onJudgeStartDateChange}
-          onEndDateChange={this.props.onJudgeEndDateChange}
-        />
-        <div {...fileUploadStyling} >
-          <FileUpload
-            preUploadText="Select a file for upload"
-            postUploadText="Choose a different file"
-            id="judge_file_upload"
-            fileType=".xlsx"
-            onChange={this.props.onJudgeFileUpload}
-            value={this.props.judgeFileUpload}
+      <div>
+        {this.props.uploadJudgeFormErrors && <span className="usa-input-error-message">{this.props.uploadJudgeFormErrors}</span>}
+        <InlineForm>
+          <BasicDateRangeSelector
+            messageLabel
+            startDateName="startDate"
+            startDateValue={this.props.judgeStartDate}
+            startDateLabel={false}
+            endDateName="endDate"
+            endDateValue={this.props.judgeEndDate}
+            endDateLabel={false}
+            onStartDateChange={this.props.onJudgeStartDateChange}
+            onEndDateChange={this.props.onJudgeEndDateChange}
           />
-        </div>
-      </InlineForm>}
+          <div {...fileUploadStyling} >
+            <FileUpload
+              preUploadText="Select a file for upload"
+              postUploadText="Choose a different file"
+              id="judge_file_upload"
+              fileType=".xlsx"
+              onChange={this.props.onJudgeFileUpload}
+              value={this.props.judgeFileUpload}
+            />
+          </div>
+        </InlineForm>
+      </div>}
     </div>;
   };
 
@@ -136,6 +142,8 @@ BuildScheduleUpload.propTypes = {
   judgeFileUpload: PropTypes.object,
   onJudgeFileUpload: PropTypes.func,
   uploadFormErrors: PropTypes.string,
+  uploadRoCoFormErrors: PropTypes.string,
+  uploadJudgeFormErrors: PropTypes.string,
   onUploadContinue: PropTypes.func,
   uploadContinueLoading: PropTypes.bool
 };
