@@ -1,12 +1,9 @@
 // Local
-@import 'variables';
+@import '_variables.scss';
+@import '~uswds/src/stylesheets/uswds.scss';
+@import '~uswds/src/stylesheets/lib/addons/font-stacks';
 
-// Add scss includes explicitly here.
-@import '../../../client/node_modules/uswds/src/stylesheets/lib/addons/font-stacks';
-@import '../../../client/node_modules/uswds/src/stylesheets/all';
 
-// Local
-@import 'variables';
 
 html,
 body {
