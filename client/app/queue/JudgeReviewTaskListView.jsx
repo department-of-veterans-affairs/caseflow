@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 
 import StatusMessage from '../components/StatusMessage';
-import JudgeReviewTaskTable from './JudgeReviewTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -47,7 +47,14 @@ class JudgeReviewTaskListView extends React.PureComponent {
         {COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE}
       </StatusMessage>;
     } else {
-      tableContent = <JudgeReviewTaskTable />;
+      tableContent = <TaskTable
+        includeDetailsLink
+        includeDocumentId
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDaysWaiting
+      />;
     }
 
     return <AppSegment filledBackground>

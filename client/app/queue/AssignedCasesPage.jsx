@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import StatusMessage from '../components/StatusMessage';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
+import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';

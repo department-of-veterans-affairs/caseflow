@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
+import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
@@ -45,7 +45,15 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
           previousAssigneeId={userId}
           onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
           selectedTasks={selectedTasks} />}
-      <JudgeAssignTaskTable {...this.props} />
+      <TaskTable
+        includeSelect
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDocumentCount
+        includeDueDate
+      {...this.props} />
     </React.Fragment>;
   }
 }
