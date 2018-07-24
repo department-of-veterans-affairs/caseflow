@@ -23,18 +23,18 @@ import BuildScheduleUpload from '../components/BuildScheduleUpload';
 export class BuildScheduleUploadContainer extends React.Component {
 
   validateDatesAndFile = (onFailure, startDate, endDate, file) => {
-      if (!(startDate && endDate && file)) {
-          onFailure('Please enter a start date and an end date, and upload a file.');
+    if (!(startDate && endDate && file)) {
+      onFailure('Please enter a start date and an end date, and upload a file.');
 
-          return false
-      }
-      if (endDate < startDate) {
-          onFailure('Please enter an end date that is after the start date');
+      return false;
+    }
+    if (endDate < startDate) {
+      onFailure('Please enter an end date that is after the start date');
 
-          return false
-      }
+      return false;
+    }
 
-      return true;
+    return true;
   };
 
   validateData = () => {
@@ -44,7 +44,7 @@ export class BuildScheduleUploadContainer extends React.Component {
         this.props.roCoStartDate,
         this.props.roCoEndDate,
         this.props.roCoFileUpload
-      )
+      );
     }
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       return this.validateDatesAndFile(
@@ -52,7 +52,7 @@ export class BuildScheduleUploadContainer extends React.Component {
         this.props.judgeStartDate,
         this.props.judgeEndDate,
         this.props.judgeFileUpload
-      )
+      );
     }
     this.props.updateUploadFormErrors('Please select a file type.');
 
@@ -94,16 +94,16 @@ export class BuildScheduleUploadContainer extends React.Component {
       then((response) => {
         if (_.has(response.body, 'error')) {
           if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-            this.props.updateRoCoUploadFormErrors("The spreadsheet validation failed.");
+            this.props.updateRoCoUploadFormErrors('The spreadsheet validation failed.');
           }
           if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-            this.props.updateJudgeUploadFormErrors("The spreadsheet validation failed.");
+            this.props.updateJudgeUploadFormErrors('The spreadsheet validation failed.');
           }
+
           return;
         }
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
-      }
-    );
+      });
   }
 
   onUploadContinue = () => {

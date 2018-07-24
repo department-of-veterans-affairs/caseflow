@@ -45,7 +45,6 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
     render json: { id: schedule_period.id }
-
   rescue ActiveRecord::RecordInvalid => error
     render json: { error: error.message }
   end
