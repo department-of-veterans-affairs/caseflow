@@ -107,7 +107,7 @@ Rails.application.routes.draw do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index]
     resources :schedule_periods, only: [:index, :create]
-    resources :schedule_periods, only: [:show], param: :schedule_period_id
+    resources :schedule_periods, only: [:show, :update], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -164,6 +164,11 @@ Rails.application.routes.draw do
 
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
+
+  resources :organizations, only: [:show], param: :url do
+    resources :tasks, only: [:index], controller: 'organizations/tasks'
+  end
+
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"

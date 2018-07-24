@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 require "bgs"
 
 class Fakes::BGSService
@@ -270,9 +271,17 @@ class Fakes::BGSService
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
+    record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record)
+    get_poa_from_bgs_poa(record[:power_of_attorney])
+  end
+
+  def fetch_poas_by_participant_id(participant_id)
+    if participant_id == VSO_PARTICIPANT_ID
+      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
+    end
+    []
   end
 
   # TODO: add more test cases
@@ -325,6 +334,11 @@ class Fakes::BGSService
     rating_issues = rating_issues.first if rating_issues.count == 1
 
     { rating_issues: rating_issues }
+  end
+
+  def get_participant_id_for_user(user)
+    return VSO_PARTICIPANT_ID if user.css_id == "VSO"
+    DEFAULT_PARTICIPANT_ID
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -392,6 +406,9 @@ class Fakes::BGSService
 
   private
 
+  VSO_PARTICIPANT_ID = "4623321".freeze
+  DEFAULT_PARTICIPANT_ID = "781162".freeze
+
   def default_claimant_info
     {
       name: "Harry Carey",
@@ -411,6 +428,37 @@ class Fakes::BGSService
         },
       ptcpnt_id: "600085544"
     }
+  end
+
+  def default_vso_power_of_attorney_record
+    {
+      file_number: "216979849",
+      power_of_attorney:
+        {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452415"
+        },
+      ptcpnt_id: "600085544"
+    }
+  end
+
+  def default_vsos_by_participant_id
+    [
+      {
+        legacy_poa_cd: "070",
+        nm: "VIETNAM VETERANS OF AMERICA",
+        org_type_nm: "POA National Organization",
+        ptcpnt_id: "2452415"
+      },
+      {
+        legacy_poa_cd: "071",
+        nm: "PARALYZED VETERANS OF AMERICA, INC.",
+        org_type_nm: "POA National Organization",
+        ptcpnt_id: "2452383"
+      }
+    ]
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -442,3 +490,4 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength

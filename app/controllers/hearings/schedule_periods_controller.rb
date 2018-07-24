@@ -38,6 +38,10 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
   # rubocop:enable Metrics/MethodLength
 
+  def update
+    sleep(2)
+  end
+
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["file"], file_name)
