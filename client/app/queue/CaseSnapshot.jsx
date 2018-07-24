@@ -98,6 +98,21 @@ export class CaseSnapshot extends React.PureComponent {
     </React.Fragment>;
   };
 
+  showActionsSection = () => {
+    if (this.props.hideDropdown) {
+      return false;
+    }
+    if (this.props.appealsAssignedToCurrentUser.includes(this.props.appeal.attributes.vacols_id)) {
+      return true;
+    }
+    if (!this.props.task) {
+      return false;
+    }
+
+    return _.some(
+      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.attributes.assigned_to_pg_id);
+  }
+
   render = () => {
     const {
       appeal: { attributes: appeal },
@@ -128,8 +143,7 @@ export class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </CaseDetailsDescriptionList>
       </div>
-      {!this.props.hideDropdown &&
-        (this.props.appealsAssignedToCurrentUser.includes(appeal.vacols_id) || userRole === USER_ROLES.JUDGE) &&
+      {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
