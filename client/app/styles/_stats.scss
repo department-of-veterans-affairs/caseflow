@@ -1,8 +1,6 @@
-@import 'bourbon';
-@import 'neat';
-
-@import '../../../client/node_modules/uswds/src/stylesheets/all';
-@import 'variables';
+@import '~bourbon/core/_bourbon.scss';
+@import '~uswds/src/stylesheets/uswds.scss';
+@import '_variables.scss';
 
 .cf-stats-container {
 

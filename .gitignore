@@ -38,6 +38,8 @@ node_modules
 
 # Generated public assets
 /public/assets/*
+/public/fonts/*
+/public/images/*
 
 # Oracle instant client
 ci-bin/circle_docker_container/instant*
