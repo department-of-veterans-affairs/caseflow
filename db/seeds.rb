@@ -186,6 +186,8 @@ class SeedDB
     create_beaam_appeals
     create_users
 
+    User.create(css_id: "VSO", station_id: 101)
+
     return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
