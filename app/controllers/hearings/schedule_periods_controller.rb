@@ -43,6 +43,18 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     render json: { id: schedule_period.id }
   end
 
+  def update
+    schedule_period = SchedulePeriod.find(params[:id])
+    schedule_period.finalized = if schedule_period.type === "RoSchedulePeriod"
+                                  HearingDay.create_schedule(schedule_period.ro_hearing_day_allocations)
+                                else
+                                  HearingDay.update_schedule(schedule_period.allocations)
+                                end
+
+    scheduled_period.update
+    render json: { id: schedule_period.id }
+  end
+
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file_name, :start_date, :end_date)
   end

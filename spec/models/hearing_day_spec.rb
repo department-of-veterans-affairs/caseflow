@@ -36,4 +36,29 @@ describe HearingDay do
       end
     end
   end
+
+  context "bulk persist", focus:true do
+    let(:schedule_period) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      create(:ro_schedule_period, start_date: Date.parse("2019-04-01"), end_date: Date.parse("2019-09-30"))
+    end
+
+    let(:allocation) do
+      create(:allocation, regional_office: "RO17", allocated_days: 118, schedule_period: schedule_period)
+    end
+
+    context "generate and persist hearing schedule" do
+      before do
+        allocation
+        HearingDay.create_schedule(schedule_period.ro_hearing_day_allocations)
+      end
+
+      subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
+
+      it do
+        expect(subject.length).to eq(allocation.allocated_days)
+      end
+    end
+  end
 end
