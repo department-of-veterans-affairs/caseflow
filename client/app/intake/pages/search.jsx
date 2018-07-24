@@ -57,7 +57,7 @@ class Search extends React.PureComponent {
         body: 'Please enter a valid Veteran ID and try again.'
       },
       veteran_not_accessible: {
-        title: 'You don\'t have permission to view this veteran\'s information​',
+        title: 'You don\'t have permission to view this Veteran\'s information​',
         body: 'It looks like you do not have the necessary level of access to view this information.' +
           ' Please alert your manager so they can assign the form to someone else.'
       },

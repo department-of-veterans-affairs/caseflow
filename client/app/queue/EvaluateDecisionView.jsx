@@ -171,7 +171,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -268,8 +268,8 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   decision: state.queue.stagedChanges.taskDecision,
