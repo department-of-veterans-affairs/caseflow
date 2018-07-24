@@ -56,7 +56,13 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     valueFunction: (task) => task.attributes.task_id ?
       renderAppealType(this.getAppealForTask(task)) :
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-    span: (task) => task.attributes.task_id ? 1 : 5
+    span: (task) => task.attributes.task_id ? 1 : 5,
+    getSortValue: (task, tasks) => {
+      const { appeals } = this.props;
+      const sortedTasks = sortTasks({ tasks, appeals });
+
+      return sortedTasks.indexOf(task);
+    }
   }, {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
     valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
@@ -99,19 +105,15 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     }
   }];
 
-  render = () => {
-    const { appeals, tasks } = this.props;
-
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={sortTasks({
-        appeals,
-        tasks
-      })}
-      getKeyForRow={this.getKeyForRow}
-      defaultSort={{ sortColIdx: 0 }}
-      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={Object.values(this.props.tasks)}
+    getKeyForRow={this.getKeyForRow}
+    defaultSort={{
+      sortColIdx: 1,
+      sortAscending: false
+    }}
+    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
 }
 
 const mapStateToProps = (state) => {
