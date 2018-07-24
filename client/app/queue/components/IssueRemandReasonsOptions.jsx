@@ -109,7 +109,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   };
 
   updateStoreIssue = () => {
-    // on going to the next page, update issue attrs from state
+    // on going to the next or previous page, update issue attrs from state
     // "remand_reasons": [
     //   {"code": "AB", "after_certification": true},
     //   {"code": "AC", "after_certification": false}
