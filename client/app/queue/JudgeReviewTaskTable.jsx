@@ -7,6 +7,7 @@ import moment from 'moment';
 import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
 
+import { judgeReviewTasksSelector } from './selectors';
 import { sortTasks, renderAppealType } from './utils';
 import COPY from '../../COPY.json';
 
@@ -50,28 +51,13 @@ class JudgeReviewTaskTable extends React.PureComponent {
       diff(moment(task.attributes.assigned_on), 'days')
   }];
 
-  render = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={
-        sortTasks(
-          { tasks: taskWithId,
-            appeals }).
-          filter((task) => task.attributes.task_type === 'Review')
-      }
-      getKeyForRow={this.getKeyForRow} />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
+    getKeyForRow={this.getKeyForRow} />;
 }
 
 JudgeReviewTaskTable.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   tasks: PropTypes.object.isRequired
 };
@@ -79,18 +65,13 @@ JudgeReviewTaskTable.propTypes = {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
-      tasks
+      appeals
     }
   } = state;
 
   return {
-    loadedQueueTasks,
     appeals,
-    tasks
+    tasks: judgeReviewTasksSelector(state)
   };
 };
 

@@ -2,19 +2,16 @@
 import type {
   Task,
   Tasks,
-  DeprecatedTask,
+  LegacyAppeals,
   User,
   Attorneys,
   LegacyAppeals
 } from './models';
 
-export type LoadedQueueTasks = { [string]: ?DeprecatedTask };
-export type LoadedQueueAppeals = LegacyAppeals;
-
 export type TasksAndAppealsOfAttorney = {
   [string]: {
     state: string,
-    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals},
+    data: {tasks: Tasks, appeals: LegacyAppeals},
     error: {status: number, response: Object}
   }
 };
@@ -46,7 +43,9 @@ export type UiState = {
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
-  userRole: string
+  loadedUserId: ?number,
+  userRole: string,
+  userCssId: string
 };
 
 export type UsersById = { [number]: ?User };
@@ -56,11 +55,7 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
-  loadedQueue: {
-    appeals: LoadedQueueAppeals,
-    tasks: LoadedQueueTasks,
-    loadedUserId: ?number
-  },
+  appeals: LegacyAppeals,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

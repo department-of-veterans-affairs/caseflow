@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
 import StatusMessage from '../components/StatusMessage';
@@ -17,6 +16,7 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import { judgeReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -35,13 +35,11 @@ class JudgeReviewTaskListView extends React.PureComponent {
 
   render = () => {
     const {
-      loadedQueueTasks,
       userId,
       messages,
       tasks
     } = this.props;
-    const reviewableCount =
-      _.filter(loadedQueueTasks, (task) => tasks[task.id].attributes.task_type === 'Review').length;
+    const reviewableCount = Object.keys(tasks).length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -67,18 +65,14 @@ class JudgeReviewTaskListView extends React.PureComponent {
 }
 
 JudgeReviewTaskListView.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        appeals,
-        tasks: loadedQueueTasks
-      },
-      tasks
+      appeals
     },
     ui: {
       messages
@@ -87,9 +81,8 @@ const mapStateToProps = (state) => {
 
   return {
     appeals,
-    tasks,
-    messages,
-    loadedQueueTasks
+    tasks: judgeReviewTasksSelector(state),
+    messages
   };
 };
 

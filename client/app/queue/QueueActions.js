@@ -3,18 +3,24 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
-import type { Task, User } from './types/models';
+import type { Dispatch, UsersById } from './types/state';
+import type {
+  Task,
+  Tasks,
+  LegacyAppeals,
+  User
+} from './types/models';
 
-export const onReceiveQueue =
-  ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: number }) => ({
-    type: ACTIONS.RECEIVE_QUEUE_DETAILS,
-    payload: {
-      tasks,
-      appeals,
-      userId
-    }
-  });
+export const onReceiveQueue = (
+  { tasks, appeals, userId }: { tasks: Tasks, appeals: LegacyAppeals, userId: number }
+) => ({
+  type: ACTIONS.RECEIVE_QUEUE_DETAILS,
+  payload: {
+    tasks,
+    appeals,
+    userId
+  }
+});
 
 export const onReceiveJudges = (judges: UsersById) => ({
   type: ACTIONS.RECEIVE_JUDGE_DETAILS,
