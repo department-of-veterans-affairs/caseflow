@@ -42,4 +42,37 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       expect(response_body["id"]).to eq id
     end
   end
+
+  context "persist full schedule for a schedule period", focus: true do
+    let(:schedule_period_id) do
+      RequestStore[:current_user] = user
+      base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+      post :create, params: {
+        schedule_period: {
+          type: "RoSchedulePeriod",
+          start_date: "2015/10/24",
+          end_date: "2016/10/24"
+        },
+        file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
+      }
+      response_body = JSON.parse(response.body)
+      response_body["id"]
+    end
+
+    it "persists a schedule for a given schedulePeriod id" do
+      put :update, params: {
+        schedule_period_id: schedule_period_id
+      }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["id"]).to eq schedule_period_id
+
+      # Invoking separate controller to verify that we persisted
+      # the schedule for the given date range.
+      @controller = Hearings::HearingDayController.new
+      get :index, params: { start_date: "2015-10-24", end_date: "2016-10-24" }, as: :json
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearings"].size).to be_between(355, 359)
+    end
+  end
 end

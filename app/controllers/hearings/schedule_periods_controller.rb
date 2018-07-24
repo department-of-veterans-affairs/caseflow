@@ -38,10 +38,6 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
   # rubocop:enable Metrics/MethodLength
 
-  def update
-    sleep(2)
-  end
-
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["file"], file_name)
@@ -52,14 +48,14 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def update
-    schedule_period = SchedulePeriod.find(params[:id])
+    schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     schedule_period.finalized = if schedule_period.type === "RoSchedulePeriod"
                                   HearingDay.create_schedule(schedule_period.ro_hearing_day_allocations)
                                 else
                                   HearingDay.update_schedule(schedule_period.allocations)
                                 end
 
-    scheduled_period.update
+    schedule_period.save
     render json: { id: schedule_period.id }
   end
 
