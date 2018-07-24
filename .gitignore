@@ -35,10 +35,9 @@ node_modules
 
 # Generated js bundles
 /app/assets/javascripts/*
-/app/assets/webpack/
 
 # Generated public assets
-/public/assets
+/public/assets/*
 
 # Oracle instant client
 ci-bin/circle_docker_container/instant*
