@@ -14,6 +14,7 @@ import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
+import { USER_ROLES } from './constants';
 
 type Params = {|
   userId: number,
@@ -128,7 +129,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   }
 
   maybeLoadJudgeData = () => {
-    if (this.props.userRole !== 'Judge') {
+    if (this.props.userRole !== USER_ROLES.JUDGE) {
       return Promise.resolve();
     }
     this.props.fetchAllAttorneys();
