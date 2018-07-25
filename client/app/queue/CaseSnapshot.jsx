@@ -129,7 +129,7 @@ export class CaseSnapshot extends React.PureComponent {
       </div>
       {!this.props.hideDropdown &&
         this.props.appealsAssignedToCurrentUser.
-          some((appealIterator) => appealIterator.attributes.vacols_id == appeal.vacols_id) &&
+          some((appealIterator) => appealIterator.attributes.vacols_id === appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
