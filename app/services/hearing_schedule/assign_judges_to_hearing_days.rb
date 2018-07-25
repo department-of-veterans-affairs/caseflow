@@ -32,13 +32,12 @@ class HearingSchedule::AssignJudgesToHearingDays
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def match_hearing_days_to_judges
-    non_assigned_judges_to_days = []
     shuffled_judges = @judges.keys.shuffle
     assigned_hearing_days = []
-
     hearing_days_assigned = false
-    assigned_days = {}
+    has_day_been_assigned = {}
     until hearing_days_assigned
       catch :hearing_days_assigned do
         shuffled_judges.each do |css_id|
@@ -46,12 +45,12 @@ class HearingSchedule::AssignJudgesToHearingDays
 
           while index < @video_co_hearing_days.length
             current_hearing_day = @video_co_hearing_days[index]
+            hearing_date = current_hearing_day.hearing_date.to_date
 
-            puts "date included" if @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date)
-            unless @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date) ||
-                   assigned_days[current_hearing_day.hearing_pkseq]
+            unless @judges[css_id][:non_availabilities].include?(hearing_date) ||
+                   has_day_been_assigned[current_hearing_day.hearing_pkseq]
               assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
-              assigned_days[current_hearing_day.hearing_pkseq] = true
+              has_day_been_assigned[current_hearing_day.hearing_pkseq] = true
               break
             end
             index += 1
@@ -64,20 +63,28 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     assigned_hearing_days
   end
+  # rubocop:enable Metrics/MethodLength
 
   def assign_judge_to_hearing_day(hearing_day, css_id)
-    is_co_hearing_day = co_hearing_day?(hearing_day)
+    is_central_hearing = co_hearing_day?(hearing_day)
 
     HearingDayMapper.hearing_day_field_validations(
       hearing_pkseq: hearing_day.hearing_pkseq,
-      hearing_type: is_co_hearing_day ?
-        HearingDay::HEARING_TYPES[:central] : HearingDay::HEARING_TYPES[:video],
+      hearing_type: get_hearing_type(is_central_hearing),
       hearing_date: hearing_day.hearing_date,
       room_info: hearing_day.room,
       regional_office: is_co_hearing_day ? nil : hearing_day.folder_nr.split(" ")[1],
       judge_id: @judges[css_id][:staff_info].sattyid,
       judge_name: get_judge_name(css_id)
     )
+  end
+
+  def get_hearing_type(is_central_hearing)
+    if is_central_hearing
+      HearingDay::HEARING_TYPES[:central]
+    else
+      HearingDay::HEARING_TYPES[:video]
+    end
   end
 
   def get_judge_name(css_id)
@@ -143,7 +150,7 @@ class HearingSchedule::AssignJudgesToHearingDays
       tb_judge_ids = [tb_record[:tbmem_1], tb_record[:tbmem_2], tb_record[:tbmem_3], tb_record[:tbmem_4]].compact
       judges = @judges.select { |_key, judge| tb_judge_ids.include?(judge[:staff_info].sattyid) }
 
-      judges.each do |_judge_board_id, judge_staff_info|
+      judges.each_value do |judge_staff_info|
         css_id = judge_staff_info[:staff_info].sdomainid
 
         @judges[css_id][:non_availabilities] ||= Set.new
