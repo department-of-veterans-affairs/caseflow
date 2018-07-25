@@ -144,26 +144,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     end
   end
 
-  context "handle co hearings" do
-    before do
-      co_hearing_days
-    end
-
-    let(:co_hearing_days) do
-      get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 50).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
-      end
-    end
-
-    subject { assign_judges_to_hearing_days.video_co_hearing_days }
-
-    it "filter CO non wednesdays" do
-      subject.each do |hearing_day|
-        expect(hearing_day.hearing_date.wednesday?).to be(true)
-      end
-    end
-  end
-
   context "handle CO hearings" do
     before do
       co_hearing_days
