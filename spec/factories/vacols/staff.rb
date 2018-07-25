@@ -19,6 +19,11 @@ FactoryBot.define do
       sactive "A"
     end
 
+    trait :hearing_judge do
+      stitle "DS"
+      svlj "A"
+    end
+
     trait :judge_role do
       svlj "J"
       sactive "A"

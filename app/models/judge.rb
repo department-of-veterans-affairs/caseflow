@@ -48,7 +48,7 @@ class Judge
     Hearing.repository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
   end
 
-  def get_dockets_slots(dockets)
+  def get_dotyckets_slots(dockets)
     Hearing.repository.fetch_dockets_slots(dockets)
   end
 
@@ -64,6 +64,10 @@ class Judge
       Rails.cache.fetch("#{Rails.env}_list_of_judges_from_vacols") do
         repository.find_all_judges
       end
+    end
+
+    def list_all_hearing_judges
+      repository.find_all_hearing_judges
     end
   end
 end
