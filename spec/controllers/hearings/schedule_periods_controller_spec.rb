@@ -64,7 +64,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   context "assign judges to full schedule for a schedule period" do
     it "update judge assignments for a given schedulePeriod id" do
       put :update, params: {
-          schedule_period_id: judge_schedule_period.id
+        schedule_period_id: judge_schedule_period.id
       }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
