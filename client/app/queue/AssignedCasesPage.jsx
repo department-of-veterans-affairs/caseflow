@@ -14,8 +14,9 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
+import Alert from '../components/Alert';
 import type { Task, Tasks } from './types/models';
-import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, State } from './types/state';
+import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, UiStateError, State } from './types/state';
 
 type Params = {|
   match: Object
@@ -28,6 +29,8 @@ type Props = Params & {|
   selectedTasks: Array<Task>,
   tasks: Tasks,
   tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  success: string,
+  error: ?UiStateError,
   // Action creators
   resetSuccessMessages: typeof resetSuccessMessages,
   resetErrorMessages: typeof resetErrorMessages,
@@ -53,7 +56,7 @@ class AssignedCasesPage extends React.PureComponent<Props> {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles, selectedTasks
+      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles, selectedTasks, success, error
     } = props;
     const { attorneyId } = match.params;
 
@@ -62,13 +65,13 @@ class AssignedCasesPage extends React.PureComponent<Props> {
     }
 
     if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
-      const { error } = tasksAndAppealsOfAttorney[attorneyId];
+      const { error: loadingError } = tasksAndAppealsOfAttorney[attorneyId];
 
-      if (!error.response) {
+      if (!loadingError.response) {
         return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
       }
 
-      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>;
+      return <StatusMessage title={loadingError.response.statusText}>Error fetching cases</StatusMessage>;
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
@@ -81,6 +84,8 @@ class AssignedCasesPage extends React.PureComponent<Props> {
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
+      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
@@ -103,7 +108,13 @@ class AssignedCasesPage extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
-  const { featureToggles } = state.ui;
+  const {
+    featureToggles,
+    messages: {
+      success,
+      error
+    }
+  } = state.ui;
   const { attorneyId } = ownProps.match.params;
 
   return {
@@ -111,7 +122,9 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     attorneysOfJudge,
     tasks,
     featureToggles,
-    selectedTasks: selectedTasksSelector(state, attorneyId)
+    selectedTasks: selectedTasksSelector(state, attorneyId),
+    success,
+    error
   };
 };
 
