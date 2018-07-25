@@ -84,6 +84,10 @@ export const updateJudgeUploadFormErrors = (errors) => ({
   }
 });
 
+export const unsetUploadErrors = () => ({
+  type: ACTIONS.UNSET_UPLOAD_ERRORS
+});
+
 export const onViewStartDateChange = (viewStartDate) => ({
   type: ACTIONS.VIEW_START_DATE_CHANGE,
   payload: {
