@@ -2,6 +2,7 @@ import React from 'react';
 import COPY from '../../../COPY.json';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
@@ -9,7 +10,7 @@ import Button from '../../components/Button';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
-import { SPREADSHEET_TYPES } from '../constants';
+import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
 
 const fileUploadStyling = css({
   marginTop: '70px'
@@ -17,12 +18,18 @@ const fileUploadStyling = css({
 
 export default class BuildScheduleUpload extends React.Component {
 
+  getErrorMessage = (errors) => {
+    return _.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
+      return <div key={i}>{ERROR_MAPPINGS[error]}</div>;
+    });
+  };
+
   getRoCoDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
       <div>
         {this.props.uploadRoCoFormErrors &&
-          <span className="usa-input-error-message">{this.props.uploadRoCoFormErrors}</span>}
+          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
         <InlineForm>
           <BasicDateRangeSelector
             messageLabel
@@ -55,7 +62,7 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
       <div>
         {this.props.uploadJudgeFormErrors &&
-          <span className="usa-input-error-message">{this.props.uploadJudgeFormErrors}</span>}
+          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
           <BasicDateRangeSelector
             messageLabel
