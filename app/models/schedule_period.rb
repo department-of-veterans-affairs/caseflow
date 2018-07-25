@@ -60,4 +60,8 @@ class SchedulePeriod < ApplicationRecord
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
     format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
   end
+
+  def schedule_confirmed(*)
+    update(finalized: true)
+  end
 end

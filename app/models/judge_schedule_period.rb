@@ -10,4 +10,9 @@ class JudgeSchedulePeriod < SchedulePeriod
   def import_spreadsheet
     JudgeNonAvailability.import_judge_non_availability(self)
   end
+
+  def schedule_confirmed(hearing_schedule)
+    HearingDay.update_schedule(hearing_schedule)
+    super
+  end
 end
