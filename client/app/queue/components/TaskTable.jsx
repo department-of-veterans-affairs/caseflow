@@ -159,7 +159,7 @@ class TaskTable extends React.PureComponent<Props> {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
         if (appeal.attributes.aod || appeal.attributes.type === 'Court Remand') {
-          return '*' + appeal.docket_number;
+          return `*${appeal.docket_number}`;
         }
 
         return appeal.docket_number;
