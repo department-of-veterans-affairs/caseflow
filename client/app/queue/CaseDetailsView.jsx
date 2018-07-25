@@ -64,11 +64,16 @@ CaseDetailsView.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  appeal: state.caseDetail.activeAppeal,
-  error: state.ui.messages.error,
-  task: state.caseDetail.activeTask
-});
+const mapStateToProps = (state) => {
+  const { activeAppeal, activeTask } = state.caseDetail;
+  const { appeals, tasks } = state.queue;
+
+  return {
+    appeal: activeAppeal ? appeals[activeAppeal.attributes.vacols_id] : activeAppeal,
+    error: state.ui.messages.error,
+    task: activeTask ? tasks[activeTask.id] : activeTask
+  };
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveAppealAndTask

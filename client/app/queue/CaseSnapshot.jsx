@@ -164,7 +164,8 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: Object.keys(appealsByAssignedTaskSelector(state))
+  appealsAssignedToCurrentUser: Object.keys(appealsByAssignedTaskSelector(state)),
+  attorneysOfJudge: state.queue.attorneysOfJudge
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

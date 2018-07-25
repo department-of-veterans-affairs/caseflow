@@ -401,6 +401,14 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
+  case CASE_DETAIL_ACTIONS.SET_ACTIVE_APPEAL:
+    return {
+      ...state,
+      appeals: {
+        ...state.appeals,
+        [action.payload.appeal.attributes.vacols_id]: action.payload.appeal
+      }
+    };
   case CASE_DETAIL_ACTIONS.SET_ACTIVE_TASK: {
     if (!action.payload.taskObj) {
       return state;
