@@ -137,8 +137,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :board_member,
              "snamef || ' ' || snamemi || ' ' || snamel as judge_name",
              :mduser,
-             :mdtime,
-             :sattyid)
+             :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where("folder_nr is null or folder_nr like ?", "VIDEO %")
     end

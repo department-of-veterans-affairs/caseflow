@@ -21,26 +21,19 @@ class HearingSchedule::AssignJudgesToHearingDays
     fetch_hearing_days_for_schedule_period
   end
 
-  def fetch_judges
-    Judge.list_all_hearing_judges.map do |judge|
-      user = User.find_by(css_id: judge.sdomainid)
-      @judges[judge.sdomainid] = {
-        staff_info: judge,
-        user_info: user,
-        non_availabilities: Set.new
-      }
-    end
-  end
-
   # rubocop:disable Metrics/MethodLength
   def match_hearing_days_to_judges
-    shuffled_judges = @judges.keys.shuffle
+    @video_co_hearing_days = @video_co_hearing_days.shuffle
+
+    # sorts judges and gets their ordered css ids
+    sorted_judges = sort_judge_by_non_available_days
     assigned_hearing_days = []
     hearing_days_assigned = false
-    has_day_been_assigned = {}
+    already_assigned = {}
+
     until hearing_days_assigned
       catch :hearing_days_assigned do
-        shuffled_judges.each do |css_id|
+        sorted_judges.each do |css_id|
           index = 0
 
           while index < @video_co_hearing_days.length
@@ -48,9 +41,9 @@ class HearingSchedule::AssignJudgesToHearingDays
             hearing_date = current_hearing_day.hearing_date.to_date
 
             unless @judges[css_id][:non_availabilities].include?(hearing_date) ||
-                   has_day_been_assigned[current_hearing_day.hearing_pkseq]
+                   already_assigned[current_hearing_day.hearing_pkseq]
               assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
-              has_day_been_assigned[current_hearing_day.hearing_pkseq] = true
+              already_assigned[current_hearing_day.hearing_pkseq] = true
               break
             end
             index += 1
@@ -64,6 +57,23 @@ class HearingSchedule::AssignJudgesToHearingDays
     assigned_hearing_days
   end
   # rubocop:enable Metrics/MethodLength
+
+  private
+
+  def fetch_judges
+    Judge.list_all_hearing_judges.map do |judge|
+      user = User.find_by(css_id: judge.sdomainid)
+      @judges[judge.sdomainid] = {
+        staff_info: judge,
+        user_info: user,
+        non_availabilities: Set.new
+      }
+    end
+  end
+
+  def sort_judge_by_non_available_days
+    @judges.sort_by { |_k, v| v[:non_availabilities].count }.to_h.keys.reverse
+  end
 
   def assign_judge_to_hearing_day(hearing_day, css_id)
     is_central_hearing = co_hearing_day?(hearing_day)
@@ -111,7 +121,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def fetch_hearing_days_for_schedule_period
-    hearing_days = HearingDayRepository.load_days_for_range(@schedule_period.start_date, @schedule_period.end_date)
+    hearing_days = HearingDay.load_days(@schedule_period.start_date, @schedule_period.end_date)
     @video_co_hearing_days = filter_co_hearings(hearing_days[0].to_a)
     filter_travel_board_hearing_days(hearing_days[1])
   end
