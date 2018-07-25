@@ -22,6 +22,7 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
+import AddAdminActionView from './AddAdminActionView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -93,6 +94,8 @@ class QueueApp extends React.PureComponent {
     {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
+
+  routedAddAdminAction = (props) => <AddAdminActionView {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
@@ -193,6 +196,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/admin_action"
+            title="Add Admin Action | Caseflow"
+            render={this.routedAddAdminAction} />
         </div>
       </AppFrame>
       <Footer

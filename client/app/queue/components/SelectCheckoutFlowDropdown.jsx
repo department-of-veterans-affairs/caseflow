@@ -50,7 +50,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Params> {
       omo_request: 'submit',
       draft_decision: 'dispositions',
       admin_action: 'admin_action'
-    }
+    };
     const route = routes[decisionType];
 
     this.stageAppeal();
@@ -77,7 +77,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Params> {
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...DRAFT_DECISION_OPTIONS, {
-        label: 'Add admin action',
+        label: 'Add Admin Action',
         value: 'admin_action'
       }];
     }
