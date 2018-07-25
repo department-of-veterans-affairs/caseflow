@@ -5,12 +5,12 @@ class TasksController < ApplicationController
   before_action :verify_task_assignment_access, only: [:create]
 
   TASK_CLASSES = {
-    CoLocatedAdminAction: CoLocatedAdminAction
+    ColocatedTask: ColocatedTask
   }.freeze
 
   QUEUES = {
     attorney: AttorneyQueue,
-    colocated: CoLocatedAdminQueue
+    colocated: ColocatedQueue
   }.freeze
 
   def set_application
