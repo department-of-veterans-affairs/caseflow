@@ -29,7 +29,7 @@ import {
   JUDGE_DECISION_OPTIONS
 } from '../constants';
 import AssignWidget from './AssignWidget';
-import type { Task, Appeal } from '../types/models';
+import type { Task, LegacyAppeal } from '../types/models';
 import type { State } from '../types/state';
 
 const ASSIGN = 'ASSIGN';
@@ -40,7 +40,7 @@ type Params = {|
 
 type Props = Params & {|
   // From store
-  appeal: Appeal,
+  appeal: LegacyAppeal,
   task: Task,
   changedAppeals: Array<string>,
   decision: Object,
