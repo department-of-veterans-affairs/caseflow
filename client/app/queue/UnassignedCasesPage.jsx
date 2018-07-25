@@ -14,6 +14,8 @@ import {
 } from './uiReducer/uiActions';
 import { selectedTasksSelector } from './selectors';
 import type { Task } from './types/models';
+import Alert from '../components/Alert';
+import type { UiStateError } from './types/state';
 
 type Params = {|
   userId: string,
@@ -23,6 +25,8 @@ type Props = Params & {|
   // Props
   featureToggles: Object,
   selectedTasks: Array<Task>,
+  error: ?UiStateError,
+  success: string,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,
@@ -36,10 +40,12 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { userId, featureToggles, selectedTasks } = this.props;
+    const { userId, featureToggles, selectedTasks, success, error } = this.props;
 
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
+      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={userId}
@@ -57,7 +63,11 @@ const mapStateToProps = (state, ownProps) => {
       isTaskAssignedToUserSelected
     },
     ui: {
-      featureToggles
+      featureToggles,
+      messages: {
+        success,
+        error
+      }
     }
   } = state;
 
@@ -65,7 +75,9 @@ const mapStateToProps = (state, ownProps) => {
     tasks,
     isTaskAssignedToUserSelected,
     featureToggles,
-    selectedTasks: selectedTasksSelector(state, ownProps.userId)
+    selectedTasks: selectedTasksSelector(state, ownProps.userId),
+    success,
+    error
   };
 };
 
