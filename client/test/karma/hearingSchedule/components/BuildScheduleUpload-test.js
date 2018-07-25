@@ -21,4 +21,13 @@ describe('BuildScheduleUpload', () => {
 
     expect(wrapper.text()).to.include('Please input a date range');
   });
+
+  it('displays errors when set', () => {
+    const wrapper = mount(<MemoryRouter><BuildScheduleUpload
+      fileType={SPREADSHEET_TYPES.JudgeSchedulePeriod.value}
+      uploadJudgeFormErrors="Validation failed: HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed"
+    /></MemoryRouter>);
+
+    expect(wrapper.text()).to.include('We have found column names that vary from');
+  });
 });
