@@ -82,7 +82,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
 AttorneyTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {

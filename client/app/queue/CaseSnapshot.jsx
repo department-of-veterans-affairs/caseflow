@@ -128,7 +128,8 @@ export class CaseSnapshot extends React.PureComponent {
         </CaseDetailsDescriptionList>
       </div>
       {!this.props.hideDropdown &&
-        this.props.appealsAssignedToCurrentUser.includes(appeal.vacols_id) &&
+        this.props.appealsAssignedToCurrentUser.
+          some((appealIterator) => appealIterator.attributes.vacols_id == appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
@@ -149,7 +150,7 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: Object.keys(appealsByAssigneeCssIdSelector(state))
+  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state)
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

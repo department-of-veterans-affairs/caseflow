@@ -56,13 +56,13 @@ export const appealsByAssigneeCssIdSelector = createSelector(
 export const judgeReviewAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
   (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && appeal.tasks[0].attributes.task_type === 'Review')
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && _.some(appeal.tasks, (task) => task.attributes.task_type === 'Review'))
 );
 
 export const unassignedAppealsSelector = createSelector(
   [appealsWithTasksSelector],
   (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && appeal.tasks[0].attributes.task_type === 'Assign')
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && _.some(appeal.tasks, (task) => task.attributes.task_type === 'Assign'))
 );
 
 // ***************** Non-memoized selectors *****************
