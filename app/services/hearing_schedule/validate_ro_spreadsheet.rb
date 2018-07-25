@@ -2,7 +2,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
   RO_NON_AVAILABILITY_EXAMPLE_ROW = ["Example", "RO00", "Ithaca, NY", Date.parse("2019/01/01"),
                                      Date.parse("2019/02/01"), Date.parse("2019/03/16"), Date.parse("2019/04/21"),
-                                     Date.parse("2019/05/19"), nil].freeze
+                                     Date.parse("2019/05/19")].freeze
   RO_NON_AVAILABILITY_EMPTY_COLUMN = [nil].freeze
 
   CO_SPREADSHEET_TITLE = "Board Non-Availability Dates and Holidays in Date Range".freeze
@@ -57,7 +57,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_ro_non_availability_template
     unless @ro_spreadsheet_template[:title] == RO_NON_AVAILABILITY_TITLE &&
-           @ro_spreadsheet_template[:example_row] == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
+           @ro_spreadsheet_template[:example_row].compact == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
            @ro_spreadsheet_template[:empty_column] == RO_NON_AVAILABILITY_EMPTY_COLUMN
       @errors << RoTemplateNotFollowed
     end
@@ -84,7 +84,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_co_non_availability_template
     unless @co_spreadsheet_template[:title] == CO_SPREADSHEET_TITLE &&
-           @co_spreadsheet_template[:example_row] == CO_SPREADSHEET_EXAMPLE_ROW &&
+           @co_spreadsheet_template[:example_row].compact == CO_SPREADSHEET_EXAMPLE_ROW &&
            @co_spreadsheet_template[:empty_column] == CO_SPREADSHEET_EMPTY_COLUMN
       @errors << CoTemplateNotFollowed
     end
@@ -110,7 +110,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_hearing_allocation_template
     unless @allocation_spreadsheet_template[:title] == HEARING_ALLOCATION_SHEET_TITLE &&
-           @allocation_spreadsheet_template[:example_row] == HEARING_ALLOCATION_SHEET_EXAMPLE_ROW &&
+           @allocation_spreadsheet_template[:example_row].compact == HEARING_ALLOCATION_SHEET_EXAMPLE_ROW &&
            @allocation_spreadsheet_template[:empty_column] == HEARING_ALLOCATION_SHEET_EMPTY_COLUMN
       @errors << AllocationTemplateNotFollowed
     end
