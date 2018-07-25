@@ -17,13 +17,13 @@ describe ColocatedTask do
     context "when all fields are present" do
       subject do
         ColocatedTask.create([{
-                                      assigned_by: attorney,
-                                      title: :aoj,
-                                      appeal: appeal
-                                    },
-                                     { assigned_by: attorney,
-                                       title: :poa_clarification,
-                                       appeal: appeal }])
+                               assigned_by: attorney,
+                               title: :aoj,
+                               appeal: appeal
+                             },
+                              { assigned_by: attorney,
+                                title: :poa_clarification,
+                                appeal: appeal }])
       end
 
       it "creates a co-located task successfully" do
