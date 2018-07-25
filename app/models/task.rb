@@ -1,9 +1,11 @@
 class Task < ApplicationRecord
+  acts_as_tree
+
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
 
-  validates :assigned_to, :assigned_by, :appeal, :type, :status, presence: true
+  validates :assigned_to, :appeal, :type, :status, presence: true
   validate :on_hold_duration_is_set, on: :update
   before_create :set_assigned_at
   before_update :set_timestamps
@@ -16,6 +18,14 @@ class Task < ApplicationRecord
     on_hold: "on_hold",
     completed: "completed"
   }
+
+  def legacy?
+    appeal_type == "LegacyAppeal"
+  end
+
+  def ama?
+    appeal_type == "Appeal"
+  end
 
   private
 
