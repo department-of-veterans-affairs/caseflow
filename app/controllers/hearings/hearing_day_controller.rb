@@ -50,11 +50,11 @@ class Hearings::HearingDayController < HearingScheduleController
   private
 
   def hearing
-    @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
+    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office)
+    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
   end
 
   def create_params

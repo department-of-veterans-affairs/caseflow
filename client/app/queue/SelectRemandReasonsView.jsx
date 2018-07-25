@@ -37,15 +37,22 @@ class SelectRemandReasonsView extends React.Component {
     return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
   }
 
+  goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
+
   goToNextStep = () => {
     const { issues } = this.props;
-    const { issuesRendered } = this.state;
+    const {
+      issuesRendered,
+      renderedChildren
+    } = this.state;
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
 
       return false;
     }
+
+    _.each(renderedChildren, (child) => child.updateStoreIssue());
 
     return true;
   }

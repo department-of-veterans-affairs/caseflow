@@ -79,14 +79,18 @@ class QueueApp extends React.PureComponent {
     appealId={props.match.params.appealId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView appealId={props.match.params.appealId} />;
+  routedSelectDispositions = (props) => <SelectDispositionsView
+    prevStep={`/queue/appeals/${props.match.params.appealId}`}
+    appealId={props.match.params.appealId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
     prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
     {...props.match.params} />;
 
-  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
+    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
