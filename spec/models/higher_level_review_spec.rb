@@ -144,7 +144,8 @@ describe HigherLevelReview do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        { decision_text: "non-rated issue decision text", issue_category: "test issue category", decision_date: "2018-12-25" }
       ]
     end
 

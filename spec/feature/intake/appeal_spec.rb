@@ -19,8 +19,8 @@ RSpec.feature "Appeal Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:veteran) do
-    Generators::Veteran.build(
+  let!(:veteran) do
+    Generators::Veteran.create(
       file_number: "22334455",
       first_name: "Ed",
       last_name: "Merica",
@@ -56,7 +56,7 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
-  it "Creates an appeal", skip: "test fails on circle" do
+  it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
@@ -119,11 +119,13 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
-    expect(appeal.claimants.first).to have_attributes(
-      participant_id: veteran.participant_id
-    )
 
     expect(page).to have_content("Identify issues on")
+
+    expect(appeal.claimant_participant_id).to eq(
+      intake.veteran.participant_id
+    )
+
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
