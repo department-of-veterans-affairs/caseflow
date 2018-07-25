@@ -119,4 +119,20 @@ describe EndProductEstablishment do
       end
     end
   end
+
+  context "#status_canceled?" do
+    subject { end_product_establishment.status_canceled? }
+
+    context "returns true if canceled" do
+      before { end_product_establishment.synced_status = "CAN" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "returns false if any other status" do
+      before { end_product_establishment.synced_status = "NOTCANCELED" }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end

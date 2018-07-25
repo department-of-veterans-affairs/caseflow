@@ -58,6 +58,10 @@ class EndProductEstablishment < ApplicationRecord
     )
   end
 
+  def status_canceled?
+    synced_status == "CAN".freeze
+  end
+
   delegate :contentions, to: :cached_result
 
   private
@@ -104,10 +108,6 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
-  end
-
-  def status_canceled?
-    synced_status == "CAN".freeze
   end
 
   def status_active?
