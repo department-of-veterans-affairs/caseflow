@@ -15,12 +15,11 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 
 import type {
-  AttorneysOfJudge, UiStateError, State
+  AttorneysOfJudge, State
 } from '../types/state';
 import type {
   Task, Attorneys
@@ -39,16 +38,14 @@ type Props = Params & {|
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
-  error: ?UiStateError,
-  success: string,
   attorneys: Attorneys,
   // Action creators
-  setSelectedAssignee: Function,
-  setSelectedAssigneeSecondary: Function,
-  showErrorMessage: (UiStateError) => void,
-  resetErrorMessages: Function,
-  showSuccessMessage: (string) => void,
-  resetSuccessMessages: Function
+  setSelectedAssignee: typeof setSelectedAssignee,
+  setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
+  showErrorMessage: typeof showErrorMessage,
+  resetErrorMessages: typeof resetErrorMessages,
+  showSuccessMessage: typeof showSuccessMessage,
+  resetSuccessMessages: typeof resetSuccessMessages
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
@@ -113,8 +110,6 @@ class AssignWidget extends React.PureComponent<Props> {
       attorneysOfJudge,
       selectedAssignee,
       selectedAssigneeSecondary,
-      error,
-      success,
       attorneys,
       selectedTasks
     } = this.props;
@@ -138,8 +133,6 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>
-      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
-      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
@@ -183,14 +176,12 @@ class AssignWidget extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
+  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    error,
-    success,
     attorneys
   };
 };
