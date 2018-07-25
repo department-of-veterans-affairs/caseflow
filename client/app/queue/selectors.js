@@ -1,5 +1,5 @@
 // @flow
-import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
+import { createSelector } from 'reselect';
 import _ from 'lodash';
 
 import type { State } from './types/state';
@@ -8,7 +8,7 @@ import type {
   Tasks,
   LegacyAppeal,
   LegacyAppeals,
-  Attorneys
+  User
 } from './types/models';
 
 export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
@@ -16,21 +16,11 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
   (selected, id) => selected ? [state.queue.tasks[id]] : []
 );
 
-const createDeepEqualSelector = createSelectorCreator(
-  defaultMemoize,
-  _.isEqual
-)
-
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
-const getAttorney = (state: State, attorneyId: string) => {
-  if (!state.queue.attorneysOfJudge) {
-    return null;
-  }
+const getAttorneysOfJudge = (state: State) => state.queue.attorneysOfJudge;
 
-  return _.find(state.queue.attorneysOfJudge, (attorney) => attorney.id.toString() === attorneyId);
-}
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
@@ -39,7 +29,7 @@ export const tasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-export const appealsWithTasks = createDeepEqualSelector(
+export const appealsWithTasks = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     const taskMap = _.reduce(tasks, (map, task) => {
@@ -73,12 +63,39 @@ export const unassignedAppealsSelector = createSelector(
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks[0].attributes.task_type === 'Assign')
 );
 
-export const assignedAppealsSelector = createDeepEqualSelector(
-  [appealsWithTasks, getAttorney],
-  (appeals: LegacyAppeals, attorney: Attorneys) => {
-    const cssId = attorney ? attorney.css_id : null;
+// ***************** Non-memoized selectors *****************
 
-    return _.filter(appeals, (appeal: LegacyAppeal) =>
-      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+const getAttorney = (state: State, attorneyId: string) => {
+  if (!state.queue.attorneysOfJudge) {
+    return null;
   }
-);
+
+  return _.find(state.queue.attorneysOfJudge, (attorney) => attorney.id.toString() === attorneyId);
+};
+
+export const assignedAppealsSelector = (state: State, attorneyId: string) => {
+  const appeals = appealsWithTasks(state);
+  const attorney = getAttorney(state, attorneyId);
+  const cssId = attorney ? attorney.css_id : null;
+
+  return _.filter(appeals, (appeal: LegacyAppeal) =>
+    _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+};
+
+export const getAppealsByUserId = (state: State) => {
+  const appeals = appealsWithTasks(state);
+  const attorneys = state.queue.attorneysOfJudge;
+  const attorneysByCssId = _.keyBy(attorneys, 'css_id');
+
+  return _.reduce(appeals, (appealsByUserId: Object, appeal: LegacyAppeal) => {
+    const attorney = attorneysByCssId[appeal.tasks[0].attributes.user_id];
+
+    if (!attorney) {
+      return appealsByUserId;
+    };
+
+    appealsByUserId[attorney.id] ? appealsByUserId[attorney.id].push(appeal) : appealsByUserId[attorney.id] = [appeal];
+
+    return appealsByUserId;
+  }, {});
+};
