@@ -22,6 +22,10 @@ export default class BuildSchedule extends React.Component {
       schedulePeriod
     } = this.props;
 
+    const linkStyling = css({
+      marginTop: '6px'
+    });
+
     const alertStyling = css({
       marginBottom: '20px'
     });
@@ -79,19 +83,30 @@ export default class BuildSchedule extends React.Component {
     const displayRoCoSuccessMessage = displaySuccessMessage &&
       schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
+    const successMessage = <div>
+      {COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+      <br />
+      <div {...linkStyling}>
+        <Link
+          name="view-schedule"
+          to="/schedule">
+          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
+      </div>
+    </div>;
+
     return <AppSegment filledBackground>
       {displayJudgeSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned judges to hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={successMessage}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={successMessage}
         styling={alertStyling}
       />}
       <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>

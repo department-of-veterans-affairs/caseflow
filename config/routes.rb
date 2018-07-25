@@ -164,6 +164,11 @@ Rails.application.routes.draw do
 
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
+
+  resources :organizations, only: [:show], param: :url do
+    resources :tasks, only: [:index], controller: 'organizations/tasks'
+  end
+
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"

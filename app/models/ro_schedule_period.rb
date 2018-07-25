@@ -10,4 +10,9 @@ class RoSchedulePeriod < SchedulePeriod
     CoNonAvailability.import_co_non_availability(self)
     Allocation.import_allocation(self)
   end
+
+  def schedule_confirmed(hearing_schedule)
+    HearingDay.create_schedule(hearing_schedule)
+    super
+  end
 end

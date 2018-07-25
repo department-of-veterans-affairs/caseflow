@@ -38,7 +38,7 @@ class LegacyTasksController < ApplicationController
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
-                        current_user
+                        task.assigned_to
       ))
     }
   end
@@ -51,7 +51,7 @@ class LegacyTasksController < ApplicationController
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
-                        current_user
+                        task.assigned_to
       ))
     }
   end
