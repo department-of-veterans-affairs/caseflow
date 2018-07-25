@@ -49,11 +49,18 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def update
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
-    schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    if valid_schedule_period(schedule_period)
+      schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    end
     render json: { id: schedule_period.id }
   end
 
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
+  end
+
+  def valid_schedule_period(schedule_period)
+    nbr_of_days = schedule_period.updated_at.beginning_of_day - Time.zone.today.beginning_of_day
+    nbr_of_days < 5 && !schedule_period.finalized
   end
 end
