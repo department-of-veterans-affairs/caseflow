@@ -110,7 +110,7 @@ class LegacyAppeal < ApplicationRecord
 
   LOCATION_CODES = {
     remand_returned_to_bva: "96",
-    bva_dispatch: "30",
+    bva_dispatch: "4E",
     omo_office: "20",
     caseflow: "CASEFLOW"
   }.freeze
@@ -121,7 +121,8 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+  delegate :documents, :number_of_documents, :new_documents_for_user,
+           :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date

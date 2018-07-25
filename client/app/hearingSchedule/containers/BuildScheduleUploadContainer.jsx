@@ -34,7 +34,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.roCoFileUpload,
+        file: this.props.roCoFileUpload.file,
         startDate: this.props.roCoStartDate,
         endDate: this.props.roCoEndDate,
         type: this.props.fileType
@@ -43,7 +43,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.judgeFileUpload,
+        file: this.props.judgeFileUpload.file,
         startDate: this.props.judgeStartDate,
         endDate: this.props.judgeEndDate,
         type: this.props.fileType

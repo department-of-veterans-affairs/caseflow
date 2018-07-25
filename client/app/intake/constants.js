@@ -75,11 +75,11 @@ export const REVIEW_OPTIONS = {
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
-    name: 'Higher Level Review'
+    name: 'Higher-Level Review'
   },
   HIGHER_LEVEL_REVIEW_WITH_HEARING: {
     key: 'higher_level_review_with_hearing',
-    name: 'Higher Level Review with Informal Conference'
+    name: 'Higher-Level Review with Informal Conference'
   },
   APPEAL: {
     key: 'appeal',

@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import StatusMessage from '../components/StatusMessage';
@@ -7,13 +8,33 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
 import { sortTasks } from './utils';
+import { selectedTasksSelector } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
+import type { Task, Tasks } from './types/models';
+import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, State } from './types/state';
 
-class AssignedCasesPage extends React.PureComponent {
+type Params = {|
+  match: Object
+|};
+
+type Props = Params & {|
+  // From state
+  attorneysOfJudge: AttorneysOfJudge,
+  featureToggles: Object,
+  selectedTasks: Array<Task>,
+  tasks: Tasks,
+  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  // Action creators
+  resetSuccessMessages: typeof resetSuccessMessages,
+  resetErrorMessages: typeof resetErrorMessages,
+  reassignTasksToUser: typeof reassignTasksToUser
+|};
+
+class AssignedCasesPage extends React.PureComponent<Props> {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -32,7 +53,7 @@ class AssignedCasesPage extends React.PureComponent {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles
+      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles, selectedTasks
     } = props;
     const { attorneyId } = match.params;
 
@@ -60,10 +81,11 @@ class AssignedCasesPage extends React.PureComponent {
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
-      {featureToggles.judge_assign_cases &&
+      {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
-          onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
+          onTaskAssignment={(params) => props.reassignTasksToUser(params)}
+          selectedTasks={selectedTasks} />}
       <JudgeAssignTaskTable
         tasksAndAppeals={
           sortTasks({
@@ -79,20 +101,24 @@ class AssignedCasesPage extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: State, ownProps: Params) => {
   const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
   const { featureToggles } = state.ui;
+  const { attorneyId } = ownProps.match.params;
 
-  return { tasksAndAppealsOfAttorney,
+  return {
+    tasksAndAppealsOfAttorney,
     attorneysOfJudge,
     tasks,
-    featureToggles };
+    featureToggles,
+    selectedTasks: selectedTasksSelector(state, attorneyId)
+  };
 };
 
-export default connect(
+export default (connect(
   mapStateToProps,
   (dispatch) => (bindActionCreators({
     reassignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
-  }, dispatch)))(AssignedCasesPage);
+  }, dispatch)))(AssignedCasesPage): React.ComponentType<Params>);

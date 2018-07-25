@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
 
 import Table from '../components/Table';
 import CaseDetailsLink from './CaseDetailsLink';
 
-import { sortTasks, renderAppealType } from './utils';
+import { judgeReviewTasksSelector } from './selectors';
+import { sortTasks, renderAppealType, getTaskDaysWaiting } from './utils';
 import COPY from '../../COPY.json';
 
 class JudgeReviewTaskTable extends React.PureComponent {
@@ -46,32 +46,17 @@ class JudgeReviewTaskTable extends React.PureComponent {
     valueFunction: (task) => this.getAppealForTask(task, 'issues.length')
   }, {
     header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    valueFunction: (task) => moment().startOf('day').
-      diff(moment(task.attributes.assigned_on), 'days')
+    valueFunction: getTaskDaysWaiting,
+    getSortValue: getTaskDaysWaiting
   }];
 
-  render = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={
-        sortTasks(
-          { tasks: taskWithId,
-            appeals }).
-          filter((task) => task.attributes.task_type === 'Review')
-      }
-      getKeyForRow={this.getKeyForRow} />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={sortTasks(_.pick(this.props, 'tasks', 'appeals'))}
+    getKeyForRow={this.getKeyForRow} />;
 }
 
 JudgeReviewTaskTable.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
   appeals: PropTypes.object.isRequired,
   tasks: PropTypes.object.isRequired
 };
@@ -79,18 +64,13 @@ JudgeReviewTaskTable.propTypes = {
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
-      tasks
+      appeals
     }
   } = state;
 
   return {
-    loadedQueueTasks,
     appeals,
-    tasks
+    tasks: judgeReviewTasksSelector(state)
   };
 };
 

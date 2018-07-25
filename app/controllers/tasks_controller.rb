@@ -1,4 +1,6 @@
 class TasksController < ApplicationController
+  include Errors
+
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
 
@@ -27,7 +29,7 @@ class TasksController < ApplicationController
     tasks = task_class.create(tasks_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: tasks }, status: :created
+    render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
   def update
@@ -51,15 +53,6 @@ class TasksController < ApplicationController
     @user ||= User.find(params[:user_id])
   end
   helper_method :user
-
-  def invalid_role_error
-    render json: {
-      "errors": [
-        "title": "Role is Invalid",
-        "detail": "User is not allowed to perform this action"
-      ]
-    }, status: 400
-  end
 
   def task_class
     TASK_CLASSES[tasks_params.first[:type].try(:to_sym)]
