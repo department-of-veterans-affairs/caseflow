@@ -41,6 +41,13 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.errors
       }
     });
+  case ACTIONS.UNSET_UPLOAD_ERRORS:
+    return update(state, {
+      $unset: [
+        'uploadRoCoFormErrors',
+        'uploadJudgeFormErrors'
+      ]
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {
