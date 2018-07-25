@@ -71,7 +71,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_ro_dates_in_range
     @ro_spreadsheet_data.all? do |row|
-      row["date"] == "N/A" || (row["date"] >= @start_date && row["date"] <= @end_date)
+      !row["date"].instance_of?(Date) || (row["date"] >= @start_date && row["date"] <= @end_date)
     end
   end
 
@@ -98,7 +98,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def validate_co_non_availability_dates_in_range
     @co_spreadsheet_data.all? do |date|
-      date == "N/A" || date >= @start_date && date <= @end_date
+      !date.instance_of?(Date) || date >= @start_date && date <= @end_date
     end
   end
 
