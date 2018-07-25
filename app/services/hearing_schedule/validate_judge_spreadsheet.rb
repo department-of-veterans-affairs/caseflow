@@ -34,8 +34,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       @errors << JudgeDatesNotUnique
     end
     unless @spreadsheet_data.all? do |row|
-      row["date"] >= @start_date &&
-      row["date"] <= @end_date
+      !row["date"].instance_of?(Date) || (row["date"] >= @start_date && row["date"] <= @end_date)
     end
       @errors << JudgeDatesNotInRange
     end
@@ -45,7 +44,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
            end
       @errors << JudgeNotInDatabase
     end
-    true
   end
 
   def validate
