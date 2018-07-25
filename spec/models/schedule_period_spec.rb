@@ -7,6 +7,18 @@ describe SchedulePeriod do
     it { is_expected.to be_a(Roo::Excelx) }
   end
 
+  context "validation" do
+    before do
+      schedule_period.update!(finalized: true)
+    end
+
+    subject { create(:ro_schedule_period) }
+
+    it "returns an error" do
+      expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
   context "generate hearing schedule" do
     it do
       total_allocation_days = Allocation.where(schedule_period: schedule_period).sum(:allocated_days)
