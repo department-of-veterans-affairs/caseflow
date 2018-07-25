@@ -73,7 +73,7 @@ class HearingSchedule::AssignJudgesToHearingDays
       hearing_type: get_hearing_type(is_central_hearing),
       hearing_date: hearing_day.hearing_date,
       room_info: hearing_day.room,
-      regional_office: is_co_hearing_day ? nil : hearing_day.folder_nr.split(" ")[1],
+      regional_office: is_central_hearing ? nil : hearing_day.folder_nr.split(" ")[1],
       judge_id: @judges[css_id][:staff_info].sattyid,
       judge_name: get_judge_name(css_id)
     )
