@@ -135,6 +135,7 @@ export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
 // max length for Attorney comments `DECASS.DEATCOM`
 export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 
+// todo: replace with user_role_types
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,
   JUDGE: USER_ROLE_TYPES.judge

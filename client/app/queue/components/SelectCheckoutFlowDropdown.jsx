@@ -1,7 +1,7 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
@@ -17,16 +17,41 @@ import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS
 } from '../constants';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
-class SelectCheckoutFlowDropdown extends React.PureComponent {
+import type {
+  State
+} from '../types/state';
+
+type Props = {|
+  appealId: string
+|};
+
+type Params = Props & {|
+  // state
+  featureToggles: Object,
+  changedAppeals: Array<number>,
+  // dispatch
+  stageAppeal: typeof stageAppeal,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  checkoutStagedAppeal: typeof checkoutStagedAppeal,
+  setCaseReviewActionType: typeof setCaseReviewActionType,
+  // withrouter
+  history: Object
+|};
+
+class SelectCheckoutFlowDropdown extends React.PureComponent<Params> {
   changeRoute = (props) => {
     const {
       appealId,
       history
     } = this.props;
     const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
+    const routes = {
+      omo_request: 'submit',
+      draft_decision: 'dispositions',
+      admin_action: 'admin_action'
+    }
+    const route = routes[decisionType];
 
     this.stageAppeal();
 
@@ -47,22 +72,32 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     this.props.stageAppeal(appealId);
   }
 
+  getOptions = () => {
+    const { featureToggles } = this.props;
+
+    if (featureToggles.attorney_assignment_to_colocated) {
+      return [...DRAFT_DECISION_OPTIONS, {
+        label: 'Add admin action',
+        value: 'admin_action'
+      }];
+    }
+
+    return DRAFT_DECISION_OPTIONS;
+  }
+
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.appealId}`}
     placeholder="Select an action&hellip;"
-    options={DRAFT_DECISION_OPTIONS}
+    options={this.getOptions()}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;
 }
 
-SelectCheckoutFlowDropdown.propTypes = {
-  appealId: PropTypes.string.isRequired
-};
-
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: State, ownProps) => ({
   appeal: state.queue.appeals[ownProps.appealId],
-  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
+  changedAppeals: _.keys(state.queue.stagedChanges.appeals),
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -72,4 +107,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   stageAppeal
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown));
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown)
+): React.ComponentType<Params>);
