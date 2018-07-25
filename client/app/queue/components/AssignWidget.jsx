@@ -11,9 +11,6 @@ import {
   setSelectedAssignee,
   setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
-import {
-  initialAssignTasksToUser
-} from '../QueueActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
@@ -48,7 +45,6 @@ type Props = Params & {|
   // Action creators
   setSelectedAssignee: Function,
   setSelectedAssigneeSecondary: Function,
-  initialAssignTasksToUser: Function,
   showErrorMessage: (UiStateError) => void,
   resetErrorMessages: Function,
   showSuccessMessage: (string) => void,
@@ -204,7 +200,6 @@ export default (connect(
   (dispatch) => bindActionCreators({
     setSelectedAssignee,
     setSelectedAssigneeSecondary,
-    initialAssignTasksToUser,
     showErrorMessage,
     resetErrorMessages,
     showSuccessMessage,
