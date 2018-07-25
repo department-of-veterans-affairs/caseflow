@@ -26,6 +26,15 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
+  def find_user(css_id, name)
+    User.where(css_id: css_id,
+               full_name: name.split(", ").reverse.join(" ")).count > 0
+  end
+
+  def check_range_of_dates(date)
+    !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
+  end
+
   def validate_judge_non_availability_dates
     unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
       @errors << JudgeDatesNotCorrectFormat
@@ -33,15 +42,10 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_data.uniq == @spreadsheet_data
       @errors << JudgeDatesNotUnique
     end
-    unless @spreadsheet_data.all? do |row|
-      !row["date"].instance_of?(Date) || (row["date"] >= @start_date && row["date"] <= @end_date)
-    end
+    unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
       @errors << JudgeDatesNotInRange
     end
-    unless @spreadsheet_data.all? do |row|
-             User.where(css_id: row["css_id"],
-                        full_name: row["name"].split(", ").reverse.join(" ")).count > 0
-           end
+    unless @spreadsheet_data.all? { |row| find_user(row["css_id"], row["name"]) }
       @errors << JudgeNotInDatabase
     end
   end

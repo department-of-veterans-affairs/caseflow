@@ -1,8 +1,5 @@
 describe SchedulePeriod do
-  let(:schedule_period) do
-    create(:ro_schedule_period, start_date: Date.parse("2019-04-01"),
-                                end_date: Date.parse("2019-09-30"))
-  end
+  let!(:schedule_period) { create(:ro_schedule_period) }
 
   context "spreadsheet" do
     subject { schedule_period.spreadsheet }

@@ -31,8 +31,8 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       post :create, params: {
         schedule_period: {
           type: "RoSchedulePeriod",
-          start_date: "2015/10/24",
-          end_date: "2016/10/24",
+          start_date: "2018/01/01",
+          end_date: "2018/06/01",
           file_name: "fakeFileName.xlsx"
         },
         file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
