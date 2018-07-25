@@ -107,7 +107,7 @@ const documentsReducer = (state = initialState, action = {}) => {
            * we'll leave it be.
            */
           $apply: (docTags) => _.map(docTags, (docTag) => {
-            if (docTag.id) {
+            if (!docTag.temporaryId) {
               return docTag;
             }
 

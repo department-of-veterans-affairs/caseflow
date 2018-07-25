@@ -1,11 +1,11 @@
 describe CoLocatedAdminAction do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-  let!(:vacols_case) { create(:case) }
-  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+  let(:vacols_case) { create(:case) }
+  let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   before do
     RequestStore.store[:current_user] = attorney
-    allow_any_instance_of(User).to receive(:vacols_roles).and_return(["attorney"])
     FeatureToggle.enable!(:test_facols)
   end
 
@@ -118,7 +118,36 @@ describe CoLocatedAdminAction do
       end
     end
 
-    context "when status is updated to in-progress and on-hold" do
+    context "when status is updated to completed" do
+      let(:colocated_admin_action) do
+        create(:colocated_admin_action, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+      end
+
+      context "when more than one task per appeal and not all tasks are completed" do
+        let(:appeal_type) { "LegacyAppeal" }
+
+        let!(:colocated_admin_action2) do
+          create(:colocated_admin_action, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+        end
+
+        it "should not update location in vacols" do
+          colocated_admin_action.update(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to_not eq staff.slogid
+        end
+      end
+
+      context "when legacy appeal" do
+        let(:appeal_type) { "LegacyAppeal" }
+
+        it "should update location in vacols" do
+          expect(vacols_case.bfcurloc).to_not eq staff.slogid
+          colocated_admin_action.update(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to eq staff.slogid
+        end
+      end
+    end
+
+    context "when status is updated" do
       it "should reset timestamps only if status has changed" do
         time1 = Time.utc(2015, 1, 1, 12, 0, 0)
         Timecop.freeze(time1)
@@ -150,6 +179,14 @@ describe CoLocatedAdminAction do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
+
+        time6 = Time.utc(2015, 1, 8, 12, 0, 0)
+        Timecop.freeze(time6)
+        colocated_admin_action.update(status: "completed")
+        # go back to in-progres - should reset date
+        expect(colocated_admin_action.reload.started_at).to eq time5
+        expect(colocated_admin_action.placed_on_hold_at).to eq time3
+        expect(colocated_admin_action.completed_at).to eq time6
       end
     end
   end

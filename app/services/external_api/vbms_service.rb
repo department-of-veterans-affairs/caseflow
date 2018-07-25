@@ -24,11 +24,8 @@ class ExternalApi::VBMSService
     @vbms_client ||= init_vbms_client
 
     vbms_id = document.vbms_document_id
-    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-                VBMS::Requests::GetDocumentContent.new(vbms_id)
-              else
-                VBMS::Requests::FetchDocumentById.new(vbms_id)
-              end
+    request = VBMS::Requests::GetDocumentContent.new(vbms_id)
+
     result = send_and_log_request(vbms_id, request)
     result && result.content
   end
@@ -39,11 +36,7 @@ class ExternalApi::VBMSService
     @vbms_client ||= init_vbms_client
 
     veteran_file_number = appeal.veteran_file_number
-    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-                VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
-              else
-                VBMS::Requests::ListDocuments.new(veteran_file_number)
-              end
+    request = VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
     documents = send_and_log_request(veteran_file_number, request)
 
     Rails.logger.info("Document list length: #{documents.length}")
@@ -68,13 +61,8 @@ class ExternalApi::VBMSService
 
   def self.upload_document_to_vbms(appeal, form8)
     @vbms_client ||= init_vbms_client
-    document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-                 response = initialize_upload(appeal, form8)
-                 upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
-               else
-                 upload_document_deprecated(appeal, form8)
-               end
-    document
+    response = initialize_upload(appeal, form8)
+    upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
   end
 
   def self.initialize_upload(appeal, uploadable_document)
@@ -89,22 +77,6 @@ class ExternalApi::VBMSService
       source: "VACOLS",
       subject: uploadable_document.document_type,
       new_mail: true
-    )
-    send_and_log_request(appeal.vbms_id, request)
-  end
-
-  def self.upload_document_deprecated(appeal, uploadable_document)
-    request = VBMS::Requests::UploadDocumentWithAssociations.new(
-      appeal.sanitized_vbms_id,
-      uploadable_document.upload_date,
-      appeal.veteran_first_name,
-      appeal.veteran_middle_initial,
-      appeal.veteran_last_name,
-      uploadable_document.document_type,
-      uploadable_document.pdf_location,
-      uploadable_document.document_type_id,
-      "VACOLS",
-      true
     )
     send_and_log_request(appeal.vbms_id, request)
   end

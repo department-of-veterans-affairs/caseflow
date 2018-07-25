@@ -33,6 +33,8 @@ gem "paranoia", "~> 2.2"
 
 gem "dogstatsd-ruby"
 
+gem "acts_as_tree"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -48,7 +50,7 @@ gem "wannabe_bool"
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "60a4d8a569cc7fd35a71f6f230151f9f7be1e270"
 
 # PDF Tools
 gem "pdf-forms"

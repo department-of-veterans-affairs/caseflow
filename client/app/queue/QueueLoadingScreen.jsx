@@ -27,11 +27,14 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 
   loadRelevantCases = () => {
-    if (this.props.appealId) {
-      return this.loadActiveAppeal();
-    }
+    const promises = [];
 
-    return this.loadQueue();
+    if (this.props.appealId) {
+      promises.push(this.loadActiveAppeal());
+    }
+    promises.push(this.loadQueue());
+
+    return Promise.all(promises);
   }
 
   loadQueue = () => {
@@ -122,10 +125,11 @@ QueueLoadingScreen.propTypes = {
   appealId: PropTypes.string
 };
 
+// todo: remove ...this.props from usages within QueueApp
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'judges'),
+  ..._.pick(state.queue, 'judges', 'tasks', 'appeals'),
   activeAppeal: state.caseDetail.activeAppeal,
-  ...state.queue.loadedQueue
+  loadedUserId: state.ui.loadedUserId
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

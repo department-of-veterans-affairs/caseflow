@@ -1,14 +1,12 @@
 RSpec.describe LegacyTasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:judge_queue)
     FeatureToggle.enable!(:test_facols)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:judge_queue)
   end
 
   describe "GET legacy_tasks/xxx" do
@@ -57,11 +55,11 @@ RSpec.describe LegacyTasksController, type: :controller do
     end
 
     before do
-      FeatureToggle.enable!(:judge_assignment)
+      FeatureToggle.enable!(:judge_assignment_to_attorney)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
+      FeatureToggle.disable!(:judge_assignment_to_attorney)
     end
 
     context "when current user is an attorney" do
@@ -149,11 +147,11 @@ RSpec.describe LegacyTasksController, type: :controller do
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
-      FeatureToggle.enable!(:judge_assignment)
+      FeatureToggle.enable!(:judge_assignment_to_attorney)
     end
 
     after do
-      FeatureToggle.disable!(:judge_assignment)
+      FeatureToggle.disable!(:judge_assignment_to_attorney)
     end
 
     context "when current user is an attorney" do

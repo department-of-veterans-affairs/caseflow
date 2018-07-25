@@ -1,8 +1,7 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { css } from 'glamor';
 import moment from 'moment';
 import pluralize from 'pluralize';
 
@@ -10,6 +9,10 @@ import Table from '../components/Table';
 import ReaderLink from './ReaderLink';
 import CaseDetailsLink from './CaseDetailsLink';
 
+import {
+  appealsByAssignedTaskSelector,
+  tasksByAssigneeCssIdSelector
+} from './selectors';
 import { sortTasks, renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import { CATEGORIES, redText } from './constants';
@@ -21,7 +24,6 @@ import type {
 } from './types/models';
 
 type Props = {|
-  loadedQueueTasks: Tasks,
   appeals: LegacyAppeals,
   tasks: Tasks,
   featureToggles: Object
@@ -35,13 +37,6 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     return attr ? _.get(appeal.attributes, attr) : appeal;
   };
 
-  tableStyle = css({
-    '& > tr > td': {
-      '&:last-of-type': {
-        width: this.props.featureToggles.phase_two ? '25%' : ''
-      }
-    }
-  });
   collapseColumnIfNoDASRecord = (task) => task.attributes.task_id ? 1 : 0;
 
   getQueueColumns = () => [{
@@ -61,7 +56,16 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     valueFunction: (task) => task.attributes.task_id ?
       renderAppealType(this.getAppealForTask(task)) :
       <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-    span: (task) => task.attributes.task_id ? 1 : 5
+    span: (task) => task.attributes.task_id ? 1 : 5,
+    getSortValue: (task, tasks) => {
+      const { appeals } = this.props;
+      const sortedTasks = sortTasks({
+        tasks,
+        appeals
+      });
+
+      return sortedTasks.indexOf(task);
+    }
   }, {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
     valueFunction: (task) => task.attributes.task_id ? this.getAppealForTask(task, 'docket_number') : null,
@@ -104,46 +108,29 @@ class AttorneyTaskTable extends React.PureComponent<Props> {
     }
   }];
 
-  render = () => {
-    const { appeals, loadedQueueTasks, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={sortTasks({
-        appeals,
-        tasks: taskWithId
-      })}
-      getKeyForRow={this.getKeyForRow}
-      rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'}
-      bodyStyling={this.tableStyle} />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={Object.values(this.props.tasks)}
+    getKeyForRow={this.getKeyForRow}
+    defaultSort={{
+      sortColIdx: 1,
+      sortAscending: false
+    }}
+    rowClassNames={(task) => task.attributes.task_id ? null : 'usa-input-error'} />;
 }
 
 const mapStateToProps = (state) => {
   const {
-    queue: {
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      },
-      tasks
-    },
     ui: {
       featureToggles
     }
   } = state;
 
   return {
-    loadedQueueTasks,
-    appeals,
-    tasks,
+    appeals: appealsByAssignedTaskSelector(state),
+    tasks: tasksByAssigneeCssIdSelector(state),
     featureToggles
   };
 };
 
-export default connect(mapStateToProps)(AttorneyTaskTable);
+export default (connect(mapStateToProps)(AttorneyTaskTable): React.ComponentType<Props>);

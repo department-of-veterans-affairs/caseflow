@@ -27,15 +27,48 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   context "create" do
     it "creates a new schedule period" do
       id = SchedulePeriod.last.id + 1
-      post :create, params: { schedule_period: {
-        type: "RoSchedulePeriod",
-        start_date: "2015/10/24",
-        end_date: "2016/10/24",
-        file_name: "fakeFileName.xlsx"
-      } }
+      base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+      post :create, params: {
+        schedule_period: {
+          type: "RoSchedulePeriod",
+          start_date: "2015/10/24",
+          end_date: "2016/10/24",
+          file_name: "fakeFileName.xlsx"
+        },
+        file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
+      }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["id"]).to eq id
+    end
+  end
+
+  context "persist full schedule for a schedule period" do
+    it "persists a schedule for a given schedulePeriod id" do
+      put :update, params: {
+        schedule_period_id: ro_schedule_period.id
+      }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["id"]).to eq ro_schedule_period.id
+
+      # Invoking separate controller to verify that we persisted
+      # the schedule for the given date range.
+      @controller = Hearings::HearingDayController.new
+      get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearings"].size).to be_between(355, 359)
+    end
+  end
+
+  context "assign judges to full schedule for a schedule period" do
+    it "update judge assignments for a given schedulePeriod id" do
+      put :update, params: {
+        schedule_period_id: judge_schedule_period.id
+      }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["id"]).to eq judge_schedule_period.id
     end
   end
 end

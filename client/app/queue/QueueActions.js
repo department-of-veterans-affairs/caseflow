@@ -3,18 +3,24 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
-import type { Task, User } from './types/models';
+import type { Dispatch, UsersById } from './types/state';
+import type {
+  Task,
+  Tasks,
+  LegacyAppeals,
+  User
+} from './types/models';
 
-export const onReceiveQueue =
-  ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: string }) => ({
-    type: ACTIONS.RECEIVE_QUEUE_DETAILS,
-    payload: {
-      tasks,
-      appeals,
-      userId
-    }
-  });
+export const onReceiveQueue = (
+  { tasks, appeals, userId }: { tasks: Tasks, appeals: LegacyAppeals, userId: string }
+) => ({
+  type: ACTIONS.RECEIVE_QUEUE_DETAILS,
+  payload: {
+    tasks,
+    appeals,
+    userId
+  }
+});
 
 export const onReceiveJudges = (judges: UsersById) => ({
   type: ACTIONS.RECEIVE_JUDGE_DETAILS,
@@ -22,6 +28,28 @@ export const onReceiveJudges = (judges: UsersById) => ({
     judges
   }
 });
+
+export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    dispatch({
+      type: ACTIONS.RECEIVE_NEW_FILES,
+      payload: {
+        appealId,
+        newDocuments: resp.new_documents
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
+      payload: {
+        appealId,
+        error
+      }
+    });
+  });
+};
 
 export const setAppealDocCount = (appealId: string, docCount: number) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,

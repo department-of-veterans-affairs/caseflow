@@ -46,7 +46,6 @@ RSpec.feature "Task queue" do
   let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -54,7 +53,6 @@ RSpec.feature "Task queue" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "attorney user with assigned tasks" do

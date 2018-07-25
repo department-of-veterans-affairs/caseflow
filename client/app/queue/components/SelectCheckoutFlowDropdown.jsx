@@ -61,7 +61,7 @@ SelectCheckoutFlowDropdown.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals)
 });
 
