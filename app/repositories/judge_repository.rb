@@ -10,6 +10,6 @@ class JudgeRepository
   def self.find_all_hearing_judges
     VACOLS::Staff.where("substr(stitle, 1, 1) = 'D') AND (svlj in ('A', 'J')")
   end
-  
+
   # :nocov:
 end

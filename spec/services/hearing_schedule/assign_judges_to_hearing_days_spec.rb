@@ -1,5 +1,4 @@
 describe HearingSchedule::AssignJudgesToHearingDays do
-
   let(:schedule_period) do
     create(:ro_schedule_period, start_date: Date.parse("2018-04-01"),
                                 end_date: Date.parse("2018-07-31"))
@@ -10,7 +9,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
   end
 
   context "assign judges info from VACOLS staff and Caseflow" do
-    
     subject { assign_judges_to_hearing_days }
 
     context "when Judge exists in both VACOLS and Caseflow" do
@@ -21,7 +19,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         end
       end
 
-      it "Caseflow user and staff information are populated" do      
+      it "Caseflow user and staff information are populated" do
         expect(subject.judges.count).to eq(3)
         subject.judges.keys.each do |css_id|
           expect(subject.judges[css_id][:staff_info].sdomainid).to eq(css_id)
@@ -68,7 +66,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     it "assigns non availabilities to judges" do
       expect(subject.judges.count).to eq(3)
       subject.judges.keys.each_with_index do |css_id, index|
-        expect(subject.judges[css_id][:non_availabilities].count).to eq(@num_non_available_days[index])  
+        expect(subject.judges[css_id][:non_availabilities].count).to eq(@num_non_available_days[index])
       end
     end
   end
@@ -80,20 +78,18 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     let(:tb_hearing) do
       create(:travel_board_schedule, tbro: "RO17",
-        tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
-        tbmem1: member1.sattyid,
-        tbmem2: member2.sattyid,
-        tbmem3: member3.sattyid
-      )
+                                     tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
+                                     tbmem1: member1.sattyid,
+                                     tbmem2: member2.sattyid,
+                                     tbmem3: member3.sattyid)
     end
 
     let(:tb_hearing2) do
       create(:travel_board_schedule, tbro: "RO17",
-        tbstdate: Date.parse("2018-09-03"), tbenddate: Date.parse("2018-09-07"),
-        tbmem1: member1.sattyid,
-        tbmem2: member2.sattyid,
-        tbmem3: member3.sattyid
-      )
+                                     tbstdate: Date.parse("2018-09-03"), tbenddate: Date.parse("2018-09-07"),
+                                     tbmem1: member1.sattyid,
+                                     tbmem2: member2.sattyid,
+                                     tbmem3: member3.sattyid)
     end
 
     subject { assign_judges_to_hearing_days }
@@ -105,7 +101,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       start_date2 = 3.business_days.before(tb_hearing2[:tbstdate])
       end_date2 = 3.business_days.after(tb_hearing2[:tbenddate])
 
-      subject.judges do |css_id, judge|
+      subject.judges do |_css_id, judge|
         expect(judge[:non_availabilities].include?(start_date)).to be_truthy
         expect(judge[:non_availabilities].include?(end_date)).to be_truthy
 
@@ -212,25 +208,23 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     before do
       judges
       hearing_days
-      
-      create(:travel_board_schedule, tbro: "RO13",
-        tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
-        tbmem1: judges[0].sattyid,
-        tbmem2: judges[1].sattyid,
-        tbmem3: judges[2].sattyid
-      )
 
       create(:travel_board_schedule, tbro: "RO13",
-        tbstdate: Date.parse("2018-04-16"), tbenddate: Date.parse("2018-04-20"),
-        tbmem1: judges[3].sattyid,
-        tbmem2: judges[4].sattyid,
-        tbmem3: judges[5].sattyid
-      )
+                                     tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
+                                     tbmem1: judges[0].sattyid,
+                                     tbmem2: judges[1].sattyid,
+                                     tbmem3: judges[2].sattyid)
+
+      create(:travel_board_schedule, tbro: "RO13",
+                                     tbstdate: Date.parse("2018-04-16"), tbenddate: Date.parse("2018-04-20"),
+                                     tbmem1: judges[3].sattyid,
+                                     tbmem2: judges[4].sattyid,
+                                     tbmem3: judges[5].sattyid)
     end
 
     let(:judges) do
       judges = []
-      7.times do |index|
+      7.times do
         judge = FactoryBot.create(:user)
         get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, Random.rand(20..40)).map do |date|
           create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: judge.css_id)
@@ -247,7 +241,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         @hearing_counter += date.wednesday? ? 2 : 1
         case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
         hearing_days[case_hearing.hearing_pkseq] = case_hearing
-        
+
         co_case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
         hearing_days[co_case_hearing.hearing_pkseq] = co_case_hearing
       end
@@ -257,9 +251,8 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     subject { assign_judges_to_hearing_days }
 
     context "allocated judges to hearing days" do
-      
       subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
-      
+
       it "all hearing days should be assigned to judges" do
         expect(subject.count).to eq(@hearing_counter)
         judge_count = {}
@@ -270,7 +263,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           judge_count[hearing_day[:judge_id]] += 1
 
           type = is_co ? HearingDay::HEARING_TYPES[:central] : HearingDay::HEARING_TYPES[:video]
-          ro = is_co ? nil : expected_day.folder_nr.split(' ')[1]
+          ro = is_co ? nil : expected_day.folder_nr.split(" ")[1]
 
           expect(expected_day).to_not be_nil
           expect(hearing_day[:hearing_type]).to eq(type)
