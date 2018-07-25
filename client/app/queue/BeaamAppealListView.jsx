@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BeaamTable from './BeaamTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 import _ from 'lodash';
@@ -19,7 +19,13 @@ class BeaamListView extends React.PureComponent {
         {messages.error && <Alert type="error" title={messages.error.title}>
           {messages.error.detail}
         </Alert>}
-        <BeaamTable />
+        <TaskTable
+          includeDetailsLink
+          includeType
+          includeDocketNumber
+          includeIssueCount
+          includeReaderLink
+          appeals={this.props.appealsOfAttorney} />
       </div>
     </AppSegment>;
   };
