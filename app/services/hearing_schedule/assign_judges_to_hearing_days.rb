@@ -1,17 +1,16 @@
-require 'business_time'
-require 'set'
+require "business_time"
+require "set"
 
 class HearingSchedule::AssignJudgesToHearingDays
-
   attr_reader :judges, :video_co_hearing_days
-  
+
   TB_ADDITIONAL_NA_DAYS = 3
 
   class HearingDaysNotAllocated < StandardError; end
 
   def initialize(schedule_period)
     # raises an exception if hearing days have not already been finalized
-    raise HearingDaysNotAllocated if schedule_period.try(:finalized) == false
+    fail HearingDaysNotAllocated if schedule_period.try(:finalized) == false
 
     @video_co_hearing_days = []
     @judges = {}
@@ -34,23 +33,23 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def match_hearing_days_to_judges
-
     non_assigned_judges_to_days = []
     shuffled_judges = @judges.keys.shuffle
     assigned_hearing_days = []
 
     hearing_days_assigned = false
     assigned_days = {}
-    while(!hearing_days_assigned)
+    until hearing_days_assigned
       catch :hearing_days_assigned do
         shuffled_judges.each do |css_id|
           index = 0
-          
-          while(index < @video_co_hearing_days.length)
+
+          while index < @video_co_hearing_days.length
             current_hearing_day = @video_co_hearing_days[index]
 
+            puts "date included" if @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date)
             unless @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date) ||
-                assigned_days[current_hearing_day.hearing_pkseq]
+                   assigned_days[current_hearing_day.hearing_pkseq]
               assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
               assigned_days[current_hearing_day.hearing_pkseq] = true
               break
@@ -62,12 +61,11 @@ class HearingSchedule::AssignJudgesToHearingDays
         end
       end
     end
-    
+
     assigned_hearing_days
   end
 
   def assign_judge_to_hearing_day(hearing_day, css_id)
-    
     is_co_hearing_day = co_hearing_day?(hearing_day)
 
     HearingDayMapper.hearing_day_field_validations(
@@ -76,21 +74,19 @@ class HearingSchedule::AssignJudgesToHearingDays
         HearingDay::HEARING_TYPES[:central] : HearingDay::HEARING_TYPES[:video],
       hearing_date: hearing_day.hearing_date,
       room_info: hearing_day.room,
-      regional_office: is_co_hearing_day ? nil : hearing_day.folder_nr.split(' ')[1],
+      regional_office: is_co_hearing_day ? nil : hearing_day.folder_nr.split(" ")[1],
       judge_id: @judges[css_id][:staff_info].sattyid,
       judge_name: get_judge_name(css_id)
     )
   end
 
-  def get_hearing_day_assigned_count
-    @video_co_hearing_days.select { |hearing_day| hearing_day[:assigned] == true }.size
-  end
-
   def get_judge_name(css_id)
-    staff_info = @judges[css_id][:staff_info]
-
-    @judges[css_id][:user_info] ? @judges[css_id][:user_info].full_name :
+    if @judges[css_id][:user_info]
+      @judges[css_id][:user_info].full_name
+    else
+      staff_info = @judges[css_id][:staff_info]
       "#{staff_info.snamef} #{staff_info.snamemi} #{staff_info.snamel}"
+    end
   end
 
   def weekend?(day)
@@ -115,15 +111,15 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.reject do |hearing_day|
-      (co_hearing_day?(hearing_day) && !(hearing_day.hearing_date.wednesday?)) ||
+      (co_hearing_day?(hearing_day) && !hearing_day.hearing_date.wednesday?) ||
         hearing_day_already_assigned(hearing_day)
     end
   end
 
   def hearing_day_already_assigned(hearing_day)
     assigned = !hearing_day.board_member.nil?
-    
-    if assigned      
+
+    if assigned
       @judges.each do |css_id, judge|
         if judge[:staff_info].sattyid == hearing_day.board_member
           @judges[css_id][:non_availabilities] << hearing_day.hearing_date
@@ -137,15 +133,15 @@ class HearingSchedule::AssignJudgesToHearingDays
     hearing_day.folder_nr.nil?
   end
 
-  # Adds 3 days and 3 days prior non-available days for each Judge assigned to a 
+  # Adds 3 days and 3 days prior non-available days for each Judge assigned to a
   # travel board.
   def filter_travel_board_hearing_days(tb_hearing_days)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(tb_hearing_days)
-    
+
     tb_master_records.each do |tb_record|
       # assign non-availability days to all the travel board judges
       tb_judge_ids = [tb_record[:tbmem_1], tb_record[:tbmem_2], tb_record[:tbmem_3], tb_record[:tbmem_4]].compact
-      judges = @judges.select {|_key, judge| tb_judge_ids.include?(judge[:staff_info].sattyid) }
+      judges = @judges.select { |_key, judge| tb_judge_ids.include?(judge[:staff_info].sattyid) }
 
       judges.each do |_judge_board_id, judge_staff_info|
         css_id = judge_staff_info[:staff_info].sdomainid
@@ -153,7 +149,7 @@ class HearingSchedule::AssignJudgesToHearingDays
         @judges[css_id][:non_availabilities] ||= Set.new
         @judges[css_id][:non_availabilities] +=
           (TB_ADDITIONAL_NA_DAYS.business_days.before(tb_record[:start_date])..TB_ADDITIONAL_NA_DAYS.business_days
-            .after(tb_record[:end_date])).select { |date| !weekend?(date) }
+            .after(tb_record[:end_date])).reject { |date| weekend?(date) }
       end
     end
   end

@@ -21,7 +21,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
       it "Caseflow user and staff information are populated" do
         expect(subject.judges.count).to eq(3)
-        subject.judges.keys.each do |css_id|
+        subject.judges.each_key do |css_id|
           expect(subject.judges[css_id][:staff_info].sdomainid).to eq(css_id)
           expect(subject.judges[css_id][:user_info].css_id).to eq(css_id)
         end
@@ -37,7 +37,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
       it "staff info is populate but user info is nil" do
         expect(subject.judges.count).to eq(3)
-        subject.judges.keys.each do |css_id|
+        subject.judges.each_key do |css_id|
           expect(subject.judges[css_id][:staff_info].sdomainid).to eq(css_id)
           expect(subject.judges[css_id][:user_info]).to eq(nil)
         end
@@ -50,8 +50,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       @num_non_available_days = [10, 5, 15]
       @num_non_available_days.count.times do |i|
         judge = FactoryBot.create(:user)
-        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, @num_non_available_days[i]).map do |date|
-          create(:judge_non_availability, object_identifier: judge.css_id, date: date, schedule_period_id: schedule_period.id)
+        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
+                                 @num_non_available_days[i]).map do |date|
+          create(:judge_non_availability, object_identifier: judge.css_id,
+                                          date: date, schedule_period_id: schedule_period.id)
         end
         create(:staff, :hearing_judge, sdomainid: judge.css_id)
       end
@@ -194,7 +196,8 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     end
 
     let(:co_hearing_day) do
-      create(:case_hearing, hearing_type: "C", hearing_date: "2018-04-10", board_member: judge.sattyid, folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: "2018-04-10",
+                            board_member: judge.sattyid, folder_nr: "VIDEO RO13")
     end
 
     subject { assign_judges_to_hearing_days }
@@ -226,8 +229,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       judges = []
       7.times do
         judge = FactoryBot.create(:user)
-        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, Random.rand(20..40)).map do |date|
-          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: judge.css_id)
+        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
+                                 Random.rand(20..40)).map do |date|
+          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                          object_identifier: judge.css_id)
         end
         judges << create(:staff, :hearing_judge, sdomainid: judge.css_id)
       end
@@ -273,7 +278,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           expect(hearing_day[:judge_id]).to_not be_nil
           expect(hearing_day[:judge_name]).to_not be_nil
         end
-        binding.pry
       end
     end
   end
