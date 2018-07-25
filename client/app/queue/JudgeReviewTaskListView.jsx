@@ -78,9 +78,6 @@ JudgeReviewTaskListView.propTypes = {
 
 const mapStateToProps = (state) => {
   const {
-    queue: {
-      appeals
-    },
     ui: {
       messages
     }

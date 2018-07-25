@@ -36,7 +36,7 @@ export const initialState = {
     }
   },
   attorneysOfJudge: [],
-  tasksAndAppealsOfAttorney: {},
+  attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   attorneys: {}
 };
@@ -245,7 +245,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY:
     return update(state, {
-      tasksAndAppealsOfAttorney: {
+      attorneyAppealsLoadingState: {
         [action.payload.attorneyId]: {
           $set: {
             state: 'LOADING'
@@ -255,7 +255,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY:
     return update(state, {
-      tasksAndAppealsOfAttorney: {
+      attorneyAppealsLoadingState: {
         [action.payload.attorneyId]: {
           $set: {
             state: 'LOADED'
@@ -271,7 +271,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY:
     return update(state, {
-      tasksAndAppealsOfAttorney: {
+      attorneyAppealsLoadingState: {
         [action.payload.attorneyId]: {
           $set: {
             state: 'FAILED',
@@ -297,7 +297,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
   case ACTIONS.TASK_INITIAL_ASSIGNED: {
     const appealId = action.payload.task.id;
-    const appeal = state.appeals[appealId];
 
     return update(state, {
       tasks: {
@@ -309,7 +308,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
   case ACTIONS.TASK_REASSIGNED: {
     const appealId = action.payload.task.id;
-    const appeal = state.appeals[appealId];
 
     return update(state, {
       tasks: {

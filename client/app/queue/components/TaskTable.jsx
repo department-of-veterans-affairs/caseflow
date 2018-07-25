@@ -12,12 +12,8 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import AppealDocumentCount from '../AppealDocumentCount';
 
-import {
-  appealsByAssigneeCssIdSelector,
-  appealsWithTasks
-} from '../selectors';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { sortTasks, renderAppealType } from '../utils';
+import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import { CATEGORIES, redText } from '../constants';
 import COPY from '../../../COPY.json';
@@ -26,15 +22,35 @@ import type {
   LegacyAppeals
 } from '../types/models';
 
-type Props = {|
+type Params = {|
+  includeSelect?: boolean,
+  includeDetailsLink?: boolean,
+  includeDocumentId?: boolean,
+  includeType?: boolean,
+  includeDocketNumber?: boolean,
+  includeIssueCount?: boolean,
+  includeDueDate?: boolean,
+  includeDaysWaiting?: boolean,
+  includeReaderLink?: boolean,
+  includeDocumentCount?: boolean,
+  requireDasRecord?: boolean,
   appeals: LegacyAppeals,
-  userId: ?string
+  userId: ?string,
+|};
+
+type Props = Params & {|
+  setSelectionOfTaskOfUser: Function,
+  isTaskAssignedToUserSelected?: Object
 |};
 
 class TaskTable extends React.PureComponent<Props> {
   getKeyForRow = (rowNumber, object) => object.id
-  
+
   isTaskSelected = (taskId) => {
+    if (!this.props.isTaskAssignedToUserSelected) {
+      return false;
+    }
+
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
     return isTaskSelected[taskId] || false;
@@ -43,9 +59,9 @@ class TaskTable extends React.PureComponent<Props> {
   appealHasDASRecord = (appeal) => {
     if (this.props.requireDasRecord) {
       return appeal.tasks.some((task) => task.attributes.task_id);
-    } else {
-      return true;
     }
+
+    return true;
   }
 
   oldestTask = (appeal) => {
@@ -56,14 +72,14 @@ class TaskTable extends React.PureComponent<Props> {
     return appeal.tasks.reduce((oldestTask, task) => {
       if (oldestTask === null) {
         return task;
-      } else {
-        if (moment(task.attributes.assigned_on).isBefore(moment(oldestTask.attributes.assigned_on))) {
-          return task
-        } else {
-          return oldestTask
-        }
       }
-    }, null)
+      if (moment(task.attributes.assigned_on).isBefore(moment(oldestTask.attributes.assigned_on))) {
+        return task;
+      }
+
+      return oldestTask;
+
+    }, null);
   }
 
   collapseColumnIfNoDASRecord = (appeal) => this.appealHasDASRecord(appeal) ? 1 : 0
@@ -74,6 +90,10 @@ class TaskTable extends React.PureComponent<Props> {
       valueFunction:
         (appeal) => {
           const task = this.oldestTask(appeal);
+
+          if (!task) {
+            return null;
+          }
 
           return <Checkbox
             name={task.id}
@@ -97,7 +117,7 @@ class TaskTable extends React.PureComponent<Props> {
         appeal={appeal}
         disabled={!this.appealHasDASRecord(appeal)} />,
       getSortValue: (appeal) => {
-        const vetName = appeal.attributes['veteran_full_name'].split(' ');
+        const vetName = appeal.attributes.veteran_full_name.split(' ');
         // only take last, first names. ignore middle names/initials
 
         return `${_.last(vetName)} ${vetName[0]}`;
@@ -110,6 +130,10 @@ class TaskTable extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
       valueFunction: (appeal) => {
         const task = this.oldestTask(appeal);
+
+        if (!task) {
+          return null;
+        }
 
         if (!task.attributes.assigned_by_first_name) {
           return task.attributes.document_id;
@@ -163,6 +187,10 @@ class TaskTable extends React.PureComponent<Props> {
 
         const task = this.oldestTask(appeal);
 
+        if (!task) {
+          return null;
+        }
+
         const daysWaiting = moment().
           diff(moment(task.attributes.assigned_on), 'days');
 
@@ -171,18 +199,42 @@ class TaskTable extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => moment().diff(moment(this.oldestTask(appeal).attributes.assigned_on), 'days')
+      getSortValue: (appeal) => {
+        const task = this.oldestTask(appeal);
+
+        if (!task) {
+          return 0;
+        }
+
+        return moment().diff(moment(task.attributes.assigned_on), 'days');
+      }
     } : null;
   }
 
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: (appeal) => moment().startOf('day').
-        diff(moment(this.oldestTask(appeal).attributes.assigned_on), 'days'),
+      valueFunction: (appeal) => {
+        const task = this.oldestTask(appeal);
+
+        if (!task) {
+          return null;
+        }
+
+        return moment().startOf('day').
+          diff(moment(task.attributes.assigned_on), 'days');
+      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => moment().startOf('day').
-        diff(moment(this.oldestTask(appeal).attributes.assigned_on), 'days')
+      getSortValue: (appeal) => {
+        const task = this.oldestTask(appeal);
+
+        if (!task) {
+          return null;
+        }
+
+        return moment().startOf('day').
+          diff(moment(task.attributes.assigned_on), 'days');
+      }
     } : null;
   }
 
@@ -205,26 +257,27 @@ class TaskTable extends React.PureComponent<Props> {
 
   caseDocumentCount = () => {
     return this.props.includeDocumentCount ? {
-      header: COPY.JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
+      header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       valueFunction: (appeal) => <AppealDocumentCount appeal={appeal} />
     } : null;
   }
 
-  getQueueColumns = () => _.compact([
-    this.caseSelectColumn(),
-    this.caseDetailsColumn(),
-    this.caseDocumentIdColumn(),
-    this.caseTypeColumn(), 
-    this.caseDocketNumberColumn(),
-    this.caseIssueCountColumn(),
-    this.caseDocumentCount(),
-    this.caseDueDateColumn(),
-    this.caseDaysWaitingColumn(),
-    this.caseReaderLinkColumn()
-  ]);
+  getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
+    _.compact([
+      this.caseSelectColumn(),
+      this.caseDetailsColumn(),
+      this.caseDocumentIdColumn(),
+      this.caseTypeColumn(),
+      this.caseDocketNumberColumn(),
+      this.caseIssueCountColumn(),
+      this.caseDocumentCount(),
+      this.caseDueDateColumn(),
+      this.caseDaysWaitingColumn(),
+      this.caseReaderLinkColumn()
+    ]);
 
   getFirstSortableColumn = () => {
-    return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue)
+    return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
   render = () => {
@@ -248,4 +301,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default (connect(mapStateToProps, mapDispatchToProps)(TaskTable): React.ComponentType<Props>);
+export default (connect(mapStateToProps, mapDispatchToProps)(TaskTable): React.ComponentType<Params>);

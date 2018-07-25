@@ -6,7 +6,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 import _ from 'lodash';
 import {
-  appealsWithTasks
+  appealsWithTasksSelector
 } from './selectors';
 
 import { fullWidth } from './constants';
@@ -36,7 +36,7 @@ class BeaamListView extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'messages'),
-  appeals: appealsWithTasks(state)
+  appeals: appealsWithTasksSelector(state)
 });
 
 export default connect(mapStateToProps)(BeaamListView);

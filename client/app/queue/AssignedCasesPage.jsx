@@ -7,15 +7,14 @@ import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
-import { sortTasks } from './utils';
-import { selectedTasksSelector, assignedAppealsSelector } from './selectors';
+import { selectedTasksSelector, getAssignedAppeals } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import type { Task, Tasks } from './types/models';
-import type { AttorneysOfJudge, TasksAndAppealsOfAttorney, State } from './types/state';
+import type { Task, LegacyAppeals } from './types/models';
+import type { AttorneysOfJudge, AttorneyAppealsLoadingState, State } from './types/state';
 
 type Params = {|
   match: Object
@@ -24,10 +23,10 @@ type Params = {|
 type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
+  appealsOfAttorney: LegacyAppeals,
   featureToggles: Object,
   selectedTasks: Array<Task>,
-  tasks: Tasks,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   // Action creators
   resetSuccessMessages: typeof resetSuccessMessages,
   resetErrorMessages: typeof resetErrorMessages,
@@ -53,16 +52,16 @@ class AssignedCasesPage extends React.Component<Props> {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles, selectedTasks
+      match, attorneysOfJudge, attorneyAppealsLoadingState, featureToggles, selectedTasks
     } = props;
     const { attorneyId } = match.params;
 
-    if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
+    if (!(attorneyId in attorneyAppealsLoadingState) || attorneyAppealsLoadingState[attorneyId].state === 'LOADING') {
       return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
     }
 
-    if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
-      const { error } = tasksAndAppealsOfAttorney[attorneyId];
+    if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
+      const { error } = attorneyAppealsLoadingState[attorneyId];
 
       if (!error.response) {
         return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
@@ -72,7 +71,7 @@ class AssignedCasesPage extends React.Component<Props> {
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
-    
+
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
       {featureToggles.judge_assignment_to_attorney &&
@@ -95,15 +94,14 @@ class AssignedCasesPage extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
+  const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
   const { featureToggles } = state.ui;
   const { attorneyId } = ownProps.match.params;
 
   return {
-    appealsOfAttorney: assignedAppealsSelector(state, attorneyId),
-    tasksAndAppealsOfAttorney,
+    appealsOfAttorney: getAssignedAppeals(state, attorneyId),
+    attorneyAppealsLoadingState,
     attorneysOfJudge,
-    tasks,
     featureToggles,
     selectedTasks: selectedTasksSelector(state, attorneyId)
   };

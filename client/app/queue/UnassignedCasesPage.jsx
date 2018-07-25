@@ -13,7 +13,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import { unassignedAppealsSelector, selectedTasksSelector } from './selectors';
-import type { Task } from './types/models';
+import type { Task, LegacyAppeals } from './types/models';
 
 type Params = {|
   userId: string,
@@ -23,6 +23,7 @@ type Props = Params & {|
   // Props
   featureToggles: Object,
   selectedTasks: Array<Task>,
+  appeals: LegacyAppeals,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,

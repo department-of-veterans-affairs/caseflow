@@ -19,7 +19,6 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
-const getAttorneysOfJudge = (state: State) => state.queue.attorneysOfJudge;
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
@@ -29,38 +28,41 @@ export const tasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-export const appealsWithTasks = createSelector(
+export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     const taskMap = _.reduce(tasks, (map, task) => {
-      const taskList = map[task.attributes.appeal_id] ? [...map[task.attributes.appeal_id], task] : [task]
-      return {...map, [task.attributes.appeal_id]: taskList}
+      const taskList = map[task.attributes.appeal_id] ? [...map[task.attributes.appeal_id], task] : [task];
+
+      return { ...map,
+        [task.attributes.appeal_id]: taskList };
     }, {});
 
     return _.map(appeals, (appeal) => {
       appeal.tasks = taskMap[appeal.id];
 
       return appeal;
-    })
+    });
   }
 );
 
 export const appealsByAssigneeCssIdSelector = createSelector(
-  [appealsWithTasks, getUserCssId],
-  (appeals: LegacyAppeals, cssId: string) => 
-    _.values(_.filter(appeals, (appeal: LegacyAppeal) => _.some(appeal.tasks, (task) => task.attributes.user_id === cssId)))
+  [appealsWithTasksSelector, getUserCssId],
+  (appeals: LegacyAppeals, cssId: string) =>
+    _.filter(appeals, (appeal: LegacyAppeal) =>
+      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
 );
 
 export const judgeReviewAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
   (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks[0].attributes.task_type === 'Review')
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && appeal.tasks[0].attributes.task_type === 'Review')
 );
 
 export const unassignedAppealsSelector = createSelector(
-  [appealsWithTasks],
+  [appealsWithTasksSelector],
   (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks[0].attributes.task_type === 'Assign')
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks && appeal.tasks[0].attributes.task_type === 'Assign')
 );
 
 // ***************** Non-memoized selectors *****************
@@ -70,31 +72,32 @@ const getAttorney = (state: State, attorneyId: string) => {
     return null;
   }
 
-  return _.find(state.queue.attorneysOfJudge, (attorney) => attorney.id.toString() === attorneyId);
+  return _.find(state.queue.attorneysOfJudge, (attorney: User) => attorney.id.toString() === attorneyId);
 };
 
-export const assignedAppealsSelector = (state: State, attorneyId: string) => {
-  const appeals = appealsWithTasks(state);
+export const getAssignedAppeals = (state: State, attorneyId: string) => {
+  const appeals = appealsWithTasksSelector(state);
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
   return _.filter(appeals, (appeal: LegacyAppeal) =>
-    _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+    _.some(appeal.tasks, (task) => task.attributes.user_id === cssId));
 };
 
 export const getAppealsByUserId = (state: State) => {
-  const appeals = appealsWithTasks(state);
+  const appeals = appealsWithTasksSelector(state);
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 
   return _.reduce(appeals, (appealsByUserId: Object, appeal: LegacyAppeal) => {
-    const attorney = attorneysByCssId[appeal.tasks[0].attributes.user_id];
+    const appealCssId = appeal.tasks ? appeal.tasks[0].attributes.user_id : null;
+    const attorney = attorneysByCssId[appealCssId];
 
     if (!attorney) {
       return appealsByUserId;
-    };
+    }
 
-    appealsByUserId[attorney.id] ? appealsByUserId[attorney.id].push(appeal) : appealsByUserId[attorney.id] = [appeal];
+    appealsByUserId[attorney.id] = [...(appealsByUserId[attorney.id] || []), appeal];
 
     return appealsByUserId;
   }, {});
