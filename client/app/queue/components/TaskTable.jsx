@@ -154,7 +154,16 @@ class TaskTable extends React.PureComponent<Props> {
       valueFunction: (appeal) => this.appealHasDASRecord(appeal) ?
         renderAppealType(appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-      span: (appeal) => this.appealHasDASRecord(appeal) ? 1 : 5
+      span: (appeal) => this.appealHasDASRecord(appeal) ? 1 : 5,
+      getSortValue: (appeal) => {
+        // We append a * before the docket number if it's a priority case since * comes before
+        // numbers in sort order, this forces these cases to the top of the sort.
+        if (appeal.attributes.aod || appeal.attributes.type === 'Court Remand') {
+          return '*' + appeal.docket_number;
+        }
+
+        return appeal.docket_number;
+      }
     } : null;
   }
 
@@ -276,7 +285,14 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseReaderLinkColumn()
     ]);
 
-  getFirstSortableColumn = () => {
+  getDefaultSortableColumn = () => {
+    const index = _.findIndex(this.getQueueColumns(),
+      (column) => column.header === COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE);
+
+    if (index >= 0) {
+      return index;
+    }
+
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
@@ -287,7 +303,7 @@ class TaskTable extends React.PureComponent<Props> {
       columns={this.getQueueColumns}
       rowObjects={appeals}
       getKeyForRow={this.getKeyForRow}
-      defaultSort={{ sortColIdx: this.getFirstSortableColumn() }}
+      defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
       rowClassNames={(appeal) =>
         this.appealHasDASRecord(appeal) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
   }
