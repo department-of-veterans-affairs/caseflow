@@ -2,7 +2,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
   let(:schedule_period) do
     create(:ro_schedule_period, start_date: Date.parse("2018-04-01"),
-                                end_date: Date.parse("2018-09-30"))
+                                end_date: Date.parse("2018-07-31"))
   end
 
   let(:assign_judges_to_hearing_days) do
@@ -182,6 +182,105 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     it "filter CO non wednesdays" do
       subject.each do |hearing_day|
         expect(hearing_day.hearing_date.wednesday?).to be(true)
+      end
+    end
+  end
+
+  context "handle already assgined hearing day" do
+    before do
+      judge
+      co_hearing_day
+    end
+
+    let(:judge) do
+      judge = FactoryBot.create(:user)
+      create(:staff, :hearing_judge, sdomainid: judge.css_id)
+    end
+
+    let(:co_hearing_day) do
+      create(:case_hearing, hearing_type: "C", hearing_date: "2018-04-10", board_member: judge.sattyid, folder_nr: "VIDEO RO13")
+    end
+
+    subject { assign_judges_to_hearing_days }
+
+    it "expect judge to have non-available day" do
+      expect(subject.judges[judge.sdomainid][:non_availabilities].include?(co_hearing_day.hearing_date)).to be(true)
+    end
+  end
+
+  context "Allocating VIDEO and CO hearing days to judges evenly" do
+    before do
+      judges
+      hearing_days
+      
+      create(:travel_board_schedule, tbro: "RO13",
+        tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
+        tbmem1: judges[0].sattyid,
+        tbmem2: judges[1].sattyid,
+        tbmem3: judges[2].sattyid
+      )
+
+      create(:travel_board_schedule, tbro: "RO13",
+        tbstdate: Date.parse("2018-04-16"), tbenddate: Date.parse("2018-04-20"),
+        tbmem1: judges[3].sattyid,
+        tbmem2: judges[4].sattyid,
+        tbmem3: judges[5].sattyid
+      )
+    end
+
+    let(:judges) do
+      judges = []
+      7.times do |index|
+        judge = FactoryBot.create(:user)
+        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, Random.rand(20..40)).map do |date|
+          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: judge.css_id)
+        end
+        judges << create(:staff, :hearing_judge, sdomainid: judge.css_id)
+      end
+      judges
+    end
+
+    let(:hearing_days) do
+      @hearing_counter = 0
+      hearing_days = {}
+      get_dates_between(schedule_period.start_date, schedule_period.end_date, 60).map do |date|
+        @hearing_counter += date.wednesday? ? 2 : 1
+        case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+        hearing_days[case_hearing.hearing_pkseq] = case_hearing
+        
+        co_case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
+        hearing_days[co_case_hearing.hearing_pkseq] = co_case_hearing
+      end
+      hearing_days
+    end
+
+    subject { assign_judges_to_hearing_days }
+
+    context "allocated judges to hearing days" do
+      
+      subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
+      
+      it "all hearing days should be assigned to judges" do
+        expect(subject.count).to eq(@hearing_counter)
+        judge_count = {}
+        subject.each do |hearing_day|
+          expected_day = hearing_days[hearing_day[:hearing_pkseq]]
+          is_co = expected_day.folder_nr.nil?
+          judge_count[hearing_day[:judge_id]] ||= 0
+          judge_count[hearing_day[:judge_id]] += 1
+
+          type = is_co ? HearingDay::HEARING_TYPES[:central] : HearingDay::HEARING_TYPES[:video]
+          ro = is_co ? nil : expected_day.folder_nr.split(' ')[1]
+
+          expect(expected_day).to_not be_nil
+          expect(hearing_day[:hearing_type]).to eq(type)
+          expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date)
+          expect(hearing_day[:room_info]).to eq(expected_day.room)
+          expect(hearing_day[:regional_office]).to eq(ro)
+          expect(hearing_day[:judge_id]).to_not be_nil
+          expect(hearing_day[:judge_name]).to_not be_nil
+        end
+        binding.pry
       end
     end
   end

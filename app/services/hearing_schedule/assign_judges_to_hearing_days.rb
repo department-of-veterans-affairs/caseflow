@@ -22,7 +22,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     fetch_hearing_days_for_schedule_period
   end
 
-  def fetch_judges    
+  def fetch_judges
     Judge.list_all_hearing_judges.map do |judge|
       user = User.find_by(css_id: judge.sdomainid)
       @judges[judge.sdomainid] = {
@@ -39,20 +39,26 @@ class HearingSchedule::AssignJudgesToHearingDays
     shuffled_judges = @judges.keys.shuffle
     assigned_hearing_days = []
 
-    while(assigned_hearing_days.length < @video_co_hearing_days.length)
-      shuffled_judges.each do |css_id|
+    hearing_days_assigned = false
+    assigned_days = {}
+    while(!hearing_days_assigned)
+      catch :hearing_days_assigned do
+        shuffled_judges.each do |css_id|
+          index = 0
+          
+          while(index < @video_co_hearing_days.length)
+            current_hearing_day = @video_co_hearing_days[index]
 
-        index = 0
-        
-        while(index < @video_co_hearing_days.length)
-          current_hearing_day = @video_co_hearing_days[index]
-
-          unless @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date) ||
-                 current_hearing_day[:assigned] == true
-            assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
-            break
+            unless @judges[css_id][:non_availabilities].include?(current_hearing_day.hearing_date) ||
+                assigned_days[current_hearing_day.hearing_pkseq]
+              assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
+              assigned_days[current_hearing_day.hearing_pkseq] = true
+              break
+            end
+            index += 1
+            hearing_days_assigned = @video_co_hearing_days.length == assigned_hearing_days.length
+            throw :hearing_days_assigned if hearing_days_assigned
           end
-          index += 1
         end
       end
     end
@@ -115,23 +121,17 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def hearing_day_already_assigned(hearing_day)
-    not_assigned = hearing_day.board_member.nil?
+    assigned = !hearing_day.board_member.nil?
     
-    if !not_assigned
-      judge = find_judge(hearing_day.board_member)
-      
+    if assigned      
       @judges.each do |css_id, judge|
-        if judge[:staff_info].sattyid == hearing_day.board_member_id
+        if judge[:staff_info].sattyid == hearing_day.board_member
           @judges[css_id][:non_availabilities] << hearing_day.hearing_date
         end
       end
     end
-    not_assigned
+    assigned
   end
-
-  # def find_judge(board_member_id)
-  #   @judges.select {|_key, judge| judge[:staff_info].sattyid == hearing_day.board_member_id }.first
-  # end
 
   def co_hearing_day?(hearing_day)
     hearing_day.folder_nr.nil?
