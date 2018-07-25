@@ -63,7 +63,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_canceled?
-    sync_ep_status! && end_product_establishment.synced_status == "CAN"
+    sync_ep_status! && end_product_establishment.status_canceled?
   end
 
   def sync_ep_status!

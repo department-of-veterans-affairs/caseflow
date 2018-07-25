@@ -106,6 +106,10 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def status_canceled?
+    synced_status == "CAN".freeze
+  end
+
   def status_active?
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
