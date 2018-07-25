@@ -48,17 +48,23 @@ class TaskTable extends React.PureComponent<Props> {
     }
   }
 
-  oldestTask = (appeal) => appeal.tasks.reduce((oldestTask, task) => {
-    if (oldestTask === null) {
-      return task;
-    } else {
-      if (moment(task.attributes.assigned_on).isBefore(moment(oldestTask.attributes.assigned_on))) {
-        return task
-      } else {
-        return oldestTask
-      }
+  oldestTask = (appeal) => {
+    if (!appeal.tasks) {
+      return null;
     }
-  }, null)
+
+    return appeal.tasks.reduce((oldestTask, task) => {
+      if (oldestTask === null) {
+        return task;
+      } else {
+        if (moment(task.attributes.assigned_on).isBefore(moment(oldestTask.attributes.assigned_on))) {
+          return task
+        } else {
+          return oldestTask
+        }
+      }
+    }, null)
+  }
 
   collapseColumnIfNoDASRecord = (appeal) => this.appealHasDASRecord(appeal) ? 1 : 0
 
@@ -87,7 +93,7 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeDetailsLink ? {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction: (appeal) => <CaseDetailsLink
-        task={appeal.tasks[0]}
+        task={this.oldestTask(appeal)}
         appeal={appeal}
         disabled={!this.appealHasDASRecord(appeal)} />,
       getSortValue: (appeal) => {

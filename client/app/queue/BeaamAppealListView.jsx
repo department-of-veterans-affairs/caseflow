@@ -5,6 +5,9 @@ import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 import _ from 'lodash';
+import {
+  appealsWithTasks
+} from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -25,14 +28,15 @@ class BeaamListView extends React.PureComponent {
           includeDocketNumber
           includeIssueCount
           includeReaderLink
-          appeals={this.props.appealsOfAttorney} />
+          appeals={this.props.appeals} />
       </div>
     </AppSegment>;
   };
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'messages')
+  ..._.pick(state.ui, 'messages'),
+  appeals: appealsWithTasks(state)
 });
 
 export default connect(mapStateToProps)(BeaamListView);
