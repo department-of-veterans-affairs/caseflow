@@ -306,8 +306,8 @@ RSpec.feature "RAMP Election Intake" do
     expect(intake.completed_at).to eq(Time.zone.now)
     expect(intake).to be_success
 
-    election.reload
-    expect(election.end_product_reference_id).to eq("SHANE9642")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: election.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("SHANE9642")
 
     # Validate that the intake is no longer able to be worked on
     visit "/intake/finish"
