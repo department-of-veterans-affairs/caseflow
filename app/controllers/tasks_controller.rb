@@ -29,7 +29,7 @@ class TasksController < ApplicationController
     tasks = task_class.create(tasks_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: tasks }, status: :created
+    render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
   def update

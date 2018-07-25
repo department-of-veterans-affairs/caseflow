@@ -33,6 +33,8 @@ gem "paranoia", "~> 2.2"
 
 gem "dogstatsd-ruby"
 
+gem "acts_as_tree"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
