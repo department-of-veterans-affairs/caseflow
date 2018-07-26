@@ -23,39 +23,39 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 export const associateTasksWithAppeals =
   (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
     { appeals: LegacyAppeals, tasks: Tasks } => {
-  const {
-    appeals: { data: appeals },
-    tasks: outerTasks
-  } = serverData;
+    const {
+      appeals: { data: appeals },
+      tasks: outerTasks
+    } = serverData;
 
-  const result = {
-    appeals: {},
-    tasks: {}
-  };
+    const result = {
+      appeals: {},
+      tasks: {}
+    };
 
-  for (const appeal of appeals) {
-    if (appeal) {
-      result.appeals[appeal.attributes.vacols_id] = appeal;
+    for (const appeal of appeals) {
+      if (appeal) {
+        result.appeals[appeal.attributes.vacols_id] = appeal;
+      }
     }
-  }
-  if (Array.isArray(outerTasks)) {
+    if (Array.isArray(outerTasks)) {
+      return result;
+    }
+
+    const tasks = outerTasks.data;
+
+    _.each(tasks, (task) => {
+      task.appealId = task.id;
+    });
+
+    for (const task of tasks) {
+      if (task) {
+        result.tasks[task.id] = task;
+      }
+    }
+
     return result;
-  }
-
-  const tasks = outerTasks.data;
-
-  _.each(tasks, (task) => {
-    task.appealId = task.id;
-  });
-
-  for (const task of tasks) {
-    if (task) {
-      result.tasks[task.id] = task;
-    }
-  }
-
-  return result;
-};
+  };
 
 /*
 * Sorting hierarchy:
