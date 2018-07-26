@@ -7,6 +7,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   TB_ADDITIONAL_NA_DAYS = 3
 
   class HearingDaysNotAllocated < StandardError; end
+  class NoJudgesProvided < StandardError; end
 
   def initialize(schedule_period)
     # raises an exception if hearing days have not already been finalized
@@ -16,8 +17,8 @@ class HearingSchedule::AssignJudgesToHearingDays
     @judges = {}
     @schedule_period = schedule_period
 
-    fetch_judges
     fetch_judge_non_availabilities
+    fetch_judge_details
     fetch_hearing_days_for_schedule_period
   end
 
@@ -60,14 +61,13 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   private
 
-  def fetch_judges
-    Judge.list_all_hearing_judges.map do |judge|
+  def fetch_judge_details
+    raise NoJudgesProvided if @judges.keys.empty?
+
+    VACOLS::Staff.load_users_by_css_ids(@judges.keys).map do |judge|
       user = User.find_by(css_id: judge.sdomainid)
-      @judges[judge.sdomainid] = {
-        staff_info: judge,
-        user_info: user,
-        non_availabilities: Set.new
-      }
+      @judges[judge.sdomainid][:staff_info] = judge
+      @judges[judge.sdomainid][:user_info] = user
     end
   end
 
@@ -111,10 +111,13 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def fetch_judge_non_availabilities
-    @schedule_period.non_availabilities.each do |non_availability|
-      css_id = non_availability.object_identifier
+    non_availabilities = @schedule_period.non_availabilities
 
+    non_availabilities.each do |non_availability|
       if non_availability.instance_of? JudgeNonAvailability
+        css_id = non_availability.object_identifier
+        @judges[css_id] ||= {}
+        @judges[css_id][:non_availabilities] ||= Set.new
         @judges[css_id][:non_availabilities] << non_availability.date
       end
     end
@@ -153,9 +156,9 @@ class HearingSchedule::AssignJudgesToHearingDays
   # Adds 3 days and 3 days prior non-available days for each Judge assigned to a
   # travel board.
   def filter_travel_board_hearing_days(tb_hearing_days)
-    tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(tb_hearing_days)
+    tb_hearing_days_formatted = TravelBoardScheduleMapper.convert_from_vacols_format(tb_hearing_days)
 
-    tb_master_records.each do |tb_record|
+    tb_hearing_days_formatted.each do |tb_record|
       # assign non-availability days to all the travel board judges
       tb_judge_ids = [tb_record[:tbmem_1], tb_record[:tbmem_2], tb_record[:tbmem_3], tb_record[:tbmem_4]].compact
       judges = @judges.select { |_key, judge| tb_judge_ids.include?(judge[:staff_info].sattyid) }

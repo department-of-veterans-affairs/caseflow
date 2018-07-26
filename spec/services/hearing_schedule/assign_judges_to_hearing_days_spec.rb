@@ -15,7 +15,12 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       before do
         3.times do
           judge = FactoryBot.create(:user)
+          date = get_unique_dates_between(schedule_period.start_date, 
+                                          schedule_period.end_date, 1).first
+          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                          object_identifier: judge.css_id)
           create(:staff, :hearing_judge, sdomainid: judge.css_id)
+          
         end
       end
 
@@ -31,6 +36,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     context "when judge exists in VACOLS but not caseflow" do
       before do
         3.times do |i|
+          date = get_unique_dates_between(schedule_period.start_date, 
+                                          schedule_period.end_date, 1).first
+          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                          object_identifier: "CSS_ID_#{i}")
           create(:staff, :hearing_judge, sdomainid: "CSS_ID_#{i}")
         end
       end
@@ -88,21 +97,34 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     let(:tb_hearing2) do
       create(:travel_board_schedule, tbro: "RO17",
-                                     tbstdate: Date.parse("2018-09-03"), tbenddate: Date.parse("2018-09-07"),
+                                     tbstdate: Date.parse("2018-05-07"), tbenddate: Date.parse("2018-05-11s"),
                                      tbmem1: member1.sattyid,
                                      tbmem2: member2.sattyid,
                                      tbmem3: member3.sattyid)
     end
 
+    let(:non_availabilities) do
+      date = get_unique_dates_between(schedule_period.start_date, 
+                                      schedule_period.end_date, 1).first  
+      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+              object_identifier: member1.sdomainid)
+      create(:judge_non_availability, date: date + 1, schedule_period_id: schedule_period.id,
+              object_identifier: member2.sdomainid)
+      create(:judge_non_availability, date: date + 2, schedule_period_id: schedule_period.id,
+              object_identifier: member3.sdomainid)
+    end
+
     subject { assign_judges_to_hearing_days }
 
     it "judges are given non-availabilities based on travel board" do
+      non_availabilities
       start_date = 3.business_days.before(tb_hearing[:tbstdate])
       end_date = 3.business_days.after(tb_hearing[:tbenddate])
 
       start_date2 = 3.business_days.before(tb_hearing2[:tbstdate])
       end_date2 = 3.business_days.after(tb_hearing2[:tbenddate])
 
+      expect(subject.judges.count).to eq(3)
       subject.judges do |_css_id, judge|
         expect(judge[:non_availabilities].include?(start_date)).to be_truthy
         expect(judge[:non_availabilities].include?(end_date)).to be_truthy
@@ -121,6 +143,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
       5.times do
         judge = FactoryBot.create(:user)
+        date = get_unique_dates_between(schedule_period.start_date, 
+                                        schedule_period.end_date, 1).first
+        create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                        object_identifier: judge.css_id)
         @judges << create(:staff, :hearing_judge, sdomainid: judge.css_id)
       end
     end
@@ -133,8 +159,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
-    it "allocates VIDEO hearing days to judges" do
-      # binding.pry
+    it "assign VIDEO hearing days to judges" do
       expect(subject.count).to eq(video_hearing_days.count)
       judge_ids = subject.map { |hearing_day| hearing_day[:judge_id] }
 
@@ -147,6 +172,11 @@ describe HearingSchedule::AssignJudgesToHearingDays do
   context "handle CO hearings" do
     before do
       co_hearing_days
+
+      date = get_unique_dates_between(schedule_period.start_date, 
+        schedule_period.end_date, 1).first
+      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                      object_identifier: "CSS_ID1")
     end
 
     let(:co_hearing_days) do
@@ -172,6 +202,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     let(:judge) do
       judge = FactoryBot.create(:user)
+      date = get_unique_dates_between(schedule_period.start_date, 
+                                      schedule_period.end_date, 1).first
+      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                      object_identifier: judge.css_id)
       create(:staff, :hearing_judge, sdomainid: judge.css_id)
     end
 
