@@ -229,6 +229,10 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
+  def docket_name
+    "legacy"
+  end
+
   # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
     self.class.bgs.can_access?(veteran_file_number)
