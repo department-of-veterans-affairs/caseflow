@@ -10,6 +10,10 @@ class Idt::Api::V1::AppealsController < ActionController::Base
     request.headers["TOKEN"]
   end
 
+  def css_id
+    Idt::Token.associated_css_id(token)
+  end
+
   def validate_token
     return render json: { message: "Missing token" }, status: 400 unless token
     return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
@@ -33,9 +37,6 @@ class Idt::Api::V1::AppealsController < ActionController::Base
     LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
   end
 
-  def css_id
-    Idt::Token.associated_css_id(token)
-  end
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
