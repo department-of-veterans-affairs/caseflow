@@ -17,6 +17,7 @@ import _ from 'lodash';
 import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
+import { fullWidth } from '../constants';
 
 import type {
   AttorneysOfJudge, State
@@ -137,7 +138,7 @@ class AssignWidget extends React.PureComponent<Props> {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        '& > *': { marginRight: '1rem' } })}>
+        '& > *': { marginRight: '1rem', marginTop: '0', marginBottom: '16px' } })}>
         <p>{COPY.ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
         <SearchableDropdown
           name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
@@ -150,7 +151,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         {selectedAssignee === OTHER &&
           <React.Fragment>
-            <div {...css({ width: '100%' })} />
+            <div {...fullWidth} {...css({ marginBottom: '0' })} />
             <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
               name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
