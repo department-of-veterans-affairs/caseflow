@@ -12,7 +12,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def user
-    user ||= User.find_by(css_id: css_id)
+    @user ||= User.find_by(css_id: css_id)
   end
 
   def file_number
