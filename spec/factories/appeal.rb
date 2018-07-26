@@ -23,7 +23,7 @@ FactoryBot.define do
         issue.review_request = appeal
         issue.save
       end
-      appeal.update(veteran_file_number: veteran.file_number) if evaluator.veteran
+      appeal.update(veteran_file_number: evaluator.veteran.file_number) if evaluator.veteran
     end
 
     transient do
