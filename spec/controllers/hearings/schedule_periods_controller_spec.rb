@@ -79,14 +79,14 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
     it "persist twice and make sure number of schedule rows stays the same" do
       put :update, params: {
-          schedule_period_id: ro_schedule_period.id
+        schedule_period_id: ro_schedule_period.id
       }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["id"]).to eq ro_schedule_period.id
 
       put :update, params: {
-          schedule_period_id: ro_schedule_period.id
+        schedule_period_id: ro_schedule_period.id
       }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
