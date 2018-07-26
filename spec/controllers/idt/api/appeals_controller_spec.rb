@@ -18,7 +18,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when request header contains valid token" do
       before do
-        key, token = Idt::Token.generate_proposed_token_and_one_time_key
+        key, token = Idt::Token.generate_one_time_key_and_proposed_token
         Idt::Token.activate_proposed_token(key)
         request.headers["TOKEN"] = token
       end
@@ -31,7 +31,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when request header contains inactive token" do
       before do
-        _key, token = Idt::Token.generate_proposed_token_and_one_time_key
+        _key, token = Idt::Token.generate_one_time_key_and_proposed_token
         request.headers["TOKEN"] = token
       end
 

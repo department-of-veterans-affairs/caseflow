@@ -1,9 +1,10 @@
 class Idt::Token
   VALID_TOKENS_KEY = "valid_tokens_key".freeze
   ONE_TIME_KEYS_KEY = "one_time_keys_key".freeze
-  TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24 * 3
+  # 7 day validity window.
+  TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24 * 7
 
-  def self.generate_proposed_token_and_one_time_key
+  def self.generate_one_time_key_and_proposed_token
     one_time_key = SecureRandom.hex(64)
     token = SecureRandom.hex(64)
 
@@ -14,7 +15,7 @@ class Idt::Token
     [one_time_key, token]
   end
 
-  def self.activate_proposed_token(one_time_key)
+  def self.activate_proposed_token(one_time_key, css_id)
     token = client.get(ONE_TIME_KEYS_KEY + one_time_key)
 
     fail Caseflow::Error::InvalidOneTimeKey unless token && token.length == 128
@@ -22,7 +23,7 @@ class Idt::Token
     # Remove the one_time_key/token association to ensure it isn't used again,
     # and move the token to the valid tokens list for the validity period.
     client.del(ONE_TIME_KEYS_KEY + one_time_key)
-    client.set(VALID_TOKENS_KEY + token, true)
+    client.set(VALID_TOKENS_KEY + token, css_id)
     client.expire(VALID_TOKENS_KEY + token, TOKEN_VALIDITY_IN_SECONDS)
 
     true
@@ -31,6 +32,10 @@ class Idt::Token
   def self.active?(token)
     # check if token is in valid list and return boolean
     client.exists(VALID_TOKENS_KEY + token)
+  end  
+
+  def self.associated_css_id(token)
+    client.get(VALID_TOKENS_KEY + token)
   end
 
   def self.client

@@ -385,6 +385,11 @@ class LegacyAppeal < ApplicationRecord
     return "Remand" if remand_on_dispatch?
   end
 
+  def activated?
+    # An appeal will be in this status if the board is currently working on it.
+    status == "Active"
+  end
+
   def active?
     status != "Complete"
   end
