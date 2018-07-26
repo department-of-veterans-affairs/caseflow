@@ -9,6 +9,11 @@ describe HearingSchedule::AssignJudgesToHearingDays do
   end
 
   context "assign judges info from VACOLS staff and Caseflow" do
+    before do
+      date = get_unique_dates_between(schedule_period.start_date,
+                                      schedule_period.end_date, 1).first
+      create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+    end
     subject { assign_judges_to_hearing_days }
 
     context "when Judge exists in both VACOLS and Caseflow" do
@@ -51,86 +56,89 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         end
       end
     end
-  end
 
-  context "assigning non-available days to judges" do
-    before do
-      @num_non_available_days = [10, 5, 15]
-      @num_non_available_days.count.times do |i|
-        judge = FactoryBot.create(:user)
-        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                 @num_non_available_days[i]).map do |date|
-          create(:judge_non_availability, object_identifier: judge.css_id,
-                                          date: date, schedule_period_id: schedule_period.id)
+    context "assigning non-available days to judges" do
+      before do
+        @num_non_available_days = [10, 5, 15]
+        @num_non_available_days.count.times do |i|
+          judge = FactoryBot.create(:user)
+          get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
+                                   @num_non_available_days[i]).map do |date|
+            create(:judge_non_availability, object_identifier: judge.css_id,
+                                            date: date, schedule_period_id: schedule_period.id)
+          end
+          create(:staff, :hearing_judge, sdomainid: judge.css_id)
         end
-        create(:staff, :hearing_judge, sdomainid: judge.css_id)
+      end
+  
+      let(:assign_judges_to_hearing_days) do
+        HearingSchedule::AssignJudgesToHearingDays.new(schedule_period)
+      end
+  
+      subject { assign_judges_to_hearing_days }
+  
+      it "assigns non availabilities to judges" do
+        expect(subject.judges.count).to eq(3)
+        subject.judges.keys.each_with_index do |css_id, index|
+          expect(subject.judges[css_id][:non_availabilities].count).to eq(@num_non_available_days[index])
+        end
       end
     end
 
-    let(:assign_judges_to_hearing_days) do
-      HearingSchedule::AssignJudgesToHearingDays.new(schedule_period)
-    end
-
-    subject { assign_judges_to_hearing_days }
-
-    it "assigns non availabilities to judges" do
-      expect(subject.judges.count).to eq(3)
-      subject.judges.keys.each_with_index do |css_id, index|
-        expect(subject.judges[css_id][:non_availabilities].count).to eq(@num_non_available_days[index])
+    context "travel board hearing day non-availabilities added" do
+      before do
+        non_availabilities
       end
-    end
-  end
-
-  context "handle travel board hearings" do
-    let(:member1) { create(:staff, :hearing_judge) }
-    let(:member2) { create(:staff, :hearing_judge) }
-    let(:member3) { create(:staff, :hearing_judge) }
-
-    let(:tb_hearing) do
-      create(:travel_board_schedule, tbro: "RO17",
-                                     tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
-                                     tbmem1: member1.sattyid,
-                                     tbmem2: member2.sattyid,
-                                     tbmem3: member3.sattyid)
-    end
-
-    let(:tb_hearing2) do
-      create(:travel_board_schedule, tbro: "RO17",
-                                     tbstdate: Date.parse("2018-05-07"), tbenddate: Date.parse("2018-05-11s"),
-                                     tbmem1: member1.sattyid,
-                                     tbmem2: member2.sattyid,
-                                     tbmem3: member3.sattyid)
-    end
-
-    let(:non_availabilities) do
-      date = get_unique_dates_between(schedule_period.start_date,
-                                      schedule_period.end_date, 1).first
-      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
-                                      object_identifier: member1.sdomainid)
-      create(:judge_non_availability, date: date + 1, schedule_period_id: schedule_period.id,
-                                      object_identifier: member2.sdomainid)
-      create(:judge_non_availability, date: date + 2, schedule_period_id: schedule_period.id,
-                                      object_identifier: member3.sdomainid)
-    end
-
-    subject { assign_judges_to_hearing_days }
-
-    it "judges are given non-availabilities based on travel board" do
-      non_availabilities
-      start_date = 3.business_days.before(tb_hearing[:tbstdate])
-      end_date = 3.business_days.after(tb_hearing[:tbenddate])
-
-      start_date2 = 3.business_days.before(tb_hearing2[:tbstdate])
-      end_date2 = 3.business_days.after(tb_hearing2[:tbenddate])
-
-      expect(subject.judges.count).to eq(3)
-      subject.judges do |_css_id, judge|
-        expect(judge[:non_availabilities].include?(start_date)).to be_truthy
-        expect(judge[:non_availabilities].include?(end_date)).to be_truthy
-
-        expect(judge[:non_availabilities].include?(start_date2)).to be_truthy
-        expect(judge[:non_availabilities].include?(end_date2)).to be_truthy
-        expect(judge[:non_availabilities].count).to eq(22)
+      let(:member1) { create(:staff, :hearing_judge) }
+      let(:member2) { create(:staff, :hearing_judge) }
+      let(:member3) { create(:staff, :hearing_judge) }
+  
+      let(:tb_hearing) do
+        create(:travel_board_schedule, tbro: "RO17",
+                                       tbstdate: Date.parse("2018-06-04"), tbenddate: Date.parse("2018-06-08"),
+                                       tbmem1: member1.sattyid,
+                                       tbmem2: member2.sattyid,
+                                       tbmem3: member3.sattyid)
+      end
+  
+      let(:tb_hearing2) do
+        create(:travel_board_schedule, tbro: "RO17",
+                                       tbstdate: Date.parse("2018-05-07"), tbenddate: Date.parse("2018-05-11s"),
+                                       tbmem1: member1.sattyid,
+                                       tbmem2: member2.sattyid,
+                                       tbmem3: member3.sattyid)
+      end
+  
+      let(:non_availabilities) do
+        date = get_unique_dates_between(schedule_period.start_date,
+                                        schedule_period.end_date, 1).first
+        create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                        object_identifier: member1.sdomainid)
+        create(:judge_non_availability, date: date + 1, schedule_period_id: schedule_period.id,
+                                        object_identifier: member2.sdomainid)
+        create(:judge_non_availability, date: date + 2, schedule_period_id: schedule_period.id,
+                                        object_identifier: member3.sdomainid)
+      end
+  
+      subject { assign_judges_to_hearing_days }
+  
+      it "judges are given non-availabilities based on travel board" do
+        
+        start_date = 3.business_days.before(tb_hearing[:tbstdate])
+        end_date = 3.business_days.after(tb_hearing[:tbenddate])
+  
+        start_date2 = 3.business_days.before(tb_hearing2[:tbstdate])
+        end_date2 = 3.business_days.after(tb_hearing2[:tbenddate])
+  
+        expect(subject.judges.count).to eq(3)
+        subject.judges do |_css_id, judge|
+          expect(judge[:non_availabilities].include?(start_date)).to be_truthy
+          expect(judge[:non_availabilities].include?(end_date)).to be_truthy
+  
+          expect(judge[:non_availabilities].include?(start_date2)).to be_truthy
+          expect(judge[:non_availabilities].include?(end_date2)).to be_truthy
+          expect(judge[:non_availabilities].count).to eq(22)
+        end
       end
     end
   end
@@ -201,22 +209,23 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     let(:judge) do
       judge = FactoryBot.create(:user)
-      date = get_unique_dates_between(schedule_period.start_date,
+      @date = get_unique_dates_between(schedule_period.start_date,
                                       schedule_period.end_date, 1).first
-      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+      create(:judge_non_availability, date: @date, schedule_period_id: schedule_period.id,
                                       object_identifier: judge.css_id)
       create(:staff, :hearing_judge, sdomainid: judge.css_id)
     end
 
     let(:co_hearing_day) do
-      create(:case_hearing, hearing_type: "C", hearing_date: "2018-04-10",
-                            board_member: judge.sattyid, folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: @date,
+                            folder_nr: "VIDEO RO13")
     end
 
     subject { assign_judges_to_hearing_days }
 
-    it "expect judge to have non-available day" do
-      expect(subject.judges[judge.sdomainid][:non_availabilities].include?(co_hearing_day.hearing_date)).to be(true)
+    it "expect judge to have non-available days" do
+      expect(subject.judges[judge.sdomainid][:non_availabilities]
+        .include?(co_hearing_day.hearing_date.to_date)).to be(true)
     end
   end
 
@@ -260,10 +269,11 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     context "errors with judges cannot be assigned" do
       before do
+        hearing_days
         2.times do
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                   60).map do |date|
+                                   80).map do |date|
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
           end
@@ -272,7 +282,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       end
       subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
-      it "all hearing days should be assigned to judges" do
+      it do
         expect { subject }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
       end
     end
@@ -299,7 +309,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         6.times do
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                   Random.rand(20..40)).map do |date|
+                                   Random.rand(10..30)).map do |date|
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
           end
