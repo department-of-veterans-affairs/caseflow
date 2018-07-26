@@ -130,7 +130,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   def fetch_hearing_days_for_schedule_period
     hearing_days = HearingDay.load_days(@schedule_period.start_date, @schedule_period.end_date)
     @video_co_hearing_days = filter_co_hearings(hearing_days[0].to_a)
-    
+
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
     filter_travel_board_hearing_days(hearing_days[1])
@@ -141,9 +141,9 @@ class HearingSchedule::AssignJudgesToHearingDays
       day = OpenStruct.new(hearing_day.attributes)
       day.hearing_date = day.hearing_date.to_date
 
-      unless(co_hearing_day?(day) && !day.hearing_date.wednesday?) ||
+      unless (co_hearing_day?(day) && !day.hearing_date.wednesday?) ||
              hearing_day_already_assigned(day)
-        day        
+        day
       end
     end.compact
   end
