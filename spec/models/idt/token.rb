@@ -3,6 +3,7 @@ describe Idt::Token do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
+  let(:css_id) { "TEST_ID" }
   let(:key_token_pair) { Idt::Token.generate_one_time_key_and_proposed_token }
   # rubocop:disable Metrics/LineLength
   let(:invalid_token) { "9373a256a2ac3c3bd320adeeb8a1e4d996ef064d1332357954410f25740bf0c17b6565e152760c461a85587e6a6845457f955ccfa20a8e462a77b776eb10b72c" }
@@ -18,20 +19,20 @@ describe Idt::Token do
   context "#activate_proposed_token" do
     it "successfully activates tokens with valid one time keys" do
       key, token = key_token_pair
-      expect(Idt::Token.activate_proposed_token(key)).to eq(true)
+      expect(Idt::Token.activate_proposed_token(key, css_id)).to eq(true)
       expect(Idt::Token.active?(token)).to eq(true)
     end
 
     it "raises an error when invalid one time key is used" do
-      expect { Idt::Token.activate_proposed_token(invalid_token) }
+      expect { Idt::Token.activate_proposed_token(invalid_token, css_id) }
         .to raise_error(Caseflow::Error::InvalidOneTimeKey)
     end
 
     it "raises on the second attempted use of a one time key" do
       key, _token = key_token_pair
-      expect(Idt::Token.activate_proposed_token(key)).to eq(true)
+      expect(Idt::Token.activate_proposed_token(key, css_id)).to eq(true)
 
-      expect { Idt::Token.activate_proposed_token(key) }
+      expect { Idt::Token.activate_proposed_token(key, css_id) }
         .to raise_error(Caseflow::Error::InvalidOneTimeKey)
     end
   end
@@ -39,7 +40,7 @@ describe Idt::Token do
   context "#active?" do
     it "returns true for valid tokens" do
       key, token = key_token_pair
-      Idt::Token.activate_proposed_token(key)
+      Idt::Token.activate_proposed_token(key, css_id)
       expect(Idt::Token.active?(token)).to eq(true)
     end
 
