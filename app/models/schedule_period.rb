@@ -52,4 +52,9 @@ class SchedulePeriod < ApplicationRecord
   def schedule_confirmed(*)
     update(finalized: true)
   end
+
+  def can_be_finalized?
+    nbr_of_days = updated_at.beginning_of_day - Time.zone.today.beginning_of_day
+    nbr_of_days < 5 && !finalized
+  end
 end
