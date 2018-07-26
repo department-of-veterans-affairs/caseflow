@@ -52,11 +52,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and user is not an attorney" do
-        let(:user) { create(:user, css_id: "ANOTHER_TEST_ID") }
-
         before do
+          create(:user, css_id: "ANOTHER_TEST_ID")
           key, t = Idt::Token.generate_one_time_key_and_proposed_token
-          Idt::Token.activate_proposed_token(key, user.css_id)
+          Idt::Token.activate_proposed_token(key, "ANOTHER_TEST_ID")
           request.headers["TOKEN"] = t
         end
 
