@@ -8,6 +8,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
+  class CannotAssignJudges < StandardError; end
 
   def initialize(schedule_period)
     # raises an exception if hearing days have not already been finalized
@@ -34,6 +35,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     until hearing_days_assigned
       catch :hearing_days_assigned do
+        num_days_assigned = assigned_hearing_days.length
         sorted_judges.each do |css_id|
           index = 0
 
@@ -52,6 +54,7 @@ class HearingSchedule::AssignJudgesToHearingDays
             throw :hearing_days_assigned if hearing_days_assigned
           end
         end
+        verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned)
       end
     end
 
@@ -60,6 +63,11 @@ class HearingSchedule::AssignJudgesToHearingDays
   # rubocop:enable Metrics/MethodLength
 
   private
+
+  def verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned)
+    fail CannotAssignJudges if
+          (num_days_assigned == assigned_hearing_days.length) && !hearing_days_assigned
+  end
 
   def fetch_judge_details
     fail NoJudgesProvided if @judges.keys.empty?
