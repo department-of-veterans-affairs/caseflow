@@ -56,7 +56,7 @@ describe HigherLevelReviewIntake do
       )
     end
 
-    it "cancels and deletes the Higher Level Review record created" do
+    it "cancels and deletes the Higher-Level Review record created" do
       subject
 
       expect(intake.reload).to be_canceled
@@ -145,10 +145,13 @@ describe HigherLevelReviewIntake do
     it "completes the intake and creates an end product" do
       subject
 
-      expect(intake.reload).to be_success
-      expect(intake.detail.established_at).to_not be_nil
-      expect(intake.detail.end_product_reference_id).to_not be_nil
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      expect(intake).to be_success
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(resultant_end_product_establishment).to_not be_nil
+      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
       expect(intake.detail.request_issues.count).to eq 2
+
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
@@ -161,7 +164,7 @@ describe HigherLevelReviewIntake do
       )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
-        claim_id: intake.detail.end_product_reference_id,
+        claim_id: resultant_end_product_establishment.reference_id,
         contention_descriptions: ["non-rated issue text", "decision text"],
         special_issues: []
       )
@@ -179,9 +182,10 @@ describe HigherLevelReviewIntake do
       it "adds same office to special issues" do
         subject
 
+        resultant_end_product_establishment = EndProductEstablishment.find_by(source: detail.reload)
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: intake.detail.veteran_file_number,
-          claim_id: intake.detail.end_product_reference_id,
+          claim_id: resultant_end_product_establishment.reference_id,
           contention_descriptions: ["decision text"],
           special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
         )
@@ -223,7 +227,7 @@ describe HigherLevelReviewIntake do
             station_of_jurisdiction: "397",
             date: detail.receipt_date.to_date,
             end_product_modifier: "032",
-            end_product_label: "Higher Level Review Rating",
+            end_product_label: "Higher-Level Review Rating",
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false

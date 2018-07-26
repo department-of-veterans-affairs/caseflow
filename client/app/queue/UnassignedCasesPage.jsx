@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
+import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
@@ -12,8 +12,8 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { selectedTasksSelector } from './utils';
-import type { Task } from './types/models';
+import { unassignedAppealsSelector, selectedTasksSelector } from './selectors';
+import type { Task, LegacyAppeals } from './types/models';
 
 type Params = {|
   userId: string,
@@ -23,6 +23,7 @@ type Props = Params & {|
   // Props
   featureToggles: Object,
   selectedTasks: Array<Task>,
+  appeals: LegacyAppeals,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,
@@ -45,7 +46,16 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
           previousAssigneeId={userId}
           onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
           selectedTasks={selectedTasks} />}
-      <JudgeAssignTaskTable {...this.props} />
+      <TaskTable
+        includeSelect
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDocumentCount
+        includeDaysWaiting
+        appeals={this.props.appeals}
+        userId={userId} />
     </React.Fragment>;
   }
 }
@@ -53,7 +63,6 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
 const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
-      tasks,
       isTaskAssignedToUserSelected
     },
     ui: {
@@ -62,7 +71,7 @@ const mapStateToProps = (state, ownProps) => {
   } = state;
 
   return {
-    tasks,
+    appeals: unassignedAppealsSelector(state),
     isTaskAssignedToUserSelected,
     featureToggles,
     selectedTasks: selectedTasksSelector(state, ownProps.userId)

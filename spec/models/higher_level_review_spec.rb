@@ -13,7 +13,6 @@ describe HigherLevelReview do
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
   let(:end_product_status) { nil }
 
@@ -23,7 +22,6 @@ describe HigherLevelReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      end_product_reference_id: end_product_reference_id,
       established_at: established_at,
       end_product_status: end_product_status
     )
@@ -173,7 +171,7 @@ describe HigherLevelReview do
 
   context "#create_end_product_and_contentions!" do
     subject { higher_level_review.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -199,7 +197,7 @@ describe HigherLevelReview do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    it "creates end product" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
@@ -213,7 +211,7 @@ describe HigherLevelReview do
           station_of_jurisdiction: "397",
           date: receipt_date.to_date,
           end_product_modifier: "030",
-          end_product_label: "Higher Level Review Rating",
+          end_product_label: "Higher-Level Review Rating",
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false
@@ -221,7 +219,7 @@ describe HigherLevelReview do
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(higher_level_review.reload.end_product_reference_id).to eq("454545")
+      expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
     end
 
     context "when VBMS throws an error" do

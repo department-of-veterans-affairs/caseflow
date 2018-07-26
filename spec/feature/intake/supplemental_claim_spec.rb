@@ -217,8 +217,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(intake).to be_success
 
-    supplemental_claim.reload
-    expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: supplemental_claim.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",

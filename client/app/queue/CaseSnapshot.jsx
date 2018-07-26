@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import { appealsByAssigneeCssIdSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
@@ -127,7 +128,8 @@ export class CaseSnapshot extends React.PureComponent {
         </CaseDetailsDescriptionList>
       </div>
       {!this.props.hideDropdown &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+        this.props.appealsAssignedToCurrentUser.
+          some((appealIterator) => appealIterator.attributes.vacols_id === appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
@@ -140,7 +142,7 @@ export class CaseSnapshot extends React.PureComponent {
 CaseSnapshot.propTypes = {
   appeal: PropTypes.object.isRequired,
   featureToggles: PropTypes.object,
-  loadedQueueAppealIds: PropTypes.array,
+  appealsAssignedToCurrentUser: PropTypes.array,
   task: PropTypes.object,
   userRole: PropTypes.string,
   hideDropdown: PropTypes.bool
@@ -148,7 +150,7 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state)
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

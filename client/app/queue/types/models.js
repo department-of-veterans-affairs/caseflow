@@ -14,10 +14,6 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type DeprecatedTask = {
-  id: string
-};
-
 export type AppellantAddress = {
   address_line_1: string,
   address_line_2: string,
@@ -42,6 +38,29 @@ export type Issue = {
 };
 
 export type Issues = Array<Issue>;
+
+export type Task = {
+  id: string,
+  appealId: string,
+  attributes: {
+    added_by_css_id: string,
+    added_by_name: string,
+    appeal_id: string,
+    assigned_by_first_name: string,
+    assigned_by_last_name: string,
+    assigned_on: string,
+    docket_date: string,
+    docket_name: string,
+    document_id: string,
+    due_on: string,
+    task_id: string,
+    task_type: string,
+    user_id: string,
+    work_product: string
+  }
+};
+
+export type Tasks = { [string]: Task };
 
 export type LegacyAppeal = {
   id: string,
@@ -68,7 +87,8 @@ export type LegacyAppeal = {
     power_of_attorney: string,
     regional_office: Object,
     caseflow_veteran_id: ?string
-  }
+  },
+  tasks: ?Array<Task>
 };
 
 export type Appeal = {
@@ -97,29 +117,6 @@ export type Appeal = {
 };
 
 export type LegacyAppeals = { [string]: LegacyAppeal };
-
-export type Task = {
-  id: string,
-  appealId: string,
-  attributes: {
-    added_by_css_id: string,
-    added_by_name: string,
-    appeal_id: string,
-    assigned_by_first_name: string,
-    assigned_by_last_name: string,
-    assigned_on: string,
-    docket_date: string,
-    docket_name: string,
-    document_id: string,
-    due_on: string,
-    task_id: string,
-    task_type: string,
-    user_id: string,
-    work_product: string
-  }
-};
-
-export type Tasks = { [string]: Task };
 
 export type Attorneys = {
   data?: Array<User>,

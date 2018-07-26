@@ -77,7 +77,7 @@ class RampRefiling < RampReview
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_reference_id,
+      claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
     )
   end
