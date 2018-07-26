@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { appealsByAssignedTaskSelector } from './selectors';
+import { appealsByAssigneeCssIdSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -102,7 +102,8 @@ export class CaseSnapshot extends React.PureComponent {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.appealsAssignedToCurrentUser.includes(this.props.appeal.attributes.vacols_id)) {
+    if (this.props.appealsAssignedToCurrentUser.
+      some((appealIterator) => appealIterator.attributes.vacols_id === appeal.vacols_id)) {
       return true;
     }
     if (!this.props.task) {
@@ -164,7 +165,7 @@ CaseSnapshot.propTypes = {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: Object.keys(appealsByAssignedTaskSelector(state)),
+  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
   attorneysOfJudge: state.queue.attorneysOfJudge
 });
 
