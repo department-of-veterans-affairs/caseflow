@@ -20,7 +20,8 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const associateTasksWithAppeals = (serverData: Object = {}) => {
+export const associateTasksWithAppeals =
+  (serverData: { appeals?: { data: Array<Appeal> }, tasks?: Array | { data: Array<Task> } } = {}) => {
   const {
     appeals: { data: appeals },
     tasks: { data: tasks }
