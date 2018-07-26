@@ -34,6 +34,7 @@ import {
   marginBottom,
   marginTop,
   ATTORNEY_COMMENTS_MAX_LENGTH,
+  DOCUMENT_ID_MAX_LENGTH,
   OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
   ISSUE_DISPOSITIONS
 } from './constants';
@@ -264,6 +265,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
+        maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
       {this.getJudgeSelectComponent()}
       <TextareaField
