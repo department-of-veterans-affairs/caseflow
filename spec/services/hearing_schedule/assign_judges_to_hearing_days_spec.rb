@@ -254,8 +254,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       it "all hearing days should be assigned to judges" do
         expect { subject }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
       end
-
-      it {}
     end
 
     context "allocated judges to hearing days" do
