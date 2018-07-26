@@ -7,6 +7,6 @@ FactoryBot.define do
     start_date { Date.parse("2018-04-01") }
     end_date { Date.parse("2018-09-30") }
     file_name { "validJudgeSpreadsheet.xlsx" }
-    user { create(:user) }
+    user { create(:default_user) }
   end
 end

@@ -33,6 +33,7 @@ export default class FileUpload extends React.Component {
       <div {...styling}>
         <input
           type="file"
+          accept={this.props.fileType}
           id={this.props.id}
           onChange={this.onUploadEvent}
         />
@@ -46,5 +47,6 @@ FileUpload.propTypes = {
   id: PropTypes.string.isRequired,
   preUploadText: PropTypes.string.isRequired,
   postUploadText: PropTypes.string.isRequired,
+  fileType: PropTypes.string,
   value: PropTypes.object
 };

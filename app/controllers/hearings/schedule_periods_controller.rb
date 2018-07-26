@@ -45,11 +45,15 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
     render json: { id: schedule_period.id }
+  rescue ActiveRecord::RecordInvalid => error
+    render json: { error: error.message }
   end
 
   def update
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
-    schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    if schedule_period.can_be_finalized?
+      schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    end
     render json: { id: schedule_period.id }
   end
 

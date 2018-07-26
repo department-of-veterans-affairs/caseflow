@@ -63,6 +63,31 @@ export const onJudgeEndDateChange = (endDate) => ({
   }
 });
 
+export const updateUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateRoCoUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateJudgeUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const unsetUploadErrors = () => ({
+  type: ACTIONS.UNSET_UPLOAD_ERRORS
+});
+
 export const onViewStartDateChange = (viewStartDate) => ({
   type: ACTIONS.VIEW_START_DATE_CHANGE,
   payload: {
