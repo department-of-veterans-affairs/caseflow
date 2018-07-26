@@ -242,7 +242,6 @@ ActiveRecord::Schema.define(version: 20180724145953) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "claimant_participant_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
