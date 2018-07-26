@@ -7,4 +7,17 @@ class JudgeRepository
     end
   end
   # :nocov:
+
+  # :nocov:
+  def self.find_all_judges_with_name_and_id
+    records = VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
+
+    records.map do |record|
+      { first_name: record.snamef,
+        middle_name: record.snamemi,
+        last_name: record.snamel,
+        vacols_attorney_id: record.sattyid }
+    end
+  end
+  # :nocov:
 end
