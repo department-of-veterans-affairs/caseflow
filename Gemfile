@@ -166,11 +166,10 @@ end
 gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
-# rubocop:enable Metrics/LineLength
 
 gem "holidays", "~> 6.4"
 
 gem "roo", "~> 2.7"
 
-# Added at 2018-07-17 08:39:32 -0400 by teja:
 gem "business_time", "~> 0.9.3"
+# rubocop:enable Metrics/LineLength

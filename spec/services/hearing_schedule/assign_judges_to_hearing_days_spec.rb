@@ -1,6 +1,6 @@
 describe HearingSchedule::AssignJudgesToHearingDays do
   let(:schedule_period) do
-    create(:blank_ro_schedule_period, start_date: Date.parse("2018-04-01"),
+    create(:blank_judge_schedule_period, start_date: Date.parse("2018-04-01"),
                                       end_date: Date.parse("2018-07-31"))
   end
 
@@ -217,6 +217,27 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     it "expect judge to have non-available day" do
       expect(subject.judges[judge.sdomainid][:non_availabilities].include?(co_hearing_day.hearing_date)).to be(true)
+    end
+  end
+
+  context "no Video and CO hearing days exist" do
+    before do
+      judge
+    end
+
+    let(:judge) do
+      judge = FactoryBot.create(:user)
+      date = get_unique_dates_between(schedule_period.start_date,
+                                      schedule_period.end_date, 1).first
+      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+                                      object_identifier: judge.css_id)
+      create(:staff, :hearing_judge, sdomainid: judge.css_id)
+    end
+
+    subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
+
+    it do
+      expect { subject }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::HearingDaysNotAllocated)
     end
   end
 

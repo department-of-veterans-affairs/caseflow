@@ -11,9 +11,6 @@ class HearingSchedule::AssignJudgesToHearingDays
   class CannotAssignJudges < StandardError; end
 
   def initialize(schedule_period)
-    # raises an exception if hearing days have not already been finalized
-    fail HearingDaysNotAllocated if schedule_period.try(:finalized) == false
-
     @video_co_hearing_days = []
     @judges = {}
     @schedule_period = schedule_period
@@ -133,6 +130,10 @@ class HearingSchedule::AssignJudgesToHearingDays
   def fetch_hearing_days_for_schedule_period
     hearing_days = HearingDay.load_days(@schedule_period.start_date, @schedule_period.end_date)
     @video_co_hearing_days = filter_co_hearings(hearing_days[0].to_a)
+
+    # raises an exception if hearing days have not already been allocated
+    fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
+
     filter_travel_board_hearing_days(hearing_days[1])
   end
 

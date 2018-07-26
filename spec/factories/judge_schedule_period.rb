@@ -9,4 +9,11 @@ FactoryBot.define do
     file_name { "validJudgeSpreadsheet.xlsx" }
     user { create(:default_user) }
   end
+
+  factory :blank_judge_schedule_period do
+    start_date { Date.parse("2018-01-01") }
+    end_date { Date.parse("2018-06-01") }
+    file_name { "blankJudgeSpreadsheet.xlsx" }
+    user { create(:user) }
+  end
 end
