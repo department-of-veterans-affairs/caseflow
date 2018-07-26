@@ -1,4 +1,4 @@
-describe CoLocatedAdminAction do
+describe ColocatedTask do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }
@@ -16,14 +16,14 @@ describe CoLocatedAdminAction do
   context ".create" do
     context "when all fields are present" do
       subject do
-        CoLocatedAdminAction.create([{
-                                      assigned_by: attorney,
-                                      title: :aoj,
-                                      appeal: appeal
-                                    },
-                                     { assigned_by: attorney,
-                                       title: :poa_clarification,
-                                       appeal: appeal }])
+        ColocatedTask.create([{
+                               assigned_by: attorney,
+                               title: :aoj,
+                               appeal: appeal
+                             },
+                              { assigned_by: attorney,
+                                title: :poa_clarification,
+                                appeal: appeal }])
       end
 
       it "creates a co-located task successfully" do
@@ -43,21 +43,21 @@ describe CoLocatedAdminAction do
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
 
         # should start from index 0
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
       end
     end
 
     context "when appeal is missing" do
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :aoj
         )
@@ -74,7 +74,7 @@ describe CoLocatedAdminAction do
       end
 
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :aoj,
           appeal: appeal
@@ -88,7 +88,7 @@ describe CoLocatedAdminAction do
 
     context "when title is not valid" do
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :test,
           appeal: appeal
@@ -102,7 +102,7 @@ describe CoLocatedAdminAction do
   end
 
   context ".update" do
-    let(:colocated_admin_action) { create(:colocated_admin_action) }
+    let(:colocated_admin_action) { create(:colocated_task) }
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do
@@ -120,14 +120,14 @@ describe CoLocatedAdminAction do
 
     context "when status is updated to completed" do
       let(:colocated_admin_action) do
-        create(:colocated_admin_action, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+        create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
       end
 
       context "when more than one task per appeal and not all tasks are completed" do
         let(:appeal_type) { "LegacyAppeal" }
 
         let!(:colocated_admin_action2) do
-          create(:colocated_admin_action, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+          create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
         end
 
         it "should not update location in vacols" do

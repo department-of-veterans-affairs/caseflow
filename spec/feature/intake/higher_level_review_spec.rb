@@ -218,8 +218,8 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(intake).to be_success
 
-    higher_level_review.reload
-    expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: higher_level_review.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",

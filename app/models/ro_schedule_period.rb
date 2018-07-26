@@ -1,8 +1,10 @@
 class RoSchedulePeriod < SchedulePeriod
+  validate :validate_spreadsheet, on: :create
   after_create :import_spreadsheet
 
   def validate_spreadsheet
-    HearingSchedule::ValidateRoSpreadsheet.new(spreadsheet, start_date, end_date).validate
+    validate_spreadsheet = HearingSchedule::ValidateRoSpreadsheet.new(spreadsheet, start_date, end_date)
+    errors[:base] << validate_spreadsheet.validate
   end
 
   def import_spreadsheet
