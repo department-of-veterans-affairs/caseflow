@@ -39,7 +39,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
       messages,
       appeals
     } = this.props;
-    const reviewableCount = Object.keys(appeals).length;
+    const reviewableCount = appeals.length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -73,7 +73,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
 }
 
 JudgeReviewTaskListView.propTypes = {
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {

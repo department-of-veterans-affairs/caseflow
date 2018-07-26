@@ -63,7 +63,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
     if (attorneyId in attorneyAppealsLoadingState &&
       attorneyAppealsLoadingState[attorneyId].state === 'LOADED') {
-      return appealsByUserId[attorneyId] ? appealsByUserId[attorneyId].length.toString() : 0;
+      return appealsByUserId[attorneyId] ? appealsByUserId[attorneyId].length : 0;
     }
 
     return '?';
