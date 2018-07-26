@@ -21,15 +21,12 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 export const associateTasksWithAppeals =
-  (serverData: { appeals?: { data: Array<Appeal> }, tasks?: Array | { data: Array<Task> } } = {}) => {
+  (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
+    { appeals: LegacyAppeals, tasks: Tasks } => {
   const {
     appeals: { data: appeals },
-    tasks: { data: tasks }
+    tasks: outerTasks
   } = serverData;
-
-  _.each(tasks, (task) => {
-    task.appealId = task.id;
-  });
 
   const result = {
     appeals: {},
@@ -41,6 +38,16 @@ export const associateTasksWithAppeals =
       result.appeals[appeal.attributes.vacols_id] = appeal;
     }
   }
+  if (Array.isArray(outerTasks)) {
+    return result;
+  }
+
+  const tasks = outerTasks.data;
+
+  _.each(tasks, (task) => {
+    task.appealId = task.id;
+  });
+
   for (const task of tasks) {
     if (task) {
       result.tasks[task.id] = task;
