@@ -122,7 +122,9 @@ describe SupplementalClaimIntake do
     let(:params) do
       { request_issues: [
         { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
-        { decision_text: "non-rated issue decision text", issue_category: "test issue category", decision_date: "2018-12-25" }
+        { decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25" }
       ] }
     end
 

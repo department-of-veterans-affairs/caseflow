@@ -143,7 +143,9 @@ describe HigherLevelReview do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
         { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
-        { decision_text: "non-rated issue decision text", issue_category: "test issue category", decision_date: "2018-12-25" }
+        { decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25" }
       ]
     end
 
@@ -162,9 +164,11 @@ describe HigherLevelReview do
         rating_issue_profile_date: Date.new(2018, 4, 4),
         description: "hello"
       )
-      expect(higher_level_review.request_issues.find_by(description: "non-rated issue decision text")).to have_attributes(
+      expect(higher_level_review.request_issues.find_by(
+               description: "non-rated issue decision text"
+      )).to have_attributes(
         issue_category: "test issue category",
-        decision_date: Date.new(2018,12,25)
+        decision_date: Date.new(2018, 12, 25)
       )
     end
   end
