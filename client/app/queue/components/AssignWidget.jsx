@@ -138,7 +138,9 @@ class AssignWidget extends React.PureComponent<Props> {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        '& > *': { marginRight: '1rem', marginTop: '0', marginBottom: '16px' } })}>
+        '& > *': { marginRight: '1rem',
+          marginTop: '0',
+          marginBottom: '16px' } })}>
         <p>{COPY.ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
         <SearchableDropdown
           name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
