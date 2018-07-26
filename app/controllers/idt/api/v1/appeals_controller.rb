@@ -34,7 +34,7 @@ class Idt::Api::V1::AppealsController < ActionController::Base
   end
 
   def css_id
-    css_id = Idt::Token.associated_css_id(token)
+    Idt::Token.associated_css_id(token)
   end
 
   def json_appeals(appeals)
