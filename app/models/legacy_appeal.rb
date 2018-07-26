@@ -7,6 +7,9 @@ class LegacyAppeal < ApplicationRecord
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
+  has_many :appeal_views, as: :appeal
+  has_many :claims_folder_searches, as: :appeal
+  has_many :tasks, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -22,7 +25,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :representative, :contested_claim
+  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -36,14 +39,14 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number
+  vacols_attr_accessor :docket_number, :docket_date
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :docket_date, :date_due
+  attr_accessor :date_assigned, :date_received, :date_completed, :signed_date, :date_due
 
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
@@ -107,7 +110,7 @@ class LegacyAppeal < ApplicationRecord
 
   LOCATION_CODES = {
     remand_returned_to_bva: "96",
-    bva_dispatch: "30",
+    bva_dispatch: "4E",
     omo_office: "20",
     caseflow: "CASEFLOW"
   }.freeze
@@ -118,7 +121,8 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+  delegate :documents, :number_of_documents, :new_documents_for_user,
+           :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -177,10 +181,12 @@ class LegacyAppeal < ApplicationRecord
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney(load_bgs_record: true)
-    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id)
-
-    load_bgs_record ? @poa.load_bgs_record! : @poa
+  def power_of_attorney
+    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+      # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
+      poa.class.repository.set_vacols_values(poa: poa, case_record: case_record)
+      poa
+    end
   end
 
   attr_writer :hearings
@@ -216,18 +222,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def representative_name
-    representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
+    power_of_attorney.vacols_representative_name
   end
 
   def representative_type
-    case representative
-    when "None", "One Time Representative"
-      "Other"
-    when "Agent", "Attorney"
-      representative
-    else
-      "Organization"
-    end
+    power_of_attorney.vacols_representative_type
   end
 
   # TODO: delegate this to veteran
@@ -248,7 +247,21 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_ramp?
-    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+    !ramp_ineligibility_reason
+  end
+
+  def ramp_ineligibility_reason
+    return @ramp_ineligibility_reason if defined? @ramp_ineligibility_reason
+
+    @ramp_ineligibility_reason = begin
+      if ineligibile_for_ramp_at_bva?
+        :activated_to_bva
+      elsif appellant_first_name
+        :claimant_not_veteran
+      elsif !compensation?
+        :no_compensation_issues
+      end
+    end
   end
 
   def compensation_issues
@@ -535,6 +548,17 @@ class LegacyAppeal < ApplicationRecord
   # Used for serialization
   def regional_office_hash
     regional_office.to_h
+  end
+
+  def ineligibile_for_ramp_at_bva?
+    !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
+      eligible_for_ramp_despite_being_at_bva?)
+  end
+
+  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
+  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
+  def eligible_for_ramp_despite_being_at_bva?
+    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
   end
 
   class << self

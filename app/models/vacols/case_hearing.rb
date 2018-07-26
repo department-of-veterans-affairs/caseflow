@@ -42,10 +42,11 @@ class VACOLS::CaseHearing < VACOLS::Record
     add_on: :addon,
     representative_name: :repname,
     staff_id: :mduser,
+    room_info: :room,
     room: :room,
     hearing_date: :hearing_date,
     hearing_type: :hearing_type,
-    board_member: :board_member
+    judge_id: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -80,7 +81,12 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_range(start_date, end_date)
-      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date)
+      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date).order(:hearing_date)
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?",
+                                 "VIDEO #{regional_office}", start_date, end_date)
     end
 
     def create_hearing!(hearing_info)
@@ -91,7 +97,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil))
       end
     end
 
@@ -127,12 +133,13 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_date,
              :hearing_type,
              :folder_nr,
-             :repname,
              :room,
              :board_member,
+             "snamef || ' ' || snamemi || ' ' || snamel as judge_name",
              :mduser,
-             :mdtime,
-             :canceldate)
+             :mdtime)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .where("folder_nr is null or folder_nr like ?", "VIDEO %")
     end
   end
 

@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+// @flow
+
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
@@ -15,13 +18,10 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 export const initialState = {
   judges: {},
   tasks: {},
-  loadedQueue: {
-    appeals: {},
-    tasks: {},
-    loadedUserId: null
-  },
+  appeals: {},
   editingIssue: {},
   docCountForAppeal: {},
+  newDocsForAppeal: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -37,7 +37,8 @@ export const initialState = {
   },
   attorneysOfJudge: [],
   tasksAndAppealsOfAttorney: {},
-  isVacolsIdAssignedToUserSelected: {}
+  isTaskAssignedToUserSelected: {},
+  attorneys: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -45,16 +46,8 @@ const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          $set: action.payload.appeals
-        },
-        tasks: {
-          $set: action.payload.tasks
-        },
-        loadedUserId: {
-          $set: action.payload.userId
-        }
+      appeals: {
+        $merge: action.payload.appeals
       },
       tasks: {
         $merge: action.payload.tasks
@@ -68,19 +61,35 @@ const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.DELETE_APPEAL:
     return update(state, {
-      loadedQueue: {
-        appeals: { $unset: action.payload.appealId },
-        tasks: { $unset: action.payload.appealId }
-      }
+      appeals: { $unset: action.payload.appealId },
+      tasks: { $unset: action.payload.appealId }
     });
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
-      loadedQueue: {
-        appeals: {
-          [action.payload.appealId]: {
-            attributes: {
-              $merge: action.payload.attributes
-            }
+      appeals: {
+        [action.payload.appealId]: {
+          attributes: {
+            $merge: action.payload.attributes
+          }
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_NEW_FILES:
+    return update(state, {
+      newDocsForAppeal: {
+        [action.payload.appealId]: {
+          $set: {
+            docs: action.payload.newDocuments
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES:
+    return update(state, {
+      newDocsForAppeal: {
+        [action.payload.appealId]: {
+          $set: {
+            error: action.payload.error
           }
         }
       }
@@ -88,7 +97,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
-        [action.payload.vacolsId]: {
+        [action.payload.appealId]: {
           $set: action.payload.docCount
         }
       }
@@ -122,7 +131,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
       stagedChanges: {
         appeals: {
           [action.payload.appealId]: {
-            $set: state.loadedQueue.appeals[action.payload.appealId]
+            $set: state.appeals[action.payload.appealId]
           }
         }
       }
@@ -270,20 +279,126 @@ const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
-    const isVacolsIdSelected = update(state.isVacolsIdAssignedToUserSelected[action.payload.userId] || {}, {
-      [action.payload.vacolsId]: {
+    const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
+      [action.payload.taskId]: {
         $set: action.payload.selected
       }
     });
 
     return update(state, {
-      isVacolsIdAssignedToUserSelected: {
+      isTaskAssignedToUserSelected: {
         [action.payload.userId]: {
-          $set: isVacolsIdSelected
+          $set: isTaskSelected
         }
       }
     });
   }
+  case ACTIONS.TASK_INITIAL_ASSIGNED: {
+    const appealId = action.payload.task.id;
+    const appeal = state.appeals[appealId];
+
+    const tasksAndAppealsOfAssignee = update(
+      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
+        {
+          data: {
+            tasks: {},
+            appeals: {}
+          }
+        },
+      {
+        data: {
+          tasks: {
+            [appealId]: {
+              $set: action.payload.task
+            }
+          },
+          appeals: {
+            [appealId]: {
+              $set: appeal
+            }
+          }
+        }
+      });
+
+    return update(state, {
+      tasks: {
+        [appealId]: {
+          $set: action.payload.task
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.assigneeId]: {
+          $set: tasksAndAppealsOfAssignee
+        }
+      }
+    });
+  }
+  case ACTIONS.TASK_REASSIGNED: {
+    const appealId = action.payload.task.id;
+    const appeal = state.tasksAndAppealsOfAttorney[action.payload.previousAssigneeId].data.appeals[appealId];
+
+    const tasksAndAppealsOfAssignee = update(
+      state.tasksAndAppealsOfAttorney[action.payload.assigneeId] ||
+        {
+          data: {
+            tasks: {},
+            appeals: {}
+          }
+        },
+      {
+        data: {
+          tasks: {
+            [appealId]: {
+              $set: action.payload.task
+            }
+          },
+          appeals: {
+            [appealId]: {
+              $set: appeal
+            }
+          }
+        }
+      });
+
+    return update(state, {
+      tasks: {
+        [appealId]: {
+          $set: action.payload.task
+        }
+      },
+      tasksAndAppealsOfAttorney: {
+        [action.payload.previousAssigneeId]: {
+          data: {
+            tasks: {
+              $unset: [appealId]
+            },
+            appeals: {
+              $unset: [appealId]
+            }
+          }
+        },
+        [action.payload.assigneeId]: {
+          $set: tasksAndAppealsOfAssignee
+        }
+      }
+    });
+  }
+  case ACTIONS.RECEIVE_ALL_ATTORNEYS:
+    return update(state, {
+      attorneys: {
+        $set: {
+          data: action.payload.attorneys
+        }
+      }
+    });
+  case ACTIONS.ERROR_LOADING_ATTORNEYS:
+    return update(state, {
+      attorneys: {
+        $set: {
+          error: action.payload.error
+        }
+      }
+    });
   default:
     return state;
   }

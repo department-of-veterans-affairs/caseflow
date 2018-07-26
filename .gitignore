@@ -34,7 +34,10 @@ npm-debug.log*
 node_modules
 
 # Generated js bundles
-/app/assets/webpack/*
+/app/assets/javascripts/*
+
+# Generated public assets
+/public/assets
 
 # Oracle instant client
 ci-bin/circle_docker_container/instant*

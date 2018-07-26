@@ -60,15 +60,30 @@ class ExternalApi::BGSService
     DBService.release_db_connections
 
     unless @poas[file_number]
-      bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
+      bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
                                       service: :bgs,
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa)
+      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa[:power_of_attorney])
     end
 
     @poas[file_number]
+  end
+
+  def fetch_poas_by_participant_id(participant_id)
+    DBService.release_db_connections
+
+    unless @poas[participant_id]
+      bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
+                                       service: :bgs,
+                                       name: "org.find_poas_by_participant_id") do
+        client.org.find_poas_by_ptcpnt_id(participant_id)
+      end
+      @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+    end
+
+    @poas[participant_id]
   end
 
   def find_address_by_participant_id(participant_id)
@@ -81,6 +96,8 @@ class ExternalApi::BGSService
         client.address.find_all_by_participant_id(participant_id)
       end
       if bgs_address
+        # Count on addresses being sorted with most recent first if we return a list of addresses.
+        bgs_address = bgs_address[0] if bgs_address.is_a?(Array)
         @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
       end
     end
@@ -97,10 +114,10 @@ class ExternalApi::BGSService
     Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       DBService.release_db_connections
 
-      MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+      MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
                             service: :bgs,
                             name: "can_access?") do
-        client.can_access?(vbms_id)
+        client.can_access?(vbms_id, FeatureToggle.enabled?(:can_access_v2, user: current_user))
       end
     end
   end
@@ -130,6 +147,18 @@ class ExternalApi::BGSService
     end
   end
 
+  def fetch_claimant_info_by_participant_id(participant_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: fetch claimant info: \
+                           participant_id = #{participant_id}",
+                          service: :bgs,
+                          name: "claimants.find_general_information_by_participant_id") do
+      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      get_name_and_address_from_bgs_info(basic_info)
+    end
+  end
+
   def find_all_relationships(participant_id:)
     DBService.release_db_connections
 
@@ -138,6 +167,16 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "claimants.find_all_relationships") do
       client.claimants.find_all_relationships(participant_id) || []
+    end
+  end
+
+  def get_participant_id_for_user(user)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+                          service: :bgs,
+                          name: "security.find_participant_id") do
+      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
     end
   end
 

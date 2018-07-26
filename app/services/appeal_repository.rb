@@ -121,13 +121,13 @@ class AppealRepository
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
-    outcoder_record = folder_record.outcoder
+    # Only fetch outcoder (VACOLS::Staff) if the foreign key (:tiocuser) isn't nil
+    outcoder_record = folder_record.outcoder if folder_record.tiocuser?
 
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
       contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
@@ -157,7 +157,7 @@ class AppealRepository
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-      hearing_held: !case_record.bfha.nil?,
+      hearing_held: %w[1 2 6].include?(case_record.bfha),
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
@@ -170,7 +170,8 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum
+      docket_number: folder_record.tinum,
+      docket_date: case_record.bfd19
     )
 
     appeal
@@ -442,7 +443,8 @@ class AppealRepository
     fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
-    fail AppealNotValidToReopen unless adv_status ^ (close_disposition == "9")
+    fail AppealNotValidToReopen if adv_status && (close_disposition == "9")
+    fail AppealNotValidToReopen if !adv_status && (close_disposition != "9")
 
     bfmpro = adv_status ? "ADV" : "ACT"
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"

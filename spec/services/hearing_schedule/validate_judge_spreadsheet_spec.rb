@@ -14,8 +14,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique)
+    it "returns JudgeDatesNotUnique" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique]
     end
   end
 
@@ -28,8 +28,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat)
+    it "returns JudgeDatesNotCorrectFormat" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat]
     end
   end
 
@@ -42,8 +42,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase)
+    it "returns JudgeNotInDatabase" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase]
     end
   end
 
@@ -56,6 +56,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it { is_expected.to be true }
+    it "returns an empty array" do
+      expect(subject).to eq []
+    end
   end
 end

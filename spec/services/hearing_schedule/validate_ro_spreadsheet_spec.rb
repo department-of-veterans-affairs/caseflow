@@ -8,8 +8,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange)
+    it "returns RoDatesNotInRange" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange]
     end
   end
 
@@ -22,8 +22,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique)
+    it "returns RoDatesNotUnique" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique]
     end
   end
 
@@ -36,8 +36,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat)
+    it "returns RoDatesNotCorrectFormat" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat]
     end
   end
 
@@ -50,8 +50,22 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoNotInSystem)
+    it "returns RoListedIncorrectly" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly]
+    end
+  end
+
+  context "when RO template not followed" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roTemplateNotFollowed.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns RoTemplateNotFollowed" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed]
     end
   end
 
@@ -64,8 +78,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::RoHearingListDoesNotMatch)
+    it "returns RoListedIncorrectly" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly]
     end
   end
 
@@ -78,8 +92,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange)
+    it "returns CoDatesNotInRange" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange]
     end
   end
 
@@ -92,8 +106,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique)
+    it "returns CoDatesNotUnique" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique]
     end
   end
 
@@ -106,8 +120,50 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat)
+    it "returns CoDatesNotCorrectFormat" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat]
+    end
+  end
+
+  context "when allocation has wrong data type" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationWrongDataType.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns AllocationNotCorrectFormat" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat]
+    end
+  end
+
+  context "when allocation has duplicate ROs" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationDuplicateRo.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns AllocationDuplicateRo" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo]
+    end
+  end
+
+  context "when allocation template is not followed" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/allocationTemplateNotFollowed.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns AllocationTemplateNotFollowed" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed]
     end
   end
 
@@ -120,6 +176,8 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       ).validate
     end
 
-    it { is_expected.to be true }
+    it "returns an empty array" do
+      expect(subject).to eq []
+    end
   end
 end

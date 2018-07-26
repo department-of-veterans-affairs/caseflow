@@ -1,16 +1,24 @@
 describe RampElectionIntake do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let!(:current_user) { User.authenticate! }
 
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
-  let(:appeal_vacols_record) { :ready_to_certify }
-  let(:compensation_issue) { Generators::Issue.build(template: :compensation) }
+  let(:compensation_issue) { create(:case_issue, :compensation) }
+  let(:education_issue) { create(:case_issue, :education) }
   let(:issues) { [compensation_issue] }
   let(:completed_at) { nil }
+  let(:case_status) { :status_advance }
 
   let(:intake) do
     RampElectionIntake.new(
@@ -21,12 +29,13 @@ describe RampElectionIntake do
     )
   end
 
-  let(:appeal) do
-    Generators::LegacyAppeal.build(
-      vbms_id: "64205555C",
-      vacols_record: appeal_vacols_record,
-      veteran: veteran,
-      issues: issues
+  let(:vacols_case) do
+    create(
+      :case,
+      case_status,
+      bfcorlid: "64205555C",
+      case_issues: issues,
+      bfdnod: 1.year.ago
     )
   end
 
@@ -34,12 +43,11 @@ describe RampElectionIntake do
     subject { intake.cancel!(reason: "other", other: "Spelling canceled and cancellation is fun") }
 
     let(:detail) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 5.days.ago,
-        option_selected: "supplemental_claim",
-        receipt_date: 3.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 5.days.ago,
+             option_selected: "supplemental_claim",
+             receipt_date: 3.days.ago)
     end
 
     it "cancels and clears detail values" do
@@ -95,69 +103,101 @@ describe RampElectionIntake do
     subject { intake.complete!({}) }
 
     let(:detail) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 5.days.ago,
-        option_selected: "supplemental_claim",
-        receipt_date: 3.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 5.days.ago,
+             option_selected: "supplemental_claim",
+             receipt_date: 3.days.ago)
     end
 
-    let!(:appeals_to_close) do
-      (1..2).map do
-        Generators::Appeal
-          .create(vbms_id: "64205555C", vacols_record: { template: :ready_to_certify, nod_date: 1.year.ago })
-      end
+    let!(:appeal_to_partially_close) do
+      create(:legacy_appeal,
+             vacols_case: create(
+               :case,
+               :status_advance,
+               bfcorlid: "64205555C",
+               bfdnod: 1.year.ago,
+               case_issues: [compensation_issue, education_issue]
+             ))
+    end
+
+    let!(:appeal_to_fully_close) do
+      create(:legacy_appeal,
+             vacols_case: create(
+               :case,
+               :status_advance,
+               bfcorlid: "64205555C",
+               bfdnod: 1.year.ago,
+               case_issues: [create(:case_issue, :compensation)]
+             ))
     end
 
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-      expect(RampClosedAppeal).to receive(:new).with(
-        vacols_id: appeals_to_close.first.vacols_id,
-        ramp_election_id: detail.id,
-        nod_date: appeals_to_close.first.nod_date
-      ).and_call_original
-
-      expect(RampClosedAppeal).to receive(:new).with(
-        vacols_id: appeals_to_close.last.vacols_id,
-        ramp_election_id: detail.id,
-        nod_date: appeals_to_close.last.nod_date
-      ).and_call_original
-
-      expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: appeals_to_close.first,
-        user: intake.user,
-        closed_on: Time.zone.today,
-        disposition_code: "P"
-      )
-
-      expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
-        appeal: appeals_to_close.last,
-        user: intake.user,
-        closed_on: Time.zone.today,
-        disposition_code: "P"
-      )
-
       subject
 
-      expect(intake.reload).to be_success
-      expect(intake.detail.established_at).to_not be_nil
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      expect(intake).to be_success
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(resultant_end_product_establishment).not_to be_nil
+      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
+
+      expect(appeal_to_fully_close.case_record.reload).to have_attributes(
+        bfmpro: "HIS",
+        bfddec: AppealRepository.dateshift_to_utc(Time.zone.now),
+        bfdc: "P"
+      )
+
+      expect(appeal_to_fully_close.case_record.folder.timduser).to eq(user.regional_office)
+
+      reloaded_issues = AppealRepository.issues(appeal_to_partially_close.vacols_id)
+      education_issue = reloaded_issues.find { |i| i.program == :education }
+      compensation_issue = reloaded_issues.find { |i| i.program == :compensation }
+
+      expect(education_issue.disposition_id).to eq(nil)
+      expect(compensation_issue.disposition_id).to eq("P")
+
+      expect(appeal_to_partially_close.case_record.reload).to have_attributes(
+        bfmpro: "ADV",
+        bfddec: nil,
+        bfdc: nil
+      )
+
+      expect(
+        RampClosedAppeal.where(
+          vacols_id: appeal_to_partially_close.vacols_id,
+          ramp_election_id: detail.id,
+          nod_date: appeal_to_partially_close.nod_date,
+          closed_on: Time.zone.now,
+          partial_closure_issue_sequence_ids: [compensation_issue.id]
+        )
+      ).to_not be_nil
+
+      expect(
+        RampClosedAppeal.where(
+          vacols_id: appeal_to_fully_close.vacols_id,
+          ramp_election_id: detail.id,
+          nod_date: appeal_to_fully_close.nod_date,
+          closed_on: Time.zone.now,
+          partial_closure_issue_sequence_ids: nil
+        )
+      ).to_not be_nil
     end
 
-    context "if ep already exists and is connected" do
+    describe "if there is already an existing and matching EP" do
       let!(:matching_ep) do
         Generators::EndProduct.build(
-          veteran_file_number: "64205555",
+          veteran_file_number: veteran_file_number,
           bgs_attrs: {
             claim_type_code: "683SCRRRAMP",
-            claim_receive_date: intake.detail.receipt_date.to_formatted_s(:short_date),
+            claim_receive_date: detail.receipt_date.to_formatted_s(:short_date),
             end_product_type_code: "683"
           }
         )
       end
 
-      it "connects that EP to the ramp election and does not establish a claim" do
+      it "should return 'connected' with an error" do
         subject
 
         expect(intake.reload).to be_success
@@ -165,15 +205,91 @@ describe RampElectionIntake do
       end
     end
 
-    context "if VACOLS closure fails" do
-      it "does not complete" do
-        intake.save!
-        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).and_raise("VACOLS failz")
+    describe "if there are existing ramp elections" do
+      let(:existing_option_selected) { "supplemental_claim" }
+      let(:status_type_code) { "PEND" }
 
-        expect { subject }.to raise_error("VACOLS failz")
+      let(:preexisting_ep) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran_file_number,
+          bgs_attrs: {
+            claim_type_code: "683SCRRRAMP",
+            claim_receive_date: 38.days.ago.to_formatted_s(:short_date),
+            status_type_code: status_type_code,
+            end_product_type_code: "683"
+          }
+        )
+      end
 
-        intake.reload
-        expect(intake.completed_at).to be_nil
+      let!(:existing_ramp_election) do
+        re = create(:ramp_election,
+                    veteran_file_number: veteran_file_number,
+                    notice_date: 40.days.ago,
+                    option_selected: existing_option_selected,
+                    receipt_date: 38.days.ago,
+                    established_at: 38.days.ago)
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: re,
+          reference_id: preexisting_ep.claim_id,
+          synced_status: status_type_code,
+          last_synced_at: 38.days.ago
+        )
+        re
+      end
+
+      context "the existing RAMP election EP is active" do
+        it "closes out legacy appeals and connects intake to the existing ramp election" do
+          subject
+
+          expect(appeal_to_fully_close.case_record.reload).to have_attributes(bfdc: "P")
+
+          expect(
+            RampClosedAppeal.where(
+              vacols_id: appeal_to_partially_close.vacols_id,
+              ramp_election_id: detail.id,
+              nod_date: appeal_to_partially_close.nod_date,
+              closed_on: Time.zone.now,
+              partial_closure_issue_sequence_ids: [compensation_issue.id]
+            )
+          ).to_not be_nil
+
+          expect(
+            RampClosedAppeal.where(
+              vacols_id: appeal_to_fully_close.vacols_id,
+              ramp_election_id: detail.id,
+              nod_date: appeal_to_fully_close.nod_date,
+              closed_on: Time.zone.now,
+              partial_closure_issue_sequence_ids: nil
+            )
+          ).to_not be_nil
+
+          expect { detail.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "the existing RAMP election EP is inactive" do
+        let(:status_type_code) { "CAN" }
+
+        it "establishes new ramp election" do
+          subject
+
+          expect(intake.reload).to be_success
+          expect(intake.detail).to_not eq(existing_ramp_election)
+          expect(intake.detail.established_at).to_not be_nil
+        end
+      end
+
+      context "existing RAMP election EP is a different type" do
+        let(:existing_option_selected) { "higher_level_review" }
+
+        it "establishes new ramp election" do
+          subject
+
+          expect(intake.reload).to be_success
+          expect(intake.detail).to_not eq(existing_ramp_election)
+          expect(intake.detail.established_at).to_not be_nil
+        end
       end
     end
 
@@ -194,68 +310,94 @@ describe RampElectionIntake do
   context "#serialized_appeal_issues" do
     subject { intake.serialized_appeal_issues }
 
+    let(:test_issue) do
+      create(:case_issue,
+             issprog: "02",
+             isscode: "15",
+             isslev1: "03",
+             isslev2: "5257",
+             issdesc: "Broken knee")
+    end
+
     let!(:appeals) do
       [
-        Generators::LegacyAppeal.create(
-          vbms_id: "64205555C",
-          issues: [
-            Generators::Issue.build(note: "Broken thigh"),
-            Generators::Issue.build(codes: %w[02 16 03 5252],
-                                    labels: [
-                                      "Compensation",
-                                      "Something else",
-                                      "All Others",
-                                      "Knee, limitation of flexion of"
-                                    ],
-                                    note: "Broken knee")
-          ]
+        create(
+          :legacy_appeal,
+          vacols_case: create(
+            :case,
+            :status_advance,
+            bfcorlid: "64205555C",
+            case_issues: [
+              create(:case_issue,
+                     issprog: "02",
+                     isscode: "15",
+                     isslev1: "03",
+                     isslev2: "5252",
+                     issdesc: "Broken thigh"),
+              test_issue
+            ]
+          )
         ),
-        Generators::LegacyAppeal.create(
-          vbms_id: "64205555C",
-          issues: [
-            Generators::Issue.build(codes: %w[02 15],
-                                    labels: ["Compensation", "Last Issue"],
-                                    note: "")
-          ]
+        create(
+          :legacy_appeal,
+          vacols_case: create(
+            :case,
+            :status_advance,
+            bfcorlid: "64205555C",
+            case_issues: [
+              create(:case_issue,
+                     issprog: "02",
+                     isscode: "15",
+                     isslev1: "03",
+                     isslev2: "5325",
+                     issdesc: "")
+            ]
+          )
         )
       ]
     end
 
     it do
-      is_expected.to eq([{
-                          id: appeals.first.id,
-                          issues: [{
-                            program_description: "02 - Compensation",
-                            description: [
-                              "15 - Service connection",
-                              "03 - All Others",
-                              "5252 - Thigh, limitation of flexion of"
-                            ],
-                            note: "Broken thigh"
-                          }, {
-                            program_description: "02 - Compensation",
-                            description: [
-                              "16 - Something else",
-                              "03 - All Others",
-                              "5252 - Knee, limitation of flexion of"
-                            ],
-                            note: "Broken knee"
-                          }]
-                        },
-                         {
-                           id: appeals.last.id,
-                           issues: [{
-                             program_description: "02 - Compensation",
-                             description: ["15 - Last Issue"],
-                             note: ""
-                           }]
-                         }])
+      is_expected.to eq([
+                          {
+                            id: appeals.first.id,
+                            issues: [{
+                              program_description: "02 - Compensation",
+                              description: [
+                                "15 - Service connection",
+                                "03 - All Others",
+                                "5252 - Thigh, limitation of flexion of"
+                              ],
+                              note: "Broken thigh"
+                            }, {
+                              program_description: "02 - Compensation",
+                              description: [
+                                "15 - Service connection",
+                                "03 - All Others",
+                                "5257 - Knee, other impairment of"
+                              ],
+                              note: "Broken knee"
+                            }]
+                          },
+                          {
+                            id: appeals.last.id,
+                            issues: [{
+                              program_description: "02 - Compensation",
+                              description: [
+                                "15 - Service connection",
+                                "03 - All Others",
+                                "5325 - Muscle injury, facial muscles"
+                              ],
+                              note: nil
+                            }]
+                          }
+                        ])
     end
   end
 
   context "#start!" do
     subject { intake.start! }
-    let!(:ramp_appeal) { appeal }
+    let!(:ramp_appeal) { vacols_case }
 
     context "not valid to start" do
       let(:veteran_file_number) { "NOTVALID" }
@@ -276,14 +418,17 @@ describe RampElectionIntake do
     context "valid to start" do
       context "RAMP election with notice_date exists" do
         let!(:ramp_election) do
-          RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+          create(:ramp_election, veteran_file_number: "64205555", notice_date: 5.days.ago)
         end
+        let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
-        it "saves intake and sets detail to ramp election" do
+        it "saves intake and sets detail to a new ramp election" do
           expect(subject).to be_truthy
 
           expect(intake.started_at).to eq(Time.zone.now)
-          expect(intake.detail).to eq(ramp_election)
+          expect(intake.detail).to eq(new_ramp_election)
+          expect(new_ramp_election).to_not be_nil
+          expect(new_ramp_election.notice_date).to be_nil
         end
       end
 
@@ -314,32 +459,26 @@ describe RampElectionIntake do
 
   context "#validate_start" do
     subject { intake.validate_start }
-    let(:end_product_reference_id) { nil }
     let(:established_at) { nil }
-    let!(:ramp_appeal) { appeal }
+    let!(:ramp_appeal) { vacols_case }
     let!(:ramp_election) do
-      RampElection.create!(
-        veteran_file_number: "64205555",
-        notice_date: 6.days.ago,
-        end_product_reference_id: end_product_reference_id,
-        established_at: established_at
-      )
+      create(:ramp_election,
+             veteran_file_number: "64205555",
+             notice_date: 6.days.ago,
+             established_at: established_at)
     end
-
-    let(:education_issue) { Generators::Issue.build(template: :education) }
+    let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
     context "the ramp election is complete" do
-      let(:end_product_reference_id) { 1 }
       let(:established_at) { Time.zone.now }
 
-      it "adds ramp_election_already_complete and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("ramp_election_already_complete")
+      it "returns true even if there is an existing ramp election" do
+        expect(subject).to eq(true)
       end
     end
 
     context "there are no active appeals" do
-      let(:appeal_vacols_record) { :full_grant_decided }
+      let(:case_status) { :status_complete }
 
       it "adds no_active_appeals and returns false" do
         expect(subject).to eq(false)
@@ -356,17 +495,8 @@ describe RampElectionIntake do
       end
     end
 
-    context "there are no active fully compensation appeals" do
-      let(:issues) { [compensation_issue, education_issue] }
-
-      it "adds no_active_fully_compensation_appeals and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("no_active_fully_compensation_appeals")
-      end
-    end
-
     context "there are active but not eligible appeals" do
-      let(:appeal_vacols_record) { :pending_hearing }
+      let(:case_status) { :status_active }
 
       it "adds no_eligible_appeals and returns false" do
         expect(subject).to eq(false)

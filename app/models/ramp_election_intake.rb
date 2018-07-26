@@ -3,11 +3,13 @@ class RampElectionIntake < Intake
 
   enum error_code: {
     did_not_receive_ramp_election: "did_not_receive_ramp_election",
-    ramp_election_already_complete: "ramp_election_already_complete",
     no_eligible_appeals: "no_eligible_appeals",
     no_active_compensation_appeals: "no_active_compensation_appeals",
-    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     no_active_appeals: "no_active_appeals",
+    # This is a legacy error_code from when we only allowed one RAMP election
+    ramp_election_already_complete: "ramp_election_already_complete",
+    # This is a legacy error_code from when we did not allow RAMP elections on mixed comp/non-comp appeals
+    no_active_fully_compensation_appeals: "no_active_fully_compensation_appeals",
     # This status will be set on successful intakes to signify that we had to
     # connect an existing EP, which in theory, shouldn't happen, but does in practice.
     connected_preexisting_ep: "connected_preexisting_ep"
@@ -18,7 +20,10 @@ class RampElectionIntake < Intake
   end
 
   def find_or_build_initial_detail
-    matching_ramp_election
+    # This is temporary if there are already ramp elections.
+    # It will NOT find existing ramp elections since we can't compare type as we
+    # don't know it yet. Later we will switch to existing matching elections.
+    new_intake_ramp_election
   end
 
   def review!(request_params)
@@ -34,20 +39,18 @@ class RampElectionIntake < Intake
     return if complete? || pending?
     start_completion!
 
-    create_or_connect_end_product
-
-    close_eligible_appeals!
+    if existing_ramp_election_active?
+      use_existing_ramp_election
+    else
+      create_or_connect_end_product
+    end
 
     transaction do
       complete_with_status!(:success)
-      eligible_appeals.each do |appeal|
-        RampClosedAppeal.create!(
-          vacols_id: appeal.vacols_id,
-          ramp_election_id: ramp_election.id,
-          nod_date: appeal.nod_date
-        )
-      end
+      create_ramp_closed_appeals!
     end
+
+    @ramp_closed_appeals.each(&:close!)
   end
 
   def cancel_detail!
@@ -91,24 +94,23 @@ class RampElectionIntake < Intake
     raise e
   end
 
-  def close_eligible_appeals!
-    LegacyAppeal.close(
-      appeals: eligible_appeals,
-      user: user,
-      closed_on: Time.zone.today,
-      disposition: "RAMP Opt-in"
-    )
+  def create_ramp_closed_appeals!
+    @ramp_closed_appeals = eligible_appeals.map do |appeal|
+      RampClosedAppeal.create!(
+        vacols_id: appeal.vacols_id,
+        ramp_election_id: ramp_election.id,
+        nod_date: appeal.nod_date,
+        closed_on: Time.zone.now,
+        user: user,
+        partial_closure_issue_sequence_ids:
+          (appeal.fully_compensation? ? nil : appeal.compensation_issues.map(&:vacols_sequence_id))
+      )
+    end
   end
 
   # Appeals in VACOLS that will be closed out in favor of a new format review
   def eligible_appeals
-    active_fully_compensation_appeals.select(&:eligible_for_ramp?)
-  end
-
-  # Temporarily only allow RAMP appeals with 100% compensation issues.
-  # TODO: Take this out when we allow partial closing of appeals.
-  def active_fully_compensation_appeals
-    active_veteran_appeals.select(&:fully_compensation?)
+    active_compensation_appeals.select(&:eligible_for_ramp?)
   end
 
   def active_compensation_appeals
@@ -120,26 +122,37 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if matching_ramp_election.established?
-      self.error_code = :ramp_election_already_complete
-      @error_data = { receipt_date: matching_ramp_election.receipt_date }
-
-    elsif active_veteran_appeals.empty?
+    if active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
 
     elsif active_compensation_appeals.empty?
       self.error_code = :no_active_compensation_appeals
-
-    elsif active_fully_compensation_appeals.empty?
-      self.error_code = :no_active_fully_compensation_appeals
 
     elsif eligible_appeals.empty?
       self.error_code = :no_eligible_appeals
     end
   end
 
-  def matching_ramp_election
-    @ramp_election_on_create ||= veteran_ramp_elections.all.first || veteran_ramp_elections.build
+  def new_intake_ramp_election
+    @ramp_election_on_create ||= veteran_ramp_elections.build
+  end
+
+  def existing_ramp_election
+    @existing_ramp_election ||= RampElection.established.where(
+      veteran_file_number: veteran_file_number,
+      option_selected: detail.option_selected
+    ).where.not(id: detail_id).first
+  end
+
+  def existing_ramp_election_active?
+    existing_ramp_election && existing_ramp_election.end_product_active?
+  end
+
+  def use_existing_ramp_election
+    transaction do
+      detail.destroy!
+      update!(detail: existing_ramp_election)
+    end
   end
 
   def veteran_ramp_elections

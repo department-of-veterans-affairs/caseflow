@@ -7,17 +7,18 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
+import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
+import VeteranDetail from './VeteranDetail';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
-import IssueList from './components/IssueList';
+import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
-import { pushBreadcrumb, resetBreadcrumbs } from './uiReducer/uiActions';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -27,59 +28,50 @@ const horizontalRuleStyling = css({
   marginBottom: '3rem'
 });
 
-// TODO: Move this out to its own component when it gets complex.
-const PowerOfAttorneyDetail = ({ appeal }) => <p>{appeal.attributes.power_of_attorney}</p>;
+const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
 
 class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.clearActiveAppealAndTask();
   }
 
-  componentDidMount = () => {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
-
-    if (!this.props.breadcrumbs.length) {
-      this.props.resetBreadcrumbs(this.props.appeal.attributes.veteran_full_name, this.props.vacolsId);
-    }
-  }
+  componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
   render = () => <AppSegment filledBackground>
-    <CaseTitle appeal={this.props.appeal} vacolsId={this.props.vacolsId} redirectUrl={window.location.pathname} />
-    <CaseSnapshot
-      appeal={this.props.appeal}
-      featureToggles={this.props.featureToggles}
-      loadedQueueAppealIds={this.props.loadedQueueAppealIds}
-      task={this.props.task}
-      userRole={this.props.userRole}
-    />
+    <CaseTitle appeal={this.props.appeal} appealId={this.props.appealId} redirectUrl={window.location.pathname} />
+    {this.props.error && <Alert title={this.props.error.title} type="error">
+      {this.props.error.detail}
+    </Alert>}
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
-      <IssueList title="Issues" appeal={_.pick(this.props.appeal.attributes, 'issues')} />
-      <PowerOfAttorneyDetail title="Power of Attorney" appeal={this.props.appeal} />
+      <CaseDetailsIssueList
+        title="Issues"
+        isLegacyAppeal={this.props.appeal.attributes.is_legacy_appeal}
+        issues={this.props.appeal.attributes.issues}
+      />
+      <PowerOfAttorneyDetail title="Power of Attorney" poa={this.props.appeal.attributes.power_of_attorney} />
       { this.props.appeal.attributes.hearings.length &&
-      <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
-      <AppellantDetail title="About the Veteran" appeal={this.props.appeal} />
+        <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
+      <VeteranDetail title="About the Veteran" appeal={this.props.appeal} />
+      { !_.isNull(this.props.appeal.attributes.appellant_full_name) &&
+        <AppellantDetail title="About the Appellant" appeal={this.props.appeal} /> }
     </StickyNavContentArea>
   </AppSegment>;
 }
 
 CaseDetailsView.propTypes = {
-  vacolsId: PropTypes.string.isRequired,
-  featureToggles: PropTypes.object,
-  userRole: PropTypes.string
+  appealId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({
   appeal: state.caseDetail.activeAppeal,
-  ..._.pick(state.ui, 'breadcrumbs', 'featureToggles', 'userRole'),
-  task: state.caseDetail.activeTask,
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  error: state.ui.messages.error,
+  task: state.caseDetail.activeTask
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearActiveAppealAndTask,
-  pushBreadcrumb,
-  resetBreadcrumbs
+  clearActiveAppealAndTask
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);

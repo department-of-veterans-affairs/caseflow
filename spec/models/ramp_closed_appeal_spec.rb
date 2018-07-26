@@ -1,16 +1,19 @@
 describe RampClosedAppeal do
   before do
-    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
     FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    RequestStore[:current_user] = user
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:vacols_case) { create(:case) }
+  let(:vacols_case) { create(:case, :status_advance) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:ep_status) { "PEND" }
+  let(:partial_closure_issue_sequence_ids) { nil }
+  let(:user) { Generators::User.build }
 
   let(:end_product) do
     Generators::EndProduct.build(
@@ -20,28 +23,49 @@ describe RampClosedAppeal do
   end
 
   let(:ramp_election) do
-    RampElection.new(
-      veteran_file_number: appeal.veteran_file_number,
-      option_selected: :higher_level_review,
-      receipt_date: 6.days.ago,
-      end_product_reference_id: end_product.claim_id,
-      established_at: 2.days.ago
-    )
+    build(:ramp_election,
+          veteran_file_number: appeal.veteran_file_number,
+          option_selected: :higher_level_review,
+          receipt_date: 6.days.ago,
+          established_at: 2.days.ago)
   end
 
   let(:ramp_closed_appeal) do
     RampClosedAppeal.create!(
       vacols_id: appeal.vacols_id,
       nod_date: 2.years.ago,
-      ramp_election: ramp_election
+      ramp_election: ramp_election,
+      partial_closure_issue_sequence_ids: partial_closure_issue_sequence_ids
     )
+  end
+
+  context "#partial?" do
+    subject { ramp_closed_appeal.partial? }
+
+    context "when partial_closure_issue_sequence_ids are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when partial_closure_issue_sequence_ids are set" do
+      let(:partial_closure_issue_sequence_ids) { [1, 2, 3] }
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#reclose!" do
     subject { ramp_closed_appeal.reclose! }
 
     context "when end product was canceled" do
-      let!(:current_end_product) { end_product }
+      let!(:current_end_product) do
+        end_product.tap do |_ep|
+          EndProductEstablishment.create(
+            source: ramp_election,
+            veteran_file_number: ramp_election.veteran_file_number,
+            last_synced_at: Time.zone.now,
+            synced_status: "CAN"
+          )
+        end
+      end
       let(:ep_status) { "CAN" }
 
       it "rolls back the Caseflow ramp election" do
@@ -56,13 +80,12 @@ describe RampClosedAppeal do
     end
 
     context "when appeal is in history status" do
-      let(:vacols_case) { create(:case, :status_complete) }
+      let(:vacols_case) { create(:case, :reopenable, bfdc: "B") }
 
       it "reopens the election and closes it with as a RAMP Opt-in" do
-        expect(LegacyAppeal).to receive(:reopen)
-        expect(LegacyAppeal).to receive(:close)
-
         subject
+
+        expect(vacols_case.reload.bfdc).to eq("P")
       end
 
       context "when appeal was decided by BVA" do
@@ -81,6 +104,19 @@ describe RampClosedAppeal do
 
         subject
       end
+
+      context "when it was a partial closure" do
+        let(:issue) { create(:case_issue) }
+        let(:vacols_case) { create(:case, case_issues: [issue]) }
+        let(:partial_closure_issue_sequence_ids) { [issue.issseq] }
+
+        it "only recloses the issues with a P" do
+          subject
+
+          expect(vacols_case.reload.bfdc).to_not eq("P")
+          expect(issue.reload.issdc).to eq("P")
+        end
+      end
     end
   end
 
@@ -96,21 +132,12 @@ describe RampClosedAppeal do
 
     let(:veteran) { Generators::Veteran.build(file_number: "23232323") }
 
-    let(:canceled_end_product) do
-      Generators::EndProduct.build(
-        veteran_file_number: veteran.file_number,
-        bgs_attrs: { status_type_code: "CAN" }
-      )
-    end
-
     let(:ramp_election_canceled_ep) do
-      RampElection.create(
-        veteran_file_number: veteran.file_number,
-        option_selected: :higher_level_review,
-        receipt_date: 6.days.ago,
-        end_product_reference_id: canceled_end_product.claim_id,
-        established_at: 2.days.ago
-      )
+      create(:ramp_election,
+             veteran_file_number: veteran.file_number,
+             option_selected: :higher_level_review,
+             receipt_date: 6.days.ago,
+             established_at: 2.days.ago)
     end
 
     let!(:ramp_closed_appeals_canceled_ep) do
@@ -128,8 +155,6 @@ describe RampClosedAppeal do
       ]
     end
 
-    let(:user) { Generators::User.build }
-
     before do
       expect(AppealRepository).to receive(:find_ramp_reopened_appeals)
         .with(%w[SHANE1 SHANE2 CANCELED1 CANCELED2] + [appeal.vacols_id])
@@ -138,14 +163,12 @@ describe RampClosedAppeal do
                       OpenStruct.new(vacols_id: "CANCELED1"),
                       OpenStruct.new(vacols_id: "CANCELED2")
                     ])
-
-      RequestStore[:current_user] = user
-
-      FeatureToggle.enable!(:reclose_ramp_appeals_script)
-    end
-
-    after do
-      FeatureToggle.disable!(:reclose_ramp_appeals_script)
+      EndProductEstablishment.create(
+        source: ramp_election_canceled_ep,
+        veteran_file_number: veteran.file_number,
+        last_synced_at: 2.days.ago,
+        synced_status: "CAN"
+      )
     end
 
     it "finds reopened appeals based off of ramp closed appeals and recloses them" do

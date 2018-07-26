@@ -14,15 +14,9 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       setIssueDescription
     } = this.props;
 
-    let disableAddNonRatedIssue;
-
-    if (Object.keys(nonRatedIssues).length === 0) {
-      disableAddNonRatedIssue = false;
-    } else {
-      disableAddNonRatedIssue = Boolean(_.reduce(nonRatedIssues, (result, issue) => {
-        return issue.description ? result : result - 1;
-      }, 0));
-    }
+    const disableAddNonRatedIssue = _.some(nonRatedIssues, (issue) => {
+      return !issue.description;
+    });
 
     const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
       return (
@@ -61,7 +55,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
 class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
-    this.props.setCategory(this.props.id, event.value);
+    this.props.setCategory(this.props.id, event ? event.value : null);
   }
 
   handleDescriptionChange(event) {

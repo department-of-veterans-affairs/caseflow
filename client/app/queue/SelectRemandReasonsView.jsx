@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
+import COPY from '../../COPY.json';
 
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
@@ -28,11 +30,6 @@ class SelectRemandReasonsView extends React.Component {
 
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/remands`
-  });
-
   getNextStepUrl = () => {
     const { appealId, userRole } = this.props;
     const baseUrl = `/queue/appeals/${appealId}`;
@@ -40,15 +37,22 @@ class SelectRemandReasonsView extends React.Component {
     return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
   }
 
+  goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
+
   goToNextStep = () => {
     const { issues } = this.props;
-    const { issuesRendered } = this.state;
+    const {
+      issuesRendered,
+      renderedChildren
+    } = this.state;
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
 
       return false;
     }
+
+    _.each(renderedChildren, (child) => child.updateStoreIssue());
 
     return true;
   }
@@ -78,8 +82,10 @@ class SelectRemandReasonsView extends React.Component {
       {this.getPageName()}
     </h1>
     <p className="cf-lead-paragraph" {...subHeadStyling}>
-      Please {this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'}
-      the appropriate remand reason(s) for all the remand dispositions.
+      {sprintf(
+        COPY.REMAND_REASONS_SCREEN_SUBHEAD_LABEL,
+        this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'
+      )}
     </p>
     <hr />
     {_.map(_.range(this.state.issuesRendered), (idx) =>

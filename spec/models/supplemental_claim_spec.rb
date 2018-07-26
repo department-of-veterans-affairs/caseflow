@@ -1,12 +1,16 @@
 describe SupplementalClaim do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
-  let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
   let(:end_product_status) { nil }
 
@@ -14,9 +18,7 @@ describe SupplementalClaim do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
@@ -92,7 +94,7 @@ describe SupplementalClaim do
 
   context "#create_end_product_and_contentions!" do
     subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -118,7 +120,7 @@ describe SupplementalClaim do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    it "creates end product and saves end_product_establishment" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
@@ -140,7 +142,7 @@ describe SupplementalClaim do
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(supplemental_claim.reload.end_product_reference_id).to eq("454545")
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload).reference_id).to eq("454545")
     end
 
     context "when VBMS throws an error" do

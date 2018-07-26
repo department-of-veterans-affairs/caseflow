@@ -1,6 +1,11 @@
 describe RampRefiling do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:user) { Generators::User.build }
@@ -13,14 +18,12 @@ describe RampRefiling do
   let(:appeal_docket) { nil }
 
   let!(:completed_ramp_election) do
-    RampElection.create!(
-      veteran_file_number: veteran_file_number,
-      notice_date: 3.days.ago,
-      receipt_date: 2.days.ago,
-      option_selected: original_election_option,
-      end_product_reference_id: "123",
-      established_at: 1.day.ago
-    )
+    create(:ramp_election,
+           veteran_file_number: veteran_file_number,
+           notice_date: 3.days.ago,
+           receipt_date: 2.days.ago,
+           option_selected: original_election_option,
+           established_at: 1.day.ago)
   end
 
   let(:ramp_refiling) do
@@ -154,10 +157,10 @@ describe RampRefiling do
     end
 
     context "option_selected" do
-      context "when orginal election was higher level review" do
+      context "when orginal election was Higher-Level Review" do
         let(:original_election_option) { "higher_level_review" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -166,7 +169,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -186,10 +189,10 @@ describe RampRefiling do
         end
       end
 
-      context "when orginal election was higher level review with hearing" do
+      context "when orginal election was Higher-Level Review with hearing" do
         let(:original_election_option) { "higher_level_review_with_hearing" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -198,7 +201,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -217,7 +220,7 @@ describe RampRefiling do
       context "when orginal election was supplemental claim" do
         let(:original_election_option) { "supplemental_claim" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
           it { is_expected.to be true }
         end

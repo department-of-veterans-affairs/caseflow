@@ -67,6 +67,16 @@ describe AppealSeries do
   let(:location_code) { "77" }
   let(:status) { "ADV" }
 
+  # Sometimes there are empty issues in VACOLS; we should ignore these issues
+  before do
+    latest_appeal.issues << Generators::Issue.build(
+      codes: [],
+      labels: [],
+      disposition: nil,
+      close_date: nil
+    )
+  end
+
   context "#vacols_ids" do
     subject { series.vacols_ids }
 
@@ -340,7 +350,7 @@ describe AppealSeries do
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:at_vso)
-        expect(subject[:details][:vso_name]).to eq("Military Order of the Purple Heart")
+        expect(subject[:details][:vso_name]).to eq("The American Legion")
       end
     end
 

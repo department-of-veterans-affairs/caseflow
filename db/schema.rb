@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180607184059) do
+ActiveRecord::Schema.define(version: 20180724145953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,7 +63,8 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_viewed_at"
-    t.index ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true
+    t.string "appeal_type", null: false
+    t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
   end
 
   create_table "appeals", force: :cascade do |t|
@@ -72,6 +73,7 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -164,6 +166,7 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.integer "appeal_id"
     t.string "query"
     t.datetime "created_at"
+    t.string "appeal_type", null: false
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -225,6 +228,22 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.integer "document_id", null: false
     t.integer "tag_id", null: false
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
+  end
+
+  create_table "end_product_establishments", force: :cascade do |t|
+    t.datetime "established_at"
+    t.string "synced_status"
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.string "veteran_file_number", null: false
+    t.string "reference_id"
+    t.date "claim_date"
+    t.string "code"
+    t.string "modifier"
+    t.string "station"
+    t.datetime "last_synced_at"
+    t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
+    t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -427,10 +446,21 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
   end
 
+  create_table "organizations", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.string "role"
+    t.string "feature"
+    t.string "url"
+    t.string "participant_id"
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
     t.date "nod_date"
+    t.string "partial_closure_issue_sequence_ids", array: true
+    t.datetime "closed_on"
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
@@ -467,7 +497,6 @@ ActiveRecord::Schema.define(version: 20180607184059) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "veteran_file_number", null: false
-    t.integer "ramp_election_id"
     t.string "option_selected"
     t.date "receipt_date"
     t.string "end_product_reference_id"
@@ -537,6 +566,11 @@ ActiveRecord::Schema.define(version: 20180607184059) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "appeal_type", null: false
+    t.datetime "placed_on_hold_at"
+    t.integer "on_hold_duration"
+    t.string "assigned_to_type", null: false
+    t.integer "parent_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

@@ -6,17 +6,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Table from '../components/Table';
 import _ from 'lodash';
-import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { renderAppealType } from './utils';
+import { renderAppealType, getTaskDaysWaiting } from './utils';
 import { setSelectionOfTaskOfUser } from './QueueActions';
 
 class JudgeAssignTaskTable extends React.PureComponent {
-  isVacolsIdSelected = (vacolsId) => {
-    const isVacolsIdSelected = this.props.isVacolsIdAssignedToUserSelected[this.props.userId] || {};
+  isTaskSelected = (taskId) => {
+    const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
-    return isVacolsIdSelected[vacolsId] || false;
+    return isTaskSelected[taskId] || false;
   }
 
   getKeyForRow = (rowNumber, { task }) => task.id;
@@ -28,14 +27,14 @@ class JudgeAssignTaskTable extends React.PureComponent {
       header: COPY.JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE,
       valueFunction:
         ({ task }) => <Checkbox
-          name={task.vacolsId}
+          name={task.id}
           hideLabel
-          value={this.isVacolsIdSelected(task.vacolsId)}
+          value={this.isTaskSelected(task.id)}
           onChange={
             (checked) =>
               this.props.setSelectionOfTaskOfUser(
                 { userId: this.props.userId,
-                  vacolsId: task.vacolsId,
+                  taskId: task.id,
                   selected: checked })} />
     },
     {
@@ -60,10 +59,8 @@ class JudgeAssignTaskTable extends React.PureComponent {
     },
     {
       header: COPY.JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: ({ task }) => (
-        moment().
-          startOf('day').
-          diff(moment(task.attributes.assigned_on), 'days'))
+      valueFunction: ({ task }) => getTaskDaysWaiting(task),
+      getSortValue: ({ task }) => getTaskDaysWaiting(task)
     }
   ];
 
@@ -81,7 +78,7 @@ JudgeAssignTaskTable.propTypes = {
   userId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state) => _.pick(state.queue, 'isVacolsIdAssignedToUserSelected');
+const mapStateToProps = (state) => _.pick(state.queue, 'isTaskAssignedToUserSelected');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

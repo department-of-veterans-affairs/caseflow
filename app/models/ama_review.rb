@@ -1,9 +1,9 @@
 class AmaReview < ApplicationRecord
-  include EstablishesEndProduct
+  include CachedAttributes
 
   validate :validate_receipt_date
 
-  AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
+  AMA_BEGIN_DATE = Date.new(2018, 4, 1).freeze
 
   self.abstract_class = true
 
@@ -11,6 +11,10 @@ class AmaReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+
+  cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
+    receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
+  end
 
   def start_review!
     @saving_review = true
@@ -25,6 +29,15 @@ class AmaReview < ApplicationRecord
     claimants.destroy_all
   end
 
+  def claimant_participant_id
+    return nil if claimants.empty?
+    claimants.first.participant_id
+  end
+
+  def claimant_not_veteran
+    claimant_participant_id && claimant_participant_id != veteran.participant_id
+  end
+
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 
@@ -33,17 +46,9 @@ class AmaReview < ApplicationRecord
 
   def create_end_product_and_contentions!
     return nil if contention_descriptions_to_create.empty?
-    establish_end_product!
+    end_product_establishment.perform!
     create_contentions_on_new_end_product!
-  end
-
-  def end_product_description
-    end_product_reference_id && end_product_to_establish.description_with_routing
-  end
-
-  def pending_end_product_description
-    # This is for EPs not yet created or that failed to create
-    end_product_to_establish.modifier
+    update! established_at: Time.zone.now
   end
 
   def veteran
@@ -51,6 +56,18 @@ class AmaReview < ApplicationRecord
   end
 
   private
+
+  def end_product_establishment
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def timely_ratings_cache_key
+    "#{veteran_file_number}-#{formatted_receipt_date}"
+  end
+
+  def formatted_receipt_date
+    receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
+  end
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
@@ -77,7 +94,7 @@ class AmaReview < ApplicationRecord
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_reference_id,
+      claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
     )
   end

@@ -1,10 +1,12 @@
-import { after, css, merge } from 'glamor';
+import { css } from 'glamor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import { appealsByAssignedTaskSelector } from './selectors';
+import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
 import COPY from '../../COPY.json';
@@ -25,20 +27,6 @@ const snapshotParentContainerStyling = css({
   '& > div:first-child': { paddingLeft: '3rem' },
 
   '& .Select': { maxWidth: '100%' }
-});
-
-const definitionListStyling = css({
-  margin: '0',
-  '& dt': merge(
-    after({ content: ':' }),
-    {
-      color: COLORS.GREY_MEDIUM,
-      float: 'left',
-      fontSize: '1.5rem',
-      marginRight: '0.5rem',
-      textTransform: 'uppercase'
-    }
-  )
 });
 
 const headingStyling = css({
@@ -117,30 +105,30 @@ export class CaseSnapshot extends React.PureComponent {
     let CheckoutDropdown = <React.Fragment />;
 
     if (this.props.userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
-    } else if (this.props.featureToggles.judge_assignment) {
-      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown vacolsId={appeal.vacols_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
+    } else if (this.props.featureToggles.judge_case_review_checkout) {
+      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
-        <dl {...definitionListStyling}>
+        <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderAppealType(this.props.appeal)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}
-        </dl>
+        </CaseDetailsDescriptionList>
       </div>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
-        <dl {...definitionListStyling}>
+        <CaseDetailsDescriptionList>
           {this.taskAssignmentListItems()}
-        </dl>
+        </CaseDetailsDescriptionList>
       </div>
-      { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+      {!this.props.hideDropdown &&
+        this.props.appealsAssignedToCurrentUser.includes(appeal.vacols_id) &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
@@ -153,14 +141,15 @@ export class CaseSnapshot extends React.PureComponent {
 CaseSnapshot.propTypes = {
   appeal: PropTypes.object.isRequired,
   featureToggles: PropTypes.object,
-  loadedQueueAppealIds: PropTypes.array,
+  appealsAssignedToCurrentUser: PropTypes.array,
   task: PropTypes.object,
-  userRole: PropTypes.string
+  userRole: PropTypes.string,
+  hideDropdown: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  appealsAssignedToCurrentUser: Object.keys(appealsByAssignedTaskSelector(state))
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

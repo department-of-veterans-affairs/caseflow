@@ -16,10 +16,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb
-  ref: be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb
+  revision: 8dde00d67b7c629e4b871f8dcb3617bfe989b3db
+  ref: 8dde00d67b7c629e4b871f8dcb3617bfe989b3db
   specs:
-    caseflow (0.3.7)
+    caseflow (0.3.8)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
@@ -30,8 +30,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: fd9771bafc48d98b56909c4466721da312a22739
-  ref: fd9771bafc48d98b56909c4466721da312a22739
+  revision: b4d61f190ac8f6f397db245a257a89238970a224
+  ref: b4d61f190ac8f6f397db245a257a89238970a224
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -44,8 +44,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: bc9c89591ac5830939476bd6eb96c1a2b415fdcb
-  ref: bc9c89591ac5830939476bd6eb96c1a2b415fdcb
+  revision: 60a4d8a569cc7fd35a71f6f230151f9f7be1e270
+  ref: 60a4d8a569cc7fd35a71f6f230151f9f7be1e270
   specs:
     bgs (0.2)
       nokogiri (~> 1.8.2)
@@ -121,6 +121,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    acts_as_tree (2.7.1)
+      activerecord (>= 3.0.0)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     akami (1.3.1)
@@ -264,7 +266,7 @@ GEM
     newrelic_rpm (4.7.1.340)
     nio4r (2.3.0)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.2)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     octokit (4.8.0)
@@ -491,6 +493,7 @@ DEPENDENCIES
   activerecord-import
   activerecord-jdbcsqlite3-adapter
   activerecord-oracle_enhanced-adapter
+  acts_as_tree
   bgs!
   brakeman
   bundler-audit
@@ -514,6 +517,7 @@ DEPENDENCIES
   launchy
   moment_timezone-rails
   newrelic_rpm
+  nokogiri (>= 1.8.3)
   paper_trail (= 8.1.2)
   parallel
   paranoia (~> 2.2)
@@ -556,4 +560,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.1
+   1.16.2

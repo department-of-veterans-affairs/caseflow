@@ -6,7 +6,7 @@ class HearingDay
   HEARING_TYPES = {
     video: "V",
     travel: "T",
-    central_office: "C"
+    central: "C"
   }.freeze
 
   class << self
@@ -18,8 +18,20 @@ class HearingDay
       HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
     end
 
-    def load_days_for_range(start_date, end_date)
-      HearingDayRepository.load_days_for_range(start_date, end_date)
+    def create_schedule(scheduled_hearings)
+      HearingDayRepository.create_schedule(scheduled_hearings)
+    end
+
+    def update_schedule(updated_hearings)
+      HearingDayRepository.update_schedule(updated_hearings)
+    end
+
+    def load_days(start_date, end_date, regional_office = nil)
+      if regional_office.nil?
+        HearingDayRepository.load_days_for_range(start_date, end_date)
+      else
+        HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
+      end
     end
 
     def find_hearing_day(hearing_type, hearing_key)

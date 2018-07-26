@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
-import StringUtil from '../util/StringUtil';
 import scrollToComponent from 'react-scroll-to-component';
+import { sprintf } from 'sprintf-js';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -16,13 +16,17 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import Alert from '../components/Alert';
 
-import { setDecisionOptions } from './QueueActions';
+import { deleteAppeal } from './QueueActions';
+import { requestSave } from './uiReducer/uiActions';
+import { buildCaseReviewPayload } from './utils';
 
 import COPY from '../../COPY.json';
+import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
 import {
   marginBottom, marginTop,
   marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES
+  fullWidth, redText, PAGE_TITLES,
+  ISSUE_DISPOSITIONS
 } from './constants';
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
@@ -47,10 +51,11 @@ class EvaluateDecisionView extends React.PureComponent {
     super(props);
 
     this.state = {
-      caseComplexity: null,
-      caseQuality: null,
-      additionalFactors: '',
-      areasOfImprovement: {}
+      complexity: null,
+      quality: null,
+      factors_not_considered: {},
+      areas_for_improvement: {},
+      comment: ''
     };
   }
 
@@ -60,12 +65,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   getPageName = () => PAGE_TITLES.EVALUATE;
 
-  getBreadcrumb = () => ({
-    breadcrumb: this.getPageName(),
-    path: `/queue/appeals/${this.props.appealId}/evaluate`
-  });
-
-  caseQualityIsDeficient = () => this.state.caseQuality > 0 && this.state.caseQuality < 3;
+  qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
   // moving these into DecisionViewBase didn't work for some reason :\
@@ -78,70 +78,93 @@ class EvaluateDecisionView extends React.PureComponent {
 
   validateForm = () => {
     const {
-      areasOfImprovement,
-      caseComplexity,
-      caseQuality
+      areas_for_improvement,
+      factors_not_considered,
+      complexity,
+      quality
     } = this.state;
 
-    if (!caseComplexity) {
-      this.scrollTo(this.caseComplexityLabel);
+    if (!complexity) {
+      this.scrollTo(this.complexityLabel);
 
       return false;
     }
 
-    if (!caseQuality) {
-      this.scrollTo(this.caseQualityLabel);
+    if (!quality) {
+      this.scrollTo(this.qualityLabel);
 
       return false;
     }
 
-    if (this.caseQualityIsDeficient() && _.isEmpty(areasOfImprovement)) {
-      this.scrollTo(this.deficientCaseQualityAlert);
+    // eslint-disable-next-line camelcase
+    if (this.qualityIsDeficient() && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
+      this.scrollTo(this.deficientQualityAlert);
 
       return false;
     }
-
-    this.props.setDecisionOptions(this.state);
 
     return true;
   };
 
-  getAreasOfImprovement = () => [
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_THEORY,
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_CASELAW,
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_STATUE,
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_ADMIN,
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_RELEVANT,
-    COPY.JUDGE_EVALUATE_DECISION_FACTORS_NOT_CONSIDERED_LAY,
-    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_IMPROPERLY_ADDRESSED,
-    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_FINDINGS_NOT_SUPPORTED,
-    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_DUE_PROCESS,
-    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_INCOMPLETE_REMANDS,
-    COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_ERRORS
-  ].map((opt) => ({
-    id: StringUtil.parameterize(opt),
-    label: opt
-  }));
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal: { attributes: appeal }
+    } = this.props;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const prevUrl = `/queue/appeals/${appealId}`;
 
-  setAreasOfImprovement = (event) => {
+    return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+      `${prevUrl}/remands` :
+      `${prevUrl}/dispositions`;
+  }
+
+  goToNextStep = () => {
+    const {
+      task: { attributes: task },
+      appeal: { attributes: appeal },
+      decision,
+      userRole,
+      appealId
+    } = this.props;
+    const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+      location: 'bva_dispatch',
+      ...this.state
+    });
+    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+
+    this.props.requestSave(`/case_reviews/${task.task_id}/complete`, payload, successMsg).
+      then(() => this.props.deleteAppeal(appealId));
+  }
+
+  getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],
+    (value, key) => ({
+      id: key,
+      label: value
+    }));
+
+  setStateAttrList = (event, key = 'factors_not_considered') => {
     const factor = event.target.name;
-    const newOpts = this.state.areasOfImprovement;
+    const newOpts = this.state[key];
 
-    if (factor in this.state.areasOfImprovement) {
+    if (factor in this.state[key]) {
       delete newOpts[factor];
     } else {
       newOpts[factor] = true;
     }
 
-    this.setState({ areasOfImprovement: newOpts });
+    this.setState({ [key]: newOpts });
   }
+
+  setAreasOfImprovement = (event) => this.setStateAttrList(event, 'areas_for_improvement');
 
   render = () => {
     const {
       appeal: { attributes: appeal },
       task: { attributes: task },
       appealId,
-      highlight
+      highlight,
+      error
     } = this.props;
     const dateAssigned = moment(task.assigned_on);
     const decisionSubmitted = moment(task.previous_task.assigned_on);
@@ -151,7 +174,7 @@ class EvaluateDecisionView extends React.PureComponent {
     return <React.Fragment>
       <CaseTitle
         heading={appeal.veteran_full_name}
-        vacolsId={appealId}
+        appealId={appealId}
         appeal={this.props.appeal}
         analyticsSource="evaluate_decision"
         taskType="Dispatch"
@@ -159,7 +182,10 @@ class EvaluateDecisionView extends React.PureComponent {
       <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
+      {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
+        {error.detail}
+      </Alert>}
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -170,57 +196,39 @@ class EvaluateDecisionView extends React.PureComponent {
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling} ref={(node) => this.caseComplexityLabel = node}>
+      <h2 {...headerStyling} ref={(node) => this.complexityLabel = node}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
-        onChange={(caseComplexity) => this.setState({ caseComplexity })}
-        value={this.state.caseComplexity}
+        onChange={(complexity) => this.setState({ complexity })}
+        value={this.state.complexity}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseComplexity ? 'Choose one' : null}
-        options={[{
-          value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY.toLowerCase(),
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_EASY
-        }, {
-          value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_MEDIUM.toLowerCase(),
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_MEDIUM
-        }, {
-          value: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_HARD.toLowerCase(),
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_HARD
-        }]} />
+        errorMessage={highlight && !this.state.complexity ? 'Choose one' : null}
+        options={_.map(JUDGE_CASE_REVIEW_OPTIONS.COMPLEXITY, (value, key) => ({
+          value: key,
+          displayText: value
+        }))} />
 
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling} ref={(node) => this.caseQualityLabel = node}>
+      <h2 {...headerStyling} ref={(node) => this.qualityLabel = node}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD}</h3>
       <RadioField vertical hideLabel
         name={COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
-        onChange={(caseQuality) => this.setState({ caseQuality })}
-        value={this.state.caseQuality}
+        onChange={(quality) => this.setState({ quality })}
+        value={this.state.quality}
         styling={css(marginBottom(0), errorStylingNoTopMargin)}
-        errorMessage={highlight && !this.state.caseQuality ? 'Choose one' : null}
-        options={[{
-          value: '5',
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_5
-        }, {
-          value: '4',
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_4
-        }, {
-          value: '3',
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_3
-        }, {
-          value: '2',
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_2
-        }, {
-          value: '1',
-          displayText: COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_1
-        }]} />
+        errorMessage={highlight && !this.state.quality ? 'Choose one' : null}
+        options={_.map(JUDGE_CASE_REVIEW_OPTIONS.QUALITY, (val, key, obj) => ({
+          value: key,
+          displayText: `${_.size(obj) - Object.keys(obj).indexOf(key)} - ${val}`
+        }))} />
 
-      {this.caseQualityIsDeficient() && <Alert ref={(node) => this.deficientCaseQualityAlert = node}
+      {this.qualityIsDeficient() && <Alert ref={(node) => this.deficientQualityAlert = node}
         type="info"
         scrollOnAlert={false}
         styling={qualityOfWorkAlertStyling}>
@@ -229,10 +237,10 @@ class EvaluateDecisionView extends React.PureComponent {
       </Alert>}
 
       <div {...css(setWidth('100%'), marginTop(4))}>
-        <h3 {...css(headerStyling, { float: this.caseQualityIsDeficient() ? 'left' : '' })}>
+        <h3 {...css(headerStyling, { float: this.qualityIsDeficient() ? 'left' : '' })}>
           {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
         </h3>
-        {this.caseQualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
+        {this.qualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
       </div>
       <div {...twoColumnContainerStyling}>
         <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
@@ -240,17 +248,17 @@ class EvaluateDecisionView extends React.PureComponent {
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
             onChange={this.setAreasOfImprovement}
-            errorState={highlight && this.caseQualityIsDeficient() && _.isEmpty(this.state.areasOfImprovement)}
-            value={this.state.areasOfImprovement}
-            options={this.getAreasOfImprovement().slice(0, 6)} />
+            errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
+            value={this.state.areas_for_improvement}
+            options={this.getDisplayOptions('areas_for_improvement')} />
         </div>
         <div className="cf-push-left">
           <CheckboxGroup
             hideLabel vertical
             name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={this.setAreasOfImprovement}
-            value={this.state.areasOfImprovement}
-            options={this.getAreasOfImprovement().slice(6)} />
+            onChange={this.setStateAttrList}
+            value={this.state.factors_not_considered}
+            options={this.getDisplayOptions('factors_not_considered')} />
         </div>
       </div>
 
@@ -263,8 +271,8 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
-        value={this.state.additionalFactors}
-        onChange={(additionalFactors) => this.setState({ additionalFactors })} />
+        value={this.state.comment}
+        onChange={(comment) => this.setState({ comment })} />
     </React.Fragment>;
   };
 }
@@ -274,14 +282,18 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
-  taskOptions: state.queue.stagedChanges.taskDecision.opts
+  taskOptions: state.queue.stagedChanges.taskDecision.opts,
+  decision: state.queue.stagedChanges.taskDecision,
+  userRole: state.ui.userRole,
+  error: state.ui.messages.error
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDecisionOptions
+  deleteAppeal,
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(EvaluateDecisionView));

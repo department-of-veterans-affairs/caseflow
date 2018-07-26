@@ -1,8 +1,6 @@
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 
-  belongs_to :ramp_election
-
   before_validation :clear_appeal_docket_if_not_appeal
 
   validate :validate_receipt_date, :validate_option_selected
@@ -79,7 +77,7 @@ class RampRefiling < RampReview
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_reference_id,
+      claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
     )
   end
