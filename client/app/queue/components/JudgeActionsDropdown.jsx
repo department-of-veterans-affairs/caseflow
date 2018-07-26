@@ -98,9 +98,9 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
       this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
         then(() => {
-          this.props.deleteAppeal(appealId);
           history.push('');
           history.replace('/queue');
+          this.props.deleteAppeal(appealId);
         });
     } else {
       this.stageAppeal();
