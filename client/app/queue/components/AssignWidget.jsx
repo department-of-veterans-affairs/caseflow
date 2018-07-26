@@ -150,6 +150,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         {selectedAssignee === OTHER &&
           <React.Fragment>
+            <div {...css({ width: '100%' })} />
             <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
               name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
