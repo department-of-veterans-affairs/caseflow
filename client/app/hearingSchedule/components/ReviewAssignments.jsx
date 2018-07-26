@@ -13,7 +13,8 @@ import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
-const tableBorder = css({
+const tableStyling = css({
+  '& > thead > tr > th': { backgroundColor: '#dadbdc' },
   border: '1px solid #dadbdc'
 });
 
@@ -139,7 +140,7 @@ export default class ReviewAssignments extends React.Component {
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
       />
       <Table
-        styling={tableBorder}
+        styling={tableStyling}
         columns={hearingAssignmentColumns}
         rowObjects={hearingAssignmentRows}
         summary="hearing-assignments"
