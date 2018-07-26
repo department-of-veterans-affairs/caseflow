@@ -6,7 +6,7 @@ FactoryBot.define do
       end
     end
 
-    sequence(:veteran_file_number, 100_000_000)
+    sequence(:veteran_file_number, 500_000_000)
 
     transient do
       veteran nil
