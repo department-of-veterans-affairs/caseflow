@@ -3,10 +3,11 @@ RSpec.describe Idt::AuthenticationsController, type: :controller do
     let(:one_time_key) do
       Idt::Token.generate_one_time_key_and_proposed_token[0]
     end
+    let(:css_id) { "TEST_ID" }
 
     let(:activated_one_time_key) do
       key = Idt::Token.generate_one_time_key_and_proposed_token[0]
-      Idt::Token.activate_proposed_token(key)
+      Idt::Token.activate_proposed_token(key, css_id)
       key
     end
 
