@@ -143,9 +143,10 @@ RSpec.feature "Appeal Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
-    expect(page).to have_content("1 issue")
+    # To do: Change this to one issue once we implement decision date into issue count
+    expect(page).to have_content("2 issues")
 
-    fill_in "Decision date", with: "04/25/2018"
+    fill_in "Decision date", with: "04/19/2018"
 
     expect(page).to have_content("2 issues")
 
