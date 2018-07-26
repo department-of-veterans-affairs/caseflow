@@ -20,7 +20,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   let!(:veteran) do
-    Generators::Veteran.create(
+    Generators::Veteran.build(
       file_number: "22334455",
       first_name: "Ed",
       last_name: "Merica",
