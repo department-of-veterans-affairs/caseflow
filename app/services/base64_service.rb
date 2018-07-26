@@ -5,6 +5,7 @@ class Base64Service
     decoded_base64_content = Base64.decode64(regex_result.to_s)
     tempfile = Tempfile.new(file_name, encoding: "ISO-8859-1")
     tempfile.write(decoded_base64_content.force_encoding("ISO-8859-1"))
+    tempfile.rewind
     ActionDispatch::Http::UploadedFile.new(
       tempfile: tempfile,
       filename: file_name,

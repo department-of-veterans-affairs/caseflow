@@ -16,14 +16,14 @@ RSpec.describe TasksController, type: :controller do
     before do
       User.stub = user
       create(:staff, role, sdomainid: user.css_id)
-      create(:colocated_admin_action, assigned_by: user)
-      create(:colocated_admin_action, assigned_by: user)
-      create(:colocated_admin_action, assigned_by: user, status: "completed")
+      create(:colocated_task, assigned_by: user)
+      create(:colocated_task, assigned_by: user)
+      create(:colocated_task, assigned_by: user, status: "completed")
 
-      create(:colocated_admin_action, assigned_to: user)
-      create(:colocated_admin_action, assigned_to: user, status: "in_progress")
-      create(:colocated_admin_action, assigned_to: user, status: "completed")
-      create(:colocated_admin_action)
+      create(:colocated_task, assigned_to: user)
+      create(:colocated_task, assigned_to: user, status: "in_progress")
+      create(:colocated_task, assigned_to: user, status: "completed")
+      create(:colocated_task)
     end
 
     context "when user is an attorney" do
@@ -106,7 +106,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "appeal_id": appeal.id,
-            "type": "CoLocatedAdminAction"
+            "type": "ColocatedTask"
           }]
         end
 
@@ -123,13 +123,13 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             [{
               "appeal_id": appeal.id,
-              "type": "CoLocatedAdminAction",
+              "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
             },
              {
                "appeal_id": appeal.id,
-               "type": "CoLocatedAdminAction",
+               "type": "ColocatedTask",
                "title": "substituation_determination",
                "instructions": "another one"
              }]
@@ -160,7 +160,7 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             {
               "appeal_id": appeal.id,
-              "type": "CoLocatedAdminAction",
+              "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
             }
@@ -182,7 +182,7 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             [{
               "appeal_id": 4_646_464,
-              "type": "CoLocatedAdminAction",
+              "type": "ColocatedTask",
               "title": "address_verification"
             }]
           end
@@ -206,7 +206,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when updating status to in-progress and on-hold" do
-      let(:admin_action) { create(:colocated_admin_action, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_to: user) }
 
       it "should update successfully" do
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
@@ -224,7 +224,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when updating status to completed" do
-      let(:admin_action) { create(:colocated_admin_action, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_to: user) }
 
       it "should update successfully" do
         patch :update, params: { task: { status: "completed" }, id: admin_action.id }
@@ -236,7 +236,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when some other user updates another user's task" do
-      let(:admin_action) { create(:colocated_admin_action, assigned_to: create(:user)) }
+      let(:admin_action) { create(:colocated_task, assigned_to: create(:user)) }
 
       it "should return not be successful" do
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
