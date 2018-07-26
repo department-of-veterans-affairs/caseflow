@@ -103,7 +103,7 @@ export class CaseSnapshot extends React.PureComponent {
       return false;
     }
     if (this.props.appealsAssignedToCurrentUser.
-      some((appealIterator) => appealIterator.attributes.vacols_id === appeal.vacols_id)) {
+      some((appealIterator) => appealIterator.attributes.vacols_id === this.props.appeal.vacols_id)) {
       return true;
     }
     if (!this.props.task) {

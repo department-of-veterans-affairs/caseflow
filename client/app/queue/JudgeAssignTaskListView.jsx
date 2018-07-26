@@ -20,7 +20,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
 } from './QueueActions';
-import { judgeAssignTasksSelector, getAppealsByUserId } from './selectors';
+import { judgeAssignAppealsSelector, getAppealsByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -130,7 +130,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    unassignedAppealsCount: unassignedAppealsSelector(state).length,
+    unassignedAppealsCount: judgeAssignAppealsSelector(state).length,
     appealsByUserId: getAppealsByUserId(state),
     attorneysOfJudge,
     attorneyAppealsLoadingState,
