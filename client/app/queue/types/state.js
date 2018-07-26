@@ -7,7 +7,7 @@ import type {
   Attorneys
 } from './models';
 
-export type TasksAndAppealsOfAttorney = {
+export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
     data: {tasks: Tasks, appeals: LegacyAppeals},
@@ -65,7 +65,7 @@ export type QueueState = {
     }
   },
   attorneysOfJudge: AttorneysOfJudge,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys
 };
