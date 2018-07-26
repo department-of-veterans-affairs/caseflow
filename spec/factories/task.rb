@@ -25,8 +25,8 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
-    factory :colocated_admin_action do
-      type "CoLocatedAdminAction"
+    factory :colocated_task do
+      type "ColocatedTask"
       title "poa_clarification"
       instructions "poa is missing"
 
@@ -36,7 +36,7 @@ FactoryBot.define do
     end
 
     factory :ama_colocated_task do
-      type "CoLocatedAdminAction"
+      type "ColocatedTask"
       title "poa_clarification"
       instructions "poa is missing"
       appeal_type "Appeal"
