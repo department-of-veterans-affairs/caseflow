@@ -37,7 +37,6 @@ class Idt::Api::V1::AppealsController < ActionController::Base
     LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
   end
 
-
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
