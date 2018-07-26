@@ -57,6 +57,16 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     render json: { id: schedule_period.id }
   end
 
+  def download
+    schedule_period = SchedulePeriod.find_by(file_name: params[:file_name])
+    schedule_period.spreadsheet
+    send_file(
+      schedule_period.spreadsheet_location,
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      disposition: "attachment; filename='#{schedule_period.file_name}'"
+    )
+  end
+
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
   end

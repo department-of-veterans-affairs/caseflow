@@ -108,6 +108,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:index]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update], param: :schedule_period_id
+    resources :schedule_periods, only: [:download], param: :file_name
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -118,6 +119,7 @@ Rails.application.routes.draw do
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
+  get 'hearings/schedule/:file_name/download', to: "hearings/schedule_periods#download"
 
   resources :hearings, only: [:update]
 

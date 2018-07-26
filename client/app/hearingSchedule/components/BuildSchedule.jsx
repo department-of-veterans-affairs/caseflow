@@ -74,7 +74,7 @@ export default class BuildSchedule extends React.Component {
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
-      download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
+      download: <Link name="download" to={`${pastUpload.fileName}/download`}>Download {downloadIcon(COLORS.PRIMARY)}</Link>
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&

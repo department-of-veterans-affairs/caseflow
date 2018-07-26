@@ -111,4 +111,13 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       expect(response_body["id"]).to eq judge_schedule_period.id
     end
   end
+
+  context "download spreadsheet from S3" do
+    it "downloads from S3 and saves in client computer" do
+      get :download, params: {
+          file_name: ro_schedule_period.file_name
+      }, as: :json
+      expect(response.status).to eq 200
+    end
+  end
 end
