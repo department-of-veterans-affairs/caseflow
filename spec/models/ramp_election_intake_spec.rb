@@ -137,8 +137,11 @@ describe RampElectionIntake do
 
       subject
 
-      expect(intake.reload).to be_success
+      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(resultant_end_product_establishment).not_to be_nil
+      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
 
       expect(appeal_to_fully_close.case_record.reload).to have_attributes(
         bfmpro: "HIS",
@@ -199,23 +202,12 @@ describe RampElectionIntake do
 
         expect(intake.reload).to be_success
         expect(intake.error_code).to eq("connected_preexisting_ep")
-        expect(detail.end_product_reference_id).to eq(matching_ep.claim_id)
       end
     end
 
     describe "if there are existing ramp elections" do
       let(:existing_option_selected) { "supplemental_claim" }
       let(:status_type_code) { "PEND" }
-
-      let!(:existing_ramp_election) do
-        create(:ramp_election,
-               veteran_file_number: veteran_file_number,
-               notice_date: 40.days.ago,
-               option_selected: existing_option_selected,
-               receipt_date: 38.days.ago,
-               established_at: 38.days.ago,
-               end_product_reference_id: preexisting_ep.claim_id)
-      end
 
       let(:preexisting_ep) do
         Generators::EndProduct.build(
@@ -227,6 +219,23 @@ describe RampElectionIntake do
             end_product_type_code: "683"
           }
         )
+      end
+
+      let!(:existing_ramp_election) do
+        re = create(:ramp_election,
+                    veteran_file_number: veteran_file_number,
+                    notice_date: 40.days.ago,
+                    option_selected: existing_option_selected,
+                    receipt_date: 38.days.ago,
+                    established_at: 38.days.ago)
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: re,
+          reference_id: preexisting_ep.claim_id,
+          synced_status: status_type_code,
+          last_synced_at: 38.days.ago
+        )
+        re
       end
 
       context "the existing RAMP election EP is active" do
@@ -271,7 +280,7 @@ describe RampElectionIntake do
         end
       end
 
-      context "exiting RAMP election EP is a different type" do
+      context "existing RAMP election EP is a different type" do
         let(:existing_option_selected) { "higher_level_review" }
 
         it "establishes new ramp election" do
@@ -450,20 +459,17 @@ describe RampElectionIntake do
 
   context "#validate_start" do
     subject { intake.validate_start }
-    let(:end_product_reference_id) { nil }
     let(:established_at) { nil }
     let!(:ramp_appeal) { vacols_case }
     let!(:ramp_election) do
       create(:ramp_election,
              veteran_file_number: "64205555",
              notice_date: 6.days.ago,
-             end_product_reference_id: end_product_reference_id,
              established_at: established_at)
     end
     let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
     context "the ramp election is complete" do
-      let(:end_product_reference_id) { 1 }
       let(:established_at) { Time.zone.now }
 
       it "returns true even if there is an existing ramp election" do

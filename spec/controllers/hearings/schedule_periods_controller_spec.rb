@@ -31,8 +31,8 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       post :create, params: {
         schedule_period: {
           type: "RoSchedulePeriod",
-          start_date: "2015/10/24",
-          end_date: "2016/10/24",
+          start_date: "2018/01/01",
+          end_date: "2018/06/01",
           file_name: "fakeFileName.xlsx"
         },
         file: base64_header + Base64.encode64(File.open("spec/support/validRoSpreadsheet.xlsx").read)
@@ -40,6 +40,23 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["id"]).to eq id
+    end
+
+    it "returns an error for an invalid spreadsheet" do
+      error = "Validation failed: HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed"
+      base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
+      post :create, params: {
+        schedule_period: {
+          type: "RoSchedulePeriod",
+          start_date: "2018/01/01",
+          end_date: "2018/06/01",
+          file_name: "fakeFileName.xlsx"
+        },
+        file: base64_header + Base64.encode64(File.open("spec/support/roTemplateNotFollowed.xlsx").read)
+      }
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["error"]).to eq error
     end
   end
 
