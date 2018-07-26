@@ -386,11 +386,12 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def activated?
-    # An appeal will be in this status if the board is currently working on it.
+    # An appeal is currently at the board, and it has passed some data checks
     status == "Active"
   end
 
   def active?
+    # All issues on an appeal have not yet been granted or denied
     status != "Complete"
   end
 
