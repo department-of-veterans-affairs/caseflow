@@ -62,7 +62,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   private
 
   def fetch_judge_details
-    raise NoJudgesProvided if @judges.keys.empty?
+    fail NoJudgesProvided if @judges.keys.empty?
 
     VACOLS::Staff.load_users_by_css_ids(@judges.keys).map do |judge|
       user = User.find_by(css_id: judge.sdomainid)
@@ -114,12 +114,11 @@ class HearingSchedule::AssignJudgesToHearingDays
     non_availabilities = @schedule_period.non_availabilities
 
     non_availabilities.each do |non_availability|
-      if non_availability.instance_of? JudgeNonAvailability
-        css_id = non_availability.object_identifier
-        @judges[css_id] ||= {}
-        @judges[css_id][:non_availabilities] ||= Set.new
-        @judges[css_id][:non_availabilities] << non_availability.date
-      end
+      next unless non_availability.instance_of? JudgeNonAvailability
+      css_id = non_availability.object_identifier
+      @judges[css_id] ||= {}
+      @judges[css_id][:non_availabilities] ||= Set.new
+      @judges[css_id][:non_availabilities] << non_availability.date
     end
   end
 
