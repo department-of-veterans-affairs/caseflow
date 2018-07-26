@@ -11,6 +11,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
+    @errors = []
     @spreadsheet_template = get_spreadsheet_data.judge_non_availability_template
     @spreadsheet_data = get_spreadsheet_data.judge_non_availability_data
     @start_date = start_date
@@ -21,34 +22,37 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
            @spreadsheet_template[:example_row] == SPREADSHEET_EXAMPLE_ROW &&
            @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
-      fail JudgeTemplateNotFollowed
+      @errors << JudgeTemplateNotFollowed
     end
+  end
+
+  def find_user(css_id, name)
+    User.where(css_id: css_id,
+               full_name: name.split(", ").reverse.join(" ")).count > 0
+  end
+
+  def check_range_of_dates(date)
+    !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
   end
 
   def validate_judge_non_availability_dates
     unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
-      fail JudgeDatesNotCorrectFormat
+      @errors << JudgeDatesNotCorrectFormat
     end
     unless @spreadsheet_data.uniq == @spreadsheet_data
-      fail JudgeDatesNotUnique
+      @errors << JudgeDatesNotUnique
     end
-    unless @spreadsheet_data.all? do |row|
-      row["date"] >= @start_date &&
-      row["date"] <= @end_date
+    unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
+      @errors << JudgeDatesNotInRange
     end
-      fail JudgeDatesNotInRange
+    unless @spreadsheet_data.all? { |row| find_user(row["css_id"], row["name"]) }
+      @errors << JudgeNotInDatabase
     end
-    unless @spreadsheet_data.all? do |row|
-             User.where(css_id: row["css_id"],
-                        full_name: row["name"].split(", ").reverse.join(" ")).count > 0
-           end
-      fail JudgeNotInDatabase
-    end
-    true
   end
 
   def validate
     validate_judge_non_availability_template
     validate_judge_non_availability_dates
+    @errors
   end
 end

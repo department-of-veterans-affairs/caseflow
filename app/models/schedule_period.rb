@@ -1,4 +1,8 @@
 class SchedulePeriod < ApplicationRecord
+  validate :validate_schedule_period, on: :create
+
+  class OverlappingSchedulePeriods < StandardError; end
+
   include CachedAttributes
 
   belongs_to :user
@@ -10,6 +14,14 @@ class SchedulePeriod < ApplicationRecord
   end
 
   delegate :full_name, to: :user, prefix: true
+
+  def validate_schedule_period
+    SchedulePeriod.where(type: type, finalized: true).find_each do |sp|
+      if sp.start_date <= start_date && start_date <= sp.end_date
+        errors[:base] << OverlappingSchedulePeriods
+      end
+    end
+  end
 
   def spreadsheet_location
     File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)

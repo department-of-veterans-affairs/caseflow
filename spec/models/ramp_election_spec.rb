@@ -23,29 +23,40 @@ describe RampElection do
           notice_date: notice_date,
           option_selected: option_selected,
           receipt_date: receipt_date,
-          end_product_reference_id: end_product_reference_id,
           established_at: established_at,
           end_product_status: end_product_status)
   end
 
   context ".active scope" do
     it "includes any RampElection where end_product_status is nil or not inactive" do
-      create(:ramp_election,
-             veteran_file_number: "1",
-             notice_date: 1.day.ago,
-             receipt_date: 1.day.ago,
-             end_product_status: "ACTIVE")
-      create(:ramp_election,
-             veteran_file_number: "11",
-             notice_date: 1.day.ago,
-             receipt_date: 1.day.ago,
-             established_at: Time.zone.now,
-             end_product_status: "ACTIVE")
-      create(:ramp_election,
-             veteran_file_number: "2",
-             notice_date: 1.day.ago,
-             receipt_date: 1.day.ago,
-             end_product_status: EndProduct::INACTIVE_STATUSES.first)
+      ep1 = create(:ramp_election,
+                   veteran_file_number: "1",
+                   notice_date: 1.day.ago,
+                   receipt_date: 1.day.ago)
+      EndProductEstablishment.create(
+        source: ep1,
+        veteran_file_number: "1",
+        synced_status: "ACTIVE"
+      )
+      ep11 = create(:ramp_election,
+                    veteran_file_number: "11",
+                    notice_date: 1.day.ago,
+                    receipt_date: 1.day.ago,
+                    established_at: Time.zone.now)
+      EndProductEstablishment.create(
+        source: ep11,
+        veteran_file_number: "11",
+        synced_status: "ACTIVE"
+      )
+      ep2 = create(:ramp_election,
+                   veteran_file_number: "2",
+                   notice_date: 1.day.ago,
+                   receipt_date: 1.day.ago)
+      EndProductEstablishment.create(
+        source: ep2,
+        veteran_file_number: "2",
+        synced_status: EndProduct::INACTIVE_STATUSES.first
+      )
       create(:ramp_election,
              veteran_file_number: "3",
              notice_date: 1.day.ago,
@@ -60,8 +71,15 @@ describe RampElection do
 
     subject { ramp_election.sync! }
 
-    let!(:ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
-    let(:end_product_reference_id) { ep.claim_id }
+    let!(:ep) do
+      Generators::EndProduct.build(veteran_file_number: veteran_file_number).tap do |end_product|
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product.claim_id
+        )
+      end
+    end
 
     it "calls recreate_issues_from_contentions! and sync_ep_status!" do
       expect(ramp_election).to receive(:recreate_issues_from_contentions!)
@@ -99,7 +117,7 @@ describe RampElection do
     end
 
     context "when option_selected is set" do
-      let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+      let(:veteran) { Veteran.create(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
 
       context "when option receipt_date is nil" do
@@ -132,7 +150,7 @@ describe RampElection do
           veteran_hash: veteran.to_vbms_hash
         )
 
-        expect(ramp_election.reload.end_product_reference_id).to eq("454545")
+        expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
       end
 
       context "if matching RAMP ep already exists" do
@@ -216,6 +234,13 @@ describe RampElection do
           Generators::Contention.build(claim_id: "123", text: "Not related")
         ]
       end
+      let!(:end_product_establishment) do
+        EndProductEstablishment.create(
+          veteran_file_number: veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product_reference_id
+        )
+      end
 
       it "destroys previous issues and creates issues from contentions" do
         expect(subject).to be_truthy
@@ -255,6 +280,12 @@ describe RampElection do
           status_type_code: status_type_code
         }
       )
+      EndProductEstablishment.create(
+        veteran_file_number: ramp_election.veteran_file_number,
+        source: ramp_election,
+        synced_status: status_type_code,
+        reference_id: end_product_reference_id
+      )
     end
 
     context "when the EP is cleared" do
@@ -275,6 +306,13 @@ describe RampElection do
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
+      EndProductEstablishment.create(
+        veteran_file_number: ramp_election.veteran_file_number,
+        source: ramp_election,
+        reference_id: end_product_reference_id,
+        synced_status: end_product_status,
+        last_synced_at: 3.days.ago
+      )
       Generators::EndProduct.build(
         veteran_file_number: ramp_election.veteran_file_number,
         bgs_attrs: {
@@ -289,9 +327,9 @@ describe RampElection do
 
       it "updates values properly and returns true" do
         expect(subject).to be_truthy
-        ramp_election.reload
-        expect(ramp_election.end_product_status).to eql("WAZZAP")
-        expect(ramp_election.end_product_status_last_synced_at).to eql(Time.zone.now)
+        establishment = EndProductEstablishment.find_by(source: ramp_election.reload)
+        expect(establishment.synced_status).to eq("WAZZAP")
+        expect(establishment.last_synced_at).to eq(Time.zone.now)
       end
     end
 
@@ -300,9 +338,9 @@ describe RampElection do
 
       it "does not update any values and returns true" do
         expect(subject).to be_truthy
-        expect(ramp_election).to_not be_persisted
-        expect(ramp_election.end_product_status).to eql("CAN")
-        expect(ramp_election.end_product_status_last_synced_at).to be_nil
+        establishment = EndProductEstablishment.find_by(source: ramp_election.reload)
+        expect(establishment.synced_status).to eq("CAN")
+        expect(establishment.last_synced_at).to eq(3.days.ago)
       end
     end
   end
@@ -312,6 +350,12 @@ describe RampElection do
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
+      EndProductEstablishment.create(
+        veteran_file_number: ramp_election.veteran_file_number,
+        source: ramp_election,
+        reference_id: end_product_reference_id,
+        synced_status: ep_status
+      )
       Generators::EndProduct.build(
         veteran_file_number: ramp_election.veteran_file_number,
         bgs_attrs: {
