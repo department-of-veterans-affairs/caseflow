@@ -32,7 +32,7 @@ class Idt::Token
   def self.active?(token)
     # check if token is in valid list and return boolean
     client.exists(VALID_TOKENS_KEY + token)
-  end  
+  end
 
   def self.associated_css_id(token)
     client.get(VALID_TOKENS_KEY + token)

@@ -1,6 +1,6 @@
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   describe "GET /idt/api/v1/appeals" do
-    let(:user) { create(:user, { css_id: "TEST_ID" } ) }
+    let(:user) { create(:user, css_id: "TEST_ID") }
 
     let(:token) do
       key, token = Idt::Token.generate_one_time_key_and_proposed_token
@@ -45,7 +45,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           request.headers["TOKEN"] = token
         end
 
-        it "succeeds" do 
+        it "succeeds" do
           get :index
           expect(response.status).to eq 200
         end
@@ -53,7 +53,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       context "and user is not an attorney" do
         let(:role) { :colocated_role }
-        let(:user) { create(:user, { css_id: "ANOTHER_TEST_ID" }) }
+        let(:user) { create(:user, css_id: "ANOTHER_TEST_ID") }
 
         before do
           request.headers["TOKEN"] = token

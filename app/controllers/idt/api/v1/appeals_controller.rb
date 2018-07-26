@@ -9,7 +9,7 @@ class Idt::Api::V1::AppealsController < ActionController::Base
   def token
     request.headers["TOKEN"]
   end
-  
+
   def validate_token
     return render json: { message: "Missing token" }, status: 400 unless token
     return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
@@ -17,7 +17,7 @@ class Idt::Api::V1::AppealsController < ActionController::Base
 
   def index
     user = User.find_by(css_id: css_id)
-    return render json: { message: "User must be attorney"}, status: 403 unless user.attorney_in_vacols?
+    return render json: { message: "User must be attorney" }, status: 403 unless user.attorney_in_vacols?
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user(user)
 
     render json: json_appeals(appeals)
