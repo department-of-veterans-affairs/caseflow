@@ -13,7 +13,6 @@ import Alert from '../../components/Alert';
 import { downloadIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { SPREADSHEET_TYPES } from '../constants';
-import {CATEGORIES} from "../../reader/analytics";
 
 export default class BuildSchedule extends React.Component {
 
@@ -81,10 +80,12 @@ export default class BuildSchedule extends React.Component {
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
       download: <Button name="download"
-                        linkStyling={true}
-                        onClick={() => {this.openDownloadLink(`${pastUpload.id}`)}}>
-                        Download {downloadIcon(COLORS.PRIMARY)}
-                </Button>
+       linkStyling
+       onClick={() => {
+         this.openDownloadLink(`${ pastUpload.id}`); }
+       }>
+         Download {downloadIcon(COLORS.PRIMARY)}
+       </Button>
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
