@@ -55,6 +55,15 @@ describe Judge do
       # call a second time, should get from the cache
       Judge.list_all
     end
+  end  
+
+  context ".list_all_with_name_and_id" do
+    it "should cache the values" do
+      expect(Fakes::JudgeRepository).to receive(:find_all_judges_with_name_and_id).once
+      Judge.list_all_with_name_and_id
+      # call a second time, should get from the cache
+      Judge.list_all_with_name_and_id
+    end
   end
 
   context "#docket?" do
