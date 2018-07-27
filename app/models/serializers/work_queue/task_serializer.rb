@@ -10,9 +10,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :completed_at
   attribute :placed_on_hold_at
   attribute :instructions
+  attribute :appeal_type
 
   attribute :docket_name do
-    "legacy"
+    object.appeal.docket_name
   end
 
   attribute :case_type do

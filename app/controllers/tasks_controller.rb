@@ -10,13 +10,17 @@ class TasksController < ApplicationController
 
   QUEUES = {
     attorney: AttorneyQueue,
-    colocated: ColocatedQueue
+    colocated: ColocatedQueue,
+    judge: JudgeQueue
   }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
+  # e.g, GET /tasks?user_id=xxx&role=colocated
+  #      GET /tasks?user_id=xxx&role=attorney
+  #      GET /tasks?user_id=xxx&role=judge
   def index
     return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
     tasks = queue_class.new(user: user).tasks
