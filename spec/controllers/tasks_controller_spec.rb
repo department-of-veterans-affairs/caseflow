@@ -131,7 +131,7 @@ RSpec.describe TasksController, type: :controller do
         let(:role) { :judge_role }
         let(:params) do
           [{
-            "appeal_id": appeal.id,
+            "external_id": appeal.vacols_id,
             "type": "ColocatedTask"
           }]
         end
@@ -148,13 +148,13 @@ RSpec.describe TasksController, type: :controller do
         context "when multiple admin actions" do
           let(:params) do
             [{
-              "appeal_id": appeal.id,
+              "external_id": appeal.vacols_id,
               "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
             },
              {
-               "appeal_id": appeal.id,
+               "external_id": appeal.vacols_id,
                "type": "ColocatedTask",
                "title": "substituation_determination",
                "instructions": "another one"
@@ -185,7 +185,7 @@ RSpec.describe TasksController, type: :controller do
         context "when one admin action" do
           let(:params) do
             {
-              "appeal_id": appeal.id,
+              "external_id": appeal.vacols_id,
               "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
@@ -207,7 +207,7 @@ RSpec.describe TasksController, type: :controller do
         context "when appeal is not found" do
           let(:params) do
             [{
-              "appeal_id": 4_646_464,
+              "external_id": 4_646_464,
               "type": "ColocatedTask",
               "title": "address_verification"
             }]
