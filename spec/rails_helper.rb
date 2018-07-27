@@ -231,7 +231,7 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
+  if not File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
