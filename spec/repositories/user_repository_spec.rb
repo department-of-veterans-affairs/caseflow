@@ -105,7 +105,7 @@ describe UserRepository do
         expect(subject).to eq nil
       end
     end
-  end  
+  end
 
   context "user_info_for_idt" do
     subject { UserRepository.user_info_for_idt(css_id) }

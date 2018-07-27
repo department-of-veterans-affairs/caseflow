@@ -55,7 +55,7 @@ describe Judge do
       # call a second time, should get from the cache
       Judge.list_all
     end
-  end  
+  end
 
   context ".list_all_with_name_and_id" do
     it "should cache the values" do

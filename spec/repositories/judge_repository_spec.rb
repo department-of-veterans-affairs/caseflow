@@ -1,14 +1,14 @@
 describe JudgeRepository do
-  let(:judge_name){ "Sojudgey"}
+  let(:judge_name) { "Sojudgey" }
 
   before do
     3.times do
       create(:staff, :judge_role, snamef: judge_name)
-    end    
+    end
 
     3.times do
       create(:staff, :attorney_judge_role, snamef: judge_name)
-    end    
+    end
 
     3.times do
       create(:staff, :attorney_role)
@@ -28,10 +28,10 @@ describe JudgeRepository do
 
     it "should return only judges and acting judges" do
       expect(subject.length).to eq(6)
-    end        
+    end
 
     it "should return names" do
       expect(subject[0][:first_name]).to eq("Sojudgey")
-    end    
+    end
   end
 end
