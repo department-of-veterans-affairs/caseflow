@@ -11,5 +11,9 @@ class Fakes::UserRepository
       group_id: "Attorney/Judge Group",
       full_name: %w[George John Thomas].sample + " " + %w[Washington King Jefferson].sample
     }
+  end  
+
+  def self.user_info_for_idt(css_id)
+    {}
   end
 end
