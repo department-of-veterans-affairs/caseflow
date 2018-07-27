@@ -3,7 +3,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   before_action :verify_attorney_user
 
   def index
-    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user(user)
+    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
     render json: json_appeals(appeals)
   end
