@@ -83,8 +83,8 @@ class QueueLoadingScreen extends React.PureComponent {
   };
 
   createLoadPromise = () => Promise.all([
-    this.loadRelevantCases(),
-    this.loadJudges()
+    this.loadRelevantCases()
+    // this.loadJudges()
   ]);
 
   reload = () => window.location.reload();

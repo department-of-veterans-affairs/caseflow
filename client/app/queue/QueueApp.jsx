@@ -32,6 +32,7 @@ import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
+import OrganizationQueue from './OrganizationQueue';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES, USER_ROLES } from './constants';
@@ -93,6 +94,11 @@ class QueueApp extends React.PureComponent {
     {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
+
+  routedOrganization = (props) => <QueueLoadingScreen {...this.props} urlToLoad={`${props.location.pathname}/tasks`}>
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <OrganizationQueue {...this.props} />
+  </QueueLoadingScreen>
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
@@ -193,6 +199,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
+          <PageRoute
+            exact
+            path="/organizations/:organization"
+            title="Organization Queue | Caseflow"
+            render={this.routedOrganization} />
         </div>
       </AppFrame>
       <Footer

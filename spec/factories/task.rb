@@ -52,5 +52,10 @@ FactoryBot.define do
       type "AttorneyTask"
       appeal_type "Appeal"
     end
+
+    factory :ama_vso_task do
+      type "VsoTask"
+      appeal_type "Appeal"
+    end
   end
 end

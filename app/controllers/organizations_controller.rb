@@ -5,7 +5,7 @@ class OrganizationsController < ApplicationController
   before_action :set_application
 
   def show
-    render "queue/index"
+    render "organizations/show"
   end
 
   private
@@ -35,4 +35,5 @@ class OrganizationsController < ApplicationController
   def organization
     Organization.find_by(url: organization_url)
   end
+  helper_method :organization
 end

@@ -42,6 +42,8 @@ class SeedDB
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
+
+    User.create(css_id: "VSO", station_id: 101, full_name: "VSO user associated with american-legion")
   end
 
   def create_dispatch_tasks(number)
@@ -211,6 +213,7 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
+    vso = Organization.find_by(name: "American Legion")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
     FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
@@ -249,6 +252,17 @@ class SeedDB
                       assigned_by: judge,
                       parent: parent,
                       appeal: @ama_appeals[5])
+
+    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+  end
+
+  def create_organizations
+    Vso.create(
+      name: "American Legion",
+      role: "VSO",
+      url: "american-legion",
+      participant_id: "2452415"
+    )
   end
 
   def clean_db
@@ -263,9 +277,8 @@ class SeedDB
     create_tags
     create_ama_appeals
     create_users
+    create_organizations
     create_tasks
-
-    User.create(css_id: "VSO", station_id: 101)
 
     return if Rails.env.development?
 

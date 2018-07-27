@@ -12,7 +12,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :instructions
 
   attribute :docket_name do
-    "legacy"
+    object.appeal.docket_name
   end
 
   attribute :case_type do
