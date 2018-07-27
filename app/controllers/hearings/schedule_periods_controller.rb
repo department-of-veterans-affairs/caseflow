@@ -51,7 +51,9 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def update
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
-    schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    if schedule_period.can_be_finalized?
+      schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+    end
     render json: { id: schedule_period.id }
   end
 

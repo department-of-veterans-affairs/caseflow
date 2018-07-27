@@ -206,7 +206,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         [Object.keys(state.nonRatedIssues).length]: {
           $set: {
             category: null,
-            description: null
+            description: null,
+            decisionDate: null
           }
         }
       }
@@ -235,6 +236,16 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       issueCount: {
         $set: nonRatedIssueCounter(state, action)
+      }
+    });
+  case ACTIONS.SET_ISSUE_DECISION_DATE:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          decisionDate: {
+            $set: action.payload.decisionDate
+          }
+        }
       }
     });
   default:

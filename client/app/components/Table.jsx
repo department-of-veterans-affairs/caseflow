@@ -54,7 +54,7 @@ const HeaderRow = (props) => {
         let columnContent = <span {...tooltipProps}>{column.header || ''}</span>;
 
         if (column.getSortValue) {
-          const sortIndicator = props.sortAscending ? <SortArrowDown /> : <SortArrowUp />;
+          const sortIndicator = props.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
           const notSortedIndicator = <DoubleArrow />;
 
           columnContent = <span
@@ -182,8 +182,8 @@ export default class Table extends React.PureComponent {
     const builtColumns = getColumns(this.props);
 
     return _.orderBy(rowObjects,
-      (row) => builtColumns[sortColIdx].getSortValue(row, rowObjects),
-      sortAscending ? 'desc' : 'asc'
+      (row) => builtColumns[sortColIdx].getSortValue(row),
+      sortAscending ? 'asc' : 'desc'
     );
   }
 
