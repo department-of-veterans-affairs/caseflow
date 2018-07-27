@@ -19,4 +19,3 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
   end
   # :nocov
 end
-
