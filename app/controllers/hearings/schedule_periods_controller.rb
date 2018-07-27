@@ -59,11 +59,12 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def download
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
+    file_name = schedule_period.file_name
     schedule_period.spreadsheet
     send_file(
       schedule_period.spreadsheet_location,
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      disposition: "attachment; filename='#{schedule_period.file_name}'"
+      disposition: "attachment; filename='DownloadCopy_#{file_name}'"
     )
   end
 
