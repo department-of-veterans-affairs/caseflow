@@ -6,8 +6,6 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     end
   end
   def show
-    # TODO: remove sleep, rubocop disable, and faked data when we actually run the algorithm!
-    sleep(2)
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     render json: { schedule_period: schedule_period.to_hash.merge(
       hearing_days: schedule_period.ro_hearing_day_allocations.map do |hearing_day|
