@@ -256,7 +256,7 @@ class TaskTable extends React.PureComponent<Props> {
           return null;
         }
 
-        return <ReaderLink appealId={appeal.id}
+        return <ReaderLink appealId={appeal.attributes.vacols_id}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={appeal} />;
