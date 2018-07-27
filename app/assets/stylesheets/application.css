@@ -14,6 +14,5 @@
  *= require _pdf_viewer.css
  *= require _style_guide.scss
  *= require dispatch/_dispatch.scss
- *= require ./_react-draft-wysiwyg.css
  *= require _intake.scss
  */
