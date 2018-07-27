@@ -9,7 +9,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def details
-   	#TODO: implement
+    # TODO: implement
   end
 
   def appeals_assigned_to_user
