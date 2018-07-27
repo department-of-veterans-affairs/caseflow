@@ -1,6 +1,6 @@
 class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
-  before_action :verify_attorney_user
+  before_action :verify_access
 
   def index
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user

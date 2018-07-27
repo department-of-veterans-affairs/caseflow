@@ -7,7 +7,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
     return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
   end
 
-  def verify_attorney_user
+  def verify_access
     return render json: { message: "User must be attorney" }, status: 403 unless user.attorney_in_vacols?
   end
 
@@ -16,7 +16,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def file_number
-    request.headers["FILE"]
+    request.headers["FILENUMBER"]
   end
 
   def token
