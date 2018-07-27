@@ -40,17 +40,20 @@ FactoryBot.define do
       title "poa_clarification"
       instructions "poa is missing"
       appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
 
     factory :ama_judge_task do
       type "JudgeTask"
       appeal_type "Appeal"
       assigned_by nil
+      appeal { create(:appeal) }
     end
 
     factory :ama_attorney_task do
       type "AttorneyTask"
       appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
   end
 end
