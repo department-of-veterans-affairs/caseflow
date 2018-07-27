@@ -130,7 +130,8 @@ describe HigherLevelReviewIntake do
 
     let(:params) do
       { request_issues: [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" }
+        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        { decision_text: "non-rated issue text", issue_category: "surgery", decision_date: 4.days.ago }
       ] }
     end
 
@@ -149,16 +150,22 @@ describe HigherLevelReviewIntake do
       expect(intake.detail.established_at).to eq(Time.zone.now)
       expect(resultant_end_product_establishment).to_not be_nil
       expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
-      expect(intake.detail.request_issues.count).to eq 1
+      expect(intake.detail.request_issues.count).to eq 2
+
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "decision text"
       )
+      expect(intake.detail.request_issues.second).to have_attributes(
+        description: "non-rated issue text",
+        issue_category: "surgery",
+        decision_date: 4.days.ago.to_date
+      )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: resultant_end_product_establishment.reference_id,
-        contention_descriptions: ["decision text"],
+        contention_descriptions: ["non-rated issue text", "decision text"],
         special_issues: []
       )
     end
@@ -179,7 +186,7 @@ describe HigherLevelReviewIntake do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: intake.detail.veteran_file_number,
           claim_id: resultant_end_product_establishment.reference_id,
-          contention_descriptions: ["decision text"],
+          contention_descriptions: ["non-rated issue text", "decision text"],
           special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
         )
       end
