@@ -17,6 +17,6 @@ class JudgeRepository
   end
 
   def self.judge_records
-    records = VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
+    VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
   end
 end
