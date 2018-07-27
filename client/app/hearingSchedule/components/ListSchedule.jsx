@@ -14,6 +14,8 @@ const hearingSchedStyling = css({
   marginTop: '70px'
 });
 
+const fullWidth = css({ width: '100%' });
+
 export default class ListSchedule extends React.Component {
 
   render() {
@@ -58,7 +60,8 @@ export default class ListSchedule extends React.Component {
     }));
 
     return <AppSegment filledBackground>
-      <h1>{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+      <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+      <span className="cf-push-right"><Link button="primary">Build Schedule</Link></span>
       <InlineForm>
         <BasicDateRangeSelector
           startDateName="fromDate"
