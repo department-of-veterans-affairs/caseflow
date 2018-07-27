@@ -80,12 +80,13 @@ export default class BuildSchedule extends React.Component {
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
       download: <Button name="download"
-       linkStyling
-       onClick={() => {
-         this.openDownloadLink(`${ pastUpload.id}`); }
-       }>
+        linkStyling
+        onClick={() => {
+          this.openDownloadLink(`${pastUpload.id}`);
+        }
+        }>
          Download {downloadIcon(COLORS.PRIMARY)}
-       </Button>
+      </Button>
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
