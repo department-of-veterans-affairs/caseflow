@@ -27,7 +27,7 @@ FactoryBot.define do
 
     factory :colocated_task do
       type "ColocatedTask"
-      title "poa_clarification"
+      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions "poa is missing"
 
       after(:create) do |task, _evaluator|
@@ -37,7 +37,7 @@ FactoryBot.define do
 
     factory :ama_colocated_task do
       type "ColocatedTask"
-      title "poa_clarification"
+      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions "poa is missing"
       appeal_type "Appeal"
       appeal { create(:appeal) }
