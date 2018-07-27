@@ -18,14 +18,10 @@ FactoryBot.define do
 
     established_at { Time.zone.now }
 
-    after(:create) do |appeal, evaluator|
+    after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
         issue.review_request = appeal
         issue.save
-      end
-      if evaluator.veteran
-        appeal.veteran_file_number = evaluator.veteran.file_number
-        appeal.save
       end
     end
 
@@ -34,6 +30,11 @@ FactoryBot.define do
     end
 
     after(:build) do |appeal, evaluator|
+      if evaluator.veteran
+        appeal.veteran_file_number = evaluator.veteran.file_number
+        appeal.save
+      end
+
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end
