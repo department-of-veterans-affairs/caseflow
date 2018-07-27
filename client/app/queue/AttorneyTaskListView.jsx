@@ -90,8 +90,7 @@ const mapStateToProps = (state) => {
     queue: {
       stagedChanges: {
         taskDecision
-      },
-      judges
+      }
     },
     ui: {
       messages
@@ -102,8 +101,7 @@ const mapStateToProps = (state) => {
     appeals: appealsByAssigneeCssIdSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     messages,
-    taskDecision,
-    judges
+    taskDecision
   });
 };
 

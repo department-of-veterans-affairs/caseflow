@@ -13,19 +13,6 @@ import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, onReceiveJudges } from './QueueActions';
 
 class QueueLoadingScreen extends React.PureComponent {
-  loadJudges = () => {
-    if (!_.isEmpty(this.props.judges)) {
-      return Promise.resolve();
-    }
-
-    return ApiUtil.get('/users?role=Judge').then((response) => {
-      const resp = JSON.parse(response.text);
-      const judges = _.keyBy(resp.judges, 'id');
-
-      this.props.onReceiveJudges(judges);
-    });
-  }
-
   loadRelevantCases = () => {
     const promises = [];
 
@@ -84,7 +71,6 @@ class QueueLoadingScreen extends React.PureComponent {
 
   createLoadPromise = () => Promise.all([
     this.loadRelevantCases()
-    // this.loadJudges()
   ]);
 
   reload = () => window.location.reload();
