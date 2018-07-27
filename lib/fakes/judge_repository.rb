@@ -9,6 +9,6 @@ class Fakes::JudgeRepository
   end
 
   def self.find_all_judges_with_name_and_id
-  	[]
+    []
   end
 end
