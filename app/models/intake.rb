@@ -189,7 +189,6 @@ class Intake < ApplicationRecord
   end
 
   def ui_hash(ama_enabled)
-    # binding.pry
     {
       id: id,
       form_type: form_type,
