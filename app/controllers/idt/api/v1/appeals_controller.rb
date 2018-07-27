@@ -8,6 +8,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render json: json_appeals(appeals)
   end
 
+  def details
+    
+  end
+
   def appeals_assigned_to_user
     # TODO: add AMA appeals
     LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
