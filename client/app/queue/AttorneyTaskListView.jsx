@@ -5,12 +5,12 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import AttorneyTaskTable from './AttorneyTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
 import {
-  appealsByAssignedTaskSelector,
+  appealsByAssigneeCssIdSelector,
   tasksByAssigneeCssIdSelector
 } from './selectors';
 import {
@@ -61,7 +61,16 @@ class AttorneyTaskListView extends React.PureComponent {
         {messages.success && <Alert type="success" title={messages.success}>
           {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <AttorneyTaskTable />
+        <TaskTable
+          includeDetailsLink
+          includeType
+          includeDocketNumber
+          includeIssueCount
+          includeDueDate
+          includeReaderLink
+          requireDasRecord
+          appeals={this.props.appeals}
+        />
       </div>;
     }
 
@@ -73,7 +82,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
 AttorneyTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -90,7 +99,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    appeals: appealsByAssignedTaskSelector(state),
+    appeals: appealsByAssigneeCssIdSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision,

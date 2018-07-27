@@ -77,15 +77,16 @@ export default function decisionViewBase(ComponentToWrap) {
       history.push(`/queue/appeals/${appealId}`);
     }
 
+    getPrevStepUrl = () => _.invoke(this.state.wrapped, 'getPrevStepUrl') || this.props.prevStep;
+    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
+
     goToPrevStep = () => {
       const prevStepHook = _.get(this.state.wrapped, 'goToPrevStep');
 
       if (!prevStepHook || prevStepHook()) {
-        return this.props.history.push(this.props.prevStep);
+        return this.props.history.push(this.getPrevStepUrl());
       }
     };
-
-    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
 
     goToNextStep = () => {
       // This handles moving to the next step in the flow. The wrapped

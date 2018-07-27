@@ -34,7 +34,9 @@ import {
   marginBottom,
   marginTop,
   ATTORNEY_COMMENTS_MAX_LENGTH,
-  OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES
+  DOCUMENT_ID_MAX_LENGTH,
+  OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
+  ISSUE_DISPOSITIONS
 } from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
@@ -109,6 +111,24 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     return !missingParams.length;
   };
+
+  getPrevStepUrl = () => {
+    const {
+      decision: { type: decisionType },
+      appeal: { attributes: appeal },
+      appealId
+    } = this.props;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const prevUrl = `/queue/appeals/${appealId}`;
+
+    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
+      return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+        `${prevUrl}/remands` :
+        `${prevUrl}/dispositions`;
+    }
+
+    return prevUrl;
+  }
 
   goToNextStep = () => {
     const {
@@ -245,6 +265,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
+        maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
       {this.getJudgeSelectComponent()}
       <TextareaField

@@ -5,18 +5,22 @@ class TasksController < ApplicationController
   before_action :verify_task_assignment_access, only: [:create]
 
   TASK_CLASSES = {
-    CoLocatedAdminAction: CoLocatedAdminAction
+    ColocatedTask: ColocatedTask
   }.freeze
 
   QUEUES = {
     attorney: AttorneyQueue,
-    colocated: CoLocatedAdminQueue
+    colocated: ColocatedQueue,
+    judge: JudgeQueue
   }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
+  # e.g, GET /tasks?user_id=xxx&role=colocated
+  #      GET /tasks?user_id=xxx&role=attorney
+  #      GET /tasks?user_id=xxx&role=judge
   def index
     return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
     tasks = queue_class.new(user: user).tasks
@@ -29,7 +33,7 @@ class TasksController < ApplicationController
     tasks = task_class.create(tasks_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: tasks }, status: :created
+    render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
   def update
