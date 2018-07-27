@@ -180,6 +180,11 @@ RSpec.feature "Higher-Level Review Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    # To do: Change this to one issue once we implement decision date into issue count
+    expect(page).to have_content("2 issues")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
@@ -224,14 +229,16 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
     visit "/higher_level_reviews/IAMANEPID/edit"
