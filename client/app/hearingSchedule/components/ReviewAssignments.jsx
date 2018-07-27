@@ -17,6 +17,14 @@ const tableBorder = css({
   border: '1px solid #dadbdc'
 });
 
+/* eslint-disable id-length */
+const HEARING_TYPE_LABELS = {
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */
+
 export default class ReviewAssignments extends React.Component {
 
   getAlertTitle = () => {
@@ -115,9 +123,9 @@ export default class ReviewAssignments extends React.Component {
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
       date: formatDate(hearingDay.hearingDate),
-      type: hearingDay.hearingType,
+      type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.room,
+      room: hearingDay.roomInfo,
       judge: hearingDay.judge
     }));
 

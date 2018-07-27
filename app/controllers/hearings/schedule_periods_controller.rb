@@ -5,35 +5,16 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
       format.json { render json: { schedule_periods: SchedulePeriod.all.map(&:to_hash) } }
     end
   end
-
-  # rubocop:disable Metrics/MethodLength
   def show
     # TODO: remove sleep, rubocop disable, and faked data when we actually run the algorithm!
     sleep(2)
-    render json: { schedule_period: SchedulePeriod.find(params[:schedule_period_id]).to_hash.merge(
-      hearing_days: [
-        {
-          hearing_date: "2018-06-04",
-          hearing_type: "Video",
-          regional_office: "St. Petersburg, FL",
-          room: "1",
-          judge: "Sarah Smith"
-        },
-        {
-          hearing_date: "2018-06-04",
-          hearing_type: "Video",
-          regional_office: "Baltimore, MD",
-          room: "1",
-          judge: "Sarah Smith"
-        },
-        {
-          hearing_date: "2018-06-04",
-          hearing_type: "Video",
-          regional_office: "Portland, OR",
-          room: "1",
-          judge: "Sarah Smith"
-        }
-      ]
+    schedule_period = SchedulePeriod.find(params[:schedule_period_id])
+    render json: { schedule_period: schedule_period.to_hash.merge(
+      hearing_days: schedule_period.ro_hearing_day_allocations.map do |hearing_day|
+        regional_office = RegionalOffice::CITIES[hearing_day[:regional_office]]
+        hearing_day[:regional_office] = "#{regional_office[:city]}, #{regional_office[:state]}"
+        hearing_day
+      end
     ) }
   end
   # rubocop:enable Metrics/MethodLength
