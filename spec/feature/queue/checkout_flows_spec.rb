@@ -232,8 +232,7 @@ RSpec.feature "Checkout flows" do
         expect(issue_rows.length).to eq(old_issues_count - 1)
 
         visit "/queue"
-
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
       end
     end
@@ -349,7 +348,7 @@ RSpec.feature "Checkout flows" do
 
         visit "/queue"
 
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
         expect(issue_count).to eq "2"
       end
     end
