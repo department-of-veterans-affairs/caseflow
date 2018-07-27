@@ -308,7 +308,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         6.times do
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                   Random.rand(10..30)).map do |date|
+                                   Random.rand(10..50)).map do |date|
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
           end
@@ -333,7 +333,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
           expect(expected_day).to_not be_nil
           expect(hearing_day[:hearing_type]).to eq(type)
-          expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date)
+          expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date.to_date)
           expect(hearing_day[:room_info]).to eq(expected_day.room)
           expect(hearing_day[:regional_office]).to eq(ro)
           expect(hearing_day[:judge_id]).to_not be_nil
