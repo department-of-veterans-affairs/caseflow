@@ -186,7 +186,7 @@ describe HigherLevelReviewIntake do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: intake.detail.veteran_file_number,
           claim_id: resultant_end_product_establishment.reference_id,
-          contention_descriptions: ["decision text"],
+          contention_descriptions: ["non-rated issue text", "decision text"],
           special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
         )
       end
