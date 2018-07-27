@@ -12,7 +12,7 @@ class ColocatedTask < Task
           result << super(task.merge(assigned_to: assignee))
           result
         end
-        if records.map(&:valid?).uniq == [true]
+        if records.map(&:valid?).uniq == [true] && legacy?
           AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
         records

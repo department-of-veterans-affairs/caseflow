@@ -255,7 +255,7 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    # Colocated legacy tasks
+    # Colocated tasks with legacy appeals
     FactoryBot.create(:colocated_task,
                       appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
                       assigned_by: attorney,
@@ -263,7 +263,7 @@ class SeedDB
 
     FactoryBot.create(:colocated_task,
                       :in_progress,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
+                      appeal: LegacyAppeal.find_by(vacols_id: "2226048"),
                       assigned_by: attorney,
                       assigned_to: colocated)
 
