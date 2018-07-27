@@ -16,10 +16,7 @@ import {
   resetDecisionOptions,
   deleteAppeal
 } from './QueueActions';
-import {
-  setSelectingJudge,
-  requestSave
-} from './uiReducer/uiActions';
+import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -28,6 +25,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
+import JudgeSelectComponent from './JudgeSelectComponent';
 
 import {
   fullWidth,
@@ -64,34 +62,17 @@ type Props = Params & {|
   appeal: LegacyAppeal,
   decision: Object,
   task: Task,
-  judges: Judges,
   highlightFormItems: Boolean,
   userRole: string,
-  selectingJudge: Boolean,
   error: ?UiStateError,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   resetDecisionOptions: typeof resetDecisionOptions,
-  setSelectingJudge: typeof setSelectingJudge,
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal
 |};
 
 class SubmitDecisionView extends React.PureComponent<Props> {
-  componentDidMount = () => {
-    const { task: { attributes: task } } = this.props;
-    const judge = this.props.judges[task.added_by_css_id];
-
-    if (judge) {
-      this.props.setDecisionOptions({
-        judge: {
-          label: task.added_by_name,
-          value: judge.id
-        }
-      });
-    }
-  };
-
   validateForm = () => {
     const {
       type: decisionType,
@@ -160,58 +141,6 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       then(() => this.props.deleteAppeal(appealId));
   };
 
-  getJudgeSelectComponent = () => {
-    const {
-      selectingJudge,
-      judges,
-      decision: { opts: decisionOpts },
-      highlightFormItems
-    } = this.props;
-    let componentContent = <span />;
-    const selectedJudge = _.get(this.props.judges, decisionOpts.reviewing_judge_id);
-    const shouldDisplayError = highlightFormItems && !selectedJudge;
-    const fieldClasses = classNames({
-      'usa-input-error': shouldDisplayError
-    });
-
-    if (selectingJudge) {
-      componentContent = <React.Fragment>
-        <SearchableDropdown
-          name="Select a judge"
-          placeholder="Select a judge&hellip;"
-          options={_.map(judges, (judge, value) => ({
-            label: judge.full_name,
-            value
-          }))}
-          onChange={({ value }) => {
-            this.props.setSelectingJudge(false);
-            this.props.setDecisionOptions({ reviewing_judge_id: value });
-          }}
-          hideLabel />
-      </React.Fragment>;
-    } else {
-      componentContent = <React.Fragment>
-        {selectedJudge && <span>{selectedJudge.full_name}</span>}
-        <Button
-          id="select-judge"
-          linkStyling
-          willNeverBeLoading
-          styling={selectJudgeButtonStyling(selectedJudge)}
-          onClick={() => this.props.setSelectingJudge(true)}>
-          Select {selectedJudge ? 'another' : 'a'} judge
-        </Button>
-      </React.Fragment>;
-    }
-
-    return <div className={fieldClasses}>
-      <label>Submit to judge:</label>
-      {shouldDisplayError && <span className="usa-input-error-message">
-        {COPY.FORM_ERROR_FIELD_REQUIRED}
-      </span>}
-      {componentContent}
-    </div>;
-  };
-
   render = () => {
     const {
       highlightFormItems,
@@ -267,7 +196,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      {this.getJudgeSelectComponent()}
+      <JudgeSelectComponent assignedByCssId={this.props.task.added_by_css_id}/>
       <TextareaField
         label="Notes:"
         name="notes"
@@ -291,13 +220,11 @@ const mapStateToProps = (state, ownProps) => {
       },
       tasks: {
         [ownProps.appealId]: task
-      },
-      judges
+      }
     },
     ui: {
       highlightFormItems,
       userRole,
-      selectingJudge,
       messages: {
         error
       }
@@ -308,18 +235,15 @@ const mapStateToProps = (state, ownProps) => {
     appeal,
     task,
     decision,
-    judges,
     error,
     userRole,
     highlightFormItems,
-    selectingJudge
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   resetDecisionOptions,
-  setSelectingJudge,
   requestSave,
   deleteAppeal
 }, dispatch);

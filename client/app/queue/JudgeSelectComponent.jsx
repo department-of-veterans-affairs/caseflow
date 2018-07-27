@@ -8,13 +8,9 @@ import classNames from 'classnames';
 
 import {
   setDecisionOptions,
-  resetDecisionOptions,
-  deleteAppeal
+  fetchJudges
 } from './QueueActions';
-import {
-  setSelectingJudge,
-  requestSave
-} from './uiReducer/uiActions';
+import { setSelectingJudge } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
@@ -44,52 +40,52 @@ const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJ
 
 import type {
   Task,
-  LegacyAppeal,
   Judges
 } from './types/models';
 import type { UiStateError } from './types/state';
 
 type Params = {|
-  appealId: string,
-  nextStep: string
+  assignedByCssId: Object
 |};
 
 type Props = Params & {|
   // state
-  appeal: LegacyAppeal,
-  decision: Object,
-  task: Task,
   judges: Judges,
+  decision: Object,
   highlightFormItems: Boolean,
-  userRole: string,
   selectingJudge: Boolean,
-  error: ?UiStateError,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
-  resetDecisionOptions: typeof resetDecisionOptions,
   setSelectingJudge: typeof setSelectingJudge,
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
 |};
 
-class SubmitDecisionView extends React.PureComponent<Props> {
+class JudgeSelectComponent extends React.PureComponent<Props> {
   componentDidMount = () => {
-    if (!_.isEmpty(this.props.judges)) {
-      return Promise.resolve();
-    } 
+    if (_.isEmpty(this.props.judges)) {
+      this.props.fetchJudges();
+    } else {
+      this.setDefaultJudge()
+    }
   }
-    const { task: { attributes: task } } = this.props;
-    const judge = this.props.judges[task.added_by_css_id];
+
+  setDefaultJudge = () => {
+    const judge = this.props.judges[this.props.assignedByCssId];
 
     if (judge) {
       this.props.setDecisionOptions({
         judge: {
-          label: task.added_by_name,
+          label: judge.full_name,
           value: judge.id
         }
       });
     }
   };
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.judges !== this.props.judges) {
+      this.setDefaultJudge();
+    }
+  }
 
   render = () => {
     const {
@@ -106,20 +102,33 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     });
 
     if (selectingJudge) {
-      componentContent = <React.Fragment>
-        <SearchableDropdown
-          name="Select a judge"
-          placeholder="Select a judge&hellip;"
-          options={_.map(judges, (judge, value) => ({
-            label: judge.full_name,
-            value
-          }))}
-          onChange={({ value }) => {
-            this.props.setSelectingJudge(false);
-            this.props.setDecisionOptions({ reviewing_judge_id: value });
-          }}
-          hideLabel />
-      </React.Fragment>;
+      const judgeOptions = _.map(judges, (judge, value) => ({
+        label: judge.full_name,
+        value
+      }));
+
+      if (judgeOptions.length === 0) {
+        componentContent = <React.Fragment>
+          <SearchableDropdown
+            name="Loading Judges"
+            placeholder="Loading Judges&hellip;"
+            options={[]}
+            onChange={_.noop}
+            hideLabel />
+        </React.Fragment>;
+      } else {
+        componentContent = <React.Fragment>
+          <SearchableDropdown
+            name="Select a judge"
+            placeholder="Select a judge&hellip;"
+            options={judgeOptions}
+            onChange={({ value }) => {
+              this.props.setSelectingJudge(false);
+              this.props.setDecisionOptions({ reviewing_judge_id: value });
+            }}
+            hideLabel />
+        </React.Fragment>;
+      }
     } else {
       componentContent = <React.Fragment>
         {selectedJudge && <span>{selectedJudge.full_name}</span>}
@@ -147,7 +156,10 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
-      judges
+      judges,
+      stagedChanges: {
+        taskDecision: decision
+      }
     },
     ui: {
       highlightFormItems,
@@ -157,6 +169,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     judges,
+    decision,
     highlightFormItems,
     selectingJudge
   };
@@ -164,16 +177,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
-  resetDecisionOptions,
   setSelectingJudge,
-  requestSave,
-  deleteAppeal
+  fetchJudges
 }, dispatch);
 
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(
-  decisionViewBase(SubmitDecisionView)
-): React.ComponentType<Params>
-);
+)(JudgeSelectComponent): React.ComponentType<Params>);

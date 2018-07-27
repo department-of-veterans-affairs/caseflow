@@ -22,24 +22,17 @@ export const onReceiveQueue = (
   }
 });
 
-export const onReceiveJudges = (judges: UsersById) => ({
-  type: ACTIONS.RECEIVE_JUDGE_DETAILS,
-  payload: {
-    judges
-  }
-});
-
-export const fetchJudges = () => (dispatch: Dispatch) {
+export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);
     const judges = _.keyBy(resp.judges, 'id');
 
-    dispatch(
+    dispatch({
       type: ACTIONS.RECEIVE_JUDGE_DETAILS,
       payload: {
         judges
       }
-    );
+    });
   })
 };
 

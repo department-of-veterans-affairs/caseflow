@@ -10,7 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
-import { onReceiveQueue, onReceiveJudges } from './QueueActions';
+import { onReceiveQueue } from './QueueActions';
 
 class QueueLoadingScreen extends React.PureComponent {
   loadRelevantCases = () => {
@@ -56,7 +56,7 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    if (appealId in appeals) {
+    if (appeals && appealId in appeals) {
       this.props.setActiveAppeal(appeals[appealId]);
 
       return Promise.resolve();
@@ -113,14 +113,12 @@ QueueLoadingScreen.propTypes = {
 
 // todo: remove ...this.props from usages within QueueApp
 const mapStateToProps = (state) => ({
-  ..._.pick(state.queue, 'judges', 'tasks', 'appeals'),
   activeAppeal: state.caseDetail.activeAppeal,
   loadedUserId: state.ui.loadedUserId
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  onReceiveJudges,
   setActiveAppeal
 }, dispatch);
 
