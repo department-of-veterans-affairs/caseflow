@@ -13,6 +13,7 @@ class UserRepository
 
     def user_info_for_idt(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      return {} unless staff_record
       {
         first_name: staff_record.snamef,
         middle_name: staff_record.snamemi,

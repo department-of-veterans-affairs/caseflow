@@ -120,7 +120,7 @@ describe UserRepository do
 
     context "when user does not exist in VACOLS" do
       it "should return nil" do
-        expect(subject).to eq nil
+        expect(subject[:judge_status]).to eq(nil)
       end
     end
   end
