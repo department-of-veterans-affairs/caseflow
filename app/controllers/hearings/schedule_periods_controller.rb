@@ -59,7 +59,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def download
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
-    #file_name = schedule_period.file_name.clone.freeze
+    # file_name = schedule_period.file_name.clone.freeze
     file_location = schedule_period.spreadsheet_location.clone.freeze
     schedule_period.spreadsheet
     send_file(
