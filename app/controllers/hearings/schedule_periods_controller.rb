@@ -65,7 +65,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     send_file(
       file_location,
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      disposition: "attachment; filename='DownloadCopy_#{file_name}'"
+      disposition: "attachment; filename='DownloadCopy_RoSchedule_Period'"
     )
   end
 
