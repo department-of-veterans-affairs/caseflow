@@ -75,4 +75,8 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
   </React.Fragment>;
 }
 
-export default (connect(null, null)(decisionViewBase(AddAdminActionView)): React.ComponentType<Params>);
+const WrappedComponent = decisionViewBase(AddAdminActionView, {
+  title: 'cancelAddAdminAction',
+  text: 'asdfasdfasdf'
+});
+export default (connect(null, null)(WrappedComponent): React.ComponentType<Params>);
