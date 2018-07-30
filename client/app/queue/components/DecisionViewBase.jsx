@@ -25,8 +25,8 @@ const getDisplayName = (WrappedComponent) => {
 };
 
 const defaultTopLevelProps = {
-  title: 'cancelCheckout',
-  text: COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT
+  continueBtnText: 'Continue',
+  hideCancelButton: false
 };
 
 export default function decisionViewBase(ComponentToWrap, topLevelProps = defaultTopLevelProps) {
@@ -35,8 +35,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       super(props);
 
       this.state = {
-        wrapped: {},
-        modalProps: topLevelProps
+        wrapped: {}
       };
     }
 
@@ -44,31 +43,35 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
-    getModal = () => this.props.modal[this.state.modalProps.title];
-    showModal = () => this.props.showModal(this.state.modalProps.title);
-    hideModal = () => this.props.hideModal(this.state.modalProps.title);
+    getModal = () => this.props.modal['cancelCheckout'];
+    showModal = () => this.props.showModal('cancelCheckout');
+    hideModal = () => this.props.hideModal('cancelCheckout');
 
-    getFooterButtons = () => [{
-      classNames: ['cf-btn-link'],
-      callback: this.showModal,
-      name: 'cancel-button',
-      displayText: 'Cancel',
-      willNeverBeLoading: true
-    }, {
-      classNames: ['cf-right-side', 'cf-next-step'],
-      callback: this.goToNextStep,
-      loading: this.props.savePending,
-      name: 'next-button',
-      displayText: 'Continue',
-      loadingText: 'Submitting...',
-      styling: css({ marginLeft: '1rem' })
-    }, {
-      classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
-      callback: this.goToPrevStep,
-      name: 'back-button',
-      displayText: 'Back',
-      willNeverBeLoading: true
-    }];
+    getFooterButtons = () => {
+      const buttons = [{
+        classNames: ['cf-btn-link'],
+        callback: this.showModal,
+        name: 'cancel-button',
+        displayText: 'Cancel',
+        willNeverBeLoading: true
+      }, {
+        classNames: ['cf-right-side', 'cf-next-step'],
+        callback: this.goToNextStep,
+        loading: this.props.savePending,
+        name: 'next-button',
+        displayText: this.props.continueBtnText,
+        loadingText: 'Submitting...',
+        styling: css({ marginLeft: '1rem' })
+      }, {
+        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
+        callback: this.goToPrevStep,
+        name: 'back-button',
+        displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
+        willNeverBeLoading: true
+      }];
+
+      return this.props.hideCancelButton ? buttons.slice(1) : buttons;
+    }
 
     cancelFlow = () => {
       const {
@@ -145,7 +148,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
             onClick: this.cancelFlow
           }]}
           closeHandler={this.hideModal}>
-          {this.state.modalProps.text}
+          {COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}
         </Modal>
       </div>}
       <AppSegment filledBackground>
@@ -164,7 +167,8 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       modal: state.ui.modal,
       savePending,
       saveSuccessful,
-      stagedAppeals: Object.keys(state.queue.stagedChanges.appeals)
+      stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),
+      ...topLevelProps
     }
   }
   const mapDispatchToProps = (dispatch) => bindActionCreators({

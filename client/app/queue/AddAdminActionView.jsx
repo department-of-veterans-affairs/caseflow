@@ -55,6 +55,8 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
 
   validateForm = () => _.every(Object.values(this.state), (val) => !!val);
 
+  getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
+
   goToNextStep = () => {
     const payload = {
       data: {
@@ -118,7 +120,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(AddAdminActionView, {
-  title: 'cancelAddAdminAction',
-  text: 'asdfasdfasdf'
+  hideCancelButton: true,
+  continueBtnText: 'Assign Action'
 });
 export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent): React.ComponentType<Params>);
