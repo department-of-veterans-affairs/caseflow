@@ -23,6 +23,16 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.SCHEDULE_PERIOD_ERROR:
+    return update(state, {
+      schedulePeriodError: {
+        $set: true
+      }
+    });
+  case ACTIONS.REMOVE_SCHEDULE_PERIOD_ERROR:
+    return update(state, {
+      $unset: ['schedulePeriodError']
+    });
   case ACTIONS.UPDATE_UPLOAD_FORM_ERRORS:
     return update(state, {
       uploadFormErrors: {
