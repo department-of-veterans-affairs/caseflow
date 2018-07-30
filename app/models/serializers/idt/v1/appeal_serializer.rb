@@ -1,4 +1,3 @@
-# :nocov
 class Idt::V1::AppealSerializer < ActiveModel::Serializer
   # TODO: serialize AMA appeals with this serializer
   def id
@@ -18,4 +17,3 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
     object.issues.length
   end
 end
-# :nocov
