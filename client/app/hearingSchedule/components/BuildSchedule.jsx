@@ -109,8 +109,7 @@ export default class BuildSchedule extends React.Component {
         message={successMessage}
         styling={alertStyling}
       />}
-      <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
-      <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
+      <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h1>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
       <DropdownButton
         lists={downloadOptions}
