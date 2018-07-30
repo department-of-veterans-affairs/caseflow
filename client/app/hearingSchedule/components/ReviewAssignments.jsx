@@ -79,6 +79,18 @@ export default class ReviewAssignments extends React.Component {
 
   render() {
 
+    if (this.props.schedulePeriodError) {
+      return <StatusMessage
+        type="alert"
+        title="The assignments algorithm was unable to run successfully."
+        messageText={
+          <div>Please confirm the information in the spreadsheet is valid and
+            <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
+            contact the Help Desk.
+          </div>}
+      />;
+    }
+
     if (this.props.schedulePeriod.finalized) {
       return <StatusMessage
         type="status"
@@ -155,6 +167,7 @@ export default class ReviewAssignments extends React.Component {
 
 ReviewAssignments.propTypes = {
   schedulePeriod: PropTypes.object,
+  schedulePeriodError: PropTypes.bool,
   displayConfirmationModal: PropTypes.bool,
   onClickConfirmAssignments: PropTypes.func,
   onClickCloseModal: PropTypes.func,
