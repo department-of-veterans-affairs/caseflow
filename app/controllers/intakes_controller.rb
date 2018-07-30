@@ -10,10 +10,10 @@ class IntakesController < ApplicationController
   end
 
   def create
-    return render json: intake_in_progress.ui_hash if intake_in_progress
+    return render json: intake_in_progress.ui_hash(ama_enabled?) if intake_in_progress
 
     if new_intake.start!
-      render json: new_intake.ui_hash
+      render json: new_intake.ui_hash(ama_enabled?)
     else
       render json: {
         error_code: new_intake.error_code,
@@ -29,7 +29,7 @@ class IntakesController < ApplicationController
 
   def review
     if intake.review!(params)
-      render json: intake.ui_hash
+      render json: intake.ui_hash(ama_enabled?)
     else
       render json: { error_codes: intake.review_errors }, status: 422
     end
@@ -40,7 +40,7 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    render json: intake.ui_hash
+    render json: intake.ui_hash(ama_enabled?)
 
     # TODO: This should probably be pushed into the model, since it is very
     # end product specific
@@ -57,6 +57,10 @@ class IntakesController < ApplicationController
   end
 
   private
+
+  def ama_enabled?
+    FeatureToggle.enabled?(:intakeAma, user: current_user)
+  end
 
   def set_application
     RequestStore.store[:application] = "intake"

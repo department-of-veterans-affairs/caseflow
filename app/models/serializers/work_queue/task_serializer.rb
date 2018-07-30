@@ -23,4 +23,12 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :docket_number do
     object.appeal.docket_number
   end
+
+  attribute :veteran_name do
+    object.appeal.veteran_name
+  end
+
+  attribute :veteran_file_number do
+    object.appeal.veteran_file_number
+  end
 end

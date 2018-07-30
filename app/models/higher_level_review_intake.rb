@@ -5,7 +5,7 @@ class HigherLevelReviewIntake < Intake
     HigherLevelReview.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
       same_office: detail.same_office,
