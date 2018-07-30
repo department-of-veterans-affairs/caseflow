@@ -146,7 +146,10 @@ const reducers = (state = initialState, action = {}) => {
     });
   case ACTIONS.UNSET_SUCCESS_MESSAGE:
     return update(state, {
-      $unset: ['displaySuccessMessage']
+      $unset: [
+        'displaySuccessMessage',
+        'schedulePeriod'
+      ]
     });
   default:
     return state;
