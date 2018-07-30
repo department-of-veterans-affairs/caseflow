@@ -14,7 +14,7 @@ import { formatDate } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
 const tableStyling = css({
-  '& > thead > tr > th': { backgroundColor: '#dadbdc' },
+  '& > thead > tr > th': { backgroundColor: '#FIFIF1' },
   border: '1px solid #dadbdc'
 });
 
