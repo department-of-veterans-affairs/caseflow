@@ -95,7 +95,7 @@ class QueueApp extends React.PureComponent {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddAdminAction = (props) => <AddAdminActionView {...props.match.params} />;
+  routedAddAdminAction = (props) => <AddAdminActionView nextStep="/queue" {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
