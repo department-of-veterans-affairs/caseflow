@@ -59,9 +59,25 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           request.headers["TOKEN"] = token
         end
 
+        let!(:appeals) do
+          [
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user))
+          ]
+        end
+
         it "succeeds" do
           get :index
           expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["data"]
+          expect(response_body.first["attributes"]["veteran_first_name"]).to eq appeals.first.veteran_first_name
+          expect(response_body.first["attributes"]["veteran_last_name"]).to eq appeals.first.veteran_last_name
+          expect(response_body.first["attributes"]["file_number"]).to eq appeals.first.veteran_file_number
+
+
+          expect(response_body.second["attributes"]["veteran_first_name"]).to eq appeals.second.veteran_first_name
+          expect(response_body.second["attributes"]["veteran_last_name"]).to eq appeals.second.veteran_last_name
+          expect(response_body.second["attributes"]["file_number"]).to eq appeals.second.veteran_file_number
         end
       end
     end
