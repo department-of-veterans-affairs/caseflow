@@ -251,10 +251,8 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
   context "Allocating VIDEO and CO hearing days to judges evenly" do
     let(:hearing_days) do
-      @hearing_counter = 0
       hearing_days = {}
       get_dates_between(schedule_period.start_date, schedule_period.end_date, 60).map do |date|
-        @hearing_counter += date.wednesday? ? 2 : 1
         case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
         hearing_days[case_hearing.hearing_pkseq] = case_hearing
 
@@ -305,10 +303,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
       let(:judges) do
         judges = []
-        6.times do
+        8.times do
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                   Random.rand(10..50)).map do |date|
+                                   Random.rand(10..30)).map do |date|
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
           end
@@ -320,7 +318,13 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
       it "all hearing days should be assigned to judges" do
-        expect(subject.count).to eq(@hearing_counter)
+        day_count = hearing_days.reduce(0) do |acc, (_id, hearing_day)|
+          acc += 1 unless hearing_day.folder_nr.nil? && !hearing_day.hearing_date.to_date.wednesday?
+          acc
+        end
+
+        expect(subject.count).to eq(day_count)
+
         judge_count = {}
         subject.each do |hearing_day|
           expected_day = hearing_days[hearing_day[:hearing_pkseq]]

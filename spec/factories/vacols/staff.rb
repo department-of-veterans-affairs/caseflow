@@ -20,7 +20,7 @@ FactoryBot.define do
     end
 
     trait :hearing_judge do
-      stitle "DS"
+      stitle "D#{Random.rand(1..5)}"
       svlj "A"
     end
 
