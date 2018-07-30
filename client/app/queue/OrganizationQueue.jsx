@@ -52,7 +52,6 @@ class OrganizationQueue extends React.PureComponent {
 }
 
 OrganizationQueue.propTypes = {
-  tasks: PropTypes.object.isRequired,
   appeals: PropTypes.array.isRequired
 };
 

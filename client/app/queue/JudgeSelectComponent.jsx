@@ -55,6 +55,7 @@ type Props = Params & {|
   highlightFormItems: Boolean,
   selectingJudge: Boolean,
   // dispatch
+  fetchJudges: typeof fetchJudges,
   setDecisionOptions: typeof setDecisionOptions,
   setSelectingJudge: typeof setSelectingJudge,
 |};
