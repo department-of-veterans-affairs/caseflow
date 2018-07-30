@@ -66,6 +66,9 @@ class HearingSchedule::AssignJudgesToHearingDays
           (num_days_assigned == assigned_hearing_days.length) && !hearing_days_assigned
   end
 
+  # It's expected that the judge validations have been run before
+  # running the algorithm. This assumes that the judge information
+  # already exists in VACOLS and in Caseflow database.
   def fetch_judge_details
     fail NoJudgesProvided if @judges.keys.empty?
 
