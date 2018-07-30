@@ -136,12 +136,11 @@ export class DecisionReviewer extends React.PureComponent {
 
   render() {
     const queueEnabled = this.props.featureToggles.queueWelcomeGate;
-    const claimsFolderBreadcrumb = queueEnabled ? '' : 'Claims Folder';
+    const claimsFolderBreadcrumb = queueEnabled ? 'Reader' : 'Claims Folder';
 
     return <React.Fragment>
       <NavigationBar
         wideApp
-        appName="Reader"
         logoProps={{
           accentColor: LOGO_COLORS.READER.ACCENT,
           overlapColor: LOGO_COLORS.READER.OVERLAP
