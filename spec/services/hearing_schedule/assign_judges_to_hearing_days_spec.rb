@@ -324,7 +324,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           acc
         end
 
-        expect(subject.count).to eq(day_count)  
+        expect(subject.count).to eq(day_count)
       end
 
       it "all hearing days should be assigned to judges" do
