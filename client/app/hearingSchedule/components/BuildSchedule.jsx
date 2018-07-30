@@ -5,6 +5,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
 import { formatDateStr, formatDate } from '../../util/DateUtil';
+import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
@@ -14,6 +15,10 @@ import { COLORS } from '../../constants/AppConstants';
 import { SPREADSHEET_TYPES } from '../constants';
 
 export default class BuildSchedule extends React.Component {
+
+  openDownloadLink = (periodId) => {
+    window.open(`/hearings/schedule/${periodId}/download.json?download=true`);
+  }
 
   render() {
     const {
@@ -74,7 +79,14 @@ export default class BuildSchedule extends React.Component {
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
-      download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
+      download: <Button name="download"
+        linkStyling
+        onClick={() => {
+          this.openDownloadLink(`${pastUpload.id}`);
+        }
+        }>
+         Download {downloadIcon(COLORS.PRIMARY)}
+      </Button>
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
@@ -139,6 +151,7 @@ export default class BuildSchedule extends React.Component {
 
 BuildSchedule.propTypes = {
   pastUploads: PropTypes.shape({
+    id: PropTypes.number,
     type: PropTypes.string,
     userFullName: PropTypes.string,
     startDate: PropTypes.string,
