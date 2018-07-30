@@ -23,7 +23,7 @@ describe SchedulePeriod do
     it do
       total_allocation_days = Allocation.where(schedule_period: schedule_period).sum(:allocated_days)
       assignments = schedule_period.algorithm_assignments
-      
+
       expect(assignments.count).to eq(total_allocation_days)
       expect(assignments[0].key?(:hearing_type)).to be_truthy
       expect(assignments[0].key?(:hearing_date)).to be_truthy
