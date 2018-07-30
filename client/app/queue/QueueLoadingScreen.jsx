@@ -62,18 +62,24 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     if (this.props.appealId) {
       promises.push(this.loadActiveAppealAndTask(this.props.appealId));
     }
-    promises.push(this.loadQueue());
+    promises.push(this.maybeLoadLegacyQueue());
 
     return Promise.all(promises);
   }
 
-  loadQueue = () => {
+  maybeLoadLegacyQueue = () => {
     const {
       userId,
       loadedUserId,
       tasks,
-      appeals
+      appeals,
+      userRole
     } = this.props;
+
+    if (userRole !== USER_ROLES.ATTORNEY && userRole !== USER_ROLES.JUDGE) {
+      return Promise.resolve();
+    }
+
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
     const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
