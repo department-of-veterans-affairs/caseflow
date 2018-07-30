@@ -58,12 +58,12 @@ export const ERROR_MAPPINGS = {
     'spreadsheet contains dates that are not in this format: mm/dd/yyyy.',
   'HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed': 'The judge non-availability spreadsheet ' +
     'does not follow the template.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique': 'The judge spreadsheet contains ' +
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique': 'The judge non-availability spreadsheet contains ' +
     'duplicate dates for a judge.',
   'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotInRange': 'The judge non-availability spreadsheet ' +
     'contains dates outside the range you selected',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase': 'The judge spreadsheet contains a judge not in our' +
-    'database',
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase': 'The judge non-availability spreadsheet contains ' +
+    'a judge not in our database',
   'ValidationError::UnspecifiedError': 'The spreadsheet is invalid.'
 };
 
