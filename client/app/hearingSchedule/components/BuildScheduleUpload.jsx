@@ -19,9 +19,14 @@ const fileUploadStyling = css({
 export default class BuildScheduleUpload extends React.Component {
 
   getErrorMessage = (errors) => {
-    return _.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
-      return <div key={i}>{ERROR_MAPPINGS[error]}</div>;
-    });
+    return <div className="usa-input-error">We have found the following errors with your upload. Please
+      check the file and dates and try again.
+      <ul>
+        {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
+          return ERROR_MAPPINGS[error] ? <li key={i}>{ERROR_MAPPINGS[error]}</li> : null;
+        })}
+      </ul>
+    </div>;
   };
 
   getRoCoDisplay = () => {

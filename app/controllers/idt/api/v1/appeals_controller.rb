@@ -1,33 +1,18 @@
-class Idt::Api::V1::AppealsController < ActionController::Base
+class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
-  before_action :validate_token
-
-  def file_number
-    request.headers["FILE"]
-  end
-
-  def token
-    request.headers["TOKEN"]
-  end
-
-  def css_id
-    Idt::Token.associated_css_id(token)
-  end
-
-  def validate_token
-    return render json: { message: "Missing token" }, status: 400 unless token
-    return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
-  end
+  before_action :verify_access
 
   def index
-    user = User.find_by(css_id: css_id)
-    return render json: { message: "User must be attorney" }, status: 403 unless user.attorney_in_vacols?
-    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user(user)
+    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
     render json: json_appeals(appeals)
   end
 
-  def appeals_assigned_to_user(user)
+  def details
+    # TODO: implement
+  end
+
+  def appeals_assigned_to_user
     # TODO: add AMA appeals
     LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
   end
