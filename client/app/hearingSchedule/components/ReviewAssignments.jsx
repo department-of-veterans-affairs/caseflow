@@ -82,7 +82,11 @@ export default class ReviewAssignments extends React.Component {
       return <StatusMessage
         type="alert"
         title="The assignments algorithm was unable to run successfully."
-        messageText={<Link to="/schedule/build/upload">Go back to re-upload the spreadsheet.</Link>}
+        messageText={
+          <div>Please confirm the information in the spreadsheet is valid and
+            <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
+            contact the Help Desk.
+          </div>}
       />;
     }
 
