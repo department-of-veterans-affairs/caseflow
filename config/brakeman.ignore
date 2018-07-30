@@ -1,6 +1,26 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/hearings/schedule_periods_controller.rb",
+      "line": 64,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Hearings::SchedulePeriodsController",
+        "method": "download"
+      },
+      "user_input": "SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
       "fingerprint": "2494532c77b2833cf67088a95d0a7b9b9c66b4b2277cbfa04ea936cd0bb25c24",
@@ -8,7 +28,7 @@
       "message": "protect_from_forgery should be configured with 'with: :exception'",
       "file": "app/controllers/api/application_controller.rb",
       "line": 2,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
       "code": "protect_from_forgery(:with => :null_session)",
       "render_path": null,
       "location": {
@@ -22,12 +42,32 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
+      "fingerprint": "2634aabd9d9e0db706787681879ec9f759417bb967a833a0a3bef30c6f42ed0b",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/dispatch/establish_claims_controller.rb",
+      "line": 35,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(task.appeal.decisions[params[:decision_number].to_i].serve, :type => \"application/pdf\", :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Dispatch::EstablishClaimsController",
+        "method": "pdf"
+      },
+      "user_input": "params[:decision_number]",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
       "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/document_controller.rb",
-      "line": 29,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "line": 31,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{params[:type]}-#{params[:id]}.pdf'\")))",
       "render_path": null,
       "location": {
@@ -38,48 +78,8 @@
       "user_input": "Document.find(params[:id]).serve",
       "confidence": "Medium",
       "note": ""
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "acbfe5fab11db87920ae335a116c837c694a058ce49f06fb94dcf3dbfb14e66f",
-      "check_name": "SendFile",
-      "message": "Parameter value used in file name",
-      "file": "app/controllers/establish_claims_controller.rb",
-      "line": 32,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(task.appeal.decisions[params[:decision_number].to_i].serve, :type => \"application/pdf\", :disposition => \"inline\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "EstablishClaimsController",
-        "method": "pdf"
-      },
-      "user_input": "params[:decision_number]",
-      "confidence": "Weak",
-      "note": "Param is used in finding the document from the DB, which is sanitized"
-    },
-    {
-      "warning_type": "Mass Assignment",
-      "warning_code": 70,
-      "fingerprint": "ca492b9eafbbad210a76d7639eaf51a9fa8c68f20d8e73ac98cc93f1f239350b",
-      "check_name": "MassAssignment",
-      "message": "Parameters should be whitelisted for mass assignment",
-      "file": "app/controllers/certifications_controller.rb",
-      "line": 69,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "params.require(:form8).permit!",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "CertificationsController",
-        "method": "create"
-      },
-      "user_input": null,
-      "confidence": "Medium",
-      "note": "Permitting update for all form8 values from form"
     }
   ],
-  "updated": "2017-05-31 19:31:33 -0400",
-  "brakeman_version": "3.6.0"
+  "updated": "2018-07-30 11:36:17 -0400",
+  "brakeman_version": "4.1.1"
 }

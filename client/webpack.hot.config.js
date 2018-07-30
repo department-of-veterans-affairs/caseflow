@@ -19,7 +19,7 @@ config.entry.push(
 
 config.output = {
   filename: 'webpack-bundle.js',
-  path: path.join(__dirname, '../app/assets/webpack'),
+  path: path.join(__dirname, '../app/assets/javascripts'),
   publicPath: `http://localhost:${hotRailsPort}/`
 };
 
