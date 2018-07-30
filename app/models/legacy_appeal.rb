@@ -229,6 +229,10 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
+  def docket_name
+    "legacy"
+  end
+
   # TODO: delegate this to veteran
   def can_be_accessed_by_current_user?
     self.class.bgs.can_access?(veteran_file_number)
@@ -385,7 +389,13 @@ class LegacyAppeal < ApplicationRecord
     return "Remand" if remand_on_dispatch?
   end
 
+  def activated?
+    # An appeal is currently at the board, and it has passed some data checks
+    status == "Active"
+  end
+
   def active?
+    # All issues on an appeal have not yet been granted or denied
     status != "Complete"
   end
 

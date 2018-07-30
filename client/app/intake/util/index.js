@@ -75,7 +75,8 @@ export const formatIssues = (intakeState) => {
         map((issue) => {
           return {
             decision_text: issue.description,
-            issue_category: issue.category
+            issue_category: issue.category,
+            decision_date: formatDateStringForApi(issue.decisionDate)
           };
         })
   };

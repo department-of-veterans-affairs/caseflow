@@ -4,6 +4,7 @@ FactoryBot.define do
     assigned_by { create(:user) }
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+    appeal_type "LegacyAppeal"
 
     trait :in_progress do
       status "in_progress"
@@ -27,7 +28,7 @@ FactoryBot.define do
 
     factory :colocated_task do
       type "ColocatedTask"
-      title "poa_clarification"
+      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions "poa is missing"
 
       after(:create) do |task, _evaluator|
@@ -37,20 +38,23 @@ FactoryBot.define do
 
     factory :ama_colocated_task do
       type "ColocatedTask"
-      title "poa_clarification"
+      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions "poa is missing"
       appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
 
     factory :ama_judge_task do
       type "JudgeTask"
       appeal_type "Appeal"
       assigned_by nil
+      appeal { create(:appeal) }
     end
 
     factory :ama_attorney_task do
       type "AttorneyTask"
       appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
   end
 end

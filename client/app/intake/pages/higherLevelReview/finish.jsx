@@ -12,7 +12,8 @@ import {
   setIssueSelected,
   addNonRatedIssue,
   setIssueCategory,
-  setIssueDescription
+  setIssueDescription,
+  setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -66,7 +67,8 @@ const NonRatedIssues = connect(
   (dispatch) => bindActionCreators({
     addNonRatedIssue,
     setIssueCategory,
-    setIssueDescription
+    setIssueDescription,
+    setIssueDecisionDate
   }, dispatch)
 )(NonRatedIssuesUnconnected);
 
