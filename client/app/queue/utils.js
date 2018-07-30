@@ -20,24 +20,42 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const associateTasksWithAppeals = (serverData: Object = {}) => {
-  const {
-    appeals: { data: appeals },
-    tasks: { data: tasks }
-  } = serverData;
+export const associateTasksWithAppeals =
+  (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
+    { appeals: LegacyAppeals, tasks: Tasks } => {
+    const {
+      appeals: { data: appeals },
+      tasks: outerTasks
+    } = serverData;
 
-  _.each(tasks, (task) => {
-    task.appealId = task.id;
-  });
+    const result = {
+      appeals: {},
+      tasks: {}
+    };
 
-  const tasksById = _.keyBy(tasks, 'id');
-  const appealsById = _.keyBy(appeals, 'attributes.vacols_id');
+    for (const appeal of appeals) {
+      if (appeal) {
+        result.appeals[appeal.attributes.vacols_id] = appeal;
+      }
+    }
+    if (Array.isArray(outerTasks)) {
+      return result;
+    }
 
-  return {
-    appeals: appealsById,
-    tasks: tasksById
+    const tasks = outerTasks.data;
+
+    _.each(tasks, (task) => {
+      task.appealId = task.id;
+    });
+
+    for (const task of tasks) {
+      if (task) {
+        result.tasks[task.id] = task;
+      }
+    }
+
+    return result;
   };
-};
 
 /*
 * Sorting hierarchy:
