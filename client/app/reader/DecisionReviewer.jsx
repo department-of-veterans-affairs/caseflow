@@ -10,8 +10,6 @@ import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
-import CaseSelect from './CaseSelect';
-import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
@@ -36,7 +34,6 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-    this.routedCaseSelect.displayName = 'RoutedCaseSelect';
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
@@ -125,11 +122,6 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
-    <CaseSelect history={props.history}
-      feedbackUrl={this.props.feedbackUrl} />
-  </CaseSelectLoadingScreen>
-
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
@@ -160,12 +152,6 @@ export class DecisionReviewer extends React.PureComponent {
             breadcrumb="Reader"
             path="/:vacolsId/documents"
             render={this.routedPdfListView} />
-          {!queueEnabled && <PageRoute
-            exact
-            path="/"
-            title="Assignments | Caseflow Reader"
-            render={this.routedCaseSelect} />
-          }
         </AppFrame>
       </NavigationBar>
       <Footer
