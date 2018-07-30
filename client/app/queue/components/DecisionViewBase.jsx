@@ -43,7 +43,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
-    getModal = () => this.props.modal['cancelCheckout'];
+    getModal = () => this.props.modal.cancelCheckout;
     showModal = () => this.props.showModal('cancelCheckout');
     hideModal = () => this.props.hideModal('cancelCheckout');
 
@@ -169,8 +169,8 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       saveSuccessful,
       stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),
       ...topLevelProps
-    }
-  }
+    };
+  };
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     highlightInvalidFormItems,
     showModal,

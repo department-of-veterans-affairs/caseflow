@@ -53,7 +53,7 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
     };
   }
 
-  validateForm = () => _.every(Object.values(this.state), (val) => !!val);
+  validateForm = () => _.every(Object.values(this.state), (val) => Boolean(val));
 
   getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
 
@@ -78,33 +78,33 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
     const { title, instructions } = this.state;
 
     return <React.Fragment>
-    <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-      {COPY.ADD_ADMIN_ACTION_SUBHEAD}
-    </h1>
-    <hr />
-    {error && <Alert title={error.title} type="error">
-      {error.detail}
-    </Alert>}
-    <div {...marginTop(4)}>
-      <SearchableDropdown
-        errorMessage={highlightFormItems && !title ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        name={COPY.ADD_ADMIN_ACTION_ACTION_TYPE_LABEL}
-        placeholder="Select an action type"
-        options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
-          label,
-          value
-        }))}
-        onChange={({ value }) => this.setState({ title: value })}
-        value={this.state.title} />
-    </div>
-    <div {...marginTop(4)}>
-      <TextareaField
-        errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        name={COPY.ADD_ADMIN_ACTION_INSTRUCTIONS_LABEL}
-        onChange={(instructions) => this.setState({ instructions })}
-        value={this.state.instructions} />
-    </div>
-  </React.Fragment>;
+      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
+        {COPY.ADD_ADMIN_ACTION_SUBHEAD}
+      </h1>
+      <hr />
+      {error && <Alert title={error.title} type="error">
+        {error.detail}
+      </Alert>}
+      <div {...marginTop(4)}>
+        <SearchableDropdown
+          errorMessage={highlightFormItems && !title ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          name={COPY.ADD_ADMIN_ACTION_ACTION_TYPE_LABEL}
+          placeholder="Select an action type"
+          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
+            label,
+            value
+          }))}
+          onChange={({ value }) => this.setState({ title: value })}
+          value={this.state.title} />
+      </div>
+      <div {...marginTop(4)}>
+        <TextareaField
+          errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          name={COPY.ADD_ADMIN_ACTION_INSTRUCTIONS_LABEL}
+          onChange={(value) => this.setState({ instructions: value })}
+          value={instructions} />
+      </div>
+    </React.Fragment>;
   }
 }
 
@@ -123,4 +123,5 @@ const WrappedComponent = decisionViewBase(AddAdminActionView, {
   hideCancelButton: true,
   continueBtnText: 'Assign Action'
 });
+
 export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent): React.ComponentType<Params>);
