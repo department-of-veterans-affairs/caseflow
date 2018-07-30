@@ -43,7 +43,7 @@ class RampRefilingIntake < Intake
     detail.errors.messages
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       option_selected: detail.option_selected,
       receipt_date: detail.receipt_date,
