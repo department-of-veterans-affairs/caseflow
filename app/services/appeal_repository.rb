@@ -45,20 +45,27 @@ class AppealRepository
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
         .includes(:folder, :correspondent, folder: :outcoder)
         .references(:folder, :correspondent, folder: :outcoder)
-        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
       hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
       cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
 
+      aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
+        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+        .select("bfkey", "aod", "rem_return")
+        .each_with_object({}) do |row, memo|
+          memo[(row["bfkey"]).to_s] = row
+        end
+
       cases.map do |case_record|
         appeal = build_appeal(case_record)
-        appeal.aod = case_record["aod"] == 1
+        appeal.aod = aod_and_rem_return[appeal.vacols_id].aod == 1
         appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         appeal.hearings = hearings[appeal.vacols_id] || []
         appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
-        appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
+        appeal.remand_return_date = (aod_and_rem_return[appeal.vacols_id].rem_return || false) unless appeal.active?
         appeal.save
         appeal
       end
