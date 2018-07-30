@@ -35,7 +35,6 @@ type Props = Params & {|
   judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
-  onReceiveJudges: typeof onReceiveJudges,
   setActiveAppeal: typeof setActiveAppeal,
   setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,

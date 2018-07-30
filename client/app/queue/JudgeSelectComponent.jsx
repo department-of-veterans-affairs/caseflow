@@ -12,37 +12,15 @@ import {
 } from './QueueActions';
 import { setSelectingJudge } from './uiReducer/uiActions';
 
-import decisionViewBase from './components/DecisionViewBase';
-import RadioField from '../components/RadioField';
-import Checkbox from '../components/Checkbox';
-import TextField from '../components/TextField';
-import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
-import Alert from '../components/Alert';
-
-import {
-  fullWidth,
-  marginBottom,
-  marginTop,
-  ATTORNEY_COMMENTS_MAX_LENGTH,
-  DOCUMENT_ID_MAX_LENGTH,
-  OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
-  ISSUE_DISPOSITIONS
-} from './constants';
 import SearchableDropdown from '../components/SearchableDropdown';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
-const radioFieldStyling = css(marginBottom(0), marginTop(2), {
-  '& .question-label': marginBottom(0)
-});
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 import type {
-  Task,
   Judges
 } from './types/models';
-import type { UiStateError } from './types/state';
 
 type Params = {|
   assignedByCssId: Object
@@ -70,7 +48,7 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
   }
 
   setDefaultJudge = (judges) => {
-    const judge = _.find(judges, {'css_id': this.props.assignedByCssId});
+    const judge = _.find(judges, { css_id: this.props.assignedByCssId });
 
     if (judge) {
       this.props.setDecisionOptions({
@@ -104,33 +82,31 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
     }));
 
     if (judgeOptions.length === 0) {
-      componentContent = <React.Fragment>Loading judges&hellip;</React.Fragment>
+      componentContent = <React.Fragment>Loading judges&hellip;</React.Fragment>;
+    } else if (selectingJudge) {
+      componentContent = <React.Fragment>
+        <SearchableDropdown
+          name="Select a judge"
+          placeholder="Select a judge&hellip;"
+          options={judgeOptions}
+          onChange={({ value }) => {
+            this.props.setSelectingJudge(false);
+            this.props.setDecisionOptions({ reviewing_judge_id: value });
+          }}
+          hideLabel />
+      </React.Fragment>;
     } else {
-      if (selectingJudge) {
-        componentContent = <React.Fragment>
-          <SearchableDropdown
-            name="Select a judge"
-            placeholder="Select a judge&hellip;"
-            options={judgeOptions}
-            onChange={({ value }) => {
-              this.props.setSelectingJudge(false);
-              this.props.setDecisionOptions({ reviewing_judge_id: value });
-            }}
-            hideLabel />
-        </React.Fragment>;
-      } else {
-        componentContent = <React.Fragment>
-          {selectedJudge && <span>{selectedJudge.full_name}</span>}
-          <Button
-            id="select-judge"
-            linkStyling
-            willNeverBeLoading
-            styling={selectJudgeButtonStyling(selectedJudge)}
-            onClick={() => this.props.setSelectingJudge(true)}>
+      componentContent = <React.Fragment>
+        {selectedJudge && <span>{selectedJudge.full_name}</span>}
+        <Button
+          id="select-judge"
+          linkStyling
+          willNeverBeLoading
+          styling={selectJudgeButtonStyling(selectedJudge)}
+          onClick={() => this.props.setSelectingJudge(true)}>
             Select {selectedJudge ? 'another' : 'a'} judge
-          </Button>
-        </React.Fragment>;
-      }
+        </Button>
+      </React.Fragment>;
     }
 
     return <div className={fieldClasses}>
@@ -143,7 +119,7 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   const {
     queue: {
       judges,

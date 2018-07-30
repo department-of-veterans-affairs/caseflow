@@ -3,7 +3,8 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, UsersById } from './types/state';
+import _ from 'lodash';
+import type { Dispatch } from './types/state';
 import type {
   Task,
   Tasks,
@@ -33,7 +34,7 @@ export const fetchJudges = () => (dispatch: Dispatch) => {
         judges
       }
     });
-  })
+  });
 };
 
 export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {

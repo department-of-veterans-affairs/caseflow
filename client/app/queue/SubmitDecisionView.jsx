@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-import classNames from 'classnames';
 import {
   getDecisionTypeDisplay,
   buildCaseReviewPayload,
@@ -23,7 +22,6 @@ import RadioField from '../components/RadioField';
 import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
-import Button from '../components/Button';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
 
@@ -36,19 +34,16 @@ import {
   OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
   ISSUE_DISPOSITIONS
 } from './constants';
-import SearchableDropdown from '../components/SearchableDropdown';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
 const radioFieldStyling = css(marginBottom(0), marginTop(2), {
   '& .question-label': marginBottom(0)
 });
-const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
 import type {
   Task,
-  LegacyAppeal,
-  Judges
+  LegacyAppeal
 } from './types/models';
 import type { UiStateError } from './types/state';
 
@@ -196,7 +191,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      <JudgeSelectComponent assignedByCssId={this.props.task.attributes.added_by_css_id}/>
+      <JudgeSelectComponent assignedByCssId={this.props.task.attributes.added_by_css_id} />
       <TextareaField
         label="Notes:"
         name="notes"
@@ -237,7 +232,7 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     error,
     userRole,
-    highlightFormItems,
+    highlightFormItems
   };
 };
 
