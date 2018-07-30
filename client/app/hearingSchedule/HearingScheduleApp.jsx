@@ -18,6 +18,7 @@ class HearingScheduleApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
+      defaultUrl="/schedule"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -30,26 +31,29 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/schedule/build"
-            title="Caseflow Hearing Schedule"
-            component={BuildScheduleContainer}
-          />
-          <PageRoute
-            exact
             path="/schedule"
             title="Scheduled Hearings"
             component={ListScheduleContainer}
           />
           <PageRoute
             exact
+            path="/schedule/build"
+            title="Caseflow Hearing Schedule"
+            breadcrumb="Build"
+            component={BuildScheduleContainer}
+          />
+          <PageRoute
+            exact
             path="/schedule/build/upload"
             title="Upload Files"
+            breadcrumb="Upload"
             component={BuildScheduleUploadContainer}
           />
           <PageRoute
             exact
             path="/schedule/build/upload/:schedulePeriodId"
-            title="Upload Files"
+            title="Review Assignments"
+            breadcrumb="Review"
             component={ReviewAssignmentsContainer}
           />
         </div>
