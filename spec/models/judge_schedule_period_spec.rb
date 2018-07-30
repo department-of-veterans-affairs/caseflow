@@ -21,6 +21,8 @@ describe JudgeSchedulePeriod do
 
     subject { judge_schedule_period.algorithm_assignments }
     it "verifying the algorithm output" do
+      expect(subject.count).to eq(hearing_days.count)
+      expect(subject[0].key?(:hearing_pkseq)).to be_truthy
       expect(subject[0].key?(:hearing_type)).to be_truthy
       expect(subject[0].key?(:hearing_date)).to be_truthy
       expect(subject[0].key?(:room_info)).to be_truthy
