@@ -151,7 +151,7 @@ RSpec.describe TasksController, type: :controller do
              {
                "appeal_id": appeal.id,
                "type": "ColocatedTask",
-               "title": "substituation_determination",
+               "title": "substitution_determination",
                "instructions": "another one"
              }]
           end
@@ -170,7 +170,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.second["attributes"]["status"]).to eq "assigned"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"]).to eq "another one"
-            expect(response_body.second["attributes"]["title"]).to eq "substituation_determination"
+            expect(response_body.second["attributes"]["title"]).to eq "substitution_determination"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id

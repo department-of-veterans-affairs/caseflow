@@ -19,7 +19,6 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.j
 
 type State = {|
   admin_action: ?string,
-  assignee: ?string,
   instructions: string
 |};
 
@@ -35,7 +34,6 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
 
     this.state = {
       admin_action: null,
-      assignee: null,
       instructions: ''
     };
   }
@@ -48,8 +46,8 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
     <div {...marginTop(4)}>
       <SearchableDropdown
         required
-        name="Select admin action:"
-        placeholder="Select an action"
+        name={COPY.ADD_ADMIN_ACTION_ACTION_TYPE_LABEL}
+        placeholder="Select an action type"
         options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
           label,
           value
@@ -58,17 +56,8 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
         value={this.state.admin_action} />
     </div>
     <div {...marginTop(4)}>
-      <SearchableDropdown
-        required
-        name="Assign to:"
-        placeholder="Select assignee"
-        options={[]}
-        onChange={({ value }) => this.setState({ assignee: value })}
-        value={this.state.assignee} />
-    </div>
-    <div {...marginTop(4)}>
       <TextAreaField
-        name="Instructions:"
+        name={COPY.ADD_ADMIN_ACTION_INSTRUCTIONS_LABEL}
         onChange={({ value }) => this.setState({ instructions: value })}
         value={this.state.instructions} />
     </div>
