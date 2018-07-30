@@ -10,6 +10,7 @@ import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
+import StatusMessage from '../../components/StatusMessage';
 import { formatDate } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
@@ -79,7 +80,11 @@ export default class ReviewAssignments extends React.Component {
   render() {
 
     if (this.props.schedulePeriod.finalized) {
-      return <Redirect to="/schedule/build" />;
+      return <StatusMessage
+        type="status"
+        title="This page has expired."
+        leadMessageList={["Please return to the homepage", <Link>Go back to home</Link>]}
+      />;
     }
 
     let hearingAssignmentColumns = [
