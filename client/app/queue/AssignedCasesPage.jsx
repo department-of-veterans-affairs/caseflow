@@ -13,9 +13,8 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import Alert from '../components/Alert';
 import type { Task, LegacyAppeals } from './types/models';
-import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateError, State } from './types/state';
+import type { AttorneysOfJudge, AttorneyAppealsLoadingState, State } from './types/state';
 
 type Params = {|
   match: Object
@@ -28,8 +27,6 @@ type Props = Params & {|
   featureToggles: Object,
   selectedTasks: Array<Task>,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
-  success: string,
-  error: ?UiStateError,
   // Action creators
   resetSuccessMessages: typeof resetSuccessMessages,
   resetErrorMessages: typeof resetErrorMessages,
@@ -55,7 +52,7 @@ class AssignedCasesPage extends React.Component<Props> {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, attorneyAppealsLoadingState, featureToggles, selectedTasks, success, error
+      match, attorneysOfJudge, attorneyAppealsLoadingState, featureToggles, selectedTasks
     } = props;
     const { attorneyId } = match.params;
 
@@ -64,21 +61,19 @@ class AssignedCasesPage extends React.Component<Props> {
     }
 
     if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
-      const { error: loadingError } = attorneyAppealsLoadingState[attorneyId];
+      const { error } = attorneyAppealsLoadingState[attorneyId];
 
-      if (!loadingError.response) {
+      if (!error.response) {
         return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
       }
 
-      return <StatusMessage title={loadingError.response.statusText}>Error fetching cases</StatusMessage>;
+      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>;
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
-      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
-      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
@@ -100,13 +95,7 @@ class AssignedCasesPage extends React.Component<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
-  const {
-    featureToggles,
-    messages: {
-      success,
-      error
-    }
-  } = state.ui;
+  const { featureToggles } = state.ui;
   const { attorneyId } = ownProps.match.params;
 
   return {
@@ -114,9 +103,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     attorneyAppealsLoadingState,
     attorneysOfJudge,
     featureToggles,
-    selectedTasks: selectedTasksSelector(state, attorneyId),
-    success,
-    error
+    selectedTasks: selectedTasksSelector(state, attorneyId)
   };
 };
 
