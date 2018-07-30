@@ -134,7 +134,7 @@ RSpec.feature "Out of Service" do
 
     scenario "When out of service is disabled, it shows hearing schedule page" do
       visit "/hearings/schedule/build"
-      expect(page).to have_content("Welcome to Caseflow Hearing Schedule!")
+      expect(page).to have_content("Build Schedule")
       expect(page).to_not have_content("Technical Difficulties")
     end
 
@@ -142,7 +142,7 @@ RSpec.feature "Out of Service" do
       Rails.cache.write("hearing_schedule_out_of_service", true)
       visit "/hearings/schedule/build"
       expect(page).to have_content("Technical Difficulties")
-      expect(page).to_not have_content("Welcome to Caseflow Hearing Schedule!")
+      expect(page).to_not have_content("Build Schedule")
     end
   end
 
