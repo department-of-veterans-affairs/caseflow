@@ -47,7 +47,7 @@ export type UiState = {
   userCssId: string
 };
 
-export type UsersById = { [number]: ?User };
+export type UsersById = { [number]: User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 

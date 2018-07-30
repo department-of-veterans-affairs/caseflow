@@ -57,7 +57,7 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant", skip: "failing intermittently" do
+    scenario "veteran is the appellant" do
       visit "/queue/beaam"
 
       click_on appeals.first.veteran.first_name

@@ -14,13 +14,14 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
+  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
 } from './QueueActions';
-import { judgeAssignAppealsSelector, getAppealsByUserId } from './selectors';
+import { unassignedAppealsSelector, getAppealsByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -39,11 +40,22 @@ class JudgeAssignTaskListView extends React.PureComponent {
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
-    for (const attorney of this.props.attorneysOfJudge) {
-      this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
-    }
+    this.props.fetchAllAttorneys();
 
-    return Promise.resolve();
+    const requestOptions = {
+      timeout: true
+    };
+
+    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
+      then(
+        (response) => {
+          const resp = JSON.parse(response.text);
+
+          this.props.setAttorneysOfJudge(resp.attorneys);
+          for (const attorney of resp.attorneys) {
+            this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+          }
+        });
   }
 
   caseCountOfAttorney = (attorneyId) => {
@@ -130,7 +142,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    unassignedAppealsCount: judgeAssignAppealsSelector(state).length,
+    unassignedAppealsCount: unassignedAppealsSelector(state).length,
     appealsByUserId: getAppealsByUserId(state),
     attorneysOfJudge,
     attorneyAppealsLoadingState,
@@ -144,8 +156,10 @@ const mapDispatchToProps = (dispatch) => (
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
+    setAttorneysOfJudge,
     fetchTasksAndAppealsOfAttorney,
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    fetchAllAttorneys
   }, dispatch)
 );
 

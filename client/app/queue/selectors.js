@@ -60,8 +60,8 @@ export const judgeReviewAppealsSelector = createSelector(
       _.some(appeal.tasks, (task) => task.attributes.task_type === 'Review'))
 );
 
-export const judgeAssignAppealsSelector = createSelector(
-  [appealsByAssigneeCssIdSelector],
+export const unassignedAppealsSelector = createSelector(
+  [appealsWithTasksSelector],
   (appeals: LegacyAppeals) =>
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks &&
       _.some(appeal.tasks, (task) => task.attributes.task_type === 'Assign'))
