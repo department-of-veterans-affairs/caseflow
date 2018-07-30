@@ -55,7 +55,7 @@ class Test::UsersController < ApplicationController
     {
       name: "Hearing Schedule",
       links: {
-        current_schedule: "/hearings/schedule/build"
+        current_schedule: "/hearings/schedule"
       }
     },
     {
