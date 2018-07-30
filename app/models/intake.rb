@@ -188,7 +188,7 @@ class Intake < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     {
       id: id,
       form_type: form_type,
@@ -196,7 +196,7 @@ class Intake < ApplicationRecord
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
       completed_at: completed_at,
-      relationships: FeatureToggle.enabled?(:intakeAma) && veteran && veteran.relationships
+      relationships: ama_enabled && veteran && veteran.relationships
     }
   end
 

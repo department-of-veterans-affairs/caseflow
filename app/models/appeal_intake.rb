@@ -3,7 +3,7 @@ class AppealIntake < Intake
     Appeal.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
