@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 import COPY from '../../../COPY.json';
@@ -10,10 +9,12 @@ import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
+import StatusMessage from '../../components/StatusMessage';
 import { formatDate } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
-const tableBorder = css({
+const tableStyling = css({
+  '& > thead > tr > th': { backgroundColor: '#f1f1f1' },
   border: '1px solid #dadbdc'
 });
 
@@ -79,7 +80,11 @@ export default class ReviewAssignments extends React.Component {
   render() {
 
     if (this.props.schedulePeriod.finalized) {
-      return <Redirect to="/schedule/build" />;
+      return <StatusMessage
+        type="status"
+        title="This page has expired."
+        messageText={<Link to="/schedule">Go back to home</Link>}
+      />;
     }
 
     let hearingAssignmentColumns = [
@@ -139,7 +144,7 @@ export default class ReviewAssignments extends React.Component {
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
       />
       <Table
-        styling={tableBorder}
+        styling={tableStyling}
         columns={hearingAssignmentColumns}
         rowObjects={hearingAssignmentRows}
         summary="hearing-assignments"
