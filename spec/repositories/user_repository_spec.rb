@@ -106,4 +106,22 @@ describe UserRepository do
       end
     end
   end
+
+  context "user_info_for_idt" do
+    subject { UserRepository.user_info_for_idt(css_id) }
+
+    context "when user exists in VACOLS" do
+      let!(:staff) { create(:staff, :attorney_judge_role, sdomainid: css_id) }
+
+      it "should return judge status" do
+        expect(subject[:judge_status]).to eq "acting judge"
+      end
+    end
+
+    context "when user does not exist in VACOLS" do
+      it "should return nil" do
+        expect(subject[:judge_status]).to eq(nil)
+      end
+    end
+  end
 end
