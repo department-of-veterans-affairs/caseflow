@@ -81,8 +81,6 @@ gem "request_store"
 # State machine
 gem "aasm", "4.11.0"
 
-gem "font-awesome-sass"
-
 gem "redis-namespace"
 
 # catch problematic migrations at development/test time
