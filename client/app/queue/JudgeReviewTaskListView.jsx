@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 
 import StatusMessage from '../components/StatusMessage';
-import JudgeReviewTaskTable from './JudgeReviewTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -16,7 +16,7 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { judgeReviewTasksSelector } from './selectors';
+import { judgeReviewAppealsSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -37,9 +37,9 @@ class JudgeReviewTaskListView extends React.PureComponent {
     const {
       userId,
       messages,
-      tasks
+      appeals
     } = this.props;
-    const reviewableCount = Object.keys(tasks).length;
+    const reviewableCount = appeals.length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -47,7 +47,15 @@ class JudgeReviewTaskListView extends React.PureComponent {
         {COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE}
       </StatusMessage>;
     } else {
-      tableContent = <JudgeReviewTaskTable />;
+      tableContent = <TaskTable
+        includeDetailsLink
+        includeDocumentId
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDaysWaiting
+        appeals={this.props.appeals}
+      />;
     }
 
     return <AppSegment filledBackground>
@@ -65,23 +73,18 @@ class JudgeReviewTaskListView extends React.PureComponent {
 }
 
 JudgeReviewTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  appeals: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
   const {
-    queue: {
-      appeals
-    },
     ui: {
       messages
     }
   } = state;
 
   return {
-    appeals,
-    tasks: judgeReviewTasksSelector(state),
+    appeals: judgeReviewAppealsSelector(state),
     messages
   };
 };

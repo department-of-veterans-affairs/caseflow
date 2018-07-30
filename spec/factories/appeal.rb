@@ -6,14 +6,10 @@ FactoryBot.define do
       end
     end
 
+    sequence(:veteran_file_number, 500_000_000)
+
     transient do
       veteran nil
-    end
-
-    veteran_file_number do
-      if veteran
-        veteran.file_number
-      end
     end
 
     uuid do
@@ -22,10 +18,14 @@ FactoryBot.define do
 
     established_at { Time.zone.now }
 
-    after(:create) do |appeal, _evaluator|
+    after(:create) do |appeal, evaluator|
       appeal.request_issues.each do |issue|
         issue.review_request = appeal
         issue.save
+      end
+      if evaluator.veteran
+        appeal.veteran_file_number = evaluator.veteran.file_number
+        appeal.save
       end
     end
 
