@@ -311,7 +311,3 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
       (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
 };
-
-export const fetchTasks = (userId: number, role: string) => (dispatch: Dispatch) => {
-  return ApiUtil.get('/tasks?user_id=');
-}
