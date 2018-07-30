@@ -5,10 +5,10 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
       format.json { render json: { schedule_periods: SchedulePeriod.all.map(&:to_hash) } }
     end
   end
+
   def show
-    schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     render json: { schedule_period: schedule_period.to_hash.merge(
-      hearing_days: schedule_period.ro_hearing_day_allocations.map do |hearing_day|
+      hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
         regional_office = RegionalOffice::CITIES[hearing_day[:regional_office]]
         hearing_day[:regional_office] = "#{regional_office[:city]}, #{regional_office[:state]}"
         hearing_day
@@ -29,14 +29,17 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def update
-    schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     if schedule_period.can_be_finalized?
-      schedule_period.schedule_confirmed(schedule_period.ro_hearing_day_allocations)
+      schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
     end
     render json: { id: schedule_period.id }
   end
 
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
+  end
+
+  def schedule_period
+    SchedulePeriod.find(params[:schedule_period_id])
   end
 end
