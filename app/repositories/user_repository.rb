@@ -2,13 +2,25 @@ class UserRepository
   class << self
     def user_info_from_vacols(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
-
       {
         uniq_id: vacols_uniq_id(staff_record),
         roles: vacols_roles(staff_record),
         attorney_id: vacols_attorney_id(staff_record),
         group_id: vacols_group_id(staff_record),
         full_name: vacols_full_name(staff_record)
+      }
+    end
+
+    def user_info_for_idt(css_id)
+      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      return {} unless staff_record
+      {
+        first_name: staff_record.snamef,
+        middle_name: staff_record.snamemi,
+        last_name: staff_record.snamel,
+        attorney_id: vacols_attorney_id(staff_record),
+        judge_status: judge_status(staff_record),
+        css_id: css_id
       }
     end
 
@@ -45,6 +57,17 @@ class UserRepository
         check_other_staff_fields(staff_record)
       else
         []
+      end
+    end
+
+    def judge_status(staff_record)
+      case staff_record.svlj
+      when "J"
+        "judge"
+      when "A"
+        "acting judge"
+      else
+        "none"
       end
     end
 
