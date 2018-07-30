@@ -22,7 +22,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].downcase.try(:to_sym))
     tasks = queue_class.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
@@ -50,7 +50,7 @@ class TasksController < ApplicationController
   private
 
   def queue_class
-    QUEUES[params[:role].try(:to_sym)]
+    QUEUES[params[:role].downcase.try(:to_sym)]
   end
 
   def user
