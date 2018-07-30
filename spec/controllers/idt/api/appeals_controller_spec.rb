@@ -74,7 +74,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(response_body.first["attributes"]["veteran_last_name"]).to eq appeals.first.veteran_last_name
           expect(response_body.first["attributes"]["file_number"]).to eq appeals.first.veteran_file_number
 
-
           expect(response_body.second["attributes"]["veteran_first_name"]).to eq appeals.second.veteran_first_name
           expect(response_body.second["attributes"]["veteran_last_name"]).to eq appeals.second.veteran_last_name
           expect(response_body.second["attributes"]["file_number"]).to eq appeals.second.veteran_file_number
