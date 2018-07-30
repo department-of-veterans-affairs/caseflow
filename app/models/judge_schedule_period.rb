@@ -18,4 +18,3 @@ class JudgeSchedulePeriod < SchedulePeriod
   end
 end
 # :nocov:
-
