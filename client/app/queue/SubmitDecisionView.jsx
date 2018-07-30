@@ -196,7 +196,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      <JudgeSelectComponent assignedByCssId={this.props.task.added_by_css_id}/>
+      <JudgeSelectComponent assignedByCssId={this.props.task.attributes.added_by_css_id}/>
       <TextareaField
         label="Notes:"
         name="notes"

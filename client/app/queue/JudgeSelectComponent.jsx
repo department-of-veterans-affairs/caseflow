@@ -64,26 +64,23 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
     if (_.isEmpty(this.props.judges)) {
       this.props.fetchJudges();
     } else {
-      this.setDefaultJudge()
+      this.setDefaultJudge(this.props.judges);
     }
   }
 
-  setDefaultJudge = () => {
-    const judge = this.props.judges[this.props.assignedByCssId];
+  setDefaultJudge = (judges) => {
+    const judge = _.find(judges, {'css_id': this.props.assignedByCssId});
 
     if (judge) {
       this.props.setDecisionOptions({
-        judge: {
-          label: judge.full_name,
-          value: judge.id
-        }
+        reviewing_judge_id: judge.id
       });
     }
   };
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.judges !== this.props.judges) {
-      this.setDefaultJudge();
+      this.setDefaultJudge(nextProps.judges);
     }
   }
 
