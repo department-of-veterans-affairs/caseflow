@@ -136,7 +136,6 @@ export class DecisionReviewer extends React.PureComponent {
 
   render() {
     const queueEnabled = this.props.featureToggles.queueWelcomeGate;
-    const claimsFolderBreadcrumb = queueEnabled ? 'Reader' : 'Claims Folder';
 
     return <React.Fragment>
       <NavigationBar
@@ -158,7 +157,7 @@ export class DecisionReviewer extends React.PureComponent {
           <PageRoute
             exact
             title={this.getClaimsFolderPageTitle(this.props.appeal)}
-            breadcrumb={claimsFolderBreadcrumb}
+            breadcrumb="Reader"
             path="/:vacolsId/documents"
             render={this.routedPdfListView} />
           {!queueEnabled && <PageRoute
