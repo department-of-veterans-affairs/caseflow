@@ -2,6 +2,7 @@ import React from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
+import DateSelector from '../../components/DateSelector';
 import { ISSUE_CATEGORIES } from '../constants';
 import _ from 'lodash';
 
@@ -11,7 +12,8 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       nonRatedIssues,
       addNonRatedIssue,
       setIssueCategory,
-      setIssueDescription
+      setIssueDescription,
+      setIssueDecisionDate
     } = this.props;
 
     const disableAddNonRatedIssue = _.some(nonRatedIssues, (issue) => {
@@ -25,8 +27,10 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
           id={issueId}
           category={issue.category}
           description={issue.description}
+          decisionDate={issue.decisionDate}
           setCategory={setIssueCategory}
           setDescription={setIssueDescription}
+          setIssueDecisionDate={setIssueDecisionDate}
         />
       );
     });
@@ -62,8 +66,12 @@ class NonRatedIssue extends React.PureComponent {
     this.props.setDescription(this.props.id, event);
   }
 
+  handleDecisionDateChange(event) {
+    this.props.setIssueDecisionDate(this.props.id, event);
+  }
+
   render () {
-    const { category, description } = this.props;
+    const { category, description, decisionDate } = this.props;
 
     return (
       <div className="cf-non-rated-issue">
@@ -81,6 +89,13 @@ class NonRatedIssue extends React.PureComponent {
           value={description}
           required
           onChange={(event) => this.handleDescriptionChange(event)} />
+
+        <DateSelector
+          name="Issue date"
+          label="Decision date"
+          value={decisionDate}
+          required={category ? (category !== 'Unknown issue category') : false}
+          onChange={(event) => this.handleDecisionDateChange(event)} />
       </div>
     );
   }

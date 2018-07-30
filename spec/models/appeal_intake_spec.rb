@@ -114,7 +114,10 @@ describe AppealIntake do
 
     let(:params) do
       { request_issues: [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" }
+        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        { decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25" }
       ] }
     end
 
@@ -130,11 +133,16 @@ describe AppealIntake do
 
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
-      expect(intake.detail.request_issues.count).to eq 1
+      expect(intake.detail.request_issues.count).to eq 2
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "decision text"
+      )
+      expect(intake.detail.request_issues.second).to have_attributes(
+        issue_category: "test issue category",
+        decision_date: Date.new(2018, 12, 25),
+        description: "non-rated issue decision text"
       )
     end
   end

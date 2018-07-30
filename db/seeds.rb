@@ -207,6 +207,11 @@ class SeedDB
       veteran: FactoryBot.create(:veteran),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
+
+    LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
+    LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
+    LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
+    LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
   def create_tasks
@@ -254,6 +259,30 @@ class SeedDB
                       appeal: @ama_appeals[5])
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+
+    # Colocated tasks with legacy appeals
+    FactoryBot.create(:colocated_task,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :in_progress,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2226048"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :in_progress,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2249056"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :on_hold,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
   end
 
   def create_organizations
