@@ -112,7 +112,7 @@ RSpec.describe TasksController, type: :controller do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
-    let(:ama_appeal) { create(:appeal) }
+
 
     before do
       User.stub = user
@@ -130,23 +130,28 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when current user is a judge" do
+        let(:ama_appeal) { create(:appeal) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
         let(:role) { :judge_role }
+
         let(:params) do
           [{
             "external_id": ama_appeal.uuid,
             "type": "AttorneyTask",
-            "assigned_to_id": attorney.id
+            "assigned_to_id": attorney.id,
+            "parent_id": ama_judge_task.id
           }]
         end
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 200
+          expect(response.status).to eq 201
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.first["attributes"]["type"]).to eq "AttorneyTask"
           expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.first["attributes"]["appeal_type"]).to eq "Appeal"
         end
       end
     end
