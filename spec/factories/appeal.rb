@@ -32,7 +32,6 @@ FactoryBot.define do
     after(:build) do |appeal, evaluator|
       if evaluator.veteran
         appeal.veteran_file_number = evaluator.veteran.file_number
-        appeal.save
       end
 
       Fakes::VBMSService.document_records ||= {}
