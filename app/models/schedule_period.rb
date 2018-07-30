@@ -34,32 +34,6 @@ class SchedulePeriod < ApplicationRecord
     )
   end
 
-<<<<<<< HEAD
-  def format_ro_data(ro_allocations)
-    ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
-      ro_info[:allocated_dates].each_value do |dates|
-        dates.each do |date, rooms|
-          rooms.each do |room|
-            acc << HearingDayMapper.hearing_day_field_validations(
-              hearing_type: :video,
-              hearing_date: date,
-              room_info: room[:room_num],
-              regional_office: ro_key
-            )
-          end
-        end
-      end
-      acc
-    end
-  end
-
-  def generate_ro_hearing_schedule
-    generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
-    format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
-  end
-
-=======
->>>>>>> hd-ui
   def schedule_confirmed(*)
     update(finalized: true)
   end
