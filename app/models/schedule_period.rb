@@ -9,10 +9,6 @@ class SchedulePeriod < ApplicationRecord
   has_many :allocations
   has_many :non_availabilities
 
-  cache_attribute :ro_hearing_day_allocations, expires_in: 4.days do
-    generate_ro_hearing_schedule
-  end
-
   delegate :full_name, to: :user, prefix: true
 
   def validate_schedule_period
@@ -38,6 +34,7 @@ class SchedulePeriod < ApplicationRecord
     )
   end
 
+<<<<<<< HEAD
   def format_ro_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
@@ -61,6 +58,8 @@ class SchedulePeriod < ApplicationRecord
     format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
   end
 
+=======
+>>>>>>> hd-ui
   def schedule_confirmed(*)
     update(finalized: true)
   end
