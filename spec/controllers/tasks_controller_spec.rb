@@ -118,6 +118,32 @@ RSpec.describe TasksController, type: :controller do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
+    context "Attornet task" do
+      before do
+        FeatureToggle.enable!(:judge_assignment_to_attorney)
+      end
+
+      after do
+        FeatureToggle.disable!(:judge_assignment_to_attorney)
+      end
+
+      context "when current user is a judge" do
+        let(:role) { :judge_role }
+        let(:params) do
+          [{
+            "external_id": appeal.vacols_id,
+            "type": "AttorneyTask",
+            "assigned_to_id": attorney.id
+          }]
+        end
+
+        it "should be successful" do
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
     context "Co-located admin action" do
       before do
         FeatureToggle.enable!(:attorney_assignment_to_colocated)
@@ -215,9 +241,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should not be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 400
-            response_body = JSON.parse(response.body)
-            expect(response_body["errors"].first["detail"]).to eq "Appeal can't be blank"
+            expect(response.status).to eq 404
           end
         end
       end

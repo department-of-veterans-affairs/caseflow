@@ -80,12 +80,8 @@ class TasksController < ApplicationController
     [params.require("tasks")].flatten.map do |task|
       task.permit(:type, :instructions, :title, :assigned_to)
         .merge(assigned_by: current_user)
-        .merge(appeal: appeal)
+        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
     end
-  end
-
-  def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:external_id])
   end
 
   def update_params
