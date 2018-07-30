@@ -318,13 +318,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
       it "all hearing days should be assigned to judges" do
-        day_count = hearing_days.reduce(0) do |acc, (_id, hearing_day)|
-          acc += 1 unless hearing_day.folder_nr.nil? && !hearing_day.hearing_date.to_date.wednesday?
-          acc
-        end
-
-        expect(subject.count).to eq(day_count)
-
         judge_count = {}
         subject.each do |hearing_day|
           expected_day = hearing_days[hearing_day[:hearing_pkseq]]
