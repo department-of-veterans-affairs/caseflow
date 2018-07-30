@@ -43,7 +43,8 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 
 import type {
   Task,
-  LegacyAppeal
+  LegacyAppeal,
+  Judges
 } from './types/models';
 import type { UiStateError } from './types/state';
 
@@ -55,6 +56,7 @@ type Params = {|
 type Props = Params & {|
   // state
   appeal: LegacyAppeal,
+  judges: Judges,
   decision: Object,
   task: Task,
   highlightFormItems: Boolean,
@@ -207,6 +209,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
+      judges,
       stagedChanges: {
         appeals: {
           [ownProps.appealId]: appeal
