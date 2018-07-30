@@ -6,7 +6,7 @@ class Idt::AuthenticationsController < ApplicationController
 
     return render json: { message: "Missing key." }, status: 400 unless key
 
-    Idt::Token.activate_proposed_token(key)
+    Idt::Token.activate_proposed_token(key, current_user.css_id)
     render json: { message: "Success!" }
   rescue Caseflow::Error::InvalidOneTimeKey
     render json: { message: "Invalid key." }, status: 400

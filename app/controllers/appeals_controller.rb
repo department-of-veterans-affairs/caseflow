@@ -4,7 +4,7 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
 
-  ROLES = Constants::ROLES["roles"]
+  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -34,7 +34,7 @@ class AppealsController < ApplicationController
   def tasks
     no_cache
 
-    role = params[:role]
+    role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
     tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
     render json: {
