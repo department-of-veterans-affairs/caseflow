@@ -28,7 +28,7 @@ class BuildScheduleContainer extends React.PureComponent {
   };
 
   sendAssignments = () => {
-    if (_.isEmpty(this.props.schedulePeriod)) {
+    if (_.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true) {
       return Promise.resolve();
     }
 

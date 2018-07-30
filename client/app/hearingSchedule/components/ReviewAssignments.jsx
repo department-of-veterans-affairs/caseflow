@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 import COPY from '../../../COPY.json';
@@ -83,7 +82,7 @@ export default class ReviewAssignments extends React.Component {
       return <StatusMessage
         type="status"
         title="This page has expired."
-        leadMessageList={["Please return to the homepage", <Link>Go back to home</Link>]}
+        messageText={<Link to="/schedule">Go back to home</Link>}
       />;
     }
 
