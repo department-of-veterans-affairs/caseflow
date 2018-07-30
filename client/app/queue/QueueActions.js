@@ -311,3 +311,9 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
       (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
 };
+
+export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
+  return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+    then((resp) => resp.body).
+    then((body) => console.log(body));
+}

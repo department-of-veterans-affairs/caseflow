@@ -11,7 +11,13 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
-import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import {
+  onReceiveQueue,
+  onReceiveJudges,
+  setAttorneysOfJudge,
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser
+} from './QueueActions';
 import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
@@ -39,7 +45,8 @@ type Props = Params & {|
   setActiveAppeal: typeof setActiveAppeal,
   setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys
+  fetchAllAttorneys: typeof fetchAllAttorneys,
+  fetchAmaTasksOfUser: typeof fetchAmaTasksOfUser
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
@@ -63,6 +70,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       promises.push(this.loadActiveAppealAndTask(this.props.appealId));
     }
     promises.push(this.maybeLoadLegacyQueue());
+    promises.push(this.props.fetchAmaTasksOfUser(this.props.userId, this.props.userRole));
 
     return Promise.all(promises);
   }
@@ -205,7 +213,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveAppeal,
   setActiveTask,
   setAttorneysOfJudge,
-  fetchAllAttorneys
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
